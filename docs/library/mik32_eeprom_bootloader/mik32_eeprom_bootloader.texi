@@ -1,0 +1,556 @@
+\graphicspath{ {PATH_MIK32_EEPROM_BOOTLOADER_REPORT_DIR/pix} }
+
+
+\chapter{EEPROM Загрузчик для MIK32 (K1948BK018)}
+
+\begin{quote}
+   "Если дом начинается с двери, то прошивка начинается с загрузчика."
+   
+   "Самая лучшая функция прошивки это возможность обновления прошивки."
+\end{quote}
+
+\section{Пролог}
+
+Поговорим о загрузчиках для микроконтроллерных проектов. 
+Данный текст является пояснительной запиской про EEPROM загрузчик для 
+однокристального микроконтроллера MIK32(K1948BK018).
+
+\section{Определения}
+
+\begin{enumerate}
+
+    \item Прошивка (firmware) - содержимое энергонезависимой памяти электронного 
+     устройства с микроконтроллером. В прошивке всегда есть код, а иногда ещё образ 
+     файловой системы NVRAM, конфиги процессора. 
+     Монолитная прошивка может содержать ещё и загрузчик. 
+
+    \item Загрузчик - это отдельная прошивка, которая загружает другую прошивку. 
+     Обычно загрузчик стартует сразу после подачи питания перед запуском приложения. 
+     Это чисто системная часть кода.
+
+     \item EEPROM - electrically erasable programmable read-only memory.
+         Это энергонезависимая память, которая зиждется на самом кристалле.
+         В нашем случае 8kByte.
+         
+     \item тыква  - электронное устройство с бракованной прошивкой, которое 
+     либо зависло либо постоянно без конца перезагружается. 
+     Такое устройство можно восстановить только программатором.
+     
+    \item  connectivity - всё что связано с интерфейсами и протоколами.
+    
+\end{enumerate}
+
+
+\section{Что надо из оборудования?}
+
+\begin{enumerate}
+    \item Учебно-тренировочная электронная отладочная плата START-MIK32-V1. 1 шт.
+    \item Кабель USB-A на USB micro. 1 штук.
+    \item Перемычки гнездо-гнездо. 4+ штук. (необязательно)
+    \item Переходник с USB на UART на ASIC CP2102. 1 шт. (необязательно)
+\end{enumerate}
+
+
+INSERT_PIX2(Mik32Bootloader, Схема подключения платы для перепрошивки)
+
+\section{Что надо из ПО?}
+
+\begin{enumerate}
+    \item  Операционная система Windows 10.
+    
+    \item  WinRar. Чтобы распаковать программы перед установкой (terminal 1.9b).
+    
+    \item  Программа terminal 1.9b.
+    
+    \item  Консольная утилита FW-loader.exe.
+\end{enumerate}
+
+
+
+
+
+
+\section{Постановка задачи}
+
+В результате обсуждения пожеланий на планерке были 
+сформированы следующие технические требования к загрузчику.
+Общая задача такова, что надо обновить прошивку в off-chip SPI памяти при помощи 
+on-chip MIK32 загрузчиком по UART0.
+То есть обновить прошивку без программатора.
+
+Главная задача загрузчика - это дать возможность обновлять боевую flash и ни при 
+каких обстоятельствах не позволить устройству зависнуть.
+
+\begin{enumerate}
+    \item Загрузчик должен помещаться в 8kByte памяти EEPROM программ.
+    Это обусловлено тем, что в микроконтроллере K1948BK018 просто нет больше on-chip 
+    памяти, чем 8kByte EEPROM.
+
+ \item Загрузчик должен уметь прошивать по UART0. 
+       Это обусловлено тем, что в плату START-MIK32-V1 вмонтирован 
+	   переходник с USB на UART на основе отделного 8-ми битного E8051 совместимого микроконтроллера CH552T.
+       Одновременно с этим, для интерфейса UART существует множество бесплатного диагностического софта для serial портов.
+       Примерами таких программ являются утилиты Terminal 1.9b, Putty, TeraTerm и прочее.
+
+ \item Битовая скорость UART0 в загрузчике должна составлять 56000 бит/s.
+       Это самая максимальная (из стандартных)  битовая скорость, которую поддерживает заводская прошивка внутри переходника на основе CH552T.
+
+    \item Загрузчик должен записывать прошивку по частям. 
+    По возможности перед записью фрагмента в ячейки SPI-Flash проверять контрольную сумму 
+    принятого фрагмента данных для памяти.
+	
+    \item  Загрузчик должен быть однопоточной NoRTOS прошивкой. 
+    Так можно уменьшить *.bin(арь) и упростить код загрузчика. 
+
+   \item Желательно, чтобы была UART команда приказывать загрузчику прыгнуть в 
+       приложение и начать исполнять код в SPI-Flash.
+ 
+ \item  Желательно, чтобы загрузчик периодически раз в 10...20 секунд посылал в UART0 hello пакеты. 
+        Это позволит на стороне клиентского приложения автоматически убедится, что прошивка не зависла.
+ 
+ \item Загрузчик это не просто ещё одна прошивка в репозитории. 
+     Для загрузчика нужна инфраструктура и экосистема. 
+     В самом простом виде - это консольное Windows приложение (FW\_Loader.exe) под Windows 10 PC для 
+     нарезания *.hex фйла и отправки фрагментов прошивки по последовательному COM порту.
+
+    \item Сам загрузчик записывать программатором по JTAG.
+    На плате START-MIK32-V1 в качестве программатора выступает микросхема CH552T (U4).
+     
+\end{enumerate}
+
+
+
+
+
+\section{Структура загрузчика}
+
+Данный состоит из следующих программных компонентов:
+\begin{enumerate}
+    \item  Драйвер GPIO.
+    \item  Драйвер светодиода (LED).
+    \item  Драйвер SPIFI трансивера.
+    \item  Драйвер ASIC-а W25Q32JV.
+    \item  Драйвер UART трансивера. 
+    \item  Бинарный протокол передачи данных Trivial Binary Frame Protocol (TBFP).
+    \item  Простой кооперативный планировщик. По сути - суперцикл.
+    \item  Программный компонент FIFO.
+    \item  Программный компонент CRC8. 
+           Как дополлнение.
+\end{enumerate}
+
+LED нужен для того, чтобы показать пользователю, что прошивка загрузчика не зависла.
+Тут логика простая.
+Если LED мигает, значит загрузчик должен отвечать на TBFP пакеты.
+Если LED не мигает - значит что-то внутри прошивки заклинило.
+Это классический HeartBeat LED.
+
+
+
+\section{Команды загрузчика}
+
+В прошивке загрузчика запущен бинарный протокол обмена данными именуемый
+ Trivial Binary Frame Protocol (TBFP).
+Обновление прошивки тоже предполагается через TBFP.
+
+Структура пакета для обновления прошивки показана на рисунке.
+
+INSERT_PIX2(TBFP_frames, Структура пакета для обновления прошивки )
+
+Это бинарный протокол поверх UART0. 
+В качестве идентификатора полезной нагрузки выступает код 0xFC
+В диапазоне полезной нагрузки находится заголовок команды: чтение, запись, стирание,
+относительный адрес внутри микросхемы W25Q32JV, размер. 
+Номер ASICа в нанем случае должен быть равен единице.
+Поле данных заполняется только для операции записи.
+
+Ввиду дефицита EEPROM памяти проверка контрольной суммы отключена.
+Также её можно отключить в флагах внутри заготовка TBFP пакета.
+
+В прерывании по UART0 RX происходит запись принятого байта в очередь для протокола TBFP. 
+В прошивке есть конечный автомат, который обрабатывает входящие TBFP пакеты.
+Синтаксический разбор пакета происходит именно в суперцикле, никак не в прерывании. 
+Прошивка в суперцикле сбрасывает TBFP парсер в ожидание преамбулы, если долное 
+время (2s) ничего не происходило на шине UART0 RX.
+
+
+
+
+
+
+\section{Механизм обновления}
+
+Обновление прошивки происходит на UART0 при битовой скорости 56000 бит/c.
+Два стоповых бита. 
+Нет проверки четности.
+Один кадр: 8бит.
+
+Сеанс связи показан на временной диаграмме процесса обновления прошивки.
+Перед обновлением необходимо отправить TBFP пакет стирания содержимого микросхемы W25Q32JV.
+
+INSERT_PIX2(Dialog, сеанс связи)
+
+\section{Отладка бинарного протокола}
+
+Сам протокол TBFP отлажен в составе консольного Windows PC приложения.
+На это есть модульные тесты. 
+В частрости на чтение и запись по протоколу TBFP.
+
+\begin{lstlisting}[label=some-code,caption=Тесты протокола TBFP]
+
+-->
+-->tsa tbfp_storage+
+tbfp_storage_read.153
+tbfp_storage_write.154
+-->tsr tbfp_storage_read
+-->tsr tbfp_storage_write
+ 
+\end{lstlisting} 
+
+Консольная Win утилита также умеет генерировать тестировочные TBFP пакеты,
+чтобы не набирать их вручную.
+
+\begin{lstlisting}[label=some-code,caption=CLI утилита для формирования пакетов]
+
+Erase all contents of the SPI memory chip
+-->tseg  
+ StoreEraseFrame:
+ A5C101000800FC000000000000030123
+ A5C101000800FC 00000000 0000 03 01 23
+ 
+ Insert for the program  terminal 1.9b:
+ $A5$C1$01$00$08$00$FC$00$00$00$00$00$00$03$01$23
+
+
+
+Generate a packet to read from the address (tsrg):
+Usage: tsrg addr size
+-->tsrg 0x00000000 16
+
+ Insert for the program  terminal 1.9b:
+$A5$81$01$00$08$00$FC$00$00$00$00$10$00$01$01$59
+
+------------------------
+Let's try to write something down
+Usage: tswg addr size pattern
+-->tswg 0x00000000 8 0x77 
+
+ Insert for the program  terminal 1.9b:
+$A5$C1$01$00$10$00$FC$00$00$00$00$08$00$02$01$77$77$77$77$77$77$77$77$29
+
+
+-->tswg 16 8 0x33
+88 I,[TBFP] Address:0x00000010,Size:8,Pattern:0x33
+89 I,[TBFP] N:1,PRE:0xa5,IF:Stdio,RxMem:0047b8e0,RxSz:512,UART:85,SN:0,PrevFlow:0,CurFlow:0,MaxFlow:0,TornCnt:0,Lost:0,
+90 I,[TBFP] PayLoadLen:16 byte
+91 I,[TBFP] StoreWriteFrame:A5C101001000FC100000000800020133333333333333337A
+
+ Insert for the program  terminal 1.9b:
+$A5$C1$01$00$10$00$FC$10$00$00$00$08$00$02$01$33$33$33$33$33$33$33$33$7A
+
+
+Generate a packet to read from the address (tsrg):
+tsrg 32 16
+
+ Insert for the program  terminal 1.9b:
+$A5$81$01$00$08$00$FC$20$00$00$00$10$00$01$01$76
+
+\end{lstlisting} 
+
+Эти пакеты с символом доллара предназначены для вставки в программу Terminal 1.9b.
+
+\section{Отладка на устройстве}
+
+В программе Terminal надо установить паузу между символами. 
+Отладка производилась на значениях в диапазоне 20ms-50ms между байтами.
+Иначе прошивка может захлебнуться от плотного потока входных байтов.
+
+INSERT_PIX2(OkRead, Чтение SPI-Flash памяти)
+INSERT_PIX2(OkWrite, Запись SPI-Flash памяти)
+
+Как можно заметить, данные в самом деле прописываются и читаются.
+
+
+
+
+
+
+\section{Достоинства загрузчика}
+
+\begin{enumerate}
+ 
+    \item Загрузчиком можно обновлять прошивку без программатора.
+
+    \item Когда есть загрузчик, то можно делать DevOps. 
+       Автоматически обновлять прошивки после сборки из репозитория.
+ 
+ 
+\end{enumerate}
+
+
+\section{Особенности данного загрузчика}
+
+
+\begin{enumerate}
+     \item TBFP - это самописный внутрикомпанейский протокол. 
+           Полная спецификация на TBFP протокол находится в разработке.
+           Для обновления прошивки payload\_id будет всегда один и тот же: 0xFC. 
+
+     \item Проиверка CRC8 отключена так, как код вычисления CRC8 не поместился в EEPROM память.
+
+     \item LED нужен только для того, чтобы показать пользователю, 
+           что прошивка не зависла.
+           Чтобы человек не подумал, что загрузчик завис.
+           Если LED не мигает, то устройство однозначно не будет отвечать на команды.
+     
+     
+    \item  Так как прошивку пришлось утрамбовывать в 8 kByte получилось так, что 
+           в этом загрузчике можно только полностью стереть весь Flash. 
+           И только потом аккуратно писать страницы.
+           Это паллиативное решение.
+           Вот так выглядить пакет инициирующий процесс стирания SPI-Flash памяти:
+           A5 C1 01 00 08 00 FC 00 00 00 00 00 00 03 01 23
+           
+
+     \item  Так как прошивку пришлось утрамбовывать в 8 kByte получилось так, что    
+      не хватило EEPROM памяти на то, чтобы добавить функцию прыжка в приложение 
+      по команде из TBFP.
+      Пока можно предложить прыгать в SPIFI установкой Jumper-ов на пинах BOOT0 и BOOT1.
+
+    \item  Разработка DeskTop утилиты FW\_Loader.exe - это отдельная большая задача.
+\end{enumerate}
+
+
+INSERT_PIX2(Build, Загрузчик занимает всю EEPROM память)
+
+
+\section{Итог}
+
+Удалось составить загрузчик, который обладает минимально необходимой системой команд 
+для загрузки прошивки в off-chip средствами SPIFI трансивера. 
+Сам загрузчик исполняется из EEPROM.
+То есть из on-chip EEPROM памяти.
+
+Чтобы соответствовать жестким требованиям по нехватке памяти загрузчик пришлось собрать с ключами 
+-Os -flto. 
+Из-за этого стала невозможной пошаговая отладка.
+
+По мере утрамбовывания бинаря следует выявлять те сорцы, которые требуют относительно 
+много в сегменте text.
+Посмотреть размер прошивки по сегментам можно вот такой binutils командой.
+
+\begin{lstlisting}[label=some-code,caption=Анализ файлоа по потреблению памяти]
+
+riscv-none-elf-size.exe -Bdt  build/*.o
+riscv-none-elf-size.exe -Bdt  build/*.o | sort
+clear && riscv-none-elf-size.exe -Bdt  build/*.o | sort
+
+\end{lstlisting}
+
+
+Тем не менее пошагово отлаживать прошивку можно светодиодом. 
+Это, пожалуй, единственный вариант, когда прошивка собрана с жёсткой оптимизацией. 
+Даже если Вы поставите точку останова, то из-за оптимизации курсор окажется в 
+случайном месте. 
+Таким образом пошаговая отладка не поможет. 
+Вот и остаётся ставить себе подсказки при помощи GPIO.
+
+Всю логику протокола TBFP я отладил отдельно в консольной Windows 10 утилите, которая была 
+собрана из тех же самых исходников, что и сама прошивка.
+
+Артефакты с загрузчиком представлены в *.rar архиве.
+
+
+
+
+\section{Акронимы}
+
+\begin{tabular} {ll}
+    Акроним & Расшифровка \\
+    \hline
+    FW &  FirmWare \\
+    DFU  &  device firmware update \\
+    SPI  &  Serial Peripheral Interface \\
+    SPIFI &  Serial Peripheral Interface Flash Interface \\
+    UART &  universal asynchronous receiver-transmitter \\
+    ISR &  Interrupt Service Routine \\
+    KA &  Конечный Aвтомат \\
+    TBFP  & Trivial Binary Frame Protocol \\
+    CRC &  Cyclic redundancy check \\
+    RAM &  Random Access Memory \\
+    RISC-V & Reduced instruction set computer V \\
+    ASIC &    application-specific integrated circuit \\
+    EEPROM &  Electrically Erasable Programmable Read-Only Memory \\
+\end{tabular}
+
+
+
+
+
+\section{Гиперссылки}
+
+\begin{enumerate}
+  \item \href{https://habr.com/ru/articles/682292/}{Атрибуты Хорошего Канального Протокола Передачи Данных}
+  \item \href{https://habr.com/ru/articles/754216/}{Атрибуты Хорошего Загрузчика}
+  \item \href{https://habr.com/ru/articles/706972/}{NVRAM для микроконтроллеров}
+  \item \href{https://habr.com/ru/articles/815639/}{NVRAM из EEPROM}
+  \item \href{https://habr.com/ru/companies/rainbow/articles/275381/}{Удаленное обновление прошивки микроконтроллера}
+  \item \href{https://microtechnics.ru/mikrokontroller-i-bootloader-opisanie-i-princip-raboty/}{Микроконтроллер и Bootloader. Описание и принцип работы.}
+  \item \href{https://habr.com/ru/articles/754972/}{Как собрать Си программу в OS Windows}
+
+\end{enumerate}
+
+
+
+\section{Контрольные вопросы  }
+
+\begin{enumerate}
+  \item  Зачем нужен загрузчик во встраиваемых системах? 
+         Назовите минимум 3 его функции.
+         
+  \item  Как загрузчик может обмениваться данными с приложением?
+  
+  \item  В чем опасность вызова функций загрузчика из приложения?
+   
+  \item  Как защитить микроконтроллер от загрузки чужеродного кода через загрузчик?
+  
+  \item  Как загрузчику понять, что загрузчик принял в самом деле прошивку, а не 
+         набор случайных циферок с правильной CRC?
+         
+  \item  Можно ли сделать так, чтобы загрузчик стартовал не с адреса начала Main Flash 0x0800\_0000, а например с адреса 0x0806\_0000?
+  
+  \item  Вам прислали прошивки в *.bin файле. 
+         Как загрузить и запустить эту прошивку по произвольному отступу в on-chip Nor Flash памяти?
+\end{enumerate}
+
+
+\section{Приложения }
+
+Отчёт по функиям, которые есть в загрузчике 
+
+\begin{lstlisting}[label=some-code,caption= ]
+
+$ readelf -a start_mik32_v1_eeprom_bootloader_m.elf  | grep -i fun | sort -k3
+  1218: 0000e9eb     0 NOTYPE  WEAK   HIDDEN    11 common_functions[...]
+    30: 01000210     4 FUNC    LOCAL  DEFAULT    3 board_init
+    28: 01000210     4 FUNC    LOCAL  DEFAULT    3 interrupt_init_custom
+    45: 01000d4e    32 FUNC    LOCAL  DEFAULT    3 super_cycle_init
+    32: 01000272    34 FUNC    LOCAL  DEFAULT    3 SpiFiGetNode
+    35: 010002dc    36 FUNC    LOCAL  DEFAULT    3 GpioGetInfo
+    41: 01000b50    36 FUNC    LOCAL  DEFAULT    3 TbfpGetNode
+    34: 010002b8    36 FUNC    LOCAL  DEFAULT    3 UartGetNode
+    47: 01000de2    36 FUNC    LOCAL  DEFAULT    3 W25q32jvGetNode
+    33: 01000294    36 FUNC    LOCAL  DEFAULT    3 spifi_mcal_init
+    48: 01000e06    38 FUNC    LOCAL  DEFAULT    3 w25q32jv_mcal_init
+    38: 01000988    56 FUNC    LOCAL  DEFAULT    3 uart_send_wait_l[...]
+    50: 01000ece    56 FUNC    LOCAL  DEFAULT    3 w25q32jv_write_enable
+    42: 01000b74    62 FUNC    LOCAL  DEFAULT    3 LedMonoGetNode
+  1224: 010017d4    82 FUNC    GLOBAL HIDDEN     3 __fixunssfsi
+    51: 01000f06    90 FUNC    LOCAL  DEFAULT    3 w25q32jv_wait_bu[...]
+    31: 01000214    94 FUNC    LOCAL  DEFAULT    3 interrupt_mcal_init
+    55: 01001490   102 FUNC    LOCAL  DEFAULT    3 clock_init
+    46: 01000d6e   116 FUNC    LOCAL  DEFAULT    3 task_init
+    53: 01000ff0   120 FUNC    LOCAL  DEFAULT    3 tbfp_send_frame.[...]
+    43: 01000bb2   144 FUNC    LOCAL  DEFAULT    3 led_mono_mcal_init
+    52: 01000f60   144 FUNC    LOCAL  DEFAULT    3 tbfp_mcal_init
+    49: 01000e2c   162 FUNC    LOCAL  DEFAULT    3 HAL_SPIFI_SendCo[...]
+  1210: 0100164a   168 FUNC    GLOBAL DEFAULT    3 memset
+  1211: 010016f2   226 FUNC    GLOBAL DEFAULT    3 main
+  1177: 01001826   236 FUNC    GLOBAL DEFAULT    3 memcpy
+    44: 01000c42   268 FUNC    LOCAL  DEFAULT    3 led_mono_proc
+  1192: 010014f6   340 FUNC    GLOBAL DEFAULT    3 trap_handler
+    39: 010009c0   400 FUNC    LOCAL  DEFAULT    3 uart_mcal_init
+    54: 01001068  1064 FUNC    LOCAL  DEFAULT    3 tbfp_proc
+    36: 01000300  1672 FUNC    LOCAL  DEFAULT    3 gpio_mcal_init
+\end{lstlisting}
+
+Отчёт по константам, которые есть в загрузчике 
+
+\begin{lstlisting}[label=some-code,caption= ]
+
+$ riscv-none-elf-readelf -a start_mik32_v1_eeprom_bootloader_m.elf | grep -i OBJECT | grep -i LOCAL | sort -k3
+    40: 020004c8     2 OBJECT  LOCAL  DEFAULT    8 Uart0RxArray
+    76: 020004c4     4 OBJECT  LOCAL  DEFAULT    8 current_irq_line_mux
+    56: 020004cc     4 OBJECT  LOCAL  DEFAULT    8 int_cnt
+    37: 020004bc     6 OBJECT  LOCAL  DEFAULT    7 CSWTCH.14
+    64: 020004b0    10 OBJECT  LOCAL  DEFAULT    6 W25q32jvInstance
+    72: 01001ad0    24 OBJECT  LOCAL  DEFAULT    3 GpioInfo
+    71: 01001ab8    24 OBJECT  LOCAL  DEFAULT    3 InterruptConfig
+    58: 02000158    40 OBJECT  LOCAL  DEFAULT    6 SpiFiInstance
+    75: 01001bc0    44 OBJECT  LOCAL  DEFAULT    3 SystemInitInstance
+    68: 02000608    48 OBJECT  LOCAL  DEFAULT    9 MemRxFrame0
+    66: 02000518    48 OBJECT  LOCAL  DEFAULT    9 MemRxFrameFix0
+    74: 01001b88    56 OBJECT  LOCAL  DEFAULT    3 LedMonoConfig
+    62: 02000388    72 OBJECT  LOCAL  DEFAULT    6 LedMonoInstance
+    65: 020004d0    72 OBJECT  LOCAL  DEFAULT    9 SuperCycle
+    73: 01001ae8   160 OBJECT  LOCAL  DEFAULT    3 GpioConfig
+    69: 02000638   192 OBJECT  LOCAL  DEFAULT    9 RxData0
+    67: 02000548   192 OBJECT  LOCAL  DEFAULT    9 TxBuff0
+    63: 020003d0   224 OBJECT  LOCAL  DEFAULT    6 TaskInstance
+    61: 0200029c   236 OBJECT  LOCAL  DEFAULT    6 TbfpInstance
+    60: 020008f8   256 OBJECT  LOCAL  DEFAULT    9 Uart0TxArray
+    59: 02000180   284 OBJECT  LOCAL  DEFAULT    6 UartInstance
+    70: 020006f8   512 OBJECT  LOCAL  DEFAULT    9 storage_data
+
+\end{lstlisting}
+
+
+При попытке прошивить микроконтроллер с установленным ключем на UART появляется такой лог
+
+\begin{lstlisting}[label=some-code,caption= ]
+
+ 
+xPack Open On-Chip Debugger 0.12.0+dev-01850-geb6f2745b-dirty (2025-02-07-10:08)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+DEPRECATED! use 'adapter driver' not 'interface'
+Info : only one transport option; autoselecting 'jtag'
+Warn : incomplete ublast_vid_pid configuration
+Info : set servers polling period to 200ms
+Info : usb blaster interface using libftdi
+Error: unable to open ftdi device: device not found
+
+mik32-uploader-v0.3.3
+Using MIK32V2
+ERROR: Tcl port connection failed
+Check connectivity and OpenOCD log
+"flash_hex.bat flash_hex" terminated with exit code 1. Build might be incomplete.
+
+12:32:49 Build Failed. 1 errors, 0 warnings. (took 6s.666ms)
+
+\end{lstlisting}
+
+
+Успешный лог запуска отладочного сервера
+
+\begin{lstlisting}[label=some-code,caption= ]
+        
+
+
+Open On-Chip Debugger 0.12.0+dev-sc_sc_dt_2024_05_experimental-gb095594e (2024-05-28-11:01)
+Licensed under GNU GPL v2
+For bug reports, read
+        http://openocd.org/doc/doxygen/bugs.html
+DEPRECATED! use 'adapter driver' not 'interface'
+Info : only one transport option; autoselecting 'jtag'
+Warn : incomplete ublast_vid_pid configuration
+Info : set servers polling period to 200ms
+Info : usb blaster interface using libftdi
+Error: unable to get latency timer
+Info : Note: The adapter "usb_blaster" doesn't support configurable speed
+Info : JTAG tap: riscv.cpu tap/device found: 0xdeb11001 (mfg: 0x000 (<invalid>), part: 0xeb11, ver: 0xd)
+Info : TAP riscv.sys does not have valid IDCODE (idcode=0xfffffffe)
+Info : [riscv.cpu] datacount=2 progbufsize=6
+Info : [riscv.cpu] Examined RISC-V core
+Info : [riscv.cpu]  XLEN=32, misa=0x40001104
+[riscv.cpu] Target successfully examined.
+Info : [riscv.cpu] Examination succeed
+Info : starting gdb server for riscv.cpu on 3333
+Info : Listening on port 3333 for gdb connections
+init done
+riscv.cpu halted due to debug-request. Semihosting is active.
+Info : Listening on port 6666 for tcl connections
+Info : Listening on port 4444 for telnet connections
+
+\end{lstlisting}
+
