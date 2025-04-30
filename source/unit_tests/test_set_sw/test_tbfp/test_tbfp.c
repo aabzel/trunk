@@ -225,21 +225,21 @@ bool test_tbfp_interfaces(void) {
     memset(array, 0x55, sizeof(array));
     set_log_level(TBFP, LOG_LEVEL_DEBUG);
 #ifdef HAS_UART1
-    EXPECT_TRUE(tbfp_send(array, sizeof(array), IF_UART1, 0, ACK_NO_NEED, FRAME_ID_CHAT));
+    EXPECT_TRUE(tbfp_send_payload(array, sizeof(array), IF_UART1, 0, ACK_NO_NEED, FRAME_ID_CHAT));
 #endif
 #ifdef HAS_RS232
-    EXPECT_TRUE(tbfp_send(array, sizeof(array), IF_RS232, 0, ACK_NO_NEED, FRAME_ID_CHAT));
+    EXPECT_TRUE(tbfp_send_payload(array, sizeof(array), IF_RS232, 0, ACK_NO_NEED, FRAME_ID_CHAT));
 #endif
 #ifdef HAS_LORA
-    EXPECT_TRUE(tbfp_send(array, sizeof(array), IF_LORA, 0, ACK_NO_NEED, FRAME_ID_CHAT));
+    EXPECT_TRUE(tbfp_send_payload(array, sizeof(array), IF_LORA, 0, ACK_NO_NEED, FRAME_ID_CHAT));
 #endif
 #ifdef HAS_CAN
-    EXPECT_TRUE(tbfp_send(array, sizeof(array), IF_CAN, 0, ACK_NO_NEED, FRAME_ID_CHAT));
+    EXPECT_TRUE(tbfp_send_payload(array, sizeof(array), IF_CAN, 0, ACK_NO_NEED, FRAME_ID_CHAT));
 #endif
 
-    EXPECT_TRUE(tbfp_send(array, sizeof(array), IF_LOOPBACK, 0, ACK_NO_NEED, FRAME_ID_CHAT));
+    EXPECT_TRUE(tbfp_send_payload(array, sizeof(array), IF_LOOPBACK, 0, ACK_NO_NEED, FRAME_ID_CHAT));
 #ifdef HAS_UWB
-    EXPECT_TRUE(tbfp_send(array, sizeof(array), IF_UWB, 0, ACK_NO_NEED, FRAME_ID_CHAT));
+    EXPECT_TRUE(tbfp_send_payload(array, sizeof(array), IF_UWB, 0, ACK_NO_NEED, FRAME_ID_CHAT));
 #endif
     set_log_level(TBFP, LOG_LEVEL_INFO);
     return res;
