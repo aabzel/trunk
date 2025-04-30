@@ -1,0 +1,9 @@
+#ifndef AUTO_VERSION_H
+#define AUTO_VERSION_H
+
+#define SUCCESSFUL_BUILD_COUNTER 261
+
+#define GIT_BRANCH  "main"
+#define GIT_LAST_COMMIT_HASH  "0d47eb16"
+
+#endif /*AUTO_VERSION_H*/
