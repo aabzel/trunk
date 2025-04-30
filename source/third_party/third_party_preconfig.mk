@@ -7,11 +7,6 @@ ifneq ($(THIRD_PARTY_PRECONFIG_INC),Y)
 
     INCDIR += -I$(THIRD_PARTY_DIR)
 
-    ifeq ($(ASICS),Y)
-        #@echo $(error ASICS=$(ASICS))
-        include $(THIRD_PARTY_DIR)/asics/asics_preconfig.mk
-    endif
-
     ifeq ($(SERVICES),Y)
         #@echo $(error SERVICES=$(SERVICES))
         include $(THIRD_PARTY_DIR)/Services/Services_preconfig.mk
@@ -52,10 +47,6 @@ ifneq ($(THIRD_PARTY_PRECONFIG_INC),Y)
         include $(THIRD_PARTY_DIR)/FreeRTOS/free_rtos_preconfig.mk
     endif
 
-    ifeq ($(MISCELLANEOUS),Y)
-        #@echo $(error MISCELLANEOUS=$(MISCELLANEOUS))
-        include $(THIRD_PARTY_DIR)/miscellaneous/miscellaneous_preconfig.mk
-    endif
 
     ifeq ($(SENSITIVITY),Y)
         #@echo $(error SENSITIVITY=$(SENSITIVITY))

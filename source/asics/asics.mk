@@ -39,14 +39,6 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/bh1750/bh1750.mk
     endif
 
-    ifeq ($(DWM1000),Y)
-        OPT += -DHAS_DWM1000
-    endif
-
-    ifeq ($(DWM3000),Y)
-        OPT += -DHAS_DWM3000
-    endif
-
     ifeq ($(DECADRIVER),Y)
         #@echo $(error DECADRIVER= $(DECADRIVER))
         include $(ASICS_DIR)/decadriver/decadriver.mk
@@ -59,18 +51,6 @@ ifneq ($(ASICS_MK_INC),Y)
 
     ifeq ($(DW1000),Y)
         include $(ASICS_DIR)/dw1000/dw1000.mk
-    endif
-
-    ifeq ($(DWM1000),Y)
-        include $(ASICS_DIR)/dwm1000/dwm1000.mk
-    endif
-
-    ifeq ($(DWM3000),Y)
-        include $(ASICS_DIR)/dwm3000/dwm3000.mk
-    endif
-
-    ifeq ($(DWS3000),Y)
-        include $(ASICS_DIR)/dws3000/dws3000.mk
     endif
 
     ifeq ($(LTR390),Y)
@@ -147,7 +127,4 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/ublox_neo_6m/ublox_neo_6m.mk
     endif
 
-    ifeq ($(ZED_F9P),Y)
-        include $(ASICS_DIR)/zed_f9p/zed_f9p.mk
-    endif
 endif
