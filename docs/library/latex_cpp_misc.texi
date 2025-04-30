@@ -1,0 +1,10 @@
+
+
+#define INSERT_PIX(FILE_NAME,HINT )  \
+  \begin{figure}[h]  \
+  \centering   \
+  \includegraphics[width=0.99\textwidth]{FILE_NAME}   \
+  \caption{HINT }  \
+  \label{fig:FILE_NAME}  \
+  \end{figure}
+

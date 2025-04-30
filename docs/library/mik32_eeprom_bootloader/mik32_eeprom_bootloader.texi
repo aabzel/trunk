@@ -95,6 +95,14 @@ on-chip MIK32 загрузчиком по UART0.
  \item Битовая скорость UART0 в загрузчике должна составлять 56000 бит/s.
        Это самая максимальная (из стандартных)  битовая скорость, которую поддерживает заводская прошивка внутри переходника на основе CH552T.
 
+    \item Желательно, чтобы загрузчик осуществлял прыжок в боевую flash \underline{самопроивзольно}  
+по истечении определенного timeout c момента подачи электропитания или по
+таймауту по отсутствит входного трафика в шине UART0.
+
+    \item Загрузчик должен перед прыжком в flash настроить SPIFI кэш в трансивере
+и SPI QUAD режим.
+
+
     \item Загрузчик должен записывать прошивку по частям. 
     По возможности перед записью фрагмента в ячейки SPI-Flash проверять контрольную сумму 
     принятого фрагмента данных для памяти.
@@ -396,6 +404,7 @@ clear && riscv-none-elf-size.exe -Bdt  build/*.o | sort
   \item \href{https://habr.com/ru/companies/rainbow/articles/275381/}{Удаленное обновление прошивки микроконтроллера}
   \item \href{https://microtechnics.ru/mikrokontroller-i-bootloader-opisanie-i-princip-raboty/}{Микроконтроллер и Bootloader. Описание и принцип работы.}
   \item \href{https://habr.com/ru/articles/754972/}{Как собрать Си программу в OS Windows}
+  \item \href{https://habr.com/ru/companies/ruvds/articles/574352/}{Осваиваем LaTeX за 30 минут}
 
 \end{enumerate}
 

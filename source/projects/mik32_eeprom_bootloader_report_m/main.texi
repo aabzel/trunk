@@ -1,0 +1,27 @@
+\documentclass[a4paper, 16pt]{book}
+% \documentclass[12pt]{book}
+
+sinclude(`latex_m4_preproc_utils.texi')
+
+include(`preamble.texi')
+
+\begin{document}
+
+\title{  
+\textbf{EEPROM Загрузчик для MIK32  \\
+        (K1948BK018) \\
+        версия: 4
+        }
+}
+
+\author{aabdev}
+
+\date{\today}
+
+\maketitle
+
+\tableofcontents
+
+include(`mik32_eeprom_bootloader.texi')
+
+\end{document}

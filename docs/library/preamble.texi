@@ -1,0 +1,47 @@
+
+\usepackage[T2A]{fontenc}
+
+\usepackage{longtable}
+\usepackage{cmap}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{float}
+\usepackage{emptypage}
+\usepackage{listings}
+\usepackage{courier}
+\usepackage{listingsutf8}
+\usepackage{lipsum}     %   <---
+\usepackage{hyperref}
+\usepackage{nomencl}
+\usepackage{stfloats}   %   <---
+\usepackage{uarial}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[margin=0.6in]{geometry}
+\usepackage[russian]{babel}
+\usepackage{fancyhdr}
+\usepackage[utf8]{inputenc}
+\geometry{top=20mm}
+\setlength{\parindent}{1.25cm} 
+
+% \usepackage[utf8]{inputenc}
+
+\usepackage{times}
+\usepackage{mathptmx}
+
+\pagestyle{plain} 
+
+\rmfamily
+% \renewcommand{\rmdefault}{cmr}
+% \sffamily
+\usepackage[fontsize=14.0pt]{fontsize}
+% \renewcommand{\sfdefault}{cmss}
+
+% \hspace{\parindent}
+
+% \usepackage{microtype},
+\global\hyphenpenalty=100
+
+\lstset{basicstyle=\fontsize{10}{13}\selectfont\ttfamily,
+        breaklines=true
+          }
+

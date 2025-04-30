@@ -1,0 +1,24 @@
+
+
+define(INSERT_PIX, format(  
+                         \begin{figure}[h!]
+                             \centering   
+                             \includegraphics[width=0.7\textwidth]{%s}   
+                             \caption{%s }  
+                             \label{fig:%s}  
+                         \end{figure}
+                         , $1, $2 , $3 
+                         )     
+      )
+
+
+define(INSERT_PIX2, format(
+                           \begin{figure}[h!]  
+                               \centering   
+                               \includegraphics[width=0.45 \textwidth]{%s}   
+                               \caption{%s }  
+                               \label{fig:%s }  
+                           \end{figure}
+                           , $1, $2, $1
+                          )     
+    )
