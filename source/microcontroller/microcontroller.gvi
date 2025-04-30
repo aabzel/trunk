@@ -1,0 +1,58 @@
+#ifdef HAS_CC2642R1F
+    #include "cc2642r1f.gvi"
+#endif
+
+#ifdef HAS_AT32F413RC
+    #include "at32f413rc.gvi"
+#endif
+
+#ifdef HAS_CC2652R1F
+    #include "cc2652r1f.gvi"
+#endif
+
+#ifdef HAS_ESP32
+    #include "esp32.gvi"
+#endif
+
+#ifdef HAS_K2921BK028
+     #include "k2921bk028.gvi"
+#endif
+
+#ifdef HAS_NRF5340
+    #include "nRF5340.gvi"
+#endif
+
+#ifdef HAS_STM32F401RE
+     #include "stm32f401re.gvi"
+#endif
+
+#ifdef HAS_STM32F407ZG
+    #include "stm32f407zg.gvi"
+#endif
+
+#ifdef HAS_STM32F411CE
+    #include "stm32f411ce.gvi"
+#endif
+
+#ifdef HAS_STM32F413ZH
+    #include "stm32f413zh.gvi"
+#endif
+
+#ifdef HAS_STM32F415RG
+    #include "stm32f415rg.gvi"
+#endif
+
+#ifdef HAS_STM32F446RE
+    #include "stm32f446re.gvi"
+#endif
+
+#ifdef HAS_STM32F746ZG
+    #include "stm32f746zg.gvi"
+#endif
+
+#ifdef HAS_STM32L073RZ
+    #include "stm32l073rz.gvi"
+#endif
+
+
+

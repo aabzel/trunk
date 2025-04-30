@@ -1,0 +1,10 @@
+
+
+tsr bpsk+
+
+compose BPSK modulated wav file 100 iterations of 0x55aa data
+bpskew 1 0x926F 5
+
+
+
+tsr bpsk_decode

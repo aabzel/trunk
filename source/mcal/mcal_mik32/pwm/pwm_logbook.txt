@@ -1,0 +1,72 @@
+https://deepbluembedded.com/stm32-pwm-example-timer-pwm-mode-tutorial/
+
+
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |      pdl |        pwm_diag_ll | PWM diag low level
+|   2 |      pwd |           pwm_diag | PWM diag
+|   3 |      psd |       pwm_set_duty | PWMSetDuty
+|   4 |      psp |      pwm_set_phase | PWMSetPhase
+|   5 |      pse |        pwm_set_per | PWM period
+|   6 |     sdsp |     sw_dac_set_pwm | SwDacSetPWMWave
++-----+----------+--------------------+-------------+
+
+
+ll pwm debug
+pdl T04
+psd 4 1 40.0
+pdl T04
+pe 4 3 1
+pe 4 3 0
+
+oe 4 3 1
+
+
+gl D
+
+Нет сигнала на пине PD14 
+Таймер считает 
+ll pwm debug    
+psd 4 3 50
+pe 4 3 1
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   2 |      tdc |   tim_diag_compare | TimDiagComparator
+|   3 |      tdl |        tim_diag_ll | TimDiagLowLevel
+|   4 |       td |           tim_diag | TimDiag
+|   5 |      tsp |        tim_set_psc | TimPrescaler
+|   6 |      tsl |       tim_set_load | TimLoad
+|   7 |     tspr |        tim_set_per | TimPeriod
++-----+----------+--------------------+-------------+
+
+
+
+Как управлять фазой PWM сигнала на MIK32?
+Как сгенерировать 2 PWM сигнала и двигать их относительно друг друга.
+Например надо эмулировать сигнал с инкрементального энкодера.
+
+
+Надо 2  тайvмера работающих в режиме master slave
+Выбирите 2 аппаратных таймера A B.
+Таймер А мастер.
+Таймер B слейв.
+Установить желаемый период для мастер таймера A
+Установить максимальный период для ведомого таймера B
+
+В мастер таймере А установитье на канал 2 желаемую фазовую разность. Установить компаратор на 2 канал.
+Тригерить TRGO. При срабатывании компаратора на втором канале таймера A сбрасывать значение ведомого таймера B. Например в обработчике прерываний компаратора.
+
+You mean two waveforms of the same period and duty cycle, but mutually phase shifted?
+
+Chose two timers, let's denote them A and B, so that they can be linked, timer A be master of timer B (see the table at TIMx_SMCR for timers linking)
+Enable output pins for say CH1 on both timers
+Set up required period in timer A. Set timer B to maximum period
+Set both timers to output compare, PWM mode, and set the TIMx_CCR1 register to the same value (say, 1/3 of ARR for a starting value) and enable output compare output in both.
+In timer A, set say CH2 to the desired phase difference (say 2/3 of ARR). Set CH2 to output compare. Select CH2 compare as TRGO.
+In timer B, set slave mode to reset, and select timer A as TRGI source.
+Enable both timers.
+ 

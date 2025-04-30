@@ -1,0 +1,4 @@
+
+&i2c2 {
+	status = "disabled";
+};

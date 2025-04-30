@@ -1,0 +1,4 @@
+
+config HW_NOR_FLASH
+    bool "Enable use of the HW_NOR_FLASH drivers"
+

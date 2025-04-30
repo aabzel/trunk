@@ -1,0 +1,13 @@
+$(info TEST_DWM3000_MK_INC=$(TEST_DWM3000_MK_INC) )
+ifneq ($(TEST_DWM3000_MK_INC),Y)
+    TEST_DWM3000_MK_INC=Y
+
+    $(info + dwm3000 tests)
+    TEST_DWM3000_DIR = $(TEST_SET_HW_DIR)/test_dwm3000
+
+    #@echo $(error TEST_DWM3000_DIR=$(TEST_DWM3000_DIR))
+    INCDIR += -I$(TEST_DWM3000_DIR)
+
+    OPT += -DHAS_TEST_DWM3000
+    SOURCES_C += $(TEST_DWM3000_DIR)/test_dwm3000.c
+endif

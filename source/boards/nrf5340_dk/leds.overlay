@@ -1,0 +1,28 @@
+/ {
+	leds: leds {
+		compatible = "gpio-leds";
+		led0: led_0 {
+			gpios = < &gpio0 28 GPIO_ACTIVE_LOW >;
+			label = "0 LED_MONO_GREEN CORE_APP";
+		};
+		led1: led_1 {
+			gpios = < &gpio0 29 GPIO_ACTIVE_LOW >;
+			label = "1 LED_MONO_GREEN CORE_APP";
+		};
+		led2: led_2 {
+			gpios = < &gpio0 30 GPIO_ACTIVE_LOW >;
+			label = "2 LED_MONO_GREEN CORE_APP";
+		};
+		led3: led_3 {
+			gpios = < &gpio0 31 GPIO_ACTIVE_LOW >;
+			label = "3 LED_MONO_GREEN CORE_APP";
+		};
+	};
+
+	aliases {
+		led0 = &led0;
+		led1 = &led1;
+		led2 = &led2;
+		led3 = &led3;
+	};
+};

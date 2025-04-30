@@ -1,0 +1,68 @@
+
+    #ifdef HAS_ADC
+        #include "mcal_nrf5340/adc/adc.gvi"
+    #endif
+
+    #ifdef HAS_CLOCK
+        #include "mcal_nrf5340/clock/clock.gvi"
+    #endif
+
+    #ifdef HAS_FLASH
+        #include "mcal_nrf5340/flash/flash.gvi"
+    #endif
+
+    #ifdef HAS_GPIO
+        #include "mcal_nrf5340/gpio/gpio.gvi"
+    #endif
+
+    #ifdef HAS_I2C
+        #include "mcal_nrf5340/i2c/i2c.gvi"
+    #endif
+
+    #ifdef HAS_I2S
+        #include "mcal_nrf5340/i2s/i2s.gvi"
+    #endif
+
+    #ifdef HAS_IPC
+        #include "mcal_nrf5340/ipc/ipc.gvi"
+    #endif
+
+    #ifdef HAS_NVS
+        #include "mcal_nrf5340/nvs/nvs.gvi"
+    #endif
+
+    #ifdef HAS_PDM
+        #include "mcal_nrf5340/pdm/pdm.gvi"
+    #endif
+
+    #ifdef HAS_PWM
+        #include "mcal_nrf5340/pwm/pwm.gvi"
+    #endif
+
+    #ifdef HAS_RTC
+        #include "mcal_nrf5340/rtc/rtc.gvi"
+    #endif
+
+    #ifdef HAS_SPI
+        #include "mcal_nrf5340/spi/spi.gvi"
+    #endif
+
+    #ifdef HAS_SYSTICK
+        #include "mcal_nrf5340/systick/systick.gvi"
+    #endif
+
+    #ifdef HAS_TIMER
+        #include "mcal_nrf5340/timer/timer.gvi"
+    #endif
+    
+    #ifdef HAS_QSPI
+        #include "mcal_nrf5340/qspi/qspi.gvi"
+    #endif
+
+    #ifdef HAS_UART
+        #include "mcal_nrf5340/uart/uart.gvi"
+    #endif
+
+    #ifdef HAS_USB
+        #include "mcal_nrf5340/usb/usb.gvi"
+    #endif

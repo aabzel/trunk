@@ -1,0 +1,193 @@
+cl sdad
+sdsin 1 2000 256 0 0 
+i2sl 2 1
+i2sdac 2 1
+i2srw 2  0x5555AAAA
+i2sdac 2 0
+set sin syntax: dac_num frequency amplitude phase Yoffset
+
+
+h sw_dac
+sdsin 1 100 800 0 0 
+sdsin 1 200 400 0 0 
+sdsin 1 300 400 0 0 
+sdsin 1 500 400 0 0 
+
+sdsin 1 1000 400 0 0 
+sdsin 1 2500 400 0 0 
+sdsin 1 3000 400 0 0 
+sdsin 1 4000 400 0 0 
+sdsin 1 5000 400 0 0 
+sdsin 1 5000 500 0 0 
+
+sdsin 1 6000 500 0 0 
+sdsin 1 7000 500 0 0 
+sdsin 1 12000 500 0 0 
+sdsin 1 15000 500 0 0 
+
+sdsin 1 17000 500 0 0 
+sdsin 1 20000 500 0 0 
+
+
+
+sdsin 1 5000 600 0 0 
+
+
+
+sdad
+sdsin 1 1400 250 0 0
+sdsin 1 400 250 0 0
+sdad
+
+
+ll i2s debug
+sdsa 1 32000 20
+i2spl 2 1 1
+
+i2sds 2
+dd 
+ds 1
+di 1
+
+bool i2s_play_command(int32_t argc, char* argv[]);
+
+HAL_StatusTypeDef HAL_I2S_DMAStop(I2S_HandleTypeDef *hi2s)
+
+set sin syntax: dac_num frequency amplitude phase Yoffset
+
+
+
+mpi 1000 3000
+ 
+sdad
+
+сконфигурировать дорожку  400Hz амплитудой 8
+sdsin 1 1000 3000 0 0
+sdsin 1 1000 1000 0 0
+sdsin 1 100 2000 0 0
+
+sdsin 1 100 3000 0 0
+sdsin 1 500 30000 0 0
+sdsin 1 2000 3000 0 0
+
+sdsin 1 2000 3000 0 0
+sdsin 1 3500 4000 0 0
+sdsin 1 5000 4000 0 0
+
+Расчитать дорожку  
+
+ll math debug
+sw_dac_pattern 1 1
+sdsa 1 48000 1
+sdsa 1 53500 1
+
+sdsa 1 49670 2
+sdsa 1 49700 1
+
+sdsa 1 44100 2
+распечатать трек
+sdpt
+
+sw_dac_rev_data 1 1
+распечатать трек
+sdpt
+
+sdad
+проиграть дорожку
+i2s_play 0 1 1
+i2s_play 2 1 1
+ma 0
+
+i2sp 0 1 1
+
+Остановить I2S
+i2sds 1
+
+ Включить канал
+fdcp 3 1
+ 
+Отключить канал
+fdcp 3 0
+
+i2sl 1 1
+i2sdn 1 1
+i2sd
+
+ i2sd
+ 
+ h fda play
+ 
+i2sdac 1 0
+set sin syntax: dac_num frequency amplitude phase Yoffset
+
+mpi 1000 2222
+
+
+
+
+
+
+
+
+
+
+
+
+cl sdad
+
+сконфигурировать дорожку  400Hz
+cl sdsin 1 1000 2000 0 0
+
+Расчитать дорожку  
+cl sdsa 1 44100 2
+распечатать трек
+cl sdpt
+
+
+cl sdrd 1 1
+
+sdad
+проиграть дорожку
+cl i2spl 0 1 on
+
+Остановить I2S
+i2sds 0
+
+ Включить канал
+fdcp 3 1
+ 
+ 
+Отключить канал
+fdcp 3 0
+
+i2sl 1 1
+i2sdn 1 1
+i2sd
+
+ i2sd
+ 
+ h fda play
+ 
+i2sdac 1 0
+set sin syntax: dac_num frequency amplitude phase Yoffset
+
+
+ll math debug
+sdsin 1 1000 10000 0 0
+sdst 1
+i2spt 2 1 on
+
+sw_dac_pattern 1 1
+sw_dac_pattern 1 2
+
+pt 0 1 100
+pt 0 1 100
+pt 0 1 200
+pt 0 1 3333
+pt 0 1 10000
+pt 0 1 30000
+pt 0 1 1000 0
+
+
+
+sdsa 1 48000 1

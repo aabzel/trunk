@@ -1,0 +1,15 @@
+$(info IIR_PRECONFIG_MK_INC=$(IIR_PRECONFIG_MK_INC) )
+
+ifneq ($(IIR_PRECONFIG_MK_INC),Y)
+    IIR_PRECONFIG_MK_INC=Y
+
+    IIR=Y
+    DSP=Y
+    COMPUTING=Y
+endif
+
+
+
+
+
+

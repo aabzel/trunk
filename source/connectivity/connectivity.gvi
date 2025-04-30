@@ -1,0 +1,27 @@
+subgraph cluster_Connectivity{
+    label = "Connectivity";
+    //rank = same;
+    style=filled;
+    color=oldlace;
+    STREAM
+#ifdef HAS_LOG
+    LOG
+#endif
+
+#ifdef HAS_INTERFACES
+    #include "interfaces.gvi"
+#endif
+
+#ifdef HAS_PROTOCOLS
+    #include "protocols.gvi"
+#endif
+
+}
+
+#ifdef HAS_LOG
+    #include "log.gvi"
+#endif
+
+
+
+

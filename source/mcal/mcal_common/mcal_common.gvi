@@ -1,0 +1,79 @@
+#ifdef HAS_ADC
+    #include "mcal_common/adc/adc.gvi"
+#endif
+
+#ifdef HAS_CRYP
+    #include "mcal_common/cryp/cryp.gvi"
+#endif
+
+#ifdef HAS_DMA
+    #include "mcal_common/dma/dma.gvi"
+#endif
+
+#ifdef HAS_EEPROM
+    #include "mcal_common/eeprom/eeprom.gvi"
+#endif
+
+#ifdef HAS_FLASH
+    #include "mcal_common/flash/flash.gvi"
+#endif
+
+#ifdef HAS_GPIO
+    #include "mcal_common/gpio/gpio.gvi"
+#endif
+
+#ifdef HAS_I2C
+    #include "mcal_common/i2c/i2c.gvi"
+#endif
+
+#ifdef HAS_I2S
+    #include "mcal_common/i2s/i2s.gvi"
+#endif
+
+#ifdef HAS_NVS
+    #include "mcal_common/nvs/nvs.gvi"
+#endif
+
+#ifdef HAS_PDM
+    #include "mcal_common/pdm/pdm.gvi"
+#endif
+
+#ifdef HAS_PWM
+    #include "mcal_common/pwm/pwm.gvi"
+#endif
+
+#ifdef HAS_RTC
+    #include "mcal_common/rtc/rtc.gvi"
+#endif
+
+#ifdef HAS_SDIO
+    #include "mcal_common/sdio/sdio.gvi"
+#endif
+
+#ifdef HAS_SPI
+    #include "mcal_common/spi/spi.gvi"
+#endif
+
+#ifdef HAS_SPIFI
+    #include "mcal_common/spifi/spifi.gvi"
+#endif
+
+#ifdef HAS_TIMER
+    #include "mcal_common/timer/timer.gvi"
+#endif
+
+#ifdef HAS_UART
+    #include "mcal_common/uart/uart.gvi"
+#endif
+
+#ifdef HAS_USB
+    #include "mcal_common/usb/usb.gvi"
+#endif
+
+#ifdef HAS_WDG
+    #include "mcal_common/wdg/wdg.gvi"
+#endif
+
+
+
+

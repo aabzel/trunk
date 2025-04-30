@@ -1,0 +1,2 @@
+NODE_NRF5340 [label="NRF5340"]
+CORTEX_M33->NODE_NRF5340 [color=blue]

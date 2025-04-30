@@ -1,0 +1,8 @@
+
+Где определена функция usb_enable?
+zephyr/subsys/usb/device/usb_device.c:1514
+
+
+Где определена функция usb_audio_register?
+zephyr/subsys/usb/device/class/audio/audio.c
+

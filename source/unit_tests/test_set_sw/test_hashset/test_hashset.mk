@@ -1,0 +1,10 @@
+
+
+TEST_HASHSET_DIR = $(TEST_SET_SW_DIR)/test_hashset
+#@echo $(error TEST_HASHSET_DIR= $(TEST_HASHSET_DIR))
+#@echo $(error CFLAGS= $(CFLAGS))
+
+INCDIR += -I$(TEST_HASHSET_DIR)
+
+OPT += -DHAS_TEST_SUIT_HASHSET
+SOURCES_C += $(TEST_HASHSET_DIR)/test_hashset.c

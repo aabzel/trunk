@@ -1,0 +1,7 @@
+
+    GPIO->CROSS_DETECT[color=blue]
+    TIME->CROSS_DETECT[color=green]
+    MCU->CROSS_DETECT[color=red]
+
+
+

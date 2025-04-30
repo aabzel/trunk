@@ -1,0 +1,9 @@
+#ifndef LIGHT_SENSOR_MONO_DEP_H
+#define LIGHT_SENSOR_MONO_DEP_H
+
+#ifndef HAS_LIGHT_SENSOR
+#error "+HAS_LIGHT_SENSOR"
+#endif
+
+
+#endif /* LIGHT_SENSOR_MONO_DEP_H  */

@@ -1,0 +1,4 @@
+
+config W25Q32JV
+    bool "Enable use of the W25Q32JV drivers"
+

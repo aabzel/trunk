@@ -1,0 +1,19 @@
+$(info TEST_CROSS_DETECT_MK_INC=$(TEST_CROSS_DETECT_MK_INC))
+
+ifneq ($(TEST_CROSS_DETECT_MK_INC),Y)
+    TEST_CROSS_DETECT_MK_INC=Y
+
+    ifneq ($(CROSS_DETECT),Y)
+        @echo $(error +CROSS_DETECT)
+    endif
+
+    TEST_CROSS_DETECT_DIR = $(TEST_SET_SW_DIR)/test_cross_detect
+    #@echo $(error TEST_CROSS_DETECT_DIR= $(TEST_CROSS_DETECT_DIR))
+
+    OPT += -DHAS_TEST_SUIT_CROSS_DETECT
+    OPT += -DHAS_TEST_CROSS_DETECT
+
+    INCDIR  += -I$(TEST_CROSS_DETECT_DIR)
+
+    SOURCES_C += $(TEST_CROSS_DETECT_DIR)/test_cross_detect.c
+endif

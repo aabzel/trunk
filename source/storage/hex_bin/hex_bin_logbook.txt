@@ -1,0 +1,30 @@
+ll FatFs debug
+ll HexBin debug
+hb olimex_h407_freertos_pastilda.hex
+
+hb dev_ebox_stm32f4xx_light_navigatorc_m.hex
+
+tsr hex_bin+
+
+ll String debug
+ll HexBin debug;hb nucleo_f413zh_uwb_m.hex
+hb nucleo_f413zh_uwb_m.hex
+
+
+ffs
+
+ll HexBin debug;hb olimex_h407_freertos_pastilda.hex
+
+ll HexBin debug;tsr hex_bin_proc
+
+ll String debug
+tsr delete_substr
+ll Array debug;tsr delete_substr
+
+grep -rn replace_substring | grep "\.c:"
+
+https://microsin.net/programming/pc/intel-hex-file-format.html
+
+
+            double percent=calc_percent_s(Node->line_cnt, Node->total_lines);
+            cli_printf("\rProgress:%u/%u,%f pp", Node->line_cnt, Node->total_lines, percent);

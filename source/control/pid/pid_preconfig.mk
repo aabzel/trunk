@@ -1,0 +1,9 @@
+$(info PID_PRECONFIG_MK_INC=$(PID_PRECONFIG_MK_INC) )
+
+ifneq ($(PID_PRECONFIG_MK_INC),Y)
+    PID_PRECONFIG_MK_INC=Y
+
+    PID=Y
+    GPIO=Y
+    TIME=Y
+endif

@@ -1,0 +1,7 @@
+#ifdef HAS_LED_RGB
+    LED_RGB->INDICATION
+#endif
+
+#ifdef HAS_LED_MONO
+    LED_MONO->INDICATION
+#endif

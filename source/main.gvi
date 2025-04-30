@@ -1,0 +1,57 @@
+strict digraph graphname {
+    rankdir=LR;
+    splines=ortho
+    node [shape="box"];
+
+#ifdef HAS_CORE
+    #include "core.gvi"
+#endif
+
+#ifdef HAS_MICROCONTROLLER
+    #include "microcontroller.gvi"
+#endif
+
+#ifdef HAS_MCAL
+    #include "mcal.gvi"
+#endif    
+
+#ifdef HAS_ADT
+    #include "adt.gvi"
+#endif
+
+#ifdef HAS_CONNECTIVITY
+    #include "connectivity.gvi"
+#endif
+
+#ifdef HAS_CONTROL
+    #include "control.gvi"
+#endif
+
+#ifdef HAS_COMMON
+    #include "common.gvi"
+#endif
+
+    #include "components.gvi"
+
+#ifdef HAS_COMPUTING
+    #include "computing.gvi"
+#endif
+
+#ifdef HAS_STORAGE
+    #include "storage.gvi"
+#endif
+
+#ifdef HAS_UTILS
+    #include "utils.gvi"
+#endif
+
+#ifdef HAS_ASICS
+    #include "asics.gvi"
+#endif
+
+#ifdef HAS_THIRD_PARTY
+    #include "third_party.gvi"
+#endif    
+
+
+}

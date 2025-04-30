@@ -1,0 +1,15 @@
+#ifndef BOARD_NUCLEO_F413ZH_H 
+#define BOARD_NUCLEO_F413ZH_H 
+
+#include "stm32f413zh.h"
+
+#define BOARD_NAME "NucleoF413ZH"
+
+#define SYS_FREQ 100000000U
+
+#define AHB1_CLOCK_HZ SYS_FREQ
+
+#define APB2_CLOCK_HZ 100000000
+#define APB1_CLOCK_HZ 50000000
+
+#endif /* BOARD_NUCLEO_F413ZH_H   */

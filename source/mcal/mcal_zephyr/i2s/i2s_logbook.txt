@@ -1,0 +1,5 @@
+C:\ncs\v2.1.0\zephyr\samples\drivers\i2s\echo\boards\nrf52840dk_nrf52840.overlay
+
+
+C:\ncs\v2.1.0\zephyr\drivers\i2s
+https://docs.zephyrproject.org/3.0.0/reference/audio/i2s.html

@@ -1,0 +1,7 @@
+TIME->UART
+FIFO->UART
+DMA->UART [color = green]
+GPIO->UART [color = fuchsia]
+REG->UART [color = darkorange]
+
+//https://graphviz.org/doc/info/colors.html

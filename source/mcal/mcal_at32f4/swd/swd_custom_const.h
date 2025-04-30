@@ -1,0 +1,4 @@
+#ifndef SWD_CUSTOM_CONST_H
+#define SWD_CUSTOM_CONST_H
+
+#endif /* SWD_CUSTOM_CONST_H  */

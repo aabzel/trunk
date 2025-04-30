@@ -1,0 +1,20 @@
+ll loaddetect debug
+
+
+h loaddetect
+
+
+9:39-->h loaddetect
+argc 1
+AvailableCommands:Key1:loaddetect
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |      ldi |     load_detect_init | LoadDetectInit
+|   2 |      lde |       load_detect_en | LoadDetectEnable
+|   3 |     ldpe |   load_detect_pin_en | LoadDetectPinEnable
+|   4 |     ldpd | load_detect_pin_diag | LoadDetectPinDiag
+|   5 |      ldd |     load_detect_diag | LoadDetectDiag
++-----+----------+----------------------+-------------+
+

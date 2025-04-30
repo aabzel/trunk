@@ -1,0 +1,10 @@
+
+TEST_LED_MONO_DIR = $(TEST_SET_HW_DIR)/test_led_mono
+
+#@echo $(error TEST_LED_MONO_DIR=$(TEST_LED_MONO_DIR))
+INCDIR += -I$(TEST_LED_MONO_DIR)
+
+OPT += -DHAS_TEST_LED_MONO
+
+SOURCES_C += $(TEST_LED_MONO_DIR)/test_led_mono.c
+

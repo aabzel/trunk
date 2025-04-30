@@ -1,0 +1,12 @@
+
+
+TEST_MEMORY_DIR = $(TEST_SET_SW_DIR)/test_memory
+
+#@echo $(error TEST_MEMORY_DIR= $(TEST_MEMORY_DIR))
+#@echo $(error CFLAGS= $(CFLAGS))
+
+INCDIR += -I$(TEST_MEMORY_DIR)
+
+OPT += -DHAS_TEST_SUIT_MEMORY
+
+SOURCES_C += $(TEST_MEMORY_DIR)/test_memory.c

@@ -1,0 +1,11 @@
+
+TEST_GPIO_DIR = $(TEST_SET_HW_DIR)/test_gpio
+
+#@echo $(error TEST_GPIO_DIR=$(TEST_GPIO_DIR))
+INCDIR += -I$(TEST_GPIO_DIR)
+
+OPT += -DHAS_TEST_GPIO
+OPT += -DHAS_GPIO_TEST
+
+SOURCES_C += $(TEST_GPIO_DIR)/test_gpio.c
+

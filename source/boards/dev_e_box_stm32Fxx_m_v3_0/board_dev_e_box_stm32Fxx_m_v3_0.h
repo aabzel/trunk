@@ -1,0 +1,13 @@
+#ifndef BOARD_DEV_E_BOX_STM32FXX_M_V3_0_H407_H
+#define BOARD_DEV_E_BOX_STM32FXX_M_V3_0_H407_H
+
+#include "stm32f407vg.h"
+
+#define BOARD_NAME "DevEBox-STM32Fxx-M-v3.0"
+
+#define BUTTON_COUNT 1
+#define LED_COUNT 1
+
+#define XTALL_FREQ_HZ 8000000
+
+#endif /* BOARD_DEV_E_BOX_STM32FXX_M_V3_0_H407_H   */

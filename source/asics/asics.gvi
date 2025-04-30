@@ -1,0 +1,302 @@
+
+subgraph cluster_asics{
+    label = "ASICS";
+    //rank = same; 
+    style=filled;
+    color=oldlace;
+
+#ifdef HAS_AD9833
+    AD9833    
+#endif
+
+#ifdef HAS_AD5641
+AD5641
+#endif
+
+#ifdef HAS_BC127
+    BC127
+#endif
+
+#ifdef HAS_BQ24079
+   #include "bq24079.gvi" 
+#endif
+
+
+#ifdef HAS_BQ25171_Q1
+BQ25171_Q1
+#endif
+  
+#ifdef HAS_DS3231
+    #include "ds3231.gvi"   
+#endif
+
+#ifdef HAS_DWS3000
+    #include "dws3000.gvi" 
+#endif
+
+#ifdef HAS_DW1000
+    DW1000
+#endif
+
+#ifdef HAS_DECADRIVER
+	DECADRIVER
+#endif
+
+
+  
+#ifdef HAS_FDA801
+    FDA801
+#endif
+  
+#ifdef HAS_MIC2026
+    MIC2026 
+#endif
+
+#ifdef HAS_RS2058
+    RS2058
+#endif
+
+#ifdef HAS_SSD1306
+    SSD1306
+#endif
+  
+  #ifdef HAS_TDA7708
+TDA7708
+  #endif
+ 
+ #ifdef HAS_DWM1000
+    DWM1000
+#endif
+
+ 
+ #ifdef HAS_BH1750
+BH1750
+  #endif
+  
+  #ifdef HAS_BT1026
+BT1026 
+#endif     
+
+#ifdef HAS_HC_05
+    HC_05
+#endif
+  
+  #ifdef HAS_MIC2026
+MIC2026 
+  #endif
+  
+  #ifdef HAS_SD_CARD
+SD_CARD
+  #endif
+  
+    
+#ifdef HAS_DWM3000
+    DWM3000
+#endif
+
+  #ifdef HAS_SX1262
+SX1262
+#endif     
+
+#ifdef HAS_TPA2013D1
+TPA2013D1
+  #endif
+ 
+  #ifdef HAS_BMP180
+BMP180
+  #endif
+  
+  #ifdef HAS_AT24CXX
+    AT24CXX    
+#endif
+  
+
+  
+  #ifdef HAS_MAX98357
+MAX98357
+  #endif
+  
+  #ifdef HAS_MX25L6433F
+MX25L6433F
+#endif  
+
+  #ifdef HAS_SI4703
+SI4703
+  #endif
+  
+  
+  #ifdef HAS_BQ24079
+BQ24079
+   #endif
+   
+#ifdef HAS_DS3231
+   DS3231
+#endif
+
+#ifdef HAS_MAX9860
+    MAX9860
+#endif
+
+#ifdef HAS_MX25R6435F
+    MX25R6435F
+#endif
+
+#ifdef HAS_SI4737
+   SI4737
+#endif
+   
+#ifdef HAS_TCAN4550_Q1
+   TCAN4550_Q1
+#endif
+
+#ifdef  HAS_WM8731
+    WM8731
+#endif
+
+#ifdef HAS_ZED_F9P
+   ZED_F9P
+#endif
+
+#ifdef HAS_NAU8814
+    NAU8814
+#endif
+}
+
+#ifdef HAS_AT24CXX
+    #include "at24cxx.gvi"     
+#endif
+
+#ifdef HAS_AD9833
+    #include "ad9833.gvi"     
+#endif
+
+#ifdef HAS_AD5641
+    #include "ad5641.gvi"    
+#endif 
+
+#ifdef HAS_BC127
+    #include "bc127.gvi"   
+#endif
+
+#ifdef HAS_BQ25171_Q1
+    #include "bq25171_q1.gvi"
+#endif
+  
+  
+  #ifdef HAS_BT1026
+     #include "bt1026.gvi"   
+#endif     
+
+ 
+ #ifdef HAS_BH1750
+     #include "bh1750.gvi"  
+  #endif
+
+#ifdef HAS_DW1000
+     #include "dw1000.gvi"  
+  #endif
+  
+  #ifdef HAS_FDA801
+     #include "fda801.gvi" 
+  #endif
+
+#ifdef HAS_MIC2026
+    #include "mic2026.gvi"
+#endif
+
+
+
+
+#ifdef HAS_HC_05
+    #include "hc_05.gvi" 
+#endif
+ 
+  #ifdef HAS_BMP180
+     #include "bmp180.gvi"  
+  #endif
+  
+  #ifdef HAS_DECADRIVER
+     #include "decadriver.gvi"   
+  #endif
+  
+  #ifdef HAS_DWM3000
+     #include "dwm3000.gvi" 
+  #endif
+   
+   #ifdef HAS_MAX9860
+      #include "max9860.gvi" 
+   #endif
+   
+   #ifdef HAS_MX25R6435F
+      #include "mx25r6435f.gvi" 
+   #endif
+  
+  #ifdef HAS_MAX98357
+     #include "max98357.gvi" 
+  #endif
+  
+  #ifdef HAS_MX25L6433F
+     #include "mx25l6433f.gvi"  
+#endif  
+
+   #ifdef HAS_NAU8814
+      #include "nau8814.gvi"
+   #endif
+
+#ifdef HAS_RS2058
+     #include "rs2058.gvi"  
+#endif
+  
+  #ifdef HAS_SSD1306
+     #include "ssd1306.gvi"    
+  #endif
+  
+  #ifdef HAS_TDA7708
+     #include "tda7708.gvi"
+  #endif
+ 
+  
+
+#ifdef HAS_DWM1000
+	#include "dwm1000.gvi" 
+#endif
+
+
+  #ifdef HAS_SI4703
+     #include "si4703.gvi" 
+  #endif
+
+  #ifdef HAS_SD_CARD
+     #include "sd_card.gvi" 
+  #endif
+  
+  #ifdef HAS_SX1262
+     #include "sx1262.gvi"  
+#endif     
+
+#ifdef HAS_TPA2013D1
+     #include "tpa2013d1.gvi"
+  #endif
+
+   #ifdef HAS_SI4737
+      #include "si4737.gvi"  
+   #endif
+   
+   #ifdef HAS_TCAN4550_Q1
+      #include "tcan4550_q1.gvi"  
+   #endif
+
+
+  #ifdef HAS_W25Q32JV
+     #include "w25q32jv.gvi" 
+  #endif
+
+  
+  #ifdef HAS_WM8731
+     #include "wm8731.gvi"
+  #endif
+
+   #ifdef HAS_ZED_F9P
+      #include "zed_f9p.gvi"
+   #endif
+

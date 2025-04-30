@@ -1,0 +1,9 @@
+$(info DAC_PRECONFIG_INC=$(DAC_PRECONFIG_INC) )
+
+ifneq ($(DAC_PRECONFIG_INC),Y)
+    DAC_PRECONFIG_INC=Y
+
+    DAC=Y
+    GPIO=Y
+
+endif

@@ -1,0 +1,13 @@
+
+#ifdef HAS_CORTEX_M4
+    CORTEX_M4->CORE
+    #include "cortex_m4.doti"
+#endif
+
+#ifdef HAS_CORTEX_M33
+    CORTEX_M33->CORE
+    #include "cortex_m33.doti"
+#endif
+
+
+

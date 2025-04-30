@@ -1,0 +1,30 @@
+https://chipenable.ru/index.php/programming-avr/item/209
+https://narodstream.ru/stm-urok-88-sd-spi-fatfs-chast-1/
+
+
+Треш
+https://alex-exe.ru/radio/stm32/connect-sd-card-stm32-spi/
+
+sdpon
+
+https://github.com/Krasutski-zz/sdcard_spi_driver/blob/master/spi_sdcard_driver.c
+https://github.com/Krasutski-zz/sdcard_spi_driver/blob/master/spi_sdcard_driver.h
+
+
+sdon
+sdc 0x0 0x00000
+gs a 4 0
+sr 1 256
+sdc 0x0 0x00000000
+sdc 0x8 0x000001aa
+
+************* Run test sd_card_frame .55/61
+24.389 :I [TEST] test_sd_card_frame():
+5287654321AB
+AB2143658752
+24.393 :E [SYS] test_sd_card_frame:Line: 67 in val 0
+
+!ERRTEST
+
+
+

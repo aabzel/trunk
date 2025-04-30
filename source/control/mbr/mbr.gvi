@@ -1,0 +1,12 @@
+BOOT->MBR
+
+#ifdef HAS_SPIFI
+SPIFI->MBR
+#endif
+
+
+#ifdef HAS_LED
+LED->MBR
+#endif
+
+

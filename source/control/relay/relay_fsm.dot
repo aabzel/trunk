@@ -1,0 +1,58 @@
+
+digraph  graphname {
+
+   subgraph clusterData  {
+				newrank=true;
+		 
+       subgraph clusterActions  {
+	   rank=same;
+    	   label="Actions"
+		   /*node [style=filled];*/
+		   color=blue
+    	   Actions[shape="none"][style="invis"][label=""];
+           Ok [ shape=box]
+           Open[ shape=box]
+           Welded[ shape=box]
+       }
+       subgraph clusterInputs  {
+	   rank=same;
+    	   label="Inputs"
+		   /*node [style=filled];*/
+		   color=blue
+    	   Inputs[shape="none"][style="invis"][label=""];
+           DO_state_ON [ shape=box]
+           DI_state_ON[ shape=box]
+           DI_state_OFF[ shape=box]
+           DO_state_OFF[ shape=box]
+       }
+		//{ rank=same; Inputs; Actions; }
+    }
+		//rank="min"
+		//rankdir=LR;
+	   	subgraph clusterStates  {
+			newrank=true;
+		    rankdir=LR;
+			rank=new;
+    	   label="States"
+		   /*node [style=filled];*/
+		   color=blue
+    	   Inputs[shape="none"][style="invis"][label=""];
+
+   StOn[label="ON/SetOn" shape=circle fixedsize=true width=2 fillcolor="red" style=filled];
+   StOff[label="OFF/SetOff" shape=circle fixedsize=true width=2 fillcolor="royalblue1" style=filled];
+   
+     
+
+        }
+		
+   StOn->StOff[label="DO_state_OFF/Ok" color="green" arrowtail=dot];
+   StOff->StOn[label="DO_state_ON/Ok" color="green" arrowtail=dot];
+   
+   StOn->StOn[label="DO_state_ON/Ok" shape="normal" color="green" arrowtail=dot];
+   StOn->StOn[label="DI_state_ON/Ok" color="green" shape="normal" arrowtail=dot ];
+   StOn->StOn[label="DI_state_OFF/Open" fontcolor="blue" shape="vee"  color="blue" arrowtail=dot];
+   
+   StOff->StOff[label="DI_state_ON/Welded" color="red" fontcolor="red" arrowtail=dot];
+   StOff->StOff[arrowhead=normal label="DI_state_OFF/Ok" color="green" arrowtail=dot];
+   StOff->StOff[arrowhead=normal label="DO_state_OFF/Ok" color="green" arrowtail=dot];
+}

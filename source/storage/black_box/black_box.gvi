@@ -1,0 +1,5 @@
+#ifdef HAS_FAT_FS
+FAT_FS->BLACK_BOX
+#endif
+
+

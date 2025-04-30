@@ -1,0 +1,10 @@
+
+
+TEST_CLOCK_DIR = $(TEST_SET_HW_DIR)/test_clock
+#@echo $(error TEST_CLOCK_DIR=$(TEST_CLOCK_DIR))
+INCDIR += -I$(TEST_CLOCK_DIR)
+
+OPT += -DHAS_TEST_CLOCK
+
+SOURCES_C += $(TEST_CLOCK_DIR)/test_clock.c
+

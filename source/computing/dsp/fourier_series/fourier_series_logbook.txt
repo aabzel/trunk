@@ -1,0 +1,49 @@
+Данный компонент вычисляет коэффициенты ряда фурье для сигнала для данных из файла
+
+ll FOURIER_SERIES debug
+
+
+fscs 1 2 LiLog_13_Jun_2023.csv
+fscs 1 4 LiLog_13_Jun_2023.csv
+fscs 1 8 LiLog_13_Jun_2023.csv
+fscs 1 1 LiLog_10Jul.csv
+fscs 1 1 LiLog_11Jul.csv
+fscs 1 1 Li_12_Jul.csv
+fscs 1 1 LiLog_14_June.csv
+ll CSV debug
+fscs 1 2 LiLog_14_June.csv
+fscs 1 4 LiLog_14_June.csv
+fscs 1 8 LiLog_14_June.csv
+fscs 1 64 LiLog_14_June.csv
+fscs 1 128 LiLog_14_June.csv
+
+
+  int	tm_sec;
+  int	tm_min;
+  int	tm_hour;
+  int	tm_mday;
+  int	tm_mon;
+  int	tm_year;
+  int	tm_wday;
+  int	tm_yday;
+  int	tm_isdst;
+
+fscs 1 2 C:\1_job\0_NPP_IT_ELMA\code_base_workspace\code_base_firmware\docs\lpf_by_ft\LiLog.csv
+
+
+
+19.590 :D [CSV] SpotOffSet:[ 1627.500,20.50, 10:45:23, 14/7/2023, 1517933379
+] Index:1
+19.592 :E [CSV] ParseDoubleErr[]
+19.594 :E [FOURIER_SERIES] CSVparseErr [6387, 1627.500,20.50, 10:45:23, 14/7/2023, 1517933379
+]
+19.596 :D [CSV] Text:[6388, 1625.833,20.50, 10:45:43, 14/7/2023, 1517933399
+] Size:54 byte Index:1
+19.598 :D [CSV] SpotOffSet:[ 1625.833,20.50, 10:45:43, 14/7/2023, 1517933399
+] Index:1
+19.600 :E [CSV] ParseDoubleErr[]
+19.602 :E [FOURIER_SERIES] CSVparseErr [6388, 1625.833,20.50, 10:45:43, 14/7/2023, 1517933399
+]
+19.604 :D [CSV] Text:[6389, 1620.000,20.50, 10:46:03, 14/7/2023, 1517933419
+] Size:54 byte Index:1
+19.606 :D [CSV] SpotOffSet:[ 1620.000,20.50, 10:46:03, 14/7/2023, 1517933419

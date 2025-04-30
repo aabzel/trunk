@@ -1,0 +1,12 @@
+
+$(info FLASH_PRESET_MCAL_MK_INC=$(FLASH_PRESET_MCAL_MK_INC))
+ifneq ($(FLASH_PRESET_MCAL_MK_INC),Y)
+    FLASH_PRESET_MCAL_MK_INC=Y
+    FLASH=Y
+    #CRC16=Y
+    MICROCONTROLLER=Y
+
+    ifeq ($(FLASH_WRITE),Y)
+        WRITE_ADDR=Y
+    endif
+endif

@@ -1,0 +1,21 @@
+
+ifneq ($(KEY_VAL_MAP_MK_INC),Y)
+    KEY_VAL_MAP_MK_INC=Y
+
+    KEY_VAL_MAP=Y
+    OPT += -DHAS_KEY_VAL_MAP
+    OPT += -DHAS_MEMORY
+
+    HAL_FLASH_EX=Y
+    NVS=Y
+    STORAGE=Y
+    NVS_WRITE=Y
+    CRC8=Y
+    CRC16=Y
+    FLASH_FS=Y
+    FLASH_WRITE=Y
+    PARAM=Y
+    FLASH_FS_WRITE=Y
+    PARAM=Y
+
+endif

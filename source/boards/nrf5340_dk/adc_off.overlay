@@ -1,0 +1,5 @@
+
+&adc {
+	status = "disabled";
+};
+

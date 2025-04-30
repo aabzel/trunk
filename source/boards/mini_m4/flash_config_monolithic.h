@@ -1,0 +1,24 @@
+#ifndef FLASH_CONFIG_GENERAL_MONO_H
+#define FLASH_CONFIG_GENERAL_MONO_H
+
+
+#ifdef HAS_NVS
+#include "nvs_config_monolithic.h"
+#endif /*HAS_NVS*/
+
+#ifndef HAS_FLASH
+#error "Add HAS_FLASH"
+#endif /*HAS_FLASHER*/
+
+
+#ifndef MBR_START_ADDRESS
+#define MBR_START_ADDRESS 0x08000000
+#endif
+#define BOOT_START_ADDRESS 0x08000000
+#define APP_START_ADDRESS 0x08000000
+#define APP_SIZE (1024 * K_BYTES)
+
+
+#define FW_START_ADDRESS APP_START_ADDRESS
+
+#endif /* FLASH_CONFIG_GENERAL_MONO_H  */

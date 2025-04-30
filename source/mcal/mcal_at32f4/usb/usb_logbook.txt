@@ -1,0 +1,32 @@
+CDC+MSC USB Composite Device на STM32 HAL
+https://habr.com/ru/post/335018/
+
+usb nutshell
+https://www.beyondlogic.org/usbnutshell/usb1.shtml
+
+https://www.usbmadesimple.co.uk/
+https://www.usb.org/documents?search=&type%5B0%5D=55&items_per_page=50
+
+http://microsin.net/programming/arm-working-with-usb/stm32cube-usb-device-library.html
+
+Mass Storage Device 
+CH559 USB Host to UART Bridge Module
+
+How to use STM32 as a KEYBOARD
+https://controllerstech.com/how-to-use-stm32-as-a-keyboard/
+
+https://www.ixbt.com/live/diy/usb-hid-interfeys-dlya-stm32-v-stm32ide.html
+
+
+DIY HID USB Keyboard Using STM32 [STM32 Tutorials] [HAL]
+https://www.instructables.com/STM32-As-HID-USB-Keyboard-STM32-Tutorials/
+
+почитать текст USB in a NutShell
+
+stm32-usb-hid-keyboard-skipping-key-presses
+https://stackoverflow.com/questions/42633584/are-stm32-hid-usb-drivers-really-that-slow
+https://electronics.stackexchange.com/questions/609090/stm32-usb-hid-keyboard-skipping-key-presses
+
+
+kt Hello 100
+

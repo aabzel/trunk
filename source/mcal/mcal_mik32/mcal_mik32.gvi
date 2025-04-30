@@ -1,0 +1,53 @@
+
+    #ifdef HAS_ADC
+        #include "mcal_mik32/adc/adc.gvi"
+    #endif
+
+    #ifdef HAS_CLOCK
+        #include "mcal_mik32/clock/clock.gvi"
+    #endif
+
+    #ifdef HAS_FLASH
+        #include "mcal_mik32/flash/flash.gvi"
+    #endif
+
+    #ifdef HAS_GPIO
+        #include "mcal_mik32/gpio/gpio.gvi"
+    #endif
+
+    #ifdef HAS_I2C
+        #include "mcal_mik32/i2c/i2c.gvi"
+    #endif
+
+    #ifdef HAS_EEPROM
+        #include "mcal_mik32/eeprom/eeprom.gvi"
+    #endif
+
+    #ifdef HAS_NVS
+        #include "mcal_mik32/nvs/nvs.gvi"
+    #endif
+
+    #ifdef HAS_PWM
+        #include "mcal_mik32/pwm/pwm.gvi"
+    #endif
+
+    #ifdef HAS_RTC
+        #include "mcal_mik32/rtc/rtc.gvi"
+    #endif
+
+    #ifdef HAS_SPI
+        #include "mcal_mik32/spi/spi.gvi"
+    #endif
+
+    #ifdef HAS_TIMER
+        #include "mcal_mik32/timer/timer.gvi"
+    #endif
+    
+    #ifdef HAS_QSPI
+        #include "mcal_mik32/qspi/qspi.gvi"
+    #endif
+
+    #ifdef HAS_UART
+        #include "mcal_mik32/uart/uart.gvi"
+    #endif
+

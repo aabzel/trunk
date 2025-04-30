@@ -1,0 +1,35 @@
+#add_library(clock)
+message(STATUS "CLOCK_GENERAL_MK_INC=${CLOCK_GENERAL_MK_INC}")
+if( NOT (CLOCK_GENERAL_MK_INC STREQUAL Y))
+    set(CLOCK_GENERAL_MK_INC Y)
+
+    set(CLOCK_GENERAL_DIR ${MCAL_COMMON_DIR}/clock)
+    message(STATUS "+ Clock General")
+
+    message(STATUS "CLOCK_GENERAL_DIR=${CLOCK_GENERAL_DIR}")
+    target_compile_definitions(app PUBLIC HAS_CLOCK)
+
+    #   add_compile_definitions(HAS_CLOCK)
+    # add_compile_options(HAS_CLOCK)
+    # add_definitions(HAS_CLOCK)
+    target_sources(app PRIVATE ${CLOCK_GENERAL_DIR}/clock_general.c)
+
+    if(DIAG STREQUAL Y)
+        if(CLOCK_DIAG STREQUAL Y)
+            message(STATUS "+ Clock Diag")
+            target_sources(app PRIVATE ${CLOCK_GENERAL_DIR}/clock_diag.c)
+        endif()
+    endif()
+
+    if(CLI STREQUAL Y)
+        if(CLOCK_COMMANDS STREQUAL Y)
+            message(STATUS "+ Clock Commands")
+            target_compile_definitions(app PUBLIC HAS_CLOCK_COMMANDS)
+            target_sources(app PRIVATE ${CLOCK_GENERAL_DIR}/clock_commands.c)
+        endif()
+    endif()
+
+    target_include_directories(app PUBLIC ${CLOCK_GENERAL_DIR})
+    include_directories(${CLOCK_GENERAL_DIR})
+    #target_include_directories(clock PUBLIC ${CLOCK_GENERAL_DIR})
+endif()

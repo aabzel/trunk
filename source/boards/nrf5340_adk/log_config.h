@@ -1,0 +1,17 @@
+#ifndef LOG_CONFIGURATION_H
+#define LOG_CONFIGURATION_H
+
+#define  UART_NUM_LOG_NET 0
+#define  UART_NUM_LOG_APP 0
+
+#ifdef	HAS_CORE_APP
+#define UART_NUM_LOG UART_NUM_LOG_APP
+#endif
+
+#ifdef	HAS_CORE_NET
+#define UART_NUM_LOG UART_NUM_LOG_NET
+#endif
+
+#define LOG_UART_BAUD_RATE 460800
+
+#endif /* LOG_CONFIGURATION_H */

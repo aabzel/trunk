@@ -1,0 +1,5 @@
+#ifndef PROTOCOLS_CONST_H
+#define PROTOCOLS_CONST_H
+
+
+#endif /* PROTOCOLS_CONST_H */

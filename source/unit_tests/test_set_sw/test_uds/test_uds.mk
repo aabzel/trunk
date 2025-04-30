@@ -1,0 +1,9 @@
+
+TEST_UDS_DIR = $(TEST_SET_SW_DIR)/test_uds
+#@echo $(error TEST_UDS_DIR= $(TEST_UDS_DIR))
+OPT += -DHAS_TEST_SUIT_UDS
+OPT += -DHAS_TEST_UDS
+
+INCDIR += -I$(TEST_UDS_DIR)
+
+SOURCES_C += $(TEST_UDS_DIR)/test_uds.c

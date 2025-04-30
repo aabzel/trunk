@@ -1,0 +1,17 @@
+
+Start Mic
+pdc 0 1 2
+
+Stop MIC
+pdc 0 0
+
+Распечатать трек
+pdg 0
+
+Вычислить DFT
+pdf 0
+
+
+Start Mic
+pdc 0 1 1
+

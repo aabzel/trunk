@@ -1,0 +1,4 @@
+TASK [label="Scheduler"]
+LIMITER->TASK[color="green"]
+TIME->TASK[color="red"]
+FLASH->TASK[color="blue"]

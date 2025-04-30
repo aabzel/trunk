@@ -1,0 +1,9 @@
+$(info LED_MONO_PRECONFIG_MK_INC=$(LED_MONO_PRECONFIG_MK_INC))
+
+ifneq ($(LED_MONO_PRECONFIG_MK_INC),Y)
+    LED_MONO_PRECONFIG_MK_INC=Y
+    $(info Build LED Mono)
+    LED=Y
+    LED_MONO=Y
+    GPIO=Y
+endif

@@ -1,0 +1,7 @@
+ifneq ($(MIK32_MK_INC),Y)
+    MIK32_MK_INC=Y
+
+    MIK_HAL=Y
+    MCAL_MIK32=Y
+    MICROCONTROLLER=Y
+endif

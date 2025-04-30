@@ -1,0 +1,11 @@
+
+
+TEST_LED_RGB_DIR = $(TEST_SET_HW_DIR)/test_led_rgb
+
+#@echo $(error TEST_LED_RGB_DIR=$(TEST_LED_RGB_DIR))
+INCDIR += -I$(TEST_LED_RGB_DIR)
+
+OPT += -DHAS_TEST_LED_RGB
+
+SOURCES_C += $(TEST_LED_RGB_DIR)/test_led_rgb.c
+

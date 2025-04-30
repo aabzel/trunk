@@ -1,0 +1,6 @@
+#ifndef CLOCK_CUSTOM_DEP_H
+#define CLOCK_CUSTOM_DEP_H
+
+
+
+#endif // CLOCK_CUSTOM_DEP_H

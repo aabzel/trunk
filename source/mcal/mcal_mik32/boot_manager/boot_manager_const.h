@@ -1,0 +1,12 @@
+#ifndef BOOT_MANAGER_CONST_H
+#define BOOT_MANAGER_CONST_H
+
+typedef enum {
+    BOOT_MANAGER_SRC_EEPROM = 0,
+    BOOT_MANAGER_SRC_RAM = 1,
+    BOOT_MANAGER_SRC_SPIFI = 2,
+    BOOT_MANAGER_SRC_UNDEF = 3,
+} BootManagerSrc_t;
+
+
+#endif /* BOOT_MANAGER_CONST_H  */

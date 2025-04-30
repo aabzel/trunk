@@ -1,0 +1,8 @@
+#ifndef FOURIER_SERIES_DEP_H
+#define FOURIER_SERIES_DEP_H
+
+#ifndef HAS_FOURIER_SERIES
+#error "+HAS_FOURIER_SERIES"
+#endif
+
+#endif /* FOURIER_SERIES_DEP_H */

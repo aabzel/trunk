@@ -1,0 +1,62 @@
+#ifndef SW_NVRAM_CONST_H
+#define SW_NVRAM_CONST_H
+
+#ifndef HAS_SW_NVRAM
+#error  "+HAS_SW_NVRAM"
+#endif /*HAS_SW_NVRAM*/
+
+#include "sw_nvram_dep.h"
+
+#define NVRAM_SIGNATUGE 0x55AA /*Incapsulate version of NVRAM*/
+#define NVRAM_PAGE_PREFIX_SIZE 4
+
+typedef enum{
+	NVRAM_PAGE_1 = 0,
+	NVRAM_PAGE_2 = 1,
+
+	NVRAM_PAGE_UNDEF=2,
+}NvRamPage_t;
+
+
+
+typedef enum{
+    ENTRY_DELETE= 0,
+    ENTRY_SAVE= 1,
+
+    ENTRY_UNKNOWN= 3,
+}NvRamDeleteCode_t;
+
+typedef enum{
+    ENTRY_FRESHNESS_OBSOLATE= 0,
+    ENTRY_FRESHNESS_LATEST = 1,
+}NvRamFreshNess_t;
+
+typedef enum {
+    DATA_TYPE_ARRAY,
+    DATA_TYPE_UINT8,
+    DATA_TYPE_BOOL,
+    DATA_TYPE_INT8,
+    DATA_TYPE_UINT16,
+    DATA_TYPE_INT16,
+    DATA_TYPE_UINT32,
+    DATA_TYPE_UINT32_HEX,
+    DATA_TYPE_INT32,
+    DATA_TYPE_UINT64,
+    DATA_TYPE_INT64,
+    DATA_TYPE_STRING,
+    DATA_TYPE_FLOAT,
+    DATA_TYPE_DOUBLE,
+    DATA_TYPE_STRUCT,
+    DATA_TYPE_UNDEF,
+} DataType_t;
+
+
+typedef enum {
+    NVRAM_PAGE_CODE_ACTIVE = 0xFEFEFEFE,
+    NVRAM_PAGE_CODE_PASSIVE= 0xFCFCFCFC,
+    NVRAM_PAGE_CODE_EMPTY =0xFFFFFFFF,
+
+    NVRAM_PAGE_CODE_UNDEF =0,
+} PagePrefixCode_t;
+
+#endif /* SW_NVRAM_CONST_H*/

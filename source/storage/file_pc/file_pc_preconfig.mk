@@ -1,0 +1,7 @@
+
+ifneq ($(FILE_PC_PRECONFIG_INC),Y)
+    FILE_PC_PRECONFIG_INC=Y
+
+    FILE_PC=Y
+    STORAGE=Y
+endif

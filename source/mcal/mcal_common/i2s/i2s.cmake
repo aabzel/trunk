@@ -1,0 +1,58 @@
+message(STATUS "I2S_GENERAL_MK_INC=${I2S_GENERAL_MK_INC}")
+if( NOT (Y STREQUAL I2S_GENERAL_MK_INC))
+    set(I2S_GENERAL_MK_INC Y)
+    message(STATUS "+ I2S General")
+    message(STATUS "+ I2S_DIAG=[${I2S_DIAG}]")
+    message(STATUS "+ I2S0_MASTER=[${I2S0_MASTER}]")
+    message(STATUS "+ I2S0=[${I2S0}]")
+    message(STATUS "+ I2S_COMMANDS=[${I2S_COMMANDS}]")
+
+    set(I2S_GENERAL_DIR ${MCAL_COMMON_DIR}/i2s)
+    message(STATUS "I2S_GENERAL_DIR=${I2S_GENERAL_DIR}")
+
+    add_compile_definitions(HAS_I2S)
+    include_directories(${I2S_GENERAL_DIR})
+
+    target_compile_definitions(app PUBLIC HAS_I2S)
+    target_include_directories(app PUBLIC ${I2S_GENERAL_DIR})
+    target_sources(app PRIVATE ${I2S_GENERAL_DIR}/i2s_general.c)
+
+    if(I2S_POSTPONE_INIT STREQUAL Y)
+        message(STATUS "+ I2S_POSTPONE_INIT")
+        target_compile_definitions(app PUBLIC HAS_I2S_POSTPONE_INIT)
+    endif()
+
+    if(I2S_DIAG STREQUAL Y)
+        message(STATUS "+ I2S diagnostic")
+        target_compile_definitions(app PUBLIC HAS_I2S_DIAG)
+        target_sources(app PRIVATE ${I2S_GENERAL_DIR}/i2s_diag.c)
+    endif()
+
+    if(I2S0 STREQUAL Y)
+        message(STATUS "+ I2S0")
+        target_compile_definitions(app PUBLIC HAS_I2S0)
+    endif()
+
+    if(I2S1 STREQUAL Y)
+        message(STATUS "+ I2S1")
+        target_compile_definitions(app PUBLIC HAS_I2S1)
+    endif()
+
+    if(I2S2 STREQUAL Y)
+        message(STATUS "+ I2S2")
+        target_compile_definitions(app PUBLIC HAS_I2S2)
+    endif()
+
+    if(I2S3 STREQUAL Y)
+        message(STATUS "+ I2S3")
+        target_compile_definitions(app PUBLIC HAS_I2S3)
+    endif()
+
+    if(CLI STREQUAL Y)
+        if(I2S_COMMANDS STREQUAL Y)
+            message(STATUS "+ I2S Commands")
+            target_compile_definitions(app PUBLIC HAS_I2S_COMMANDS)
+            target_sources(app PRIVATE ${I2S_GENERAL_DIR}/i2s_commands.c)
+        endif()
+    endif()
+endif()

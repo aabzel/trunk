@@ -1,0 +1,10 @@
+ 
+#ifndef CLI_CONFIG_H
+#define CLI_CONFIG_H
+
+#include "cli_general_config.h"
+#include "cli_types.h"
+
+extern const CliConfig_t CliConfig;
+
+#endif /*CLI_CONFIG_H*/

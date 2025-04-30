@@ -1,0 +1,13 @@
+
+$(info TEST_AT24CXX_MK_INC=$(TEST_AT24CXX_MK_INC))
+ifneq ($(TEST_AT24CXX_MK_INC),Y)
+    TEST_AT24CXX_MK_INC=Y
+
+    
+    TEST_AT24CXX_DIR = $(TEST_SET_HW_DIR)/test_at24cxx
+    #@echo $(error TEST_AT24CXX_DIR=$(TEST_AT24CXX_DIR))
+    INCDIR += -I$(TEST_AT24CXX_DIR)
+    OPT += -DHAS_TEST_AT24CXX
+
+    SOURCES_C += $(TEST_AT24CXX_DIR)/test_at24cxx.c
+endif

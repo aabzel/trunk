@@ -1,0 +1,9 @@
+#ifdef HAS_PARAM
+PARAM->BOOT
+#endif
+
+
+
+#ifdef HAS_FLASH
+PARAM->BOOT
+#endif

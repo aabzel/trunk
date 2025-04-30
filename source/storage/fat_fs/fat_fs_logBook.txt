@@ -1,0 +1,133 @@
+Для форматирования SD карты понадобится утилита MiniTool Partition Vizard
+
+
+
+https://microtechnics.ru/stm32cube-nastrojka-i-ispolzovanie-fatfs/
+http://microsin.net/programming/file-systems/fatfs-return-codes.html
+SD карта отображается как диск D
+
+format --help
+
+format d:/fs:fat/q
+
+diskpart
+list volume
+format fs=fat quick
+
+diskpart
+list volume
+select volume 3
+format fs=fat quick
+
+
+
+https://repairflash.ru/formatirovanie-fleshki-v-fat16.html?utm_referrer=https%3A%2F%2Fyandex.ru%2F
+
+Источник: https://repairflash.ru/formatirovanie-fleshki-v-fat16.html
+
+https://irtos.sourceforge.net/FAT32_ChaN/doc/en/lseek.html
+tsr sdio+
+
+
+cat from_pc.txt
+
+ffw from_mcu.txt From_MCU
+cat from_mcu.txt
+
+
+tsr FatFs+
+
+fatff 1 512
+
+tsr write_new
+
+tsr fat_fs_write_line
+tsr FatFsWrite
+tsr Fat+
+
+h fat
+argc 1
+Available commands:Key1:fat
+
+-->h fat_fs
+argc 1
+AvailableCommands:Key1:fat_fs
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |    fatff |        fat_fs_format | FatFsFormat
+|   2 |     funl |        fat_fs_unlink | FatFsUnLink
+|   3 |    ftfsd |          fat_fs_diag | FatFsDiag
+|   4 |      cat |           fat_fs_cat | FatFsCat
+|   5 |    ftfso |          fat_fs_open | FatFsOpen
+|   6 |   ftfsod |      fat_fs_open_dir | FatFsOpenDir
+|   7 |   ftfsrd |      fat_fs_read_dir | FatFsReadDir
+|   8 |    ftfsw |         fat_fs_write | FatFsWrite
+|   9 |      ffw |    fat_fs_file_write | FatFsFileWrite
+|  10 |    ftfsr |          fat_fs_read | FatFsRead
+|  11 |    ftfss |          fat_fs_seek | FatFsSeek
+|  12 |    ftfsc |         fat_fs_close | FatFsClose
+|  13 |    ftfsi |          fat_fs_init | FatFsInit
+|  14 |    ftfsm |         fat_fs_mount | FatFsMount
++-----+----------+----------------------+-------------+
+-->
+
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |    ftfsd |        fat_fs_diag | FatFsDiag
+|   2 |    ftfso |        fat_fs_open | FatFsOpen
+|   3 |    ftfsw |       fat_fs_write | FatFsWrite
+|   4 |    ftfsr |        fat_fs_read | FatFsRead
+|   5 |    ftfss |        fat_fs_seek | FatFsSeek
+|   6 |    ftfsc |       fat_fs_close | FatFsClose
+|   7 |    ftfsm |       fat_fs_mount | FatFsMount
++-----+----------+--------------------+-------------+
+
+FA_CREATE_NEW
+ftfso my.txt  0x04
+ftfso my.txt
+ftfsw 0x11
+ftfsr 0x11
+ftfsc  my.txt
+
+ftfso t.txt
+
+ftfso text.txt
+ftfsr 2
+ftfsc text.txt
+
+ftfso \text.txt
+
+ftfso test.txt
+ftfso \\test.txt
+ftfso /test.txt
+ftfso //test.txt
+
+ftfsod ""
+ftfsod "\"
+
+ftfsod \
+ftfsrd
+
+ftfsod /
+ftfsod \\
+ftfso hello.txt
+
+
+ftfsod \
+ftfsod /text/
+
+
+ll fat_fs debug
+ffw log.txt text
+ffw log.txt text2
+cat log.txt
+cat hist.txt
+
+ffw rds.txt text
+
+rdsd
+cat rds.txt

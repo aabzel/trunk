@@ -1,0 +1,6 @@
+#ifndef NRF_USART_CONST_H
+#define NRF_USART_CONST_H
+
+#define UART_RX_TIMEOUT_MS 300
+
+#endif /* NRF_USART_CONST_H  */

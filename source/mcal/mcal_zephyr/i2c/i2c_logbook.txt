@@ -1,0 +1,11 @@
+
+
+C:\ncs\v2.1.0\zephyr\drivers\i2c
+cl i2cs 1
+cl i2cs 0
+
+cl i2crr 1 0x6c 0
+cl i2crr 1 0x6c 1
+cl i2crr 1 0x6c 2
+cl i2crr 1 0x6c 2
+cl i2crr 1 0x6c 13

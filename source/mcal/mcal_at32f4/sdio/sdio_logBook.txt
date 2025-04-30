@@ -1,0 +1,15 @@
+tsr sdio+
+
+
+tsr sdio_read_write
+
+tsr sdio+
+
+https://microtechnics.ru/podklyuchenie-sd-karty-k-mikrokontrolleru/
+
+cat text.txt
+ffw text.txt line3
+
+sdr 1 35
+
+tsr fat+

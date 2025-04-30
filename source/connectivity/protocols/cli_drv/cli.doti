@@ -1,0 +1,25 @@
+#ifdef HAS_UART
+    UART->STREAM
+#endif
+
+#ifdef HAS_USB_DEVICE
+    USB_DEVICE->STREAM
+#endif
+
+#ifdef HAS_LORA
+    LORA->STREAM
+#endif
+
+#ifdef HAS_RS232
+    RS232->STREAM
+#endif
+
+
+#ifdef HAS_UWB
+    UWB->STREAM
+#endif
+
+    LOG->CLI
+    STR->CLI
+    STREAM->CLI
+    FIFO->CLI

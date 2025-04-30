@@ -1,0 +1,17 @@
+dtc Num Letter Duration_ms
+
+play 1
+sdf 1 50000
+dtc 1 0 200
+dtc 1 1 200
+
+play 2
+sda 1 200
+dtc 1 2 200
+dtc 1 3 100
+dtc 1 4 200
+
+sdf 1 50000; tsr dtmf_chars
+
+
+nrf5340 free() cause hang on

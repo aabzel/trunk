@@ -1,0 +1,14 @@
+#ifndef BOARD_START_MIK32_V1_H
+#define BOARD_START_MIK32_V1_H
+
+#include "k1948bk018.h"
+
+#define BOARD_NAME "START-MIK32-V1"
+
+#define BUTTON_COUNT 2
+#define LED_COUNT 2
+
+#define XTALL_FREQ_HZ (32000000)
+
+
+#endif /* BOARD_START_MIK32_V1_H   */

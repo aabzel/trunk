@@ -1,0 +1,20 @@
+ll crossdetect debug
+
+
+h crossdetect
+
+
+9:39-->h crossdetect
+argc 1
+AvailableCommands:Key1:crossdetect
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |      ldi |     cross_detect_init | CrossDetectInit
+|   2 |      lde |       cross_detect_en | CrossDetectEnable
+|   3 |     ldpe |   cross_detect_pin_en | CrossDetectPinEnable
+|   4 |     cdpd | cross_detect_pin_diag | CrossDetectPinDiag
+|   5 |      cdd |     cross_detect_diag | CrossDetectDiag
++-----+----------+----------------------+-------------+
+

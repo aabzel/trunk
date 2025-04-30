@@ -1,0 +1,11 @@
+
+
+ll nmea debug
+nms
+nmm
+
+nmg 1
+
+ll uart info
+
+ll uart debug

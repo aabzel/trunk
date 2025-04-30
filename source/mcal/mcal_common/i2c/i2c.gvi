@@ -1,0 +1,3 @@
+REG->I2C
+GPIO->I2C
+NVIC->I2C

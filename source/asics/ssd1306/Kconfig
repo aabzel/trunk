@@ -1,0 +1,4 @@
+
+config SSD1306
+    bool "Enable use of the SSD1306 drivers"
+

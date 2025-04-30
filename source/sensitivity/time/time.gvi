@@ -1,0 +1,21 @@
+#ifdef HAS_SYSTICK
+SYSTICK->TIME
+#endif
+
+#ifdef HAS_TIMER
+TIMER->TIME
+#endif
+
+#ifdef HAS_RTC
+RTC->TIME
+#endif
+
+#ifdef HAS_CALENDAR
+TIMER->CALENDAR
+#endif
+
+#ifdef HAS_RTC
+  #ifdef HAS_CALENDAR
+    CALENDAR->RTC
+  #endif
+#endif

@@ -1,0 +1,8 @@
+#ifndef CORRELATOR_DEP_H
+#define CORRELATOR_DEP_H
+
+#ifndef HAS_CIRCULAR_BUFFER
+#error "+HAS_CIRCULAR_BUFFER"
+#endif
+
+#endif /* CORRELATOR_DEP_H */

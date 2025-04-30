@@ -1,0 +1,7 @@
+
+ifneq ($(DEBUGGER_PRECONFIG_INC),Y)
+    DEBUGGER_PRECONFIG_INC=Y
+
+    DEBUGGER=Y
+
+endif

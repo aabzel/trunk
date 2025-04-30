@@ -1,0 +1,224 @@
+#ifdef HAS_AES256_GENERAL
+#include "aes256_general.gvi"
+#endif
+
+#ifdef HAS_ALLOCATOR
+#include "allocator.gvi"
+#endif
+
+#ifdef HAS_AUDIO
+#include "audio.gvi"
+#endif
+
+#ifdef HAS_BASE16
+#include "base16.gvi"
+#endif
+
+#ifdef HAS_BASE64
+#include "base64.gvi"
+#endif
+
+#ifdef HAS_BOARD_INFO
+#include "board_info.gvi"
+#endif
+
+#ifdef HAS_CALENDAR
+#include "calendar.gvi"
+#endif
+
+#ifdef HAS_CIRCULAR_BUFFER
+#include "circular_buffer.gvi"
+#endif
+
+#ifdef HAS_COMPLEX
+#include "complex.gvi"
+#endif
+
+#ifdef HAS_CRC
+#include "crc.gvi"
+#endif
+
+#ifdef HAS_CRYPTO
+#include "crypto.gvi"
+#endif
+
+#ifdef HAS_CSV
+#include "csv.gvi"
+#endif
+
+#ifdef HAS_DEBUGGER
+#include "debugger.gvi"
+#endif
+
+#ifdef HAS_DISPLAY
+#include "display.gvi"
+#endif
+
+#ifdef HAS_DISTANCE
+#include "distance.gvi"
+#endif
+
+#ifdef HAS_DOT
+#include "dot.gvi"
+#endif
+
+#ifdef HAS_DSP
+#include "dsp.gvi"
+#endif
+
+#ifdef HAS_FAT_FS
+#include "fat_fs.gvi"
+#endif
+
+#ifdef HAS_FIFO
+#include "fifo.gvi"
+#endif
+
+#ifdef HAS_FILES
+#include "files.gvi"
+#endif
+
+#ifdef HAS_FM_TUNER
+#include "fm_tuner.gvi"
+#endif
+
+#ifdef HAS_FONT
+#include "font.gvi"
+#endif
+
+#ifdef HAS_FREE_RTOS
+#include "free_rtos.gvi"
+#endif
+
+#ifdef HAS_GNSS
+#include "gnss.gvi"
+#endif
+
+#ifdef HAS_HASHSET
+#include "hashset.gvi"
+#endif
+
+#ifdef HAS_HEALTH_MONITOR
+#include "health_monitor.gvi"
+#endif
+
+#ifdef HAS_IEC16022
+#include "iec16022.gvi"
+#endif
+
+#ifdef HAS_INTERVAL
+#include "interval.gvi"
+#endif
+
+#ifdef HAS_KEEPASS
+#include "keepass.gvi"
+#endif
+
+#ifdef HAS_KEYBOARD
+#include "keyboard.gvi"
+#endif
+
+#ifdef HAS_LIFO
+#include "lifo.gvi"
+#endif
+
+#ifdef HAS_LIMITER
+#include "limiter.gvi"
+#endif
+
+#ifdef HAS_LOG
+#include "log.gvi"
+#endif
+
+#ifdef HAS_MATH
+#include "math.gvi"
+#endif
+
+#ifdef HAS_MODULATOR
+#include "modulator.gvi"
+#endif
+
+#ifdef HAS_NOR_FLASH
+#include "nor_flash.gvi"
+#endif
+
+#ifdef HAS_PLANETARIUM
+#include "planetarium.gvi"
+#endif
+
+#ifdef HAS_RELAY
+#include "relay.gvi"
+#endif
+
+#ifdef HAS_RLE
+#include "rle.gvi"
+#endif
+
+#ifdef HAS_RTOS
+#include "rtos.gvi"
+#endif
+
+#ifdef HAS_SALSA20
+#include "salsa20.gvi"
+#endif
+
+
+#ifdef HAS_SCHMITT_TRIGGER
+#include "schmitt_trigger.gvi"
+#endif
+
+#ifdef HAS_SHA256
+#include "sha256.gvi"
+#endif
+
+#ifdef HAS_SOFTWARE_TIMER
+#include "software_timer.gvi"
+#endif
+
+#ifdef HAS_SOLVER
+#include "solver.gvi"
+#endif
+
+#ifdef HAS_STRING
+#include "string.gvi"
+#endif
+
+#ifdef HAS_SUPER_CYCLE
+#include "super_cycle.gvi"
+#endif
+
+#ifdef HAS_SW_DAC
+#include "sw_dac.gvi"
+#endif
+
+#ifdef HAS_SW_NOR_FLASH
+#include "sw_nor_flash.gvi"
+#endif
+
+#ifdef HAS_SW_NVRAM
+#include "sw_nvram.gvi"
+#endif
+
+#ifdef HAS_SYSTEM
+#include "system.gvi"
+#endif
+
+#ifdef HAS_TASK
+#include "task_drv.gvi"
+#endif
+
+#ifdef HAS_TIME
+#include "time.gvi"
+#endif
+
+#ifdef HAS_WIN
+#include "win.gvi"
+#endif
+
+#ifdef HAS_XML
+#include "xml.gvi"
+#endif
+
+#ifdef HAS_ZEPHYR_RTOS
+#include "zephyr_rtos.gvi"
+#endif

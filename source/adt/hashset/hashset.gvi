@@ -1,0 +1,4 @@
+RAM->HASHSET [color=blue]
+CRC32->HASHSET [color=blue]
+RAM->CRC32 [color=blue]
+

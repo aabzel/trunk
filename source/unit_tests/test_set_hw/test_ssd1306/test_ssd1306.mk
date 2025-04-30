@@ -1,0 +1,14 @@
+$(info TEST_SSD1306_MK_INC=$(TEST_SSD1306_MK_INC) )
+ifneq ($(TEST_SSD1306_MK_INC),Y)
+    TEST_SSD1306_MK_INC=Y
+
+    $(info + ssd1306 tests)
+    TEST_SSD1306_DIR = $(TEST_SET_HW_DIR)/test_ssd1306
+
+    #@echo $(error TEST_SSD1306_DIR=$(TEST_SSD1306_DIR))
+    INCDIR += -I$(TEST_SSD1306_DIR)
+
+    OPT += -DHAS_TEST_SSD1306
+    OPT += -DHAS_TEST_SUIT_SSD1306
+    SOURCES_C += $(TEST_SSD1306_DIR)/test_ssd1306.c
+endif

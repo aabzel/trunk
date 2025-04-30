@@ -1,0 +1,16 @@
+#ifndef NRF_TIMER_CONST_H
+#define NRF_TIMER_CONST_H
+
+#define TIMER_RX_TIMEOUT_MS 300
+#define TIMER_PERIOD_US 1
+
+typedef enum{
+	TIMER_8BIT=1,
+	TIMER_16BIT=0,
+	TIMER_24BIT=2,
+	TIMER_32BIT=3,
+	TIMER_UNDEF_BIT=4,
+}NrfTimerBitCode_t;
+
+
+#endif /* NRF_TIMER_CONST_H  */

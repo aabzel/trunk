@@ -1,0 +1,11 @@
+$(info FIR_PRECONFIG_INC=$(FIR_PRECONFIG_INC) )
+
+ifneq ($(FIR_PRECONFIG_INC),Y)
+    FIR_PRECONFIG_INC=Y
+
+    FIR=Y
+    CIRCULAR_BUFFER=Y
+    #COMPLEX=Y
+    #DFT=Y
+    DSP=Y
+endif

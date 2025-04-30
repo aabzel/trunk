@@ -1,0 +1,3 @@
+GPIO->SWD [color = fuchsia]
+REG->SWD [color = darkorange]
+//https://graphviz.org/doc/info/colors.html

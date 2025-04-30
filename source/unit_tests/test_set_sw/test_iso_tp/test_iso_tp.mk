@@ -1,0 +1,9 @@
+
+TEST_ISO_TP_DIR = $(TEST_SET_SW_DIR)/test_iso_tp
+#@echo $(error TEST_ISO_TP_DIR= $(TEST_ISO_TP_DIR))
+OPT += -DHAS_TEST_SUIT_ISO_TP
+OPT += -DHAS_TEST_ISO_TP
+
+INCDIR += -I$(TEST_ISO_TP_DIR)
+
+SOURCES_C += $(TEST_ISO_TP_DIR)/test_iso_tp.c

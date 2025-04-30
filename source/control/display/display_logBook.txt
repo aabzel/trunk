@@ -1,0 +1,11 @@
+
+h display
+dx  1 0 0 Hello! 12
+dx  1 0 0 Hello_Habr! 12
+
+dx  1 0 12 Hello_World! 12
+
+
+dx  1 0 0 Test_text 12
+
+  display_print_text

@@ -1,0 +1,6 @@
+
+    DMA->SDIO
+    NVIC->SDIO
+    GPIO->SDIO
+
+

@@ -1,0 +1,61 @@
+Send ping to UWB interfase
+tbp 10 0x51
+
+
+tbp 0 0x51
+
+
+
+-->
+-->h rpt
+argc 1
+AvailableCommands:Key1:rpt
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |      rpt |               repeat | Repeat any command N time with period
++-----+----------+----------------------+-------------+
+-->
+
+-->rpt
+-->96
+
+
+
+Usage: rpt command period_ms times
+rpt tbp_7_0x51 2000 100
+
+
+if 
+
+Инициировать Ping пакет в UWB можно CLI командой 
+tbp 7 0x51 ;tbd
+
+tbd 
+tbfp_diag 
+
+-->tbp 7 0x51
+294.558 :D [TBFP] SendPing UWB
+294.561 :D [TBFP] Send 17 byte via UWB Ping
+294.565 :D [TBFP] UWB Sent SN:2=0x0002 Len:17 crc8 0xda
+294.574 :D [TBFP] UWB SysSendOk
+294.577 :I [TBFP] PingSendOk
+-->MAC: 0x0
+295.602 :E [TBFP] InvalRemoteTime 390836
+   Rem: 12:33:56 5 Jan 2000
+295.608 :I [TBFP] Proc 7=UWB PayLoad: Pong
+
+-->
+
+
+
+-->h ping
+argc 1
+AvailableCommands:Key1:ping
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |      tbp |       tbfp_send_ping | TBFPSendPing
++-----+----------+----------------------+-------------+

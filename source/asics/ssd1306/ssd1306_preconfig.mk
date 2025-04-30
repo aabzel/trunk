@@ -1,0 +1,7 @@
+ifneq ($(SSD1306_PRECONFIG_INC),Y)
+    SSD1306_PRECONFIG_INC=Y
+    
+    SSD1306=Y
+    FONT=Y
+    I2C=Y
+endif

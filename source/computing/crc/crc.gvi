@@ -1,0 +1,17 @@
+#ifdef HAS_CRC8
+RAM->CRC8
+#endif
+
+#ifdef HAS_CRC16
+RAM->CRC16
+#endif
+
+#ifdef HAS_CRC24
+RAM->CRC24
+#endif
+
+#ifdef HAS_CRC32
+RAM->CRC32
+#endif
+
+

@@ -1,0 +1,315 @@
+cl fdad
+
+i2sdl
+i2sd
+
+gl i2s4
+
+gl i2s4
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+| No  | pad  | level |dirr |    out    |speed | pull |AltFn | ItCn |    name    | connect |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+|   0 |  PE2 |   L   | Alt |  PushPull |  Low |  Air |  AF5 |    0 |    I2S4_CK |  CN9.14 |
+|   1 |  PE4 |   L   | Alt |  PushPull |  Low |  Air |  AF5 |    0 |    I2S4_WS |  CN9.16 |
+|   2 |  PE6 |   L   | Alt |  PushPull |  Low |  Air |  AF5 |    0 |    I2S4_SD |  CN9.20 |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+
+i2sw 4 0x00000000
+
+i2sd
+
+i2sds 4
+i2sdp 4
+
+id spi
+id dma
+cld spi
+
+
+ssdl 1
+ssdx 1 10 0 Hello 12
+ssdx 1 10 10 Hello 12
+
+tsa ssd
+
+
+
+tsr 88
+
+
+i2cdl
+
+i2cs 2
+
+ÐŸÑ€Ð¾Ñ�ÐºÐ°Ð½Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ ÑˆÐ¸Ð½Ñƒ I2C2 Ð½Ð° ÐºÐ¾Ñ‚Ð¾Ñ€Ð¾Ð¹ ÑƒÑ�Ñ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½ ÑƒÑ�Ð¸Ð»Ð¸Ñ‚ÐµÐ»ÑŒ Ð¼Ð¾Ñ‰Ð½Ð¾Ñ�Ñ‚Ð¸
+i2cs 2
+
+
+
+gl en cn9
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+---------+
+| No  | pad  | level |dirr |    out    |speed | pull |AltFn | ItCn |    name    |connect1 |connect2 |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+---------+
+|   1 |  PA3 |   H   | Out |  PushPull |  Low |  Air |  AF0 |    0 |        EN1 |   CN9.1 |  J10.23 |
+|   4 |  PD7 |   H   | Out |  PushPull |  Low |  Air |  AF0 |    0 |        EN2 |   CN9.2 |  J10.25 |
+|   0 |  PC0 |   H   | Out |  PushPull |  Low |  Air |  AF0 |    0 |        EN3 |   CN9.3 |  J10.27 |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+---------+
+
+
+gs A 3 0
+gs D 7 1
+gs C 0 0
+
+
+i2cs 2
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| -- | x0 | x1 | x2 | x3 | x4 | x5 | x6 | x7 | x8 | x9 | xA | xB | xC | xD | xE | xF |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| 0x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 1x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 2x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 3x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 4x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 5x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 6x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 7x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 8x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 9x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| ax | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| bx | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| cx | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| dx | -- | -- | -- | -- | -- | -- | -- | -- | d8 | d9 | -- | -- | -- | -- | -- | -- |
+| ex | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| fx | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+d8 11011000 6C
+d9 11011001 6C
+gl mute
+
+
+
+
+h fda
+tsr fda+
+
+
+gl diag
+
+
+h fda
+argc 1
+Available commands:Key1:fda
+
+h fda
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |     fdam |         fda801_map | Fda801RegMap
+|   2 |     fdar |        fda801_read | Fda801RegRead
+|   3 |     fdad |        fda801_diag | Fda801Diag
+|   4 |    fdadl |     fda801_diag_ll | Fda801DiagLowLvl
+|   5 |     fdac |        fda801_chan | Fda801Channels
+|   6 |    fdadc |   fda801_diag_chan | Fda801DiagChannels
+|   7 |     fdaw |       fda801_write | Fda801RegWrite
+|   8 |    fdasc |      fda801_set_ch | Fda801SetChannel
+|   9 |     fdai |        fda801_init | Fda801Init
+|  10 |     fdat |       fda801_reset | Fda801Reset
++-----+----------+--------------------+-------------+
+
+ll fda801 debug
+fdam
+fdad diag
+
+
+fdasc 2 1
+
+Fda801Channels
+fdac
+
+Fda801DiagChannels
+fdadc
+
+fdai
+
+fdar 0x00
+fdaw 0x00 0x0F
+
+tsa fda
+tsr fda+
+tsr fda801_write
+
+92.624:E [SYS] fda801_test_write_reg_pat():Line: 58 in val1: 85  val2: 81
+92.627:E [SYS] fda801_test_write_reg_pat():Line: 58 in val1: 0x55 val2: 0x51
+
+92.630:E [SYS]
+               fda801_test_write_reg:Line: 66 in val 0
+
+92.633:E [SYS]
+               test_fda801_write:Line: 83 in val 0
+               
+tsr 4
+tsr fda801_read
+fdar 2
+
+
+0x6c
+ll i2c debug
+tsr fda801_read
+
+fdad ch1
+
+fda801_diag_command
+
+
+ 
+
+diagnostic start command
+Start Diag DC
+Start Diag AC
+Diagnostics can be launched only if the channel is in "MUTE" state.
+
+Diagnostic start conditions
+Diagnostic signal is generated and test is performed only if:
+1.Channel is in MUTE state.
+2. DC or AC (or both) test enable bits are set from '0' to '1'.
+3. The channel has power stage ON
+4. The PWM modulation is "In phase"
+5. Device is NOT kept in mute by means of the dedicated hardware pin
+
+
+fdacdc 1
+
+fdacdc 2
+fdac
+fdadc
+fdaac
+
+fdad phase
+fdad ac
+
+
+
+ÐŸÐ¾Ð´ÐºÐ»ÑŽÑ‡Ð¸Ñ‚ÑŒ DAC Ðº I2S4
+i2sdac 4 1
+play channel 2
+fdacdc 1
+fdacdc 2
+fdacdc 3
+fdacdc 4
+fdasc 2 1 
+fdad first
+fdadc
+
+
+FDA801 device family Diagnostic user manual.
+
+
+In the following example it is shown the case when IB3[2,1]=00; IB12[7,6]=11, IB11[6]=0.
+From 0.76 Î© to 22 Î© the load value is considered as normal load.
+
+gl en2
+gt D 7
+
+gs D 7 1
+
+
+tsr load+
+
+
+IB3[2,1] - IB12[7,6] - IB11[6]).
+DAC_LEV_CTRL_MEDIUM
+Fda801RegIb3Addr_t
+fdad dac
+
+
+ÐšÐ°Ðº Ð²Ð¾Ñ�Ð¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÑ�Ñ‚Ð¸ Ñ�Ð¸Ð½ÑƒÑ� Ð½Ð° Ð·Ð²ÑƒÐºÐ¾Ð¸Ð·Ð»ÑƒÑ‡Ð°Ñ‚ÐµÐ»ÑŒ?
+
+I2s Dma Stop 
+i2sds 4
+
+ÐžÐ¿Ñ€ÐµÐ´ÐµÐ»Ð¸Ñ‚ÑŒ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ñ�Ð¸Ð½ÑƒÑ�Ð°
+      dac_num frequency amplitude phase Yoffset
+sdsin 1 4000  400 0 0
+
+Ð´Ð¸Ð°Ð³Ð½Ð¾Ñ�Ñ‚Ð¸ÐºÐ° Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð½Ð¾Ð³Ð¾ DAC
+sdad
+
+ÐžÐ¿Ñ€ÐµÐ´ÐµÐ»Ð¸Ñ‚ÑŒ Ð¼Ð°Ñ�Ñ�Ð¸Ð² (Ñ‚Ñ€ÐµÐº) Ð´Ð»Ñ� Ð²Ð¾Ñ�Ð¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÐ´ÐµÐ½
+sdsa 1 44100 2
+
+Ð”Ð¸Ð°Ð³Ð½Ð¾Ñ�Ñ‚Ð¸ÐºÐ° ÐºÐ°Ð½Ð°Ð»Ð¾Ð² ÑƒÑ�Ð¸Ð»ÐºÐ°
+fdac
+
+Ð”Ð¸Ð°Ð³Ð½Ð¾Ñ�Ñ‚Ð¸ÐºÐ° i2s
+i2sd
+
+Ð²Ð¾Ñ�Ð¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÑ�Ñ‚Ð¸ Ñ‚Ñ€ÐµÐº
+i2spl 4 1 1
+
+Ð²Ð¾Ñ�Ð¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÑ�Ñ‚Ð¸ Ð½Ð° ÐºÐ°Ð½Ð°Ð» 3 
+fdcp 3 0
+
+
+tsr heap+
+tsr play+
+tsr heap+
+tsr play+
+
+
+tsr malloc_zero+
+tsr heap+
+
+tsa fda
+
+tsr fda+
+
+tsr fda+
+tsr fda801Type+
+
+tsr fda801_write+
+tsr fda801_read+
+  r
+  
+tsr fda801_play+
+tsr fda801_load_ok+
+tsr fda801_load_open+
+tsr fda801_load_short+
+tsr fda801I2cAddr+
+tsr 8
+ 
+ 
+
+fda801I2cAddr.5
+ 
+fda801_play.8
+
+
+
+
+tsr fda+
+cl tsr 5
+cl tsr 9
+
+
+ll ssd1306 debug
+ll dashboard debug
+ll ssd1306 info
+
+Отключить приборную панель 
+tcr 6 0
+
+Очистить экран
+ssdl 1
+
+ 
+Отдельный символ печатается хорошо
+ssdc 1 0 0 D 12
+ssdc 1 1 1 a 12
+
+ssdl 1
+ssdc 1 4 4 a 12
+
+Текст печатается хорошо
+ssdx 1 0 0 Dist 12
+
+tcr 6 1

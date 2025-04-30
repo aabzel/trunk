@@ -1,0 +1,10 @@
+
+$(info WIN_PRECONFIG_INC=$(WIN_PRECONFIG_INC))
+ifneq ($(WIN_PRECONFIG_INC),Y)
+    WIN_PRECONFIG_INC=Y
+
+    PC=Y
+    WIN=Y
+    WIN_UTILS=Y
+
+endif

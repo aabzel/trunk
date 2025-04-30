@@ -1,0 +1,72 @@
+
+Links
+https://infocenter.nordicsemi.com/index.jsp?topic=%2Fdrivers_nrfx_v2.3.0%2Fgroup__nrfx__i2s.html
+
+
+h i2s
+argc 1
+Available commands:Key1:i2s
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |     i2sd |           i2s_diag | I2S diag
+|   2 |     i2sw |          i2s_write | I2S write hex str
+|   3 |     i2si |           i2s_init | I2S init
+|   4 |     i2sr |           i2s_read | I2S read
+
+i2sw 2 0x55555555
+i2sr 2 50
+i2sr 2 2
+
+i2sd
+rpt i2sw_2_0x25253232 1000 100
+rpt i2sw_2_0x55555555 1000 100
+rpt i2sw_2_0x55555555 1000 10
+rpt i2sw_2_0x5555555555555555 1000 10
+rpt i2sw_2_0x5555555555555555 1000 100
+
+i2sw 2 0x25255656
+i2sw 4 0x25255656
+
+i2sd
+
+wms 0
+
+    status1= HAL_I2SEx_TransmitReceive_IT(&hi2s2, i2sDataOut, i2sDataIn, 2);
+	        ret =  HAL_I2SEx_TransmitReceive_IT(&I2sNode->i2s_h, (uint16_t *)&I2sNode->tx_sample, 
+         (uint16_t *)&I2sNode->rx_sample,1);
+    if(HAL_OK!=ret) {
+        I2sNode->error_cnt++;
+    }
+	
+	
+Починить owerrun
+
+
+ll i2s debug
+i2sw 4 0x55555555AAAAAAAA 2
+i2sw 4 0x55000055AAFFFFAA 4
+i2sw 4 0x55000055AAFFFFAA 2
+
+
+
+i2sds 4
+i2sw 4 0x55000055AAFFFFAA 4
+на анализаторе 00AFFA
+
+
+i2sds 4
+i2sw 4 0x55000055AAFFFFAA 1
+00555500 на каждом канале
+и зависание 
+
+
+i2sds 4
+i2sw 4 0x55000055AAFFFFAA 2
+F55F0
+
+
+
+
+

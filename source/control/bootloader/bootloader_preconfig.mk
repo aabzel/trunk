@@ -1,0 +1,56 @@
+$(info BOOTLOADER_PRECONFIG_INC=$(BOOTLOADER_PRECONFIG_INC) )
+
+ifneq ($(BOOTLOADER_PRECONFIG_INC),Y)
+    BOOTLOADER_PRECONFIG_INC=Y
+
+    BOOTLOADER_DIR = $(CONTROL_DIR)/bootloader
+
+    BOOT=Y
+    DATA_UTILS=Y
+    AUSTERITY_FIRMWARE=Y
+    INTERRUPT=Y
+    FLASH_EX=Y
+    GPIO=Y
+    BIT_UTILS=Y
+    NORTOS=Y
+    BOOTLOADER=Y
+    INTERRUPT=Y
+    CONTROL=Y
+    CRC=Y
+    CRC32=Y
+    COMPUTING=Y
+    MICROCONTROLLER=Y
+    CONNECTIVITY=Y
+    SENSITIVITY=Y
+    SUPER_CYCLE=Y
+    STORAGE=Y
+    TASK=Y
+    #TIME=Y
+    LIMITER=Y
+    FIRMWARE=Y
+    MCAL=Y
+    COMPUTING=Y
+    #NVS=Y
+    #TABLE_UTILS=Y
+    #PARAM=Y
+    #FLASH_FS=Y
+    #CLI=Y
+    BOARD=Y
+    #KEY_VAL_MAP=Y
+    #FLASH=Y
+    #FLASH_FS=Y
+    #FLASH=Y
+    #PARAM_DIAG=Y
+    #PARAM_SET=Y
+    #FLASH_WRITE=Y
+    #FLASH_FS_WRITE=Y
+    #NVS_WRITE=Y
+    #CLI=Y
+    #@echo $(error BOOTLOADER_COMMANDS=$(BOOTLOADER_COMMANDS))
+    ifeq ($(BOOTLOADER_COMMANDS),Y)
+        include $(BOOTLOADER_DIR)/cli_bootloader_preconfig.mk
+    endif
+    $(info BootLoader config done)
+endif
+
+

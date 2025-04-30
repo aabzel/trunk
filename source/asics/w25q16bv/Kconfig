@@ -1,0 +1,4 @@
+
+config HW_STORAGE_ASIC_W25Q16BV
+    bool "Enable use of the W25Q16BV drivers"
+

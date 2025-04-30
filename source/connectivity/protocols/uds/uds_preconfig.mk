@@ -1,0 +1,7 @@
+ifneq ($(UDS_PRECONFIG_MK),Y)
+    UDS_PRECONFIG_MK=Y
+    UDS=Y
+    ISO_TP=Y
+    PROTOCOLS=Y
+    CONNECTIVITY=Y
+endif

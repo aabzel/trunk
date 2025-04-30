@@ -1,0 +1,68 @@
+
+    #ifdef HAS_ADC
+        #include "mcal_at32f4/adc/adc.gvi"
+    #endif
+
+    #ifdef HAS_CLOCK
+        #include "mcal_at32f4/clock/clock.gvi"
+    #endif
+
+    #ifdef HAS_FLASH
+        #include "mcal_at32f4/flash/flash.gvi"
+    #endif
+
+    #ifdef HAS_GPIO
+        #include "mcal_at32f4/gpio/gpio.gvi"
+    #endif
+
+    #ifdef HAS_I2C
+        #include "mcal_at32f4/i2c/i2c.gvi"
+    #endif
+
+    #ifdef HAS_I2S
+        #include "mcal_at32f4/i2s/i2s.gvi"
+    #endif
+
+    #ifdef HAS_IPC
+        #include "mcal_at32f4/ipc/ipc.gvi"
+    #endif
+
+    #ifdef HAS_NVS
+        #include "mcal_at32f4/nvs/nvs.gvi"
+    #endif
+
+    #ifdef HAS_PDM
+        #include "mcal_at32f4/pdm/pdm.gvi"
+    #endif
+
+    #ifdef HAS_PWM
+        #include "mcal_at32f4/pwm/pwm.gvi"
+    #endif
+
+    #ifdef HAS_RTC
+        #include "mcal_at32f4/rtc/rtc.gvi"
+    #endif
+
+    #ifdef HAS_SPI
+        #include "mcal_at32f4/spi/spi.gvi"
+    #endif
+
+    #ifdef HAS_SYSTICK
+        #include "mcal_at32f4/systick/systick.gvi"
+    #endif
+
+    #ifdef HAS_TIMER
+        #include "mcal_at32f4/timer/timer.gvi"
+    #endif
+    
+    #ifdef HAS_QSPI
+        #include "mcal_at32f4/qspi/qspi.gvi"
+    #endif
+
+    #ifdef HAS_UART
+        #include "mcal_at32f4/uart/uart.gvi"
+    #endif
+
+    #ifdef HAS_USB
+        #include "mcal_at32f4/usb/usb.gvi"
+    #endif

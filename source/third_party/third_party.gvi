@@ -1,0 +1,11 @@
+#ifdef HAS_FREE_RTOS
+    #include "free_rtos.gvi"
+#endif
+
+#ifdef HAS_FAT_FS
+    #include "fat_fs.gvi"
+#endif
+
+#ifdef HAS_LC3
+    #include "lc3.gvi"
+#endif

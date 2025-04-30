@@ -1,0 +1,11 @@
+$(info SWD_PRECONFIG_INC=$(SWD_PRECONFIG_INC) )
+
+ifneq ($(SWD_PRECONFIG_INC),Y)
+    SWD_PRECONFIG_INC=Y
+
+    SWD=Y
+    GPIO=Y
+endif
+
+
+

@@ -1,0 +1,8 @@
+    TEST_FLASH_FS_DIR = $(TEST_SET_HW_DIR)/test_flash_fs
+#@echo $(error TEST_FLASH_FS_DIR=$(TEST_FLASH_FS_DIR))
+INCDIR += -I$(TEST_FLASH_FS_DIR)
+
+OPT += -DHAS_TEST_FLASH_FS
+
+SOURCES_C += $(TEST_FLASH_FS_DIR)/test_flash_fs.c
+

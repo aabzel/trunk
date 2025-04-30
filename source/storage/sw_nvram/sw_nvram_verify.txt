@@ -1,0 +1,76 @@
+Твердотельные накопители
+
+tsr nvram_delete
+tsr nvram+
+nvre nvram_old.gv
+nvro 1
+
+
+nvre nvram_new.gv
+tsr nvram_write_delete_write
+
+Показать узлы таблицей
+nvrd
+
+tsr nvram_write_same
+
+tsr nvram_write_stress
+nvrd
+
+
+nvram_double_write
+
+tsr nvram_double_write
+
+nvram_double_write
+sw_nvram_diag
+
+ll NOR_FLASH debug
+tsr nvram_read
+nvrd
+
+Показать оставшийся размер NVRAM
+nvrc 1
+
+
+
+tsr nvram_double_write
+sw_nvram_diag
+
+sw_nvram_diag
+
+h nvram+
+
+h nvram
+argc 1
+AvailableCommands:Key1:nvram
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |     nvrc |    sw_nvram_capacity | NvRAMCapacity
+|   1 |     nvrw |       sw_nvram_write | NvRAMwrite
+|   2 |     nvrr |        sw_nvram_read | NvRAMread
+|   3 |     nvrt |      sw_nvram_delete | NvRAMdelete
+|   4 |     nvri |        sw_nvram_init | NvRAMinit
+|   5 |     nvrd |        sw_nvram_diag | NvRAMdiag
++-----+----------+----------------------+-------------+
+
+nvrw 56 0x99445637
+nvrw 2 0x90346564
+nvrw 1 0x1156
+
+
+nvrw 1 0x1156
+nvrw 2 0x90346564
+nvrw 40 0x1234546854
+nvrw 56 0x99445637
+sw_nvram_diag
+sw_nvram_diag
+
+
+nvrw 1 0x54346564
+
+
+
+Если добавляют вторую 1 то прежднюю надо отмечать как устаревшую.

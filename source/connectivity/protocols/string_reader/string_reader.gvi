@@ -1,0 +1,18 @@
+STRING->STRING_READER [color=aqua]
+STREAM->STRING_READER
+#ifdef HAS_UART
+    UART->STREAM [color=chartreuse]
+    UART->STRING_READER [color=chartreuse]
+#endif
+
+#ifdef HAS_USB_DEVICE
+    USB_DEVICE->STREAM [color=chartreuse]
+#endif
+
+#ifdef HAS_RS232
+    RS232->STREAM [color=chartreuse]
+#endif
+
+#ifdef HAS_UWB
+    UWB->STREAM [color=chartreuse]
+#endif

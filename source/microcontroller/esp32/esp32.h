@@ -1,0 +1,37 @@
+#ifndef ESP32_H
+#define ESP32_H
+
+#include "macro_utils.h"
+/*RAM*/
+#define RAM0_START 0x40070000
+#define RAM0_SIZE  (192 * K_BYTES)
+
+#define RAM1_1_START 0x3FFE0000
+#define RAM1_1_SIZE  (128 * K_BYTES)
+
+#define RAM1_2_START 0x400A0000
+#define RAM1_2_SIZE  (128 * K_BYTES)
+
+#define RAM2_START 0x3FFAE000
+#define RAM2_SIZE  (200 * K_BYTES)
+
+#define RAM_SIZE_TOTAL (RAM0_SIZE + RAM1_1_SIZE + RAM2_SIZE)
+
+#define RAM_START RAM0_START
+#define RAM_SIZE (RAM0_SIZE)
+#define RAM_END (RAM_START + RAM_SIZE)
+
+/*ROM*/
+#define ROM0_START 0x40000000
+#define ROM0_SIZE  (384 * K_BYTES)
+
+#define ROM1_START 0x3FF90000
+#define ROM1_SIZE  (64 * K_BYTES)
+
+#define ROM_START ROM0_START
+#define ROM_SIZE ROM0_SIZE
+#define ROM_END (ROM_START + ROM_SIZE)
+
+#define MCU_NAME "ESP32-DOWDQ6"
+
+#endif /* ESP32_H */

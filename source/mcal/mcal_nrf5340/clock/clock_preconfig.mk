@@ -1,0 +1,9 @@
+
+ifneq ($(NRF_CLOCKS_PRECONFIG_MK_INC),Y)
+    NRF_CLOCKS_PRECONFIG_MK_INC=Y
+
+    CLOCK_DIR = $(MCAL_NRF5340_DIR)/clocks
+
+    CLOCK=Y
+    NRFX=Y
+endif

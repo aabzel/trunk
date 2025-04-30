@@ -1,0 +1,6 @@
+ASM->MATH
+FLOAT->MATH
+
+#ifdef HAS_MATH_VECTOR
+    MATH->VECTOR
+#endif

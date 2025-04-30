@@ -1,0 +1,85 @@
+subgraph cluster_protocols{
+    label = "Protocols";
+    //rank = same; 
+    style=filled;
+    color=oldlace;
+    #ifdef HAS_CLI
+        CLI; 
+    #endif
+    
+    #ifdef HAS_DECAWAVE
+        DECAWAVE; 
+    #endif
+
+    #ifdef HAS_DS_TWR
+        DS_TWR; 
+    #endif
+
+    #ifdef HAS_NMEA
+        NMEA; 
+    #endif
+
+    #ifdef HAS_RDS
+        RDS;
+    #endif
+
+    #ifdef HAS_RTCM
+        RTCM;
+    #endif
+
+    #ifdef HAS_TBFP
+        TBFP;
+    #endif
+
+    #ifdef HAS_UBX
+        UBX;
+    #endif
+
+    #ifdef HAS_ISO_TP
+        ISO_TP;
+    #endif
+
+    #ifdef HAS_UDS
+        UDS;
+    #endif
+}
+
+#ifdef HAS_CLI
+    #include "cli.gvi"
+#endif
+
+#ifdef HAS_TBFP
+    #include "tbfp.gvi"
+#endif
+
+#ifdef HAS_DECAWAVE
+    #include "decawave.gvi"
+#endif
+
+#ifdef HAS_DECAWAVE_NATIVE
+    #include "decawave_native.gvi"
+#endif
+
+#ifdef HAS_RDS
+    #include "rds.gvi"
+#endif
+
+#ifdef HAS_DS_TWR
+    #include "ds_twr.gvi"
+#endif
+
+#ifdef HAS_NMEA
+    #include "nmea.gvi"
+#endif
+
+#ifdef HAS_RTCM
+    #include "rtcm.gvi"
+#endif
+
+#ifdef HAS_UBX
+    #include "ubx.gvi"
+#endif
+
+#ifdef HAS_UDS
+    #include "uds.gvi"
+#endif

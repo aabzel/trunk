@@ -1,0 +1,20 @@
+#ifdef HAS_DFT
+    #include "dft.gvi"
+#endif
+
+#ifdef HAS_FIR
+    #include "fir.gvi"
+#endif
+
+
+#ifdef HAS_FIR_INT
+    #include "fir_int.gvi"
+#endif
+
+#ifdef HAS_FOURIER_SERIES
+    #include "fourier_series.gvi"
+#endif
+
+#ifdef HAS_IIR
+    #include "iir.gvi"
+#endif

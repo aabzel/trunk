@@ -1,0 +1,29 @@
+Send CAN frame ID:0x55 to CAN2
+cs 2 0x55 0x55AA01
+отправляет хорошо 
+
+cs_2_0x55_0x55AA01
+
+cs 1 0x21 0x55AA22
+cs 1 0x55 0x55AA01
+cs 1 0x55 0x55AA01
+
+Send CAN frame ID:0x20 to CAN1
+cs 1 0x20 0x1122334455667788
+cs 1 0x20 0x11223344556677
+
+
+CAN2_RX0_IRQHandler зависает
+
+
+
+rpt cs_1_0x55_0x55AA01 2000 555
+
+14.376,177 :E [DBG] Usage: rpt command period_ms times
+
+
+cs 1 0x405 0x334455667755AA01
+
+
+can_diag
+Dominant bit error

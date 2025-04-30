@@ -1,0 +1,10 @@
+tsr uart3_wait_write
+
+detect int overflow in C
+
+How in a C program to detect all the places where type overflows occur in runTime(e)?
+
+
+NRF_UARTE2_NS
+NRF_UARTE2_S    ((NRF_UARTE_Type*)         NRF_UARTE2_S_BASE) 0x5000B000UL
+NRF_UARTE2 

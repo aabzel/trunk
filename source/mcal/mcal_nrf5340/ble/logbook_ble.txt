@@ -1,0 +1,49 @@
+nRF5340 LE Audio
+
+
+https://github.com/nordic-auko/nRF52-ble-audio-streaming/blob/master/nRF5_SDK_11.0.0_89a8197/examples/ble_peripheral/ble_app_audio_streaming/main.c
+https://www.youtube.com/watch?v=KxI1-NdmHU8
+
+LC3 - high-quality audio codec 
+LC3 - Low Complexity Communication codec
+SBC 
+
+
+https://www.bluetooth.com/learn-about-bluetooth/recent-enhancements/le-audio/le-audio-specifications/
+
+
+
+nrf5340 ble audio getting started
+
+
+https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/applications/nrf5340_audio/README.html
+
+345 kBit/s
+
+
+https://github.com/google/liblc3
+
+https://www.terraelectronica.ru/product/2426941
+
+
+Конвертер USB to I2S.
+ATSAM3U4C XC2C64.
+PCM5102 чиподиповский.
+https://www.avito.ru/ufa/audio_i_video/amanero_pcm5102_2549552884
+
+https://www.amazon.com/Digital-Interface-Compatible-Italian-Amanero/dp/B09SVH5QW5/ref=sr_1_2?crid=2EAND5WMN5K7C&keywords=USB+to+I2S&qid=1662113336&sprefix=usb+to+i2s%2Caps%2C151&sr=8-2
+
+
+SoftDevice Controller
+https://developer.nordicsemi.com/nRF_Connect_SDK/doc/1.4.2/nrfxlib/softdevice_controller/README.html#softdevice-controller
+
+
+SoftDevice Controller
+https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrfxlib/softdevice_controller/README.html
+
+
+soft-float 
+
+sdc_init
+sdc_enable
+

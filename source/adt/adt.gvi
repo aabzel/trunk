@@ -1,0 +1,57 @@
+#define ADT_NODE_ATTR [shape = note][fillcolor = aqua][style="filled"]
+
+subgraph cluster_adc{
+    label = "ADT";
+    //rank = same; 
+    style=filled;
+    color=oldlace;
+    
+    #ifdef HAS_ARRAY
+        ARRAY ADT_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_CIRCULAR_BUFFER
+        CIRCULAR_BUFFER ADT_NODE_ATTR
+    #endif
+
+    #ifdef HAS_FIFO
+        FIFO ADT_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_HASHSET
+        HASHSET ADT_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_LIFO
+        LIFO ADT_NODE_ATTR
+    #endif
+
+    #ifdef HAS_SET
+        SET ADT_NODE_ATTR
+    #endif
+
+}
+
+#ifdef HAS_ARRAY
+#include "array.gvi"
+#endif
+
+#ifdef HAS_CIRCULAR_BUFFER
+#include "circular_buffer.gvi"
+#endif
+
+#ifdef HAS_FIFO
+#include "fifo.gvi"
+#endif
+
+#ifdef HAS_HASHSET
+#include "hashset.gvi"
+#endif
+
+#ifdef HAS_LIFO
+#include "lifo.gvi"
+#endif
+
+#ifdef HAS_SET
+#include "set.gvi"
+#endif

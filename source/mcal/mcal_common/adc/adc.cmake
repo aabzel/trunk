@@ -1,0 +1,35 @@
+#add_library(adc)
+message(STATUS "ADC_GENERAL_MK_INC=${ADC_GENERAL_MK_INC}")
+if( NOT (ADC_GENERAL_MK_INC STREQUAL Y))
+    set(ADC_GENERAL_MK_INC Y)
+    message(STATUS "+ ADC General")
+
+    set(ADC_GENERAL_DIR ${MCAL_COMMON_DIR}/adc)
+    message(STATUS "ADC_GENERAL_DIR=${ADC_GENERAL_DIR}")
+
+    include_directories(${ADC_GENERAL_DIR})
+    target_include_directories(app PUBLIC ${ADC_GENERAL_DIR})
+    target_compile_definitions(app PUBLIC HAS_ADC)
+
+    add_compile_definitions(HAS_ADC)
+    add_compile_options(-DHAS_ADC)
+    target_sources(app PRIVATE ${ADC_GENERAL_DIR}/adc_general_api.c)
+
+    if(DIAG STREQUAL Y)
+        if(ADC_DIAG STREQUAL Y)
+            message(STATUS "+ ADC Diag")
+            target_compile_definitions(app PUBLIC HAS_ADC_DIAG)
+            target_sources(app PRIVATE ${ADC_GENERAL_DIR}/adc_diag.c)
+        endif()
+    endif()
+
+    if(CLI STREQUAL Y)
+        if(ADC_COMMANDS STREQUAL Y)
+            message(STATUS "+ ADC Commands")
+            target_compile_definitions(app PUBLIC HAS_ADC_COMMANDS)
+            target_sources(app PRIVATE ${ADC_GENERAL_DIR}/adc_commands.c)
+        endif()
+    endif()
+
+    #target_include_directories(adc PUBLIC ${ADC_GENERAL_DIR})
+endif()

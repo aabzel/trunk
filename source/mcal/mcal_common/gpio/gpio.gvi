@@ -1,0 +1,9 @@
+ 
+REG->GPIO
+MCU->GPIO
+
+
+
+#ifdef HAS_TIME
+TIME->GPIO
+#endif

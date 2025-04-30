@@ -1,0 +1,9 @@
+#include "nvic.gvi"
+
+#ifdef HAS_SYSTICK
+    #include "systick.gvi"
+#endif
+
+ARM->CORTEX_M33
+NVIC->CORTEX_M33
+SYSTICK->CORTEX_M33

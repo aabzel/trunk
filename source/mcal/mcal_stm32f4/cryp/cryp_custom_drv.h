@@ -1,0 +1,30 @@
+#ifndef CRYP_CUSTOM_DRV_H
+#define CRYP_CUSTOM_DRV_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "cryp_cbc_drv.h"
+#include "cryp_ecb_drv.h"
+#include "stm32f4xx_hal.h"
+
+#ifndef HAS_CRYP
+#error "+HAS_CRYP"
+#endif
+
+#ifndef HAS_STM32
+#error "+HAS_STM32"
+#endif
+
+bool cryp_hw_init(void);
+int8_t CrypInstance2Num(CRYP_TypeDef* Instance);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CRYP_CUSTOM_DRV_H */

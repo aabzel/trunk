@@ -1,0 +1,24 @@
+tsr uart3_wait_write
+
+detect int overflow in C
+
+How in a C program to detect all the places where type overflows occur in runTime(e)?
+
+
+NRF_TIMERE2_NS
+NRF_TIMERE2_S    ((NRF_TIMERE_Type*)         NRF_TIMERE2_S_BASE) 0x5000B000UL
+NRF_TIMERE2 
+
+ [TIMER] Usage: tsc timer_index chaneel cc_value int_on
+ tdc
+  tsc 0 1 0x0FFF 1
+  tsc 1 1 0x0FFF 1
+  tsc 2 2 0x00FF 1
+  tsc 2 2 0xFFFFFFF0 1
+  
+  
+  
+Таймер может считать только до 
+
+tsa math
+tsr math+

@@ -1,0 +1,8 @@
+#ifndef ECHO_EFFECT_DEP_H
+#define ECHO_EFFECT_DEP_H
+
+#ifndef HAS_CIRCULAR_BUFFER
+#error "+HAS_CIRCULAR_BUFFER"
+#endif
+
+#endif /* ECHO_EFFECT_DEP_H */

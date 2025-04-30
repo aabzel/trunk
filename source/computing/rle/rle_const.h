@@ -1,0 +1,22 @@
+#ifndef RLE_CONST_H
+#define RLE_CONST_H
+
+typedef enum {
+	INPUT_LETTER=1,
+	INPUT_DIGIT=2,
+	INPUT_FINISH=3,
+
+	INPUT_UNDEF=0
+}RleDecoderInput_t;
+
+typedef enum{
+    RLE_DECODER_STATE_PREV_LETTER=1,
+    RLE_DECODER_STATE_PREV_DIGIT=2,
+    RLE_DECODER_STATE_ERROR=3,
+	RLE_DECODER_STATE_DONE=4,
+
+    RLE_DECODER_STATE_UNDEF=0,
+}RleDecoderState_t ;
+
+
+#endif

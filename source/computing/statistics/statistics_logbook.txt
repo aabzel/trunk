@@ -1,0 +1,41 @@
+ 
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   4 |      stc |      statistics_calc | StatisticsCalc
+|   5 |      stl |      statistics_load | StatisticsLoad
+|   6 |      std |      statistics_diag | StatisticsDiag
++-----+----------+----------------------+-------------+
+
+
+stb 100 0.05
+
+stl DistM_test.csv;stc;stb 25
+
+Загрузить статистические данные из файла
+stl uwb_dist_m.txt;stc
+stl C:\projects\code_base_workspace\code_base_firmware\docs\logs\UWB_dist_1_075cm\uwb_dist_m.txt
+stb 100
+
+stl C:/projects/code_base_workspace/code_base_firmware/docs/logs/UWB_dist_1_075cm/uwb_dist_m.txt
+
+stc
+
+
+
+-->stc
+84.256 :I [Statistics] Argc:0
+84.258 :I [Statistics] ExpectedValue 155.11608
+84.260 :I [Statistics] MIN: 154.98836, MAX: 155.61118, Spread:0.62282
+84.262 :I [Statistics] ExpectedValue 155.11608 m
+84.264 :I [Statistics] StandardDeviation 0.049915465 m
+84.266 :I [Statistics] StandardDeviation 0.049915465 m
+
+
+
+std
+
+
+stb 100 0.05
+
+stb 0 0.2

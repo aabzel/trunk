@@ -1,0 +1,10 @@
+$(info DFT_PRECONFIG_MK_INC=$(DFT_PRECONFIG_MK_INC))
+
+ifneq ($(DFT_PRECONFIG_MK_INC),Y)
+    DFT_PRECONFIG_MK_INC=Y
+
+    COMPLEX=Y
+    DSP=Y
+    DFT=Y
+
+endif

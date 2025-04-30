@@ -1,0 +1,22 @@
+ll phase_detector debug
+phase_detectorp 1 1
+phase_detectord 1
+phase_detectord 1
+phase_detectorp 1 0
+phase_detectord 1
+
+
+Calc Freq Resp
+ffr 1 500
+
+
+
+phase_detector_performance.112
+
+Test perfom
+tsr 112
+
+
+phase_detectord 1;fii 1
+fii 1;phase_detectord 1
+

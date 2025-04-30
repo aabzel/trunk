@@ -1,0 +1,22 @@
+
+#ifdef HAS_DISK
+    DISK->FAT_FS
+#endif
+
+#ifdef HAS_RTC
+    RTC->FAT_FS
+#endif
+
+#ifdef HAS_SD_CARD
+    SD_CARD->DISK
+#endif
+
+#ifdef HAS_SDIO
+    SDIO->SD_CARD
+#endif
+
+#ifdef HAS_SPI
+    SPI->SD_CARD
+#endif
+
+#include "Target/Target.gvi"

@@ -1,0 +1,21 @@
+/ {
+	fda801ctrl {
+		compatible = "gpio-keys";
+		enable1: enable_1 {
+			gpios = < &gpio0 0x4 GPIO_ACTIVE_HIGH >;
+			label = "1 ENABLE";
+		};
+		enable2: enable_2 {
+			gpios = < &gpio0 0x5 GPIO_ACTIVE_HIGH >;
+			label = "2 ENABLE";
+		};
+		enable3: enable_3 {
+			gpios = < &gpio0 0x1a GPIO_ACTIVE_HIGH >;
+			label = "3 ENABLE";
+		};
+		mute: mute {
+			gpios = < &gpio0 0xa GPIO_ACTIVE_HIGH >;
+			label = "MUTE";
+		};
+	};
+};

@@ -1,0 +1,13 @@
+
+$(info TEST_LTR390_MK_INC=$(TEST_LTR390_MK_INC))
+ifneq ($(TEST_LTR390_MK_INC),Y)
+    TEST_LTR390_MK_INC=Y
+
+    
+    TEST_LTR390_DIR = $(TEST_SET_HW_DIR)/test_ltr390
+    #@echo $(error TEST_LTR390_DIR=$(TEST_LTR390_DIR))
+    INCDIR += -I$(TEST_LTR390_DIR)
+    OPT += -DHAS_TEST_LTR390
+
+    SOURCES_C += $(TEST_LTR390_DIR)/test_ltr390.c
+endif

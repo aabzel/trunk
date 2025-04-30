@@ -1,0 +1,33 @@
+#include "dashboard_config.h"
+
+#include "dashboard_const.h"
+#include "data_utils.h"
+
+const DashBoardConfig_t DashBoardConfig[] = {
+    {
+        .num = 1,
+        .valid = true,
+        .display_num = 1,
+        .light_sensor_num = 1,
+        .ds3231_num = 1,
+    },
+};
+
+DashBoardHandle_t DashBoardInstance[] = {
+    {
+        .num = 1,
+        .valid = true,
+    },
+};
+
+uint32_t dashboard_get_cnt(void) {
+    uint32_t cnt = 0;
+    uint32_t cnt1 = 0;
+    uint32_t cnt2 = 0;
+    cnt1 = ARRAY_SIZE(DashBoardInstance);
+    cnt2 = ARRAY_SIZE(DashBoardConfig);
+    if(cnt1 == cnt2) {
+        cnt = cnt1;
+    }
+    return cnt;
+}

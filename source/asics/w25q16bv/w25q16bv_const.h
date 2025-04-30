@@ -1,0 +1,78 @@
+#ifndef W25Q16BV_CONST_H
+#define W25Q16BV_CONST_H
+
+#define W25Q16BV_REG_CNT 1
+
+#define REG_SET_TRY_CNT 3
+
+#include "w25q16bv_dep.h"
+
+#define W25Q16BV_FLASH_SIZE 0x800000
+#define W25Q16BV_PAGE_SIZE 256
+#define W25Q16BV_BLOCK_SIZE 0x10000   /* 128 blocks of 64KBytes */
+#define W25Q16BV_SUBBLOCK_SIZE 0x8000 /* 256 blocks of 32KBytes */
+#define W25Q16BV_SECTOR_SIZE 0x1000   /* 2048 sectors of 4kBytes */
+
+#define W25_WR_TIMEOUT_MS 1000
+
+#define MANUFACTURER_ID 0xC2
+#define MEMORY_TYPE 0x28
+#define MEMORY_DENSITY 0x17
+
+typedef enum {
+    W25_BLOCK_4K = 4,
+    W25_BLOCK_32K = 32,
+    W25_BLOCK_64K = 64,
+
+    W25_BLOCK_UNDEF = 0,
+} W25BlockSize_t;
+
+typedef enum {
+
+    W25_CMD_UNDEF = 0XFF,
+} W25q16bvCommands_t;
+
+typedef enum {
+    W25_WIP_WRITE_OPERATION = 1,
+    W25_WIP_NOT_IN_WRITE_OPERATION = 0,
+    W25_WIP_UNDEF = 2,
+} W25Wip_t;
+
+typedef enum {
+    W25_WEL_WRITE_ENABLE = 1,
+    W25_WEL_NOT_WRITE_ENABLE = 0,
+    W25_WEL_UNDEF = 2,
+} W25Wel_t;
+
+typedef enum {
+    W25_QUAD_ENABLE = 1,
+    W25_NOT_QUAD_ENABLE = 0,
+    W25_QUAD_UNDEF = 2,
+} W25Quad_t;
+
+/*SRWD (status register write protect)*/
+typedef enum {
+    W25_STATUS_REG_WR_PROT_DISABLE = 1,
+    W25_STATUS_REG_WR_PROT_ENABLE = 0,
+} W25Srwd_t;
+
+typedef enum {
+    W25_PROT_ARIA_NONE = 0,
+    W25_PROT_ARIA_1BLOCK = 1,
+    W25_PROT_ARIA_2BLOCKS = 2,
+    W25_PROT_ARIA_4BLOCKS = 3,
+    W25_PROT_ARIA_8BLOCKS = 4,
+    W25_PROT_ARIA_16BLOCKS = 5,
+    W25_PROT_ARIA_32BLOCKS = 6,
+    W25_PROT_ARIA_64BLOCKS = 7,
+    W25_PROT_ARIA_128BLOCKS_1 = 8,
+    W25_PROT_ARIA_128BLOCKS_2 = 9,
+    W25_PROT_ARIA_128BLOCKS_3 = 10,
+    W25_PROT_ARIA_128BLOCKS_4 = 11,
+    W25_PROT_ARIA_128BLOCKS_5 = 12,
+    W25_PROT_ARIA_128BLOCKS_6 = 13,
+    W25_PROT_ARIA_128BLOCKS_7 = 14,
+    W25_PROT_ARIA_128BLOCKS_8 = 15,
+} W25ProtAria_t;
+
+#endif /* W25Q16BV_CONST_H */

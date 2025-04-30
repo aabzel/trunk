@@ -1,0 +1,28 @@
+
+#ifdef HAS_UART
+    UART->STREAM [color=chartreuse]
+#endif
+
+#ifdef HAS_USB_DEVICE
+    USB_DEVICE->STREAM [color=chartreuse]
+#endif
+
+#ifdef HAS_LORA
+    LORA->STREAM [color=chartreuse]
+#endif
+
+#ifdef HAS_RS232
+    RS232->STREAM [color=chartreuse]
+#endif
+
+#ifdef HAS_UWB
+    UWB->STREAM [color=chartreuse]
+#endif
+
+    FIFO->STRING_READER [color=aqua]
+    STRING->CLI [color=aqua]
+    STRING_READER->CLI [color=aqua]
+    STREAM->CLI [color=aqua]
+    LOG->CLI [color=aqua]
+    CSV->CLI [color=aqua]
+

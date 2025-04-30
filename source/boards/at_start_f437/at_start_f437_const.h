@@ -1,0 +1,10 @@
+#ifndef AT_START_F437_CONST_H
+#define AT_START_F437_CONST_H
+
+
+#define XTALL_FREQ_HZ 8000000
+#define BOARD_NAME "AT-START-F437 V1.0"
+#define LED_COUNT 3
+#define BUTTON_COUNT 1
+
+#endif /* AT_START_F437_CONST_H  */

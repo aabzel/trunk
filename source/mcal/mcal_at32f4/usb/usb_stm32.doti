@@ -1,0 +1,11 @@
+    GPIO->USB
+
+#ifdef HAS_USB_HOST
+    USB->USB_HOST
+#endif
+
+#ifdef HAS_USB_DEVICE
+    USB->USB_DEVICE
+#endif
+
+

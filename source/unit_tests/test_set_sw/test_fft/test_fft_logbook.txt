@@ -1,0 +1,6 @@
+tsr fft_+
+ll swdac debug;tsr fft_500
+ll Complex debug; ll swdac debug;tsr fft_500
+ll Complex debug;tsr fft_500
+
+ll Complex debug;ll Dft debug; ll swdac debug;tsr fft_2000

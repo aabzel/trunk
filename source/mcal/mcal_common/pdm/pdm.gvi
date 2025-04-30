@@ -1,0 +1,7 @@
+DFT->PDM [color=darkgreen]
+COMPLEX->PDM [color=blue]
+TIME->PDM [color=darkseagreen]
+GPIO->PDM  [color=deepskyblue]
+AUDIO->PDM [color=gold]
+ARRAY->PDM [color=fuchsia]
+

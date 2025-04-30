@@ -1,0 +1,92 @@
+#define MCAL_NODE_ATTR [shape = note][fillcolor = aquamarine][style="filled"]
+
+subgraph cluster_mcal{
+    label = "MCAL";
+    //rank = same; 
+
+    style=filled;
+    color=oldlace;
+    
+    #ifdef HAS_ADC
+    
+    ADC MCAL_NODE_ATTR 
+    #endif
+    
+    #ifdef HAS_DMA
+    DMA MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_FLASH
+    FLASH MCAL_NODE_ATTR 
+    #endif
+    
+    #ifdef HAS_GPIO
+    GPIO MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_I2C
+    I2C MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_I2S
+    I2S MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_PDM
+    PDM MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_PWM
+    PWM MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_RTC
+    RTC MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_SDIO
+    SDIO MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_SPI
+    SPI MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_TIMER
+    TIMER MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_UART
+    UART MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_USB
+    USB MCAL_NODE_ATTR
+    #endif
+    
+    #ifdef HAS_WDT
+    WDT MCAL_NODE_ATTR
+    #endif
+}
+
+#include "mcal_common.gvi"
+
+#ifdef HAS_MCAL_AT32
+    #include "mcal_at32.gvi"
+#endif
+
+#ifdef HAS_MCAL_CC26X2
+    #include "mcal_cc26x2.gvi"
+#endif
+
+#ifdef HAS_MCAL_ESP32
+    #include "mcal_esp32.gvi"
+#endif
+
+#ifdef HAS_MCAL_NRF5340
+    #include "mcal_nrf5340.gvi"
+#endif
+
+#ifdef HAS_MCAL_STM32
+    #include "mcal_stm32f4.gvi"
+#endif

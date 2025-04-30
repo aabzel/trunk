@@ -1,0 +1,29 @@
+subgraph cluster_Interfaces{
+    label = "Interfaces";
+    //rank = same;
+    color=red
+
+#ifdef HAS_CAN
+#include "can.gvi"
+#endif
+
+#ifdef HAS_RADIO
+#include "radio.gvi"
+#endif
+
+#ifdef HAS_RS485
+#include "rs485.gvi"
+#endif
+
+#ifdef HAS_RS232
+#include "rs232.gvi"
+#endif
+
+#ifdef HAS_UWB
+#include "uwb.gvi"
+#endif
+}
+
+
+
+

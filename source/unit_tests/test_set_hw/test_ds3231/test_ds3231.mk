@@ -1,0 +1,14 @@
+$(info TEST_DS3231_MK_INC=$(TEST_DS3231_MK_INC) )
+ifneq ($(TEST_DS3231_MK_INC),Y)
+    TEST_DS3231_MK_INC=Y
+
+    $(info + ds3231 tests)
+    TEST_DS3231_DIR = $(TEST_SET_HW_DIR)/test_ds3231
+
+    #@echo $(error TEST_DS3231_DIR=$(TEST_DS3231_DIR))
+    INCDIR += -I$(TEST_DS3231_DIR)
+
+    OPT += -DHAS_TEST_DS3231
+    OPT += -DHAS_TEST_SUIT_DS3231
+    SOURCES_C += $(TEST_DS3231_DIR)/test_ds3231.c
+endif

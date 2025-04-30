@@ -1,0 +1,13 @@
+
+$(info TEST_SCR1_TIMER_MK_INC=$(TEST_SCR1_TIMER_MK_INC))
+
+ifneq ($(TEST_SCR1_TIMER_MK_INC),Y)
+    TEST_SCR1_TIMER_MK_INC=Y
+
+    TEST_SCR1_TIMER_DIR = $(TEST_SET_HW_DIR)/test_scr1_timer
+
+    #@echo $(error TEST_SCR1_TIMER_DIR=$(TEST_SCR1_TIMER_DIR))
+    INCDIR += -I$(TEST_SCR1_TIMER_DIR)
+    OPT += -DHAS_TEST_SCR1_TIMER
+    SOURCES_C += $(TEST_SCR1_TIMER_DIR)/test_scr1_timer.c
+endif

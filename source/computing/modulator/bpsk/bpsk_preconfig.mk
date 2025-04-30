@@ -1,0 +1,15 @@
+
+$(info BPSK_PRECONFIG_INC=$(BPSK_PRECONFIG_INC))
+ifneq ($(BPSK_PRECONFIG_INC),Y)
+    BPSK_PRECONFIG_INC=Y
+    BPSK=Y
+    DECIMATOR=Y
+    #PID=Y
+endif
+
+
+
+
+
+
+

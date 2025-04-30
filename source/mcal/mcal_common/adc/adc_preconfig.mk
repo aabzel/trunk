@@ -1,0 +1,8 @@
+ifneq ($(ADC_PRECONFIG_MK_INC),Y)
+    ADC_PRECONFIG_MK_INC=Y
+
+    ADC=Y
+    GPIO=Y
+    SENSITIVITY=Y
+
+endif

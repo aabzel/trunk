@@ -1,0 +1,16 @@
+#ifndef SCHMITT_TRIGGER_DEP_H
+#define SCHMITT_TRIGGER_DEP_H
+
+#ifndef HAS_SCHMITT_TRIGGER
+#error "+ HAS_SCHMITT_TRIGGER"
+#endif
+
+#ifndef HAS_SENSITIVITY
+#error "+ HAS_SENSITIVITY"
+#endif
+
+#ifndef HAS_COMPUTING
+#error "+ HAS_COMPUTING"
+#endif
+
+#endif /* SCHMITT_TRIGGER_DEP_H  */

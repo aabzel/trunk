@@ -1,0 +1,55 @@
+|   3 |      scs |   socket_client_send | SocketClientSend
+
+
+scs 1 Hello
+
+отправить на клиент
+
+sss 1 Test
+scs 1 Test
+
+scs 1 0x55aa55aa
+
+
+winsock2  select
+winsock2  client socket  select
+winsock2 :  How to make none blocking recv for client socket?
+
+
+winsock2 :  How to make none blocking accept for server socket?
+
+
+accept
+
+ ioctlsocket()
+ You can use the MSG_PEEK flag to see if there's anything to receive. Or use e.g. select with a zero timeout. 
+ 
+
+
+10:21:26 PM:  All connections closed
+10:36:52 PM:  All connections closed
+10:45:20 PM:  192.168.3.36 Client connected
+10:45:26 PM:  192.168.3.36 Client connected
+10:45:28 PM:  192.168.3.36 Client connected
+10:46:06 PM:  192.168.3.36 Client connected
+10:46:15 PM:  192.168.3.36 Client connected
+10:46:27 PM:  192.168.3.36 Client connected
+10:46:29 PM:  192.168.3.36 Client connected
+10:46:34 PM:  192.168.3.36 Client connected
+
+
+5:50:40 PM:  192.168.3.36 Client connected
+5:57:06 PM:  192.168.3.36 Client closed connection
+6:00:37 PM:  All connections closed
+6:02:08 PM:  192.168.3.36 Client connected
+6:02:25 PM:  All connections closed
+6:03:26 PM:  192.168.3.36 Client connected
+6:03:33 PM:  All connections closed
+6:04:05 PM:  All connections closed
+6:28:23 PM:  192.168.3.36 Client connected
+6:29:40 PM:  All connections closed
+6:29:57 PM:  192.168.3.36 Client connected
+6:31:52 PM:  192.168.3.36 Client connected
+6:33:17 PM:  192.168.3.36 Client connected
+6:33:59 PM:  192.168.3.36 Client closed connection
+6:51:33 PM:  192.168.3.36 Client connected

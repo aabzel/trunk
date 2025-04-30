@@ -1,0 +1,21 @@
+
+tsr mx25+
+
+mx25d
+
+mx25wr 0 0x5A5A5A
+mx25wr 0 0x000000
+mx25wr 0 0xFF00FF
+mx25rd 0 256
+mx25rd 0 512
+mx25rd 0 1024
+mx25rd 0 2048
+mx25rd 0 4096
+
+
+mx25a 4096
+mx25a 8192
+mx25a 16384
+mx25a 32768
+
+mx25we 1

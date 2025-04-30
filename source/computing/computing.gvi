@@ -1,0 +1,189 @@
+subgraph cluster_Computing{
+    label = "Computing";
+    //rank = same; 
+
+    style=filled;
+    color=oldlace;
+#ifdef HAS_AES256_GENERAL
+    AES256 
+#endif
+
+#ifdef HAS_BASE16
+    BASE16 
+#endif
+
+#ifdef HAS_BASE64
+    BASE64
+#endif
+
+#ifdef HAS_CALENDAR
+   CALENDAR
+#endif
+
+#ifdef HAS_COMPLEX
+ COMPLEX 
+#endif
+
+#ifdef HAS_CRC32
+    CRC32 
+#endif
+
+#ifdef HAS_CRC8
+    CRC8 
+#endif
+
+#ifdef HAS_CRC16
+    CRC16 
+#endif
+
+#ifdef HAS_CRC7
+    CRC7 
+#endif
+
+#ifdef HAS_CRYPTO
+    CRYPTO 
+#endif
+
+#ifdef HAS_DDS
+    DDS
+#endif
+
+#ifdef HAS_DFT
+    DFT 
+#endif
+
+#ifdef HAS_GNSS
+    GNSS
+#endif
+
+#ifdef HAS_LIMITER
+    LIMITER
+#endif
+
+#ifdef HAS_IEC16022
+    IEC16022
+#endif
+
+#ifdef HAS_INTERVAL
+    INTERVAL
+#endif
+
+#ifdef HAS_MATH
+    MATH
+#endif
+
+#ifdef HAS_MODULATOR
+    MODULATOR
+#endif
+
+#ifdef HAS_PLANETARIUM
+    PLANETARIUM 
+#endif
+
+#ifdef HAS_RLE
+    RLE
+#endif
+
+#ifdef HAS_SCHMITT_TRIGGER
+    SCHMITT_TRIGGER
+#endif
+
+#ifdef HAS_SHA256
+    SHA256
+#endif
+
+#ifdef HAS_SOLVER
+    SOLVER
+#endif
+
+#ifdef HAS_SW_DAC
+    SW_DAC
+#endif
+
+}
+
+
+#ifdef HAS_AES256_GENERAL
+#include "aes256_general.gvi"
+#endif
+
+#ifdef HAS_BASE16
+#include "base16.gvi"
+#endif
+
+#ifdef HAS_BASE64
+#include "base64.gvi"
+#endif
+
+#ifdef HAS_CALENDAR
+#include "calendar.gvi"
+#endif
+
+#ifdef HAS_COMPLEX
+#include "complex.gvi"
+#endif
+
+#ifdef HAS_CRC
+#include "crc.gvi"
+#endif
+
+#ifdef HAS_LIMITER
+#include "limiter.gvi"
+#endif
+
+#ifdef HAS_CRYPTO
+#include "crypto.gvi"
+#endif
+
+#ifdef HAS_DSP
+#include "dsp.gvi"
+#endif
+
+#ifdef HAS_DDS
+#include "dds.gvi"
+#endif
+
+#ifdef HAS_GNSS
+#include "gnss.gvi"
+#endif
+
+#ifdef HAS_IEC16022
+#include "iec16022.gvi"
+#endif
+
+#ifdef HAS_INTERVAL
+#include "interval.gvi"
+#endif
+
+#ifdef HAS_MATH
+#include "math.gvi"
+#endif
+
+#ifdef HAS_MODULATOR
+#include "modulator.gvi"
+#endif
+
+#ifdef HAS_PLANETARIUM
+#include "planetarium.gvi"
+#endif
+
+#ifdef HAS_RLE
+#include "rle.gvi"
+#endif
+
+#ifdef HAS_SCHMITT_TRIGGER
+#include "schmitt_trigger.gvi"
+#endif
+
+#ifdef HAS_SHA256
+#include "sha256.gvi"
+#endif
+
+#ifdef HAS_SOLVER
+#include "solver.gvi"
+#endif
+
+#ifdef HAS_SW_DAC
+#include "sw_dac.gvi"
+#endif
+

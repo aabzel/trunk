@@ -1,0 +1,8 @@
+ifneq ($(RTC_CUSTOM_DRIVER_PRECONFIG_MK_INC),Y)
+    RTC_CUSTOM_DRIVER_PRECONFIG_MK_INC=Y
+    RTC_DIR = $(MCAL_NRF5340_DIR)/rtc
+    #@echo $(error RTC_DIR=$(RTC_DIR))
+    RTC=Y
+    STR2_MONTH=Y
+    CALENDAR=Y
+endif

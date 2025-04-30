@@ -1,0 +1,6 @@
+
+$(info MCAL_PRESET_MK_INC=$(MCAL_PRESET_MK_INC))
+ifneq ($(MCAL_PRESET_MK_INC),Y)
+    MCAL_PRESET_MK_INC=Y
+    MCAL=Y
+endif

@@ -1,0 +1,59 @@
+Установить на PWM0 Channel0 кважность 50.0%
+pds 0 0 50.0 
+
+
+cl ps 85 11
+
+cl pds 0 0 0
+cl pds 0 0 5
+cl pds 0 0 50
+cl pds 0 0 99
+
+
+
+cl pwi
+
+
+ 
+
+cl h pwm
+
+0x50021000
+0x40021000
+pwm usec pwm@21000 0 10000 1000
+pwm usec pwm@21000 0 10000 100
+pwm usec pwm@21000 0 10000 500
+pwm usec pwm@21000 1 10000 9000
+pwm usec pwm@21000 0 10000 9000
+
+У Zephyr есть  команда pwm usec @BASE_OFFSET chan period ONE_DURATION
+pwm usec pwm@21000 0 10000 5000
+Она приводит к тому что на нулевом канале PWM0 синтезируется 100 Hz скважность 50%
+получается что pwm@21000 соответствует номеру PWM0
+0 - это канал 
+10000 - это период в микросекундах
+5000 - длительность импульса 3,3V
+
+pwm@21000
+
+Pulse width modulation unit	PWM0	0x50021000	0x40021000
+
+
+->pwm
+pwm - PWM shell commands
+Subcommands:
+  cycles  :<device> <channel> <period in cycles> <pulse width in cycles> [flags]
+  usec    :<device> <channel> <period in usec> <pulse width in usec> [flags]
+  nsec    :<device> <channel> <period in nsec> <pulse width in nsec> [flags]
+->
+
+
+
+Про то как пользоваться функцией  int pwm_set( можно посмотреть туту
+C:/ncs/v2.1.0/zephyr/samples/bluetooth/mesh_demo/src/microbit.c
+
+
+:132:                  pwm_set(pwm, BUZZER_PWM_CHANNEL, PWM_USEC(period),
+
+zephyr/samples/bluetooth/mesh_demo/src/microbit.c:139:          pwm_set(pwm, BUZZER_PWM_CHANNEL, 0, 0, 0);
+

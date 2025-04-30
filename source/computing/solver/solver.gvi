@@ -1,0 +1,7 @@
+LIFO->SOLVER
+STRING->SOLVER
+
+
+#ifdef HAS_SOLVER_SAE
+	#include "solver_slae.gvi"  
+#endif

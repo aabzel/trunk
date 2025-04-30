@@ -1,0 +1,4 @@
+GPIO->BUTTON [color=blue]
+FLASH->BUTTON [color=green]
+TIME->BUTTON [color=red]
+

@@ -1,0 +1,30 @@
+allocator
+
+Требования
+ thread safety
+ сборщик месора
+
+
+tsr allocator+
+tsr allocator_malloc_several
+
+
+ap
+argc 1
+Available commands:Key1:heap
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |       hd |          heap_diag | HeapDiag
+|   2 |       hf |          heap_free | HeapFree
+|   3 |       hm |        heap_malloc | HeapMalloc
+|   4 |       hs |          heap_scan | HeapScan
++-----+----------+--------------------+-------------+
+
+tsr 
+
+hm 4
+hm 6
+hm 555
+hf 0x200019e8

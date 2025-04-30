@@ -1,0 +1,173 @@
+
+subgraph cluster_control{
+    label = "Control";
+    //rank = same; 
+    style=filled;
+    color=oldlace;
+
+#ifdef HAS_BOOT
+BOOT
+#endif
+
+#ifdef HAS_DEBUGGER
+DEBUGGER
+#endif
+ 
+#ifdef HAS_DISPLAY
+DISPLAY
+#endif
+ 
+ 
+ 
+#ifdef HAS_FREE_RTOS
+FREE_RTOS
+#endif
+ 
+#ifdef HAS_GPIO_PWM
+GPIO_PWM
+#endif
+ 
+#ifdef HAS_INDICATION
+INDICATION
+#endif
+ 
+#ifdef HAS_LED
+LED
+#endif
+
+#ifdef HAS_RELAY
+RELAY
+#endif
+ 
+#ifdef HAS_RTOS
+RTOS
+#endif
+ 
+#ifdef HAS_SUPER_CYCLE
+SUPER_CYCLE
+#endif
+ 
+#ifdef HAS_SYSTEM
+SYSTEM
+ 
+#endif
+ 
+#ifdef HAS_TASK
+TASK
+#endif
+ 
+#ifdef HAS_TELEMATIC
+TELEMATIC
+#endif
+ 
+#ifdef HAS_WIN
+WIN
+#endif
+ 
+#ifdef HAS_ZEPHYR_RTOS
+ZEPHYR_RTOS
+#endif
+
+}
+
+
+
+
+
+
+
+
+
+
+
+#ifdef HAS_BOOTLOADER
+ #include "bootloader.gvi"
+#endif
+
+
+#ifdef HAS_BOOT
+#include "boot.gvi"
+#endif
+
+#ifdef HAS_DEBUGGER
+#include "debugger.gvi"
+#endif
+ 
+#ifdef HAS_DISPLAY
+#include "display.gvi"
+#endif
+
+#ifdef HAS_DISPLAY_SERVER
+#include "display_server.gvi"
+#endif
+ 
+#ifdef HAS_FREE_RTOS
+ #include "free_rtos.gvi"
+#endif
+ 
+#ifdef HAS_GPIO_PWM
+ #include "gpio_pwm.gvi"
+#endif
+ 
+#ifdef HAS_INDICATION
+ #include "indication.gvi"
+#endif
+ 
+#ifdef HAS_LED
+ #include "led.gvi"
+#endif
+ 
+#ifdef HAS_LOG
+ #include "log.gvi"
+#endif
+ 
+#ifdef HAS_MBR
+     #include "mbr.gvi"
+#endif
+ 
+ 
+#ifdef HAS_RELAY
+ #include "relay.gvi"
+#endif
+
+#ifdef HAS_GENERIC
+#include "generic.gvi"
+#endif
+
+#ifdef HAS_PID
+#include "pid.gvi"
+#endif
+
+#ifdef HAS_RELAY
+#include "relay.gvi"
+#endif
+
+
+#ifdef HAS_RTOS
+#include "rtos.gvi"
+#endif
+ 
+#ifdef HAS_SUPER_CYCLE
+ #include "super_cycle.gvi"
+#endif
+ 
+#ifdef HAS_SYSTEM
+ #include "system.gvi"
+ 
+#endif
+ 
+#ifdef HAS_TASK
+ #include "task.gvi"
+#endif
+ 
+#ifdef HAS_TELEMATIC
+ #include "telematic.gvi"
+#endif
+ 
+#ifdef HAS_WIN
+ #include "win.gvi"
+#endif
+ 
+#ifdef HAS_ZEPHYR_RTOS
+ #include "zephyr_rtos.gvi"
+#endif

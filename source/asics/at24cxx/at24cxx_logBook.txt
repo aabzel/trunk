@@ -1,0 +1,103 @@
+
+i2cw 1 0x50 0x03
+
+Read one byte
+i2cr 1 0x50 234
+ff
+
+
+i2cr 1 0x50 1024
+
+i2cr 1 0x50 2
+ffff
+
+
+atw 1 3 0xAAAAAAAA55555555
+
+Erase chip 
+ata 1
+
+read all
+atr 1 0 256
+
+
+
+atwb 1 7 0x78;  atrb 1 7
+
+Write byte
+atwb 1 7 0x78;  atrb 1 7; atd
+atwb 1 7 0x34;  atrb 1 7; atd
+atwb 1 8 0x85;  atrb 1 8 
+Read Byte
+atrb 1 8 
+
+
+tsr at24cxx_write_page
+
+atb 1 0 0x55
+atb 1 4 0x78
+atb 1 0 0xaa
+atb 1 44 0x78
+atb 1 30 0x78
+atb 1 10 0x78
+atb 1 5 0x78
+
+Read Byte
+atrb 1 0xff 
+atrb 1 0 
+atrb 1 4 
+atrb 1 5 
+atrb 1 1 
+atrb 1 10 
+atrb 1 30 
+atrb 1 44 
+atrb 1 2 
+atrb 1 3 
+
+
+Write pattern
+atp 1 0x55
+atp 1 0xcc
+atp 1 0xdd
+
+read all
+atr 1 0 256
+
+atr 1 0 2
+
+
+
+tsr 74
+tsr at24+
+
+ll AT24C debug
+Write Byte
+atb 1 0 0x73
+
+
+atr 1 0 1
+
+
+tsr at24cxx_read
+.701-->
+ 22.856-->
+ 23.011-->tsa at24
+28.190 :I [SYS] cmd_unit_test_list() key 1
+28.196 :I [TEST] dump_unit_test_key() key at24
+at24cxx_errase.68
+at24cxx_connect.69
+at24cxx_read0.70
+at24cxx_read_null.71
+at24cxx_read.72
+at24cxx_write_null.73
+at24cxx_write.74
+at24cxx_write0.75
+!OKTEST
+
+
+tsr at24cxx_errase
+
+tsr at24cxx_write
+
+
+https://www.youtube.com/watch?v=ArM9e5pOPEs

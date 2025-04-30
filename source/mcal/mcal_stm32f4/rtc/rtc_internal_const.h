@@ -1,0 +1,9 @@
+#ifndef RTC_CUSTOM_CONST_H
+#define RTC_CUSTOM_CONST_H
+
+
+
+#define RTC_HAL_START_YEAR 2000
+
+
+#endif /* RTC_CUSTOM_CONST_H  */

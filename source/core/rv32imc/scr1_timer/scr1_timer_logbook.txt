@@ -1,0 +1,23 @@
+ien -1 1
+ien -1 0
+
+ien 80 1
+id 80
+id syst
+
+
+h syst
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |     stkd |       scr1_timer_diag | Scr1TimerDiag
+|   2 |     stks |      scr1_timer_start | SysTicStart
+|   3 |     stkp |       scr1_timer_stop | SysTicStop
+|   4 |    stksl |    systic_set_load | SysTicSetLoad
+|   5 |    stksp |     systic_set_per | SysTicSetPeriod
+|   6 |    stksd |    systic_stm_diag | SysTicStmDiag
+stkd
+stksd
+
+rm 0xE000E010 16
+ 

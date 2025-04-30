@@ -1,0 +1,15 @@
+
+ifneq ($(MIK32_SRC_SF_INC),Y) 
+    MIK32_SRC_SF_INC=Y
+
+    HAL_MIK32_SF_DIR = $(HAL_MIK32_DIR)/SF
+    HAL_MIK32_SF_INC_DIR = $(HAL_MIK32_SF_DIR)/Include
+    HAL_MIK32_SF_SRC_DIR = $(HAL_MIK32_SF_DIR)/Source
+    # $(error HAL_MIK32_SF_DIR=$(HAL_MIK32_SF_DIR))
+    INCDIR += -I$(HAL_MIK32_SF_DIR)
+    INCDIR += -I$(HAL_MIK32_SF_INC_DIR)
+
+    ifeq ($(UART),Y)
+        #SOURCES_THIRD_PARTY_C += $(HAL_MIK32_SF_SRC_DIR)/uart_lib.c
+    endif
+endif

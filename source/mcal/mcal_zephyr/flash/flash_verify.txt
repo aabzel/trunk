@@ -1,0 +1,91 @@
+Про то как в Zephyr получить доступ к on chip NOR Flash памяти можно почитать тут
+https://docs.zephyrproject.org/latest/hardware/peripherals/flash.html
+
+57
+0x50039000
+0x40039000
+NVMC
+NVMC : S
+NVMC : NS
+SPLIT NA Non-volatile memory controller
+
+
+
+
+
+			flash_controller: flash-controller@39000 {
+				compatible = "nordic,nrf53-flash-controller";
+				reg = < 0x39000 0x1000 >;
+				partial-erase;
+				#address-cells = < 0x1 >;
+				#size-cells = < 0x1 >;
+				flash0: flash@0 {
+					compatible = "soc-nv-flash";
+					erase-block-size = < 0x1000 >;
+					write-block-size = < 0x4 >;
+					reg = < 0x0 0x100000 >;
+					partitions {
+						compatible = "fixed-partitions";
+						#address-cells = < 0x1 >;
+						#size-cells = < 0x1 >;
+						boot_partition: partition@0 {
+							label = "mcuboot";
+							reg = < 0x0 0x10000 >;
+						};
+						slot0_partition: partition@10000 {
+							label = "image-0";
+							reg = < 0x10000 0x40000 >;
+						};
+						slot0_ns_partition: partition@50000 {
+							label = "image-0-nonsecure";
+							reg = < 0x50000 0x30000 >;
+						};
+						slot1_partition: partition@80000 {
+							label = "image-1";
+							reg = < 0x80000 0x40000 >;
+						};
+						slot1_ns_partition: partition@c0000 {
+							label = "image-1-nonsecure";
+							reg = < 0xc0000 0x30000 >;
+						};
+						scratch_partition: partition@f0000 {
+							label = "image-scratch";
+							reg = < 0xf0000 0xa000 >;
+						};
+						storage_partition: partition@fa000 {
+							label = "storage";
+							reg = < 0xfa000 0x6000 >;
+						};
+					};
+				};
+			};
+			
+			
+			
+
+nrf/tests/drivers/fprotect/app/src/main.c:36:   err = flash_mcal_writeite(flash_dev, STORAGE_LAST_WORD, val, sizeof(val));
+nrf/tests/subsys/emds/emds_flash/src/main.c:123:                rc = flash_mcal_writeite(m_test_fd.fd, offset, data8, blen);
+nrf/tests/subsys/fw_info/src/main.c:43:         ret = flash_mcal_writeite(flash_dev, S1_ADDRESS, &dummy_s1,
+zephyr/samples/arch/mpu/mpu_test/src/main.c:66: if (flash_mcal_writeite(flash_dev, offset, value,
+
+zephyr/samples/drivers/flash_shell/src/main.c:209:      ret = flash_mcal_writeite(flash_device, offset, buf, len);
+zephyr/samples/drivers/soc_flash_nrf/src/main.c:68:             if (flash_mcal_writeite(flash_dev, offset, &buf_array_1[i],
+zephyr/tests/drivers/flash/src/main.c:110:      rc = flash_mcal_writeite(flash_dev,
+zephyr/tests/drivers/flash_simulator/src/main.c:65:             zassert_equal(0, rc, "flash_mcal_writeite should succeed");
+zephyr/tests/subsys/storage/flash_map/src/main.c:76:            rc = flash_mcal_writeite(flash_dev, fa->fa_off + off +
+
+Zephyr flash_mcal_writeite -22 Invalid argument
+0.522 :E [FLASH] WriteErr -22=[Invalid argument]
+0.524 :E [FLASH] Addr:0xfc004 Size:7
+
+
+
+cl fr 0x000fc000 16
+
+
+cl ll param debug
+cl ll flash_fs debug
+cl ps 85 3
+
+
+<err> flash_nrf: not word-aligned: 0x000fc004:7

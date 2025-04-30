@@ -1,0 +1,18 @@
+GPIO->LED
+
+#ifdef HAS_GPIO_PWM
+    GPIO_PWM->LED
+    TIME->GPIO_PWM
+#endif
+
+#ifdef HAS_INDITATION
+    #include "indication.gvi"
+#endif
+
+#ifdef HAS_LED_RGB
+    #include "led_rgb.gvi"
+#endif
+
+#ifdef HAS_LED_MONO
+    #include "led_mono.gvi"
+#endif

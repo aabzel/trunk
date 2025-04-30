@@ -1,0 +1,241 @@
+allocator
+
+Требования
+ thread safety
+ сборщик месора
+
+allocator_malloc_several
+tsr allocator+
+tsr allocator_malloc_several
+
+cmd_unit_test_run() argc 1
+key1 allocator_malloc_several 1 time
+unit_tests_run() key allocator_malloc_several
+************* Run test allocator_malloc_several.8/48
+110.010:I [?] test_allocator_malloc_several():
+110.016:D [HEAP] SpareAddr 0x200019e8
+110.020:D [HEAP] SpareRegion 200019e8 1
+110.025:D [HEAP] Header: 200019e0
+110.037:D [HEAP] BysyAddr 200019e8
+110.041:D [HEAP] SpareAddr 0x200019e9
+110.046:D [HEAP] SpareRegion 200019e9 2
+110.051:D [HEAP] Header: 200019e1
+110.069:E [SYS] test_allocator_malloc_several():Line: 63 in val1: 3  val2: 1
+110.084:E [SYS] test_allocator_malloc_several():Line: 63 in val1:   val2:
+110.100:E [SYS] test_allocator_malloc_several():Line: 63 in val1: 0x3 val2: 0x1
+
+!ERRTEST
+
+
+ap
+argc 1
+Available commands:Key1:heap
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |       hd |          heap_diag | HeapDiag
+|   2 |       hf |          heap_free | HeapFree
+|   3 |       hpm |        heap_malloc | HeapMalloc
+|   4 |       hs |          heap_scan | HeapScan
++-----+----------+--------------------+-------------+
+
+tsr 
+
+hpm 4
+hpm 6
+hpm 555
+hf 0x200019e8
+
+
+hs
++-----+------------+------+------+------+
+| num |    addr    | size |LinkIn|LinkOu|
++-----+------------+------+------+------+
+124.712:D [HEAP] CountLinksForAddr: 0x200019e0
+124.719:D [HEAP] [0x200019dc]=0x200019e0 in heap
+124.740:D [HEAP] [0x20017d50]=0x200019e0 out heap
+124.746:D [HEAP] [0x20017db4]=0x200019e0 out heap
+124.752:D [HEAP] [0x20017dd4]=0x200019e0 out heap
+124.758:D [HEAP] [0x20017ddc]=0x200019e0 out heap
+|   1 | 0x200019e0 |    1 |    1 |    4 |
+124.769:D [HEAP] CountLinksForAddr: 0x200019ea
+124.775:D [HEAP] [0x200019e6]=0x200019ea in heap
+124.797:D [HEAP] [0x20017d50]=0x200019ea out heap
+124.803:D [HEAP] [0x20017db4]=0x200019ea out heap
+124.809:D [HEAP] [0x20017dd4]=0x200019ea out heap
+124.815:D [HEAP] [0x20017ddc]=0x200019ea out heap
+|   2 | 0x200019ea |    1 |    1 |    4 |
+
+
+cl 0x200019eb
+
+
+cl 0x20001c31
+cl 0x20001c32
+cl 0x20001c33
+cl 0x20001c34
+cl 0x20001c35
+
+
+
+
+
+126.229:E [SX1262] OpCodeError: 0x12 GetIrqStatus
+126.402:D [HEAP] CountLinksForAddr: 0x20001a28
+126.408:D [HEAP] [0x20001a24]=0x20001a28 in heap
+126.430:D [HEAP] [0x20017ee0]=0x20001a28 out heap
+126.436:D [HEAP] [0x20017f44]=0x20001a28 out heap
+126.442:D [HEAP] [0x20017f64]=0x20001a28 out heap
+126.448:D [HEAP] [0x20017f68]=0x20001a28 out heap
+126.454:D [HEAP] CountLinksForAddr: 0x20001a36
+126.461:D [HEAP] [0x20001a32]=0x20001a36 in heap
+126.482:D [HEAP] [0x20017ee0]=0x20001a36 out heap
+126.488:D [HEAP] [0x20017f44]=0x20001a36 out heap
+126.494:D [HEAP] [0x20017f64]=0x20001a36 out heap
+126.500:D [HEAP] [0x20017f68]=0x20001a36 out heap
+126.507:D [HEAP] CountLinksForAddr: 0x20001a45
+
+
+
+
+
+181.699:D [HEAP] [0x20017f68]=0x20001a45 out heap
+181.705:D [HEAP] CountLinksForAddr: 0x20001a9c
+181.712:D [HEAP] [0x20001a98]=0x20001a9c in heap
+181.734:D [HEAP] [0x20017ee0]=0x20001a9c out heap
+181.740:D [HEAP] [0x20017f44]=0x20001a9c out heap
+181.746:D [HEAP] [0x20017f64]=0x20001a9c out heap
+181.752:D [HEAP] [0x20017f68]=0x20001a9c out heap
+183.636:E [SPI] 1 RxTimeOut Cnt:169085 Byte:2
+184.495:E [SPI] 1 RxTimeOut Cnt:168896 Byte:258
+184.500:E [LoRa] OpCodeProckError 0x1e
+184.507:E [SX1262] OpCodeError: 0x1e readBuffer
+184.512:I [SX1262] DataReadErr
+184.706:D [HEAP] CountLinksForAddr: 0x20001a28
+184.712:D [HEAP] [0x20001a24]=0x20001a28 in heap
+184.734:D [HEAP] [0x20017ee0]=0x20001a28 out heap
+184.740:D [HEAP] [0x20017f44]=0x20001a28 out heap
+184.746:D [HEAP] [0x20017f64]=0x20001a28 out heap
+184.752:D [HEAP] [0x20017f68]=0x20001a28 out heap
+184.758:D [HEAP] CountLinksForAddr: 0x20001a36
+184.765:D [HEAP] [0x20001a32]=0x20001a36 in heap
+184.786:D [HEAP] [0x20017ee0]=0x20001a36 out heap
+184.792:D [HEAP] [0x20017f44]=0x20001a36 out heap
+184.798:D [HEAP] [0x20017f64]=0x20001a36 out heap
+184.805:D [HEAP] [0x20017f68]=0x20001a36 out heap
+184.811:D [HEAP] CountLinksForAddr: 0x20001a45
+184.817:D [HEAP] [0x20001a41]=0x20001a45 in heap
+
+
+ [HEAP] CountLinksForAddr: 0x20001a20
+7.372:D [HEAP] [0x20001a1c]=0x20001a20 in heap
+7.401:D [HEAP] [0x20017ee0]=0x20001a20 out heap
+7.407:D [HEAP] [0x20017f44]=0x20001a20 out heap
+7.413:D [HEAP] [0x20017f64]=0x20001a20 out heap
+7.418:D [HEAP] [0x20017f68]=0x20001a20 out heap
+
+
+rm 0x20001a1c
+
+
+ CountLinksForAddr: 0x20001a77
+37.724:D [HEAP] [0x20001a73]=0x20001a77 in heap
+37.753:D [HEAP] [0x20017ee0]=0x20001a77 out heap
+37.759:D [HEAP] [0x20017f44]=0x20001a77 out heap
+37.765:D [HEAP] [0x20017f64]=0x20001a77 out heap
+
+
+
+ountLinksForAddr: 0x20001a77
+10.387:D [HEAP] [0x20001a73]=0x20001a77 in heap
+10.416:D [HEAP] [0x20017ee0]=0x20001a77 out heap
+10.422:D [HEAP] [0x20017f44]=0x20001a77 out heap
+10.428:D [HEAP] [0x20017f64]=0x20001a77 out heap
+10.434:D [HEAP] [0x20017f68]=0x20001a77 out heap
+
+
+
+
+
+184.839:D [HEAP] [0x20017ee0]=0x20001a45 out heap
+184.845:D [HEAP] [0x20017f44]=0x20001a45 out heap
+184.851:D [HEAP] [0x20017f64]=0x20001a45 out heap
+184.857:D [HEAP] [0x20017f68]=0x20001a45 out heap
+184.863:D [HEAP] CountLinksForAddr: 0x20001a9c
+184.870:D [HEAP] [0x20001a98]=0x20001a9c in heap
+184.892:D [HEAP] [0x20017ee0]=0x20001a9c out heap
+184.898:D [HEAP] [0x20017f44]=0x20001a9c out heap
+184.904:D [HEAP] [0x20017f64]=0x20001a9c out heap
+184.910:D [HEAP] [0x20017f68]=0x20001a9c out heap
+186.262:E [SPI] 1 RxTimeOut Cnt:169042 Byte:3
+186.267:E [LoRa] OpCodeProckError 0x11
+186.274:E [SX1262] OpCodeError: 0x11 GetPacketType
+187.792:D [HEAP] CountLinksForAddr: 0x20001a28
+187.798:D [HEAP] [0x20001a24]=0x20001a28 in heap
+187.820:D [HEAP] [0x20017ee0]=0x20001a28 out heap
+187.826:D [HEAP] [0x20017f44]=0x20001a28 out heap
+187.832:D [HEAP] [0x20017f64]=0x20001a28 out heap
+187.838:D [HEAP] [0x20017f68]=0x20001a28 out heap
+187.844:D [HEAP] CountLinksForAddr: 0x20001a36
+187.851:D [HEAP] [0x20001a32]=0x20001a36 in heap
+187.872:D [HEAP] [0x20017ee0]=0x20001a36 out heap
+187.878:D [HEAP] [0x20017f44]=0x20001a36 out heap
+187.885:D [HEAP] [0x20017f64]=0x20001a36 out heap
+187.890:D [HEAP] [0x20017f68]=0x20001a36 out heap
+187.897:D [HEAP] CountLinksForAddr: 0x20001a45
+187.903:D [HEAP] [0x20001a41]=0x20001a45 in heap  rm 0x20001a41 0x20001a41
+
+8]=0x20001a9c out heap
+
+address: 0x20001a41
+451a0020
+
+
+187.925:D [HEAP] [0x20017ee0]=0x20001a45 out heap
+187.931:D [HEAP] [0x20017f44]=0x20001a45 out heap
+187.937:D [HEAP] [0x20017f64]=0x20001a45 out heap
+187.943:D [HEAP] [0x20017f68]=0x20001a45 out heap
+187.949:D [HEAP] CountLinksForAddr: 0x20001a9c
+187.956:D [HEAP] [0x20001a98]=0x20001a9c in heap
+187.978:D [HEAP] [0x20017ee0]=0x20001a9c out heap
+187.984:D [HEAP] [0x20017f44]=0x20001a9c out heap
+187.990:D [HEAP] [0x20017f64]=0x20001a9c out heap
+187.996:D [HEAP] [0x20017f68]=0x20001a9c out heap
+188.852:E [SPI] 1 RxTimeOut Cnt:169085 Byte:3
+188.857:E [LoRa] OpCodeProckError 0x15
+188.864:E [SX1262] OpCodeError: 0x15 GetRssiinst
+188.871:E [SPI] TxErr 2 Busy
+189.176:E [SPI] 1 RxTimeOut cnt:169068 Byte:7
+189.181:E [LoRa] OpCodeProckError 0x00
+189.188:E [SX1262] OpCodeError: 0x00 resetStats
+189.195:E [SPI] TxErr 2 Busy
+189.500:E [SPI] 1 RxTimeOut cnt:169069 Byte:1
+189.505:E [LoRa] OpCodeProckError 0x14
+189.512:E [SX1262] OpCodeError: 0x14 GetPacketStatus
+190
+
+
+
+
+
+142.590:D [HEAP] CountLinksForAddr: 0x20001a28
+142.597:D [HEAP] [0x20001a24]=0x20001a28 in heap
+142.626:D [HEAP] [0x20017ee0]=0x20001a28 out heap
+142.632:D [HEAP] [0x20017f44]=0x20001a28 out heap
+142.638:D [HEAP] [0x20017f64]=0x20001a28 out heap
+142.644:D [HEAP] [0x20017f68]=0x20001a28 out heap
+142.650:D [HEAP] CountLinksForAddr: 0x20001a35
+142.658:D [HEAP] [0x20001a31]=0x20001a35 in heap rm 0x20001a31
+142.687:D [HEAP] [0x20017ee0]=0x20001a35 out heap
+142.693:D [HEAP] [0x20017f44]=0x20001a35 out heap
+142.699:D [HEAP] [0x20017f64]=0x20001a35 out heap
+142.705:D [HEAP] [0x20017f68]=0x20001a35 out heap
+142.711:D [HEAP] CountLinksForAddr: 0x20001a44
+142.718:D [HEAP] [0x20001a40]=0x20001a44 in heap
+142.748:D [HEAP] [0x20017ee0]=0x20001a44 out heap
+142.754:D [HEAP] [0x20017f44]=0x20001a44 out heap
+142.760:D [HEAP] [0x20017f64]=0x20001a44 out heap
+142.766:D [HEAP] [0x20017f68]=0x20001a44 out heap
+
+

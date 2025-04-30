@@ -1,0 +1,5 @@
+
+config BSP_COMMON
+    bool "Enable use of the BSP common drivers"
+
+

@@ -1,0 +1,11 @@
+#ifdef HAS_AUDIO
+#include "audio.gvi"
+#endif
+
+#ifdef HAS_BOARD_INFO
+#include "board_info.gvi"
+#endif
+
+#ifdef HAS_SOFTWARE_TIMER
+#include "software_timer.gvi"
+#endif

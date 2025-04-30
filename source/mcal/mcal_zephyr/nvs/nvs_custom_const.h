@@ -1,0 +1,5 @@
+#ifndef ZEPHYR_NVS_CONST_H
+#define ZEPHYR_NVS_CONST_H
+
+
+#endif /* ZEPHYR_NVS_CONST_H */

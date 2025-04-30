@@ -1,0 +1,6 @@
+ 
+#ifdef HAS_MX25R6435F
+    MX25R6435F->NOR_FLASH_OFF_CHIP
+#endif
+
+ 

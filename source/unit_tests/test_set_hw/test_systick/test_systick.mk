@@ -1,0 +1,9 @@
+    
+    TEST_SYSTICK_DIR = $(TEST_SET_HW_DIR)/test_systick
+#@echo $(error TEST_SYSTICK_DIR=$(TEST_SYSTICK_DIR))
+INCDIR += -I$(TEST_SYSTICK_DIR)
+
+OPT += -DHAS_TEST_SYSTICK
+
+SOURCES_C += $(TEST_SYSTICK_DIR)/test_systick.c
+

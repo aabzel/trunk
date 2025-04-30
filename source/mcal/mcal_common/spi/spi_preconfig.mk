@@ -1,0 +1,10 @@
+$(info SPI_PRECONFIG_INC=$(SPI_PRECONFIG_INC) )
+
+ifneq ($(SPI_PRECONFIG_INC),Y)
+    SPI_PRECONFIG_INC=Y
+
+    SPI=Y
+    GPIO=Y
+    TIME=Y
+
+endif

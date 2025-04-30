@@ -1,0 +1,13 @@
+
+#ifndef VOLTAGE_DIVIDER_DEP_H
+#define VOLTAGE_DIVIDER_DEP_H
+
+#ifndef HAS_VOLTAGE_DIVIDER
+#define "+HAS_VOLTAGE_DIVIDER"
+#endif
+
+#ifndef HAS_COMPUTING
+#define "+HAS_COMPUTING"
+#endif
+
+#endif /* VOLTAGE_DIVIDER_DEP_H */

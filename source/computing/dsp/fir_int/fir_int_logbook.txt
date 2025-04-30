@@ -1,0 +1,22 @@
+ll fir debug
+firp 1 1
+fird 1
+fird 1
+firp 1 0
+fird 1
+
+
+Calc Freq Resp
+ffr 1 500
+
+
+
+fir_performance.112
+
+Test perfom
+tsr 112
+
+
+fird 1;fii 1
+fii 1;fird 1
+

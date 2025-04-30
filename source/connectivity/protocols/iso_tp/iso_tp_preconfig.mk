@@ -1,0 +1,6 @@
+ifneq ($(ISO_TP_PRECONFIG_MK),Y)
+    ISO_TP_PRECONFIG_MK=Y
+    ISO_TP=Y
+    PROTOCOLS=Y
+    CONNECTIVITY=Y
+endif

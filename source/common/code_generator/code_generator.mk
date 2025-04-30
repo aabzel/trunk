@@ -1,0 +1,12 @@
+$(info CODE_GENERATOR_MK_INC=$(CODE_GENERATOR_MK_INC))
+ifneq ($(CODE_GENERATOR_MK_INC),Y)
+    CODE_GENERATOR_MK_INC=Y
+    $(info + App)
+    MCAL_CODE_GENERATOR_DIR=$(COMMON_DIR)/code_generator
+    #@echo $(error COMMON_DIR=$(COMMON_DIR))
+    #@echo $(error CFLAGS=$(CFLAGS))
+    OPT += -DHAS_CODE_GENERATOR
+    INCDIR += -I$(MCAL_CODE_GENERATOR_DIR)
+
+
+endif

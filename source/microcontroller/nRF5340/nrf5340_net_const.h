@@ -1,0 +1,24 @@
+
+#ifndef NRF5340_NET_CONST_H
+#define NRF5340_NET_CONST_H
+
+
+#ifndef HAS_MICROCONTROLLER
+#error "+HAS_MICROCONTROLLER"
+#endif /*HAS_MICROCONTROLLER*/
+
+#define RAM_START 0x21000000
+#define RAM_SIZE (64 * K_BYTES)
+
+#define ROM_START 0x01000000
+#define NOR_FLASH_BASE 0x01000000
+
+#define I2C_COUNT 1
+#define SPI_COUNT 1
+#define SPIM_COUNT 1
+#define SPIS_COUNT 1
+#define TIMER_COUNT 3
+#define UART_COUNT 1
+
+
+#endif /* NRF5340_NET_CONST_H */
