@@ -16,5 +16,6 @@ const char* GpioPort2Str(uint8_t port_num);
 //const char* GpioDir2Str(uint8_t code);
 //const char* GpioAlterFun2Str(uint8_t code);
 Port_t PortLetter2PortNum(char port);
+bool gpio_diag_ll(void);
 
 #endif /* GPIO_MIK32_DIAG_H  */

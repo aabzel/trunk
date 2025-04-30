@@ -111,18 +111,25 @@ const char* GpioMik32Pull2Str(HAL_GPIO_PullTypeDef code) {
 Port_t PortLetter2PortNum(char port) {
     Port_t port_num = PORT_UNDEF;
     switch(port) {
-    case '0':
-        port_num = PORT_0;
-        break;
-    case '1':
-        port_num = PORT_1;
-        break;
-    case '2':
-        port_num = PORT_2;
-        break;
-    default:
-        port_num = PORT_UNDEF;
-        break;
+      case '0':  port_num = PORT_0; break;
+      case '1':  port_num = PORT_1; break;
+      case '2':  port_num = PORT_2; break;
+      default:   port_num = PORT_UNDEF;  break;
     }
     return port_num;
+}
+
+bool gpio_diag_ll(void) {
+    bool res = false;
+#if 0
+    char debug_text[200] = {0};
+    snprintf(debug_text,sizeof(debug_text),"%s,P0_PAD_CFG:0x%x",debug_text, PAD_CONFIG->PORT_0_CFG);
+    snprintf(debug_text,sizeof(debug_text),"%s,P0_PAD_PUL:0x%x",debug_text, PAD_CONFIG->PORT_0_PUPD);
+    snprintf(debug_text,sizeof(debug_text),"%s,P0_DIR_OUT:0x%x",debug_text, GPIO_0->DIRECTION_OUT);
+    snprintf(debug_text,sizeof(debug_text),"%s,P0_DIR_IN:0x%x",debug_text, GPIO_0->DIRECTION_IN);
+    snprintf(debug_text,sizeof(debug_text),"%s%s",debug_text, CRLF);
+    UartHandle_t* Node = UartGetNode(0);
+    res = uart_send_wait_ll(Node, (uint8_t*) debug_text, strlen(debug_text));
+#endif
+    return res;
 }

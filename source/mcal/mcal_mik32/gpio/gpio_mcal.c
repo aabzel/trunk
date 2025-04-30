@@ -1,13 +1,7 @@
 #include "gpio_mcal.h"
 
-//#include <stddef.h>
-//#include <stdio.h>
-//#include <string.h>
 
 #include "microcontroller.h"
-//#include "bit_utils.h"
-//#include "board_config.h"
-//#include "data_utils.h"
 #include "gpio_custom_drv.h"
 #include "hal_mcal.h"
 #include "mik32_hal_gpio.h"
@@ -34,7 +28,7 @@ GPIO_PinState GpioLevelToMik32Level(GpioLogicLevel_t level) {
     return pin_state;
 }
 
-//#include "mik32_hal.h"
+#ifdef HAS_GPIO_EXT
 GpioApiMode_t GpioMik32ModeToMode(HAL_GPIO_ModeTypeDef mik_mode) {
     GpioApiMode_t mode = GPIO_API_MODE_INPUT;
     switch(mik_mode) {
@@ -58,7 +52,9 @@ GpioApiMode_t GpioMik32ModeToMode(HAL_GPIO_ModeTypeDef mik_mode) {
     }
     return mode;
 }
+#endif
 
+#ifdef HAS_GPIO_EXT
 GpioPullMode_t GpioMik32Pull2GeneralPull(HAL_GPIO_PullTypeDef mik32_pull) {
     GpioPullMode_t general_pull_code = GPIO__PULL_UNDEF;
     switch((uint32_t)mik32_pull) {
@@ -79,7 +75,9 @@ GpioPullMode_t GpioMik32Pull2GeneralPull(HAL_GPIO_PullTypeDef mik32_pull) {
     }
     return general_pull_code;
 }
+#endif
 
+#ifdef HAS_GPIO_EXT
 GpioLogicLevel_t GpioMik32LevelToLevel(GPIO_PinState pin_state) {
     GpioLogicLevel_t level = GPIO_LVL_UNDEF;
     switch((uint32_t)pin_state) {
@@ -94,6 +92,9 @@ GpioLogicLevel_t GpioMik32LevelToLevel(GPIO_PinState pin_state) {
     }
     return level;
 }
+#endif
+
+#ifdef HAS_GPIO_EXT
 
 GpioDir_t GpioMik32DirToDir(HAL_GPIO_ModeTypeDef mode) {
     GpioDir_t direction = GPIO_DIR_UNDEF;
@@ -114,6 +115,7 @@ GpioDir_t GpioMik32DirToDir(HAL_GPIO_ModeTypeDef mode) {
     }
     return direction;
 }
+#endif
 
 HAL_GPIO_ModeTypeDef GpioModeToMik32Mode(GpioApiMode_t mode) {
     HAL_GPIO_ModeTypeDef mik_mode = HAL_GPIO_MODE_GPIO_INPUT;
@@ -305,6 +307,7 @@ GpioDir_t gpio_dir_get(uint8_t pad_num) {
 }
 #endif
 
+#ifdef HAS_GPIO_EXT
 GpioSpeed_t GpioMik32SpeedToSpeed(GpioMik32Speed_t mik_speed) {
     GpioSpeed_t speed = GPIO_SPEED_UNDEF;
     switch(mik_speed) {
@@ -325,6 +328,7 @@ GpioSpeed_t GpioMik32SpeedToSpeed(GpioMik32Speed_t mik_speed) {
     }
     return speed;
 }
+#endif
 
 #ifdef HAS_GPIO_EXT
 bool gpio_get_state(uint8_t pad_num, GpioLogicLevel_t* logic_level) {
@@ -429,10 +433,6 @@ GpioPullMode_t gpio_pull_get(uint8_t pad_num) {
 #endif
 
 #ifdef HAS_GPIO_EXT
-
-#endif
-
-#ifdef HAS_GPIO_EXT
 bool ext_int_set_mask(uint32_t mask) {
     bool res = true;
     return res;
@@ -447,20 +447,6 @@ bool ext_int_reset_mask(uint32_t mask) {
 }
 #endif
 
-#if 0
-bool gpio_toggle(uint8_t pad_num) {
-    bool res = false;
-
-    return res;
-}
-#endif
-
-#if 0
-bool gpio_dir_set(uint8_t pad_num, GpioDir_t dir) {
-    bool res = false;
-    return res;
-}
-#endif
 
 #ifdef HAS_GPIO_EXT
 bool gpio_is_valid_pad(uint8_t pad_num) {
@@ -537,6 +523,10 @@ static bool gpio_port0_pin_mux_get(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t* 
 
 static bool gpio_port0_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t mux) {
     bool res = false;
+    uint32_t mask_mux = mux;
+    PinMux->PAD0_CFG.dword &= ~(0x3<<pin);
+    PinMux->PAD0_CFG.dword |= (mask_mux)<<pin;
+#if 0
     switch(pin) {
     case 0:
         PinMux->PAD0_CFG.pin_mux_0 = mux;
@@ -589,11 +579,16 @@ static bool gpio_port0_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t m
     default:
         break;
     }
+#endif
     return res;
 }
 
 static bool gpio_port1_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t mux) {
     bool res = false;
+    uint32_t mask_mux = mux;
+    PinMux->PAD1_CFG.dword &= ~(0x00000003<<pin);
+    PinMux->PAD1_CFG.dword |= (mask_mux)<<pin;
+#if 0
     switch(pin) {
     case 0:
         PinMux->PAD1_CFG.pin_mux_0 = mux;
@@ -646,11 +641,17 @@ static bool gpio_port1_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t m
     default:
         break;
     }
+#endif
     return res;
 }
 
 static bool gpio_port2_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t mux) {
     bool res = false;
+
+    uint32_t mask_mux = mux;
+    PinMux->PAD2_CFG.dword &= ~(0x00000003<<pin);
+    PinMux->PAD2_CFG.dword |= (mask_mux)<<pin;
+#if 0
     switch(pin) {
     case 0:
         PinMux->PAD2_CFG.pin_mux_0 = mux;
@@ -703,6 +704,7 @@ static bool gpio_port2_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t m
     default:
         break;
     }
+#endif
     return res;
 }
 
@@ -736,6 +738,12 @@ bool gpio_pin_mux_set(Port_t port, uint8_t pin, uint8_t mux) {
 
 static bool gpio_port0_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO_PullTypeDef pull_code) {
     bool res = true;
+
+    uint32_t mask_pull = pull_code;
+    PinMux->PAD0_PUPD.dword &= ~(0x00000003<<pin);
+    PinMux->PAD0_PUPD.dword |= mask_pull<<pin;
+
+#if 0
     switch(pin) {
     case 0:
         PinMux->PAD0_PUPD.pin_0 = pull_code;
@@ -788,11 +796,17 @@ static bool gpio_port0_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO
     default:
         break;
     }
+#endif
     return res;
 }
 
 static bool gpio_port1_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO_PullTypeDef pull_code) {
     bool res = true;
+
+    uint32_t mask_pull = pull_code;
+    PinMux->PAD1_PUPD.dword &= ~(0x00000003<<pin);
+    PinMux->PAD1_PUPD.dword |= mask_pull<<pin;
+#if 0
     switch(pin) {
     case 0:
         PinMux->PAD1_PUPD.pin_0 = pull_code;
@@ -845,11 +859,18 @@ static bool gpio_port1_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO
     default:
         break;
     }
+#endif
     return res;
 }
 
 static bool gpio_port2_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO_PullTypeDef pull_code) {
     bool res = true;
+
+
+    uint32_t mask_pull = pull_code;
+    PinMux->PAD2_PUPD.dword &= ~(0x00000003<<pin);
+    PinMux->PAD2_PUPD.dword |= mask_pull<<pin;
+#if 0
     switch(pin) {
     case 0:
         PinMux->PAD2_PUPD.pin_0 = pull_code;
@@ -902,6 +923,7 @@ static bool gpio_port2_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO
     default:
         break;
     }
+#endif
     return res;
 }
 
@@ -946,20 +968,11 @@ bool gpio_pin_mux_get(uint8_t port, uint8_t pin, uint8_t* const mux) {
 #ifdef HAS_GPIO_EXT
 bool gpio_proc(void) {
     bool res = false;
-#if 0
-    char debug_text[200] = {0};
-    snprintf(debug_text,sizeof(debug_text),"%s,P0_PAD_CFG:0x%x",debug_text, PAD_CONFIG->PORT_0_CFG);
-    snprintf(debug_text,sizeof(debug_text),"%s,P0_PAD_PUL:0x%x",debug_text, PAD_CONFIG->PORT_0_PUPD);
-    snprintf(debug_text,sizeof(debug_text),"%s,P0_DIR_OUT:0x%x",debug_text, GPIO_0->DIRECTION_OUT);
-    snprintf(debug_text,sizeof(debug_text),"%s,P0_DIR_IN:0x%x",debug_text, GPIO_0->DIRECTION_IN);
-    snprintf(debug_text,sizeof(debug_text),"%s%s",debug_text,CRLF);
-    UartHandle_t* Node = UartGetNode(0);
-    res = uart_send_wait_ll(Node, (uint8_t*) debug_text, strlen(debug_text));
-#endif
     return res;
 }
 #endif
 
+#ifdef HAS_GPIO_EXT
 bool gpio_toggle(const Pad_t Pad) {
     bool res = false;
     GpioInfo_t* Info = GpioGetInfo(Pad.port);
@@ -970,6 +983,7 @@ bool gpio_toggle(const Pad_t Pad) {
     }
     return res;
 }
+#endif
 
 bool gpio_init_one(const GpioConfig_t* const Config) {
     bool res = false;

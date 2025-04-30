@@ -1,10 +1,17 @@
 #include "board_api.h"
 
-#include "spifi_mcal.h"
-#include "w25q32jv_drv.h"
-#include "spifi_custom_drv.h"
 #include "rv32imc_driver.h"
 #include "tbfp.h"
+#include "time_mcal.h"
+
+#ifdef HAS_SPIFI
+#include "spifi_mcal.h"
+#include "spifi_custom_drv.h"
+#endif
+
+#ifdef HAS_W25Q32JV
+#include "w25q32jv_drv.h"
+#endif
 
 #ifdef HAS_LOG
 #include "log.h"
@@ -24,7 +31,8 @@ bool board_init(void) {
   Init XIP -  execute-in-place
  */
 bool board_init_xip(void) {
-    bool res = true;
+    bool res = false;
+#ifdef HAS_SPIFI
     const SpiFiConfig_t *Config = SpiFiGetConfig(0);
     if (Config) {
         SpiFiInfo_t *Info = SpiFiGetInfo(0);
@@ -57,6 +65,7 @@ bool board_init_xip(void) {
             }
         }
     }
+#endif
 
     return res;
 }
@@ -76,9 +85,9 @@ bool board_proc(void) {
     if (Tbfp) {
 #ifdef HAS_TIME
        uint32_t up_time_ms = time_get_ms32();
-       uint32_t diff_ms = up_time_ms - Node->rx_time_stamp_ms;
+       uint32_t diff_ms = up_time_ms - Tbfp->rx_time_stamp_ms;
        if(BOARD_IDLE_TIME_OUT_MS < diff_ms) {
-           Node->rx_time_stamp_ms = time_get_ms32();
+    	   Tbfp->rx_time_stamp_ms = time_get_ms32();
            res = application_launch( );
        }
 #else

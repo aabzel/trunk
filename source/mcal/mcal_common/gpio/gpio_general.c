@@ -133,17 +133,6 @@ const char* GpioGetCon2(uint8_t pad) {
 }
 #endif
 
-#if 0
-Port_t PortLetter2PortNum(char port) {
-    Port_t port_num = PORT_UNDEF;
-    switch(port) {
-    case '0': port_num = 0;break;
-    case '1': port_num = 1;break;
-    case '2': port_num = 2;break;
-    }
-    return port_num;
-}
-#endif
 
 #ifdef HAS_GPIO_EXT
 uint8_t gpio_port_pin2pad(Port_t port, uint8_t pin) {

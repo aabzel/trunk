@@ -5,7 +5,10 @@
 
 #include "sys_config.h"
 
+#define BOARD_IDLE_TIME_OUT_MS 30000
 #define BOARD_IDLE_TIME_OUT_ITER 400000
+
+#define BOARD_POLL_PERIOD_US 10000000
 
 bool board_init_xip(void);
 bool board_init(void);

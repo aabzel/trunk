@@ -29,7 +29,6 @@
 #include "w25q32jv_registers_types.h"
 #endif
 
-#ifdef HAS_SPIFI_EXT
 
 HAL_SPIFI_CacheEnableTypeDef SpiFiCacheCtrlToCacheEnable(bool cache_on_off) {
     HAL_SPIFI_CacheEnableTypeDef cache_enable = GPIO_PIN_LOW;
@@ -45,7 +44,7 @@ HAL_SPIFI_CacheEnableTypeDef SpiFiCacheCtrlToCacheEnable(bool cache_on_off) {
     }
     return cache_enable;
 }
-#endif
+
 
 static const SpiFiInfo_t SpiFiInfo[] = {
     {

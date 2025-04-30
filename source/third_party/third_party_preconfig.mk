@@ -26,7 +26,7 @@ ifneq ($(THIRD_PARTY_PRECONFIG_INC),Y)
         #@echo $(error EHAL_AT32F413=$(EHAL_AT32F413))
         include $(THIRD_PARTY_DIR)/EHAL_AT32F413x/EHAL_AT32F413_preconfig.mk
     endif
-    
+
     ifeq ($(EHAL_AT32F43X),Y)
         #@echo $(error EHAL_AT32F43X=$(EHAL_AT32F43X))
         include $(THIRD_PARTY_DIR)/EHAL_AT32F43X/EHAL_AT32F43X_preconfig.mk
@@ -36,7 +36,7 @@ ifneq ($(THIRD_PARTY_PRECONFIG_INC),Y)
         #@echo $(error EHAL_YTM32B1MX=$(EHAL_YTM32B1MX))
         include $(THIRD_PARTY_DIR)/EHAL_YTM32B1Mx/EHAL_YTM32B1M_preconfig.mk
     endif
-    
+
     ifeq ($(FAT_FS),Y)
         #@echo $(error FAT_FS=$(FAT_FS))
         include $(THIRD_PARTY_DIR)/fat_fs/fat_fs_preconfig.mk
@@ -46,11 +46,4 @@ ifneq ($(THIRD_PARTY_PRECONFIG_INC),Y)
         #@echo $(error FREE_RTOS=$(FREE_RTOS))
         include $(THIRD_PARTY_DIR)/FreeRTOS/free_rtos_preconfig.mk
     endif
-
-
-    ifeq ($(SENSITIVITY),Y)
-        #@echo $(error SENSITIVITY=$(SENSITIVITY))
-        include $(THIRD_PARTY_DIR)/sensitivity/sensitivity_preconfig.mk
-    endif
-
 endif

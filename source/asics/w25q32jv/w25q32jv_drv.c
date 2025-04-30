@@ -2,13 +2,14 @@
 
 #include <string.h>
 
-#ifdef HAS_LOG
-#include "log.h"
-#endif
 #include "code_generator.h"
 #include "hal_mcal.h"
 #include "mik32_hal_spifi.h"
 #include "spifi_mcal.h"
+#ifdef HAS_LOG
+#include "log.h"
+#endif
+
 #ifdef HAS_LED
 #include "led_drv.h"
 #endif

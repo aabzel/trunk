@@ -77,10 +77,6 @@ ifneq ($(THIRD_PARTY_MK_INC),Y)
         include $(THIRD_PARTY_DIR)/computing/computing.mk
     endif
     
-    ifeq ($(THIRD_PARTY_SENSITIVITY),Y)
-        #@echo $(error THIRD_PARTY_SENSITIVITY=$(THIRD_PARTY_SENSITIVITY))
-        include $(THIRD_PARTY_DIR)/sensitivity/sensitivity.mk
-    endif
     
     ifeq ($(THIRD_PARTY_STORAGE),Y)
         #@echo $(error THIRD_PARTY_STORAGE=$(THIRD_PARTY_STORAGE))

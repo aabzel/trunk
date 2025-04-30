@@ -18,7 +18,6 @@ __attribute__((weak)) void HAL_SPIFI_MspInit(void)
 }
 #endif
 
-#ifdef HAS_SPIFI_EXT
 
 void HAL_SPIFI_MemoryMode_Init(SPIFI_MemoryModeConfig_HandleTypeDef *spifi)
 {
@@ -41,7 +40,6 @@ void HAL_SPIFI_MemoryMode_Init(SPIFI_MemoryModeConfig_HandleTypeDef *spifi)
                              (spifi->Command.FrameForm << SPIFI_CONFIG_MCMD_FRAMEFORM_S) |
                              (spifi->Command.OpCode << SPIFI_CONFIG_MCMD_OPCODE_S));
 }
-#endif
 
 #ifdef HAS_SPIFI_EXT
 
