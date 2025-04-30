@@ -48,7 +48,7 @@
 #endif /*HAS_SW_DAC*/
 
 #ifdef HAS_MICROCONTROLLER
-#include "board_config.h"
+#include "board_api.h"
 
 #ifdef HAS_LOG
 #define BOARD_INIT_NAME .name = "Board",
@@ -184,10 +184,13 @@
 #define BOOTLOADER_INIT_NAME
 #endif
 
-#define BOOTLOADER_INIT  {.init_function = bootloader_init,BOOTLOADER_INIT_NAME},
+#define BOOTLOADER_INIT  {.init_function = bootloader_init, BOOTLOADER_INIT_NAME},
 #else
 #define BOOTLOADER_INIT
 #endif
+
+
+
 
 #ifdef USE_HAL_DRIVER
 #include "hal_mcal.h"
@@ -222,6 +225,8 @@
 
 #include "sw_init.h"
 
+#define APPLICATION_INIT {.init_function = application_mcal_init,  },
+
 #define PRE_INIT                                                                \
     SOFTWARE_TIMER_INIT                                                         \
     SW_DAC_INIT
@@ -253,6 +258,7 @@
     BOARD_INIT                                                                 \
     THIRD_PARTY_INIT                                                           \
     GAMES_INIT                                                                 \
-    BOOTLOADER_INIT
+    BOOTLOADER_INIT                                                            \
+    APPLICATION_INIT
 
 #endif /* SYSTEM_INIT_H  */

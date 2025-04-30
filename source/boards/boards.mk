@@ -6,10 +6,15 @@ ifneq ($(BOARDS_MK_INC),Y)
 
     BOARD_DIR = $(WORKSPACE_LOC)/boards
     #@echo $(error WORKSPACE_LOC=$(WORKSPACE_LOC))
-    #@echo $(error BOARD_DIR=$(BOARD_DIR))
 
     OPT += -DHAS_BOARD
+
     INCDIR += -I$(BOARD_DIR)
+
+    ifeq ($(BOARD_PROC),Y)
+        # $(error BOARD_DIR=$(BOARD_DIR))
+        OPT += -DHAS_BOARD_PROC
+    endif
 
     #include $(BOARD_DIR)/sw_config/sw_config.mk
 

@@ -63,10 +63,26 @@
 #endif /**/
 
 
+#ifdef HAS_BOARD_PROC
+#include "board_api.h"
+
+#ifdef HAS_LOG
+#define BOARD_TASK_NAME .name = "Board",
+#else
+#define BOARD_TASK_NAME
+#endif
+
+#define BOARD_TASK { .period_us = BOARD_POLL_PERIOD_US, .limiter.function = board_proc, BOARD_TASK_NAME},
+#else
+#define BOARD_TASK
+#endif /**/
+
+
 #define CONTROL_TASKS       \
     BOOT_TASK               \
     DISPLAY_TASK            \
     GPIO_PWM_TASK           \
+    BOARD_TASK              \
     HW_DAC_TASK             \
     PID_TASK                \
     LEDS_TASKS              \

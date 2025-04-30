@@ -10,6 +10,11 @@ extern "C" {
 #error "+HAS_SPIFI"
 #endif
 
+#include <stdbool.h>
+
+#include "mik32_hal_spifi.h"
+
+HAL_SPIFI_CacheEnableTypeDef SpiFiCacheCtrlToCacheEnable(bool cache_on_off) ;
 
 #ifdef __cplusplus
 }

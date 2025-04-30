@@ -6,7 +6,7 @@
 
 #include "microcontroller.h"
 //#include "bit_utils.h"
-#include "board_config.h"
+//#include "board_config.h"
 //#include "data_utils.h"
 #include "gpio_custom_drv.h"
 #include "hal_mcal.h"

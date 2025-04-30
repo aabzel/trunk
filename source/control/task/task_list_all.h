@@ -88,7 +88,7 @@
 #define THIRD_PARTY_TASKS
 #endif
 
-#define TASK_CORE      \
+#define TASK_CORE                \
     TASK_WATCHDOG
 
 #define TASKS_BASE_TASKS         \

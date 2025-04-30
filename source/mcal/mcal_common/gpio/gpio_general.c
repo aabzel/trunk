@@ -30,7 +30,7 @@
 #include "none_blocking_pause.h"
 #endif /*HAS_SUPER_CYCLE*/
 
-#include "board_config.h"
+//#include "board_config.h"
 //#include "data_utils.h"
 
 #ifdef HAS_DEBUGGER

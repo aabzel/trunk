@@ -5,15 +5,17 @@
 #ifdef HAS_LOG
 #include "log.h"
 #endif
+#include "code_generator.h"
+#include "hal_mcal.h"
+#include "mik32_hal_spifi.h"
+#include "spifi_mcal.h"
+#ifdef HAS_LED
+#include "led_drv.h"
+#endif
 
 #ifdef HAS_TIME
 #include "time_mcal.h"
 #endif
-#include "code_generator.h"
-#include "hal_mcal.h"
-#include "led_drv.h"
-#include "mik32_hal_spifi.h"
-#include "spifi_mcal.h"
 
 const W25q32jvOpCodes_t w25q32jv_reg_num_to_op_code(const W25q32jvRegisterIndex_t reg_num) {
     W25q32jvOpCodes_t op_code = W25Q32JV_OPCODE_UNDEF;
@@ -36,8 +38,42 @@ const W25q32jvOpCodes_t w25q32jv_reg_num_to_op_code(const W25q32jvRegisterIndex_
 
 COMPONENT_GET_NODE(W25q32jv, w25q32jv)
 COMPONENT_GET_CONFIG(W25q32jv, w25q32jv)
-COMPONENT_INIT_PATTERT(W25Q32JV, W25Q32JV, w25q32jv)
-COMPONENT_PROC_PATTERT(W25Q32JV, W25Q32JV, w25q32jv)
+
+
+bool w25q32jv_write_reg2(const uint8_t num, const uint8_t reg_val){
+    bool res = false;
+    res = w25q32jv_write_enable(num);
+    W25q32jvHandle_t* Node = W25q32jvGetNode(num);
+    if(Node) {
+        SpiFiHandle_t* SpiFi = SpiFiGetNode(Node->spifi_num);
+        if(SpiFi) {
+            SpiFiRegCmd_t WrReg2Cmd = {0};
+            WrReg2Cmd.opcode = W25Q32JV_WRITE_SREG2;
+            WrReg2Cmd.intlen = 0;
+            WrReg2Cmd.dout = SPIFI_CMD_DOUT_FLASH_WRITE;
+            WrReg2Cmd.fieldform = SPIFI_CMD_FIELDFORM_ALL_SERIAL;
+            WrReg2Cmd.datalen = 1;
+            WrReg2Cmd.poll = SPIFI_CMD_POLL_NO;
+            WrReg2Cmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_NOADDR;
+
+            HAL_StatusTypeDef ret = HAL_ERROR;
+            ret = HAL_SPIFI_SendCommand_LL(
+                    &SpiFi->Handle, /* spifi */
+                    WrReg2Cmd.dword, /* cmd */
+                    0, /* address */
+                    1, /* bufferSize */
+                    0, /* readBuffer */
+                    &reg_val, /* writeBuffer */
+                    0, /* interimData */
+                    HAL_SPIFI_TIMEOUT/* timeout */
+            );
+
+            res = MIK32_HalRetToRes(ret);
+            res = w25q32jv_wait_busy(num, W25Q32JV_PROGRAM_BUSY_TIMEOUT) && res;
+        }
+    }
+    return res;
+}
 
 /*
   Read Data (03h)
@@ -55,10 +91,10 @@ bool w25q32jv_read_data(uint8_t num, const uint32_t address, uint8_t* const data
     if(size) {
         W25q32jvHandle_t* Node = W25q32jvGetNode(num);
         if(Node) {
-        	// run
+            // run
             SpiFiHandle_t* SpiFi = SpiFiGetNode(Node->spifi_num);
             if(SpiFi) {
-            	//run
+                //run
                 SpiFiRegCmd_t RegCmd = {0};
                 RegCmd.opcode = W25Q32JV_READ_DATA;
                 RegCmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_3ADDR;
@@ -241,13 +277,13 @@ bool w25q32jv_prog_page(uint8_t num, const uint32_t address, const uint8_t* cons
 
                     HAL_StatusTypeDef ret = HAL_ERROR;
                     ret = HAL_SPIFI_SendCommand_LL(
-                    		&SpiFi->Handle,
-                    		RegCmd.dword,
-							address,
-                    		size, 0,
-                    		(uint8_t *) data,
+                            &SpiFi->Handle,
+                            RegCmd.dword,
+                            address,
+                            size, 0,
+                            (uint8_t *) data,
                             SPIFI_INTERIM_DATA,
-						   HAL_SPIFI_TIMEOUT);
+                            HAL_SPIFI_TIMEOUT);
                     res = MIK32_HalRetToRes(ret);
                     res = w25q32jv_wait_busy(num, W25Q32JV_PROGRAM_BUSY_TIMEOUT) && res;
                 }
@@ -305,3 +341,6 @@ bool w25q32jv_proc_one(uint8_t num) {
 #endif
     return res;
 }
+
+COMPONENT_INIT_PATTERT(W25Q32JV, W25Q32JV, w25q32jv)
+COMPONENT_PROC_PATTERT(W25Q32JV, W25Q32JV, w25q32jv)

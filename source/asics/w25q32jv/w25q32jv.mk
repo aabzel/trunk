@@ -12,9 +12,7 @@ ifneq ($(W25Q32JV_MK_INC),Y)
     OPT += -DHAS_NOR_FLASH
     OPT += -DHAS_W25Q32JV_INIT
 
-    ifeq ($(W25Q32JV_CORE),Y)
-        SOURCES_C += $(W25Q32JV_DIR)/w25q32jv_drv.c
-    endif
+    SOURCES_C += $(W25Q32JV_DIR)/w25q32jv_drv.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(W25Q32JV_DIAG),Y)

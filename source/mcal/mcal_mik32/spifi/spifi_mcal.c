@@ -3,8 +3,11 @@
 #include <stddef.h>
 
 #include "interrupt_mcal.h"
-#include "led_drv.h"
 #include "mik32_hal_spifi.h"
+
+#ifdef HAS_LED
+#include "led_drv.h"
+#endif
 
 #ifdef HAS_TIME
 #include "time_mcal.h"
@@ -18,6 +21,8 @@
 #include "data_utils.h"
 #endif
 
+#include "spifi_custom_drv.h"
+
 #ifdef HAS_W25Q32JV
 #include "mik32_hal_spifi_w25.h"
 #include "w25q32jv_const.h"
@@ -26,7 +31,7 @@
 
 #ifdef HAS_SPIFI_EXT
 
-static HAL_SPIFI_CacheEnableTypeDef SpiFiCacheCtrlToCacheEnable(bool cache_on_off) {
+HAL_SPIFI_CacheEnableTypeDef SpiFiCacheCtrlToCacheEnable(bool cache_on_off) {
     HAL_SPIFI_CacheEnableTypeDef cache_enable = GPIO_PIN_LOW;
     switch((uint8_t)cache_on_off) {
     case false:
@@ -329,7 +334,6 @@ bool spifi_init_one(uint8_t num) {
     const SpiFiConfig_t* Config = SpiFiGetConfig(num);
     if(Config) {
     	res = true;
-    	// no rin
 #ifdef HAS_SPIFI_EXT
         res = SpiFiIsValidConfig(Config);
 #endif
@@ -345,37 +349,6 @@ bool spifi_init_one(uint8_t num) {
                     // HAL_SPIFI_MspInit();
                     HAL_SPIFI_Reset(&Node->Handle);
 
-#ifdef HAS_SPIFI_EXT
-                    W25q32jvRegStatus_t RegStatus1;
-                    RegStatus1.byte = HAL_SPIFI_W25_ReadSREG(&Node->Handle, W25_SREG1);
-
-                    W25q32jvRegStatus2_t RegStatus2 = {0};
-                    RegStatus2.byte = HAL_SPIFI_W25_ReadSREG(&Node->Handle, W25_SREG2);
-
-                    RegStatus2.qe = W25_STAUS_2_QUAD_ENABLE;
-                    HAL_StatusTypeDef ret = HAL_ERROR;
-                    ret = HAL_SPIFI_W25_WriteSREG(&Node->Handle, RegStatus1.byte, RegStatus2.byte);
-                    if(HAL_OK == ret) {
-                        /* see Figure 24. Fast Read Quad I/O Instruction (M7-M0 should be set to Fxh)*/
-                        SPIFI_MemoryCommandTypeDef CmdFastReadQuad = {0};
-                        CmdFastReadQuad.OpCode = W25Q32JV_FAST_READ_QUAD_IO; /* Fast Read Quad I/O (EBh) */
-                        CmdFastReadQuad.FieldForm = SPIFI_CONFIG_CMD_FIELDFORM_OPCODE_SERIAL;
-                        CmdFastReadQuad.FrameForm = SPIFI_CONFIG_CMD_FRAMEFORM_OPCODE_3ADDR;
-                        CmdFastReadQuad.InterimData = 0;
-                        CmdFastReadQuad.InterimLength = 3;
-
-#ifndef HAS_BOOTLOADER
-                        SPIFI_MemoryModeConfig_HandleTypeDef SpiFiMem = {0};
-                        SpiFiMem.Instance = Info->SPIFIx;
-                        SpiFiMem.CacheEnable = SpiFiCacheCtrlToCacheEnable(Config->cache_on_off);
-                        SpiFiMem.CacheLimit = Config->cache_limit;
-                        SpiFiMem.Command = CmdFastReadQuad;
-                        HAL_SPIFI_MemoryMode_Init(&SpiFiMem);
-#endif
-
-                        res = true;
-                    }
-#endif
                 } else {
 #ifdef HAS_LOG
                     LOG_ERROR(SPIFI, "%u NodeErr", num);

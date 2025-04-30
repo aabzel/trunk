@@ -1187,10 +1187,12 @@ bool tbfp_proc_one(uint32_t num) {
            res = tbfp_parser_reset_rx(Node, Node->rx_state);
        }
 #else
-       uint32_t up_time_iteration = Node->iteration;
-       uint32_t diff_iteration = up_time_iteration - Node->rx_time_stamp_iteration;
+       uint32_t up_time_iteration = Node->iteration ;
+       uint32_t diff_iteration = 0;
+
+       diff_iteration = up_time_iteration - Node->rx_time_stamp_iteration;
        if(TBFP_RX_TIME_OUT_ITER < diff_iteration) {
-           Node->rx_time_stamp_iteration = Node->iteration;
+         //  Node->rx_time_stamp_iteration = Node->iteration;
            res = tbfp_parser_reset_rx(Node, Node->rx_state);
        }
 #endif

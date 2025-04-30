@@ -12,7 +12,7 @@ ifneq ($(START_MIK32_V1_MK_INC),Y)
 
     INCDIR += -I$(BOARD_CFG_DIR)
 
-    SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_config.c
+    SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_api.c
  
     ifeq ($(GPIO),Y)
         $(info Config GPIO)
