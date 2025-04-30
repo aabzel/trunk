@@ -223,10 +223,10 @@ bool led_mono_on(LedMonoHandle_t* const Node) {
     bool res = false;
     if(Node) {
         res = true;
-#ifdef HAS_GENERIC
         res = led_set_state_ll(Node, GPIO_LVL_HI); // Error
         Node->mode = LED_MODE_ON;// Error
         Node->prev = GPIO_LVL_UNDEF; // Error
+#ifdef HAS_GENERIC
 #endif
     } else {
 #ifdef HAS_LOG

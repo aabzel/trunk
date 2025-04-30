@@ -8,6 +8,10 @@
 
 #include "csr.h"
 
+#ifdef HAS_LED
+#include "led_drv.h"
+#endif
+
 #ifdef HAS_MISCELLANEOUS
 #include "data_types.h"
 #endif
@@ -47,13 +51,13 @@ bool rv32imc_reboot(void) {
     return res;
 }
 
-#ifdef HAS_CORE_EXT
 bool rv32imc_boot_spifi(void) {
     bool res = true;
     __asm__ volatile("la ra, 0x80000000\n\t"
                      "jalr ra");
     return res;
 }
+#ifdef HAS_CORE_EXT
 
 bool rv32imc_boot_eeprom(void) {
     bool res = true;
@@ -81,6 +85,9 @@ bool rv32imc_boot_addr_asm(const uint32_t app_start_address) {
 bool rv32imc_boot_addr(uint32_t app_start_address) {
     bool res = false;
     interrupt_disable();
+#ifdef HAS_LED
+    led_mono_ctrl(2, true);
+#endif
     res = rv32imc_boot_addr_asm(app_start_address);
     return res;
 }

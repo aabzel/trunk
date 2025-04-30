@@ -1,8 +1,19 @@
 #include "board_api.h"
 
 #include "rv32imc_driver.h"
+#include "k1948bk018_const.h"
+
+#ifdef HAS_LED
+#include "led_drv.h"
+#endif
+
+#ifdef HAS_TBFP
 #include "tbfp.h"
+#endif
+
+#ifdef HAS_TIME
 #include "time_mcal.h"
+#endif
 
 #ifdef HAS_SPIFI
 #include "spifi_mcal.h"
@@ -44,23 +55,28 @@ bool board_init_xip(void) {
 
                 W25q32jvRegUniversal_t UniReg2 = { 0 };
                 res = w25q32jv_read_reg(1, W25Q32JV_STATUS_REG_2, &UniReg2);
-                UniReg2.Status2.qe = W25_STAUS_2_QUAD_ENABLE;
-                res = w25q32jv_write_reg2(1, UniReg2.byte);
-                if (res) {
-                    /* see Figure 24. Fast Read Quad I/O Instruction (M7-M0 should be set to Fxh)*/
-                    SPIFI_MemoryCommandTypeDef CmdFastReadQuad = { 0 };
-                    CmdFastReadQuad.OpCode = W25Q32JV_FAST_READ_QUAD_IO; /* Fast Read Quad I/O (EBh) */
-                    CmdFastReadQuad.FieldForm = SPIFI_CONFIG_CMD_FIELDFORM_OPCODE_SERIAL;
-                    CmdFastReadQuad.FrameForm = SPIFI_CONFIG_CMD_FRAMEFORM_OPCODE_3ADDR;
-                    CmdFastReadQuad.InterimData = 0;
-                    CmdFastReadQuad.InterimLength = 3;
+                if(res){
 
-                    SPIFI_MemoryModeConfig_HandleTypeDef SpiFiMem = { 0 };
-                    SpiFiMem.Instance = Info->SPIFIx;
-                    SpiFiMem.CacheEnable = SpiFiCacheCtrlToCacheEnable(Config->cache_on_off);
-                    SpiFiMem.CacheLimit = Config->cache_limit;
-                    SpiFiMem.Command = CmdFastReadQuad;
-                    HAL_SPIFI_MemoryMode_Init(&SpiFiMem);
+                    UniReg2.Status2.qe = W25_STAUS_2_QUAD_ENABLE;
+                    res = w25q32jv_write_reg2(1, UniReg2.byte);
+                    if (res) {
+                        /* see Figure 24. Fast Read Quad I/O Instruction (M7-M0 should be set to Fxh)*/
+                        SPIFI_MemoryCommandTypeDef CmdFastReadQuad = { 0 };
+                        CmdFastReadQuad.OpCode = W25Q32JV_FAST_READ_QUAD_IO; /* Fast Read Quad I/O (EBh) */
+                        CmdFastReadQuad.FieldForm = SPIFI_CONFIG_CMD_FIELDFORM_OPCODE_SERIAL;
+                        CmdFastReadQuad.FrameForm = SPIFI_CONFIG_CMD_FRAMEFORM_OPCODE_3ADDR;
+                        CmdFastReadQuad.InterimData = 0;
+                        CmdFastReadQuad.InterimLength = 3;
+
+                        SPIFI_MemoryModeConfig_HandleTypeDef SpiFiMem = { 0 };
+                        SpiFiMem.Instance = Info->SPIFIx;
+                        SpiFiMem.CacheEnable = SpiFiCacheCtrlToCacheEnable(Config->cache_on_off);
+                        SpiFiMem.CacheLimit = Config->cache_limit;
+                        SpiFiMem.Command = CmdFastReadQuad;
+                        HAL_SPIFI_MemoryMode_Init(&SpiFiMem);
+                       // led_mono_ctrl(2, true);
+                        res = true;
+                    }
                 }
             }
         }
@@ -74,6 +90,7 @@ bool application_launch(void) {
     bool res = true;
     res = board_init_xip();
     if(res) {
+        //res = rv32imc_boot_spifi() ;
         res = rv32imc_boot_addr(EXT_ROM_START) ;
     }
     return res;
@@ -81,6 +98,7 @@ bool application_launch(void) {
 
 bool board_proc(void) {
     bool res = false;
+#ifdef HAS_TBFP
     TbfpHandle_t *Tbfp = TbfpGetNode(1);
     if (Tbfp) {
 #ifdef HAS_TIME
@@ -98,6 +116,9 @@ bool board_proc(void) {
 #endif
         res = true;
     }
+#else
+    res = application_launch();
+#endif
     return res;
 }
 
