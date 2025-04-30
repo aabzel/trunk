@@ -41,6 +41,47 @@ COMPONENT_GET_NODE(W25q32jv, w25q32jv)
 COMPONENT_GET_CONFIG(W25q32jv, w25q32jv)
 
 
+
+bool w25q32jv_write_regs(const uint8_t num,
+		const uint8_t sreg1,
+		const uint8_t sreg2) {
+	bool res = false;
+	res = w25q32jv_write_enable(num);
+	W25q32jvHandle_t *Node = W25q32jvGetNode(num);
+	if (Node) {
+		SpiFiHandle_t *SpiFi = SpiFiGetNode(Node->spifi_num);
+		if (SpiFi) {
+
+			uint8_t data[2] = {sreg1, sreg2};
+
+			SpiFiRegCmd_t WrRegsCmd = { 0 };
+			WrRegsCmd.opcode = W25Q32JV_WRITE_SREG;
+			WrRegsCmd.fieldform = SPIFI_CMD_FIELDFORM_ALL_SERIAL;
+			WrRegsCmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_NOADDR;
+			WrRegsCmd.intlen = 0;
+			WrRegsCmd.dout = SPIFI_CMD_DOUT_FLASH_WRITE;
+			WrRegsCmd.datalen = 2;
+			WrRegsCmd.poll = SPIFI_CMD_POLL_NO;
+
+			HAL_StatusTypeDef ret = HAL_ERROR;
+			ret = HAL_SPIFI_SendCommand_LL(&SpiFi->Handle, /* spifi */
+					WrRegsCmd.dword, /* cmd */
+			0, /* address */
+			2, /* bufferSize */
+			0, /* readBuffer */
+			data, /* writeBuffer */
+			0, /* interimData */
+			HAL_SPIFI_TIMEOUT/* timeout */
+			);
+
+			res = MIK32_HalRetToRes(ret);
+			res = w25q32jv_wait_busy(num, W25Q32JV_PROGRAM_BUSY_TIMEOUT) && res;
+		}
+	}
+	return res;
+}
+
+
 bool w25q32jv_write_reg2(const uint8_t num, const uint8_t reg_val){
     bool res = false;
     res = w25q32jv_write_enable(num);

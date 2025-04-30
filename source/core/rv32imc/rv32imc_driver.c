@@ -86,7 +86,7 @@ bool rv32imc_boot_addr(uint32_t app_start_address) {
     bool res = false;
     interrupt_disable();
 #ifdef HAS_LED
-    led_mono_ctrl(2, true);
+   // led_mono_ctrl(2, true);
 #endif
     res = rv32imc_boot_addr_asm(app_start_address);
     return res;

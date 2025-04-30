@@ -285,7 +285,7 @@ HAL_GPIO_PullTypeDef GpioPullToMik32Pull(GpioPullMode_t pull_code) {
 }
 
 HAL_GPIO_DSTypeDef GpioDriveSelToMik32DriveSel(GpioDriveSelect_t drive_select) {
-    HAL_GPIO_DSTypeDef mik32_ds = GPIO_DRIVE_SELECT_UNDEF;
+    HAL_GPIO_DSTypeDef mik32_ds = HAL_GPIO_DS_8MA;
     switch((uint8_t)drive_select) {
     case GPIO_DRIVE_SELECT_2MA:
         mik32_ds = HAL_GPIO_DS_2MA;

@@ -168,7 +168,7 @@ static bool string_reader_echo_putchar(StringReaderHandle_t* Node, char ch) {
     res = string_reader_is_valid_char(ch);
     if(res) {
     } else {
-        LOG_ERROR(STRING_READER, "UndefChar:0x%x=(%c)", ch, ch);
+        LOG_DEBUG(STRING_READER, "UndefChar:0x%x=(%c)", ch, ch);
         // ch = '?';
     }
     switch(Node->interface_if) {

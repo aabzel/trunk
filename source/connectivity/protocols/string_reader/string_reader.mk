@@ -17,6 +17,14 @@ ifneq ($(STRING_READER_DRV_MK_LOG),Y)
 
     SOURCES_C += $(STRING_READER_DRV_DIR)/string_reader.c
 
+    ifeq ($(STRING_READER1),Y)
+        OPT += -DHAS_STRING_READER1
+    endif
+    
+    ifeq ($(STRING_READER2),Y)
+        OPT += -DHAS_STRING_READER2
+    endif
+    
     ifeq ($(STRING_READER_DIAG),Y)
         OPT += -DHAS_STRING_READER_DIAG
         SOURCES_C +=  $(STRING_READER_DRV_DIR)/string_reader_diag.c

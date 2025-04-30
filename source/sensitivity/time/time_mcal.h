@@ -21,33 +21,33 @@ extern uint32_t g_up_time_ms;
 
 
 #define HOUR_2_MS(HOUR) ((HOUR)*60U * 60U * 1000U)
-#define HOUR_2_SEC(HOUR) (((double)(HOUR)) * 60.0 * 60.0)
-#define DAY_2_SEC(DAYS) (((double)(DAYS)) * 86400.0)
-#define WEEK_2_SEC(WEEKS) (((double)(WEEKS)) * 604800.0)
-#define HOUR_2_MIN(HOUR) (((double)(HOUR)) * 60.0)
-#define MIN_2_SEC(MIN) (((double)(MIN)) * 60.0)
+#define HOUR_2_SEC(HOUR) (((float)(HOUR)) * 60.0 * 60.0)
+#define DAY_2_SEC(DAYS) (((float)(DAYS)) * 86400.0)
+#define WEEK_2_SEC(WEEKS) (((float)(WEEKS)) * 604800.0)
+#define HOUR_2_MIN(HOUR) (((float)(HOUR)) * 60.0)
+#define MIN_2_SEC(MIN) (((float)(MIN)) * 60.0)
 #define MIN_2_MS(MIN) ((MIN)*60U * 1000U)
 #define MIN_2_US(MIN) ((60000000 * (MIN)))
-#define MIN_2_HOUR(MIN) (((double)(MIN)) / 60.0)
-#define MSEC_2_HOUR(MSEC) (((double)(MSEC) / 3600000.0))
-#define MSEC_2_MIN(MSEC) (((double)(MSEC)) / (1000.0 * 60.0))
-#define MSEC_2_SEC(MSEC) (((double)(MSEC)) / 1000.0)
+#define MIN_2_HOUR(MIN) (((float)(MIN)) / 60.0)
+#define MSEC_2_HOUR(MSEC) (((float)(MSEC) / 3600000.0))
+#define MSEC_2_MIN(MSEC) (((float)(MSEC)) / (1000.0 * 60.0))
+#define MSEC_2_SEC(MSEC) (((float)(MSEC)) / 1000.0)
 #define MSEC_2_USEC(MSEC) ((MSEC)*1000U)
-#define NSEC_2_SEC(NSEC) (((double)(NSEC)) / 1000000000.0)
+#define NSEC_2_SEC(NSEC) (((float)(NSEC)) / 1000000000.0)
 #define NSEC_2_USEC_U(NSEC) ((NSEC) / 1000)
-#define MSEC_2_NSEC(SEC) ((double)(1000000.0 * ((double)SEC)))
-#define SEC_2_DAYS(SEC) ((((double)(SEC))) / (24.0 * 3600.0))
-#define SEC_2_HOUR(SEC) (((double)(SEC)) / (3600.0))
-#define SEC_2_MIN(SEC) (((double)(SEC)) / (60.0))
-#define SEC_2_MSEC(SEC) ((((double)(SEC)) * 1000.0))
-#define SEC_2_USEC(SEC) ((1000000.0 * ((double)(SEC))))
-#define SEC_2_NSEC(SEC) ((double)(1000000000.0 * ((double)(SEC))))
-#define USEC_2_MSEC(USEC) (((double)(USEC)) / 1000.0)
-#define USEC_2_SEC(USEC) (((double)(USEC)) / 1000000.0)
+#define MSEC_2_NSEC(SEC) ((float)(1000000.0 * ((float)SEC)))
+#define SEC_2_DAYS(SEC) ((((float)(SEC))) / (24.0 * 3600.0))
+#define SEC_2_HOUR(SEC) (((float)(SEC)) / (3600.0))
+#define SEC_2_MIN(SEC) (((float)(SEC)) / (60.0))
+#define SEC_2_MSEC(SEC) ((((float)(SEC)) * 1000.0))
+#define SEC_2_USEC(SEC) ((1000000.0 * ((float)(SEC))))
+#define SEC_2_NSEC(SEC) ((float)(1000000000.0 * ((float)(SEC))))
+#define USEC_2_MSEC(USEC) (((float)(USEC)) / 1000.0)
+#define USEC_2_SEC(USEC) (((float)(USEC)) / 1000000.0)
 #define USEC_2_MIN(USEC) (SEC_2_MIN((USEC_2_SEC(USEC))))
-#define USEC_2_HOUR(USEC) (((double)(USEC)) / 3600000000.0)
-#define MIN_2_DAYS(MIN) (((double)(MIN)) / (1440.0))
-#define MSEC_2_DAYS(MSEC) (((double)(MSEC)) / 86400000.0)
+#define USEC_2_HOUR(USEC) (((float)(USEC)) / 3600000000.0)
+#define MIN_2_DAYS(MIN) (((float)(MIN)) / (1440.0))
+#define MSEC_2_DAYS(MSEC) (((float)(MSEC)) / 86400000.0)
 
 extern uint32_t start_time_ms;
 
@@ -102,10 +102,10 @@ bool time_data_parse(struct tm* date_time, char* str);
 bool time_parse(struct tm* const date_time, char* str);
 uint32_t time_duration_parse(const char* const diration_str);
 
-uint64_t sec_to_usec(double sec);
-double usec_to_sec(uint64_t usec);
+uint64_t sec_to_usec(float sec);
+float usec_to_sec(uint64_t usec);
 
-double sec_to_msec(double  SEC) ;//((((double)(SEC)) * 1000.0))
+float sec_to_msec(float  SEC) ;//((((float)(SEC)) * 1000.0))
 int calc_total_day_cnt(const struct tm* const date_time);
 int32_t time_date_cmp(const struct tm* const date_time1, const struct tm* const date_time2);
 

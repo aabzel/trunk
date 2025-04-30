@@ -1,6 +1,5 @@
 #include <mik32_hal_spifi.h>
 
-#ifdef HAS_SPIFI_EXT
 __attribute__((weak)) void HAL_SPIFI_MspInit(void)
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -16,8 +15,6 @@ __attribute__((weak)) void HAL_SPIFI_MspInit(void)
     GPIO_InitStruct.Pull = HAL_GPIO_PULL_UP;
     HAL_GPIO_Init(GPIO_2, &GPIO_InitStruct);
 }
-#endif
-
 
 void HAL_SPIFI_MemoryMode_Init(SPIFI_MemoryModeConfig_HandleTypeDef *spifi)
 {

@@ -7,7 +7,7 @@
 static char FifoData0[80]={0};
 static char LineData0[80]={0};
 
-#ifdef HAS_SR2
+#ifdef HAS_STRING_READER2
 static char FifoData1[80]={0};
 static char LineData1[80]={0};
 #endif
@@ -28,7 +28,7 @@ const StringReaderConfig_t StringReaderConfig[] = {
         .callback = (handle_string_f)(cli_process_cmd),
         .feedback_led = 2,
     },
-#ifdef HAS_SR2
+#ifdef HAS_STRING_READER2
     { 
         .num = 2,
         .valid = true,
@@ -50,7 +50,7 @@ const StringReaderConfig_t StringReaderConfig[] = {
 
 StringReaderHandle_t StringReaderInstance[]={
     {.num=1, .valid=true, },
-#ifdef HAS_SR2
+#ifdef HAS_STRING_READER2
     {.num=2, .valid=true, },
 #endif
 };

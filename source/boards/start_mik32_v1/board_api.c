@@ -50,16 +50,19 @@ bool board_init_xip(void) {
         if (Info) {
             SpiFiHandle_t *Node = SpiFiGetNode(0);
             if (Node) {
-                // HAL_SPIFI_MspInit();
-                HAL_SPIFI_Reset(&Node->Handle);
+                HAL_SPIFI_MspInit();
+                // HAL_SPIFI_Reset(&Node->Handle);
+
+                W25q32jvRegUniversal_t UniReg1 = { 0 };
+                res = w25q32jv_read_reg(1, W25Q32JV_STATUS_REG_1, &UniReg1);
 
                 W25q32jvRegUniversal_t UniReg2 = { 0 };
-                res = w25q32jv_read_reg(1, W25Q32JV_STATUS_REG_2, &UniReg2);
+                res = w25q32jv_read_reg(1, W25Q32JV_STATUS_REG_2, &UniReg2);// r
                 if(res){
-
                     UniReg2.Status2.qe = W25_STAUS_2_QUAD_ENABLE;
-                    res = w25q32jv_write_reg2(1, UniReg2.byte);
+                    res = w25q32jv_write_regs(1,UniReg1.byte, UniReg2.byte); // rr
                     if (res) {
+                    	// r
                         /* see Figure 24. Fast Read Quad I/O Instruction (M7-M0 should be set to Fxh)*/
                         SPIFI_MemoryCommandTypeDef CmdFastReadQuad = { 0 };
                         CmdFastReadQuad.OpCode = W25Q32JV_FAST_READ_QUAD_IO; /* Fast Read Quad I/O (EBh) */
@@ -69,11 +72,14 @@ bool board_init_xip(void) {
                         CmdFastReadQuad.InterimLength = 3;
 
                         SPIFI_MemoryModeConfig_HandleTypeDef SpiFiMem = { 0 };
+                        (void) SpiFiMem;
                         SpiFiMem.Instance = Info->SPIFIx;
                         SpiFiMem.CacheEnable = SpiFiCacheCtrlToCacheEnable(Config->cache_on_off);
                         SpiFiMem.CacheLimit = Config->cache_limit;
                         SpiFiMem.Command = CmdFastReadQuad;
-                        HAL_SPIFI_MemoryMode_Init(&SpiFiMem);
+        	            // r
+                        HAL_SPIFI_MemoryMode_Init(&SpiFiMem); // hang on here
+        	            led_mono_ctrl(2, 1);
                        // led_mono_ctrl(2, true);
                         res = true;
                     }
@@ -91,6 +97,7 @@ bool application_launch(void) {
     res = board_init_xip();
     if(res) {
         //res = rv32imc_boot_spifi() ;
+    	// no led_mono_ctrl(2, 1);
         res = rv32imc_boot_addr(EXT_ROM_START) ;
     }
     return res;

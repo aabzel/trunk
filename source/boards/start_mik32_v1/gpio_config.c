@@ -12,18 +12,17 @@
 const GpioConfig_t GpioConfig[] = {
 
 #ifdef HAS_LED
-    {.pad={.port=0, .pin=3},
+    {.pad={.port=0, .pin=3}, .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_AIR, .mux=0, .logic_level=GPIO_LVL_LOW,
 #ifdef HAS_LOG
             .name="VD1",
 #endif
-            .dir=GPIO_DIR_OUT,
-            .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
+    },
     {.pad={.port=1, .pin=3},
+            .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_AIR, .mux=0, .logic_level=GPIO_LVL_LOW,
 #ifdef HAS_LOG
             .name="VD2",
 #endif
-            .dir=GPIO_DIR_OUT,
-            .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
+    },
 #endif/*HAS_LED*/
 
 #ifdef HAS_BUTTON
@@ -42,8 +41,7 @@ const GpioConfig_t GpioConfig[] = {
 #endif
     },
 #if 0
-    {.pad={.port = 0, .pin = 8},
-            .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_HI,
+    {.pad={.port = 0, .pin = 8}, .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_HI,
 #ifdef HAS_LOG
             .name="UART0_nrts", .connector1="49",
 #endif
@@ -63,7 +61,7 @@ const GpioConfig_t GpioConfig[] = {
 #endif
     },
 #if 0
-    {.pad={.port = 1, .pin = 11}, .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_ALT1,  .mux=1, .pull=GPIO__PULL_UP,  .logic_level=GPIO_LVL_HI},
+    {.pad={.port = 1, .pin = 11}, .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_ALT1, .mux=1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI},
 #ifdef HAS_LOG
             .name="UART1_nrts", .connector1="UEXT.4",
 #endif
@@ -71,58 +69,41 @@ const GpioConfig_t GpioConfig[] = {
 #endif /*HAS_USART1*/
 
 #ifdef HAS_SPIFI
-    {.pad={.port=2, .pin=0},
-            .dir=GPIO_DIR_OUT,
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
+    {.pad={.port=2, .pin=0}, .drive_select = GPIO_DRIVE_SELECT_8MA, .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
 #ifdef HAS_LOG
-            .name="SPIFI_SCLK",
-            .connector1="38", .connector2="pin34",
+            .name="SPIFI_SCLK", .connector1="38", .connector2="pin34",
 #endif
     },
-    {.pad={.port=2, .pin=1},
-            .dir=GPIO_DIR_OUT,
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
+    {.pad={.port=2, .pin=1},  .drive_select = GPIO_DRIVE_SELECT_8MA, .dir=GPIO_DIR_OUT, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
 #ifdef HAS_LOG
-            .name="SPIFI_CS",
-            .connector1="37", .connector2="pin34",
+            .name="SPIFI_CS", .connector1="37", .connector2="pin34",
 #endif
     },
-    {.pad={.port=2, .pin=2},
-            .dir=GPIO_DIR_INOUT,
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
+    {.pad={.port=2, .pin=2},  .drive_select=GPIO_DRIVE_SELECT_8MA,.dir=GPIO_DIR_INOUT, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .mux=1, .logic_level=GPIO_LVL_LOW,
 #ifdef HAS_LOG
-            .name="SPIFI_DATA_0",
-            .connector1="36", .connector2="pin34",
+            .name="SPIFI_DATA_0", .connector1="36", .connector2="pin34",
 #endif
     },
-    {.pad={.port=2, .pin=3},
-            .dir=GPIO_DIR_INOUT,
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
+    {.pad={.port=2, .pin=3},  .drive_select=GPIO_DRIVE_SELECT_8MA,.dir=GPIO_DIR_INOUT, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .mux=1, .logic_level=GPIO_LVL_LOW,
 #ifdef HAS_LOG
-            .name="SPIFI_DATA_1 ",
-            .connector1="35", .connector2="pin34",
+            .name="SPIFI_DATA_1 ", .connector1="35", .connector2="pin34",
 #endif
     },
-    {.pad={.port=2, .pin=4},
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
-            .dir=GPIO_DIR_INOUT,
+    {.pad={.port=2, .pin=4}, .drive_select=GPIO_DRIVE_SELECT_8MA, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .mux=1, .logic_level=GPIO_LVL_LOW, .dir=GPIO_DIR_INOUT,
 #ifdef HAS_LOG
-            .name="SPIFI_DATA_2 ",
-            .connector1="34",
-            .connector2="pin34",
+            .name="SPIFI_DATA_2 ", .connector1="34", .connector2="pin34",
 #endif
     },
-    {.pad={.port=2, .pin=5},
-            .dir=GPIO_DIR_INOUT,
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .mux=1, .logic_level=GPIO_LVL_LOW,
+    {.pad={.port=2, .pin=5},  .drive_select=GPIO_DRIVE_SELECT_8MA, .dir=GPIO_DIR_INOUT, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .mux=1, .logic_level=GPIO_LVL_LOW,
 #ifdef HAS_LOG
-            .name="SPIFI_DATA_3 ",
-            .connector1="33", .connector2="pin34",
+            .name="SPIFI_DATA_3 ", .connector1="33", .connector2="pin34",
 #endif
     },
-#endif
+#endif /*HAS_SPIFI*/
 
 };
+
+
 
 uint32_t gpio_get_cnt(void) {
     return ARRAY_SIZE(GpioConfig);

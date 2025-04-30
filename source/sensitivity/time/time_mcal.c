@@ -381,7 +381,7 @@ bool is_valid_time_date(const struct tm* const date_time) {
 #endif
 
 #ifdef HAS_TIME_EXT
-bool time_get_time_str(char* out_str, uint32_t size) {
+bool time_get_time_str(char* const out_str, uint32_t size) {
     bool res = false;
     if(out_str && (0 < size)) {
         strncpy(out_str, "", size);
@@ -393,7 +393,9 @@ bool time_get_time_str(char* out_str, uint32_t size) {
                 snprintf(out_str, size, "%02u:%02u:%02u", curTime->tm_hour, curTime->tm_min, curTime->tm_sec);
             }
         }
-#else
+
+#else /*HAS_CALENDAR*/
+
 #ifdef HAS_TIME
 #ifdef HAS_TIME_DIAG
         uint32_t up_time_ms = time_get_ms32();
@@ -405,7 +407,7 @@ bool time_get_time_str(char* out_str, uint32_t size) {
     }
     return res;
 }
-#endif
+#endif /*HAS_CALENDAR*/
 
 #ifdef HAS_DATE
 /*000000000011111111112222*/
@@ -599,7 +601,7 @@ int32_t time_date_cmp(const struct tm* const date_time1, const struct tm* const 
     time_t time_stamp2 = mktime((struct tm*)date_time2);
     if((0 < time_stamp1) && (0 < time_stamp2)) {
         LOG_DEBUG(TIME, "1:%u 2:%u", time_stamp1, time_stamp2);
-        double sec = difftime(time_stamp2, time_stamp1);
+        float sec = difftime(time_stamp2, time_stamp1);
         diff_sec = (int32_t)sec;
     } else {
         print_time_date("Time1", date_time1, true);
@@ -897,7 +899,7 @@ bool time_duration_init(DurationFsm_t* Duration) {
 static bool time_duration_parse_integer_digit(DurationFsm_t* Duration, char cur_ch) {
     bool res = true;
     uint8_t digit = char_to_u8(cur_ch);
-    Duration->digit_f = Duration->digit_f * 10.0 + ((double)digit);
+    Duration->digit_f = Duration->digit_f * 10.0 + ((float)digit);
     return res;
 }
 #endif
@@ -908,7 +910,7 @@ static bool time_duration_parse_digit_fractional(DurationFsm_t* Duration, char c
     uint8_t digit = char_to_u8(cur_ch);
     // 5 ->0.5 1/2
     uint32_t base = ipow(10, Duration->fractional_cnt);
-    double fraction = ((double)digit) / ((double)base);
+    float fraction = ((float)digit) / ((float)base);
 #ifdef HAS_LOG
     LOG_DEBUG(TIME, "fraction + %f", fraction);
 #endif
@@ -1203,20 +1205,20 @@ bool time_proc_one(uint8_t num) {
 #endif
 
 #ifdef HAS_TIME_EXT
-uint64_t sec_to_usec(double sec) {
+uint64_t sec_to_usec(float sec) {
     uint64_t usec = 0;
     usec = (uint64_t)(1000000.0 * sec);
     return usec;
 }
 
-double sec_to_msec(double sec) {
-    double msec = sec * 1000.0;
+float sec_to_msec(float sec) {
+    float msec = sec * 1000.0;
     return msec;
 }
 
-double usec_to_sec(uint64_t usec) {
-    double sec = 0;
-    sec = ((double)usec) / 1000000.0;
+float usec_to_sec(uint64_t usec) {
+    float sec = 0;
+    sec = ((float)usec) / 1000000.0;
     return sec;
 }
 #endif

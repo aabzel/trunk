@@ -284,7 +284,7 @@ static void cli_prompt_ll(CliHandle_t* Node) {
     LOG_DEBUG(CLI, "prompt");
     if(Node) {
         if(Node->echo) {
-            char time_stamp[40] = "";
+            char time_stamp[50] = {0};
 #ifdef HAS_TIME
             time_get_time_str(time_stamp, sizeof(time_stamp));
 #endif

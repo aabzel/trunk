@@ -6,8 +6,8 @@ ifneq ($(LED_GENERAL_PRECONFIG_INC),Y)
     #@echo $(error LED_GENERAL_DIR=$(LED_GENERAL_DIR))
     LED=Y
     GPIO=Y
+    PINS=Y
     #TIME=Y
-
     ifeq ($(LED_MONO),Y)
         include $(LED_GENERAL_DIR)/led_mono/led_mono_preconfig.mk
     endif

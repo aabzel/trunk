@@ -4,7 +4,7 @@ ifneq ($(MBR_PRECONFIG_INC),Y)
     # MBR can contain ASICS (XPI MIK32)
     
     #$(error MBR= $(MBR))
-    PACK_PROGRAM=Y
+    #PACK_PROGRAM=Y
     MBR=Y
     #TIME=Y
     #MCAL=Y

@@ -326,6 +326,12 @@ bool SpiFiIsValidConfig(const SpiFiConfig_t* const Config) {
 }
 #endif
 
+bool spifi_init_custom(void) {
+   bool res = true;
+   __HAL_PCC_SPIFI_CLK_ENABLE();
+   return res;
+}
+
 bool spifi_init_one(uint8_t num) {
     bool res = false;
     // PM->CLK_AHB_SET.dword = PM_CLOCK_AHB_SPIFI_M;
