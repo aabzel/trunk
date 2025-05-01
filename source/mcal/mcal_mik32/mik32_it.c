@@ -15,7 +15,7 @@ void trap_handler(void) {
 #endif
 
 #ifdef HAS_LED_MONO
-    //led_mono_toggle(2); // hang-un in optimisation
+    // led_mono_toggle(2); // hang-un in optimisation
 #endif
 
     bool res = false;

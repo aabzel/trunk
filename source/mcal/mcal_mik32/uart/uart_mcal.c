@@ -21,9 +21,9 @@
 #include "mik32_hal_irq.h"
 #include "mik32_hal_usart.h"
 
+#include "led_drv.h"
 #include "uart_custom_drv.h"
 #include "uart_lib.h"
-#include "led_drv.h"
 //#include "mik32_hal.h"
 #ifdef HAS_TIME
 #include "time_mcal.h"
@@ -44,8 +44,8 @@
 
 #include "sys_config.h"
 
-//uint32_t g_uart_rx_cnt = 0;
-//static volatile uint8_t rx_buff[UART_COUNT][1];
+// uint32_t g_uart_rx_cnt = 0;
+// static volatile uint8_t rx_buff[UART_COUNT][1];
 
 static const UartInfo_t UartInfo[] = {
 #ifdef HAS_UART0
@@ -495,7 +495,7 @@ bool uart_init_custom(void) {
 bool uart_init_one(uint8_t num) {
     bool res = false;
     const UartConfig_t* Config = UartGetConfig(num);
-    if(Config) {// TOGO verify config
+    if(Config) { // TOGO verify config
         UartHandle_t* Node = UartGetNode(num);
         if(Node) {
             UartInfo_t* Info = UartGetInfo(num);

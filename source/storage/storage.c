@@ -20,7 +20,6 @@
 
 static uint8_t storage_data[STORAGE_DATA_SIZE] = {0};
 
-
 #define STORAGE_DATA_OFFSET sizeof(StorageFrameHeader_t)
 /*
  * tbfp_num - TBFP instance NUM
@@ -42,15 +41,17 @@ bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint
             LOG_DEBUG(STORAGE, "%s", StorageFrameHeaderToStr(&Header));
 #endif
             switch(Header.operation) {
+
             case ACCESS_WRITE_ONLY: {
                 res = true;
 #ifdef HAS_W25Q32JV
-                res = w25q32jv_prog_page(Header.asic_num, Header.address , &payload[STORAGE_DATA_OFFSET], Header.size);
+                res = w25q32jv_prog_page(Header.asic_num, Header.address, &payload[STORAGE_DATA_OFFSET], Header.size);
 #endif
 #ifdef HAS_TBFP
                 res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_data, sizeof(StorageFrameHeader_t));
 #endif
             } break;
+
             case ACCESS_ERASE: {
                 res = true;
 #ifdef HAS_W25Q32JV
@@ -62,19 +63,27 @@ bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint
 #endif
             } break;
 
+            case ACCESS_ERASE_SECTOR: {
+#ifdef HAS_W25Q32JV
+                res = w25q32jv_erase_sector(Header.asic_num, Header.address);
+#endif
+#ifdef HAS_TBFP
+                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_data, sizeof(StorageFrameHeader_t));
+#endif
+            } break;
+
             case ACCESS_READ_ONLY: {
                 if(Header.size < STORAGE_DATA_SIZE) {
                     res = true;
 #ifdef HAS_W25Q32JV
-                    res = w25q32jv_read_data(Header.asic_num,
-                    		                 Header.address,
-                                             &storage_data[sizeof(StorageFrameHeader_t)],
-											 Header.size);
+                    res = w25q32jv_read_data(Header.asic_num, Header.address,
+                                             &storage_data[sizeof(StorageFrameHeader_t)], Header.size);
 
 #endif
 
 #ifdef HAS_TBFP
-                        res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_data, sizeof(StorageFrameHeader_t)+Header.size);
+                    res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_data,
+                                          sizeof(StorageFrameHeader_t) + Header.size);
 #endif
 
                 } else {

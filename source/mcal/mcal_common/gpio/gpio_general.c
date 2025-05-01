@@ -133,7 +133,6 @@ const char* GpioGetCon2(uint8_t pad) {
 }
 #endif
 
-
 #ifdef HAS_GPIO_EXT
 uint8_t gpio_port_pin2pad(Port_t port, uint8_t pin) {
     Pad_t pad = {0};

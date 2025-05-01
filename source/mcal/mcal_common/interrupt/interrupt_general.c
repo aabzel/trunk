@@ -27,7 +27,7 @@ _WEAK_FUN_ bool interrupt_clear(void) {
 }
 
 _WEAK_FUN_
-bool interrupt_enable(void){
+bool interrupt_enable(void) {
     bool res = false;
     return res;
 }
@@ -98,7 +98,7 @@ static bool interrupt_init_one(const InterruptConfig_t* const Config) {
     return res;
 }
 
-_WEAK_FUN_ bool interrupt_init_custom(void){
+_WEAK_FUN_ bool interrupt_init_custom(void) {
     bool res = true;
     return res;
 }

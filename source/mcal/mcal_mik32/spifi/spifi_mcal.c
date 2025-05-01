@@ -29,7 +29,6 @@
 #include "w25q32jv_registers_types.h"
 #endif
 
-
 HAL_SPIFI_CacheEnableTypeDef SpiFiCacheCtrlToCacheEnable(bool cache_on_off) {
     HAL_SPIFI_CacheEnableTypeDef cache_enable = GPIO_PIN_LOW;
     switch((uint8_t)cache_on_off) {
@@ -44,7 +43,6 @@ HAL_SPIFI_CacheEnableTypeDef SpiFiCacheCtrlToCacheEnable(bool cache_on_off) {
     }
     return cache_enable;
 }
-
 
 static const SpiFiInfo_t SpiFiInfo[] = {
     {
@@ -327,10 +325,10 @@ bool SpiFiIsValidConfig(const SpiFiConfig_t* const Config) {
 #endif
 
 bool spifi_init_custom(void) {
-   bool res = true;
-   HAL_SPIFI_MspInit();
-   __HAL_PCC_SPIFI_CLK_ENABLE();
-   return res;
+    bool res = true;
+    HAL_SPIFI_MspInit();
+    __HAL_PCC_SPIFI_CLK_ENABLE();
+    return res;
 }
 
 bool spifi_init_one(uint8_t num) {
@@ -339,7 +337,7 @@ bool spifi_init_one(uint8_t num) {
     //	led_mono_ctrl(  2, true);
     const SpiFiConfig_t* Config = SpiFiGetConfig(num);
     if(Config) {
-    	res = true;
+        res = true;
 #ifdef HAS_SPIFI_EXT
         res = SpiFiIsValidConfig(Config);
 #endif

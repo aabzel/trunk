@@ -32,6 +32,7 @@ typedef enum {
     ACCESS_WRITE_ONLY = 2,
     ACCESS_ERASE = 3,
     ACCESS_READ_WRITE = 4,
+    ACCESS_ERASE_SECTOR = 5,
 
     ACCESS_UNDEF = 0,
 } StorageAccess_t;

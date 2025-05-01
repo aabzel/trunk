@@ -1,9 +1,8 @@
 #include "gpio_mcal.h"
 
-
-#include "microcontroller.h"
 #include "gpio_custom_drv.h"
 #include "hal_mcal.h"
+#include "microcontroller.h"
 #include "mik32_hal_gpio.h"
 #ifdef HAS_DEBUGGER
 #include "debugger.h"
@@ -367,7 +366,6 @@ bool gpio_logic_level_set(Pad_t Pad, GpioLogicLevel_t logic_level) {
     return res;
 }
 
-
 #ifdef HAS_GPIO_EXT
 bool is_edge_irq_en(uint8_t dio_pin) {
     bool res = false;
@@ -447,7 +445,6 @@ bool ext_int_reset_mask(uint32_t mask) {
 }
 #endif
 
-
 #ifdef HAS_GPIO_EXT
 bool gpio_is_valid_pad(uint8_t pad_num) {
     bool res = false;
@@ -520,12 +517,11 @@ static bool gpio_port0_pin_mux_get(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t* 
 }
 #endif
 
-
 static bool gpio_port0_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t mux) {
     bool res = false;
     uint32_t mask_mux = mux;
-    PinMux->PAD0_CFG.dword &= ~(0x3<<pin);
-    PinMux->PAD0_CFG.dword |= (mask_mux)<<pin;
+    PinMux->PAD0_CFG.dword &= ~(0x3 << pin);
+    PinMux->PAD0_CFG.dword |= (mask_mux) << pin;
 #if 0
     switch(pin) {
     case 0:
@@ -586,8 +582,8 @@ static bool gpio_port0_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t m
 static bool gpio_port1_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t mux) {
     bool res = false;
     uint32_t mask_mux = mux;
-    PinMux->PAD1_CFG.dword &= ~(0x00000003<<pin);
-    PinMux->PAD1_CFG.dword |= (mask_mux)<<pin;
+    PinMux->PAD1_CFG.dword &= ~(0x00000003 << pin);
+    PinMux->PAD1_CFG.dword |= (mask_mux) << pin;
 #if 0
     switch(pin) {
     case 0:
@@ -649,8 +645,8 @@ static bool gpio_port2_pin_mux_set(Mik32PinMux_t* PinMux, uint8_t pin, uint8_t m
     bool res = false;
 
     uint32_t mask_mux = mux;
-    PinMux->PAD2_CFG.dword &= ~(0x00000003<<pin);
-    PinMux->PAD2_CFG.dword |= (mask_mux)<<pin;
+    PinMux->PAD2_CFG.dword &= ~(0x00000003 << pin);
+    PinMux->PAD2_CFG.dword |= (mask_mux) << pin;
 #if 0
     switch(pin) {
     case 0:
@@ -740,8 +736,8 @@ static bool gpio_port0_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO
     bool res = true;
 
     uint32_t mask_pull = pull_code;
-    PinMux->PAD0_PUPD.dword &= ~(0x00000003<<pin);
-    PinMux->PAD0_PUPD.dword |= mask_pull<<pin;
+    PinMux->PAD0_PUPD.dword &= ~(0x00000003 << pin);
+    PinMux->PAD0_PUPD.dword |= mask_pull << pin;
 
 #if 0
     switch(pin) {
@@ -804,8 +800,8 @@ static bool gpio_port1_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO
     bool res = true;
 
     uint32_t mask_pull = pull_code;
-    PinMux->PAD1_PUPD.dword &= ~(0x00000003<<pin);
-    PinMux->PAD1_PUPD.dword |= mask_pull<<pin;
+    PinMux->PAD1_PUPD.dword &= ~(0x00000003 << pin);
+    PinMux->PAD1_PUPD.dword |= mask_pull << pin;
 #if 0
     switch(pin) {
     case 0:
@@ -866,10 +862,9 @@ static bool gpio_port1_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO
 static bool gpio_port2_pin_pull_set(Mik32PinMux_t* PinMux, uint8_t pin, HAL_GPIO_PullTypeDef pull_code) {
     bool res = true;
 
-
     uint32_t mask_pull = pull_code;
-    PinMux->PAD2_PUPD.dword &= ~(0x00000003<<pin);
-    PinMux->PAD2_PUPD.dword |= mask_pull<<pin;
+    PinMux->PAD2_PUPD.dword &= ~(0x00000003 << pin);
+    PinMux->PAD2_PUPD.dword |= mask_pull << pin;
 #if 0
     switch(pin) {
     case 0:
@@ -976,10 +971,10 @@ bool gpio_proc(void) {
 bool gpio_toggle(const Pad_t Pad) {
     bool res = false;
     GpioInfo_t* Info = GpioGetInfo(Pad.port);
-    if(Info){
-    	uint16_t mask= (1U<<Pad.pin);
-        HAL_GPIO_TogglePin(Info->GPIOx, (HAL_PinsTypeDef) mask);
-    	res = true;
+    if(Info) {
+        uint16_t mask = (1U << Pad.pin);
+        HAL_GPIO_TogglePin(Info->GPIOx, (HAL_PinsTypeDef)mask);
+        res = true;
     }
     return res;
 }
