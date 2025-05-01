@@ -27,6 +27,7 @@ bool w25q32jv_prog_page(const uint8_t num, const uint32_t address, const uint8_t
 bool w25q32jv_write_reg2(const uint8_t num, const uint8_t reg_val);
 bool w25q32jv_write_enable(const uint8_t num);
 bool w25q32jv_chip_erase(const uint8_t num);
+bool w25q32jv_erase_sector(const uint8_t num, const uint32_t address);
 
 /*Getter*/
 bool w25q32jv_read_data(const uint8_t num, const uint32_t address, uint8_t* const data, const uint16_t size);

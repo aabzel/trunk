@@ -236,3 +236,13 @@ bool fpu_init(void) {
     return res;
 }
 #endif
+
+uint32_t core_get_up_time_ms(void) {
+    static uint32_t up_time_ms = 0;
+#ifdef HAS_RV32IMC_EXT
+    up_time_ms = rv32imc_up_time_get_ms32();
+#else
+    up_time_ms++;
+#endif
+    return up_time_ms;
+}

@@ -40,49 +40,44 @@ const W25q32jvOpCodes_t w25q32jv_reg_num_to_op_code(const W25q32jvRegisterIndex_
 COMPONENT_GET_NODE(W25q32jv, w25q32jv)
 COMPONENT_GET_CONFIG(W25q32jv, w25q32jv)
 
+bool w25q32jv_write_regs(const uint8_t num, const uint8_t sreg1, const uint8_t sreg2) {
+    bool res = false;
+    res = w25q32jv_write_enable(num);
+    W25q32jvHandle_t* Node = W25q32jvGetNode(num);
+    if(Node) {
+        SpiFiHandle_t* SpiFi = SpiFiGetNode(Node->spifi_num);
+        if(SpiFi) {
 
+            uint8_t data[2] = {sreg1, sreg2};
 
-bool w25q32jv_write_regs(const uint8_t num,
-		const uint8_t sreg1,
-		const uint8_t sreg2) {
-	bool res = false;
-	res = w25q32jv_write_enable(num);
-	W25q32jvHandle_t *Node = W25q32jvGetNode(num);
-	if (Node) {
-		SpiFiHandle_t *SpiFi = SpiFiGetNode(Node->spifi_num);
-		if (SpiFi) {
+            SpiFiRegCmd_t WrRegsCmd = {0};
+            WrRegsCmd.opcode = W25Q32JV_WRITE_SREG;
+            WrRegsCmd.fieldform = SPIFI_CMD_FIELDFORM_ALL_SERIAL;
+            WrRegsCmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_NOADDR;
+            WrRegsCmd.intlen = 0;
+            WrRegsCmd.dout = SPIFI_CMD_DOUT_FLASH_WRITE;
+            WrRegsCmd.datalen = 2;
+            WrRegsCmd.poll = SPIFI_CMD_POLL_NO;
 
-			uint8_t data[2] = {sreg1, sreg2};
+            HAL_StatusTypeDef ret = HAL_ERROR;
+            ret = HAL_SPIFI_SendCommand_LL(&SpiFi->Handle,   /* spifi */
+                                           WrRegsCmd.dword,  /* cmd */
+                                           0,                /* address */
+                                           2,                /* bufferSize */
+                                           0,                /* readBuffer */
+                                           data,             /* writeBuffer */
+                                           0,                /* interimData */
+                                           HAL_SPIFI_TIMEOUT /* timeout */
+            );
 
-			SpiFiRegCmd_t WrRegsCmd = { 0 };
-			WrRegsCmd.opcode = W25Q32JV_WRITE_SREG;
-			WrRegsCmd.fieldform = SPIFI_CMD_FIELDFORM_ALL_SERIAL;
-			WrRegsCmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_NOADDR;
-			WrRegsCmd.intlen = 0;
-			WrRegsCmd.dout = SPIFI_CMD_DOUT_FLASH_WRITE;
-			WrRegsCmd.datalen = 2;
-			WrRegsCmd.poll = SPIFI_CMD_POLL_NO;
-
-			HAL_StatusTypeDef ret = HAL_ERROR;
-			ret = HAL_SPIFI_SendCommand_LL(&SpiFi->Handle, /* spifi */
-					WrRegsCmd.dword, /* cmd */
-			0, /* address */
-			2, /* bufferSize */
-			0, /* readBuffer */
-			data, /* writeBuffer */
-			0, /* interimData */
-			HAL_SPIFI_TIMEOUT/* timeout */
-			);
-
-			res = MIK32_HalRetToRes(ret);
-			res = w25q32jv_wait_busy(num, W25Q32JV_PROGRAM_BUSY_TIMEOUT) && res;
-		}
-	}
-	return res;
+            res = MIK32_HalRetToRes(ret);
+            res = w25q32jv_wait_busy(num, W25Q32JV_PROGRAM_BUSY_TIMEOUT) && res;
+        }
+    }
+    return res;
 }
 
-
-bool w25q32jv_write_reg2(const uint8_t num, const uint8_t reg_val){
+bool w25q32jv_write_reg2(const uint8_t num, const uint8_t reg_val) {
     bool res = false;
     res = w25q32jv_write_enable(num);
     W25q32jvHandle_t* Node = W25q32jvGetNode(num);
@@ -99,15 +94,14 @@ bool w25q32jv_write_reg2(const uint8_t num, const uint8_t reg_val){
             WrReg2Cmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_NOADDR;
 
             HAL_StatusTypeDef ret = HAL_ERROR;
-            ret = HAL_SPIFI_SendCommand_LL(
-                    &SpiFi->Handle, /* spifi */
-                    WrReg2Cmd.dword, /* cmd */
-                    0, /* address */
-                    1, /* bufferSize */
-                    0, /* readBuffer */
-                    &reg_val, /* writeBuffer */
-                    0, /* interimData */
-                    HAL_SPIFI_TIMEOUT/* timeout */
+            ret = HAL_SPIFI_SendCommand_LL(&SpiFi->Handle,   /* spifi */
+                                           WrReg2Cmd.dword,  /* cmd */
+                                           0,                /* address */
+                                           1,                /* bufferSize */
+                                           0,                /* readBuffer */
+                                           &reg_val,         /* writeBuffer */
+                                           0,                /* interimData */
+                                           HAL_SPIFI_TIMEOUT /* timeout */
             );
 
             res = MIK32_HalRetToRes(ret);
@@ -136,7 +130,7 @@ bool w25q32jv_read_data(uint8_t num, const uint32_t address, uint8_t* const data
             // run
             SpiFiHandle_t* SpiFi = SpiFiGetNode(Node->spifi_num);
             if(SpiFi) {
-                //run
+                // run
                 SpiFiRegCmd_t RegCmd = {0};
                 RegCmd.opcode = W25Q32JV_READ_DATA;
                 RegCmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_3ADDR;
@@ -150,7 +144,7 @@ bool w25q32jv_read_data(uint8_t num, const uint32_t address, uint8_t* const data
                 HAL_StatusTypeDef ret = HAL_ERROR;
                 ret = HAL_SPIFI_SendCommand_LL(&SpiFi->Handle, RegCmd.dword, address, size, data, SPIFI_WRITE_BUFFER,
                                                SPIFI_INTERIM_DATA, HAL_SPIFI_TIMEOUT);
-                //led_mono_ctrl(  2, true);
+                // led_mono_ctrl(  2, true);
                 res = MIK32_HalRetToRes(ret);
             }
         }
@@ -282,6 +276,65 @@ bool w25q32jv_chip_erase(const uint8_t num) {
 }
 
 /*
+The Sector Erase instruction sets all memory within a specified sector (4K-bytes) to the erased
+state of all 1s (FFh).
+
+A Write Enable instruction must be executed before the device will accept the Sector Erase
+Instruction (Status Register bit WEL must equal 1).
+
+The instruction is initiated by driving the /CS pin low and shifting the instruction
+code “20h” followed a 24-bit sector address (A23-A0).
+
+The /CS pin must be driven high after the eighth bit of the last byte has been latched.
+If this is not done the Sector Erase instruction will not be executed.
+After /CS is driven high, the self-timed Sector Erase instruction will commence for a time
+duration of tSE (See AC Characteristics).
+
+While the Sector Erase cycle is in progress, the Read Status Register instruction may still
+be accessed for checking the status of the BUSY bit.
+
+The BUSY bit is a 1 during the Sector Erase cycle and becomes a 0 when the cycle is finished and the
+device is ready to accept other instructions again.
+After the Sector Erase cycle has finished the Write Enable Latch (WEL) bit in the Status
+Register is cleared to 0.
+The Sector Erase instruction will not be executed if the addressed page is protected by the
+Block Protect (CMP, SEC, TB, BP2, BP1, and BP0) bits or the Individual Block/Sector Locks.
+   */
+bool w25q32jv_erase_sector(const uint8_t num, const uint32_t address) {
+    bool res = false;
+    W25q32jvHandle_t* Node = W25q32jvGetNode(num);
+    if(Node) {
+        SpiFiHandle_t* SpiFi = SpiFiGetNode(Node->spifi_num);
+        if(SpiFi) {
+            res = w25q32jv_write_enable(num);
+            if(res) {
+                SpiFiRegCmd_t RegCmd = {0};
+                RegCmd.opcode = W25Q32JV_SECTOR_ERASE_4K;
+                RegCmd.frameform = SPIFI_CMD_FRAME_FORM_OPCODE_3ADDR;
+                RegCmd.fieldform = SPIFI_CMD_FIELDFORM_ALL_SERIAL;
+                RegCmd.dout = SPIFI_CMD_DOUT_FLASH_WRITE;
+                RegCmd.intlen = 0;
+                RegCmd.poll = SPIFI_CMD_POLL_NO;
+                RegCmd.datalen = 0;
+
+                HAL_StatusTypeDef ret = HAL_ERROR;
+                ret = HAL_SPIFI_SendCommand_LL(&SpiFi->Handle,     /*spifi*/
+                                               RegCmd.dword,       /*cmd*/
+                                               address,            /*address*/
+                                               0,                  /*bufferSize*/
+                                               0,                  /*readBuffer*/
+                                               (uint8_t*)0,        /*interimData*/
+                                               SPIFI_INTERIM_DATA, /*interimData*/
+                                               HAL_SPIFI_TIMEOUT   /*timeout*/
+                );
+                res = MIK32_HalRetToRes(ret);
+                res = w25q32jv_wait_busy(num, W25Q32JV_PROGRAM_BUSY_TIMEOUT) && res;
+            }
+        }
+    }
+    return res;
+}
+/*
  The Page Program instruction allows from one byte to 256 bytes
  A Write Enable instruction must be executed before the device will accept the Page
  Program Instruction (Status Register bit WEL= 1).
@@ -318,14 +371,8 @@ bool w25q32jv_prog_page(uint8_t num, const uint32_t address, const uint8_t* cons
                     RegCmd.datalen = size;
 
                     HAL_StatusTypeDef ret = HAL_ERROR;
-                    ret = HAL_SPIFI_SendCommand_LL(
-                            &SpiFi->Handle,
-                            RegCmd.dword,
-                            address,
-                            size, 0,
-                            (uint8_t *) data,
-                            SPIFI_INTERIM_DATA,
-                            HAL_SPIFI_TIMEOUT);
+                    ret = HAL_SPIFI_SendCommand_LL(&SpiFi->Handle, RegCmd.dword, address, size, 0, (uint8_t*)data,
+                                                   SPIFI_INTERIM_DATA, HAL_SPIFI_TIMEOUT);
                     res = MIK32_HalRetToRes(ret);
                     res = w25q32jv_wait_busy(num, W25Q32JV_PROGRAM_BUSY_TIMEOUT) && res;
                 }
@@ -371,7 +418,7 @@ bool w25q32jv_init_one(uint8_t num) {
             res = true;
         }
     }
-    //no led_mono_ctrl(2, true);
+    // no led_mono_ctrl(2, true);
 
     return res;
 }

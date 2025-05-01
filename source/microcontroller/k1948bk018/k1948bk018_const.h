@@ -19,7 +19,6 @@
 #define TIMER_COUNT 6
 #define TIMER_MAX_NUM 6
 
-
 // clocking
 #define CPU_MAX_HZ (32000000U)
 #define LSI_FREQ 32768

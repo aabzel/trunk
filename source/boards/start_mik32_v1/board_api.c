@@ -2,6 +2,7 @@
 
 #include "rv32imc_driver.h"
 #include "k1948bk018_const.h"
+#include "core_driver.h"
 
 #ifdef HAS_LED
 #include "led_drv.h"
@@ -104,16 +105,28 @@ bool application_launch(const uint32_t base_address) {
     return res;
 }
 
+uint32_t board_get_up_time_ms(void){
+	   uint32_t up_time_ms = 0;
+#ifdef HAS_TIME
+       up_time_ms =  time_get_ms32();
+#else
+       up_time_ms = core_get_up_time_ms();
+#endif
+       return up_time_ms;
+}
+
 bool board_proc(void) {
     bool res = false;
 #ifdef HAS_TBFP
     TbfpHandle_t *Tbfp = TbfpGetNode(1);
     if (Tbfp) {
 #ifdef HAS_TIME
-       uint32_t up_time_ms = time_get_ms32();
-       uint32_t diff_ms = up_time_ms - Tbfp->rx_time_stamp_ms;
+       uint32_t up_time_ms = 0;
+       uint32_t diff_ms  = 0;
+       up_time_ms = board_get_up_time_ms();
+       diff_ms = up_time_ms - Tbfp->rx_time_stamp_ms;
        if(BOARD_IDLE_TIME_OUT_MS < diff_ms) {
-           Tbfp->rx_time_stamp_ms = time_get_ms32();
+           Tbfp->rx_time_stamp_ms = board_get_up_time_ms();
            res = application_launch(EXT_ROM_START );
        }
 #else

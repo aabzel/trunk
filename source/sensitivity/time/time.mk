@@ -15,6 +15,7 @@ ifneq ($(TIME_GENERAL_MK_INC),Y)
 
     ifeq ($(TIME_EXT),Y)
         OPT += -DHAS_TIME_EXT
+        SOURCES_C += $(TIME_GENERAL_DIR)/none_blocking_pause.c
     endif
 
 
@@ -35,7 +36,6 @@ ifneq ($(TIME_GENERAL_MK_INC),Y)
         SOURCES_C += $(TIME_GENERAL_DIR)/timer_utils.c
     endif
 
-    SOURCES_C += $(TIME_GENERAL_DIR)/none_blocking_pause.c
 
     ifeq ($(CLI),Y)
         ifeq ($(TIME_COMMANDS),Y)

@@ -4,10 +4,9 @@
 #include <string.h>
 
 #include "data_utils.h"
+#include "protocol.h"
 #include "std_includes.h"
 #include "tbfp_diag.h"
-#include "protocol.h"
-
 
 #ifdef HAS_TIME
 #include "time_mcal.h"
@@ -250,7 +249,6 @@ static bool tbfp_parser_proc_wait_payload(TbfpHandle_t* Node, uint8_t rx_byte) {
     return res;
 }
 
-
 /*
  * data - frame data
  * size- frame size
@@ -272,7 +270,7 @@ static inline bool tbfp_proc_full_ll(TbfpHandle_t* const Node, uint16_t size) {
             Node->rx_byte += size;
             TbfpHeader_t inHeader = {0};
             memset(inHeader.buff, 0, sizeof(TbfpHeader_t));
-            memcpy(&inHeader, Node->fix_frame , sizeof(TbfpHeader_t));
+            memcpy(&inHeader, Node->fix_frame, sizeof(TbfpHeader_t));
 #ifdef HAS_TBFP_FLOW_CONTROL
             bool flow_ctrl_ok = false;
             flow_ctrl_ok = protocol_check_flow_control(TBFP, &Node->Flow, inHeader.snum, Node->interface);
@@ -291,10 +289,11 @@ static inline bool tbfp_proc_full_ll(TbfpHandle_t* const Node, uint16_t size) {
             }
 #endif /*HAS_TBFP_RETRANSMIT*/
 
-            //res = tbfp_proc_payload(&Node->fix_frame[TBFP_INDEX_PAYLOAD], inHeader.len, Node->interface, inHeader.payload_id);
+            // res = tbfp_proc_payload(&Node->fix_frame[TBFP_INDEX_PAYLOAD], inHeader.len, Node->interface,
+            // inHeader.payload_id);
             res = tbfp_proc_payload(Node, inHeader.len, inHeader.payload_id);
 #ifdef HAS_LOG
-            log_res(TBFP,res,"ProcPayLoad");
+            log_res(TBFP, res, "ProcPayLoad");
 #endif
 
 #ifdef HAS_TBFP_ACK
@@ -360,7 +359,7 @@ static bool tbfp_parser_proc_wait_crc8(TbfpHandle_t* const Node, const uint8_t r
             Node->rx_state = RX_DONE;
             Node->rx_pkt_cnt++;
             res = tbfp_parser_reset_rx(Node, WAIT_CRC);
-            //res = tbfp_proc_full(Node->fix_frame, frame_len + TBFP_SIZE_CRC, Node->interface);
+            // res = tbfp_proc_full(Node->fix_frame, frame_len + TBFP_SIZE_CRC, Node->interface);
             res = tbfp_proc_full_ll(Node, frame_len + TBFP_SIZE_CRC);
 #ifdef HAS_LOG
             log_res(TBFP, res, "ProcFull");
@@ -453,8 +452,8 @@ bool tbfp_parser_init(TbfpHandle_t* const Node, const TbfpConfig_t* const Config
             Node->exp_payload_len = 0;
             Node->load_len = 0;
             Node->s_num = 0;
-           // memset(Node->rx_frame, 0, TBFP_MAX_FRAME);
-           // memset(Node->fix_frame, 0, TBFP_MAX_FRAME);
+            // memset(Node->rx_frame, 0, TBFP_MAX_FRAME);
+            // memset(Node->fix_frame, 0, TBFP_MAX_FRAME);
             res = true;
         } else {
 #ifdef HAS_LOG

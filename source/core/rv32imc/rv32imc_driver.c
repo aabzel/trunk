@@ -28,10 +28,12 @@
 #include "watchdog_mcal.h"
 #endif
 
+#ifdef HAS_RV32IMC_EXT
 bool rv32imc_is_interrupt(void) {
     bool res = false;
     return res;
 }
+#endif
 
 bool rv32imc_reboot(void) {
     bool res = true;
@@ -51,13 +53,13 @@ bool rv32imc_reboot(void) {
     return res;
 }
 
+#ifdef HAS_CORE_EXT
 bool rv32imc_boot_spifi(void) {
     bool res = true;
     __asm__ volatile("la ra, 0x80000000\n\t"
                      "jalr ra");
     return res;
 }
-#ifdef HAS_CORE_EXT
 
 bool rv32imc_boot_eeprom(void) {
     bool res = true;
@@ -85,21 +87,34 @@ bool rv32imc_boot_addr_asm(const uint32_t app_start_address) {
 bool rv32imc_boot_addr(uint32_t app_start_address) {
     bool res = false;
     interrupt_disable();
-#ifdef HAS_LED
-   // led_mono_ctrl(2, true);
-#endif
     res = rv32imc_boot_addr_asm(app_start_address);
     return res;
 }
 
 #ifdef HAS_RV32IMC_EXT
-static uint64_t rv32imc_up_time_counter_get(void) {
+uint64_t rv32imc_up_time_counter_get(void) {
     uint64_t val = 0;
     Counter64bit_t Un64 = {0};
     Un64.u32[0] = read_csr(cycle);
     Un64.u32[1] = read_csr(cycleh);
     val = Un64.u64;
     return val;
+}
+#endif
+
+#ifdef HAS_RV32IMC_EXT
+uint32_t rv32imc_up_time_get_ms32(void) {
+    uint64_t counter = rv32imc_up_time_counter_get();
+    uint32_t up_time_ms = (1000UL * counter) / (SYS_FREQ);
+    return up_time_ms;
+}
+#endif
+
+#ifdef HAS_RV32IMC_EXT
+uint64_t rv32imc_up_time_get_us(void) {
+    uint64_t counter = rv32imc_up_time_counter_get();
+    uint64_t up_time_us = (1000000UL * counter) / (SYS_FREQ);
+    return up_time_us;
 }
 #endif
 
@@ -113,28 +128,9 @@ float rv32imc_up_time_get(void) {
 #endif
 
 #ifdef HAS_RV32IMC_EXT
-uint64_t rv32imc_up_time_get_us(void) {
-    uint64_t counter = rv32imc_up_time_counter_get();
-    uint64_t up_time_us = (1000000UL * counter) / (SYS_FREQ);
-
-    return up_time_us;
-}
-#endif
-
-#ifdef HAS_RV32IMC_EXT
 uint64_t rv32imc_up_time_get_ms(void) {
     uint64_t counter = rv32imc_up_time_counter_get();
     uint64_t up_time_us = (1000UL * counter) / (SYS_FREQ);
-    ;
-    return up_time_us;
-}
-#endif
-
-#ifdef HAS_RV32IMC_EXT
-uint32_t rv32imc_up_time_get_ms32(void) {
-    uint64_t counter = rv32imc_up_time_counter_get();
-    uint32_t up_time_us = (1000UL * counter) / (SYS_FREQ);
-
     return up_time_us;
 }
 #endif

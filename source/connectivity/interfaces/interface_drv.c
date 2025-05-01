@@ -92,8 +92,8 @@ bool system_calc_byte_rate(void) {
   interface_if - interface to send
   retx - retransmit
   */
-bool sys_send_if(const uint8_t* const array, const uint32_t size,
-		         const Interfaces_t interface_if, const IfRetx_t retx) {
+bool sys_send_if(const uint8_t* const array, const uint32_t size, const Interfaces_t interface_if,
+                 const IfRetx_t retx) {
     bool res = false;
 #ifdef HAS_SYSTEM_DIAG
     LOG_DEBUG(SYS, "%s Send", InterfaceToStr(interface_if));

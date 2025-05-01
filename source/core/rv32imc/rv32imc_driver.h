@@ -22,6 +22,7 @@ bool rv32imc_boot_eeprom(void);
 bool rv32imc_boot_addr(uint32_t app_start_address);
 bool rv32imc_boot_addr_asm(const uint32_t app_start_address);
 
+uint64_t rv32imc_up_time_counter_get(void);
 uint64_t rv32imc_up_time_get_us(void) ;
 uint64_t rv32imc_up_time_get_ms(void) ;
 uint32_t rv32imc_up_time_get_ms32(void) ;

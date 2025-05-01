@@ -16,7 +16,9 @@ ifneq ($(UART_DRV_MK_INC),Y)
         OPT += -DHAS_UART1
     endif
 
-    OPT += -DHAS_UART_TX_TIMEOUT
+    ifeq ($(TIME),Y)
+        OPT += -DHAS_UART_TX_TIMEOUT
+    endif
 
     SOURCES_C += $(UART_MIK_DIR)/uart_mcal.c
     SOURCES_C += $(UART_MIK_DIR)/uart_custom_isr.c

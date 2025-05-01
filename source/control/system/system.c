@@ -327,7 +327,7 @@ bool system_init(void) {
 #ifdef HAS_SYSTEM_EXT
         bool all_uniq = system_init_array_uniq();
 #ifdef HAS_LOG
-        log_info_res(SYS,all_uniq,"CheckUniqInit");
+        log_info_res(SYS, all_uniq, "CheckUniqInit");
 #endif
         res = res && all_uniq;
 #endif /*HAS_SYSTEM_EXT*/

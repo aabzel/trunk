@@ -4,13 +4,13 @@
 #include <string.h>
 #include <time.h>
 
+#include "board_api.h"
 #include "byte_utils.h"
 #include "common_diag.h"
 #include "common_functions.h"
 #include "data_utils.h"
 #include "interface_drv.h"
 #include "protocol.h"
-#include "board_api.h"
 
 #ifdef HAS_LED
 #include "led_drv.h"
@@ -362,8 +362,8 @@ IfRetx_t AckNeed2Retx(TbfpAck_t ack) {
 }
 #endif
 
-bool tbfp_send_payload(uint8_t* payload, uint32_t payload_size, Interfaces_t inter_face, uint8_t lifetime, TbfpAck_t ack,
-               TbfpPayloadId_t payload_id) {
+bool tbfp_send_payload(uint8_t* payload, uint32_t payload_size, Interfaces_t inter_face, uint8_t lifetime,
+                       TbfpAck_t ack, TbfpPayloadId_t payload_id) {
     bool res = false;
 #ifdef HAS_TBFP_DIAG
     LOG_DEBUG(TBFP, "TxSize:%u byte,IF:%s,PlID:%s", payload_size, InterfaceToStr(inter_face),
@@ -371,7 +371,7 @@ bool tbfp_send_payload(uint8_t* payload, uint32_t payload_size, Interfaces_t int
 #endif
     TbfpHandle_t* Node = TbfpInterfaceToNode(inter_face);
     if(Node) {
-    	IfRetx_t retx =  RETX_NO_NEED;
+        IfRetx_t retx = RETX_NO_NEED;
 #ifdef HAS_TBFP_RETX
         retx = AckNeed2Retx(ack);
 #endif
@@ -574,7 +574,7 @@ bool tbfp_send_ping(TbfpPayloadId_t payload_id, Interfaces_t inter_face) {
 bool tbfp_proc_ping(uint8_t* ping_payload, uint16_t len, Interfaces_t inter_face) {
     bool res = false;
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "PingPayload");
+    LOG_DEBUG(TBFP, "PingPayload");
 #endif
     if(ping_payload) {
         TbfPingFrame_t pingFrame = {0};
@@ -663,7 +663,7 @@ static bool tbfp_proc_chat(uint8_t* payload, uint16_t len) {
 static bool tbfp_proc_cmd(uint8_t* payload, uint16_t len) {
     bool res = false;
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "CmdPayload");
+    LOG_DEBUG(TBFP, "CmdPayload");
 #endif
     if((payload) && (0 < len) && (FRAME_ID_CMD == payload[0])) {
         res = false;
@@ -694,20 +694,19 @@ bool tbfp_parser_reset_rx(TbfpHandle_t* Node, RxState_t state) {
 /*
  $A5$C1$01$00$04$00$01$00$00$00$80$E4
  */
-static bool tbfp_jump(const TbfpHandle_t* const Node){
+static bool tbfp_jump(const TbfpHandle_t* const Node) {
     bool res = false;
-    if( 4 <= Node->payload_size) {
+    if(4 <= Node->payload_size) {
         led_mono_ctrl(2, true);
         uint32_t base_address = 0;
-        memcpy(&base_address,&(Node->fix_frame[TBFP_INDEX_PAYLOAD]),4);
+        memcpy(&base_address, &(Node->fix_frame[TBFP_INDEX_PAYLOAD]), 4);
         res = application_launch(base_address);
     }
     return res;
 }
 
-
-
-//            //res = tbfp_proc_payload(&Node->fix_frame[TBFP_INDEX_PAYLOAD], inHeader.len, Node->interface, inHeader.payload_id);
+//            //res = tbfp_proc_payload(&Node->fix_frame[TBFP_INDEX_PAYLOAD], inHeader.len, Node->interface,
+//            inHeader.payload_id);
 /*
  * len -
  * size - tbfp frame payload size
@@ -720,14 +719,14 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
     LOG_DEBUG(TBFP, "%s,ProcPayloadID:0x%x=%s,Len:%u Byte", InterfaceToStr(Node->interface), payload_id,
               TbfpPayloadIdToStr(payload_id), len);
 #endif
-   // TbfpHandle_t* Node = TbfpInterfaceToNode(Node->interface);
+    // TbfpHandle_t* Node = TbfpInterfaceToNode(Node->interface);
     if(Node) {
         switch(payload_id) {
         case FRAME_ID_JUMP: {
             // r
             res = tbfp_jump(Node);
 #ifdef HAS_LOG
-            log_res(TBFP,res,"JumpProc");
+            log_res(TBFP, res, "JumpProc");
 #endif
         } break;
 
@@ -736,7 +735,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
             // code runs
             res = storage_proc_cmd(Node->num, &(Node->fix_frame[TBFP_INDEX_PAYLOAD]), len);
 #ifdef HAS_LOG
-            log_res(TBFP,res,"StoreProc");
+            log_res(TBFP, res, "StoreProc");
 #endif
         } break;
 #endif
@@ -771,7 +770,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
             LOG_DEBUG(TBFP, "RxAck");
 #endif
             uint16_t ser_num = 0;
-            memcpy(&ser_num, &Node->fix_frame[TBFP_INDEX_PAYLOAD+1], 2);
+            memcpy(&ser_num, &Node->fix_frame[TBFP_INDEX_PAYLOAD + 1], 2);
 #ifdef HAS_TBFP_RETX
             res = tbfp_retx_ack(Node, ser_num);
 #endif
@@ -918,7 +917,6 @@ bool tbfp_proc_xxx(uint8_t* arr, uint16_t len, Interfaces_t inter_face, bool is_
     return res;
 }
 #endif
-
 
 /*
   size       1        1     2     2     N      1
@@ -1179,13 +1177,13 @@ bool tbfp_rx(uint8_t* const arr, uint32_t size, Interfaces_t interface) {
 }
 
 #ifdef HAS_TBFP_EXT
-bool tbfp_heartbeat_proc_one(uint32_t num){
+bool tbfp_heartbeat_proc_one(uint32_t num) {
     bool res = false;
-    TbfpHandle_t *Node = TbfpGetNode(num);
-    if (Node) {
-    	if(Node->heartbeat) {
-        	res = tbfp_send_ping(FRAME_ID_PONG , Node->interface);
-    	}
+    TbfpHandle_t* Node = TbfpGetNode(num);
+    if(Node) {
+        if(Node->heartbeat) {
+            res = tbfp_send_ping(FRAME_ID_PONG, Node->interface);
+        }
     }
     return res;
 }
@@ -1193,44 +1191,42 @@ bool tbfp_heartbeat_proc_one(uint32_t num){
 
 bool tbfp_proc_one(uint32_t num) {
     bool res = false;
-    TbfpHandle_t *Node = TbfpGetNode(num);
-    if (Node) {
+    TbfpHandle_t* Node = TbfpGetNode(num);
+    if(Node) {
         res = true;
         uint32_t i = 0;
-        for (i = 0; i < 512; i++) {
+        for(i = 0; i < 512; i++) {
             char out_char = 0;
             res = fifo_pull(&Node->RxFifo, &out_char);
-            if (res) {
+            if(res) {
                 Node->rx_time_stamp_iteration = Node->iteration;
-                res = tbfp_proc_byte(Node, (uint8_t) out_char);
+                res = tbfp_proc_byte(Node, (uint8_t)out_char);
             } else {
                 break;
             }
         }
 
 #ifdef HAS_TIME
-       uint32_t up_time_ms = time_get_ms32();
-       uint32_t diff_ms = up_time_ms - Node->rx_time_stamp_ms;
-       if(TBFP_RX_TIME_OUT_MS < diff_ms) {
-           Node->rx_time_stamp_ms = time_get_ms32();
-           res = tbfp_parser_reset_rx(Node, Node->rx_state);
-       }
+        uint32_t up_time_ms = time_get_ms32();
+        uint32_t diff_ms = up_time_ms - Node->rx_time_stamp_ms;
+        if(TBFP_RX_TIME_OUT_MS < diff_ms) {
+            Node->rx_time_stamp_ms = time_get_ms32();
+            res = tbfp_parser_reset_rx(Node, Node->rx_state);
+        }
 #else
-       uint32_t up_time_iteration = Node->iteration ;
-       uint32_t diff_iteration = 0;
+        uint32_t up_time_iteration = Node->iteration;
+        uint32_t diff_iteration = 0;
 
-       diff_iteration = up_time_iteration - Node->rx_time_stamp_iteration;
-       if(TBFP_RX_TIME_OUT_ITER < diff_iteration) {
-         //  Node->rx_time_stamp_iteration = Node->iteration;
-           res = tbfp_parser_reset_rx(Node, Node->rx_state);
-       }
+        diff_iteration = up_time_iteration - Node->rx_time_stamp_iteration;
+        if(TBFP_RX_TIME_OUT_ITER < diff_iteration) {
+            //  Node->rx_time_stamp_iteration = Node->iteration;
+            res = tbfp_parser_reset_rx(Node, Node->rx_state);
+        }
 #endif
-       Node->iteration++;
-
+        Node->iteration++;
     }
     return res;
 }
-
 
 static bool tbfp_init_common(const TbfpConfig_t* const Config, TbfpHandle_t* const Node) {
     bool res = false;
@@ -1315,7 +1311,7 @@ bool tbfp_proc(void) {
         } else {
         }
     }
-    if( ok) {
+    if(ok) {
         res = true;
     } else {
         res = false;
@@ -1323,13 +1319,12 @@ bool tbfp_proc(void) {
     return res;
 }
 
-
 #ifdef HAS_TBFP_EXT
 bool tbfp_heartbeat_proc(void) {
     bool res = true;
     uint32_t ok = 0;
     uint32_t num = 0;
-    //uint32_t cnt = tbfp_get_cnt();
+    // uint32_t cnt = tbfp_get_cnt();
     for(num = 0; num <= 10; num++) {
         res = tbfp_heartbeat_proc_one(num);
         if(res) {
@@ -1337,7 +1332,7 @@ bool tbfp_heartbeat_proc(void) {
         } else {
         }
     }
-    if( ok) {
+    if(ok) {
         res = true;
     } else {
         res = false;

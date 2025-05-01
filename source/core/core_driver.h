@@ -25,11 +25,13 @@ extern uint8_t* low_stack;
 
 bool fpu_init(void);
 uint32_t core_isr_handler_addr_get(int16_t irq_n);
+uint32_t core_get_up_time_ms(void);
 bool core_exeption(uint32_t in, uint32_t* out) ;
 bool core_is_interrupt(void);
 bool core_is_valid_isr_handler(int16_t irq_n);
 bool is_ram_addr(register uint32_t address);
 bool core_reboot(void);
+
 
 #ifdef HAS_CORE_EXT
 bool try_recursion(uint32_t max_depth, uint32_t* stack_size);

@@ -178,14 +178,14 @@ bool uart_wait_tx_done_ll(UartHandle_t* Node) {
     if(Node) {
         Node->wait_iter = 0;
 #ifdef HAS_UART_TX_TIMEOUT
-#ifdef HAS_TIME
+        uint32_t cur_ms = 0;
+        uint32_t dutation_ms = 0;
         bool time_out = false;
+        uint32_t start_ms = time_get_ms32();
+#ifdef HAS_UART_EXT
         uint32_t time_out_us = 0;
         (void)time_out_us;
         uint32_t baudrate = uart_get_cfg_baudrate(Node->num);
-        uint32_t start_ms = time_get_ms32();
-        uint32_t dutation_ms = 0;
-        uint32_t cur_ms = 0;
         if(Node->tx_len) {
             time_out_us = uart_calc_transfer_time_us(baudrate, (uint32_t)Node->tx_len + 1);
         } else { // for first call tx_len==0
