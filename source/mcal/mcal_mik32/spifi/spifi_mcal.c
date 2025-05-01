@@ -328,6 +328,7 @@ bool SpiFiIsValidConfig(const SpiFiConfig_t* const Config) {
 
 bool spifi_init_custom(void) {
    bool res = true;
+   HAL_SPIFI_MspInit();
    __HAL_PCC_SPIFI_CLK_ENABLE();
    return res;
 }
@@ -351,7 +352,7 @@ bool spifi_init_one(uint8_t num) {
                     Node->Handle.Instance = Info->SPIFIx;
                     Node->irq_n = Info->irq_n;
 
-                    // HAL_SPIFI_MspInit();
+                    HAL_SPIFI_MspInit();
                     HAL_SPIFI_Reset(&Node->Handle);
 
                 } else {

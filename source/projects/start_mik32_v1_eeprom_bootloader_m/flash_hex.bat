@@ -17,10 +17,13 @@ echo script=%script%
 set FlashTool=%PYTHON_BIN% %script%
 
 
+set MCU_CFG=mik32.cfg
+set PROG_CFG=start-link.cfg
+
 set gdb_server=--openocd-exec=openocd.exe
 set bit_rate=--adapter-speed=3200
-set programmer=--openocd-interface=start-link.cfg
-set Device=--openocd-target=mik32.cfg
+set programmer=--openocd-interface=%PROG_CFG%
+set Device=--openocd-target=%MCU_CFG%
 
 set options="%artefact_hex%"
 set options=%options% --run-openocd
