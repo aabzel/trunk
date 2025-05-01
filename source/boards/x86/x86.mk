@@ -14,7 +14,7 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         @echo $(error Board has been selected before)
     endif
 
-    SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_config.c
+    SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_api.c
     SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_monitor.c
 
     ifeq ($(GPIO),Y)

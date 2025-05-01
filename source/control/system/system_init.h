@@ -225,7 +225,11 @@
 
 #include "sw_init.h"
 
+#ifdef HAS_APPLICATION
 #define APPLICATION_INIT {.init_function = application_mcal_init,  },
+#else
+#define APPLICATION_INIT
+#endif /* */
 
 #define PRE_INIT                                                                \
     SOFTWARE_TIMER_INIT                                                         \

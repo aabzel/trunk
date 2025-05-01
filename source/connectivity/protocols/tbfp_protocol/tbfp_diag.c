@@ -335,6 +335,39 @@ bool tbfp_parse_frame(const uint8_t* const data, const uint32_t size) {
     return res;
 }
 
+/*0x80000000 */
+bool tbfp_generate_jump(const uint32_t base_address){
+    bool res = false;
+    TbfpHandle_t* Node = TbfpGetNode(1);
+    if(Node) {
+        LOG_WARNING(TBFP, "GenerateJumpToAddr:0x%08X Packet", base_address);
+        LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
+        uint16_t payload_len = 4 ;
+        LOG_INFO(TBFP, "PayLoadSize:%u byte", payload_len);
+        TbfpHeader_t Header = {0};
+        Header.preamble = Node->preamble_val;
+        Header.flags.ack_need = 1;
+        Header.flags.crc_check_need = 1;
+        Header.flags.lifetime = 1;
+        Header.payload_id = FRAME_ID_JUMP;
+        Header.snum = 1;
+        Header.len = payload_len;
+        memcpy(Node->TxFrame, &Header, sizeof(TbfpHeader_t));
+        memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &base_address, 4);
+        uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
+        uint16_t total_frame_len = frame_len + 1;
+        Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
+        LOG_INFO(TBFP, "JumpFrame:%s", ArrayToStr(Node->TxFrame, total_frame_len));
+        uint32_t i = 0;
+        for(i=0; i < total_frame_len; i++) {
+            cli_printf("$%02X", Node->TxFrame[i]);
+        }
+        cli_printf(CRLF);
+        res = true;
+    }
+    return res;
+}
+
 bool tbfp_storage_erase_generate(void) {
     bool res = false;
     TbfpHandle_t* Node = TbfpGetNode(1);

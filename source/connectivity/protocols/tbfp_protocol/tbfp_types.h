@@ -134,6 +134,7 @@ typedef struct  {
     uint32_t lack_frame_in_data;
 //  TbfpParser_t parser;
     uint16_t tx_sn;
+    uint16_t payload_size;
     uint32_t rx_time_stamp_ms;
     uint32_t rx_time_stamp_iteration;
     uint32_t iteration;

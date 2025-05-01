@@ -10,7 +10,7 @@ include(`preamble.texi')
 \title{  
 \textbf{EEPROM Загрузчик для MIK32  \\
         (K1948BK018) \\
-        версия: 4
+        версия: 5
         }
 }
 

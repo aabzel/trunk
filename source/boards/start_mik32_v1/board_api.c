@@ -92,13 +92,14 @@ bool board_init_xip(void) {
     return res;
 }
 
-bool application_launch(void) {
+bool application_launch(const uint32_t base_address) {
     bool res = true;
     res = board_init_xip();
     if(res) {
         //res = rv32imc_boot_spifi() ;
     	// no led_mono_ctrl(2, 1);
-        res = rv32imc_boot_addr(EXT_ROM_START) ;
+        //res = rv32imc_boot_addr(EXT_ROM_START) ;
+        res = rv32imc_boot_addr(base_address) ;
     }
     return res;
 }
@@ -112,13 +113,13 @@ bool board_proc(void) {
        uint32_t up_time_ms = time_get_ms32();
        uint32_t diff_ms = up_time_ms - Tbfp->rx_time_stamp_ms;
        if(BOARD_IDLE_TIME_OUT_MS < diff_ms) {
-    	   Tbfp->rx_time_stamp_ms = time_get_ms32();
-           res = application_launch( );
+           Tbfp->rx_time_stamp_ms = time_get_ms32();
+           res = application_launch(EXT_ROM_START );
        }
 #else
        uint32_t diff_iteration = Tbfp->iteration - Tbfp->rx_time_stamp_iteration;
        if(BOARD_IDLE_TIME_OUT_ITER < diff_iteration) {
-           res = application_launch();
+           res = application_launch(EXT_ROM_START);
        }
 #endif
         res = true;

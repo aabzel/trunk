@@ -12,7 +12,7 @@
 
 bool board_init_xip(void);
 bool board_init(void);
-bool application_launch(void);
+bool application_launch(const uint32_t app_start_address) ;
 bool application_mcal_init(void);
 bool board_proc(void);
 

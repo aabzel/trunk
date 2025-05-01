@@ -1,4 +1,4 @@
-#include "board_config.h"
+#include "board_api.h"
 
 #include "log.h"
 
@@ -8,5 +8,14 @@ bool board_init(void) {
 }
 
 bool is_ram_addr(uint32_t addr) {
+    return true;
+}
+
+bool application_launch(uint32_t base_address){
+    return false;
+}
+
+
+bool application_mcal_init(void){
     return true;
 }

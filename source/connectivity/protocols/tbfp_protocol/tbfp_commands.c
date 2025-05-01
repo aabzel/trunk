@@ -16,28 +16,56 @@
 
 bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]){
     bool res = false;
-    res = tbfp_storage_erase_generate();
+    res = tbfp_storage_erase_generate( );
     log_info_res(TBFP, res, "GenErase");
     return res;
 }
 
+
+/*
+   tgj 0x80000000
+ */
+bool tbfp_generate_jump_command(int32_t argc, char* argv[]){
+    bool res = false;
+
+    uint32_t base_address = 0x80000000;
+
+    if(0 <= argc) {
+        res = true;
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &base_address);
+        log_info_res(TBFP, res, "Addr");
+    }
+
+    if(res) {
+        res = tbfp_generate_jump(base_address);
+        log_info_res(TBFP, res, "GenJump");
+    }else {
+        LOG_ERROR(TBFP, "Usage: tgj addr");
+    }
+    return res;
+}
+
+
 bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]){
     bool res = false;
 
-    uint32_t address = 0;
     uint16_t size = 0;
     uint8_t pattern = 0;
-    if(0 <= argc) {
+    uint32_t address = 0;
+    if(1 <= argc) {
         res = try_str2uint32(argv[0], &address);
         log_info_res(TBFP, res, "Addr");
     }
 
-    if(1 <= argc) {
+    if(2 <= argc) {
         res = try_str2uint16(argv[1], &size);
         log_info_res(TBFP, res, "Size");
     }
 
-    if(2 <= argc) {
+    if(3 <= argc) {
         res = try_str2uint8(argv[2], &pattern);
         log_info_res(TBFP, res, "Pattern");
     }
@@ -55,12 +83,12 @@ bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]){
 
     uint32_t address = 0;
     uint16_t size = 0;
-    if(0 <= argc) {
+    if(1 <= argc) {
         res = try_str2uint32(argv[0], &address);
         log_info_res(TBFP, res, "Addr");
     }
 
-    if(1 <= argc) {
+    if(2 <= argc) {
         res = try_str2uint16(argv[1], &size);
         log_info_res(TBFP, res, "Size");
     }

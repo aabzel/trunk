@@ -13,6 +13,7 @@ bool tbfp_error_command(int32_t argc, char* argv[]);
 bool tbfp_diag_retx_command(int32_t argc, char* argv[]);
 bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]);
 bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]);
+bool tbfp_generate_jump_command(int32_t argc, char* argv[]);
 bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]);
 bool tbfp_diag_command(int32_t argc, char* argv[]);
 bool tbfp_send_command(int32_t argc, char* argv[]);
@@ -21,6 +22,7 @@ bool tbfp_parse_frame_command(int32_t argc, char* argv[]);
 bool tbfp_send_hi_load_command(int32_t argc, char* argv[]);
 
 #define TBFP_COMMANDS                                                                                                  \
+    SHELL_CMD("tbfp_generate_jump", "tgj", tbfp_generate_jump_command, "TbfpGenJump"),              \
     SHELL_CMD("tbfp_storage_erase_gen", "tseg", tbfp_storage_erase_generate_command, "TbfpStorageErase"),              \
     SHELL_CMD("tbfp_storage_write_gen", "tswg", tbfp_storage_write_generate_command, "TbfpStorageWrite"),              \
     SHELL_CMD("tbfp_storage_read_gen", "tsrg", tbfp_storage_read_generate_command, "TbfpStorageRead"),                 \
