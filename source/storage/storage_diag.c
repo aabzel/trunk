@@ -261,6 +261,18 @@ const char* DataToValueStr(const uint8_t* const buff, size_t size, StorageType_t
     return text;
 }
 
+const char* StorageMemoryFrameHeaderToStr(const StorageMemoryFrameHeader_t* const Header) {
+    static char lText[120] = {0};
+    if(Header) {
+        strcpy(lText, "");
+        memset(lText, 0, sizeof(lText));
+        snprintf(lText, sizeof(lText), "%sOp:%s,", lText, StorageAccessToStr(Header->operation));
+        snprintf(lText, sizeof(lText), "%sAddr:0x%08x,", lText, Header->address);
+        snprintf(lText, sizeof(lText), "%sSize:%u,", lText, Header->size);
+    }
+    return lText;
+}
+
 const char* StorageFrameHeaderToStr(const StorageFrameHeader_t* const Header) {
     static char lText[120] = {0};
     if(Header) {

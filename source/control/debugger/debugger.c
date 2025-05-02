@@ -61,14 +61,7 @@ bool write_addr_32bit(uint32_t address, uint32_t value) {
 #endif /*CC26X2*/
     return res;
 }
-bool write_addr_8bit(uint32_t address, uint8_t value) {
-    LOG_DEBUG(DBG, "WrireAddr[0x%08x]=0x%02x", address, value);
-    bool res = true;
-    volatile uint8_t* addr = NULL;
-    addr = (volatile uint8_t*)address;
-    (*addr) = value; /*May cause HardFault_Handler*/
-    return res;
-}
+
 bool write_addr_16bit(uint32_t address, uint16_t value) {
     LOG_DEBUG(DBG, "WrireAddr[0x%08x]=0x%04x", address, value);
     bool res = true;
@@ -78,19 +71,6 @@ bool write_addr_16bit(uint32_t address, uint16_t value) {
     return res;
 }
 #endif
-
-uint8_t read_addr_8bit(uint32_t address) {
-    uint8_t value = 0u;
-
-    volatile uint8_t* p_addr = NULL;
-    /*MISRA 2012 Rule 11.4: integer should not be converted to pointer */
-    p_addr = (volatile uint8_t*)address;
-    if(p_addr) {
-        value = *p_addr;
-    }
-
-    return value;
-}
 
 uint16_t read_addr_16bit(uint32_t address) {
     uint16_t value = 0u;

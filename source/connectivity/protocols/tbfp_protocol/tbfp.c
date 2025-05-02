@@ -691,6 +691,14 @@ bool tbfp_parser_reset_rx(TbfpHandle_t* Node, RxState_t state) {
     return res;
 }
 
+static bool tbfp_memory(const TbfpHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+        res = storage_tbfp_memory(Node->num, &(Node->fix_frame[TBFP_INDEX_PAYLOAD]), Node->payload_size);
+    }
+    return res;
+}
+
 /*
  $A5$C1$01$00$04$00$01$00$00$00$80$E4
  */
@@ -722,6 +730,14 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
     // TbfpHandle_t* Node = TbfpInterfaceToNode(Node->interface);
     if(Node) {
         switch(payload_id) {
+
+        case FRAME_ID_MEM: {
+            res = tbfp_memory(Node);
+#ifdef HAS_LOG
+            log_res(TBFP, res, "Memory");
+#endif
+        } break;
+
         case FRAME_ID_JUMP: {
             // r
             res = tbfp_jump(Node);

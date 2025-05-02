@@ -1,9 +1,3 @@
-subgraph cluster_Computing{
-    label = "Computing";
-    //rank = same; 
-
-    style=filled;
-    color=oldlace;
 #ifdef HAS_AES256_GENERAL
     AES256 
 #endif
@@ -96,11 +90,10 @@ subgraph cluster_Computing{
     SOLVER
 #endif
 
-#ifdef HAS_SW_DAC
-    SW_DAC
+#ifdef HAS_DDS
+    DDS
 #endif
 
-}
 
 
 #ifdef HAS_AES256_GENERAL
@@ -183,7 +176,7 @@ subgraph cluster_Computing{
 #include "solver.gvi"
 #endif
 
-#ifdef HAS_SW_DAC
+#ifdef HAS_DDS
 #include "sw_dac.gvi"
 #endif
 

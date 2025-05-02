@@ -144,5 +144,10 @@
 			<type>2</type>
 			<locationURI>$%7BWORKSPACE_LOC%7D/unit_tests</locationURI>
 		</link>
+		<link>
+			<name>xpack-riscv-none-elf-gcc-14.2.0-3</name>
+			<type>2</type>
+			<location>C:/xpack-riscv-none-elf-gcc-14.2.0-3</location>
+		</link>
 	</linkedResources>
 </projectDescription>

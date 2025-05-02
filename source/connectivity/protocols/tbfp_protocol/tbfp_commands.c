@@ -14,18 +14,17 @@
 #include "tbfp_retx_diag.h"
 #include "writer_generic.h"
 
-bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]){
+bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]) {
     bool res = false;
-    res = tbfp_storage_erase_generate( );
+    res = tbfp_storage_erase_generate();
     log_info_res(TBFP, res, "GenErase");
     return res;
 }
 
-
 /*
    tgj 0x80000000
  */
-bool tbfp_generate_jump_command(int32_t argc, char* argv[]){
+bool tbfp_generate_jump_command(int32_t argc, char* argv[]) {
     bool res = false;
 
     uint32_t base_address = 0x80000000;
@@ -42,14 +41,13 @@ bool tbfp_generate_jump_command(int32_t argc, char* argv[]){
     if(res) {
         res = tbfp_generate_jump(base_address);
         log_info_res(TBFP, res, "GenJump");
-    }else {
+    } else {
         LOG_ERROR(TBFP, "Usage: tgj addr");
     }
     return res;
 }
 
-
-bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]){
+bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]) {
     bool res = false;
 
     uint16_t size = 0;
@@ -71,14 +69,14 @@ bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]){
     }
 
     if(res) {
-        res = tbfp_storage_write_generate(address, size,pattern);
-    }else {
+        res = tbfp_storage_write_generate(address, size, pattern);
+    } else {
         LOG_ERROR(TBFP, "Usage: tswg addr size pattern");
     }
     return res;
 }
 
-bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]){
+bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]) {
     bool res = false;
 
     uint32_t address = 0;
@@ -95,7 +93,7 @@ bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]){
 
     if(res) {
         res = tbfp_storage_read_generate(address, size);
-    }else {
+    } else {
         LOG_ERROR(TBFP, "Usage: tsrg addr size");
     }
     return res;

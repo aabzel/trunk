@@ -111,10 +111,18 @@ const char* GpioMik32Pull2Str(HAL_GPIO_PullTypeDef code) {
 Port_t PortLetter2PortNum(char port) {
     Port_t port_num = PORT_UNDEF;
     switch(port) {
-      case '0':  port_num = PORT_0; break;
-      case '1':  port_num = PORT_1; break;
-      case '2':  port_num = PORT_2; break;
-      default:   port_num = PORT_UNDEF;  break;
+    case '0':
+        port_num = PORT_0;
+        break;
+    case '1':
+        port_num = PORT_1;
+        break;
+    case '2':
+        port_num = PORT_2;
+        break;
+    default:
+        port_num = PORT_UNDEF;
+        break;
     }
     return port_num;
 }

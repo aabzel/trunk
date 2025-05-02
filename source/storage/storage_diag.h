@@ -7,6 +7,7 @@
 #include "storage_types.h"
 
 
+const char* StorageMemoryFrameHeaderToStr(const StorageMemoryFrameHeader_t* const Header);
 const char* StorageFrameHeaderToStr(const StorageFrameHeader_t* const Header );
 const char* StorageAccessToStr(const StorageAccess_t access);
 const char* StorageTypeToStr(StorageType_t type);

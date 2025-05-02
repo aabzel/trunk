@@ -1,48 +1,44 @@
-subgraph cluster_protocols{
-    label = "Protocols";
-    //rank = same; 
-    style=filled;
-    color=oldlace;
+#define PROTOCOLS_NODE_ATTR [shape = note][fillcolor = aqua][style="filled"]
+
     #ifdef HAS_CLI
-        CLI; 
+        CLI
     #endif
     
     #ifdef HAS_DECAWAVE
-        DECAWAVE; 
+        DECAWAVE
     #endif
 
     #ifdef HAS_DS_TWR
-        DS_TWR; 
+        DS_TWR
     #endif
 
     #ifdef HAS_NMEA
-        NMEA; 
+        NMEA
     #endif
 
     #ifdef HAS_RDS
-        RDS;
+        RDS
     #endif
 
     #ifdef HAS_RTCM
-        RTCM;
+        RTCM
     #endif
 
     #ifdef HAS_TBFP
-        TBFP;
+        TBFP
     #endif
 
     #ifdef HAS_UBX
-        UBX;
+        UBX
     #endif
 
     #ifdef HAS_ISO_TP
-        ISO_TP;
+        ISO_TP
     #endif
 
     #ifdef HAS_UDS
-        UDS;
+        UDS
     #endif
-}
 
 #ifdef HAS_CLI
     #include "cli.gvi"

@@ -1,10 +1,5 @@
 #define ADT_NODE_ATTR [shape = note][fillcolor = aqua][style="filled"]
 
-subgraph cluster_adc{
-    label = "ADT";
-    //rank = same; 
-    style=filled;
-    color=oldlace;
     
     #ifdef HAS_ARRAY
         ARRAY ADT_NODE_ATTR
@@ -30,7 +25,6 @@ subgraph cluster_adc{
         SET ADT_NODE_ATTR
     #endif
 
-}
 
 #ifdef HAS_ARRAY
 #include "array.gvi"

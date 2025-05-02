@@ -224,8 +224,8 @@ bool led_mono_on(LedMonoHandle_t* const Node) {
     if(Node) {
         res = true;
         res = led_set_state_ll(Node, GPIO_LVL_HI); // Error
-        Node->mode = LED_MODE_ON;// Error
-        Node->prev = GPIO_LVL_UNDEF; // Error
+        Node->mode = LED_MODE_ON;                  // Error
+        Node->prev = GPIO_LVL_UNDEF;               // Error
 #ifdef HAS_GENERIC
 #endif
     } else {
@@ -242,9 +242,9 @@ bool led_mono_off(LedMonoHandle_t* const Node) {
     if(Node) {
         res = true;
 #ifdef HAS_GENERIC
-        Node->prev = GPIO_LVL_UNDEF;// hang-up error in optimization
-        Node->mode = LED_MODE_OFF;// hang-up error in optimization
-        res = led_set_state_ll(Node, GPIO_LVL_LOW);// hang-up error in optimization
+        Node->prev = GPIO_LVL_UNDEF;                // hang-up error in optimization
+        Node->mode = LED_MODE_OFF;                  // hang-up error in optimization
+        res = led_set_state_ll(Node, GPIO_LVL_LOW); // hang-up error in optimization
 #endif
     } else {
 #ifdef HAS_LOG
@@ -255,26 +255,28 @@ bool led_mono_off(LedMonoHandle_t* const Node) {
 }
 
 bool led_mono_toggle(const uint8_t num) {
-	bool res = false;
+    bool res = false;
     LedMonoHandle_t* Node = LedMonoGetNode(num);
     if(Node) {
-    	res = gpio_toggle(Node->pad);
+        res = gpio_toggle(Node->pad);
     }
     return res;
 }
 
+#if 1
 bool led_mono_ctrl(const uint8_t num, const bool on_off) {
     bool res = false;
     LedMonoHandle_t* Node = LedMonoGetNode(num);
     if(Node) {
         if(on_off) {
             res = led_mono_on(Node); // hang-up error in optimization
-        }else{
+        } else {
             res = led_mono_off(Node); // hang-up error in optimization
         }
     }
     return res;
 }
+#endif
 
 #if 0
 
@@ -551,7 +553,7 @@ bool led_mono_proc_one(uint32_t num) {
 #endif
         case LED_MODE_PWM: {
 #ifdef HAS_MATH
-            val = calc_pwm_sample_num(time_us, Node->period_ms, Node->duty, Node->phase_ms);
+            val = calc_pwm_sample_num(time_us, Node->period_ms, (uint8_t)Node->duty, Node->phase_ms);
 #else
             val = led_calc_pwm_sample_num((int32_t)time_us, Node->period_ms, Node->duty);
 #endif

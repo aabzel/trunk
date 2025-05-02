@@ -33,17 +33,17 @@
 const char* TbfpRxState2Str(RxState_t rx_state) {
     char* name = "?";
     switch(rx_state) {
-    case WAIT_INIT: name = "Init";        break;
-    case WAIT_PREAMBLE: name = "WaitPre";        break;
-    case WAIT_FLAGS: name = "WaitFlags";        break;
-    case WAIT_SERIAL_NUM: name = "WaitSn";        break;
-    case WAIT_LEN: name = "WaitLen";        break;
-    case WAIT_FRAME_ID: name = "WaitFrameId";        break;
-    case WAIT_PAYLOAD: name = "WaitPayload";        break;
-    case WAIT_CRC: name = "WaitCrc8";        break;
-    case WAIT_RETX_CNT: name = "WaitFlag";        break;
-    case WAIT_UNDEF: name = "?";        break;
-    case RX_DONE: name = "RxDone";        break;
+    case WAIT_INIT: name = "Init"; break;
+    case WAIT_PREAMBLE: name = "WaitPre"; break;
+    case WAIT_FLAGS: name = "WaitFlags"; break;
+    case WAIT_SERIAL_NUM: name = "WaitSn"; break;
+    case WAIT_LEN: name = "WaitLen"; break;
+    case WAIT_FRAME_ID: name = "WaitFrameId"; break;
+    case WAIT_PAYLOAD: name = "WaitPayload"; break;
+    case WAIT_CRC: name = "WaitCrc8"; break;
+    case WAIT_RETX_CNT: name = "WaitFlag"; break;
+    case WAIT_UNDEF: name = "?"; break;
+    case RX_DONE: name = "RxDone"; break;
     }
     return name;
 }
@@ -52,21 +52,21 @@ const char* TbfpRxState2Str(RxState_t rx_state) {
 const char* TbfpPayloadIdToStr(const TbfpPayloadId_t id) {
     const char* name = "?";
     switch( (uint8_t) id) {
-    case FRAME_ID_STORAGE: name = "Stor";        break;
-    case FRAME_ID_MEM_READ: name = "MR";        break;
-    case FRAME_ID_KEYBOARD: name = "Kye";        break;
-    case FRAME_ID_ACK: name = "Ack";        break;
-    case FRAME_ID_CHAT: name = "Chat";        break;
-    case FRAME_ID_CMD: name = "Cmd";        break;
-    case FRAME_ID_PING: name = "Ping";        break;
-    case FRAME_ID_TUNNEL: name = "Tunnel";        break;
-    case FRAME_ID_PONG: name = "Pong";        break;
+    case FRAME_ID_STORAGE: name = "Stor"; break;
+    case FRAME_ID_MEM: name = "Mem"; break;
+    case FRAME_ID_KEYBOARD: name = "Kye"; break;
+    case FRAME_ID_ACK: name = "Ack"; break;
+    case FRAME_ID_CHAT: name = "Chat"; break;
+    case FRAME_ID_CMD: name = "Cmd"; break;
+    case FRAME_ID_PING: name = "Ping"; break;
+    case FRAME_ID_TUNNEL: name = "Tunnel"; break;
+    case FRAME_ID_PONG: name = "Pong"; break;
 #ifdef HAS_DECAWAVE
-    case FRAME_ID_DECAWAVE: name = "DecaWave";        break;
+    case FRAME_ID_DECAWAVE: name = "DecaWave"; break;
 #endif
 
 #ifdef HAS_RTCM3
-    case FRAME_ID_RTCM3: name = "RTCM3";        break;
+    case FRAME_ID_RTCM3: name = "RTCM3"; break;
 #endif
 
 #if 0
@@ -77,9 +77,7 @@ const char* TbfpPayloadIdToStr(const TbfpPayloadId_t id) {
         case  FRAME_ID_T_LOOP: name="tLoop"; break;
         case  FRAME_ID_TIMINGS: name="Timings"; break;
 #endif
-    default:
- name = "?";
-        break;
+    default: name = "?"; break;
     }
     return name;
 }

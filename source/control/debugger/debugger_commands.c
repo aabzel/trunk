@@ -20,6 +20,7 @@
 #include "debugger.h"
 #include "log.h"
 #include "log_utils.h"
+#include "storage.h"
 #include "sys_config.h"
 #ifdef HAS_FLASH
 #include "flash_mcal.h"

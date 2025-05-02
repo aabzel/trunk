@@ -192,7 +192,7 @@ float calc_sin_sample(uint64_t time_us, float frequency, float phase_ms, float d
 }
 
 float calc_dtmf_sample(uint64_t time_us, float frequency1, float frequency2, float phase_ms, float des_amplitude,
-                        float in_offset) {
+                       float in_offset) {
     // float lineVal = 0.0;
 #ifdef HAS_LOG
     LOG_DEBUG(MATH, "DualTone T:%u,F1:%f, F2:%f, P:%f, A:%f, O:%f", time_us, frequency1, frequency2, phase_ms,
@@ -215,7 +215,7 @@ float calc_dtmf_sample(uint64_t time_us, float frequency1, float frequency2, flo
   phase_rad -  initial phase.
  */
 float calc_chirp_sample(uint64_t time_us, float f_2_hz, float f_1_hz, float phase_rad, float amplitude,
-                         float signal_diration_s) {
+                        float signal_diration_s) {
     float amplitude_scaled = 0.0;
     float b = 0;
     if(0.0 < signal_diration_s) {
@@ -238,8 +238,8 @@ float calc_chirp_sample(uint64_t time_us, float f_2_hz, float f_1_hz, float phas
     return amplitude_scaled;
 }
 
-float calc_pwm_sample(uint64_t time_us, float freq, float cur_phase_ms, float des_amplitude,
-                       float duty_cycle_percent, float offset) {
+float calc_pwm_sample(uint64_t time_us, float freq, float cur_phase_ms, float des_amplitude, float duty_cycle_percent,
+                      float offset) {
     float line_val = 0.0;
     float saw_val = 0.0;
 
@@ -251,7 +251,7 @@ float calc_pwm_sample(uint64_t time_us, float freq, float cur_phase_ms, float de
     }
     float cur_time_ms = ((float)time_us) / 1000.0;
     line_val = ((((float)cur_time_ms) + ((float)cur_phase_ms)) / 1000.0) * freq; /*tune frequency*/
-    saw_val = fmodf(line_val, 1.0);                                                /*tune DutyCycle*/
+    saw_val = fmodf(line_val, 1.0);                                              /*tune DutyCycle*/
 
     float magnitude = offset;
     float val = (((1.0 - ((100.0 - duty_cycle_percent)) / 100.0)) - saw_val); /*tune DutyCycle*/
@@ -327,8 +327,7 @@ bool is_prime(uint32_t number) {
     return true;
 }
 
-float calc_fence_sample(uint64_t time_us, float in_frequency, float in_phase_ms, float des_amplitude,
-                         float in_offset) {
+float calc_fence_sample(uint64_t time_us, float in_frequency, float in_phase_ms, float des_amplitude, float in_offset) {
     float argument = 0.0f;
     float amplitude = 0.0f;
     float amplitude_scaled = 0.0f;
@@ -341,8 +340,7 @@ float calc_fence_sample(uint64_t time_us, float in_frequency, float in_phase_ms,
     return amplitude_scaled;
 }
 
-float calc_saw_sample(uint64_t time_us, float in_frequency, float in_phase_ms, float des_amplitude,
-                       float in_offset) {
+float calc_saw_sample(uint64_t time_us, float in_frequency, float in_phase_ms, float des_amplitude, float in_offset) {
     float argument = 0.0f;
     float amplitude = 0.0f;
     float amplitude_scaled = 0.0f;

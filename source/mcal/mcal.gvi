@@ -1,27 +1,7 @@
 #define MCAL_NODE_ATTR [shape = note][fillcolor = aquamarine][style="filled"]
 
-subgraph cluster_mcal{
-    label = "MCAL";
-    //rank = same; 
-
-    style=filled;
-    color=oldlace;
-    
-    #ifdef HAS_ADC
-    
-    ADC MCAL_NODE_ATTR 
-    #endif
-    
-    #ifdef HAS_DMA
-    DMA MCAL_NODE_ATTR
-    #endif
-    
-    #ifdef HAS_FLASH
-    FLASH MCAL_NODE_ATTR 
-    #endif
-    
-    #ifdef HAS_GPIO
-    GPIO MCAL_NODE_ATTR
+    #ifdef HAS_SPIFI
+    SPIFI MCAL_NODE_ATTR
     #endif
     
     #ifdef HAS_I2C
@@ -67,7 +47,6 @@ subgraph cluster_mcal{
     #ifdef HAS_WDT
     WDT MCAL_NODE_ATTR
     #endif
-}
 
 #include "mcal_common.gvi"
 

@@ -14,7 +14,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.release.1334713933" name="Release" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=" parent="cdt.managedbuild.config.gnu.cross.exe.release">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.release.1334713933" name="Release" optionalBuildProperties="org.eclipse.cdt.docker.launcher.containerbuild.property.selectedvolumes=,org.eclipse.cdt.docker.launcher.containerbuild.property.volumes=" parent="cdt.managedbuild.config.gnu.cross.exe.release">
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.release.1334713933." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.release.1505050315" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.release">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1759110014" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
@@ -42,7 +42,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="mcal/mcal_zephyr|mcal/mcal_stm32f4|mcal/mcal_nrf5340|mcal/mcal_mik32|mcal/mcal_esp32|mcal/mcal_ehal|mcal/mcal_cc26x2|mcal/mcal_at32f4|applications/pastilda|applications/nrf5340_dk_audio|applications/light_navigator|applications/keylog|applications/graphviz_to_tsort|applications/dashboard|applications/bt_ble_uwb_tag_audio|applications/ble_speaker_audio|applications/ble_audio_evb_v1|applications/auto_volume|applications/version_auto|applications/auto_brightness|adt/set" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="microcontroller/stm32f446re|microcontroller/stm32f429zi|microcontroller/stm32f415rg|microcontroller/stm32f413zh|microcontroller/stm32f411ce|microcontroller/stm32f407zg|microcontroller/stm32f407vg|microcontroller/stm32f407ve|microcontroller/stm32f401re|microcontroller/nRF5340|microcontroller/k1948bk018|microcontroller/esp32|microcontroller/at32f437zm|microcontroller/at32f435zm|microcontroller/at32f413rc|mcal/mcal_zephyr|mcal/mcal_stm32f4|mcal/mcal_nrf5340|mcal/mcal_mik32|mcal/mcal_esp32|mcal/mcal_ehal|mcal/mcal_cc26x2|mcal/mcal_at32f4|applications/pastilda|applications/nrf5340_dk_audio|applications/light_navigator|applications/keylog|applications/graphviz_to_tsort|applications/dashboard|applications/bt_ble_uwb_tag_audio|applications/ble_speaker_audio|applications/ble_audio_evb_v1|applications/auto_volume|applications/version_auto|applications/auto_brightness|adt/set" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

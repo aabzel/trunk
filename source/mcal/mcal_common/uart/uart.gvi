@@ -1,7 +1,13 @@
+#ifdef HAS_TIME
 TIME->UART
-FIFO->UART
-DMA->UART [color = green]
+#endif
+
 GPIO->UART [color = fuchsia]
 REG->UART [color = darkorange]
+FIFO->UART
+
+#ifdef HAS_DMA
+DMA->UART [color = green]
+#endif
 
 //https://graphviz.org/doc/info/colors.html

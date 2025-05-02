@@ -53,13 +53,13 @@ bool find_addr_by_val(uint16_t byte_num, uint32_t val, uint32_t start_addr, uint
 #ifdef HAS_ALLOCATOR
 bool h_count_link(void* addr, LinkCounter_t* LinkCounter);
 #endif
-uint8_t read_addr_8bit(uint32_t addr_val);
+
 uint16_t read_addr_16bit(uint32_t addr_val);
 uint32_t read_addr_32bit(register uint32_t addr_val);
 uint64_t read_addr_64bit(uint32_t addr_val);
 
 #ifdef HAS_WRITE_ADDR
-bool write_addr_8bit(uint32_t in_addr, uint8_t addr_val);
+
 bool write_addr_16bit(uint32_t in_addr, uint16_t addr_val);
 bool write_addr_32bit(uint32_t in_addr, uint32_t addr_val);
 #endif

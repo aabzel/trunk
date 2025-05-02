@@ -5,6 +5,17 @@
 
 #include "std_includes.h"
 
+
+/*order matter it is frame structure (8 byte)*/
+typedef struct {
+    uint32_t address; /*4byte     32 bit address*/
+    uint16_t size;     /*2byte    0...65355*/
+    StorageAccess_t operation; /* 1byte   read write*/
+    //uint8_t data[0];     /*just for pointer*/
+} __attribute__((__packed__)) StorageMemoryFrameHeader_t;
+
+
+
 /*order matter it is frame structure (8 byte)*/
 typedef struct {
     uint32_t address; /*4byte     24 bit address*/

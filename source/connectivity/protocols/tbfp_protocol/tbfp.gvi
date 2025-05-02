@@ -1,1 +1,19 @@
 CRC8->TBFP
+
+
+#ifdef HAS_CORE
+CORE->TBFP
+#endif
+
+
+FIFO->TBFP
+
+#ifdef HAS_UART
+UART->TBFP
+#endif
+
+
+
+#ifdef HAS_STORAGE
+STORAGE->TBFP
+#endif

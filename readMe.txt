@@ -15,9 +15,14 @@ Configuration are verified in CD Jenkins.
 
 Hardware independed part of code base has been built in X86/GCC/MinGW/32bit invironment.
 
-
-
 URLS:
+
+Что Должно Быть в Каждом FirmWare Pепозитории
+https://habr.com/ru/articles/689542/
+
+Настройка ToolChain-а Cборки Прошивок для MIK32 (MIK32 + C+ GCC + GNU Make + OpenOCD)
+https://habr.com/ru/articles/854050/
+
 http://all-ht.ru/inf/prog/c/func/_exit.html
 
 

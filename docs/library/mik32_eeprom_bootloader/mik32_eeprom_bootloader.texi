@@ -347,6 +347,9 @@ INSERT_PIX2(OkWrite, Запись SPI-Flash памяти)
     \item  Разработка DeskTop утилиты FW\_Loader.exe - это отдельная большая задача.
 \end{enumerate}
 
+
+INSERT_PIX2(SWC, Граф зависимостей программных компонентов загрузчика)
+
 INSERT_PIX2(Build, Загрузчик занимает всю EEPROM память)
 
 

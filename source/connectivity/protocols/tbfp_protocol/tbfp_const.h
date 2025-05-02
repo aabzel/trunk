@@ -49,12 +49,12 @@ typedef enum {
     FRAME_ID_UNDEF = 0x00,  /*Unfed payload*/
 
     FRAME_ID_JUMP = 0x01,   /**/
+    FRAME_ID_MEM = 0x02,   /**/
     FRAME_ID_ACK = 0x41,    /*A*/
     FRAME_ID_CHAT = 0x43,   /*C*/
     FRAME_ID_CMD = 0x44,    /*D*/
     FRAME_ID_PING = 0x51,   /*P*/
     FRAME_ID_STORAGE = 0xFC,   /**/
-    FRAME_ID_MEM_READ = 0x01,   /**/
     FRAME_ID_TUNNEL = 0x54, /*T matryoshka*/
     FRAME_ID_PONG = 0x90,   /**/
     FRAME_ID_KEYBOARD = 0x91,   /**/

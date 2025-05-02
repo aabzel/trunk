@@ -2,6 +2,10 @@
     #include "cortex_m0.gvi"
 #endif
 
+#ifdef HAS_RV32IMC
+    #include "rv32imc.gvi"
+#endif
+
 #ifdef HAS_CORTEX_M1
     #include "cortex_m1.gvi"
 #endif

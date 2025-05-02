@@ -6,6 +6,7 @@
 #include "debug_info.h"
 #include "eeprom_config.h"
 #include "microcontroller_const.h"
+#include "storage.h"
 
 #ifdef HAS_DEBUGGER
 #include "debugger.h"

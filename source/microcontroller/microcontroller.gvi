@@ -14,6 +14,12 @@
     #include "esp32.gvi"
 #endif
 
+
+#ifdef HAS_K1948BK018
+     #include "k1948bk018.gvi"
+#endif
+
+
 #ifdef HAS_K2921BK028
      #include "k2921bk028.gvi"
 #endif

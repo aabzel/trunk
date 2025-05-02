@@ -63,8 +63,8 @@ TbfpHandle_t TbfpInstance[] = {
     {
        .num = 1,
        .valid = true,
-       .rx_frame = {0},
-       .fix_frame = {0},
+       .rx_frame = 0,
+       .fix_frame = 0,
     },
 #endif
 
@@ -72,8 +72,8 @@ TbfpHandle_t TbfpInstance[] = {
     {
        .num = 2,
        .valid = true,
-       .rx_frame = {0},
-       .fix_frame = {0},
+       .rx_frame = 0,
+       .fix_frame = 0,
     },
 #endif
 };
