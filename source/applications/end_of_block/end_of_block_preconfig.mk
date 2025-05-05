@@ -1,0 +1,14 @@
+ifneq ($(END_OF_BLOCK_PRECONFIG),Y)
+    END_OF_BLOCK_PRECONFIG=Y
+
+    END_OF_BLOCK=Y
+    MINGW=Y
+    FILE_PC=Y
+    PC=Y
+    CSV=Y
+    STORAGE=Y
+    LIFO_ARRAY=Y
+    LIFO=Y
+endif
+
+

@@ -1,0 +1,16 @@
+
+ifneq ($(KEYLOG_PRECONFIG_INC),Y)
+    KEYLOG_PRECONFIG_INC=Y
+
+    KEYLOG=Y
+
+    FIFO_ARRAY=Y
+    FIFO=Y
+    USB=Y
+    USB_DEVICE=Y
+    KEYBOARD=Y
+    FAT_FS=Y
+    USB_HOST=Y
+    USB_HOST_PROC=Y
+
+endif

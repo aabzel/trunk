@@ -1,0 +1,50 @@
+
+subgraph cluster_applications{
+    label = "Applications";
+    //rank = same; 
+    style=filled;
+    color=oldlace;
+
+#ifdef HAS_AUTO_VOLUME
+    AUTO_VOLUME
+#endif
+
+#ifdef HAS_DASHBOARD
+    DASHBOARD
+ #endif
+
+#ifdef HAS_KEYLOG
+    KEYLOG
+ #endif
+
+#ifdef HAS_LIGHT_NAVIGATOR
+    LIGHT_NAVIGATOR
+#endif
+
+#ifdef HAS_PASTILDA
+    PASTILDA
+#endif
+
+}
+
+
+
+#ifdef HAS_AUTO_VOLUME
+    #include "auto_volume.gvi"
+#endif
+
+#ifdef HAS_DASHBOARD
+    #include "dashboard.gvi"
+#endif
+
+#ifdef HAS_KEYLOG
+    #include "keylog.gvi"
+#endif
+
+#ifdef HAS_LIGHT_NAVIGATOR
+    #include "light_navigator.gvi"
+#endif
+
+#ifdef HAS_PASTILDA
+    #include "pastilda.gvi"
+#endif

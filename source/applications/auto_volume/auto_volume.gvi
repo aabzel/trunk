@@ -1,0 +1,11 @@
+#ifdef HAS_WM8731
+    WM8731->AUTO_VOLUME
+#endif
+
+#ifdef HAS_MAX9860
+    MAX9860->AUTO_VOLUME
+#endif
+
+#ifdef HAS_DECAWAVE
+    DECAWAVE->AUTO_VOLUME
+#endif

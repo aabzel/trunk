@@ -1,0 +1,11 @@
+ifneq ($(AUTO_VERSION_PRECONFIG),Y)
+    AUTO_VERSION_PRECONFIG=Y
+
+    AUTO_VERSION=Y
+    MINGW=Y
+    FILE_PC=Y
+    PC=Y
+    STORAGE=Y
+endif
+
+

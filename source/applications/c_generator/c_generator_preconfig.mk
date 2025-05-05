@@ -1,0 +1,11 @@
+ifneq ($(C_GENERATOR_PRECONFIG),Y)
+    C_GENERATOR_PRECONFIG=Y
+
+    C_GENERATOR=Y
+    MINGW=Y
+    FILE_PC=Y
+    PC=Y
+    STORAGE=Y
+endif
+
+

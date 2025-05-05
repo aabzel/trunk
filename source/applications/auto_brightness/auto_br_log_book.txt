@@ -1,0 +1,38 @@
+abd
+
+ll AutoBrightness debug
+
+
+tdp
+tcr 1 0 ; pds 0 0 45
+ll pwm debug
+
+pds 0 0 90
+pds 0 0 80
+pds 0 0 70
+pds 0 0 60
+pds 0 0 55
+pds 0 0 51
+pds 0 0 50
+pds 0 0 45
+pds 0 0 40
+pds 0 0 30
+pds 0 0 20
+pds 0 0 15
+pds 0 0 10
+pds 0 0 7.5
+pds 0 0 6
+pds 0 0 5
+pds 0 0 4
+pds 0 0 3.5
+pds 0 0 3.25
+pds 0 0 3.1
+pds 0 0 3
+pds 0 0 2.75
+pds 0 0 2.5
+pds 0 0 2
+pds 0 0 1
+
+hwp 100;
+
+pds 0 0 10;hwp 100;pds 0 0 20;hwp 100;pds 0 0 40;hwp 100;pds 0 0 80;hwp 100;pds 0 0 100

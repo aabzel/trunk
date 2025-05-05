@@ -1,0 +1,10 @@
+#ifndef APPLICATIONS_DEP_H
+#define APPLICATIONS_DEP_H
+
+
+#ifndef HAS_APPLICATIONS
+#error  "+HAS_APPLICATIONS"
+#endif
+
+
+#endif /* APPLICATIONS_DEP_H */

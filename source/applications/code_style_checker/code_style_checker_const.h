@@ -1,0 +1,13 @@
+#ifndef CODE_STYLE_CHECKER_CONST_H
+#define CODE_STYLE_CHECKER_CONST_H
+
+#ifndef HAS_CODE_STYLE_CHECKER
+#error "+HAS_CODE_STYLE_CHECKER"
+#endif
+
+#include "code_style_checker_dep.h"
+
+#define CODE_STYLE_CHECKER_DRIVER_VERSION 3
+
+
+#endif /* CODE_STYLE_CHECKER_CONST_H */
