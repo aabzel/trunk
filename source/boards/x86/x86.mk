@@ -30,6 +30,12 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         $(info Add config CORRELATOR)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/correlator_config.c
     endif
+
+    ifeq ($(FW_LOADER),Y)
+        $(info Add config FW_LOADER)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/fw_loader_config.c
+    endif
+    
     
     ifeq ($(SCAN),Y)
         $(info Add config SCAN)
@@ -88,8 +94,6 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/cli_config.c
     endif
 
-
-
     SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/mem_config.c
 
     ifeq ($(CRYP),Y)
@@ -141,20 +145,16 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         $(info Config Crypt)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/local_oscillator_config.c
     endif
-    
+
     ifeq ($(SOCKET),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/socket_config.c
     endif
 
-    ifeq ($(SONAR),Y)
-        $(info Config SONAR)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/sonar_config.c
+    ifeq ($(SERIAL_PORT),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/serial_port_config.c
     endif
 
-    ifeq ($(SOUND_LOCALIZATION),Y)
-        $(info Add config SOUND_LOCALIZATION)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/sound_localization_config.c
-    endif
+
 
     ifeq ($(SW_NOR_FLASH),Y)
         $(info Config SwNvRam)

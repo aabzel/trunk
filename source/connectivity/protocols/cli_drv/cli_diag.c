@@ -5,7 +5,6 @@
 
 #include "log.h"
 
-
 const char* CliConfigToStr(const CliConfig_t* const Config) {
     if(Config) {
         strcpy(text, "");
@@ -32,7 +31,7 @@ bool cli_argument_diag(const int32_t argc, char* argv[]) {
     bool res = false;
     int32_t i = 0;
     strcpy(text, "");
-    snprintf(text, sizeof(text), "%sargc:%d",text, argc);
+    snprintf(text, sizeof(text), "%sargc:%d", text, argc);
     for(i = 0; i < argc; i++) {
         snprintf(text, sizeof(text), "%sargv[%d]=[%s],", text, i, argv[i]);
         res = true;

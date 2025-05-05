@@ -91,6 +91,16 @@
 #define DECAWAVE_FACILITY_DIAG
 #endif
 
+#ifdef HAS_SERIAL_PORT
+#define SERIAL_PORT_FACILITY_DIAG                                                                                      \
+    {                                                                                                                  \
+        .facility = SERIAL_PORT,                                                                                       \
+        .name = "SerialPort",                                                                                          \
+    },
+#else
+#define SERIAL_PORT_FACILITY_DIAG
+#endif
+
 #ifdef HAS_SOCKET
 #define SOCKET_FACILITY_DIAG                                                                                           \
     {                                                                                                                  \
@@ -207,6 +217,16 @@
     },
 #else
 #define HEX_BIN_FACILITY_DIAG
+#endif
+
+#ifdef HAS_FW_LOADER
+#define FW_LOADER_FACILITY_DIAG                                                                                        \
+    {                                                                                                                  \
+        .facility = FW_LOADER,                                                                                         \
+        .name = "FwLoader",                                                                                            \
+    },
+#else
+#define FW_LOADER_FACILITY_DIAG
 #endif
 
 #ifdef HAS_FILE_PC
@@ -763,6 +783,7 @@
     GPS_FACILITY_DIAG                                                                                                  \
     GRAPHVIZ_TO_TSORT_FACILITY_DIAG                                                                                    \
     HEX_BIN_FACILITY_DIAG                                                                                              \
+    FW_LOADER_FACILITY_DIAG                                                                                            \
     HW_CRYP_FACILITY_DIAG                                                                                              \
     HW_VERSION_FACILITY_DIAG                                                                                           \
     ISO_TP_FACILITY_DIAG                                                                                               \
@@ -781,6 +802,7 @@
     PID_FACILITY_DIAG                                                                                                  \
     SA51034_FACILITY_DIAG                                                                                              \
     SOCKET_FACILITY_DIAG                                                                                               \
+    SERIAL_PORT_FACILITY_DIAG                                                                                          \
     SOUND_LOCALIZATION_FACILITY_DIAG                                                                                   \
     FFT_FACILITY_DIAG                                                                                                  \
     STRING_READER_FACILITY_DIAG                                                                                        \

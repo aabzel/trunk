@@ -155,6 +155,10 @@ typedef enum {
     CRC24,
 #endif
 
+#ifdef HAS_FW_LOADER
+	FW_LOADER,
+#endif
+
 #ifdef HAS_STATISTICS
     STATISTICS,
 #endif
@@ -467,6 +471,10 @@ typedef enum {
 
 #ifdef HAS_END_OF_BLOCK
     END_OF_BLOCK,
+#endif
+
+#ifdef HAS_SERIAL_PORT
+    SERIAL_PORT,
 #endif
 
 #ifdef HAS_LED

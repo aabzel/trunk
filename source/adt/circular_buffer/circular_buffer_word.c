@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-#include "std_includes.h"
 #include "log.h"
+#include "std_includes.h"
 
 static bool is_circular_buffer_valid(CircularBufferWord_t* const Node) {
     bool res = false;
@@ -94,19 +94,16 @@ bool circular_buffer_word_pull(CircularBufferWord_t* Node, int16_t* const out_wo
 /*
  * shift register
  * */
-bool circular_buffer_word_get(CircularBufferWord_t* const Node,
-                              int32_t need,
-                              int16_t* const sample){
+bool circular_buffer_word_get(CircularBufferWord_t* const Node, int32_t need, int16_t* const sample) {
     bool res = false;
     if(sample) {
-        int32_t phy_index = circular_buffer_index_calc_phy_index(  Node->state.size,
-                                                         (int32_t) Node->state.cur,
-                                                         (int32_t) need-1);
-        if(phy_index<Node->state.size) {
+        int32_t phy_index =
+            circular_buffer_index_calc_phy_index(Node->state.size, (int32_t)Node->state.cur, (int32_t)need - 1);
+        if(phy_index < Node->state.size) {
             *sample = Node->array[phy_index];
             res = true;
-        }else{
-            LOG_ERROR(SYS,"Error");
+        } else {
+            LOG_ERROR(SYS, "Error");
         }
     }
     return res;

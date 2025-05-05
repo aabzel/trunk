@@ -65,11 +65,18 @@
 #define SOCKET_COMMANDS
 #endif
 
+#ifdef HAS_SERIAL_PORT_COMMANDS
+#include "serial_port_commands.h"
+#else
+#define SERIAL_PORT_COMMANDS
+#endif
+
 #define INTERFACES_COMMANDS              \
     BLUETOOTH_COMMANDS                   \
     BLE_AUDIO_COMMANDS                   \
     DTMF_COMMANDS                        \
     ONE_WIRE_COMMANDS                    \
+    SERIAL_PORT_COMMANDS                 \
     SOCKET_COMMANDS                      \
     RS232_COMMANDS                       \
     RS485_COMMANDS

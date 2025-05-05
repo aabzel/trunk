@@ -1,9 +1,7 @@
 #ifndef SYSTEM_TYPES_H
 #define SYSTEM_TYPES_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "sys_constants.h"
 
 typedef struct{

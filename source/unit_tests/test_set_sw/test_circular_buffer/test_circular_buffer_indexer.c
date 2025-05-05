@@ -1,9 +1,9 @@
 #include "test_circular_buffer_indexer.h"
 
-#include "circular_buffer_word.h"
 #include "circular_buffer_index.h"
-#include "unit_test_check.h"
+#include "circular_buffer_word.h"
 #include "unit_test_assert.h"
+#include "unit_test_check.h"
 
 #define RI_SIZE 10
 
@@ -24,25 +24,25 @@ bool test_circular_buffer_index_add(void) {
  tsr circular_buffer_word+
   tsr circular_buffer+
  */
-bool test_circular_buffer_word_get(void){
+bool test_circular_buffer_word_get(void) {
     LOG_INFO(CIRCULAR_BUFFER, "%s():", __FUNCTION__);
 
-    CircularBufferWord_t Obj={0};
+    CircularBufferWord_t Obj = {0};
     int16_t Heap[10] = {0};
-    ASSERT_TRUE( circular_buffer_word_init(   &Obj, Heap, ARRAY_SIZE(Heap)   )   );
+    ASSERT_TRUE(circular_buffer_word_init(&Obj, Heap, ARRAY_SIZE(Heap)));
 
-    ASSERT_TRUE(  circular_buffer_word_push(&Obj,   1)   );
-    ASSERT_TRUE(  circular_buffer_word_push(&Obj,   2)   );
-    ASSERT_TRUE(  circular_buffer_word_push(&Obj,   3)   );
+    ASSERT_TRUE(circular_buffer_word_push(&Obj, 1));
+    ASSERT_TRUE(circular_buffer_word_push(&Obj, 2));
+    ASSERT_TRUE(circular_buffer_word_push(&Obj, 3));
 
     int16_t sample = 0;
-    ASSERT_TRUE( circular_buffer_word_get(&Obj, 0, &sample)   );
+    ASSERT_TRUE(circular_buffer_word_get(&Obj, 0, &sample));
     ASSERT_EQ(3, sample);
 
-    ASSERT_TRUE( circular_buffer_word_get(&Obj, -1, &sample)   );
+    ASSERT_TRUE(circular_buffer_word_get(&Obj, -1, &sample));
     ASSERT_EQ(2, sample);
 
-    ASSERT_TRUE( circular_buffer_word_get(&Obj, -2, &sample)   );
+    ASSERT_TRUE(circular_buffer_word_get(&Obj, -2, &sample));
     ASSERT_EQ(1, sample);
 
     return true;

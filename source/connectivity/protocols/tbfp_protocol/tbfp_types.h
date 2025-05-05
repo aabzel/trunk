@@ -92,23 +92,23 @@ typedef struct  {
     uint32_t err_tx_cnt;  \
     uint32_t err_tx_cnt_prev;
 
-#define TBFP_COMMON_RX_VARIABLES            \
+#define TBFP_COMMON_RX_VARIABLES         \
     uint8_t* fix_frame;                  \
     uint8_t* rx_frame;                   \
     uint8_t* RxArray;                    \
     uint32_t rx_array_size;
 
-#define TBFP_COMMON_TX_VARIABLES            \
+#define TBFP_COMMON_TX_VARIABLES         \
     uint32_t tx_array_size;              \
     uint8_t* TxFrame;
 
 
 #define TBFP_COMMON_VARIABLES            \
-    TBFP_COMMON_RX_VARIABLES         \
-    TBFP_COMMON_TX_VARIABLES         \
+    TBFP_COMMON_RX_VARIABLES             \
+    TBFP_COMMON_TX_VARIABLES             \
     bool valid;                          \
     bool heartbeat;                      \
-    Interfaces_t interface;              \
+    Interfaces_t inter_face;             \
     uint8_t preamble_val;                \
     uint8_t uart_num;                    \
 	uint32_t num;

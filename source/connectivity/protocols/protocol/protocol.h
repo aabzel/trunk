@@ -10,7 +10,7 @@
 #endif
 
 bool protocol_check_flow_control(facility_t facility, FlowCrtl_t* const Node,
-                                 uint16_t snum, Interfaces_t interface);
+                                 uint16_t snum, Interfaces_t inter_face);
 bool protocol_flow_init(FlowCrtl_t* const Node);
 
 #endif /* PROTOCOLS_GENERAL_H */

@@ -1,6 +1,5 @@
 #include "hex_bin.h"
 
-#include <stdbool.h>
 #include <string.h>
 #ifdef HAS_PC
 #include <stdio.h>
@@ -22,6 +21,7 @@
 #include "data_utils.h"
 #include "file_api.h"
 #include "log.h"
+#include "std_includes.h"
 #include "time_mcal.h"
 #ifdef HAS_BOOTLOADER
 #include "bootloader.h"
@@ -470,10 +470,10 @@ static bool hex_compose_bin(HexBinHandle_t* const Node) {
     if(Node) {
         if(Node->bin_data) {
             if(0 < Node->address_size_byte) {
-                char text[80] = {0};
-                snprintf(text, sizeof(text), "%s_generated.bin", Node->only_file_name);
-                LOG_INFO(HEX_BIN, "ComposeBin File:[%s],Size:%u Byte...", text, Node->address_size_byte);
-                res = file_array_to_binary_file(text, Node->bin_data, Node->address_size_byte);
+                char lText[80] = {0};
+                snprintf(lText, sizeof(lText), "%s_generated.bin", Node->only_file_name);
+                LOG_INFO(HEX_BIN, "ComposeBin File:[%s],Size:%u Byte...", lText, Node->address_size_byte);
+                res = file_array_to_binary_file(lText, Node->bin_data, Node->address_size_byte);
                 if(res) {
                     LOG_INFO(HEX_BIN, "SaveToBinOk");
                 } else {

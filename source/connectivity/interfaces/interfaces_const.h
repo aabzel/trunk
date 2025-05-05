@@ -142,6 +142,10 @@ typedef enum {
     IF_UWB,
 #endif
 
+#ifdef HAS_SERIAL_PORT
+    IF_SERIAL_PORT,
+#endif
+
 #ifdef HAS_PC
     IF_STDIO,
 #endif

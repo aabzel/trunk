@@ -11,10 +11,11 @@
 #endif
 
 
-bool file_pc_realpath(const char* const in_path, char* const out_file);
-
-int32_t file_pc_get_size(char* file_name);
 int32_t file_pc_line_cnt(const char* const file_name);
+int32_t file_pc_get_size(char* file_name);
+
+bool file_pc_realpath(const char* const in_path, char* const out_file);
+bool file_pc_print_line_cache(const char* const file_name, const char* const in_text, size_t size);
 bool file_pc_delete(const char* const file_name);
 bool file_pc_array_to_binary_file(const char* const file_name, const uint8_t* const  data, size_t  size);
 bool file_pc_save_array(const char* const file_name, const uint8_t* const  data, size_t  size);

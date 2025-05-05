@@ -294,7 +294,6 @@ bool is_time_date_equal(struct tm* date_time1, struct tm* date_time2) {
 #endif
 
 #ifdef HAS_DATE
-#error erer
 bool is_valid_date(const struct tm* const date_time) {
     bool res = true;
     if(res) {

@@ -7,8 +7,8 @@
 #include "array.h"
 #endif
 #include "byte_utils.h"
-#include "log.h"
 #include "interfaces_diag.h"
+#include "log.h"
 #include "protocol_types.h"
 #include "sys_constants.h"
 #include "system_diag.h"
@@ -61,8 +61,8 @@ bool flow_ctrl_print_lost(facility_t facility, FlowCrtl_t* Node, uint16_t s_num,
             }
             if((Node->prev_s_num + 1) == (s_num - 1)) {
 #ifdef HAS_INTERFACES_DIAG
-                LOG_DEBUG(facility, "%s Lost_%u %u: Flow:%u", InterfaceToStr(interface), Node->lost_rx_frames, s_num - 1,
-                          Node->cur);
+                LOG_DEBUG(facility, "%s Lost_%u %u: Flow:%u", InterfaceToStr(interface), Node->lost_rx_frames,
+                          s_num - 1, Node->cur);
 #endif
             } else {
 #ifdef HAS_INTERFACES_DIAG
@@ -108,12 +108,12 @@ char* Mask322Str(const Addr32Mask_t* const Mask) {
             for(i = 0; i < 32; i++) {
                 if(i < Mask->size) {
                     if((1 << i) == (Mask->addr & (1 << i))) {
-                    	lText[i] = '1';
+                        lText[i] = '1';
                     } else {
-                    	lText[i] = '0';
+                        lText[i] = '0';
                     }
                 } else {
-                	lText[i] = 'x';
+                    lText[i] = 'x';
                     break;
                 }
             }
@@ -124,31 +124,26 @@ char* Mask322Str(const Addr32Mask_t* const Mask) {
     return text;
 }
 
-const char* ProtocolFrame2Str(const uint8_t* const data, size_t size, Protocol_t protocol){
-	const char* name = "?";
-    switch((uint32_t) protocol){
+const char* ProtocolFrame2Str(const uint8_t* const data, size_t size, Protocol_t protocol) {
+    const char* name = "?";
+    switch((uint32_t)protocol) {
 #ifdef HAS_STACK_FRAME
-        case PROTO_STACK_FRAME : name = StackFrame2Str(data, size); break;
+    case PROTO_STACK_FRAME:
+        name = StackFrame2Str(data, size);
+        break;
 #endif
-        default: break;
+    default:
+        break;
     }
     return name;
 }
 
 const char* FlowCtrl2Str(const FlowCrtl_t* const Node) {
-	static char lText[80]={0};
-	if(Node) {
-		strcpy(lText,"");
-        snprintf(lText,sizeof(lText),"SN:%u,PrevFlow:%u,CurFlow:%u,MaxFlow:%u,TornCnt:%u,Lost:%u",
-        		Node->cur_sn,
-        		Node->prev_flow,
-        		Node->cur,
-				Node->maximum_continuous,
-				Node->torn_cnt,
-				Node->lost_rx_frames
-				);
-	}
-	return lText;
+    static char lText[80] = {0};
+    if(Node) {
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "SN:%u,PrevFlow:%u,CurFlow:%u,MaxFlow:%u,TornCnt:%u,Lost:%u", Node->cur_sn,
+                 Node->prev_flow, Node->cur, Node->maximum_continuous, Node->torn_cnt, Node->lost_rx_frames);
+    }
+    return lText;
 }
-
-

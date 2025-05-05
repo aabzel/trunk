@@ -1,16 +1,15 @@
 #include "file_pc.h"
 
 #include <limits.h>
-#include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h> //_fullpath
 
 #include "file_api.h"
 #include "log.h"
-#include "str_utils.h"
 #include "macro_utils.h"
+#include "std_includes.h"
+#include "str_utils.h"
 #include "win_utils.h"
 #ifdef HAS_STRING
 #include "str_utils_ex.h"
@@ -20,15 +19,13 @@
 #error That code only for desktop builds
 #endif
 
-
 #ifdef HAS_PC
-char *_fullpath(char*, const char*, size_t);
+char* _fullpath(char*, const char*, size_t);
 
-#define REAL_RATH(N,R) _fullpath((R),(N),5000)
+#define REAL_RATH(N, R) _fullpath((R), (N), 5000)
 #else
 
-char *realpath(const char *restrict path,
-               char *restrict resolved_path);
+char* realpath(const char* restrict path, char* restrict resolved_path);
 #endif
 
 int32_t file_pc_line_cnt(const char* const file_name) {
@@ -197,24 +194,24 @@ bool file_pc_run_through_lines(char* in_file_name, char* pattern, char* rep, cha
     return res;
 }
 
-#define CACHE_SIZE (20*1024)
-static char cache[CACHE_SIZE]={0};
+#define CACHE_SIZE (20 * 1024)
+static char cache[CACHE_SIZE] = {0};
 
-bool file_pc_print_line_cache(const char* const file_name, const char* const text, size_t size) {
+bool file_pc_print_line_cache(const char* const file_name, const char* const in_text, size_t size) {
     bool res = false;
     if(file_name) {
-        if(text && size) {
-            snprintf(cache, sizeof(cache),"%s%s\n",cache,text);
+        if(in_text && size) {
+            snprintf(cache, sizeof(cache), "%s%s\n", cache, in_text);
             size_t size_len = strlen(cache);
             LOG_DEBUG(FILE_PC, "size:%u", size);
-            if (   (  (uint32_t)   (   (float)CACHE_SIZE  )*0.75   ) < size   ) {
-                res = file_pc_print_line(file_name, cache,   size_len);
-                memset(cache,0,sizeof(cache));
-            }else{
+            if(((uint32_t)((float)CACHE_SIZE) * 0.75) < size) {
+                res = file_pc_print_line(file_name, cache, size_len);
+                memset(cache, 0, sizeof(cache));
+            } else {
                 res = true;
             }
         } else {
-            LOG_ERROR(FILE_PC, "text[%s]%u,Err", text,size);
+            LOG_ERROR(FILE_PC, "text[%s]%u,Err", in_text, size);
         }
     } else {
         LOG_ERROR(FILE_PC, "Ptr[%s]Err", file_name);
@@ -222,31 +219,29 @@ bool file_pc_print_line_cache(const char* const file_name, const char* const tex
     return res;
 }
 
-
-bool file_pc_print_line(const char* const file_name, const char* const text, size_t size) {
+bool file_pc_print_line(const char* const file_name, const char* const in_text, size_t size) {
     bool res = false;
     if(file_name) {
-        if(text && size) {
+        if(in_text && size) {
             LOG_DEBUG(FILE_PC, "size:%u", size);
-                FILE* file = NULL;
-                file = fopen(file_name, "a");
-                if(file) {
-                    LOG_DEBUG(FILE_PC, "Open[%s]Ok", file_name);
-                    fprintf(file, "%s\n", text);
-                    res = true;
-                    fclose(file);
-                } else {
-                    LOG_ERROR(FILE_PC, "Open[%s]Err", file_name);
-                }
+            FILE* file = NULL;
+            file = fopen(file_name, "a");
+            if(file) {
+                LOG_DEBUG(FILE_PC, "Open[%s]Ok", file_name);
+                fprintf(file, "%s\n", in_text);
+                res = true;
+                fclose(file);
+            } else {
+                LOG_ERROR(FILE_PC, "Open[%s]Err", file_name);
+            }
         } else {
-            LOG_ERROR(FILE_PC, "text[%s]%u,Err", text,size);
+            LOG_ERROR(FILE_PC, "text[%s]%u,Err", in_text, size);
         }
     } else {
         LOG_ERROR(FILE_PC, "Ptr[%s]Err", file_name);
     }
     return res;
 }
-
 
 bool file_pc_print_array(const char* const file_name, const uint8_t* const array, size_t size) {
     bool res = false;
@@ -406,18 +401,17 @@ bool file_pc_delete(const char* const file_name) {
  * return absolute Windows path
  * C:/job/company/code_base_workspace/code_base_firmware/source/asics/bc127/bc127_drv.c
  */
-bool file_pc_realpath(const char* const in_path,
-                      char* const out_file) {
+bool file_pc_realpath(const char* const in_path, char* const out_file) {
     bool res = false;
     if(in_path) {
         LOG_DEBUG(FILE_PC, "RelativePath:[%s]", in_path);
         if(out_file) {
-            char *abs_path = REAL_RATH(in_path, out_file);
+            char* abs_path = REAL_RATH(in_path, out_file);
             if(abs_path) {
                 int ret = replace_char(out_file, '\\', '/');
-                LOG_DEBUG(FILE_PC, "AbsolutePath:[%s],%u",out_file,ret);
+                LOG_DEBUG(FILE_PC, "AbsolutePath:[%s],%u", out_file, ret);
                 ret = replace_char(abs_path, '\\', '/');
-                LOG_DEBUG(FILE_PC, "AbsolutePath:[%s],%u",abs_path,ret);
+                LOG_DEBUG(FILE_PC, "AbsolutePath:[%s],%u", abs_path, ret);
                 free(abs_path);
                 res = true;
             }

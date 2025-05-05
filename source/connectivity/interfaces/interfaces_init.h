@@ -47,6 +47,14 @@
 #define DTMF_INIT
 #endif /*HAS_DTMF*/
 
+#ifdef HAS_SERIAL_PORT
+#include "serial_port.h"
+#define SERIAL_PORT_INIT {.init_function=serial_port_mcal_init, .name="SerialPort",},
+#else
+#define SERIAL_PORT_INIT
+#endif /*HAS_SERIAL_PORT*/
+
+
 #ifdef HAS_SOCKET
 #include "socket_if.h"
 #define SOCKET_INIT {.init_function=socket_init, .name="Socket",},
@@ -64,6 +72,7 @@
 #define INTERFACES_INIT             \
     HW_WIRE_INTERFACES_INIT         \
     HW_WIRELESS_INTERFACES_INIT     \
+    SERIAL_PORT_INIT                \
     SOCKET_INIT
 
 

@@ -104,6 +104,18 @@
 #define USB_HOST_TASK
 #endif
 
+
+#ifdef HAS_SERIAL_PORT_PROC
+#include "serial_port.h"
+#define SERIAL_PORT_TASK {.name="SerialPort", .period_us=SERIAL_PORT_PERIOD_US, .limiter.function=serial_port_proc,},
+#else
+#define SERIAL_PORT_TASK
+#endif
+
+
+
+
+
 #ifdef HAS_UWB_PROC
 #include "uwb_if.h"
 #define UWB_TASK {.name="UWB", .period_us=UWB_PERIOD_US, .limiter.function=uwb_process,},
@@ -133,6 +145,7 @@
     ONE_WIRE_TASK                \
     QSPI_TASK                    \
     RS232_TASK                   \
+    SERIAL_PORT_TASK             \
     RS485_TASKS                  \
     SDIO_TASKS                   \
     SWD_TASKS                    \

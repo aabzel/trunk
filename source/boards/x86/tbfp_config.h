@@ -9,7 +9,7 @@
 #error " +HAS_TBFP"
 #endif
 
-#define TBFP_MAX_FRAME 512
+//#define TBFP_MAX_FRAME 512
 #define TBFP_MAX_TX_BUFF 512U
 
 extern const TbfpConfig_t TbfpConfig[];

@@ -15,7 +15,7 @@ static uint8_t MemRxFrameFix[TBFP_MAX_FRAME] = {0};
 const TbfpConfig_t TbfpConfig[] = {
     {
      .num = 1, 
-     .interface = IF_STDIO, 
+     .inter_face = IF_STDIO,
      .RxArray = RxData1,
      .rx_array_size = sizeof(RxData1),
      .TxFrame = TxBuff1, 
@@ -28,7 +28,7 @@ const TbfpConfig_t TbfpConfig[] = {
      },
     {
     .num = 2, 
-    .interface = IF_LOOPBACK, 
+    .inter_face = IF_LOOPBACK,
     .TxFrame=TxBuff1, 
     .tx_array_size=TBFP_MAX_TX_BUFF, 
     .preamble_val = 0xA5, 
@@ -37,7 +37,7 @@ const TbfpConfig_t TbfpConfig[] = {
 	 .fix_frame = MemRxFrameFix,
     },
     {.num = 3, 
-    .interface = IF_BLACK_HOLE, 
+    .inter_face = IF_BLACK_HOLE,
     .TxFrame=TxBuff2, 
     .tx_array_size=TBFP_MAX_TX_BUFF, 
     .preamble_val = 0xB0, 
@@ -47,7 +47,7 @@ const TbfpConfig_t TbfpConfig[] = {
     },
 #ifdef HAS_UWB
     {.num = 4, 
-     .interface = IF_UWB, 
+     .inter_face = IF_UWB,
      .preamble_val = 0x12, 
      .valid = true, 
      .TxFrame=TxBuff3, 

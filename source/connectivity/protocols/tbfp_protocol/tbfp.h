@@ -25,7 +25,7 @@ extern "C" {
 /*API*/
 const TbfpConfig_t* TbfpGetConfig(uint8_t num);
 TbfpHandle_t* TbfpGetNode(uint8_t num);
-TbfpHandle_t* TbfpInterfaceToNode(Interfaces_t interface);
+TbfpHandle_t* TbfpInterfaceToNode(Interfaces_t inter_face);
 TbfpHandle_t* TbfpGetNodeByUart(uint8_t uart_num);
 bool tbfp_proc(void);
 #ifdef HAS_TBFP_EXT
@@ -39,7 +39,7 @@ bool tbfp_parser_init(TbfpHandle_t* Node, const TbfpConfig_t* Config);
 bool tbfp_init_one(uint32_t num);
 bool tbfp_rx(uint8_t* const arr,
              uint32_t size,
-             Interfaces_t interface);
+             Interfaces_t inter_face);
 bool tbfp_proc_ping(uint8_t* ping_payload, uint16_t len, Interfaces_t inter_face) ;
 bool tbfp_parser_reset_rx(TbfpHandle_t* Node, RxState_t state);
 
@@ -50,36 +50,36 @@ bool tbfp_send_text(uint8_t payload_id, uint8_t* tx_array, uint32_t len, Interfa
 
 bool tbfp_send_payload(uint8_t* tx_array,
                uint32_t len,
-               Interfaces_t interface,
+               Interfaces_t inter_face,
                uint8_t lifetime,
                TbfpAck_t ack,
                TbfpPayloadId_t payload_id);
 bool tbfp_send_frame(uint8_t num,  TbfpPayloadId_t payload_id, uint8_t* const payload,  uint16_t payload_size);
 bool tbfp_compose_frame(const uint8_t* const payload, uint16_t payload_len ,
-                        Interfaces_t interface,
+                        Interfaces_t inter_face,
                         TbfpPayloadId_t payload_id,
                         uint8_t* const buff,
                         uint32_t buff_len );
 
 bool tbfp_compose_ping(uint8_t* out_frame, uint32_t* tx_frame_len,
-                       TbfPingFrame_t* pingFrame, Interfaces_t interface);
-bool tbfp_generate_frame(uint8_t* array, uint32_t len, Interfaces_t interface);
-bool tbfp_send_chat(uint8_t* tx_array, uint32_t len, Interfaces_t interface, uint8_t lifetime, TbfpAck_t ack);
-bool tbfp_send_cmd(uint8_t* tx_array, uint32_t len, Interfaces_t interface);
-bool tbfp_send_ping(TbfpPayloadId_t payload_id, Interfaces_t interface);
-bool tbfp_send_tunnel(uint8_t* tx_array, uint32_t len, Interfaces_t interface, TbfpAck_t ack);
+                       TbfPingFrame_t* pingFrame, Interfaces_t inter_face);
+bool tbfp_generate_frame(uint8_t* array, uint32_t len, Interfaces_t inter_face);
+bool tbfp_send_chat(uint8_t* tx_array, uint32_t len, Interfaces_t inter_face, uint8_t lifetime, TbfpAck_t ack);
+bool tbfp_send_cmd(uint8_t* tx_array, uint32_t len, Interfaces_t inter_face);
+bool tbfp_send_ping(TbfpPayloadId_t payload_id, Interfaces_t inter_face);
+bool tbfp_send_tunnel(uint8_t* tx_array, uint32_t len, Interfaces_t inter_face, TbfpAck_t ack);
 
 
 /*Rx API*/
-//bool tbfp_proc_full(uint8_t* const arr, uint16_t len, Interfaces_t interface);
+//bool tbfp_proc_full(uint8_t* const arr, uint16_t len, Interfaces_t inter_face);
 IfRetx_t AckNeed2Retx(TbfpAck_t ack);
-bool is_tbfp_protocol(uint8_t* arr, uint16_t len, Interfaces_t interface);
+bool is_tbfp_protocol(uint8_t* arr, uint16_t len, Interfaces_t inter_face);
 bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload_id);
 bool tbfp_calc_byte_rate(void);
 bool tbfp_check(void);
-bool tbfp_proc_xxx(uint8_t* arr, uint16_t len, Interfaces_t interface, bool is_reset);
+bool tbfp_proc_xxx(uint8_t* arr, uint16_t len, Interfaces_t inter_face, bool is_reset);
 bool tbfp_proc_byte(TbfpHandle_t* instance, uint8_t rx_byte);
-bool wait_pong_loop_ms(uint32_t wait_pause_ms, Interfaces_t interface);
+bool wait_pong_loop_ms(uint32_t wait_pause_ms, Interfaces_t inter_face);
 
 #ifdef __cplusplus
 }

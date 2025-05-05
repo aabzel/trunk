@@ -10,7 +10,6 @@
 #include "calendar.h"
 #endif
 
-
 #include "unit_test_check.h"
 
 bool test_time_types(void) {

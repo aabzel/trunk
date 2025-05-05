@@ -33,6 +33,10 @@ ifneq ($(INTERFACE_MK_INC),Y)
         include $(INTERFACES_DIR)/dtmf/dtmf.mk
     endif
 
+    ifeq ($(SERIAL_PORT),Y)
+        include $(INTERFACES_DIR)/serial_port/serial_port.mk
+    endif
+
     ifeq ($(RADIO),Y)
         include $(INTERFACES_DIR)/radio/radio.mk
     endif

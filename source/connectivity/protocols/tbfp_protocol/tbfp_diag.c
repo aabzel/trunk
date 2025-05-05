@@ -156,7 +156,7 @@ bool tbfp_error(void) {
             cli_printf(TSEP);
 
 #ifdef HAS_INTERFACES_DIAG
-            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->interface));
+            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->inter_face));
 #endif
             cli_printf(" %7u " TSEP, TbfpNode->lack_frame_in_data);
             cli_printf(" %7u " TSEP, TbfpNode->len_err_cnt);
@@ -165,7 +165,7 @@ bool tbfp_error(void) {
             cli_printf(" %7u " TSEP, TbfpNode->err_tx_cnt);
             cli_printf(" %7u " TSEP, TbfpNode->err_cnt);
 #ifdef HAS_PROTOCOL_DIAG
-            res = flow_ctrl_diag(TBFP, &TbfpNode->Flow, TbfpNode->interface);
+            res = flow_ctrl_diag(TBFP, &TbfpNode->Flow, TbfpNode->inter_face);
 #endif /*HAS_PROTOCOL_DIAG*/
 #endif /*HAS_TBFP_DIAG*/
             cli_printf(CRLF);
@@ -194,7 +194,7 @@ bool tbfp_rate_diago(void) {
         if(TbfpNode) {
             cli_printf(TSEP);
 #ifdef HAS_INTERFACES_DIAG
-            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->interface));
+            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->inter_face));
 #endif
             cli_printf(" %7u " TSEP, TbfpNode->rx_rate.min);
             cli_printf(" %7u " TSEP, TbfpNode->rx_rate.cur);
@@ -236,7 +236,7 @@ bool tbfp_diag(void) {
         if(TbfpNode) {
             cli_printf(TSEP);
 #ifdef HAS_INTERFACES_DIAG
-            cli_printf(" %8s " TSEP, InterfaceToStr(TbfpNode->interface));
+            cli_printf(" %8s " TSEP, InterfaceToStr(TbfpNode->inter_face));
 #endif
             cli_printf(" %7u " TSEP, TbfpNode->rx_pkt_cnt);
             cli_printf(" %7u " TSEP, TbfpNode->tx_pkt_cnt);
@@ -267,7 +267,7 @@ const char* TbfpNode2Str(const TbfpHandle_t* const Node) {
         strcpy(text,"");
         snprintf(text,sizeof(text),"%sN:%u,",text,  Node->num);
         snprintf(text,sizeof(text),"%sPRE:0x%x,",text,  Node->preamble_val);
-        snprintf(text,sizeof(text),"%sIF:%s,",text,  InterfaceToStr(Node->interface));
+        snprintf(text,sizeof(text),"%sIF:%s,",text,  InterfaceToStr(Node->inter_face));
         if(Node->rx_array_size) {
             snprintf(text, sizeof(text), "%sRxMem:%p,", text,  Node->RxArray);
             snprintf(text, sizeof(text), "%sRxSz:%u,", text,  Node->rx_array_size);

@@ -114,8 +114,8 @@ bool test_array_i8_mult(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     set_log_level(SYS, LOG_LEVEL_DEBUG);
 
-    int8_t TestArray1[4] = {-1,  1, -1, 1};
-    int8_t array2[4] =     {-1, -1,  1, 1};
+    int8_t TestArray1[4] = {-1, 1, -1, 1};
+    int8_t array2[4] = {-1, -1, 1, 1};
     int8_t mult_arr[4] = {0};
     ASSERT_TRUE(array_i8_mult(TestArray1, array2, mult_arr, 4));
 

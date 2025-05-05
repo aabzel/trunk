@@ -25,21 +25,14 @@ ifneq ($(LIBRARY_MK_INC),Y)
         include $(LIBRARY_DIR)/mik32_bootloader/mik32_bootloader.mk
     endif
 
+    ifeq ($(FW_LOADER),Y)
+        include $(LIBRARY_DIR)/fw_loader/fw_loader.mk
+    endif
+
     ifeq ($(MAKE_BASICS),Y)
         include $(LIBRARY_DIR)/make_basics/make_basics.mk
     endif
 
-    ifeq ($(TOOLCHAIN),Y)
-        include $(LIBRARY_DIR)/toolchain/toolchain.mk
-    endif
-
-    ifeq ($(DEFINITION),Y)
-        include $(LIBRARY_DIR)/definition/definition.mk
-    endif
-
-    ifeq ($(ALL_ARRAY),Y)
-        include $(LIBRARY_DIR)/all_array/all_array.mk
-    endif
 
     ifeq ($(BOOTLOADER),Y)
         include $(LIBRARY_DIR)/bootloader/bootloader.mk

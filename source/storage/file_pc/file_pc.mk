@@ -6,6 +6,7 @@ ifneq ($(FILE_PC_COM_MK_INC),Y)
     #@echo $(error FILE_PC_DIR = $(FILE_PC_DIR))
 
     OPT += -DHAS_FILE_PC
+    OPT += -DHAS_FILE_API_CUSTOM
 
     INCDIR += -I$(FILE_PC_DIR)
     SOURCES_C += $(FILE_PC_DIR)/file_pc.c
