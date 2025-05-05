@@ -1,0 +1,292 @@
+\graphicspath{ {PATH_FW_LOADER_REPORT_DIR/pix} }
+
+
+\chapter{DeskTop утилита FW Loader}
+
+
+\section{Пролог}
+
+Данный текст является пояснительной запиской для Windows DeskTop PC утилиты FW loader.
+Утилита FW loader  предназначена чтобы загрузать прошивку в SPIFI память микроконтроллера через 
+on-chip загрузчик в EEPROM памяти MIK32.
+
+\section{Что надо из оборудования?}
+
+\begin{enumerate}
+    \item Учебно-тренировочная электронная отладочная плата START-MIK32-V1. 1 шт.
+    \item Кабель USB-A на USB micro. 1 штук.
+    \item Переходник с USB на UART на ASIC CP2102. 1 шт. (необязательно)
+    \item Перемычки гнездо-гнездо. 4+ штук. (необязательно)
+\end{enumerate}
+
+
+INSERT_PIX2(Mik32Bootloader, Схема подключения платы для перепрошивки)
+
+\section{Что надо из ПО?}
+
+\begin{enumerate}
+    \item  Операционная система Windows 10.
+    \item  Компилятор GCC.
+    \item  Утилита системы сборки GNU Make.
+    \item  WinRar. Чтобы распаковать программы перед установкой (terminal 1.9b).
+
+    \item  Программа terminal 1.9b. 
+           Для отладки системы поманд на стороне прошивки.
+
+    \item  Консольная утилита FW\_Loader.exe.
+\end{enumerate}
+
+
+
+\section{Технические требования}
+
+Общий план таков, что надо загрузить прошивку в off-chip SPI памяти при помощи 
+on-chip MIK32 загрузчиком и утилиты FW\_Loader по UART0.
+То есть обновить прошивку без программатора.
+
+
+\begin{enumerate}
+    \item Программа fw_loader должна быть собрана для Windows 10
+
+    \item  В утилите FW\_Loader должна быть консольным Win приложением.
+    
+    \item  В утилите FW\_Loader должна быть команда ping для проверки соединения между PC и платой.
+
+    \item Программа fw_loader должна работать с hex файлом
+    
+    \item Битовая скорость UART должна передаваться через ключи утилиты.
+ 
+    FW\_Loader.exe start_mik32_v1_generic_gcc_m.hex 56000
+
+
+     \item  После обновления утилита должна давать команду прыжка в приложение.
+
+ 
+    \item Утилита должена записывать прошивку по частям. 
+
+    \item У утилиты FW Loader должен быть интеррактивный режим.
+          То есть режим командной строки в stdio.
+          Подобно тому как это происходит в busy_box.
+    
+    \item У утилиты FW Loader должен быть пакетный режим.
+          То есть утилита должна отрабатывать свои аргументы командной строки.
+    
+    
+    \item  Утилита должена быть однопоточной NoRTOS прошивкой. 
+   
+ 
+     \item Должна быть возможность вычитывать содержимое памяти MCU.
+     
+     
+ \item  FW Loader - это консольное Windows приложение (FW\_Loader.exe) под Windows 10 PC для 
+     нарезания *.hex фйла и отправки фрагментов прошивки по последовательному COM порту.
+
+ \item Вот так должна выглядеть команда обновления прошивки через COM порт 4 на битовой скорости 56000 bit/s
+      FW_Loader.exe fwll start_mik32_v1_generic_gcc_m.hex COM4 56000
+      
+\end{enumerate}
+
+
+
+
+
+\section{Структура программы FW Loader}
+
+Данный состоит из следующих программных компонентов:
+\begin{enumerate}
+    \item  Драйвер последователього порта трансивера. 
+    \item  Бинарный протокол передачи данных Trivial Binary Frame Protocol (TBFP).
+    \item  Простой кооперативный планировщик. По сути - суперцикл.
+    \item  Программный компонент FIFO.
+    \item  Программный компонент CRC8. 
+          
+\end{enumerate}
+
+
+
+
+
+
+
+\section{Механизм обновления}
+
+Обновление прошивки происходит через последовательный COM порт при битовой скорости 56000 бит/c.
+Параметры кадра: два стоповых бита,
+нет проверки четности,
+один кадр - 8 бит.
+
+Сеанс связи показан на временной диаграмме процесса обновления прошивки.
+Перед обновлением необходимо отправить TBFP пакет стирания содержимого микросхемы W25Q32JV.
+
+INSERT_PIX2(DFU_dialog.jpg, сеанс связи)
+
+После обновления можно принудительно прыгнуть исполнять код по адресу 0x80000000 отправив в UART0 пакет
+A5 C1 01 00 04 00 01 00 00 00 80 E4
+
+
+
+
+\section{Отладка бинарного протокола}
+
+Сам протокол TBFP отлажен в составе консольного Windows PC приложения.
+На это есть модульные тесты. 
+В частрости на чтение и запись по протоколу TBFP.
+
+\begin{lstlisting}[label=some-code,caption=Тесты протокола TBFP]
+
+-->
+-->tsa tbfp_storage+
+tbfp_storage_read.153
+tbfp_storage_write.154
+-->tsr tbfp_storage_read
+-->tsr tbfp_storage_write
+ 
+\end{lstlisting} 
+
+Консольная Win утилита также умеет генерировать тестировочные TBFP пакеты,
+чтобы не набирать их вручную.
+
+\begin{lstlisting}[label=some-code,caption=CLI утилита для формирования пакетов]
+
+Erase all contents of the SPI memory chip
+-->tseg  
+ StoreEraseFrame:
+ A5C101000800FC000000000000030123
+ A5C101000800FC 00000000 0000 03 01 23
+ 
+ Insert for the program  terminal 1.9b: Erase all SPI memory chip
+
+$A5$C1$01$00$08$00$FC$00$00$00$00$00$00$03$01$23
+ 
+
+
+
+Generate a packet to read from the address (tsrg):
+Usage: tsrg addr size
+-->tsrg 0x00000000 16
+
+Insert for the program  terminal 1.9b: read 0x00000000  16 byte
+$A5$81$01$00$08$00$FC$00$00$00$00$10$00$01$01$59
+
+$A5$81$01$00$08$00$FC$00$F0$01$00$40$00$01$01$07
+
+$A5$81$01$00$08$00$FC$00$E0$03$00$20$00$01$01$EC
+
+------------------------
+Let's try to write something down
+Usage: tswg addr size pattern
+-->tswg 0x00000000 8 0x77 
+
+Insert for the program  terminal 1.9b:  write 0x77 down at 0x00000000
+$A5$C1$01$00$10$00$FC$00$00$00$00$08$00$02$01$77$77$77$77$77$77$77$77$29
+
+
+-->tswg 16 8 0x33
+88 I,[TBFP] Address:0x00000010,Size:8,Pattern:0x33
+89 I,[TBFP] N:1,PRE:0xa5,IF:Stdio,RxMem:0047b8e0,RxSz:512,UART:85,SN:0,PrevFlow:0,CurFlow:0,MaxFlow:0,TornCnt:0,Lost:0,
+90 I,[TBFP] PayLoadLen:16 byte
+91 I,[TBFP] StoreWriteFrame:A5C101001000FC100000000800020133333333333333337A
+
+ Insert for the program  terminal 1.9b:
+$A5$C1$01$00$10$00$FC$10$00$00$00$08$00$02$01$33$33$33$33$33$33$33$33$7A
+
+
+Generate a packet to read from the address (tsrg):
+tsrg 32 16
+
+ Insert for the program  terminal 1.9b: read
+$A5$81$01$00$08$00$FC$20$00$00$00$10$00$01$01$76
+
+
+-------------------------------
+-->tgj 0x80000000
+W,[TBFP] GenerateJumpToAddr:0x80000000 Packet
+I,[TBFP] N:1,PRE:0xa5,IF:Stdio,RxMem:0047b8e0,RxSz:512,UART:85,SN:0,PrevFlow:0,CurFlow:0,MaxFlow:0,TornCnt:0,Lost:0,
+I,[TBFP] PayLoadSize:4 byte
+I,[TBFP] JumpFrame: A5C1010004000100000080E4
+A5C10100040001 00000080 E4
+
+Insert for the program  terminal 1.9b: jump to addr: 0x80000000
+$A5$C1$01$00$04$00$01$00$00$00$80$E4
+
+
+
+\end{lstlisting} 
+
+Эти пакеты с символом доллара предназначены для вставки в программу Terminal 1.9b.
+
+
+
+
+
+
+
+\section{Итог}
+
+
+
+
+
+\section{Акронимы}
+
+\begin{tabular} {ll}
+    Акроним & Расшифровка \\
+    \hline
+    FW &  FirmWare \\
+    DFU  &  device firmware update \\
+    SPI  &  Serial Peripheral Interface \\
+    SPIFI &  Serial Peripheral Interface Flash Interface \\
+    UART &  universal asynchronous receiver-transmitter \\
+    KA &  Конечный Aвтомат \\
+    TBFP  & Trivial Binary Frame Protocol \\
+    CRC &  Cyclic redundancy check \\
+    RAM &  Random Access Memory \\
+\end{tabular}
+
+
+
+
+
+\section{Гиперссылки}
+
+\begin{enumerate}
+  \item \href{https://microsin.net/programming/pc/intel-hex-file-format.html}{Intel HEX: описание формата файла}
+  \item \href{https://habr.com/ru/articles/754972/}{Как собрать Си программу в OS Windows}
+  \item \href{https://habr.com/ru/companies/ruvds/articles/574352/}{Осваиваем LaTeX за 30 минут}
+
+  \item \href{https://github.com/aabzel/trunk/tree/main/source/projects/start_mik32_v1_eeprom_bootloader_m}{Исходный код EEPROM загрузчика}
+  \item \href{https://habr.com/ru/articles/682292/}{Атрибуты Хорошего Канального Протокола Передачи Данных}
+  \item \href{https://habr.com/ru/articles/754216/}{Атрибуты Хорошего Загрузчика}
+  \item \href{https://habr.com/ru/companies/rainbow/articles/275381/}{Удаленное обновление прошивки микроконтроллера}
+  \item \href{https://microtechnics.ru/mikrokontroller-i-bootloader-opisanie-i-princip-raboty/}{Микроконтроллер и Bootloader. Описание и принцип работы.}
+
+\end{enumerate}
+
+
+
+\section{Контрольные вопросы  }
+
+\begin{enumerate}
+  \item  Зачем нужен загрузчик во встраиваемых системах? 
+         Назовите минимум 3 его функции.
+         
+  \item  Как загрузчик может обмениваться данными с приложением?
+
+  \item  Как защитить микроконтроллер от загрузки чужеродного кода через загрузчик?
+  
+  \item  Как загрузчику понять, что загрузчик принял в самом деле прошивку, а не 
+         набор случайных циферок с правильной CRC?
+         
+  \item  Можно ли сделать так, чтобы загрузчик стартовал не с адреса начала 
+         Main Flash 0x0800\_0000, а например с адреса 0x0806\_0000?
+  
+  \item  Вам прислали прошивки в *.bin файле. 
+         Как загрузить и запустить эту прошивку по произвольному отступу в on-chip Nor Flash памяти?
+\end{enumerate}
+
+
+\section{Приложения }
+
+
+
+
