@@ -1,0 +1,27 @@
+\documentclass[a4paper, 16pt]{book}
+% \documentclass[12pt]{book}
+
+sinclude(`latex_m4_preproc_utils.texi')
+
+include(`preamble.texi')
+
+\begin{document}
+
+\title{  
+\textbf{Клиентская утилита   \\
+        FW\_Loader.exe \\
+        версия: 1
+        }
+}
+
+\author{aabdev}
+
+\date{\today}
+
+\maketitle
+
+\tableofcontents
+
+include(`fw_loader.texi')
+
+\end{document}

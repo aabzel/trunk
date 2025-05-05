@@ -9,9 +9,11 @@ const char* CliConfigToStr(const CliConfig_t* const Config) {
     if(Config) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
-        snprintf(text, sizeof(text), "%sCmds:%p,", text, Config->CommandArray);
         snprintf(text, sizeof(text), "%sCmdCnt:%u,", text, Config->cmd_cnt);
+#ifdef HAS_LED
         snprintf(text, sizeof(text), "%sLED:%u", text, Config->feedback_led);
+#endif
+        snprintf(text, sizeof(text), "%sCmdArray:0x%p,", text, Config->CommandArray);
     }
     return text;
 }
@@ -22,7 +24,7 @@ const char* CliCmdToStr(const CliCmdInfo_t* const Cmd) {
         snprintf(text, sizeof(text), "%s%s,", text, Cmd->short_name);
         snprintf(text, sizeof(text), "%s%s,", text, Cmd->long_name);
         snprintf(text, sizeof(text), "%s%s,", text, Cmd->description);
-        snprintf(text, sizeof(text), "%s%p", text, Cmd->handler);
+        snprintf(text, sizeof(text), "%s0x%p", text, Cmd->handler);
     }
     return text;
 }

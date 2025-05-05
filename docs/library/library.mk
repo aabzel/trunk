@@ -20,7 +20,7 @@ ifneq ($(LIBRARY_MK_INC),Y)
     ifeq ($(MIK32_EEPROM_BOOTLOADER),Y)
         include $(LIBRARY_DIR)/mik32_eeprom_bootloader/mik32_eeprom_bootloader.mk
     endif
-    
+
     ifeq ($(MIK32_BOOTLOADER),Y)
         include $(LIBRARY_DIR)/mik32_bootloader/mik32_bootloader.mk
     endif
@@ -33,7 +33,6 @@ ifneq ($(LIBRARY_MK_INC),Y)
         include $(LIBRARY_DIR)/make_basics/make_basics.mk
     endif
 
-
     ifeq ($(BOOTLOADER),Y)
         include $(LIBRARY_DIR)/bootloader/bootloader.mk
     endif
@@ -41,7 +40,6 @@ ifneq ($(LIBRARY_MK_INC),Y)
     ifeq ($(MCU_NVRAM),Y)
         include $(LIBRARY_DIR)/mcu_nvram/mcu_nvram.mk
     endif
-    
 
     ifeq ($(ACRONYMS),Y)
         include $(LIBRARY_DIR)/acronyms/acronyms.mk
