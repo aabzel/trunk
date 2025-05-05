@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "board_config.h"
+#include "board_api.h"
 #include "board_info.h"
 #include "gpio_diag.h"
 

@@ -20,12 +20,12 @@ ifneq ($(WIN_MK_INC),Y)
 
     ifeq ($(SERIAL_PORT),Y)
         #@echo $(error SERIAL_PORT=$(SERIAL_PORT))
-        OPT += -DHAS_COM
-        OPT += -DDEBUG_SERIAL
-        OPT += -DHAS_SERIAL_PORT
-        OPT += -DHAS_SERIAL
-        SOURCES_C += $(WIN_UTILS_DIR)/cli_wrappers.c
-        SOURCES_C += $(WIN_UTILS_DIR)/scan_serial_port.c
+        #OPT += -DHAS_COM
+        #OPT += -DDEBUG_SERIAL
+        #OPT += -DHAS_SERIAL_PORT
+        #OPT += -DHAS_SERIAL
+        #SOURCES_C += $(WIN_UTILS_DIR)/cli_wrappers.c
+        #SOURCES_C += $(WIN_UTILS_DIR)/scan_serial_port.c
     endif
 
     OPT += -DHAS_PC_COMMANDS

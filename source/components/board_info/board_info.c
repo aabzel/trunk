@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-#include "board_config.h"
+#include "board_api.h"
 
 bool connectors_is_equal(const ConnectorPin_t* const conn1,
                          const ConnectorPin_t* const conn2) {
