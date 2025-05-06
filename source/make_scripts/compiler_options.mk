@@ -158,7 +158,8 @@ endif
 
 ifeq ($(DEBUG), Y)
     # Reduce compilation time and make debugging produce the expected results.
-    OPTIMIZATION = -Og
+    #OPTIMIZATION = -Og # LED will not work with that flag
+    OPTIMIZATION = -O0
 
     # $(error DEBUG=$(DEBUG))
 

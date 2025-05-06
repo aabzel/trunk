@@ -83,7 +83,6 @@
 		<buildTargets>
 			<target name="clean" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>${cross_make}</buildCommand>
-				<buildArguments/>
 				<buildTarget>clean</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
@@ -91,7 +90,6 @@
 			</target>
 			<target name="all" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>${cross_make}</buildCommand>
-				<buildArguments/>
 				<buildTarget>all</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
@@ -99,6 +97,7 @@
 			</target>
 			<target name="flash_hex" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>flash_hex.bat</buildCommand>
+				<buildArguments/>
 				<buildTarget>flash_hex</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>false</useDefaultCommand>
@@ -106,20 +105,21 @@
 			</target>
 			<target name="gdb_server" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>gdb_server.bat</buildCommand>
+				<buildArguments/>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>
 			</target>
 			<target name="build_from_make.bat" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>build_from_make.bat</buildCommand>
-				<buildArguments/>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
 			</target>
 			<target name="make flash" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
-				<buildArguments>-i flash</buildArguments>
+				<buildArguments> flash</buildArguments>
+				<buildTarget/>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>
@@ -127,7 +127,6 @@
 			<target name="make -i clang_format_mcal" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
 				<buildArguments>-i clang_format_mcal</buildArguments>
-				<buildTarget/>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>false</runAllBuilders>

@@ -9,7 +9,6 @@
     uint8_t num;                        \
     uint8_t com_num;                    \
     uint8_t tbfp_num;                   \
-    uint8_t serial_num;                 \
     uint32_t bit_rate;                  \
     char* hex_file_name;                \
     bool valid;

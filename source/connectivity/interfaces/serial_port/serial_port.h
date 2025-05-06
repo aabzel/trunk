@@ -14,6 +14,7 @@ extern "C" {
 
 SerialPortHandle_t* SerialPortGetNode(uint8_t num) ;
 const SerialPortConfig_t* SerialPortGetConfig(uint8_t num) ;
+uint8_t serial_port_com_to_num(const uint8_t com_port_num);
 
 bool serial_port_init_custom(void);
 

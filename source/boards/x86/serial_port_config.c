@@ -3,9 +3,9 @@
 #include "data_utils.h"
 
 const SerialPortConfig_t SerialPortConfig[] = {
-    {.num=1, .com_port_num=4, .bit_rate = 56000, .byte_tx_pause_ms=10, .valid = true, },
-    {.num=2, .com_port_num=5, .bit_rate = 56000, .byte_tx_pause_ms=10, .valid = true, },
-    {.num=3, .com_port_num=3, .bit_rate = 56000,  .byte_tx_pause_ms=10, .valid = true, },
+    {.num=1, .com_port_num=4, .bit_rate = 56000, .byte_tx_pause_ms=40, .valid = true, },
+    {.num=2, .com_port_num=3, .bit_rate = 56000, .byte_tx_pause_ms=40, .valid = true, },
+    {.num=3, .com_port_num=5, .bit_rate = 56000, .byte_tx_pause_ms=40, .valid = true, },
 };
 
 SerialPortHandle_t SerialPortInstance[]={

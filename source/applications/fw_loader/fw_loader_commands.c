@@ -17,10 +17,12 @@ bool fw_loader_ping_command(int32_t argc, char* argv[]){
 
     if ( 1<= argc) {
         res = try_str2uint8(argv[0], &num);
+        log_res(FW_LOADER ,res, "Num");
     }
 
     if(res) {
         res = fw_loader_ping(num);
+        log_res(FW_LOADER ,res, "Ping");
     } else {
         LOG_ERROR(FW_LOADER, "Usage: fwp Num");
     }
@@ -38,6 +40,7 @@ bool fw_loader_download_command(int32_t argc, char* argv[]) {
 
     if ( 1<= argc) {
         res = try_str2uint8(argv[0], &num);
+        log_res(FW_LOADER ,res, "Num");
     }
 
     if(res){
@@ -65,6 +68,7 @@ bool fw_loader_upload_command(int32_t argc, char* argv[]){
 
     if ( 1<= argc) {
         res = try_str2uint8(argv[0], &num);
+        log_res(FW_LOADER ,res, "Num");
     }
 
     if(2<= argc) {
@@ -83,3 +87,37 @@ bool fw_loader_upload_command(int32_t argc, char* argv[]){
 
     return res;
 }
+
+/*
+  fwj 1
+ * */
+bool fw_loader_jump_command(int32_t argc, char* argv[]){
+    bool res = false;
+    uint8_t num = 0 ;
+    uint32_t address = 0x80000000 ;
+
+    if ( 0 <= argc) {
+        res = true;
+    }
+
+    if ( 1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_res(FW_LOADER ,res, "Num");
+    }
+
+    if (2 <= argc) {
+    	res = try_str2uint32(argv[1], &address);
+    	log_res(FW_LOADER ,res, "Addr");
+        res = true;
+    }
+
+    if(res) {
+        res = fw_loader_jump(num, address);
+        log_res(FW_LOADER, res, "Jump");
+    }else {
+        LOG_ERROR(FW_LOADER, "Usage: fwj Num Addr");
+    }
+
+    return res;
+}
+

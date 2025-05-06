@@ -10,8 +10,10 @@ extern "C" {
 bool fw_loader_ping_command(int32_t argc, char* argv[]);
 bool fw_loader_upload_command(int32_t argc, char* argv[]);
 bool fw_loader_download_command(int32_t argc, char* argv[]);
+bool fw_loader_jump_command(int32_t argc, char* argv[]);
 
 #define FW_LOADER_BASE_COMMANDS                                                                        \
+    SHELL_CMD("fw_loader_jump", "fwj", fw_loader_jump_command, "FwLoaderJump"),                        \
     SHELL_CMD("fw_loader_upload", "fwl", fw_loader_upload_command, "FwLoaderUpLoad"),                  \
     SHELL_CMD("fw_loader_download", "fwd", fw_loader_download_command, "FwLoaderDownload"),            \
     SHELL_CMD("fw_loader_ping", "fwp", fw_loader_ping_command, "FwLoaderPing"),

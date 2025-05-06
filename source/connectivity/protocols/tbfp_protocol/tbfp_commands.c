@@ -39,7 +39,7 @@ bool tbfp_generate_jump_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = tbfp_generate_jump(base_address);
+        res = tbfp_generate_jump(1, base_address);
         log_info_res(TBFP, res, "GenJump");
     } else {
         LOG_ERROR(TBFP, "Usage: tgj addr");

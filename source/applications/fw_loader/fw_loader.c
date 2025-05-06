@@ -22,7 +22,6 @@ static bool fw_loader_init_common(const FwLoaderConfig_t* const Config, FwLoader
         if(Node) {
             Node->num = Config->num;
             Node->com_num = Config->com_num;
-            Node->serial_num = Config->serial_num;
             Node->tbfp_num = Config->tbfp_num;
             Node->bit_rate = Config->bit_rate;
             Node->hex_file_name = Config->hex_file_name;
@@ -93,10 +92,29 @@ bool fw_loader_ping(uint8_t num) {
         if(res) {
             TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
             if(Tbfp) {
-                res = serial_port_send( Node->serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
+            	uint8_t serial_num = serial_port_com_to_num(Node->com_num);
+                res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
             }
         }
     }
+    return res;
+}
+
+bool fw_loader_jump(uint8_t num, uint32_t base_address) {
+    bool res = false;
+    LOG_INFO(FW_LOADER, "Jump:%u,Addr:0x%08x", num,base_address);
+    FwLoaderHandle_t* Node = FwLoaderGetNode(num);
+    if(Node) {
+        res = tbfp_generate_jump(Node->tbfp_num, base_address);
+        if(res) {
+           TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
+           if(Tbfp) {
+        	   uint8_t serial_num = serial_port_com_to_num(Node->com_num);
+               res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
+           }
+        }
+    }
+
     return res;
 }
 

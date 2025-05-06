@@ -16,6 +16,7 @@ const char* SerialPortNodeToStr(const SerialPortHandle_t* const Node) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sN:%u,", text, Node->num);
         snprintf(text, sizeof(text), "%sCOM%u,", text, Node->com_port_num);
+        snprintf(text, sizeof(text), "%sPause:%u ms,", text, Node->byte_tx_pause_ms);
         snprintf(text, sizeof(text), "%sRate:%u Bit/s,", text, Node->bit_rate);
         snprintf(text, sizeof(text), "%sRx:%u byte,", text, Node->rx_cnt);
         snprintf(text, sizeof(text), "%sTx:%u byte,", text, Node->tx_cnt);
@@ -31,6 +32,7 @@ const char* SerialPortConfigToStr(const SerialPortConfig_t* const Config) {
         snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
         snprintf(text, sizeof(text), "%sCOM%u,", text, Config->com_port_num);
         snprintf(text, sizeof(text), "%sRate:%u Bit/s", text, Config->bit_rate);
+        snprintf(text, sizeof(text), "%sPause:%u ms,", text, Config->byte_tx_pause_ms);
     }
     return text;
 }
