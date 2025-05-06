@@ -447,9 +447,9 @@ bool tbfp_storage_write_generate(uint32_t address, uint16_t size, uint8_t patter
     return res;
 }
 
-bool tbfp_storage_read_generate(uint32_t address, uint16_t size) {
+bool tbfp_storage_read_generate(uint8_t num, uint32_t address, uint16_t size) {
     bool res = false;
-    TbfpHandle_t* Node = TbfpGetNode(1);
+    TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
     	if(Node->TxFrame) {
             LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
@@ -480,6 +480,7 @@ bool tbfp_storage_read_generate(uint32_t address, uint16_t size) {
             for(i=0; i<total_frame_len; i++) {
                 cli_printf("$%02X", Node->TxFrame[i]);
             }
+            Node->tx_size=frame_len+1;
             cli_printf(CRLF);
             res = true;
     	}

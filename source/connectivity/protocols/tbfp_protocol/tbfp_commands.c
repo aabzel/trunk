@@ -92,7 +92,7 @@ bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = tbfp_storage_read_generate(address, size);
+        res = tbfp_storage_read_generate(1, address, size);
     } else {
         LOG_ERROR(TBFP, "Usage: tsrg addr size");
     }

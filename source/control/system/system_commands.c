@@ -78,7 +78,7 @@ bool sys_rate_command(int32_t argc, char* argv[]) {
         Rtcm3Protocol_t* Rtcm3Node = If2Rtcm3Node(interface);
         if(Rtcm3Node) {
             cli_printf(TSEP);
-            cli_printf(" %9s " TSEP, InterfaceToStr((Interfaces_t)Rtcm3Node->interface));
+            cli_printf(" %9s " TSEP, InterfaceToStr((Interfaces_t)Rtcm3Node->inter_face));
             cli_printf(" RTCM3 " TSEP);
             cli_printf(" %7u " TSEP, Rtcm3Node->rx_rate.min);
             cli_printf(" %7u " TSEP, Rtcm3Node->rx_rate.cur);
@@ -97,7 +97,7 @@ bool sys_rate_command(int32_t argc, char* argv[]) {
         TbfpHandle_t* Node = TbfpInterfaceToNode(interface);
         if(Node) {
             cli_printf(TSEP);
-            cli_printf(" %9s " TSEP, InterfaceToStr(Node->interface));
+            cli_printf(" %9s " TSEP, InterfaceToStr(Node->inter_face));
             cli_printf("  TBFP " TSEP);
             cli_printf(" %7u " TSEP, Node->rx_rate.min);
             cli_printf(" %7u " TSEP, Node->rx_rate.cur);

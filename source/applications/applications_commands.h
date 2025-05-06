@@ -91,14 +91,22 @@
 #endif
 
 
+#ifdef HAS_FW_LOADER_COMMANDS
+#include "fw_loader_commands.h"
+#else
+#define FW_LOADER_COMMANDS
+#endif
+
+
 
 #define APPLICATIONS_COMMANDS         \
     SONAR_COMMANDS                    \
     AUTO_BRIGHTNESS_COMMANDS          \
     SOUND_LOCALIZATION_COMMANDS       \
+    FW_LOADER_COMMANDS                \
     AUTO_VERSION_COMMANDS             \
     AUTO_VOLUME_COMMANDS              \
-    END_OF_BLOCK_COMMANDS              \
+    END_OF_BLOCK_COMMANDS             \
     C_GENERATOR_COMMANDS              \
     CODE_STYLE_CHECKER_COMMANDS       \
     GRAPHVIZ_TO_TSORT_COMMANDS        \

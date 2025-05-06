@@ -7,10 +7,10 @@ include(`preamble.texi')
 
 \begin{document}
 
-\title{  
+\title{
 \textbf{Клиентская утилита   \\
         FW\_Loader.exe \\
-        версия: 1
+        версия: 3
         }
 }
 

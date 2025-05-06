@@ -12,6 +12,10 @@ ifneq ($(CLI_CONFIG_MK_INC),Y)
         WAV_COMMANDS=Y
     endif
 
+    ifeq ($(FW_LOADER),Y)
+        FW_LOADER_COMMANDS=Y
+    endif
+
     ifeq ($(SERIAL_PORT),Y)
         SERIAL_PORT_COMMANDS=Y
     endif

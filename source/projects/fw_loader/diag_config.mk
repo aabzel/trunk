@@ -18,6 +18,10 @@ ifeq ($(SERIAL_PORT),Y)
     SERIAL_PORT_DIAG=Y
 endif
 
+ifeq ($(FW_LOADER),Y)
+    FW_LOADER_DIAG=Y
+endif
+
 ifeq ($(INTERFACES),Y)
     INTERFACES_DIAG=Y
 endif

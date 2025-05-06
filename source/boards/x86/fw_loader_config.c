@@ -8,16 +8,30 @@ const FwLoaderConfig_t FwLoaderConfig[] = {
     {
             .num = 1,
             .hex_file_name = "start_mik32_v1_generic_gcc_m.hex",
+            .serial_num = 1,
+            .tbfp_num = 1,
             .com_num = 4,
+            .bit_rate = 56000,
+            .valid = true,
+    },
+    {
+            .num = 2,
+            .hex_file_name = "start_mik32_v1_generic_gcc_m.hex",
+            .serial_num = 3,
+            .tbfp_num = 1,
+            .com_num = 3,
             .bit_rate = 56000,
             .valid = true,
     },
 };
 
-
 FwLoaderHandle_t FwLoaderInstance[] = {
     {
         .num = 1,
+        .valid = true,
+    },
+    {
+        .num = 2,
         .valid = true,
     },
 };
