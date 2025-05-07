@@ -101,7 +101,16 @@ COMPILE_OPT += -fdse
 COMPILE_OPT += -fmax-errors=7
 COMPILE_OPT += -fmessage-length=0
 COMPILE_OPT += -fsigned-char
+
+#COMPILE_OPT += -fno-builtin
+#COMPILE_OPT += -fno-builtin-printf
+
+#‘-fno-common’,  specifies that the compiler places uninitialized global variables in 
+#the BSS section of the object file. 
+#This inhibits the merging of tentative definitions by the linker so you get a multiple-definition
+#error if the same variable is accidentally defined in more than one compilation unit.
 COMPILE_OPT += -fno-common
+
 COMPILE_OPT += -fstack-usage
 COMPILE_OPT += -fzero-initialized-in-bss
 COMPILE_OPT += -finline-small-functions
@@ -111,13 +120,15 @@ ifeq ($(RISC_V),Y)
     COMPILE_OPT += -Werror=enum-int-mismatch
  
     
-    # Assert that compilation targets a freestanding environment. This implies
-    # ï¿½-fno-builtinï¿½. A freestanding environment is one in which the standard
+    # Assert that compilation targets a freestanding environment. 
+    # This implies -fno-builtin. 
+    # A freestanding environment is one in which the standard
     # library may not exist, and program startup may not necessarily be at
-    # main. The most obvious example is an OS kernel. This is equivalent to
-    # ï¿½-fno-hostedï¿½.
-       #COMPILE_OPT += -ffreestanding
-    
+    # main. 
+    # The most obvious example is an OS kernel. 
+    # This is equivalent to -fno-hosted.
+    COMPILE_OPT += -ffreestanding
+
     # when you  specify ï¿½-nostdlibï¿½ or ï¿½-nodefaultlibsï¿½ you should usually 
     #  specify ï¿½-lgccï¿½ as  well. 
    # COMPILE_OPT += -nostdlib
@@ -158,7 +169,8 @@ endif
 
 ifeq ($(DEBUG), Y)
     # Reduce compilation time and make debugging produce the expected results.
-    OPTIMIZATION = -Og
+    #OPTIMIZATION = -Og
+    OPTIMIZATION = -O0
 
     # $(error DEBUG=$(DEBUG))
 
@@ -184,13 +196,14 @@ else
 endif
 
 ifeq ($(HI_PERF), Y)
+    $(error HI_PERF=$(HI_PERF))
     OPTIMIZATION = -Ofast
 endif
 
 ifeq ($(PACK_PROGRAM), Y)
-    # $(error PACK_PROGRAM=$(PACK_PROGRAM))
+     # $(error PACK_PROGRAM=$(PACK_PROGRAM))
      #OPTIMIZATION = -Os
-     OPTIMIZATION = -Os
+      OPTIMIZATION = -O1
 
     #When compiling with -flto, no callgraph information is output along with
     #the object file.
@@ -199,7 +212,7 @@ ifeq ($(PACK_PROGRAM), Y)
     #it to special ELF sections in the object file.
     # When the object files are linked together, all the function bodies are read 
     # from these ELF sections and instantiated as if they had been part of the same translation unit.
-      COMPILE_OPT += -flto
+      #COMPILE_OPT += -flto
       #COMPILE_OPT += -flto-report
 endif
 
@@ -210,6 +223,8 @@ COMPILE_OPT += $(CSTANDARD)
 COMPILE_OPT += $(INCDIR)
 # Generate dependency information
 COMPILE_OPT += -MMD -MP -MF"$(@:%.o=%.d)"
+
+#OPT += -D__int64_t_defined
 
 CFLAGS += $(OPT)
 CFLAGS += $(COMPILE_OPT)

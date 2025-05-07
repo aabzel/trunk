@@ -346,12 +346,15 @@ bool spifi_init_one(uint8_t num) {
             if(Info) {
                 SpiFiHandle_t* Node = SpiFiGetNode(num);
                 if(Node) {
+                    Node->bit_rate_hz = Config->bit_rate_hz;
+                    Node->cache_limit = Config->cache_limit;
+                    Node->cache_on_off = Config->cache_on_off;
                     Node->SPIFIx = Info->SPIFIx;
                     Node->Handle.Instance = Info->SPIFIx;
                     Node->irq_n = Info->irq_n;
 
-                    HAL_SPIFI_MspInit();
                     HAL_SPIFI_Reset(&Node->Handle);
+                    HAL_SPIFI_MspInit();
 
                 } else {
 #ifdef HAS_LOG

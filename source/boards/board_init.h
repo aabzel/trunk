@@ -17,10 +17,19 @@
 #endif /*HAS_TERA_TEST*/
 
 
+#ifdef HAS_START_MIK32_V1
+#include "board_custom.h"
+#define START_MIK32_V1_INIT   {.init_function=board_init, .name="StartMik32V1",},
+#else
+#define START_MIK32_V1_INIT
+#endif /*HAS_TERA_TEST*/
+
+
 /*Order matters*/
 #define BOARD_INIT               \
     TERA_TEST_INIT               \
-    AT_START_F437_INIT
+    AT_START_F437_INIT           \
+    START_MIK32_V1_INIT
 
 
 

@@ -9,7 +9,7 @@ ifneq ($(CONTROL_MBR_MK_INC),Y)
     OPT += -DHAS_MBR_PROC
     OPT += -DHAS_MBR_INIT
     #OPT += -Os
-    PACK_PROGRAM=Y
+    
 
     # nosys.specs just defines that system calls should be 
     # implemented as stubs that return errors when called (-lnosys). 

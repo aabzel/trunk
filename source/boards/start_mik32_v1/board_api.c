@@ -44,6 +44,7 @@ bool board_init(void) {
  */
 bool board_init_xip(void) {
     bool res = false;
+    led_mono_ctrl(2, true);
 #ifdef HAS_SPIFI
     const SpiFiConfig_t *Config = SpiFiGetConfig(0);
     if (Config) {
@@ -80,8 +81,7 @@ bool board_init_xip(void) {
                         SpiFiMem.Command = CmdFastReadQuad;
         	            // r
                         HAL_SPIFI_MemoryMode_Init(&SpiFiMem); // hang on here
-        	            led_mono_ctrl(2, 1);
-                       // led_mono_ctrl(2, true);
+        	            //led_mono_ctrl(2, 1);
                         res = true;
                     }
                 }
@@ -138,7 +138,7 @@ bool board_proc(void) {
         res = true;
     }
 #else
-    res = application_launch();
+    res = application_launch(EXT_ROM_START);
 #endif
     return res;
 }
@@ -146,7 +146,7 @@ bool board_proc(void) {
 bool application_mcal_init(void) {
     bool res = true;
 #ifdef HAS_MBR
-    res = application_launch();
+    res = application_launch(EXT_ROM_START);
 #endif
     return res;
 }
