@@ -289,7 +289,6 @@ bool system_init(void) {
             if(res) {
                 ok++;
             }
-            // led_mono_ctrl(2, true);
 #ifdef HAS_LOG
             res = try_init(res, SystemInitInstance[i].name);
 #endif

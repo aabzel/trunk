@@ -83,10 +83,9 @@ ifeq ($(RISC_V), Y)
     #LDFLAGS +=-g3 
 
     # Donot use the standard system startup files when linking. The standard system
-    # libraries are used normally, unless �-nostdlib�, �-nolibc�, or �-nodefaultlibs�
+    # libraries are used normally, unless -nostdlib, �-nolibc�, or �-nodefaultlibs�
     # is used.
     LDFLAGS += -nostartfiles
-#    LDFLAGS += -nostdlib
     #LDFLAGS += -nostdinc
     #LDFLAGS += -specs=nano.specs -specs=nosys.specs
      
@@ -98,6 +97,13 @@ ifeq ($(RISC_V), Y)
     
     
 endif
+
+ifeq ($(PACK_PROGRAM), Y)
+    #remove implementation of such functions as memcpy memset
+    # LDFLAGS += -nostdlib
+    # LDFLAGS += -lgcc
+endif
+
 #LDFLAGS += -Wl,-Tdata,addr
 
 #@echo $(error LDFLAGS=$(LDFLAGS))

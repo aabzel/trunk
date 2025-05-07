@@ -202,8 +202,9 @@ endif
 
 ifeq ($(PACK_PROGRAM), Y)
      # $(error PACK_PROGRAM=$(PACK_PROGRAM))
-     #OPTIMIZATION = -Os
-      OPTIMIZATION = -O1
+     # OPTIMIZATION = -Os
+     # OPTIMIZATION = -O1 # MBR works with O1
+     OPTIMIZATION = -Os # EEPROM bootloader need that option
 
     #When compiling with -flto, no callgraph information is output along with
     #the object file.
@@ -212,8 +213,8 @@ ifeq ($(PACK_PROGRAM), Y)
     #it to special ELF sections in the object file.
     # When the object files are linked together, all the function bodies are read 
     # from these ELF sections and instantiated as if they had been part of the same translation unit.
-      #COMPILE_OPT += -flto
-      #COMPILE_OPT += -flto-report
+    COMPILE_OPT += -flto # EEPROM bootloader need that option
+    COMPILE_OPT += -flto-report
 endif
 
 #COMPILE_OPT += -Wformat-overflow=1
