@@ -7,6 +7,9 @@
 #include "log.h"
 #include "fw_loader_diag.h"
 
+/*
+ll serialPort debug; fwp 2
+ */
 bool fw_loader_ping_command(int32_t argc, char* argv[]){
     bool res = false;
     uint8_t num = 0 ;
@@ -15,7 +18,7 @@ bool fw_loader_ping_command(int32_t argc, char* argv[]){
     } else {
     }
 
-    if ( 1<= argc) {
+    if ( 1 <= argc) {
         res = try_str2uint8(argv[0], &num);
         log_res(FW_LOADER ,res, "Num");
     }

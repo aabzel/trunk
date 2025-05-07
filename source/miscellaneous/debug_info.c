@@ -218,7 +218,7 @@ static bool pring_gcc_info(void) {
 
 #ifdef HAS_MICROCONTROLLER
 bool check_main(void) {
-    bool res = false;
+    bool res = true;
 
 #ifdef HAS_GENERIC
     res = flash_is_generic((uint32_t*)main);
@@ -360,6 +360,7 @@ bool print_version(void) {
 #ifndef HAS_MIK32
     res = check_main();
     if(res) {
+        LOG_INFO(SYS, "main() Addr:0x%08p", main);
     } else {
         LOG_ERROR(SYS, "main() Addr:0x%08p Error", main);
     }

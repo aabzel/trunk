@@ -12,6 +12,8 @@ bool sys_available_interfaces(void) ;
 bool interface_valid(Interfaces_t interface_if);
 bool system_calc_byte_rate(void) ;
 
+Interfaces_t InterfaceComPortToInterface(uint8_t com_port_num);
+
 #ifdef HAS_HARVESTER_V1
 bool sys_bypass_nmea_rs232(void);
 #endif

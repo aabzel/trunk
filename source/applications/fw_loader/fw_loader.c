@@ -9,6 +9,7 @@
 #include "file_pc.h"
 #include "log.h"
 #include "win_utils.h"
+#include "time_mcal.h"
 #include "serial_port.h"
 #include "tbfp_diag.h"
 
@@ -92,8 +93,18 @@ bool fw_loader_ping(uint8_t num) {
         if(res) {
             TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
             if(Tbfp) {
+            	Tbfp->rx_done = false;
             	uint8_t serial_num = serial_port_com_to_num(Node->com_num);
                 res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
+
+                res = wait_in_loop_ms(500);
+                if(Tbfp->rx_done){
+                	LOG_INFO(FW_LOADER, "GotTBFPresp");
+                	res = true;
+                }else{
+                	LOG_ERROR(FW_LOADER, "NoTBFPresp");
+                	res = false ;
+                }
             }
         }
     }

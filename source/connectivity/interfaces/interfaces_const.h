@@ -26,9 +26,14 @@ typedef enum {
 
 
 typedef enum {
-    IF_UNDEF=0,
+    IF_UNDEF = 0,
     IF_LOOPBACK = 1, /*for self Test*/
     IF_BLACK_HOLE = 2,
+
+#ifdef HAS_SERIAL_PORT
+    IF_SERIAL_PORT = 3,
+#endif
+
 #ifdef HAS_LORA
     IF_LORA, /*RTCM3 source*/
 #endif
@@ -140,10 +145,6 @@ typedef enum {
 
 #ifdef HAS_UWB
     IF_UWB,
-#endif
-
-#ifdef HAS_SERIAL_PORT
-    IF_SERIAL_PORT,
 #endif
 
 #ifdef HAS_PC

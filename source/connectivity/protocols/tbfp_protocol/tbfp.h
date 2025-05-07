@@ -25,22 +25,25 @@ extern "C" {
 /*API*/
 const TbfpConfig_t* TbfpGetConfig(uint8_t num);
 TbfpHandle_t* TbfpGetNode(uint8_t num);
-TbfpHandle_t* TbfpInterfaceToNode(Interfaces_t inter_face);
+TbfpHandle_t* TbfpInterfaceToNode(const Interfaces_t inter_face);
 TbfpHandle_t* TbfpGetNodeByUart(uint8_t uart_num);
-bool tbfp_proc(void);
+bool tbfp_init_common(const TbfpConfig_t* const Config, TbfpHandle_t* const Node);
+
+
 #ifdef HAS_TBFP_EXT
 bool tbfp_heartbeat_proc(void);
 bool tbfp_heartbeat_proc_one(uint32_t num);
 #endif
+bool tbfp_proc(void);
 bool tbfp_proc_one(uint32_t num);
+bool tbfp_proc_ping(uint8_t* ping_payload, uint16_t len, Interfaces_t inter_face) ;
 bool tbfp_init_custom(void);
-bool tbfp_mcal_init(void);
-bool tbfp_parser_init(TbfpHandle_t* Node, const TbfpConfig_t* Config);
 bool tbfp_init_one(uint32_t num);
+bool tbfp_mcal_init(void);
 bool tbfp_rx(uint8_t* const arr,
              uint32_t size,
              Interfaces_t inter_face);
-bool tbfp_proc_ping(uint8_t* ping_payload, uint16_t len, Interfaces_t inter_face) ;
+bool tbfp_parser_init(TbfpHandle_t* Node, const TbfpConfig_t* Config);
 bool tbfp_parser_reset_rx(TbfpHandle_t* Node, RxState_t state);
 
 /*Tx API*/

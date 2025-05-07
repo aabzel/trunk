@@ -2,10 +2,14 @@
 
 #include "data_utils.h"
 #include "tbfp_const.h"
+#include "interfaces_const.h"
 
 #define TBFP_RX_BUFF_SIZE 512
 
 static uint8_t RxData1[TBFP_MAX_TX_BUFF] = {0};
+static uint8_t RxData2[TBFP_MAX_TX_BUFF] = {0};
+static uint8_t RxData3[TBFP_MAX_TX_BUFF] = {0};
+static uint8_t RxData4[TBFP_MAX_TX_BUFF] = {0};
 
 static uint8_t TxBuff1[TBFP_MAX_TX_BUFF] = {0};
 static uint8_t TxBuff2[TBFP_MAX_TX_BUFF] = {0};
@@ -17,6 +21,18 @@ static uint8_t MemRxFrameFix[TBFP_MAX_FRAME] = {0};
 
 const TbfpConfig_t TbfpConfig[] = {
     {
+    .num = 4,
+    .inter_face = IF_SERIAL_PORT,
+    .preamble_val = 0xA5,
+    .RxArray = RxData4,
+    .TxFrame = TxBuff4,
+    .crc_check_need = false,
+    .tx_array_size = TBFP_MAX_TX_BUFF,
+    .valid = true,
+    .rx_frame = MemRxFrame,
+    .fix_frame = MemRxFrameFix,
+    },
+    {
      .num = 1, 
      .inter_face = IF_STDIO,
      .RxArray = RxData1,
@@ -26,13 +42,14 @@ const TbfpConfig_t TbfpConfig[] = {
      .uart_num = 0x55,
      .preamble_val = 0xA5,
      .valid = true,
-  	 .rx_frame = MemRxFrame,
-	 .fix_frame = MemRxFrameFix,
+     .rx_frame = MemRxFrame,
+     .fix_frame = MemRxFrameFix,
      },
 
     {
         .num = 2,
         .inter_face = IF_LOOPBACK,
+        .RxArray = RxData2,
         .TxFrame=TxBuff2,
         .tx_array_size=TBFP_MAX_TX_BUFF,
         .preamble_val = 0xA5,
@@ -44,44 +61,37 @@ const TbfpConfig_t TbfpConfig[] = {
     {
         .num = 3,
         .inter_face = IF_BLACK_HOLE,
+        .RxArray = RxData3,
         .TxFrame = TxBuff3,
         .tx_array_size = TBFP_MAX_TX_BUFF,
         .preamble_val = 0xB0,
         .valid = true,
- 	    .rx_frame = MemRxFrame,
-	    .fix_frame = MemRxFrameFix,
+         .rx_frame = MemRxFrame,
+        .fix_frame = MemRxFrameFix,
     },
 
-    {
-    .num = 4,
-    .inter_face = IF_SERIAL_PORT,
-    .TxFrame = TxBuff4,
-    .tx_array_size = TBFP_MAX_TX_BUFF,
-    .preamble_val = 0xA5,
-    .valid = true,
- 	 .rx_frame = MemRxFrame,
-	 .fix_frame = MemRxFrameFix,
-    },
 
 #ifdef HAS_UWB
-    {.num = 5,
+    {
+     .num = 5,
      .inter_face = IF_UWB,
      .preamble_val = 0x12, 
      .valid = true, 
-     .TxFrame=TxBuff3, 
+     .RxArray = RxData5,
+     .TxFrame=TxBuff5,
      .tx_array_size=TBFP_MAX_TX_BUFF, 
-  	 .rx_frame = MemRxFrame,
-	 .fix_frame = MemRxFrameFix,
+     .rx_frame = MemRxFrame,
+     .fix_frame = MemRxFrameFix,
      },
 #endif
 };
 
 
 TbfpHandle_t TbfpInstance[] = {
+    {.num = 4, .valid = true,},
     {.num = 1, .valid = true,},
     {.num = 2, .valid = true,},
     {.num = 3, .valid = true,},
-    {.num = 4, .valid = true,},
 #ifdef HAS_UWB
     {.num = 5, .valid = true,},
 #endif

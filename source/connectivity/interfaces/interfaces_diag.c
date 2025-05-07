@@ -33,6 +33,7 @@ const char* IfBitOrderToStr(IfBitOrder_t bit_order) {
 const char* InterfaceToStr(const Interfaces_t interface) {
     const char* name = "?";
     switch(interface) {
+
 #ifdef HAS_ISO_TP
     case IF_ISO_TP2:
         name = "ISO_TP2";
@@ -66,6 +67,10 @@ const char* InterfaceToStr(const Interfaces_t interface) {
         name = "LoRa";
         break;
 #endif /*HAS_LORA*/
+
+    case IF_SERIAL_PORT:
+        name = "Serial";
+        break;
 
 #ifdef HAS_RS232
     case IF_RS232:

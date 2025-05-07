@@ -162,10 +162,10 @@ TbfpHandle_t* TbfpGetNode(uint32_t num) {
 }
 #endif
 
-TbfpHandle_t* TbfpInterfaceToNode(Interfaces_t inter_face) {
+TbfpHandle_t* TbfpInterfaceToNode(const Interfaces_t inter_face) {
     TbfpHandle_t* Node = NULL;
 #ifdef HAS_LOG
-    LOG_PARN(TBFP, "%s():", __FUNCTION__);
+    LOG_PARN(TBFP, "%s():If:%u", __FUNCTION__,inter_face);
 #endif
     uint32_t i = 0;
     uint32_t cnt = tbfp_get_cnt();
@@ -173,17 +173,10 @@ TbfpHandle_t* TbfpInterfaceToNode(Interfaces_t inter_face) {
     LOG_PARN(TBFP, "Cnt %u", cnt);
 #endif
     for(i = 0; i < cnt; i++) {
-#ifdef HAS_LOG
-        LOG_PARN(TBFP, "%u", i);
-#endif
-        if(TbfpInstance[i].valid) {
-#ifdef HAS_LOG
-            LOG_PARN(TBFP, "SpotValid %u", i);
-#endif
-            if(TbfpInstance[i].inter_face == inter_face) {
-#ifdef HAS_LOG
-                LOG_PARN(TBFP, "SpotNode  %u", i);
-#endif
+    	tbfp_init_common(&TbfpConfig[i], &TbfpInstance[i]);
+        LOG_PARN( TBFP, "%u,%s", i, TbfpNodeToStr(&TbfpInstance[i])    );
+        if(inter_face==TbfpInstance[i].inter_face ) {
+            if(TbfpInstance[i].valid) {
                 Node = &TbfpInstance[i];
                 break;
             }
@@ -281,21 +274,23 @@ bool is_tbfp_protocol(uint8_t* arr, uint16_t len, Interfaces_t inter_face) {
         }
         if(res) {
 #ifdef HAS_CRC8
-            uint32_t frame_len = sizeof(TbfpHeader_t) + header.len;
-            uint8_t read_crc8 = arr[frame_len];
-            uint8_t calc_crc8 = 0;
+        	if(Node->crc_check_need) {
+                uint32_t frame_len = sizeof(TbfpHeader_t) + header.len;
+                uint8_t read_crc8 = arr[frame_len];
+                uint8_t calc_crc8 = 0;
 
-            res = crc8_sae_j1850_check(arr, frame_len, read_crc8, &calc_crc8);
-#endif
-            if(res) {
+                res = crc8_sae_j1850_check(arr, frame_len, read_crc8, &calc_crc8);
+#endif /*   HAS_CRC8 */
+                if(res) {
 #ifdef HAS_LOG
-                LOG_DEBUG(TBFP, "Crc8Ok Read:0x%02x", read_crc8);
+                  LOG_DEBUG(TBFP, "Crc8,OkRead:0x%02x", read_crc8);
 #endif
-            } else {
+                } else {
 #ifdef HAS_LOG
-                LOG_ERROR(TBFP, "Crc8Err Read:0x%02x Calc:0x%02x", read_crc8, calc_crc8);
+                    LOG_ERROR(TBFP, "Crc8,ErrRead:0x%02x,Calc:0x%02x", read_crc8, calc_crc8);
 #endif
-            }
+                }
+        	}
         }
     } else {
 #ifdef HAS_LOG
@@ -723,6 +718,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
     bool res = false;
     // code runs
     Node->payload_size = len;
+    Node->rx_done = true;
 #ifdef HAS_TBFP_DIAG
     LOG_DEBUG(TBFP, "%s,ProcPayloadID:0x%x=%s,Len:%u Byte", InterfaceToStr(Node->inter_face), payload_id,
               TbfpPayloadIdToStr(payload_id), len);
@@ -1081,6 +1077,7 @@ bool tbfp_check(void) {
 }
 #endif
 
+
 TbfpHandle_t* TbfpGetNodeByUart(uint8_t uart_num) {
     TbfpHandle_t* Node = NULL;
     uint32_t i = 0;
@@ -1156,10 +1153,6 @@ bool wait_pong_loop_ms(uint32_t wait_pause_ms, Interfaces_t inter_face) {
 }
 #endif
 
-bool tbfp_init_custom(void) {
-    bool res = true;
-    return res;
-}
 
 /*
  * Load RAW bytes to FSM parser
@@ -1244,19 +1237,25 @@ bool tbfp_proc_one(uint32_t num) {
     return res;
 }
 
-static bool tbfp_init_common(const TbfpConfig_t* const Config, TbfpHandle_t* const Node) {
+bool tbfp_init_custom(void) {
+    bool res = true;
+    return res;
+}
+
+bool tbfp_init_common(const TbfpConfig_t* const Config, TbfpHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->inter_face = Config->inter_face;
             Node->heartbeat = Config->heartbeat;
             Node->fix_frame = Config->fix_frame;
             Node->tx_array_size = Config->tx_array_size;
             Node->TxFrame = Config->TxFrame;
             Node->rx_frame = Config->rx_frame;
             Node->uart_num = Config->uart_num;
-            Node->inter_face = Config->inter_face;
             Node->RxArray = Config->RxArray;
             Node->rx_array_size = Config->rx_array_size;
+            Node->crc_check_need = Config->crc_check_need;
             Node->preamble_val = Config->preamble_val;
             Node->num = Config->num;
             Node->valid = true;

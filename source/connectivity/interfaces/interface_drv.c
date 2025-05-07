@@ -8,6 +8,10 @@
 #include "tbfp.h"
 #endif
 
+#ifdef HAS_SERIAL_PORT
+#include "serial_port.h"
+#endif
+
 #ifdef HAS_INTERFACE_DIAG
 #include "interfaces_diag.h"
 #endif
@@ -92,7 +96,9 @@ bool system_calc_byte_rate(void) {
   interface_if - interface to send
   retx - retransmit
   */
-bool sys_send_if(const uint8_t* const array, const uint32_t size, const Interfaces_t interface_if,
+bool sys_send_if(const uint8_t* const array,
+		         const uint32_t size,
+	             const Interfaces_t interface_if,
                  const IfRetx_t retx) {
     bool res = false;
 #ifdef HAS_SYSTEM_DIAG
@@ -100,6 +106,13 @@ bool sys_send_if(const uint8_t* const array, const uint32_t size, const Interfac
 #endif
 
     switch(interface_if) {
+
+#ifdef HAS_SERIAL_PORT
+    case IF_SERIAL_PORT: {
+        res = serial_port_send( 0, array, size) ;
+        log_res(SYS, res, "SerialPortSend");
+    } break;
+#endif /**/
 
 #ifdef HAS_UART0
     case IF_UART0: {
@@ -226,3 +239,11 @@ bool sys_available_interfaces(void) {
     return res;
 }
 #endif
+
+
+
+Interfaces_t InterfaceComPortToInterface(uint8_t com_port_num){
+	Interfaces_t inter_face = IF_SERIAL_PORT;
+	(void)com_port_num;
+	return inter_face;
+}

@@ -16,7 +16,7 @@ const char* TbfpPayloadToStr(const TbfpPayloadId_t payload_id,
 		                     const uint8_t* const payload );
 const char* TbfpPayloadStorageToStr(const uint8_t* const payload );
 const char* TbfpHeaderToStr(const TbfpHeader_t* const Header);
-const char* TbfpNode2Str(const TbfpHandle_t* const Node);
+const char* TbfpNodeToStr(const TbfpHandle_t* const Node);
 const char* TbfpPayloadIdToStr(TbfpPayloadId_t id);
 const char* TbfpRxState2Str(RxState_t rx_state);
 const char* TbfpFlagToStr(TbfpFrameFlags_t flags);

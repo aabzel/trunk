@@ -16,9 +16,11 @@ extern "C" {
 #include "tbfp_re_tx_ack_fsm_types.h"
 #include "tbfp_const.h"
 #include "system.h"
+
 #ifdef HAS_GNSS
 #include "gnss_types.h"
 #endif
+
 #ifdef HAS_PROTOCOL
 #include "protocol_types.h"
 #endif
@@ -26,15 +28,14 @@ extern "C" {
 
 typedef union {
     uint8_t byte;
-     struct {
+    struct {
         uint8_t lifetime :4; /*bit 0-3*/
-        uint8_t reserved:2;  /*bit 4-5*/
+        uint8_t response:1;  /*bit 4 this bit says that this is a response packet*/
+        uint8_t reserved:1;  /*bit 5*/
         uint8_t crc_check_need:1;  /*bit 6*/
         uint8_t ack_need:1;  /*bit 7*/
     };
 }TbfpFrameFlags_t;
-
-
 
 #ifdef HAS_TBFP_DIAG
 
@@ -51,12 +52,12 @@ typedef union {
    https://docs.google.com/spreadsheets/d/1VAT3Ak7AzcufgvuRHrRVoVfC3nxugFGJR5pyzxL4W7Q/edit#gid=0
   ) */
 typedef union {
-	uint8_t buff[7];
-	struct {
+    uint8_t buff[7];
+    struct {
         uint8_t preamble;
-        TbfpFrameFlags_t flags; /*For ack, mesh feature (lifetime)*/
+        TbfpFrameFlags_t flags; /* For ack, mesh feature (lifetime)*/
         uint16_t snum; /* serial number of the frame. For flow controll.*/
-        uint16_t len; /*Payload Len*/
+        uint16_t len; /* Payload Len */
         TbfpPayloadId_t payload_id;
         uint8_t payload[0]; /* just for pointer*/
 	}__attribute__((packed));
@@ -79,6 +80,7 @@ typedef struct  {
     uint32_t rx_cnt;        \
     uint32_t rx_byte_prev;  \
     uint32_t rx_pkt_cnt;    \
+    bool rx_done;           \
     bool rx_pong;           \
     bool rx_ping;
 
@@ -106,6 +108,7 @@ typedef struct  {
     TBFP_COMMON_RX_VARIABLES             \
     TBFP_COMMON_TX_VARIABLES             \
     bool valid;                          \
+    bool crc_check_need;                 \
     bool heartbeat;                      \
     Interfaces_t inter_face;             \
     uint8_t preamble_val;                \
@@ -119,7 +122,6 @@ typedef struct  {
     uint32_t read_crc8;               \
     uint32_t len_err_cnt;             \
     uint32_t crc_err_cnt;             \
-    uint32_t crc_check_need;          \
     uint32_t crc_err_cnt_prev;
 
 typedef struct  {

@@ -215,11 +215,12 @@ bool tbfp_diag(void) {
     bool res = false;
     uint32_t i;
     static const table_col_t cols[] = {
+        {5, "N"},
 #ifdef HAS_INTERFACES_DIAG
         {10, "interf"},
 #endif
-
         {9, "rxCnt"},
+
         {9, "txCnt"},
 
 #ifdef HAS_TBFP_DIAG
@@ -235,6 +236,7 @@ bool tbfp_diag(void) {
         TbfpHandle_t* TbfpNode = TbfpGetNode(i);
         if(TbfpNode) {
             cli_printf(TSEP);
+            cli_printf(" %3u " TSEP, TbfpNode->num);
 #ifdef HAS_INTERFACES_DIAG
             cli_printf(" %8s " TSEP, InterfaceToStr(TbfpNode->inter_face));
 #endif
@@ -262,17 +264,18 @@ bool tbfp_diag(void) {
 
 
 
-const char* TbfpNode2Str(const TbfpHandle_t* const Node) {
+const char* TbfpNodeToStr(const TbfpHandle_t* const Node) {
     if(Node) {
         strcpy(text,"");
         snprintf(text,sizeof(text),"%sN:%u,",text,  Node->num);
         snprintf(text,sizeof(text),"%sPRE:0x%x,",text,  Node->preamble_val);
+        snprintf(text,sizeof(text),"%sIF:%u,",text,  Node->inter_face);
         snprintf(text,sizeof(text),"%sIF:%s,",text,  InterfaceToStr(Node->inter_face));
+        snprintf(text,sizeof(text),"%sUART:%u,",text,  Node->uart_num);
         if(Node->rx_array_size) {
             snprintf(text, sizeof(text), "%sRxMem:%p,", text,  Node->RxArray);
             snprintf(text, sizeof(text), "%sRxSz:%u,", text,  Node->rx_array_size);
         }
-        snprintf(text,sizeof(text),"%sUART:%u,",text,  Node->uart_num);
 #ifdef HAS_PROTOCOL_DIAG
         snprintf(text,sizeof(text),"%s%s,",text, FlowCtrl2Str(&Node->Flow));
 #endif
@@ -339,7 +342,7 @@ bool tbfp_generate_jump(const uint8_t num, const uint32_t base_address) {
     TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
         LOG_WARNING(TBFP, "GenerateJumpToAddr:0x%08X Packet", base_address);
-        LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
+        LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
         uint16_t payload_len = 4 ;
         LOG_INFO(TBFP, "PayLoadSize:%u byte", payload_len);
         TbfpHeader_t Header = {0};
@@ -372,7 +375,7 @@ bool tbfp_storage_erase_generate(void) {
     TbfpHandle_t* Node = TbfpGetNode(1);
     if(Node) {
         LOG_INFO(TBFP, "GenerateErasePacket");
-        LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
+        LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
         uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t) ;
         LOG_INFO(TBFP, "PayLoadSize:%u byte", payload_len);
         TbfpHeader_t Header = {0};
@@ -411,7 +414,7 @@ bool tbfp_storage_write_generate(uint32_t address, uint16_t size, uint8_t patter
     TbfpHandle_t* Node = TbfpGetNode(1);
     if(Node) {
         LOG_INFO(TBFP, "Address:0x%08x,Size:%u,Pattern:0x%02x", address, size, pattern);
-        LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
+        LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
         uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t) + size;
         LOG_INFO(TBFP, "PayLoadLen:%u byte", payload_len);
         TbfpHeader_t Header = {0};
@@ -453,7 +456,7 @@ bool tbfp_storage_read_generate(uint8_t num, uint32_t address, uint16_t size) {
     TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
     	if(Node->TxFrame) {
-            LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
+            LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
             uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t);
             LOG_INFO(TBFP, "PayLoadLen:%u byte", payload_len);
             TbfpHeader_t Header = {0};

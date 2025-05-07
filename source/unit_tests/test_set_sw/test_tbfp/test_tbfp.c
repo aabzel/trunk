@@ -250,7 +250,7 @@ bool tbfp_test_genegare_storage_write(const uint8_t num, uint8_t* const frame) {
     bool res = false;
     TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
-        LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
+        LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
         uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t) + TEST_STORAGE_WRITE;
         LOG_INFO(TBFP, "PayLoadLen:%u byte", payload_len);
         TbfpHeader_t Header;
@@ -286,7 +286,7 @@ bool tbfp_test_genegare_storage_read(uint8_t num, uint8_t* const frame) {
     bool res = false;
     TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
-        LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
+        LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
         uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t);
         LOG_INFO(TBFP, "PayLoadLen:%u byte", payload_len);
         TbfpHeader_t Header;

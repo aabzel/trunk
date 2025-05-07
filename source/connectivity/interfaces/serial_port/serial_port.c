@@ -10,6 +10,9 @@
 #include "log.h"
 #include "str_utils.h"
 #include "win_utils.h"
+#ifdef HAS_TBFP
+#include "tbfp.h"
+#endif
 #include "none_blocking_pause.h"
 
 COMPONENT_GET_NODE(SerialPort, serial_port)
@@ -46,37 +49,52 @@ bool serial_port_proc_one(uint8_t num) {
     SerialPortHandle_t* Node = SerialPortGetNode(num);
     if(Node) {
         res = true;
-        char rx_byte;
         bool loopRun = true;
-        DWORD rx_size_cnt;
+#ifdef HAS_TBFP
+        TbfpHandle_t* Tbfp = TbfpInterfaceToNode(IF_SERIAL_PORT);
+        if (Tbfp) {
+        } else {
+            LOG_ERROR(SERIAL_PORT, "NoTbfp for if %u",IF_SERIAL_PORT);
+        }
+#endif
         while(loopRun) {
+            DWORD rx_size_cnt;
             rx_size_cnt = 0;
+            char rx_byte = ' ';
             ReadFile(Node->hComm,     // Handle of the Serial port
                      &rx_byte,        // Temporary character
                      sizeof(rx_byte), // Size of TempChar
                      &rx_size_cnt,    // Number of bytes read
                      NULL);
-            if(0 < rx_size_cnt) {
-                LOG_DEBUG(SERIAL_PORT, "Rx:%u,0x%x=[%c]", num, rx_byte, rx_byte);
+            if( 1 == rx_size_cnt) {
+                LOG_DEBUG(SERIAL_PORT, "COM%u,Rx:[%u]=0x%02x='%c'", Node->com_port_num, Node->rx_cnt, rx_byte, rx_byte);
+                Node->rx_cnt++;
                 loopRun = true;
+#ifdef HAS_TBFP
+                if (Tbfp) {
+                   res = tbfp_proc_byte(Tbfp,  (uint8_t)  rx_byte);
+                } else {
+                    LOG_ERROR(SERIAL_PORT, "NoTbfp for if %u",IF_SERIAL_PORT);
+                }
+#endif
             } else {
                 loopRun = false;
             }
-            Node->rx_cnt += rx_size_cnt;
         };
     }
     return res;
 }
 
-static bool serial_port_send_pause(SerialPortHandle_t* const Node, uint8_t* data, uint32_t size) {
+static bool serial_port_send_pause(SerialPortHandle_t* const Node,
+                                   uint8_t* data, uint32_t size) {
     bool res = false;
     if(data) {
-    	if(size) {
+        if(size) {
             uint32_t i = 0;
             uint32_t ok_cnt = 0;
-            for(i=0;i<size;i++) {
-            	LOG_DEBUG(SERIAL_PORT, "[%u]=0x%x", i,data[i]);
-                BOOL status;
+            for(i=0; i<size; i++) {
+                LOG_DEBUG(SERIAL_PORT, "COM%u,Tx[%u]=0x%02x",Node->com_port_num, Node->tx_cnt,data[i]);
+                BOOL status = 0;
                 DWORD written = 0;
                 status = WriteFile(Node->hComm, &data[i], (DWORD)1, &written, NULL);
                 if(1==written) {
@@ -96,7 +114,7 @@ static bool serial_port_send_pause(SerialPortHandle_t* const Node, uint8_t* data
                 res = false;
                 LOG_ERROR(SERIAL_PORT, "WriteSerialErr %u/%u", ok_cnt,size);
             }
-    	}else{
+        }else{
             LOG_ERROR(SERIAL_PORT, "SizeErr");
         }
     }else{
