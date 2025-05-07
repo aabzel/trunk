@@ -15,9 +15,12 @@ ifeq ($(SERIAL_PORT),Y)
     TEST_SERIAL_PORT=Y
 endif
 
+ifeq ($(FW_LOADER),Y)
+    TEST_FW_LOADER=Y
+endif
 
 ifeq ($(RUNNING_LINE),Y)
-    RUNNING_LINE_WAV=Y
+    TEST_RUNNING_LINE=Y
 endif
 
 

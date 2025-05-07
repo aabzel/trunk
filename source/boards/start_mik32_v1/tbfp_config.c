@@ -25,7 +25,7 @@ const TbfpConfig_t TbfpConfig[] = {
 #ifdef HAS_UART0
     {
      .num = 1,
-     .interface = IF_UART0,
+     .inter_face = IF_UART0,
      .uart_num = 0,
      .heartbeat = false,
      .RxArray = RxData0,
@@ -42,7 +42,7 @@ const TbfpConfig_t TbfpConfig[] = {
 #ifdef HAS_UART1
     {
      .num = 2,
-     .interface = IF_UART1,
+     .inter_face = IF_UART1,
      .uart_num = 1,
      .heartbeat = true,
      .RxArray = RxData1,

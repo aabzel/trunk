@@ -8,8 +8,9 @@
 #define FW_LOADER_COMMON_VARIABLES      \
     uint8_t num;                        \
     uint8_t com_num;                    \
-    uint32_t bit_rate;                    \
-    char* hex_file_name;    \
+    uint8_t tbfp_num;                   \
+    uint32_t bit_rate;                  \
+    char* hex_file_name;                \
     bool valid;
 
 typedef struct {

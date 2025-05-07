@@ -334,9 +334,9 @@ bool tbfp_parse_frame(const uint8_t* const data, const uint32_t size) {
 }
 
 /*0x80000000 */
-bool tbfp_generate_jump(const uint32_t base_address){
+bool tbfp_generate_jump(const uint8_t num, const uint32_t base_address) {
     bool res = false;
-    TbfpHandle_t* Node = TbfpGetNode(1);
+    TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
         LOG_WARNING(TBFP, "GenerateJumpToAddr:0x%08X Packet", base_address);
         LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
@@ -353,13 +353,14 @@ bool tbfp_generate_jump(const uint32_t base_address){
         memcpy(Node->TxFrame, &Header, sizeof(TbfpHeader_t));
         memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &base_address, 4);
         uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
-        uint16_t total_frame_len = frame_len + 1;
+        Node->tx_size = frame_len + 1;
         Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
-        LOG_INFO(TBFP, "JumpFrame:%s", ArrayToStr(Node->TxFrame, total_frame_len));
+        LOG_INFO(TBFP, "JumpFrame:%s", ArrayToStr(Node->TxFrame, Node->tx_size));
         uint32_t i = 0;
-        for(i=0; i < total_frame_len; i++) {
+        for(i=0; i < Node->tx_size; i++) {
             cli_printf("$%02X", Node->TxFrame[i]);
         }
+
         cli_printf(CRLF);
         res = true;
     }
@@ -447,9 +448,9 @@ bool tbfp_storage_write_generate(uint32_t address, uint16_t size, uint8_t patter
     return res;
 }
 
-bool tbfp_storage_read_generate(uint32_t address, uint16_t size) {
+bool tbfp_storage_read_generate(uint8_t num, uint32_t address, uint16_t size) {
     bool res = false;
-    TbfpHandle_t* Node = TbfpGetNode(1);
+    TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
     	if(Node->TxFrame) {
             LOG_INFO(TBFP, "%s", TbfpNode2Str(Node));
@@ -480,6 +481,7 @@ bool tbfp_storage_read_generate(uint32_t address, uint16_t size) {
             for(i=0; i<total_frame_len; i++) {
                 cli_printf("$%02X", Node->TxFrame[i]);
             }
+            Node->tx_size=frame_len+1;
             cli_printf(CRLF);
             res = true;
     	}

@@ -169,7 +169,7 @@ endif
 
 ifeq ($(DEBUG), Y)
     # Reduce compilation time and make debugging produce the expected results.
-    #OPTIMIZATION = -Og
+    #OPTIMIZATION = -Og # LED will not work with that flag
     OPTIMIZATION = -O0
 
     # $(error DEBUG=$(DEBUG))
@@ -177,7 +177,7 @@ ifeq ($(DEBUG), Y)
     #Request debugging information and also use level to specify how much information.
     # -g3 Level 3 includes extra information, such as all the macro definitions present in
     # the program. Some debuggers support macro expansion when you use �-g3�.
-    COMPILE_OPT += -g3 
+    COMPILE_OPT += -g3
 
     # Produce debugging information for use by GDB. This means to use the most
     # expressive format available (DWARF, stabs, or the native format if neither of

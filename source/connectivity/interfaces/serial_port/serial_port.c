@@ -10,9 +10,31 @@
 #include "log.h"
 #include "str_utils.h"
 #include "win_utils.h"
+#include "none_blocking_pause.h"
 
 COMPONENT_GET_NODE(SerialPort, serial_port)
 COMPONENT_GET_CONFIG(SerialPort, serial_port)
+
+/*
+ * COMport num to logic serial_num
+ *
+ * */
+uint8_t serial_port_com_to_num(const uint8_t com_port_num) {
+    uint8_t serial_num = 0;
+    uint32_t i = 0;
+    uint32_t cnt = serial_port_get_cnt();
+    for (i = 0; i < cnt; i++) {
+        if (com_port_num == SerialPortInstance[i].com_port_num) {
+            if (SerialPortInstance[i].valid) {
+                serial_num = SerialPortInstance[i].num;
+                break;
+            }
+        }
+    }
+    return serial_num;
+}
+
+
 
 bool serial_port_init_custom(void) {
     bool res = false;
@@ -46,23 +68,56 @@ bool serial_port_proc_one(uint8_t num) {
     return res;
 }
 
+static bool serial_port_send_pause(SerialPortHandle_t* const Node, uint8_t* data, uint32_t size) {
+    bool res = false;
+    if(data) {
+    	if(size) {
+            uint32_t i = 0;
+            uint32_t ok_cnt = 0;
+            for(i=0;i<size;i++) {
+            	LOG_DEBUG(SERIAL_PORT, "[%u]=0x%x", i,data[i]);
+                BOOL status;
+                DWORD written = 0;
+                status = WriteFile(Node->hComm, &data[i], (DWORD)1, &written, NULL);
+                if(1==written) {
+                    if(status) {
+                        Node->tx_cnt++;
+                        ok_cnt++;
+                    }
+                }
+                wait_ms(Node->byte_tx_pause_ms);
+
+            }
+
+            if(ok_cnt==size) {
+                LOG_DEBUG(SERIAL_PORT, "Write:0x%p,Ok", Node->hComm);
+                res = true;
+            }else{
+                res = false;
+                LOG_ERROR(SERIAL_PORT, "WriteSerialErr %u/%u", ok_cnt,size);
+            }
+    	}else{
+            LOG_ERROR(SERIAL_PORT, "SizeErr");
+        }
+    }else{
+        LOG_ERROR(SERIAL_PORT, "DataErr");
+    }
+
+    return res;
+}
+
+
 bool serial_port_send(uint8_t num, uint8_t* data, uint32_t size) {
     bool res = false;
     SerialPortHandle_t* Node = SerialPortGetNode(num);
     if(Node) {
-        BOOL status;
-        DWORD written = 0;
-        status = WriteFile(Node->hComm, data, (DWORD)size, &written, NULL);
-        if(written == size) {
-            if(status) {
-                LOG_DEBUG(SERIAL_PORT, "Write:%pOk[%s]", Node->hComm, data);
-                res = true;
-            }
-        } else {
-            res = false;
-            LOG_ERROR(SERIAL_PORT, "WriteSerialErr [%s]", data);
-        }
+        LOG_DEBUG(SERIAL_PORT, "Send,%s", SerialPortNodeToStr(Node));
+        res = serial_port_send_pause(Node, data, size);
+        log_res(SERIAL_PORT, res, "SendPause");
+    }else{
+        LOG_ERROR(SERIAL_PORT, "NodeErr %u", num);
     }
+
     return res;
 }
 
@@ -89,12 +144,26 @@ static bool serial_port_set_timeout(HANDLE hComm) {
     bool res = false;
     COMMTIMEOUTS SerailPortTimeOuts = {0};
     SerailPortTimeOuts.ReadIntervalTimeout = 2;        // in milliseconds
-    SerailPortTimeOuts.ReadTotalTimeoutMultiplier = 5; //
+    SerailPortTimeOuts.ReadTotalTimeoutMultiplier = 3; //
     SerailPortTimeOuts.ReadTotalTimeoutConstant = 10;  // in milliseconds
     SerailPortTimeOuts.WriteTotalTimeoutConstant = 1;  // in milliseconds
     SerailPortTimeOuts.WriteTotalTimeoutMultiplier = 1;
 
     SetCommTimeouts(hComm, &SerailPortTimeOuts);
+    return res;
+}
+
+static bool serial_port_init_common(const SerialPortConfig_t* const Config,
+                                    SerialPortHandle_t* const Node) {
+    bool res = false;
+    if(Config) {
+        Node->num = Config->num;
+        Node->byte_tx_pause_ms = Config->byte_tx_pause_ms;
+        Node->com_port_num = Config->com_port_num;
+        Node->bit_rate = Config->bit_rate;
+        Node->valid = true;
+        res = true;
+    }
     return res;
 }
 
@@ -106,6 +175,9 @@ bool serial_port_init_one(uint8_t num) {
         LOG_WARNING(SERIAL_PORT, "%s", SerialPortConfigToStr(Config));
         SerialPortHandle_t* Node = SerialPortGetNode(num);
         if(Node) {
+            res = serial_port_init_common(Config, Node);
+
+
             res = true;
             char ComPortName[80] = {0};
             snprintf(ComPortName, sizeof(ComPortName), "COM%u", Config->com_port_num);
@@ -128,6 +200,8 @@ bool serial_port_init_one(uint8_t num) {
             }
 
             LOG_INFO(SERIAL_PORT, "init:%u Ok", num);
+        }else{
+            LOG_ERROR(SERIAL_PORT, "NodeErr %u", num);
         }
     }
     return res;

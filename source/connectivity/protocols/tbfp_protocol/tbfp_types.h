@@ -83,8 +83,7 @@ typedef struct  {
     bool rx_ping;
 
 #define TBFP_TX_VARIABLES                  \
-    /*uint8_t tx_frame[TBFP_MAX_FRAME];*/  \
-    uint32_t tx_frame_len;  \
+    uint32_t tx_size;  \
     uint32_t tx_byte;  \
     uint32_t tx_byte_prev;  \
     uint32_t tx_pkt_cnt;  \
