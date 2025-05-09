@@ -274,14 +274,14 @@ const char* StorageMemoryFrameHeaderToStr(const StorageMemoryFrameHeader_t* cons
 }
 
 const char* StorageFrameHeaderToStr(const StorageFrameHeader_t* const Header) {
-    static char lText[120] = {0};
+    static char locText[120] = {0};
     if(Header) {
-        strcpy(lText, "");
-        memset(lText, 0, sizeof(lText));
-        snprintf(lText, sizeof(lText), "%sASIC:%u,", lText, Header->asic_num);
-        snprintf(lText, sizeof(lText), "%sOp:%s,", lText, StorageAccessToStr(Header->operation));
-        snprintf(lText, sizeof(lText), "%sAddr:0x%08x,", lText, Header->address);
-        snprintf(lText, sizeof(lText), "%sSize:%u,", lText, Header->size);
+        strcpy(locText, "");
+        memset(locText, 0, sizeof(locText));
+        snprintf(locText, sizeof(locText), "%sASIC:%u,", locText, Header->asic_num);
+        snprintf(locText, sizeof(locText), "%sOp:%s,", locText, StorageAccessToStr(Header->operation));
+        snprintf(locText, sizeof(locText), "%sAddr:0x%08x,", locText, Header->address);
+        snprintf(locText, sizeof(locText), "%sSize:%u,", locText, Header->size);
     }
-    return lText;
+    return locText;
 }

@@ -478,6 +478,27 @@ bool tbfp_storage_write_generate(const uint8_t tbfp_num,
 }
 #endif
 
+bool tbfp_terminal_print(const uint8_t num) {
+    bool res = false;
+    TbfpHandle_t* Node = TbfpGetNode(num);
+    if(Node) {
+    	if(Node->TxFrame) {
+    		if( Node->tx_size) {
+        		LOG_PARN(TBFP, "%s", TbfpNodeToStr(Node));
+                LOG_PARN(TBFP, "Frame:%s", ArrayToStr(Node->TxFrame, Node->tx_size));
+                uint32_t i = 0;
+                for(i=0; i<Node->tx_size; i++) {
+                    cli_printf("$%02X", Node->TxFrame[i]);
+                }
+                cli_printf(CRLF);
+                res = true;
+    		}
+    	}
+    }
+    return res;
+}
+
+
 bool tbfp_storage_read_generate(uint8_t num, uint32_t address, uint16_t size) {
     bool res = false;
     TbfpHandle_t* Node = TbfpGetNode(num);

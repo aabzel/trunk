@@ -8,6 +8,7 @@ extern "C" {
 #include "std_includes.h"
 #include "tbfp.h"
 
+bool tbfp_terminal_print(const uint8_t num);
 bool tbfp_generate_jump(const uint8_t num, const uint32_t base_address);
 bool tbfp_storage_erase_generate(uint8_t num);
 

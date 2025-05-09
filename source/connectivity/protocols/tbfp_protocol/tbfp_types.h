@@ -78,6 +78,8 @@ typedef struct  {
 #define TBFP_STORAGE_VARIABLES         \
     StorageFrameHeader_t Storage;
 
+
+/*Add RxData array pointer*/
 #define TBFP_RX_VARIABLES   \
     U32Value_t rx_rate;     \
     uint32_t rx_byte;       \

@@ -26,9 +26,9 @@ bool file_pc_load_to_array(const char* const file_name, uint8_t* const out_buff,
 bool file_pc_load_to_array_i8(char* const file_name, size_t offset, int8_t* const out_buff, size_t size);
 bool file_pc_load_to_array_i8_ll(FILE* FileNode, size_t offset, int8_t* const out_buff, size_t size);
 bool file_pc_run_through_lines(char* in_file_name,
-                            char* pattern,
-                            char* rep,
-                            char* out_file_name);
+                               char* pattern,
+                               char* rep,
+                               char* out_file_name);
 bool file_pc_replace_substr(const char* const file_name, const char * const prev_str ,const char* const new_str);
 
 #endif /* FILE_PC_H */

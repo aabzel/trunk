@@ -10,6 +10,8 @@
 #include "log.h"
 #endif
 
+#include "array_diag.h"
+
 #ifdef HAS_TBFP
 #include "tbfp.h"
 #endif
@@ -18,7 +20,7 @@
 #include "w25q32jv_drv.h"
 #endif
 
-static uint8_t storage_tx_data[STORAGE_DATA_SIZE] = {0};
+static uint8_t storage_io_data[STORAGE_DATA_SIZE] = {0};
 uint8_t storage_rx_data[STORAGE_DATA_SIZE] = {0};
 
 #define STORAGE_DATA_OFFSET sizeof(StorageFrameHeader_t)
@@ -55,42 +57,59 @@ bool write_addr_8bit(const uint32_t address, const uint8_t value) {
 bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint32_t size) {
     bool res = false;
     if(payload) {
-        if(size) {
+    	//LOG_DEBUG(STORAGE, "ProcPayload,TBFP:%u,Size:%u",tbfp_num, size);
+        if(sizeof(StorageFrameHeader_t) <= size) {
             // runs
-            StorageFrameHeader_t He_Storage_ader = {0};
-            memcpy(&He_Storage_ader, payload, sizeof(StorageFrameHeader_t));
+            StorageFrameHeader_t HeaderStorage = {0};
+            memcpy(&HeaderStorage, payload, sizeof(StorageFrameHeader_t));
 
-            memset(storage_tx_data, 0x00, STORAGE_DATA_SIZE);
-            memcpy(storage_tx_data, payload, sizeof(StorageFrameHeader_t));
+            memset(storage_io_data, 0x00, STORAGE_DATA_SIZE);
+            memcpy(storage_io_data, payload, size);
 
 #ifdef HAS_LOG
-            LOG_DEBUG(STORAGE, "%s", StorageFrameHeaderToStr(&He_Storage_ader));
+            LOG_PARN(STORAGE, "%s", StorageFrameHeaderToStr(&HeaderStorage));
 #endif
-            switch(He_Storage_ader.operation) {
+
+            TbfpHandle_t* Tbfp = TbfpGetNode(tbfp_num);
+            if(Tbfp){
+            	memcpy(&Tbfp->Storage,&HeaderStorage,sizeof(StorageFrameHeader_t));
+                //Tbfp->Storage.size = HeaderStorage.size;
+                //Tbfp->Storage.asic_num = HeaderStorage.asic_num;
+                //Tbfp->Storage.asic_num = HeaderStorage.asic_num;
+                //Tbfp->Storage.operation = HeaderStorage.operation;
+                //Tbfp->Storage.operation = HeaderStorage.operation;
+            }
+
+            switch(HeaderStorage.operation) {
 
             case ACCESS_READ_ONLY: {
-                if(He_Storage_ader.size < STORAGE_DATA_SIZE) {
+                if(HeaderStorage.size < STORAGE_DATA_SIZE) {
                     res = true;
-#ifdef HAS_W25Q32JV
-                    res = w25q32jv_read_data(He_Storage_ader.asic_num, He_Storage_ader.address,
-                                             &storage_tx_data[sizeof(StorageFrameHeader_t)], He_Storage_ader.size);
-
-#endif
-
 #ifdef HAS_PC
-                    memcpy(storage_rx_data,&storage_tx_data[sizeof(StorageFrameHeader_t)], He_Storage_ader.size);
+                	//LOG_DEBUG(STORAGE, "DataSize:%u",HeaderStorage.size);
+                    uint32_t data_start = sizeof(StorageFrameHeader_t);
+                   // print_bin(&payload[data_start],   HeaderStorage.size, 0);
+                    LOG_DEBUG(STORAGE,"[%s]", ArrayToStr( &payload[data_start], (uint32_t)HeaderStorage.size)       );
+                    memcpy(storage_rx_data,&payload[data_start], HeaderStorage.size);
 #endif
+
+#ifdef HAS_W25Q32JV
+                    res = w25q32jv_read_data(HeaderStorage.asic_num, HeaderStorage.address,
+                                             &storage_io_data[sizeof(StorageFrameHeader_t)], HeaderStorage.size);
+
+#endif
+
 
 #ifdef HAS_W25Q32JV
 #ifdef HAS_TBFP
-                    res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_tx_data,
-                                          sizeof(StorageFrameHeader_t) + He_Storage_ader.size);
+                    res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data,
+                                          sizeof(StorageFrameHeader_t) + HeaderStorage.size);
 #endif
 #endif
 
                 } else {
 #ifdef HAS_LOG
-                    LOG_ERROR(STORAGE, "TooBigSize:%u,Max:%u", He_Storage_ader.size, STORAGE_DATA_SIZE);
+                    LOG_ERROR(STORAGE, "TooBigSize:%u,Max:%u", HeaderStorage.size, STORAGE_DATA_SIZE);
 #endif
                 }
             } break;
@@ -98,12 +117,12 @@ bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint
             case ACCESS_WRITE_ONLY: {
                 res = true;
 #ifdef HAS_W25Q32JV
-                res = w25q32jv_prog_page(He_Storage_ader.asic_num, He_Storage_ader.address, &payload[STORAGE_DATA_OFFSET], He_Storage_ader.size);
+                res = w25q32jv_prog_page(HeaderStorage.asic_num, HeaderStorage.address, &payload[STORAGE_DATA_OFFSET], HeaderStorage.size);
 #endif
 
 #ifdef HAS_W25Q32JV
 #ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_tx_data, sizeof(StorageFrameHeader_t));
+                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data, sizeof(StorageFrameHeader_t));
 #endif
 #endif
 
@@ -112,20 +131,20 @@ bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint
             case ACCESS_ERASE: {
                 res = true;
 #ifdef HAS_W25Q32JV
-                res = w25q32jv_chip_erase(He_Storage_ader.asic_num);
+                res = w25q32jv_chip_erase(HeaderStorage.asic_num);
 #endif
 
 #ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_tx_data, sizeof(StorageFrameHeader_t));
+                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data, sizeof(StorageFrameHeader_t));
 #endif
             } break;
 
             case ACCESS_ERASE_SECTOR: {
 #ifdef HAS_W25Q32JV
-                res = w25q32jv_erase_sector(He_Storage_ader.asic_num, He_Storage_ader.address);
+                res = w25q32jv_erase_sector(HeaderStorage.asic_num, HeaderStorage.address);
 #endif
 #ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_tx_data, sizeof(StorageFrameHeader_t));
+                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data, sizeof(StorageFrameHeader_t));
 #endif
             } break;
 
@@ -168,8 +187,8 @@ bool storage_tbfp_memory(uint8_t tbfp_num, const uint8_t* const payload, const u
         if(sizeof(StorageMemoryFrameHeader_t) < size) {
             StorageMemoryFrameHeader_t MemHeader = {0};
             memcpy(&MemHeader, payload, sizeof(StorageMemoryFrameHeader_t));
-            memset(storage_tx_data, 0x00, STORAGE_DATA_SIZE);
-            memcpy(storage_tx_data, payload, sizeof(StorageMemoryFrameHeader_t));
+            memset(storage_io_data, 0x00, STORAGE_DATA_SIZE);
+            memcpy(storage_io_data, payload, sizeof(StorageMemoryFrameHeader_t));
 
 #ifdef HAS_LOG
             LOG_DEBUG(STORAGE, "%s", StorageMemoryFrameHeaderToStr(&MemHeader));
@@ -179,16 +198,16 @@ bool storage_tbfp_memory(uint8_t tbfp_num, const uint8_t* const payload, const u
             case ACCESS_WRITE_ONLY: {
                 res = memory_write(MemHeader.address, &payload[sizeof(StorageMemoryFrameHeader_t)], MemHeader.size);
 #ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_MEM, storage_tx_data, sizeof(StorageMemoryFrameHeader_t));
+                res = tbfp_send_frame(tbfp_num, FRAME_ID_MEM, storage_io_data, sizeof(StorageMemoryFrameHeader_t));
 #endif
             } break;
 
             case ACCESS_READ_ONLY: {
                 if(MemHeader.size < STORAGE_DATA_SIZE) {
-                    res = memory_read(MemHeader.address, &storage_tx_data[sizeof(StorageMemoryFrameHeader_t)],
+                    res = memory_read(MemHeader.address, &storage_io_data[sizeof(StorageMemoryFrameHeader_t)],
                                       MemHeader.size);
 #ifdef HAS_TBFP
-                    res = tbfp_send_frame(tbfp_num, FRAME_ID_MEM, storage_tx_data,
+                    res = tbfp_send_frame(tbfp_num, FRAME_ID_MEM, storage_io_data,
                                           sizeof(StorageMemoryFrameHeader_t) + MemHeader.size);
 #endif
 

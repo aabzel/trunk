@@ -148,7 +148,7 @@ bool fw_loader_read(const uint8_t num,
     bool res = true;
     FwLoaderHandle_t* Node = FwLoaderGetNode(num);
     if(Node) {
-        LOG_DEBUG(FW_LOADER, "N:%u,ReadSN:%u,Addr:0x%08x,Size:%02u,Data:%s", num, Node->read_sn, relative_adress,size);
+        LOG_PARN(FW_LOADER, "N:%u,ReadSN:%u,Addr:0x%08x,Size:%02u,Data:%s", num, Node->read_sn, relative_adress,size);
         Node->read_sn++;
         res = tbfp_storage_read_generate( Node->tbfp_num, relative_adress, size);
         if(res) {
@@ -161,7 +161,15 @@ bool fw_loader_read(const uint8_t num,
                res = tbfp_wait_response_in_loop_ms(Tbfp, 500);
                res = log_parn_res(FW_LOADER, Tbfp->rx_done, "TbfpReadResp");
                if(res) {
-                   memcpy(data,storage_rx_data,Tbfp->Storage.size);
+            	   if(Tbfp->Storage.size<=size) {
+            		   if(0<Tbfp->Storage.size) {
+                           memcpy(data,storage_rx_data,Tbfp->Storage.size);
+            		   }else{
+                		   LOG_ERROR(FW_LOADER,"SizeZero" );
+                	   }
+            	   }else{
+            		   LOG_ERROR(FW_LOADER,"SizeErr:%u",Tbfp->Storage.size);
+            	   }
                }
            }
         }
@@ -194,7 +202,7 @@ bool fw_loader_write(const uint8_t num,
     return res;
 }
 
-#define FW_LOADER_READ_SIZE 64
+#define FW_LOADER_READ_SIZE 32
 /*
  read firmware from CHIP to PC
  */
@@ -212,14 +220,17 @@ bool fw_loader_download(uint8_t num){
         memset(Node->firmware_bin,0xFF,FW_LOADER_BIN_SIZE);
         for(offset=0; offset < flash_size; offset+=FW_LOADER_READ_SIZE) {
             diag_progress_log(offset, flash_size, 10000);
-            uint8_t data[FW_LOADER_READ_SIZE] = {0};
-            res = fw_loader_read(num, offset, data, FW_LOADER_READ_SIZE);
+            uint8_t rxData[FW_LOADER_READ_SIZE] = {0xFF};
+            res = fw_loader_read(num, offset, rxData, FW_LOADER_READ_SIZE);
             if(res) {
-                memcpy(&Node->firmware_bin[offset],data,FW_LOADER_READ_SIZE);
+                LOG_DEBUG(FW_LOADER,"%s", ArrayToStr( rxData,(uint32_t) FW_LOADER_READ_SIZE)       );
+                memcpy(&Node->firmware_bin[offset],rxData,FW_LOADER_READ_SIZE);
             } else {
                 break;
             }
         }
+
+        res = file_pc_save_array("firmware.bin",   Node->firmware_bin,    flash_size);
 
         uint32_t end_ms = time_get_ms32();
         uint32_t duration_ms = end_ms-start_ms;

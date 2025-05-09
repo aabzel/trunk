@@ -13,13 +13,13 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-bool array_i32_print(const int32_t* const array, size_t size, double step) {
+bool array_i32_print(const int32_t* const array, uint32_t size, double step) {
     bool res = false;
     static const table_col_t cols[] = {
         {7, "i"}, {7, "step"}, {12, "DataHex"}, {12, "DataDec"}, {43, "DataBin"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    size_t i = 0;
+    uint32_t i = 0;
     char log_line[150];
     double up_time = 0.0;
     for(i = 0; i < size; i++) {
@@ -40,13 +40,13 @@ bool array_i32_print(const int32_t* const array, size_t size, double step) {
     return res;
 }
 
-bool array_double_i16_print(const int16_t* const array1, const int16_t* const array2, size_t size, double step) {
+bool array_double_i16_print(const int16_t* const array1, const int16_t* const array2, uint32_t size, double step) {
     bool res = false;
     static const table_col_t cols[] = {
         {7, "i"}, {7, "step"}, {8, "Data1Hex"}, {7, "Data1Dec"}, {8, "Data2Hex"}, {7, "Data2Dec"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    size_t i = 0;
+    uint32_t i = 0;
     char log_line[150];
     double up_time = 0.0;
     for(i = 0; i < size; i++) {
@@ -66,13 +66,13 @@ bool array_double_i16_print(const int16_t* const array1, const int16_t* const ar
     return res;
 }
 
-bool array_i16_print(const int16_t* const array, size_t size, double step) {
+bool array_i16_print(const int16_t* const array, uint32_t size, double step) {
     bool res = false;
     static const table_col_t cols[] = {
         {7, "i"}, {7, "step"}, {8, "DataHex"}, {7, "DataDec"}, {23, "DataBin"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    size_t i = 0;
+    uint32_t i = 0;
     char log_line[150];
     double up_time = 0.0;
     for(i = 0; i < size; i++) {
@@ -94,7 +94,7 @@ bool array_i16_print(const int16_t* const array, size_t size, double step) {
     return res;
 }
 
-bool array_i8_print(const int8_t* const data, size_t size) {
+bool array_i8_print(const int8_t* const data, uint32_t size) {
     uint32_t i = 0;
     bool res = false;
     if(data) {
@@ -108,7 +108,7 @@ bool array_i8_print(const int8_t* const data, size_t size) {
     return res;
 }
 
-bool array_u32_print(const uint32_t* const data, size_t size) {
+bool array_u32_print(const uint32_t* const data, uint32_t size) {
     uint32_t i = 0;
     bool res = false;
     if(data) {
@@ -122,7 +122,7 @@ bool array_u32_print(const uint32_t* const data, size_t size) {
     return res;
 }
 
-bool array_u16_print(const uint16_t* const data, size_t size) {
+bool array_u16_print(const uint16_t* const data, uint32_t size) {
     uint32_t i = 0;
     bool res = false;
     if(data) {
@@ -136,7 +136,7 @@ bool array_u16_print(const uint16_t* const data, size_t size) {
     return res;
 }
 
-bool array_u16_print_bin(const uint16_t* const data, size_t size) {
+bool array_u16_print_bin(const uint16_t* const data, uint32_t size) {
     uint32_t i = 0;
     bool res = false;
     if(data) {
@@ -152,7 +152,7 @@ bool array_u16_print_bin(const uint16_t* const data, size_t size) {
     return res;
 }
 
-bool array_u8_print(const uint8_t* const data, size_t size) {
+bool array_u8_print(const uint8_t* const data, uint32_t size) {
     uint32_t i = 0;
     bool res = false;
     if(data) {
@@ -166,7 +166,7 @@ bool array_u8_print(const uint8_t* const data, size_t size) {
     return res;
 }
 
-bool array_u8_print_dec(const uint8_t* const data, size_t size) {
+bool array_u8_print_dec(const uint8_t* const data, uint32_t size) {
     uint32_t i = 0;
     bool res = false;
     if(data) {
@@ -180,7 +180,7 @@ bool array_u8_print_dec(const uint8_t* const data, size_t size) {
     return res;
 }
 
-bool array_i8_print_dec(const int8_t* const data, size_t size) {
+bool array_i8_print_dec(const int8_t* const data, uint32_t size) {
     uint32_t i = 0;
     bool res = false;
     if(data) {
@@ -194,7 +194,7 @@ bool array_i8_print_dec(const int8_t* const data, size_t size) {
     return res;
 }
 
-const char* ArrayToAsciiStr(const uint8_t* const array, size_t size) {
+const char* ArrayToAsciiStr(const uint8_t* const array, uint32_t size) {
     if(array) {
         memset(text, 0, sizeof(text));
         if(size < sizeof(text)) {
@@ -204,15 +204,15 @@ const char* ArrayToAsciiStr(const uint8_t* const array, size_t size) {
     return text;
 }
 
-const char* ArrayToStr(const uint8_t* const array, size_t size) {
-	static char lText[200]={0};
+const char* ArrayToStr(const uint8_t* const array, uint32_t size) {
+	static char locText[300]={0};
+    memset(locText,0,300);
     if(array) {
         if(size) {
-            strcpy(lText, "");
-            array2str(array, size, lText, sizeof(lText));
+            array2str(array, size, locText, sizeof(locText));
         }
     }
-    return text;
+    return locText;
 }
 
 bool print_bin(uint8_t const* const buff, uint32_t size, uint16_t indent) {
