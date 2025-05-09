@@ -10,6 +10,8 @@ extern "C" {
 #include "storage_types.h"
 #include "storage_diag.h"
 
+extern uint8_t storage_rx_data[STORAGE_DATA_SIZE] ;
+
 bool memory_read( const uint32_t phy_address, uint8_t* const data,  const uint32_t size);
 bool memory_write(const uint32_t phy_address, const uint8_t* const data,  const uint32_t size);
 uint8_t read_addr_8bit(const uint32_t address);

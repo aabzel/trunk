@@ -400,6 +400,18 @@ bool log_res(const facility_t facility, const bool res, const char* const in_tex
     return res;
 }
 
+bool log_parn_res(const facility_t facility, const bool res, const char* const in_text) {
+#ifdef HAS_STREAM
+    if(res) {
+        LOG_PARN(facility, "%s,Ok", in_text);
+    } else {
+        LOG_ERROR(facility, "%s,Err", in_text);
+    }
+#endif
+    return res;
+}
+
+
 bool log_info_res(const facility_t facility, const bool res, const char* const in_text) {
 #ifdef HAS_STREAM
     if(res) {

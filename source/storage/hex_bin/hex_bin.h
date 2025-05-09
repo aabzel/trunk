@@ -12,6 +12,6 @@ bool is_hex_file(const char* const file_name);
 bool bin_to_hex(const char* const file_name);
 bool hex_bin_init(void);
 bool hex_proc_line(HexBinHandle_t* const Node, bool write);
-bool hex_to_bin(const char* const file_name);
+bool hex_to_bin(HexBinHandle_t* const Node, const char* const file_name);
 
 #endif /* HEX_BIN_H */

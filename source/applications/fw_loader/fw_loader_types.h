@@ -19,6 +19,9 @@ typedef struct {
 
 typedef struct {
     FW_LOADER_COMMON_VARIABLES
+    uint32_t write_sn;
+    uint32_t read_sn;
+    uint8_t firmware_bin[FW_LOADER_BIN_SIZE];
     bool init;
 } FwLoaderHandle_t;
 

@@ -303,6 +303,18 @@ const char* UsecToStr(uint64_t uc_sec) {
     return text;
 }
 
+const char* TimeDurationMsToStr(const uint32_t duration_ms){
+    if(duration_ms < 1000) {
+        snprintf(text, sizeof(text), "%u ms", duration_ms);
+    } else if(MSEC_2_SEC(duration_ms) < 60.0) {
+        snprintf(text, sizeof(text), "%5.1f s", MSEC_2_SEC(duration_ms));
+    } else {
+        snprintf(text, sizeof(text), "%5.1f m", MSEC_2_MIN(duration_ms));
+    }
+
+    return text;
+}
+
 const char* Ms2Str(uint32_t time_ms) {
     const char* name = UpTimeSec2Str(MSEC_2_SEC(time_ms));
     return name;

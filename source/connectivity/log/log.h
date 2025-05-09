@@ -51,6 +51,7 @@ const LogConfig_t* LogGetConfig(uint8_t num);
 bool log_mcal_init(void);
 bool log_res(const facility_t facility, const bool res, const char* const text);
 bool log_info_res(const facility_t facility, const bool res, const char* const text);
+bool log_parn_res(const facility_t facility, const bool res, const char* const in_text);
 
 log_level_t ErrValue2LogLevel(int32_t val);
 bool log_initialize(void);

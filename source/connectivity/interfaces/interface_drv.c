@@ -97,8 +97,8 @@ bool system_calc_byte_rate(void) {
   retx - retransmit
   */
 bool sys_send_if(const uint8_t* const array,
-		         const uint32_t size,
-	             const Interfaces_t interface_if,
+                 const uint32_t size,
+                 const Interfaces_t interface_if,
                  const IfRetx_t retx) {
     bool res = false;
 #ifdef HAS_SYSTEM_DIAG
@@ -243,7 +243,7 @@ bool sys_available_interfaces(void) {
 
 
 Interfaces_t InterfaceComPortToInterface(uint8_t com_port_num){
-	Interfaces_t inter_face = IF_SERIAL_PORT;
-	(void)com_port_num;
-	return inter_face;
+    Interfaces_t inter_face = IF_SERIAL_PORT;
+    (void)com_port_num;
+    return inter_face;
 }

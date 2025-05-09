@@ -205,10 +205,11 @@ const char* ArrayToAsciiStr(const uint8_t* const array, size_t size) {
 }
 
 const char* ArrayToStr(const uint8_t* const array, size_t size) {
+	static char lText[200]={0};
     if(array) {
         if(size) {
-            strcpy(text, "");
-            array2str(array, size, text, sizeof(text));
+            strcpy(lText, "");
+            array2str(array, size, lText, sizeof(lText));
         }
     }
     return text;

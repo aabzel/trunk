@@ -9,8 +9,13 @@ extern "C" {
 #include "tbfp.h"
 
 bool tbfp_generate_jump(const uint8_t num, const uint32_t base_address);
-bool tbfp_storage_erase_generate(void);
-bool tbfp_storage_write_generate(uint32_t address, uint16_t size, uint8_t pattern);
+bool tbfp_storage_erase_generate(uint8_t num);
+
+bool tbfp_storage_write_generate(const uint8_t tbfp_num,
+		                         const uint32_t address,
+		                         const uint8_t* const data,
+								 const uint16_t size);
+
 bool tbfp_storage_read_generate(uint8_t num, uint32_t address, uint16_t size);
 const char* TbfpPayloadToStr(const TbfpPayloadId_t payload_id,
 		                     const uint8_t* const payload );
@@ -20,6 +25,8 @@ const char* TbfpNodeToStr(const TbfpHandle_t* const Node);
 const char* TbfpPayloadIdToStr(TbfpPayloadId_t id);
 const char* TbfpRxState2Str(RxState_t rx_state);
 const char* TbfpFlagToStr(TbfpFrameFlags_t flags);
+const char* TbfpSrorageWriteToStr(const TbfpHandle_t*const  Node, uint32_t address, uint32_t size);
+
 bool tbfp_print_ping_frame(TbfPingFrame_t* pingFrame);
 bool tbfp_diag(void);
 bool tbfp_rate_diago(void);

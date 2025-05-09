@@ -12,7 +12,12 @@ ifneq ($(TEST_SET_SW_MK_INC),Y)
         #@echo $(error TEST_AES256=$(TEST_AES256))
         include $(TEST_SET_SW_DIR)/test_array/test_array.mk
     endif
-    
+
+    ifeq ($(TEST_FW_LOADER),Y)
+        #@echo $(error TEST_FW_LOADER=$(TEST_FW_LOADER))
+        include $(TEST_SET_SW_DIR)/test_fw_loader/test_fw_loader.mk
+    endif
+
     ifeq ($(TEST_AES256),Y)
         #@echo $(error TEST_AES256=$(TEST_AES256))
         include $(TEST_SET_SW_DIR)/test_aes/test_aes.mk

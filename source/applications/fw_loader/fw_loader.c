@@ -9,6 +9,8 @@
 #include "file_pc.h"
 #include "log.h"
 #include "win_utils.h"
+#include "storage.h"
+#include "hex_bin.h"
 #include "time_mcal.h"
 #include "serial_port.h"
 #include "tbfp_diag.h"
@@ -27,6 +29,7 @@ static bool fw_loader_init_common(const FwLoaderConfig_t* const Config, FwLoader
             Node->bit_rate = Config->bit_rate;
             Node->hex_file_name = Config->hex_file_name;
             Node->valid = true;
+            Node->write_sn = 0;
             res = true;
         }
     }
@@ -79,8 +82,24 @@ bool fw_loader_init_custom(void) {
 }
 
 
-bool fw_loader_download(uint8_t num){
+
+bool fw_loader_erase_chip(uint8_t num){
     bool res = false;
+    LOG_INFO(FW_LOADER, "Ping:%u", num);
+    FwLoaderHandle_t* Node = FwLoaderGetNode(  num);
+    if(Node) {
+        res = tbfp_storage_erase_generate(Node->tbfp_num);
+        if(res) {
+            TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
+            if(Tbfp) {
+                Tbfp->rx_done = false;
+                uint8_t serial_num = serial_port_com_to_num(Node->com_num);
+                res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
+                res = tbfp_wait_response_in_loop_ms(Tbfp,1500);
+                res = log_info_res(FW_LOADER,Tbfp->rx_done,"TbfpEraseResp");
+            }
+        }
+    }
     return res;
 }
 
@@ -93,18 +112,11 @@ bool fw_loader_ping(uint8_t num) {
         if(res) {
             TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
             if(Tbfp) {
-            	Tbfp->rx_done = false;
-            	uint8_t serial_num = serial_port_com_to_num(Node->com_num);
-                res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
-
-                res = wait_in_loop_ms(500);
-                if(Tbfp->rx_done){
-                	LOG_INFO(FW_LOADER, "GotTBFPresp");
-                	res = true;
-                }else{
-                	LOG_ERROR(FW_LOADER, "NoTBFPresp");
-                	res = false ;
-                }
+                Tbfp->rx_done = false;
+                uint8_t serial_num = serial_port_com_to_num(Node->com_num);
+                res = serial_port_send(serial_num, Tbfp->TxFrame, Tbfp->tx_size) ;
+                res = tbfp_wait_response_in_loop_ms(Tbfp, 500);
+                res = log_info_res(FW_LOADER, Tbfp->rx_done, "TbfpPingResp");
             }
         }
     }
@@ -120,7 +132,7 @@ bool fw_loader_jump(uint8_t num, uint32_t base_address) {
         if(res) {
            TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
            if(Tbfp) {
-        	   uint8_t serial_num = serial_port_com_to_num(Node->com_num);
+               uint8_t serial_num = serial_port_com_to_num(Node->com_num);
                res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
            }
         }
@@ -129,8 +141,114 @@ bool fw_loader_jump(uint8_t num, uint32_t base_address) {
     return res;
 }
 
-bool fw_loader_upload(uint8_t num, char* hex_file){
+bool fw_loader_read(const uint8_t num,
+                    const uint32_t relative_adress,
+                    uint8_t *const data,
+                    const uint32_t size){
+    bool res = true;
+    FwLoaderHandle_t* Node = FwLoaderGetNode(num);
+    if(Node) {
+        LOG_DEBUG(FW_LOADER, "N:%u,ReadSN:%u,Addr:0x%08x,Size:%02u,Data:%s", num, Node->read_sn, relative_adress,size);
+        Node->read_sn++;
+        res = tbfp_storage_read_generate( Node->tbfp_num, relative_adress, size);
+        if(res) {
+           TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
+           if(Tbfp) {
+               uint8_t serial_num = serial_port_com_to_num(Node->com_num);
+               (void) serial_num;
+               Tbfp->rx_done = false;
+               res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
+               res = tbfp_wait_response_in_loop_ms(Tbfp, 500);
+               res = log_parn_res(FW_LOADER, Tbfp->rx_done, "TbfpReadResp");
+               if(res) {
+                   memcpy(data,storage_rx_data,Tbfp->Storage.size);
+               }
+           }
+        }
+    }
+    return res;
+}
+
+bool fw_loader_write(const uint8_t num,
+                     const uint32_t relative_adress,
+                     const uint8_t *const data,
+                     const uint32_t size) {
+    bool res = true;
+    FwLoaderHandle_t* Node = FwLoaderGetNode(num);
+    if(Node) {
+        LOG_DEBUG(FW_LOADER, "N:%u, WrSN:%u,Addr:0x%08x,Size:%02u,Data:%s", num, Node->write_sn, relative_adress,size, ArrayToStr(data,size));
+        Node->write_sn++;
+        res = tbfp_storage_write_generate( Node->tbfp_num, relative_adress,   data, size   );
+        if(res) {
+           TbfpHandle_t* Tbfp = TbfpGetNode(Node->tbfp_num);
+           if(Tbfp) {
+               uint8_t serial_num = serial_port_com_to_num(Node->com_num);
+               (void) serial_num;
+               Tbfp->rx_done = false;
+               res = serial_port_send( serial_num , Tbfp->TxFrame, Tbfp->tx_size) ;
+               res = tbfp_wait_response_in_loop_ms(Tbfp, 500);
+               res = log_info_res(FW_LOADER, Tbfp->rx_done, "TbfpWriteResp");
+           }
+        }
+    }
+    return res;
+}
+
+#define FW_LOADER_READ_SIZE 64
+/*
+ read firmware from CHIP to PC
+ */
+bool fw_loader_download(uint8_t num){
     bool res = false;
+    FwLoaderHandle_t* Node = FwLoaderGetNode(num);
+    if(Node) {
+        uint32_t start_ms = time_get_ms32();
+        res = fw_loader_ping(num);
+        HexBinHandle_t Item = {0};
+        LOG_INFO(FW_LOADER, "N:%u,ReadFwToFile:[%s]", num, Node->hex_file_name);
+
+        uint32_t offset = 0;
+        uint32_t flash_size = FW_LOADER_BIN_SIZE/4;
+        memset(Node->firmware_bin,0xFF,FW_LOADER_BIN_SIZE);
+        for(offset=0; offset < flash_size; offset+=FW_LOADER_READ_SIZE) {
+            diag_progress_log(offset, flash_size, 10000);
+            uint8_t data[FW_LOADER_READ_SIZE] = {0};
+            res = fw_loader_read(num, offset, data, FW_LOADER_READ_SIZE);
+            if(res) {
+                memcpy(&Node->firmware_bin[offset],data,FW_LOADER_READ_SIZE);
+            } else {
+                break;
+            }
+        }
+
+        uint32_t end_ms = time_get_ms32();
+        uint32_t duration_ms = end_ms-start_ms;
+        LOG_INFO(FW_LOADER, "Duration:%s", TimeDurationMsToStr(duration_ms));
+        float byte_rate = Item.bin_size_byte/MSEC_2_SEC(duration_ms);
+        LOG_INFO(FW_LOADER, "Rate:%f Byte/s", byte_rate );
+    }
+    return res;
+}
+
+bool fw_loader_upload(uint8_t num, char* hex_file) {
+    bool res = false;
+    FwLoaderHandle_t* Node = FwLoaderGetNode(num);
+    if(Node) {
+        uint32_t start_ms = time_get_ms32();
+        res = fw_loader_ping(num);
+        res = fw_loader_erase_chip(num);
+        HexBinHandle_t Item = {0};
+        LOG_INFO(FW_LOADER, "N:%u,UpLoadFile:[%s]", num, hex_file);
+        res = hex_to_bin(&Item, hex_file);
+        if(res) {
+            res = fw_loader_jump(num, Item.base_address);
+        }
+        uint32_t end_ms = time_get_ms32();
+        uint32_t duration_ms = end_ms-start_ms;
+        LOG_INFO(FW_LOADER, "Duration:%s", TimeDurationMsToStr(duration_ms));
+        float byte_rate = Item.bin_size_byte/MSEC_2_SEC(duration_ms);
+        LOG_INFO(FW_LOADER, "Rate:%f Byte/s", byte_rate );
+    }
     return res;
 }
 

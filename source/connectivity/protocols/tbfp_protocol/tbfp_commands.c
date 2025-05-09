@@ -16,7 +16,7 @@
 
 bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]) {
     bool res = false;
-    res = tbfp_storage_erase_generate();
+    res = tbfp_storage_erase_generate(1);
     log_info_res(TBFP, res, "GenErase");
     return res;
 }
@@ -69,7 +69,11 @@ bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = tbfp_storage_write_generate(address, size, pattern);
+    	uint8_t data[512] ={0};
+    	if(size<512){
+        	memset(data,pattern,size);
+            res = tbfp_storage_write_generate(1, address, data, size);
+    	}
     } else {
         LOG_ERROR(TBFP, "Usage: tswg addr size pattern");
     }

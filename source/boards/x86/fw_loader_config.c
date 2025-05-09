@@ -9,7 +9,7 @@ const FwLoaderConfig_t FwLoaderConfig[] = {
             .num = 1,
             .hex_file_name = "start_mik32_v1_generic_gcc_m.hex",
             .tbfp_num = 4,
-            .com_num = 4,
+            .com_num = 3,
             .bit_rate = 56000,
             .valid = true,
     },

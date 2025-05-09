@@ -34,6 +34,18 @@ bool test_hex_bin_types(void) {
     return true;
 }
 
+bool test_hex_bin_is_hex_file(void) {
+    LOG_INFO(TEST, "%s():", __FUNCTION__);
+    log_level_t orig_ll = log_level_get_set(HEX_BIN, LOG_LEVEL_DEBUG);
+
+    ASSERT_TRUE(is_hex_file("start_mik32_v1_generic_gcc_m.hex"));
+
+    log_level_get_set(HEX_BIN, orig_ll);
+
+    return true;
+}
+
+
 bool test_hex_bin_proc_4(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     log_level_t orig_ll = log_level_get_set(HEX_BIN, LOG_LEVEL_DEBUG);

@@ -10,7 +10,15 @@ endif
 ifeq ($(GPS),Y)
     TEST_GPS=Y
 endif
- 
+
+ifeq ($(FILE_PC),Y)
+    TEST_FILE_PC=Y
+endif
+
+ifeq ($(HEX_BIN),Y)
+    TEST_HEX_BIN=Y
+endif
+
 ifeq ($(SERIAL_PORT),Y)
     TEST_SERIAL_PORT=Y
 endif

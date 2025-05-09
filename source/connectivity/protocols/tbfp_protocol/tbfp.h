@@ -39,6 +39,7 @@ bool tbfp_proc_one(uint32_t num);
 bool tbfp_proc_ping(uint8_t* ping_payload, uint16_t len, Interfaces_t inter_face) ;
 bool tbfp_init_custom(void);
 bool tbfp_init_one(uint32_t num);
+bool tbfp_init_common(const TbfpConfig_t* const Config, TbfpHandle_t* const Node);
 bool tbfp_mcal_init(void);
 bool tbfp_rx(uint8_t* const arr,
              uint32_t size,
@@ -83,6 +84,7 @@ bool tbfp_check(void);
 bool tbfp_proc_xxx(uint8_t* arr, uint16_t len, Interfaces_t inter_face, bool is_reset);
 bool tbfp_proc_byte(TbfpHandle_t* instance, uint8_t rx_byte);
 bool wait_pong_loop_ms(uint32_t wait_pause_ms, Interfaces_t inter_face);
+bool tbfp_wait_response_in_loop_ms(const  TbfpHandle_t* const Node, uint32_t wait_timeout_ms);
 
 #ifdef __cplusplus
 }

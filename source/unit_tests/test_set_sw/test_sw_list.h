@@ -133,6 +133,12 @@ extern "C" {
 #define TEST_SUIT_TBFP
 #endif
 
+#ifdef HAS_TEST_SUIT_FW_LOADER
+#include "test_fw_loader.h"
+#else
+#define TEST_SUIT_FW_LOADER
+#endif
+
 #ifdef HAS_TEST_SUIT_TBFP_RTCM
 #include "test_tbfp_rtcm_proto.h"
 #else
@@ -571,7 +577,8 @@ bool test_struct_size(void) ;
     TEST_SUIT_STRING_UTILS                                            \
     TEST_SUIT_SW_NVRAM                                                \
     TEST_SUIT_SYSTEM_SW                                               \
-    TEST_SUIT_TBFP                                              \
+    TEST_SUIT_FW_LOADER                                               \
+    TEST_SUIT_TBFP                                                    \
     TEST_SUIT_TBFP_RTCM_STACK                                         \
     TEST_SUIT_UTILS_BIT                                               \
     TEST_SUIT_UTILS_BYTE                                              \

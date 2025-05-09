@@ -1,8 +1,6 @@
 ifneq ($(TEST_HEX_BIN_MK_INC),Y)
     TEST_HEX_BIN_MK_INC=Y
 
-    mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
-    $(info Build  $(mkfile_path) )
 
     TEST_HEX_BIN_DIR = $(TEST_SET_SW_DIR)/test_hex_bin
     #@echo $(error TEST_HEX_BIN_DIR= $(TEST_HEX_BIN_DIR))

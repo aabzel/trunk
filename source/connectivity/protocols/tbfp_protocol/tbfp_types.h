@@ -9,6 +9,7 @@ extern "C" {
 
 #include <time.h>
 
+#include "storage_types.h"
 #include "std_includes.h"
 #include "data_utils.h"
 #include "fifo_char.h"
@@ -74,13 +75,16 @@ typedef struct  {
 } __attribute__((packed)) TbfPingFrame_t;
 
 
+#define TBFP_STORAGE_VARIABLES         \
+    StorageFrameHeader_t Storage;
+
 #define TBFP_RX_VARIABLES   \
     U32Value_t rx_rate;     \
     uint32_t rx_byte;       \
     uint32_t rx_cnt;        \
     uint32_t rx_byte_prev;  \
     uint32_t rx_pkt_cnt;    \
-    bool rx_done;           \
+    volatile bool rx_done;  \
     bool rx_pong;           \
     bool rx_ping;
 
@@ -137,6 +141,7 @@ typedef struct  {
     TBFP_DIAG_VARIABLES
     TBFP_PARSER_VARIABLES
     TBFP_RE_TX_FSM_VARIABLES
+    TBFP_STORAGE_VARIABLES
     //uint32_t err_cnt; // in FSM too
     uint32_t err_send_cnt;
     uint32_t lack_frame_in_data;

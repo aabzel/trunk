@@ -145,6 +145,47 @@
 COMPONENT_GET_NODE(Tbfp, tbfp)
 COMPONENT_GET_CONFIG(Tbfp, tbfp)
 
+
+/* 49 days max*/
+/*none blocking wait for self test and polling*/
+bool tbfp_wait_response_in_loop_ms(const TbfpHandle_t*const  Node, uint32_t wait_timeout_ms) {
+    bool res = false;
+
+#ifdef HAS_LOG
+        LOG_PARN(TIME, "Pause %u ms", wait_timeout_ms);
+#endif
+
+#ifdef HAS_FREE_RTOS
+        vTaskDelay(wait_timeout_ms / portTICK_RATE_MS);
+        res = true;
+#endif
+
+        uint32_t start_ms = 0U;
+        uint32_t curr_ms = 0U;
+        start_ms = time_get_ms32();
+        bool loop = true;
+
+        while(loop) {
+#ifdef HAS_SUPER_CYCLE
+            super_cycle_iteration();
+#endif
+            curr_ms = time_get_ms32();
+            if(wait_timeout_ms < (curr_ms - start_ms)) {
+                res = false;
+                loop = false;
+                break;
+            }
+
+            if(Node->rx_done){
+            	loop = false;
+            	res = true;
+            	break;
+            }
+        }
+
+    return res;
+}
+
 #if 0
 TbfpHandle_t* TbfpGetNode(uint32_t num) {
     TbfpHandle_t* Node = NULL;
@@ -244,7 +285,7 @@ bool tbfp_protocol_init(void) {
 bool is_tbfp_protocol(uint8_t* arr, uint16_t len, Interfaces_t inter_face) {
     bool res = false;
 #ifdef HAS_LOG
-    LOG_DEBUG(TBFP, "IsTBFP len: %u", len);
+    LOG_PARN(TBFP, "LOG_PARN len: %u", len);
 #endif
     TbfpHeader_t header = {0};
     memcpy(&header, arr, sizeof(TbfpHeader_t));
@@ -252,7 +293,7 @@ bool is_tbfp_protocol(uint8_t* arr, uint16_t len, Interfaces_t inter_face) {
     TbfpHandle_t* Node = TbfpInterfaceToNode(inter_face);
     if(Node) {
 #ifdef HAS_LOG
-        LOG_DEBUG(TBFP, "SpotNode");
+        LOG_PARN(TBFP, "SpotNode");
 #endif
         if(Node->preamble_val != header.preamble) {
 #ifdef HAS_LOG
@@ -283,7 +324,7 @@ bool is_tbfp_protocol(uint8_t* arr, uint16_t len, Interfaces_t inter_face) {
 #endif /*   HAS_CRC8 */
                 if(res) {
 #ifdef HAS_LOG
-                  LOG_DEBUG(TBFP, "Crc8,OkRead:0x%02x", read_crc8);
+                  LOG_PARN(TBFP, "Crc8,OkRead:0x%02x", read_crc8);
 #endif
                 } else {
 #ifdef HAS_LOG
@@ -357,11 +398,62 @@ IfRetx_t AckNeed2Retx(TbfpAck_t ack) {
 }
 #endif
 
+bool tbfp_storage_write_generate(const uint8_t tbfp_num, const uint32_t address,
+		const uint8_t *const data, const uint16_t size) {
+	bool res = false;
+	TbfpHandle_t *Node = TbfpGetNode(tbfp_num);
+	if (Node) {
+		LOG_PARN(TBFP, "%s", TbfpNodeToStr(Node));
+		if (Node->TxFrame) {
+			uint32_t req_size = (     sizeof(TbfpHeader_t) + sizeof(StorageFrameHeader_t)     );
+			if (req_size < Node->tx_array_size) {
+				uint16_t payload_len = (uint16_t) sizeof(StorageFrameHeader_t)
+						+ size;
+				TbfpHeader_t Header = { 0 };
+				(void) Header;
+				Header.preamble = Node->preamble_val;
+				Header.flags.ack_need = 1;
+				Header.flags.crc_check_need = 1;
+				Header.flags.lifetime = 1;
+				Header.payload_id = FRAME_ID_STORAGE;
+				Header.snum = 1;
+				Header.len = payload_len;
+
+				memcpy(Node->TxFrame, &Header, sizeof(TbfpHeader_t));
+#if 1
+                StorageFrameHeader_t StorageData;
+                (void) StorageData;
+                StorageData.address = address;
+                StorageData.asic_num = 1;
+                StorageData.operation = ACCESS_WRITE_ONLY;
+                StorageData.size = size; /* Bytes to read */
+                memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &StorageData, sizeof(StorageFrameHeader_t));
+                uint32_t data_index = sizeof(TbfpHeader_t) + sizeof(StorageFrameHeader_t);
+                (void)data_index;
+                //memcpy(&Node->TxFrame[data_index], data, size);
+
+                uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
+                Node->tx_size = frame_len + 1;
+                Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
+
+                LOG_PARN(TBFP, "%s",TbfpSrorageWriteToStr(Node,address,size));
+#endif
+				res = true;
+			}else{
+	            LOG_ERROR(TBFP, "TxBuffSeizeErr %u",Node->tx_array_size);
+	        }
+		}else{
+            LOG_ERROR(TBFP, "NoTxBuff Node:%u",tbfp_num);
+        }
+	}
+	return res;
+}
+
 bool tbfp_send_payload(uint8_t* payload, uint32_t payload_size, Interfaces_t inter_face, uint8_t lifetime,
                        TbfpAck_t ack, TbfpPayloadId_t payload_id) {
     bool res = false;
 #ifdef HAS_TBFP_DIAG
-    LOG_DEBUG(TBFP, "TxSize:%u byte,IF:%s,PlID:%s", payload_size, InterfaceToStr(inter_face),
+    LOG_PARN(TBFP, "TxSize:%u byte,IF:%s,PlID:%s", payload_size, InterfaceToStr(inter_face),
               TbfpPayloadIdToStr(payload_id));
 #endif
     TbfpHandle_t* Node = TbfpInterfaceToNode(inter_face);
@@ -406,7 +498,7 @@ bool tbfp_send_payload(uint8_t* payload, uint32_t payload_size, Interfaces_t int
 #endif
 
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "%s Sent SN:%u=0x%04x Len:%u crc8 0x%02x", InterfaceToStr(inter_face), OutHeader.snum,
+            LOG_PARN(TBFP, "%s Sent SN:%u=0x%04x Len:%u crc8 0x%02x", InterfaceToStr(inter_face), OutHeader.snum,
                       OutHeader.snum, OutHeader.len, Node->TxFrame[frame_len]);
 #endif
             Node->tx_byte += frame_len + TBFP_SIZE_CRC;
@@ -417,7 +509,7 @@ bool tbfp_send_payload(uint8_t* payload, uint32_t payload_size, Interfaces_t int
 #endif
             } else {
 #ifdef HAS_LOG
-                LOG_DEBUG(TBFP, "%s SysSendOk", InterfaceToStr(inter_face));
+                LOG_PARN(TBFP, "%s SysSendOk", InterfaceToStr(inter_face));
 #endif
             }
         }
@@ -456,7 +548,7 @@ bool tbfp_send_text(uint8_t payload_id, uint8_t* tx_array, uint32_t len, Interfa
     bool res = false;
     uint8_t frame[256] = "";
 #ifdef HAS_LOG
-    LOG_DEBUG(TBFP, "%s SendText Ack:%u", InterfaceToStr(inter_face), ack);
+    LOG_PARN(TBFP, "%s SendText Ack:%u", InterfaceToStr(inter_face), ack);
 #endif
     if(tx_array && (0 < len) && ((len + TBFP_SIZE_OVERHEAD + TBFP_SIZE_ID) < sizeof(frame))) {
         memcpy(&frame[0], tx_array, len);
@@ -512,7 +604,7 @@ static bool tbfp_is_ping_if(TbfpPayloadId_t payload_id) {
 bool tbfp_send_ping(TbfpPayloadId_t payload_id, Interfaces_t inter_face) {
     bool res = false;
 #ifdef HAS_LOG
-    LOG_DEBUG(TBFP, "SendPing %s", InterfaceToStr(inter_face));
+    LOG_PARN(TBFP, "SendPing %s", InterfaceToStr(inter_face));
 #endif
     res = tbfp_is_ping_if(payload_id);
     if(res) {
@@ -558,7 +650,7 @@ bool tbfp_send_ping(TbfpPayloadId_t payload_id, Interfaces_t inter_face) {
         }
     } else {
 #ifdef HAS_LOG
-        LOG_DEBUG(TBFP, "NotPingId %u", payload_id);
+        LOG_PARN(TBFP, "NotPingId %u", payload_id);
 #endif
     }
     return res;
@@ -569,7 +661,7 @@ bool tbfp_send_ping(TbfpPayloadId_t payload_id, Interfaces_t inter_face) {
 bool tbfp_proc_ping(uint8_t* ping_payload, uint16_t len, Interfaces_t inter_face) {
     bool res = false;
 #ifdef HAS_LOG
-    LOG_DEBUG(TBFP, "PingPayload");
+    LOG_PARN(TBFP, "PingPayload");
 #endif
     if(ping_payload) {
         TbfPingFrame_t pingFrame = {0};
@@ -658,7 +750,7 @@ static bool tbfp_proc_chat(uint8_t* payload, uint16_t len) {
 static bool tbfp_proc_cmd(uint8_t* payload, uint16_t len) {
     bool res = false;
 #ifdef HAS_LOG
-    LOG_DEBUG(TBFP, "CmdPayload");
+    LOG_PARN(TBFP, "CmdPayload");
 #endif
     if((payload) && (0 < len) && (FRAME_ID_CMD == payload[0])) {
         res = false;
@@ -720,7 +812,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
     Node->payload_size = len;
     Node->rx_done = true;
 #ifdef HAS_TBFP_DIAG
-    LOG_DEBUG(TBFP, "%s,ProcPayloadID:0x%x=%s,Len:%u Byte", InterfaceToStr(Node->inter_face), payload_id,
+    LOG_PARN(TBFP, "%s,ProcPayloadID:0x%x=%s,Len:%u Byte", InterfaceToStr(Node->inter_face), payload_id,
               TbfpPayloadIdToStr(payload_id), len);
 #endif
     // TbfpHandle_t* Node = TbfpInterfaceToNode(Node->inter_face);
@@ -747,7 +839,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
             // code runs
             res = storage_proc_cmd(Node->num, &(Node->fix_frame[TBFP_INDEX_PAYLOAD]), len);
 #ifdef HAS_LOG
-            log_res(TBFP, res, "StoreProc");
+            log_parn_res(TBFP, res, "StoreProc");
 #endif
         } break;
 #endif
@@ -762,11 +854,11 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
 #ifdef HAS_KEYBOARD
         case FRAME_ID_KEYBOARD: {
             if(len == sizeof(KeyBoard_t)) {
-                LOG_DEBUG(KEYLOG, "%s", KeyBoard2Str((KeyBoard_t*)&Node->fix_frame[TBFP_INDEX_PAYLOAD]));
+                LOG_PARN(KEYLOG, "%s", KeyBoard2Str((KeyBoard_t*)&Node->fix_frame[TBFP_INDEX_PAYLOAD]));
 #ifdef HAS_KEYLOG
                 res = save_key((KeyBoard_t*)&Node->fix_frame[TBFP_INDEX_PAYLOAD]);
                 if(res) {
-                    LOG_DEBUG(KEYLOG, "SaveOk");
+                    LOG_PARN(KEYLOG, "SaveOk");
                 } else {
                     LOG_ERROR(KEYLOG, "SaveErr");
                 }
@@ -779,7 +871,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
 
         case FRAME_ID_ACK: {
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "RxAck");
+            LOG_PARN(TBFP, "RxAck");
 #endif
             uint16_t ser_num = 0;
             memcpy(&ser_num, &Node->fix_frame[TBFP_INDEX_PAYLOAD + 1], 2);
@@ -789,20 +881,20 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
         } break;
         case FRAME_ID_TUNNEL: {
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "TBFP in TBFP"); /*matryoshka*/
+            LOG_PARN(TBFP, "TBFP in TBFP"); /*matryoshka*/
 #endif
         } break;
 #ifdef HAS_RTCM3
         case FRAME_ID_RTCM3:
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "RTCMpayload");
+            LOG_PARN(TBFP, "RTCMpayload");
 #endif
             res = rtcm3_proc_array(&Node->fix_frame[TBFP_INDEX_PAYLOAD], len, Node->inter_face);
             break;
 #endif /*HAS_RTCM3*/
         case FRAME_ID_CHAT:
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "ChatPayload");
+            LOG_PARN(TBFP, "ChatPayload");
 #endif
 
 #ifdef HAS_TBFP_EXT
@@ -812,7 +904,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
         case FRAME_ID_PONG:
             Node->rx_pong = true;
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "PongPayload");
+            LOG_PARN(TBFP, "PongPayload");
 #endif
 
 #ifdef HAS_TBFP_EXT
@@ -826,7 +918,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
 #if 0
         case FRAME_ID_T_DELAY:
             DsTwrItem.start_ms = time_get_ms32();
-            LOG_DEBUG(TBFP, "SignalTDelay");
+            LOG_PARN(TBFP, "SignalTDelay");
             Dwm1000Instance.ranging = true;
             res = dwm1000_range_proc_t_delay(&Dwm1000Instance, &Node->fix_frame[TBFP_INDEX_PAYLOAD], len);
             break;
@@ -847,7 +939,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
 #if 0
         case FRAME_ID_PESPONSE: {
             DsTwrItem.start_ms = time_get_ms32();
-            LOG_DEBUG(TBFP, "SignalRxResp in State %s", DsTwrState2Str(DsTwrItem.state));
+            LOG_PARN(TBFP, "SignalRxResp in State %s", DsTwrState2Str(DsTwrItem.state));
             res = ds_twr_parse_pesponse(&DsTwrItem, &Node->fix_frame[TBFP_INDEX_PAYLOAD], len);
         } break;
 #endif /*HAS_DS_TWR*/
@@ -873,7 +965,7 @@ bool tbfp_proc_payload(TbfpHandle_t* Node, uint16_t len, TbfpPayloadId_t payload
 bool tbfp_proc_xxx(uint8_t* arr, uint16_t len, Interfaces_t inter_face, bool is_reset_parser) {
     bool res = true;
 #ifdef HAS_LOG
-    LOG_DEBUG(TBFP, "IF:%s,Proc %u Byte ResetParser %s", InterfaceToStr(Node->inter_face), len, OnOff2Str(is_reset_parser));
+    LOG_PARN(TBFP, "IF:%s,Proc %u Byte ResetParser %s", InterfaceToStr(Node->inter_face), len, OnOff2Str(is_reset_parser));
 #endif
     TbfpHandle_t* Node = TbfpInterfaceToNode(Node->inter_face);
     if(Node) {
@@ -899,13 +991,13 @@ bool tbfp_proc_xxx(uint8_t* arr, uint16_t len, Interfaces_t inter_face, bool is_
 
         if(0 < cur_rx_prk) {
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "%s %u Packets in %u byte", InterfaceToStr(Node->inter_face), cur_rx_prk, len);
+            LOG_PARN(TBFP, "%s %u Packets in %u byte", InterfaceToStr(Node->inter_face), cur_rx_prk, len);
 #endif /*HAS_LOG*/
         } else {
             if(is_reset_parser) {
                 Node->lack_frame_in_data++;
 #ifdef HAS_LOG
-                LOG_DEBUG(TBFP, "%s LackPktInFrame:%u ", InterfaceToStr(Node->inter_face), len);
+                LOG_PARN(TBFP, "%s LackPktInFrame:%u ", InterfaceToStr(Node->inter_face), len);
 #endif /*HAS_LOG*/
             }
 
@@ -938,7 +1030,7 @@ bool tbfp_proc_xxx(uint8_t* arr, uint16_t len, Interfaces_t inter_face, bool is_
 bool tbfp_send_frame(uint8_t num, TbfpPayloadId_t payload_id, uint8_t* const payload, uint16_t payload_size) {
     bool res = false;
 #ifdef HAS_LOG
-    LOG_DEBUG(STORAGE, "TrySend:%u", num);
+    LOG_PARN(STORAGE, "TrySend:%u", num);
 #endif
     TbfpHandle_t* Node = TbfpGetNode(num);
     if(Node) {
@@ -1039,7 +1131,7 @@ bool tbfp_check(void) {
             if(0 < diff) {
                 res = false;
 #ifdef HAS_LOG
-                LOG_DEBUG(HMON, "%s LackOfAck %u times", InterfaceToStr(Node->inter_face), diff);
+                LOG_PARN(HMON, "%s LackOfAck %u times", InterfaceToStr(Node->inter_face), diff);
 #endif
             }
             Node->silence_cnt_prev = Node->silence_cnt;
@@ -1048,7 +1140,7 @@ bool tbfp_check(void) {
             if(0 < diff) {
                 res = false;
 #ifdef HAS_LOG
-                LOG_DEBUG(HMON, "%s CrcErr %u times", InterfaceToStr(Node->inter_face), diff);
+                LOG_PARN(HMON, "%s CrcErr %u times", InterfaceToStr(Node->inter_face), diff);
 #endif
             }
             Node->crc_err_cnt_prev = Node->crc_err_cnt;
@@ -1057,7 +1149,7 @@ bool tbfp_check(void) {
             if(0 < diff) {
                 res = false;
 #ifdef HAS_LOG
-                LOG_DEBUG(HMON, "%s FlowTorn %u times", InterfaceToStr(Node->inter_face), diff);
+                LOG_PARN(HMON, "%s FlowTorn %u times", InterfaceToStr(Node->inter_face), diff);
 #endif
             }
             Node->Flow.torn_cnt_prev = Node->Flow.torn_cnt;
@@ -1067,7 +1159,7 @@ bool tbfp_check(void) {
             if(0 < diff) {
                 res = false;
 #ifdef HAS_LOG
-                LOG_DEBUG(HMON, "IF:%s,TxErr:%u times", InterfaceToStr(Node->inter_face), diff);
+                LOG_PARN(HMON, "IF:%s,TxErr:%u times", InterfaceToStr(Node->inter_face), diff);
 #endif
             }
             Node->err_tx_cnt_prev = Node->err_tx_cnt;
@@ -1120,7 +1212,7 @@ bool tbfp_calc_byte_rate(void) {
 #endif
 
 #ifdef HAS_TBFP_EXT
-bool wait_pong_loop_ms(uint32_t wait_pause_ms, Interfaces_t inter_face) {
+bool wait_pong_loop_ms(uint32_t wait_timeout_ms, Interfaces_t inter_face) {
     bool res = false;
     TbfpHandle_t* Node = TbfpInterfaceToNode(inter_face);
     if(Node) {
@@ -1141,7 +1233,7 @@ bool wait_pong_loop_ms(uint32_t wait_pause_ms, Interfaces_t inter_face) {
             }
 
             curr_ms = time_get_ms32();
-            if(wait_pause_ms < (curr_ms - start_ms)) {
+            if(wait_timeout_ms < (curr_ms - start_ms)) {
                 res = false;
                 loop = false;
                 break;
@@ -1162,13 +1254,13 @@ bool tbfp_rx(uint8_t* const arr, uint32_t size, Interfaces_t inter_face) {
     TbfpHandle_t* Node = TbfpInterfaceToNode(inter_face);
     uint32_t ok = 0;
 #ifdef HAS_LOG
-    LOG_DEBUG(TBFP, "Size:%u byte", size);
+    LOG_PARN(TBFP, "Size:%u byte", size);
 #endif
     if(Node) {
         uint32_t i = 0;
         for(i = 0; i < size; i++) {
 #ifdef HAS_LOG
-            LOG_DEBUG(TBFP, "[%u]=0x%02x", i, arr[i]);
+            LOG_PARN(TBFP, "[%u]=0x%02x", i, arr[i]);
 #endif
             res = tbfp_proc_byte(Node, arr[i]);
             if(res) {
@@ -1306,7 +1398,7 @@ bool tbfp_init_one(uint32_t num) {
         }
     } else {
 #ifdef HAS_LOG
-        LOG_DEBUG(TBFP, "NoConfig %u", num);
+        LOG_PARN(TBFP, "NoConfig %u", num);
 #endif
     }
 

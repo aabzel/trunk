@@ -34,6 +34,7 @@ int32_t file_line_cnt(const char* const file_name) {
 #ifdef HAS_FILE_PC
     line_cnt = file_pc_line_cnt(file_name);
 #endif
+    LOG_DEBUG(FILE_API, "line:%u,File:[%s]",line_cnt,file_name);
     if(line_cnt < 0) {
         LOG_ERROR(FILE_API, "LineCntErr");
     }

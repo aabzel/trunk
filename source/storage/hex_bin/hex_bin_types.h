@@ -20,7 +20,9 @@ typedef struct {
     Crc8_t crc8;
 }HexFrame_t;
 
-#define HEX_BIN_COMMON_VARIABLES \
+#define HEX_BIN_COMMON_VARIABLES      \
+    uint8_t num;                      \
+    uint8_t fw_loader_num;            \
     bool valid;
 
 typedef struct{
@@ -33,8 +35,8 @@ typedef struct{
     bool already_the_same; /*flag to prevent updating when FW already the same*/
 #ifdef HAS_PC
     uint8_t* bin_data;
-#endif
     FILE* HexFilePtr;
+#endif
     int32_t total_lines;
     size_t line_len;
     size_t matching_size;

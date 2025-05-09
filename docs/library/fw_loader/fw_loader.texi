@@ -162,6 +162,10 @@ on-chip MIK32 загрузчиком и утилиты FW\_Loader по UART0.
             FW_Loader.exe fwll start_mik32_v1_generic_gcc_m.hex COM4 56000 10
         \end{lstlisting}
 
+  \item По окончании обновления утилита FW\_Loader должна печатать отчёт об обновлении прошивки:           
+        продолжительность обновления прошивки в секундах, размер бинаря, битовая скорость обновления.
+        Эти метрики и будут являтся критериями эффективности процесса обновления прошивки.        
+
 \end{enumerate}
 
 
@@ -356,6 +360,7 @@ $A5$C1$01$00$04$00$01$00$00$00$80$E4
 \section{Гиперссылки}
 
 \begin{enumerate}
+  \item \href{ }{Hexadecimal Object File Format Specification}
   \item \href{ https://github.com/aabzel/trunk/tree/main/source/projects/fw_loader}{Исходный код FW Loader}
   \item \href{https://microsin.net/programming/pc/intel-hex-file-format.html}{Intel HEX: описание формата файла}
   \item \href{https://habr.com/ru/articles/754972/}{Как собрать Си программу в OS Windows}

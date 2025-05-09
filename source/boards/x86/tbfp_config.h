@@ -12,6 +12,11 @@
 //#define TBFP_MAX_FRAME 512
 #define TBFP_MAX_TX_BUFF 512U
 
+typedef enum{
+	TBFP_NUM_UNDEF  =0,
+	TBFP_NUM_SERIAL_PORT  =4,
+}TbfpLegalNums_t;
+
 extern const TbfpConfig_t TbfpConfig[];
 extern TbfpHandle_t TbfpInstance[];
 

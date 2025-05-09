@@ -21,6 +21,7 @@ bool Date2Str(const struct tm* const time_date, char* text, uint32_t size);
 bool UpTimeMs2Str(uint32_t up_time_ms, char* out_str, size_t size);
 bool time_diag(void);
 
+const char* TimeDurationMsToStr(const uint32_t duration_ms);
 const char* TimeSrcToStr(const TimeSource_t time_source);
 const char* UpTimeSec2Str(float up_time_s);
 const char* Ms2Str(uint32_t time_ms);

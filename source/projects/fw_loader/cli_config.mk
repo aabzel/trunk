@@ -8,9 +8,15 @@ ifneq ($(CLI_CONFIG_MK_INC),Y)
     CLI_NATIVE_COMMANDS=Y
 
     BIT_COMMANDS=Y
+
     ifeq ($(WAV),Y)
         WAV_COMMANDS=Y
     endif
+    
+    ifeq ($(FILE_PC),Y)
+        FILE_PC_COMMANDS=Y
+    endif
+
 
     ifeq ($(FW_LOADER),Y)
         FW_LOADER_COMMANDS=Y

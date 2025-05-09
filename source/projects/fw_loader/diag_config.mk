@@ -14,6 +14,15 @@ ifeq ($(FLOAT),Y)
     FLOAT_DIAG=Y
 endif
 
+ifeq ($(HEX_BIN),Y)
+    HEX_BIN_DIAG=Y
+endif
+
+ifeq ($(FILE_PC),Y)
+    FILE_PC_DIAG=Y
+endif
+
+
 ifeq ($(SERIAL_PORT),Y)
     SERIAL_PORT_DIAG=Y
 endif

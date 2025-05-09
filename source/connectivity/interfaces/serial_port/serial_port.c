@@ -67,7 +67,7 @@ bool serial_port_proc_one(uint8_t num) {
                      &rx_size_cnt,    // Number of bytes read
                      NULL);
             if( 1 == rx_size_cnt) {
-                LOG_DEBUG(SERIAL_PORT, "COM%u,Rx:[%u]=0x%02x='%c'", Node->com_port_num, Node->rx_cnt, rx_byte, rx_byte);
+                LOG_PARN(SERIAL_PORT, "COM%u,Rx:[%u]=0x%02x", Node->com_port_num, Node->rx_cnt, rx_byte);
                 Node->rx_cnt++;
                 loopRun = true;
 #ifdef HAS_TBFP
@@ -93,7 +93,7 @@ static bool serial_port_send_pause(SerialPortHandle_t* const Node,
             uint32_t i = 0;
             uint32_t ok_cnt = 0;
             for(i=0; i<size; i++) {
-                LOG_DEBUG(SERIAL_PORT, "COM%u,Tx[%u]=0x%02x",Node->com_port_num, Node->tx_cnt,data[i]);
+                LOG_PARN(SERIAL_PORT, "COM%u,Tx[%u]=0x%02x",Node->com_port_num, Node->tx_cnt,data[i]);
                 BOOL status = 0;
                 DWORD written = 0;
                 status = WriteFile(Node->hComm, &data[i], (DWORD)1, &written, NULL);
@@ -108,7 +108,7 @@ static bool serial_port_send_pause(SerialPortHandle_t* const Node,
             }
 
             if(ok_cnt==size) {
-                LOG_DEBUG(SERIAL_PORT, "Write:0x%p,Ok", Node->hComm);
+                LOG_PARN(SERIAL_PORT, "Write:0x%p,Ok", Node->hComm);
                 res = true;
             }else{
                 res = false;
@@ -129,9 +129,9 @@ bool serial_port_send(uint8_t num, uint8_t* data, uint32_t size) {
     bool res = false;
     SerialPortHandle_t* Node = SerialPortGetNode(num);
     if(Node) {
-        LOG_DEBUG(SERIAL_PORT, "Send,%s", SerialPortNodeToStr(Node));
+        LOG_PARN(SERIAL_PORT, "Send,%s", SerialPortNodeToStr(Node));
         res = serial_port_send_pause(Node, data, size);
-        log_res(SERIAL_PORT, res, "SendPause");
+        log_parn_res(SERIAL_PORT, res, "SendPause");
     }else{
         LOG_ERROR(SERIAL_PORT, "NodeErr %u", num);
     }

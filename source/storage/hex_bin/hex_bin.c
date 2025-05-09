@@ -1,17 +1,10 @@
 #include "hex_bin.h"
 
 #include <string.h>
+
 #ifdef HAS_PC
 #include <stdio.h>
 #include <stdlib.h>
-#endif
-
-#ifdef HAS_FLASH
-#include "flash_mcal.h"
-#endif
-
-#ifdef HAS_PARAM
-#include "param_drv.h"
 #endif
 
 #include "array.h"
@@ -22,20 +15,35 @@
 #include "file_api.h"
 #include "log.h"
 #include "std_includes.h"
+#include "debug_info.h"
 #include "time_mcal.h"
-#ifdef HAS_BOOTLOADER
-#include "bootloader.h"
-#endif
 #include "str_utils.h"
-#ifdef HAS_FILE
-//#include "utils_file.h"
-#endif
 #include "byte_utils.h"
 #include "macro_utils.h"
 
+#ifdef HAS_FLASH
+#include "flash_mcal.h"
+#endif
+
+#ifdef HAS_PARAM
+#include "param_drv.h"
+#endif
+
+#ifdef HAS_FW_LOADER
+#include "fw_loader.h"
+#endif
+
+#ifdef HAS_BOOTLOADER
+#include "bootloader.h"
+#endif
+
+#ifdef HAS_FILE
+//#include "utils_file.h"
+#endif
+
 /*
- *https://microsin.net/programming/pc/intel-hex-file-format.html
- *https://en.wikipedia.org/wiki/Intel_HEX
+ https://microsin.net/programming/pc/intel-hex-file-format.html
+ https://en.wikipedia.org/wiki/Intel_HEX
  */
 
 bool hex_bin_init(void) {
@@ -61,7 +69,7 @@ static bool hex_ceck_crc(const HexFrame_t* const Frame) {
     LOG_PARN(HEX_BIN, "CheckCrc8");
     if(Frame) {
 #ifdef HAS_HEX_BIN_DIAG
-        LOG_DEBUG(HEX_BIN, "%s", HexFrame2Str(Frame));
+        LOG_PARN(HEX_BIN, "%s", HexFrame2Str(Frame));
 #endif
         uint8_t crc_acc = 0;
         uint16_t chksum = 0;
@@ -77,10 +85,10 @@ static bool hex_ceck_crc(const HexFrame_t* const Frame) {
         crc_acc += Frame->crc8.read;
 
         chksum = 0x100 - crc_acc;
-        LOG_DEBUG(HEX_BIN, "chksum 0x%04x", chksum);
+        LOG_PARN(HEX_BIN, "chksum 0x%04x", chksum);
         if(0 == crc_acc) {
             res = true;
-            LOG_DEBUG(HEX_BIN, "Crc8Ok");
+            LOG_PARN(HEX_BIN, "Crc8Ok");
         } else {
             res = false;
             LOG_ERROR(HEX_BIN, "Crc8Err 0x%02x", crc_acc);
@@ -94,16 +102,27 @@ static bool hex_flash_write(HexBinHandle_t* const Node) {
     if(Node->frame.data) {
         if(Node->frame.rec_len) {
 #ifdef HAS_HEX_BIN_DIAG
-            LOG_DEBUG(HEX_BIN, "Write: Addr:0x%08x,Size:%3u Byte,Data:%s", Node->address.u32, Node->frame.rec_len,
-                      Data2Str(Node->frame.data, Node->frame.rec_len));
+            LOG_PARN(HEX_BIN, "Write,Addr:0x%08x,Size:%3u Byte,Data:%s",
+                     Node->address.u32,
+                     Node->frame.rec_len,
+                     Data2Str(Node->frame.data, Node->frame.rec_len)
+                     );
 #endif
             uint32_t relative_adress = Node->address.u32 - Node->base_address;
             uint32_t relative_adress_end = relative_adress + Node->frame.rec_len;
-            LOG_DEBUG(HEX_BIN, "Write: Addr:0x%08x,Size:%3u Byte", relative_adress, Node->frame.rec_len);
+            LOG_PARN(HEX_BIN, "Write,Addr:0x%08x,Size:%3u Byte", relative_adress, Node->frame.rec_len);
             if(relative_adress_end < Node->address_size_byte) {
                 res = true;
+#ifdef HAS_FW_LOADER
+                res = fw_loader_write(Node->fw_loader_num,
+                                      relative_adress,
+                                      Node->frame.data,
+                                      Node->frame.rec_len);
+                log_parn_res(HEX_BIN,  res, "FwLoaderWrite");
+#endif
+
 #ifdef HAS_FLASH
-                res = flash_wr(Node->address.u32, Node->frame.data, Node->frame.rec_len);
+                res = flash_mcal_write(Node->address.u32, Node->frame.data, Node->frame.rec_len);
                 if(res) {
                     LOG_DEBUG(HEX_BIN, "FlashWriteOk Addr:0x%08x.Size:%u", Node->address.u32, Node->frame.rec_len);
                 } else {
@@ -177,11 +196,7 @@ static bool hex_proc_rec_type(HexBinHandle_t* const Node, bool write) {
 
         if(write) {
             res = hex_flash_write(Node);
-            if(res) {
-                LOG_DEBUG(HEX_BIN, "WriteOk");
-            } else {
-                LOG_ERROR(HEX_BIN, "WriteErr");
-            }
+            log_parn_res(HEX_BIN, res, "Write");
         } else {
 
             DATA_UPDATE(Node->address_range, Node->address.u32);
@@ -189,6 +204,7 @@ static bool hex_proc_rec_type(HexBinHandle_t* const Node, bool write) {
             Node->address_size_byte = Node->address_range.max - Node->address_range.min + 1;
             Node->bin_size_byte += Node->frame.rec_len;
 #ifdef HAS_FLASH
+            /*code executes on MCU*/
             uint8_t* on_chip_addr = (uint8_t*)Node->address.u32;
             size_t diff = 0;
             res = array_is_equal_ext(on_chip_addr, Node->frame.data, Node->frame.rec_len, &diff);
@@ -201,6 +217,10 @@ static bool hex_proc_rec_type(HexBinHandle_t* const Node, bool write) {
                 Node->matching_size += Node->frame.rec_len;
                 /*Equal*/
             }
+#else
+            /*code executes on PC*/
+            Node->diff_size += Node->frame.rec_len;
+            Node->already_the_same = false;
 #endif /*HAS_FLASH*/
         }
 
@@ -245,14 +265,14 @@ bool hex_proc_line(HexBinHandle_t* const Node, bool write) {
     bool res = false;
     if(Node) {
         Node->line_len = strlen(Node->hex_line);
-        LOG_DEBUG(HEX_BIN, "Proc Size:%2u Byte,Line:[%s]", Node->line_len, Node->hex_line);
+        LOG_PARN(HEX_BIN, "Proc Size:%2u Byte,Line:[%s]", Node->line_len, Node->hex_line);
         if(0 < Node->line_len) {
             Node->line_cnt++;
             log_level_t ll = log_level_get(HEX_BIN);
             if(LOG_LEVEL_DEBUG == ll) {
                 str_del_char_inplace(Node->hex_line, '\r');
                 str_del_char_inplace(Node->hex_line, '\n');
-                LOG_DEBUG(HEX_BIN, "ProcLine:%3u,[%s]", Node->line_cnt, Node->hex_line);
+                LOG_PARN(HEX_BIN, "ProcLine:%3u,[%s]", Node->line_cnt, Node->hex_line);
             }
             res = true;
         } else {
@@ -266,7 +286,7 @@ bool hex_proc_line(HexBinHandle_t* const Node, bool write) {
             LOG_PARN(HEX_BIN, "SpotRECORD_MARK");
             res = try_strl2uint8_hex(&(Node->hex_line[HEX_LINE_OFFSET_REC_LEN]), 2, &Node->frame.rec_len);
             if(res) {
-                LOG_DEBUG(HEX_BIN, "RecLen: %u Byte", Node->frame.rec_len);
+                LOG_PARN(HEX_BIN, "RecLen:%u Byte", Node->frame.rec_len);
             } else {
                 LOG_ERROR(HEX_BIN, "ParseRecLenErr [%s]", &Node->hex_line[HEX_LINE_OFFSET_REC_LEN]);
             }
@@ -279,7 +299,7 @@ bool hex_proc_line(HexBinHandle_t* const Node, bool write) {
     if(res) {
         res = try_strl2uint16_hex(&Node->hex_line[HEX_LINE_OFFSET_ADDR_LITTLE], 4, &Node->frame.load_offset);
         if(res) {
-            LOG_DEBUG(HEX_BIN, "Offset:0x%04x", Node->frame.load_offset);
+            LOG_PARN(HEX_BIN, "Offset:0x%04x", Node->frame.load_offset);
             // Node->address.u16[0]=Node->frame.load_offset;
         } else {
             LOG_ERROR(HEX_BIN, "ParseAddrErr [%s]", &Node->hex_line[HEX_LINE_OFFSET_ADDR_LITTLE]);
@@ -290,7 +310,7 @@ bool hex_proc_line(HexBinHandle_t* const Node, bool write) {
         res = try_strl2uint8_hex(&Node->hex_line[HEX_LINE_OFFSET_REC_TYPE], 2, &Node->frame.rec_type);
         if(res) {
 #ifdef HAS_HEX_BIN_DIAG
-            LOG_DEBUG(HEX_BIN, "RecType:%u=%s", Node->frame.rec_type, HexRecType2Str(Node->frame.rec_type));
+            LOG_PARN(HEX_BIN, "RecType:%u=%s", Node->frame.rec_type, HexRecType2Str(Node->frame.rec_type));
 #endif
         } else {
             LOG_ERROR(HEX_BIN, "ParseAddrErr [%s]", &Node->hex_line[HEX_LINE_OFFSET_REC_TYPE]);
@@ -300,12 +320,12 @@ bool hex_proc_line(HexBinHandle_t* const Node, bool write) {
     if(res) {
         if(Node->frame.rec_len) {
             uint32_t out_array_len = 0;
-            LOG_DEBUG(HEX_BIN, "ParseData:%u byte", Node->frame.rec_len * 2);
+            LOG_PARN(HEX_BIN, "ParseData:%u byte", Node->frame.rec_len * 2);
             res = try_strl2array(&Node->hex_line[HEX_LINE_DATA_OFFSET], Node->frame.rec_len * 2, Node->frame.data,
                                  sizeof(Node->frame.data), &out_array_len);
             if(res) {
                 if(Node->frame.rec_len == out_array_len) {
-                    LOG_DEBUG(HEX_BIN, "ParseDataOk");
+                    LOG_PARN(HEX_BIN, "ParseDataOk");
                     // array_u8_print(Node->frame.data, Node->frame.rec_len);
                     // cli_printf(CRLF);
                 } else {
@@ -322,7 +342,7 @@ bool hex_proc_line(HexBinHandle_t* const Node, bool write) {
         uint8_t crc_index = HEX_LINE_DATA_OFFSET + Node->frame.rec_len * 2;
         res = try_strl2uint8_hex(&Node->hex_line[crc_index], 2, &Node->frame.crc8.read);
         if(res) {
-            LOG_DEBUG(HEX_BIN, "Crc8:0x%x", Node->frame.crc8.read);
+            LOG_PARN(HEX_BIN, "Crc8:0x%x", Node->frame.crc8.read);
         } else {
             LOG_ERROR(HEX_BIN, "ParseCrcErr [%s]", &Node->hex_line[crc_index]);
         }
@@ -331,13 +351,9 @@ bool hex_proc_line(HexBinHandle_t* const Node, bool write) {
     if(res) {
         res = hex_ceck_crc(&Node->frame);
         if(res) {
-            LOG_DEBUG(HEX_BIN, "CrcOk");
+            LOG_PARN(HEX_BIN, "CrcOk");
             res = hex_proc_rec_type(Node, write);
-            if(res) {
-                LOG_DEBUG(HEX_BIN, "RecTypeOk");
-            } else {
-                LOG_ERROR(HEX_BIN, "RecTypeErr");
-            }
+            log_parn_res(HEX_BIN,res,"RecType");
         } else {
             LOG_ERROR(HEX_BIN, "CrcErr");
         }
@@ -406,17 +422,17 @@ static bool hex_process_lines_of_file(HexBinHandle_t* const Node, bool write) {
             size_t read_len = 0;
             res = file_api_gets(&Node->FileItem, Node->hex_line, sizeof(Node->hex_line), &read_len);
             if(res) {
-                LOG_DEBUG(HEX_BIN, "Len:%u,[%s]", read_len, Node->hex_line);
+                LOG_PARN(HEX_BIN, "Len:%u,[%s]", read_len, Node->hex_line);
                 if(0 < read_len) {
+#ifdef HAS_HEX_BIN_DIAG
+                    diag_progress_log(Node->line_cnt, Node->total_lines, 400) ;
+#endif
                     res = hex_proc_line(Node, write);
                     if(res) {
                         LOG_PARN(HEX_BIN, "ProcOk,Line:%u", Node->line_cnt);
                     } else {
                         LOG_ERROR(HEX_BIN, "ProcErr,Line:%u", Node->line_cnt);
                     }
-#ifdef HAS_HEX_BIN_DIAG
-                    cli_printf("\r%s", NodeToProgressStr(Node));
-#endif
                 } else {
                     LOG_DEBUG(HEX_BIN, "GetLineLenErr,Len:%u Byte,Str:[%s]", read_len, Node->hex_line);
                     // break;
@@ -474,12 +490,7 @@ static bool hex_compose_bin(HexBinHandle_t* const Node) {
                 snprintf(lText, sizeof(lText), "%s_generated.bin", Node->only_file_name);
                 LOG_INFO(HEX_BIN, "ComposeBin File:[%s],Size:%u Byte...", lText, Node->address_size_byte);
                 res = file_array_to_binary_file(lText, Node->bin_data, Node->address_size_byte);
-                if(res) {
-                    LOG_INFO(HEX_BIN, "SaveToBinOk");
-                } else {
-                    res = false;
-                    LOG_ERROR(HEX_BIN, "SaveToBinErr");
-                }
+                log_info_res(HEX_BIN, res, "SaveToBin");
             } else {
                 LOG_ERROR(HEX_BIN, "SizeErr");
             }
@@ -493,26 +504,27 @@ static bool hex_compose_bin(HexBinHandle_t* const Node) {
 }
 #endif
 
-bool hex_to_bin(const char* const file_name) {
+bool hex_to_bin(HexBinHandle_t* const Node, const char* const file_name) {
     bool res = false;
-    LOG_WARNING(HEX_BIN, "Hex>Bin");
+    LOG_WARNING(HEX_BIN, "Hex->Bin");
     // char hex_line[500] = {0};
-    HexBinHandle_t Item = {0};
-    res = hex_init_one(&Item, file_name);
+    //HexBinHandle_t Item = {0};
+    Node->fw_loader_num = 1;
+    res = hex_init_one(Node, file_name);
     if(res) {
-        Item.total_lines = file_line_cnt(file_name);
-        if(0 < Item.total_lines) {
+        Node->total_lines = file_line_cnt(file_name);
+        if(0 < Node->total_lines) {
 
-            LOG_INFO(HEX_BIN, "Volume:%u Lines", Item.total_lines);
+            LOG_INFO(HEX_BIN, "Volume:%u Lines", Node->total_lines);
 
-            res = hex_file_calc_fw_size(&Item);
+            res = hex_file_calc_fw_size(Node);
             if(res) {
 #ifdef HAS_PC
-                Item.bin_data = (uint8_t*)malloc(Item.address_size_byte);
-                if(Item.bin_data) {
-                    LOG_INFO(HEX_BIN, "Malloc Size:%u Byte=%f kByte Ok", Item.address_size_byte,
-                             BYTES_2_KBYTES(Item.address_size_byte));
-                    memset(Item.bin_data, 0, Item.address_size_byte);
+                Node->bin_data = (uint8_t*)malloc(Node->address_size_byte);
+                if(Node->bin_data) {
+                    LOG_INFO(HEX_BIN, "Malloc Size:%u Byte=%f kByte Ok", Node->address_size_byte,
+                             BYTES_2_KBYTES(Node->address_size_byte));
+                    memset(Node->bin_data, 0, Node->address_size_byte);
                 } else {
                     LOG_ERROR(HEX_BIN, "MallocErr");
                     res = false;
@@ -521,29 +533,24 @@ bool hex_to_bin(const char* const file_name) {
             }
 
             if(res) {
-                if(Item.diff_size) {
-                    LOG_WARNING(HEX_BIN, "NeedToUpdate", Item.diff_size);
+                if(Node->diff_size) {
+                    LOG_WARNING(HEX_BIN, "NeedToUpdate", Node->diff_size);
                     /*TODO: Save Origin FW*/
 #ifdef HAS_BOOTLOADER
                     /*ClearFlash*/
                     res = bootloader_erase_app();
 #endif
 
-                    res = hex_process_lines_of_file(&Item, true);
+                    res = hex_process_lines_of_file(Node, true);
                     if(res) {
 #ifdef HAS_PC
-                        res = hex_compose_bin(&Item);
-                        if(res) {
-                            LOG_INFO(HEX_BIN, "ComposeBinOk");
-                        } else {
-                            res = false;
-                            LOG_ERROR(HEX_BIN, "ComposeBinErr");
-                        }
+                        res = hex_compose_bin(Node);
+                        log_info_res(HEX_BIN, res, "ComposeBin");
 #endif /*HAS_PC*/
 
 #ifdef HAS_PARAM
-                        res = param_set(PAR_ID_APP_LEN, &Item.address_size_byte);
-                        res = param_set(PAR_ID_APP_CRC32, &Item.fw_crc23);
+                        res = param_set(PAR_ID_APP_LEN, &Node->address_size_byte);
+                        res = param_set(PAR_ID_APP_CRC32, &Node->fw_crc23);
 #endif /*HAS_PARAM*/
 
 #ifdef HAS_BOOTLOADER
@@ -552,7 +559,7 @@ bool hex_to_bin(const char* const file_name) {
                     }
                 }
             } else {
-                LOG_ERROR(HEX_BIN, "CntLineErr %d", Item.total_lines);
+                LOG_ERROR(HEX_BIN, "CntLineErr %d", Node->total_lines);
             }
         }
     } else {
