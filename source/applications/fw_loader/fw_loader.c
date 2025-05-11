@@ -238,10 +238,10 @@ bool fw_loader_download(uint8_t num){
         LOG_INFO(FW_LOADER, "N:%u,ReadFwToFile:[%s]", num, Node->file_name);
 
         uint32_t offset = 0;
-        uint32_t flash_size = FW_LOADER_BIN_SIZE/4;
+
         memset(Node->firmware_bin,0xFF,FW_LOADER_BIN_SIZE);
-        for(offset=0; offset < flash_size; offset+=FW_LOADER_READ_SIZE) {
-            diag_progress_log(offset, flash_size, 10000);
+        for(offset=0; offset < 	Node->fw_size; offset+=FW_LOADER_READ_SIZE) {
+            diag_progress_log(offset, 	Node->fw_size, 10000);
             uint8_t rxData[FW_LOADER_READ_SIZE] = {0xFF};
             res = fw_loader_read(num, offset, rxData, FW_LOADER_READ_SIZE);
             if(res) {
@@ -252,7 +252,7 @@ bool fw_loader_download(uint8_t num){
             }
         }
 
-        res = file_pc_save_array(Node->file_name,   Node->firmware_bin,    flash_size);
+        res = file_pc_save_array(Node->file_name,   Node->firmware_bin, Node->fw_size);
 
         uint32_t end_ms = time_get_ms32();
         uint32_t duration_ms = end_ms-start_ms;
