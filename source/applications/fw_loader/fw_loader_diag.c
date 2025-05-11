@@ -16,10 +16,8 @@ const char* FwLoaderConfigToStr(const FwLoaderConfig_t* const Config) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
         snprintf(text, sizeof(text), "%sCOM%u,", text, Config->com_num);
-        snprintf(text, sizeof(text), "%sRate:%u Bit/s,", text, Config->bit_rate);
         snprintf(text, sizeof(text), "%sTBFP:%u,", text, Config->tbfp_num);
-        snprintf(text, sizeof(text), "%sRate:%u bps,", text, Config->bit_rate);
-        snprintf(text, sizeof(text), "%sFile:%s,", text, Config->hex_file_name);
+        snprintf(text, sizeof(text), "%sFile:%s,", text, Config->file_name);
     }
     return text;
 }
@@ -30,10 +28,8 @@ const char* FwLoaderDiag2Str(const FwLoaderHandle_t* const Node) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sN:%u,", text, Node->num);
         snprintf(text, sizeof(text), "%sCOM%u,", text, Node->com_num);
-        snprintf(text, sizeof(text), "%sRate:%u Bit/s,", text, Node->bit_rate);
         snprintf(text, sizeof(text), "%sTBFP:%u,", text, Node->tbfp_num);
-        snprintf(text, sizeof(text), "%sRate:%u bps,", text, Node->bit_rate);
-        snprintf(text, sizeof(text), "%sFile:%s,", text, Node->hex_file_name);
+        snprintf(text, sizeof(text), "%sFile:%s,", text, Node->file_name);
         snprintf(text, sizeof(text), "%sinit:%u,", text, Node->init);
     }
     return text;

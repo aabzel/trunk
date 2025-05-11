@@ -21,13 +21,13 @@ static uint8_t MemRxFrameFix[TBFP_MAX_FRAME] = {0};
 
 const TbfpConfig_t TbfpConfig[] = {
     {
-    .num = 4,
+    .num = TBFP_NUM_SERIAL_PORT,
     .inter_face = IF_SERIAL_PORT,
     .preamble_val = 0xA5,
     .RxArray = RxData4,
     .TxFrame = TxBuff4,
-    .crc_check_need = false,
     .tx_array_size = TBFP_MAX_TX_BUFF,
+    .crc_check_need = false,
     .valid = true,
     .rx_frame = MemRxFrame,
     .fix_frame = MemRxFrameFix,
@@ -88,7 +88,7 @@ const TbfpConfig_t TbfpConfig[] = {
 
 
 TbfpHandle_t TbfpInstance[] = {
-    {.num = 4, .valid = true,},
+    {.num = TBFP_NUM_SERIAL_PORT, .valid = true,},
     {.num = 1, .valid = true,},
     {.num = 2, .valid = true,},
     {.num = 3, .valid = true,},
@@ -96,6 +96,8 @@ TbfpHandle_t TbfpInstance[] = {
     {.num = 5, .valid = true,},
 #endif
 };
+
+bool tbfp_init_common(const TbfpConfig_t* const Config, TbfpHandle_t* const Node) ;
 
 uint32_t tbfp_get_cnt(void){
     uint32_t cnt = 0;
@@ -105,6 +107,10 @@ uint32_t tbfp_get_cnt(void){
     cnt2 = ARRAY_SIZE(TbfpConfig);
     if (cnt1 == cnt2) {
         cnt = cnt1;
+    }
+    uint32_t i = 0 ;
+    for(i=0;i<cnt;i++){
+    	tbfp_init_common(&TbfpConfig[i], &TbfpInstance[i]);
     }
     return cnt;
 }

@@ -18,6 +18,11 @@ bool fw_loader_init_custom(void);
 bool fw_loader_proc(void);
 bool fw_loader_proc_one(uint8_t num);
 
+bool fw_loader_download_firmware(const char * const fileName,
+		                         const uint8_t com_port_num,
+		                         const uint32_t bit_rate_hz,
+		                         const uint32_t size );
+
 bool fw_loader_jump(uint8_t num, uint32_t base_address);
 bool fw_loader_download(uint8_t num);
 bool fw_loader_ping(uint8_t num);

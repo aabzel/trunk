@@ -26,8 +26,8 @@ static bool fw_loader_init_common(const FwLoaderConfig_t* const Config, FwLoader
             Node->num = Config->num;
             Node->com_num = Config->com_num;
             Node->tbfp_num = Config->tbfp_num;
-            Node->bit_rate = Config->bit_rate;
-            Node->hex_file_name = Config->hex_file_name;
+            //Node->bit_rate = Config->bit_rate;
+            Node->file_name = Config->file_name;
             Node->valid = true;
             Node->write_sn = 0;
             res = true;
@@ -202,6 +202,28 @@ bool fw_loader_write(const uint8_t num,
     return res;
 }
 
+
+bool fw_loader_download_firmware(const char * const fileName,
+		                         const uint8_t com_port_num,
+		                         const uint32_t bit_rate_hz,
+		                         const uint32_t size ){
+    bool res = false;
+    FwLoaderHandle_t* Node = FwLoaderGetNode(1);
+    if(Node){
+        LOG_INFO(FW_LOADER, "ReadFw,File:%s,COM%u,Rate:%u Bit/s,ExpSize:%u byte", fileName, com_port_num,bit_rate_hz,size);
+    	Node->com_num = com_port_num;
+    	Node->file_name = fileName;
+    	Node->fw_size = size;
+    	res = serial_port_close(   com_port_num);
+    	res = serial_port_re_init_one(1,   com_port_num,   bit_rate_hz);
+    	if(res){
+        	res = fw_loader_download(1);
+        	log_res(FW_LOADER, res, "DownLoad");
+    	}
+    }
+    return res;
+}
+
 #define FW_LOADER_READ_SIZE 32
 /*
  read firmware from CHIP to PC
@@ -213,7 +235,7 @@ bool fw_loader_download(uint8_t num){
         uint32_t start_ms = time_get_ms32();
         res = fw_loader_ping(num);
         HexBinHandle_t Item = {0};
-        LOG_INFO(FW_LOADER, "N:%u,ReadFwToFile:[%s]", num, Node->hex_file_name);
+        LOG_INFO(FW_LOADER, "N:%u,ReadFwToFile:[%s]", num, Node->file_name);
 
         uint32_t offset = 0;
         uint32_t flash_size = FW_LOADER_BIN_SIZE/4;
@@ -230,7 +252,7 @@ bool fw_loader_download(uint8_t num){
             }
         }
 
-        res = file_pc_save_array("firmware.bin",   Node->firmware_bin,    flash_size);
+        res = file_pc_save_array(Node->file_name,   Node->firmware_bin,    flash_size);
 
         uint32_t end_ms = time_get_ms32();
         uint32_t duration_ms = end_ms-start_ms;

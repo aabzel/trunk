@@ -19,8 +19,11 @@ uint8_t serial_port_com_to_num(const uint8_t com_port_num);
 bool serial_port_init_custom(void);
 
 bool serial_port_mcal_init(void) ;
-bool serial_port_init_one(uint8_t num);
 
+bool serial_port_init_one(uint8_t num);
+bool serial_port_re_init_one(const uint8_t num,const  uint8_t com_port_num, const  uint32_t bit_rate) ;
+
+bool serial_port_close(  uint8_t com_port_num);
 bool serial_port_proc(void);
 bool serial_port_proc_one(uint8_t num);
 

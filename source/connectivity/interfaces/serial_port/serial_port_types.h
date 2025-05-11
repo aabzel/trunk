@@ -22,10 +22,10 @@ typedef struct {
 
 typedef struct {
     SERIAL_PORT_COMMON_VARIABLES
+    HANDLE hComm;
     uint32_t rx_err_cnt;
     uint32_t rx_cnt;
     uint32_t tx_cnt;
-    HANDLE hComm;
 }SerialPortHandle_t;
 
 #endif /* SERIAL_PORT_IF_TYPES_H  */

@@ -185,20 +185,41 @@ static bool serial_port_init_common(const SerialPortConfig_t* const Config,
     return res;
 }
 
-bool serial_port_init_one(uint8_t num) {
+bool serial_port_close(  uint8_t com_port_num){
     bool res = false;
-    LOG_WARNING(SERIAL_PORT, "init:%u", num);
-    const SerialPortConfig_t* Config = SerialPortGetConfig(num);
-    if(Config) {
-        LOG_WARNING(SERIAL_PORT, "%s", SerialPortConfigToStr(Config));
+	uint8_t num = serial_port_com_to_num( com_port_num);
+	SerialPortHandle_t* Node=SerialPortGetNode(num) ;
+	if(Node){
+        if(Node->hComm ) {
+          LOG_WARNING(SERIAL_PORT, "Close %p",Node->hComm  );
+          BOOL ret = 0 ;
+          (void) ret;
+          ret = CloseHandle( Node->hComm );
+          res = true;
+        }
+	}
+    return res;
+}
+
+
+bool serial_port_re_init_one(const uint8_t num,const  uint8_t com_port_num, const  uint32_t bit_rate) {
+    bool res = false;
+    LOG_WARNING(SERIAL_PORT, "Init:%u,COM%u,BitRate:%u bit/s", num, com_port_num, bit_rate);
         SerialPortHandle_t* Node = SerialPortGetNode(num);
         if(Node) {
-            res = serial_port_init_common(Config, Node);
-
-
+        	Node->com_port_num = com_port_num;
+        	Node->bit_rate = bit_rate;
             res = true;
+
+            if(Node->hComm ) {
+                BOOL ret = 0 ;
+                (void) ret;
+                LOG_WARNING(SERIAL_PORT, "Close %p",Node->hComm  );
+                ret = CloseHandle( Node->hComm );
+            }
+
             char ComPortName[80] = {0};
-            snprintf(ComPortName, sizeof(ComPortName), "COM%u", Config->com_port_num);
+            snprintf(ComPortName, sizeof(ComPortName), "COM%u", Node->com_port_num);
             LOG_WARNING(SERIAL_PORT, "TryOpen...");
             Node->hComm = CreateFile(ComPortName,
                                      GENERIC_READ | GENERIC_WRITE, // Read/Write
@@ -211,13 +232,29 @@ bool serial_port_init_one(uint8_t num) {
                 LOG_ERROR(SERIAL_PORT, "OpenErr,%s", SerialPortNodeToStr(Node));
                 res = false;
             } else {
-                serial_port_set_params(Node->hComm, Config->bit_rate);
+                serial_port_set_params(Node->hComm, bit_rate);
                 serial_port_set_timeout(Node->hComm);
                 res = true;
                 LOG_INFO(SERIAL_PORT, "OpenOk,%s", SerialPortNodeToStr(Node));
             }
-
             LOG_INFO(SERIAL_PORT, "init:%u Ok", num);
+        }else{
+            LOG_ERROR(SERIAL_PORT, "NodeErr %u", num);
+        }
+
+    return res;
+}
+
+bool serial_port_init_one(uint8_t num ) {
+    bool res = false;
+    LOG_WARNING(SERIAL_PORT, "init:%u", num);
+    const SerialPortConfig_t* Config = SerialPortGetConfig(num);
+    if(Config) {
+        LOG_WARNING(SERIAL_PORT, "%s", SerialPortConfigToStr(Config));
+        SerialPortHandle_t* Node = SerialPortGetNode(num);
+        if(Node) {
+            res = serial_port_init_common(Config, Node);
+            res = serial_port_re_init_one(  num, Node->com_port_num, Config->bit_rate);
         }else{
             LOG_ERROR(SERIAL_PORT, "NodeErr %u", num);
         }

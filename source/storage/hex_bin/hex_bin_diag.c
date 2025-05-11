@@ -86,6 +86,7 @@ bool HexNodeDiag(const HexBinHandle_t* const Node) {
     return res;
 }
 
+#if 0
 const char* NodeToProgressStr(const HexBinHandle_t* const Node) {
     static char name[200] = {0};
     if(Node) {
@@ -96,3 +97,4 @@ const char* NodeToProgressStr(const HexBinHandle_t* const Node) {
     }
     return name;
 }
+#endif
