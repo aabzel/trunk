@@ -10,7 +10,9 @@
 #include "log.h"
 #endif
 
+#ifdef HAS_ARRAY_DIAG
 #include "array_diag.h"
+#endif
 
 #ifdef HAS_TBFP
 #include "tbfp.h"

@@ -241,9 +241,10 @@ bool sys_available_interfaces(void) {
 #endif
 
 
-
+#ifdef HAS_PC
 Interfaces_t InterfaceComPortToInterface(uint8_t com_port_num){
     Interfaces_t inter_face = IF_SERIAL_PORT;
     (void)com_port_num;
     return inter_face;
 }
+#endif

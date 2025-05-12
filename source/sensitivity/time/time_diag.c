@@ -309,7 +309,7 @@ const char* TimeDurationMsToStr(const uint32_t duration_ms){
     } else if(MSEC_2_SEC(duration_ms) < 60.0) {
         snprintf(text, sizeof(text), "%5.1f s", MSEC_2_SEC(duration_ms));
     } else {
-        snprintf(text, sizeof(text), "%5.1f m", MSEC_2_MIN(duration_ms));
+        snprintf(text, sizeof(text), "%5.1f min", MSEC_2_MIN(duration_ms));
     }
 
     return text;

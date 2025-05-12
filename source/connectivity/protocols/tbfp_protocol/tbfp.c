@@ -145,7 +145,7 @@
 COMPONENT_GET_NODE(Tbfp, tbfp)
 COMPONENT_GET_CONFIG(Tbfp, tbfp)
 
-
+#ifdef HAS_TBFP_EXT
 /* 49 days max*/
 /*none blocking wait for self test and polling*/
 bool tbfp_wait_response_in_loop_ms(const TbfpHandle_t*const  Node, uint32_t wait_timeout_ms) {
@@ -185,6 +185,7 @@ bool tbfp_wait_response_in_loop_ms(const TbfpHandle_t*const  Node, uint32_t wait
 
     return res;
 }
+#endif
 
 #if 0
 TbfpHandle_t* TbfpGetNode(uint32_t num) {
@@ -215,7 +216,9 @@ TbfpHandle_t* TbfpInterfaceToNode(const Interfaces_t inter_face) {
 #endif
     for(i = 0; i < cnt; i++) {
     	tbfp_init_common(&TbfpConfig[i], &TbfpInstance[i]);
+#ifdef HAS_LOG
         LOG_PARN( TBFP, "%u,%s", i, TbfpNodeToStr(&TbfpInstance[i])    );
+#endif
         if(inter_face==TbfpInstance[i].inter_face ) {
             if(TbfpInstance[i].valid) {
                 Node = &TbfpInstance[i];
@@ -398,6 +401,7 @@ IfRetx_t AckNeed2Retx(TbfpAck_t ack) {
 }
 #endif
 
+#ifdef HAS_TBFP_EXT
 bool tbfp_storage_write_generate(const uint8_t tbfp_num, const uint32_t address,
 		const uint8_t *const data, const uint16_t size) {
 	bool res = false;
@@ -448,6 +452,7 @@ bool tbfp_storage_write_generate(const uint8_t tbfp_num, const uint32_t address,
 	}
 	return res;
 }
+#endif
 
 bool tbfp_send_payload(uint8_t* payload, uint32_t payload_size, Interfaces_t inter_face, uint8_t lifetime,
                        TbfpAck_t ack, TbfpPayloadId_t payload_id) {

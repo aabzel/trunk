@@ -39,7 +39,6 @@ bool tbfp_proc_one(uint32_t num);
 bool tbfp_proc_ping(uint8_t* ping_payload, uint16_t len, Interfaces_t inter_face) ;
 bool tbfp_init_custom(void);
 bool tbfp_init_one(uint32_t num);
-bool tbfp_init_common(const TbfpConfig_t* const Config, TbfpHandle_t* const Node);
 bool tbfp_mcal_init(void);
 bool tbfp_rx(uint8_t* const arr,
              uint32_t size,

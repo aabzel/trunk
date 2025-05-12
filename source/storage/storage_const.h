@@ -3,7 +3,9 @@
 
 #include "storage_dep.h"
 
-#define STORAGE_DATA_SIZE 512
+#define STORAGE_PAYLOAD_SIZE 256
+#define STORAGE_HEADER_SIZE sizeof(StorageFrameHeader_t)
+#define STORAGE_DATA_SIZE (STORAGE_HEADER_SIZE+STORAGE_PAYLOAD_SIZE)
 
 typedef enum {
     TYPE_UINT8 = 1,
