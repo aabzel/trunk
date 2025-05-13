@@ -7,6 +7,7 @@
 #include "protocol.h"
 #include "std_includes.h"
 #include "tbfp_diag.h"
+#include "array_diag.h"
 
 #ifdef HAS_TIME
 #include "time_mcal.h"
@@ -264,6 +265,7 @@ static inline bool tbfp_proc_full_ll(TbfpHandle_t* const Node, uint16_t size) {
     if(res) {
         if(Node) {
 #ifdef HAS_LOG
+        	LOG_DEBUG(TBFP,"RxFrame:%s",ArrayToStr(Node->fix_frame,Node->rx_frame_len));
             LOG_PARN(TBFP, "IF:%s,ProcFull,Len:%u", InterfaceToStr(Node->inter_face), size);
 #endif
             Node->proc_done = false; /**/
@@ -354,8 +356,8 @@ static bool tbfp_parser_proc_wait_crc8(TbfpHandle_t* const Node, const uint8_t r
 #ifdef HAS_TBFP_DIAG
             tbfp_update_len_stat(Node, Node->exp_payload_len);
 #endif
-
-            memcpy(Node->fix_frame, Node->rx_frame, frame_len + TBFP_SIZE_CRC);
+            Node->rx_frame_len =  frame_len + TBFP_SIZE_CRC;
+            memcpy(Node->fix_frame, Node->rx_frame,  Node->rx_frame_len );
             Node->rx_state = RX_DONE;
             Node->rx_pkt_cnt++;
             res = tbfp_parser_reset_rx(Node, WAIT_CRC);
@@ -442,18 +444,16 @@ bool tbfp_proc_byte(TbfpHandle_t* const Node, uint8_t rx_byte) {
 bool tbfp_parser_init(TbfpHandle_t* const Node, const TbfpConfig_t* const Config) {
     bool res = false;
     if(Config) {
-#ifdef HAS_INTERFACES_DIAG
-        LOG_INFO(TBFP, "%s,InitParser", InterfaceToStr(Config->inter_face));
-#endif
         if(Node) {
+#ifdef HAS_INTERFACES_DIAG
+        LOG_WARNING(TBFP, "%s,InitParser", InterfaceToStr(Config->inter_face));
+#endif
             Node->preamble_val = Config->preamble_val;
-            Node->rx_state = WAIT_PREAMBLE;
             Node->read_crc8 = 0;
             Node->exp_payload_len = 0;
             Node->load_len = 0;
             Node->s_num = 0;
-            // memset(Node->rx_frame, 0, TBFP_MAX_FRAME);
-            // memset(Node->fix_frame, 0, TBFP_MAX_FRAME);
+            Node->rx_state = WAIT_PREAMBLE;
             res = true;
         } else {
 #ifdef HAS_LOG

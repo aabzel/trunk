@@ -130,11 +130,11 @@ bool test_64bit_mult(void) {
 #ifdef HAS_CLI
 #ifdef HAS_ARRAY_DIAG
     uint64_t exp = 0x00000002CB417800;
-    cli_printf("\n exp: %" PRIu64 "" CRLF, 0x00000002CB417800);
+    cli_printf("\n exp: %llu" "" CRLF, 0x00000002CB417800);
     print_mem((uint8_t*)&exp, 8U, false, false, false, false);
     print_mem((uint8_t*)&temp10x3, 8U, false, false, false, false);
 #endif
-    cli_printf("\n temp10x3: %" PRIu64 "" CRLF, temp10x3);
+    cli_printf("\n temp10x3: %llu" "" CRLF, temp10x3);
 #endif /*HAS_CLI*/
     return res;
 }

@@ -16,11 +16,12 @@ extern "C" {
 //https://docs.google.com/spreadsheets/d/1VAT3Ak7AzcufgvuRHrRVoVfC3nxugFGJR5pyzxL4W7Q/edit#gid=0
 
 
-#define TBFP_PARSER_VARIABLES                                                            \
+#define TBFP_PARSER_VARIABLES                                                    \
      uint32_t load_len;   /*number of bytes downloaded in a packet*/             \
+     uint32_t rx_frame_len;   /*number of bytes in frame*/                       \
      uint16_t exp_payload_len;                                                   \
      uint16_t s_num;   /*frame serial number   */                                \
-     RxState_t rx_state;                                                         \
+     ProtocolRxState_t rx_state;                                                         \
      FifoChar_t RxFifo;
 
 //bool tbfp_proc_byte(TbfpHandle_t* instance, uint8_t rx_byte) ;

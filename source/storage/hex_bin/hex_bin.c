@@ -102,11 +102,11 @@ static bool hex_flash_write(HexBinHandle_t* const Node) {
     if(Node->frame.data) {
         if(Node->frame.rec_len) {
 #ifdef HAS_HEX_BIN_DIAG
-            LOG_PARN(HEX_BIN, "Write,Addr:0x%08x,Size:%3u Byte,Data:%s",
-                     Node->address.u32,
-                     Node->frame.rec_len,
-                     Data2Str(Node->frame.data, Node->frame.rec_len)
-                     );
+            LOG_DEBUG(HEX_BIN, "Write,Addr:0x%08x,Size:%3u Byte,Data:%s",
+                      Node->address.u32,
+                      Node->frame.rec_len,
+                      Data2Str(Node->frame.data, Node->frame.rec_len)
+                      );
 #endif
             uint32_t relative_adress = Node->address.u32 - Node->base_address;
             uint32_t relative_adress_end = relative_adress + Node->frame.rec_len;
@@ -114,11 +114,11 @@ static bool hex_flash_write(HexBinHandle_t* const Node) {
             if(relative_adress_end < Node->address_size_byte) {
                 res = true;
 #ifdef HAS_FW_LOADER
-                res = fw_loader_write(Node->fw_loader_num,
-                                      relative_adress,
-                                      Node->frame.data,
-                                      Node->frame.rec_len);
-                log_parn_res(HEX_BIN,  res, "FwLoaderWrite");
+                res = fw_loader_write_verify(Node->fw_loader_num,
+                                             relative_adress,
+                                             Node->frame.data,
+                                             Node->frame.rec_len);
+                log_parn_res(HEX_BIN,  res, "FwLoaderWriteVerify");
 #endif
 
 #ifdef HAS_FLASH
@@ -432,6 +432,7 @@ static bool hex_process_lines_of_file(HexBinHandle_t* const Node, bool write) {
                         LOG_PARN(HEX_BIN, "ProcOk,Line:%u", Node->line_cnt);
                     } else {
                         LOG_ERROR(HEX_BIN, "ProcErr,Line:%u", Node->line_cnt);
+                        break;
                     }
                 } else {
                     LOG_DEBUG(HEX_BIN, "GetLineLenErr,Len:%u Byte,Str:[%s]", read_len, Node->hex_line);

@@ -26,8 +26,8 @@ extern "C" {
 // https://docs.google.com/spreadsheets/d/1VAT3Ak7AzcufgvuRHrRVoVfC3nxugFGJR5pyzxL4W7Q/edit#gid=0
 #define TBFP_SIZE_ID 1
 #define TBFP_SIZE_CRC 1
-#define TBFP_RX_TIME_OUT_MS   10000
-#define TBFP_RX_TIME_OUT_ITER 40000
+#define TBFP_RX_TIME_OUT_MS   500
+#define TBFP_RX_TIME_OUT_ITER 4000
 
 #define TBFP_HEARTBEAT_PERIOD_US 10000000
 

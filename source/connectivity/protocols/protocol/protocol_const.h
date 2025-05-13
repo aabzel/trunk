@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 typedef enum {
-    WAIT_INIT = 0,
+    WAIT_UNDEF = 0,
     WAIT_PREAMBLE = 1,
     WAIT_FLAGS = 2,
     WAIT_SERIAL_NUM = 3,
@@ -15,9 +15,9 @@ typedef enum {
     WAIT_PAYLOAD = 7,
     WAIT_CRC = 8,
     WAIT_RETX_CNT = 9,
-    WAIT_UNDEF = 10,
     RX_DONE = 11,
-} RxState_t;
+    WAIT_INIT = 12,
+} ProtocolRxState_t;
 
 typedef enum {
 	PROTO_STACK_FRAME=1,

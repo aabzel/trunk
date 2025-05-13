@@ -72,15 +72,17 @@ bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint
             LOG_PARN(STORAGE, "%s", StorageFrameHeaderToStr(&HeaderStorage));
 #endif
 
+#ifdef HAS_TBFP
             TbfpHandle_t* Tbfp = TbfpGetNode(tbfp_num);
-            if(Tbfp){
-            	memcpy(&Tbfp->Storage,&HeaderStorage,sizeof(StorageFrameHeader_t));
+            if(Tbfp) {
+                memcpy(&Tbfp->Storage, &HeaderStorage, sizeof(StorageFrameHeader_t));
                 //Tbfp->Storage.size = HeaderStorage.size;
                 //Tbfp->Storage.asic_num = HeaderStorage.asic_num;
                 //Tbfp->Storage.asic_num = HeaderStorage.asic_num;
                 //Tbfp->Storage.operation = HeaderStorage.operation;
                 //Tbfp->Storage.operation = HeaderStorage.operation;
             }
+#endif
 
             switch(HeaderStorage.operation) {
 

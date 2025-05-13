@@ -424,7 +424,6 @@ bool tbfp_storage_write_generate(const uint8_t tbfp_num, const uint32_t address,
 				Header.len = payload_len;
 
 				memcpy(Node->TxFrame, &Header, sizeof(TbfpHeader_t));
-#if 1
                 StorageFrameHeader_t StorageData;
                 (void) StorageData;
                 StorageData.address = address;
@@ -434,14 +433,13 @@ bool tbfp_storage_write_generate(const uint8_t tbfp_num, const uint32_t address,
                 memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &StorageData, sizeof(StorageFrameHeader_t));
                 uint32_t data_index = sizeof(TbfpHeader_t) + sizeof(StorageFrameHeader_t);
                 (void)data_index;
-                //memcpy(&Node->TxFrame[data_index], data, size);
+                memcpy(&Node->TxFrame[data_index], data, size);
 
                 uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
                 Node->tx_size = frame_len + 1;
                 Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
 
                 LOG_PARN(TBFP, "%s",TbfpSrorageWriteToStr(Node,address,size));
-#endif
 				res = true;
 			}else{
 	            LOG_ERROR(TBFP, "TxBuffSeizeErr %u",Node->tx_array_size);
@@ -770,13 +768,13 @@ static bool tbfp_proc_cmd(uint8_t* payload, uint16_t len) {
 }
 #endif
 
-bool tbfp_parser_reset_rx(TbfpHandle_t* Node, RxState_t state) {
+bool tbfp_parser_reset_rx(TbfpHandle_t* Node, ProtocolRxState_t state) {
     bool res = false;
     if(Node) {
         Node->rx_state = WAIT_PREAMBLE;
         Node->load_len = 0;
 #ifdef HAS_PROTOCOL_DIAG
-        LOG_PARN(TBFP, "ResetFsmIn: %s", ProtocolRxState2Str(state));
+        LOG_PARN(TBFP, "ResetFsmIn:%s", ProtocolRxState2Str(state));
 #endif
         res = true;
     }
@@ -1336,6 +1334,8 @@ bool tbfp_proc_one(uint32_t num) {
 
 bool tbfp_init_custom(void) {
     bool res = true;
+    uint32_t cnt = tbfp_get_cnt();
+    LOG_WARNING(TBFP, "CNT:%u", cnt);
     return res;
 }
 
@@ -1370,7 +1370,7 @@ bool tbfp_init_one(uint32_t num) {
     const TbfpConfig_t* Config = TbfpGetConfig(num);
     if(Config) {
 #ifdef HAS_LOG
-        LOG_INFO(TBFP, "SpotConfig %u", num);
+    	LOG_WARNING(TBFP, "SpotConfig:%s", TbfpConfigToStr(Config));
 #endif
         TbfpHandle_t* Node = TbfpGetNode(num);
         if(Node) {
@@ -1410,7 +1410,6 @@ bool tbfp_init_one(uint32_t num) {
     return res;
 }
 
-COMPONENT_INIT_PATTERT_CNT(TBFP, TBFP, tbfp, 1)
 
 bool tbfp_proc(void) {
     bool res = true;
@@ -1452,3 +1451,5 @@ bool tbfp_heartbeat_proc(void) {
     return res;
 }
 #endif
+
+COMPONENT_INIT_PATTERT_CNT(TBFP, TBFP, tbfp, TBFP_CNT)

@@ -132,7 +132,7 @@ bool array_max_cont(const uint8_t* const arr, uint32_t size, uint8_t patt, uint3
     if(is_ram_addr((uint32_t)arr) && is_ram_addr((uint32_t)(arr + size))) {
         res = true;
     } else {
-        LOG_ERROR(SYS, "Not a RAM");
+        LOG_ERROR(ARRAY, "Not a RAM");
         res = false;
     }
 #else
@@ -225,7 +225,7 @@ bool array_u8_rand(uint8_t* const arr, uint32_t size, uint8_t min, uint8_t max) 
 }
 
 bool is_array_equal(uint8_t* array1, uint8_t* array2, uint32_t size, uint32_t* match, uint32_t* diff) {
-    LOG_DEBUG(SYS, "%s():", __FUNCTION__);
+    LOG_DEBUG(ARRAY, "%s():", __FUNCTION__);
     bool res = false;
     if(array1 && array2 && match && diff) {
         uint32_t i = 0;
@@ -241,10 +241,10 @@ bool is_array_equal(uint8_t* array1, uint8_t* array2, uint32_t size, uint32_t* m
         } else {
             res = false;
 #ifdef HAS_ARRAY_DIAG
-            LOG_ERROR(SYS, "Match:%u", *match);
-            LOG_ERROR(SYS, "Arr1");
+            LOG_ERROR(ARRAY, "Match:%u", *match);
+            LOG_ERROR(ARRAY, "Arr1");
             print_mem(array1, size, true, false, true, true);
-            LOG_ERROR(SYS, "Arr2");
+            LOG_ERROR(ARRAY, "Arr2");
             print_mem(array2, size, true, false, true, true);
 #endif
         }
@@ -319,9 +319,12 @@ double arr_sum_double(const double* const arr, uint32_t num) {
     return sum;
 }
 
-bool array_is_equal_ext(const uint8_t* const array1, const uint8_t* const array2, uint32_t size, uint32_t* const diff) {
+bool array_is_equal_ext(const uint8_t* const array1,
+		                const uint8_t* const array2,
+						const uint32_t size,
+						uint32_t* const diff) {
 #ifdef HAS_LOG
-    LOG_DEBUG(SYS, "%s():", __FUNCTION__);
+    LOG_DEBUG(ARRAY, "%s():", __FUNCTION__);
 #endif
     bool res = false;
     if(size) {
@@ -335,7 +338,7 @@ bool array_is_equal_ext(const uint8_t* const array1, const uint8_t* const array2
                 } else {
                     l_diff++;
 #ifdef HAS_LOG
-                    LOG_DEBUG(SYS, "Diff i=%u", i);
+                    LOG_DEBUG(ARRAY, "Diff i=%u,0x%02x!=0x%02x", i, array1[i], array2[i]);
 #endif
                 }
             }
@@ -356,7 +359,7 @@ bool array_is_equal_ext(const uint8_t* const array1, const uint8_t* const array2
 
 bool array_is_equal(const uint8_t* const array1, const uint8_t* const array2, uint32_t size) {
 #ifdef HAS_LOG
-    LOG_DEBUG(SYS, "%s():", __FUNCTION__);
+    LOG_DEBUG(ARRAY, "%s():", __FUNCTION__);
 #endif
     bool res = false;
     uint32_t diff = 0;
@@ -366,15 +369,15 @@ bool array_is_equal(const uint8_t* const array1, const uint8_t* const array2, ui
 
 #ifdef HAS_ARRAY_EXT
 bool array_shift_right(uint8_t* arr, uint32_t size, uint32_t shift) {
-    LOG_DEBUG(SYS, "%s(): Shift:%u", __FUNCTION__, shift);
+    LOG_DEBUG(ARRAY, "%s(): Shift:%u", __FUNCTION__, shift);
     bool res = false;
     if(arr) {
         if(size) {
             if((shift < size) && (0 < shift)) {
-                LOG_DEBUG(SYS, "ShiftNumbers:%u");
+                LOG_DEBUG(ARRAY, "ShiftNumbers:%u");
                 uint32_t i = 0;
                 for(i = (size - shift); shift <= i; i--) {
-                    LOG_DEBUG(SYS, "a[%u]=a[%u]", i, i - shift);
+                    LOG_DEBUG(ARRAY, "a[%u]=a[%u]", i, i - shift);
                     arr[i] = arr[i - shift];
                 }
                 memset(arr, 0, shift);
@@ -392,15 +395,15 @@ bool array_shift_right(uint8_t* arr, uint32_t size, uint32_t shift) {
 // 1 2 3 4 5 6 7; 1
 // 0 1 2 3 4 5 6
 bool array_s16_shift_right(int16_t* const arr, uint32_t size, uint32_t shift) {
-    LOG_DEBUG(SYS, "%s(): Shift:%u", __FUNCTION__, shift);
+    LOG_DEBUG(ARRAY, "%s(): Shift:%u", __FUNCTION__, shift);
     bool res = false;
     if(arr) {
         if(size) {
             if(shift < size) {
-                LOG_DEBUG(SYS, "ShiftNumbers:%u");
+                LOG_DEBUG(ARRAY, "ShiftNumbers:%u");
                 uint32_t i = 0;
                 for(i = (size - shift); shift <= i; i--) {
-                    LOG_DEBUG(SYS, "a[%u]=a[%u]", i, i - shift);
+                    LOG_DEBUG(ARRAY, "a[%u]=a[%u]", i, i - shift);
                     arr[i] = arr[i - shift];
                 }
                 memset(arr, 0, shift);
@@ -420,7 +423,7 @@ bool array_s16_shift_right(int16_t* const arr, uint32_t size, uint32_t shift) {
 
 #ifdef HAS_ARRAY_EXT
 bool array_add_front(uint8_t* arr, uint32_t size, uint8_t* prefix, uint32_t prefix_size) {
-    LOG_DEBUG(SYS, "%s():", __FUNCTION__);
+    LOG_DEBUG(ARRAY, "%s():", __FUNCTION__);
     bool res = false;
     if(prefix_size < size) {
         res = array_shift_right(arr, size, prefix_size);
@@ -870,10 +873,10 @@ bool array_s16_add_front_zeros(int16_t* const data, uint32_t size, int32_t offse
     if(data) {
         if(size) {
             if(offset) {
-                // LOG_INFO(SYS, "16bit,offset:%u,size:%u", offset,size);
+                // LOG_INFO(ARRAY, "16bit,offset:%u,size:%u", offset,size);
                 uint32_t i = 0;
                 // uint32_t move_cnt = size - offset;
-                // LOG_INFO(SYS, "move_cnt:%u", move_cnt);
+                // LOG_INFO(ARRAY, "move_cnt:%u", move_cnt);
                 for(i = (size - 1); offset <= i; i--) {
                     data[i] = data[i - offset];
                 }

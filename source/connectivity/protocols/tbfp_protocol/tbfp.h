@@ -44,7 +44,7 @@ bool tbfp_rx(uint8_t* const arr,
              uint32_t size,
              Interfaces_t inter_face);
 bool tbfp_parser_init(TbfpHandle_t* Node, const TbfpConfig_t* Config);
-bool tbfp_parser_reset_rx(TbfpHandle_t* Node, RxState_t state);
+bool tbfp_parser_reset_rx(TbfpHandle_t* Node, ProtocolRxState_t state);
 
 /*Tx API*/
 bool tbfp_send_ack(uint16_t snum, Interfaces_t inter_face);

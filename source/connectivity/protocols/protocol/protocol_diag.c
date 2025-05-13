@@ -13,7 +13,7 @@
 #include "sys_constants.h"
 #include "system_diag.h"
 
-char* ProtocolRxState2Str(RxState_t rx_state) {
+char* ProtocolRxState2Str(ProtocolRxState_t rx_state) {
     char* name = "?";
     switch((uint8_t)rx_state) {
     case WAIT_PREAMBLE:

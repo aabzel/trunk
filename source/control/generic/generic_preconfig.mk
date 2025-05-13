@@ -4,7 +4,7 @@ ifneq ($(GENERIC_PRECONFIG_INC),Y)
     FLASH=Y
     INTERRUPT=Y
     ADT=Y
-    TASK_DIAG=Y
+    #TASK_DIAG=Y
     #BOOT=Y
     MATH_LIB=Y
     SUPER_CYCLE_DIAG=Y

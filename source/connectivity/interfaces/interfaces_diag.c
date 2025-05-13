@@ -68,9 +68,11 @@ const char* InterfaceToStr(const Interfaces_t interface) {
         break;
 #endif /*HAS_LORA*/
 
+#ifdef HAS_SERIAL_PORT
     case IF_SERIAL_PORT:
         name = "Serial";
         break;
+#endif
 
 #ifdef HAS_RS232
     case IF_RS232:

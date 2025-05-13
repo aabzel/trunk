@@ -195,7 +195,8 @@ bool DataToValStrBuff(const uint8_t* const buff, size_t value_len, StorageType_t
             if(8 == value_len) {
                 Type64Union_t un64;
                 memcpy(&un64, buff, sizeof(Type64Union_t));
-                snprintf(out_str, str_size, "%" PRIu64, un64.u64);
+                snprintf(out_str, str_size, "%llu", un64.u64);
+                //snprintf(out_str, str_size, "%" PRIu64, un64.u64);
                 res = true;
             }
             break;
@@ -203,7 +204,8 @@ bool DataToValStrBuff(const uint8_t* const buff, size_t value_len, StorageType_t
             if(8 == value_len) {
                 Type64Union_t un64 = {0};
                 memcpy(&un64, buff, sizeof(Type64Union_t));
-                snprintf(out_str, str_size, "%" PRId64, un64.s64);
+                snprintf(out_str, str_size, "%llu", un64.s64);
+                //snprintf(out_str, str_size, "%" PRId64, un64.s64);
                 res = true;
             }
             break;

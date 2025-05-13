@@ -33,7 +33,7 @@ const TbfpConfig_t TbfpConfig[] = {
     .fix_frame = MemRxFrameFix,
     },
     {
-     .num = 1, 
+     .num = TBFP_NUM_STDIO,
      .inter_face = IF_STDIO,
      .RxArray = RxData1,
      .rx_array_size = sizeof(RxData1),
@@ -47,7 +47,7 @@ const TbfpConfig_t TbfpConfig[] = {
      },
 
     {
-        .num = 2,
+        .num = TBFP_NUM_LOOPBACK,
         .inter_face = IF_LOOPBACK,
         .RxArray = RxData2,
         .TxFrame=TxBuff2,
@@ -59,7 +59,7 @@ const TbfpConfig_t TbfpConfig[] = {
     },
 
     {
-        .num = 3,
+        .num = TBFP_NUM_BLACK_HOLE,
         .inter_face = IF_BLACK_HOLE,
         .RxArray = RxData3,
         .TxFrame = TxBuff3,
@@ -89,9 +89,9 @@ const TbfpConfig_t TbfpConfig[] = {
 
 TbfpHandle_t TbfpInstance[] = {
     {.num = TBFP_NUM_SERIAL_PORT, .valid = true,},
-    {.num = 1, .valid = true,},
-    {.num = 2, .valid = true,},
-    {.num = 3, .valid = true,},
+    {.num = TBFP_NUM_STDIO, .valid = true,},
+    {.num = TBFP_NUM_LOOPBACK, .valid = true,},
+    {.num = TBFP_NUM_BLACK_HOLE, .valid = true,},
 #ifdef HAS_UWB
     {.num = 5, .valid = true,},
 #endif

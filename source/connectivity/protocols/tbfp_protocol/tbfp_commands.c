@@ -18,6 +18,7 @@ bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]) {
     bool res = false;
     res = tbfp_storage_erase_generate(1);
     log_info_res(TBFP, res, "GenErase");
+    log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
     res = tbfp_terminal_print(1);
     return res;
 }
@@ -41,7 +42,9 @@ bool tbfp_generate_jump_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = tbfp_generate_jump(1, base_address);
+        log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
         log_info_res(TBFP, res, "GenJump");
+        res = tbfp_terminal_print(1);
     } else {
         LOG_ERROR(TBFP, "Usage: tgj addr");
     }
@@ -74,6 +77,7 @@ bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]) {
     	if(size<512){
         	memset(data,pattern,size);
             res = tbfp_storage_write_generate(1, address, data, size);
+            log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
             res = tbfp_terminal_print(1);
     	}
     } else {
@@ -99,6 +103,7 @@ bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = tbfp_storage_read_generate(1, address, size);
+        log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
         res = tbfp_terminal_print(1);
     } else {
         LOG_ERROR(TBFP, "Usage: tsrg addr size");

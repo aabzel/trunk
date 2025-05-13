@@ -124,7 +124,7 @@ bool is_little_endian(void) {
 static bool print_prog_type(void) {
     bool res = false;
     char lText[150] = "";
-    strcpy(text, "");
+    strcpy(lText, "");
 #ifdef CONFIG_NAME
     snprintf(lText, sizeof(lText), "%sConfig:%s,", lText, CONFIG_NAME);
 #endif

@@ -187,9 +187,9 @@ static bool serial_port_init_common(const SerialPortConfig_t* const Config,
 
 bool serial_port_close(  uint8_t com_port_num){
     bool res = false;
-	uint8_t num = serial_port_com_to_num( com_port_num);
-	SerialPortHandle_t* Node=SerialPortGetNode(num) ;
-	if(Node){
+    uint8_t num = serial_port_com_to_num( com_port_num);
+    SerialPortHandle_t* Node=SerialPortGetNode(num) ;
+    if(Node){
         if(Node->hComm ) {
           LOG_WARNING(SERIAL_PORT, "Close %p",Node->hComm  );
           BOOL ret = 0 ;
@@ -197,18 +197,22 @@ bool serial_port_close(  uint8_t com_port_num){
           ret = CloseHandle( Node->hComm );
           res = true;
         }
-	}
+    }
     return res;
 }
 
 
-bool serial_port_re_init_one(const uint8_t num,const  uint8_t com_port_num, const  uint32_t bit_rate) {
+bool serial_port_re_init_one(const uint8_t num,
+                             const uint8_t com_port_num,
+                             const uint32_t bit_rate,
+                             const uint32_t byte_tx_pause_ms) {
     bool res = false;
     LOG_WARNING(SERIAL_PORT, "Init:%u,COM%u,BitRate:%u bit/s", num, com_port_num, bit_rate);
         SerialPortHandle_t* Node = SerialPortGetNode(num);
         if(Node) {
-        	Node->com_port_num = com_port_num;
-        	Node->bit_rate = bit_rate;
+            Node->com_port_num = com_port_num;
+            Node->bit_rate = bit_rate;
+            Node->byte_tx_pause_ms = byte_tx_pause_ms;
             res = true;
 
             if(Node->hComm ) {
@@ -254,7 +258,7 @@ bool serial_port_init_one(uint8_t num ) {
         SerialPortHandle_t* Node = SerialPortGetNode(num);
         if(Node) {
             res = serial_port_init_common(Config, Node);
-            res = serial_port_re_init_one(  num, Node->com_port_num, Config->bit_rate);
+            res = serial_port_re_init_one(num, Node->com_port_num, Config->bit_rate, Node->byte_tx_pause_ms);
         }else{
             LOG_ERROR(SERIAL_PORT, "NodeErr %u", num);
         }

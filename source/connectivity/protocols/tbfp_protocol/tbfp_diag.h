@@ -24,9 +24,11 @@ const char* TbfpPayloadStorageToStr(const uint8_t* const payload );
 const char* TbfpHeaderToStr(const TbfpHeader_t* const Header);
 const char* TbfpNodeToStr(const TbfpHandle_t* const Node);
 const char* TbfpPayloadIdToStr(TbfpPayloadId_t id);
-const char* TbfpRxState2Str(RxState_t rx_state);
+const char* TbfpRxState2Str(ProtocolRxState_t rx_state);
 const char* TbfpFlagToStr(TbfpFrameFlags_t flags);
 const char* TbfpSrorageWriteToStr(const TbfpHandle_t*const  Node, uint32_t address, uint32_t size);
+
+const char* TbfpConfigToStr(const TbfpConfig_t* const Config);
 
 bool tbfp_print_ping_frame(TbfPingFrame_t* pingFrame);
 bool tbfp_diag(void);

@@ -77,36 +77,44 @@ bool fw_loader_download_command(int32_t argc, char* argv[]) {
 
 
 /*
-sc rx/OneRecording_30ms_31.wav tx/1Chirp_30ms_F44100Hz_Hamming.wav
- fw_loader_convolution rx/OneRecording_30ms_31.wav tx/1Chirp_30ms_F44100Hz_Hamming.wav
+  fwl FirmWareDump.bin 4 56000 1024
  */
 bool fw_loader_upload_command(int32_t argc, char* argv[]){
     bool res = false;
-    uint8_t num = 0 ;
-    char hex_file[100] = "";
+    uint8_t com_port_num = 0 ;
+    uint32_t bit_rate_hz = 56000 ;
+    uint32_t pause_ms = 20;
+    char fileName[200] = {0};
 
-
-    if ( 0<= argc) {
-        res = true;
+    if(0 <= argc) {
+        res = false;
     }
 
-    if ( 1<= argc) {
-        res = try_str2uint8(argv[0], &num);
-        log_info_res(FW_LOADER ,res, "Num");
+    if ( 1 <= argc) {
+        res = strcpy(fileName, argv[0]);
+        log_info_res(FW_LOADER ,res, "FileName");
     }
 
-    if(2<= argc) {
-        LOG_INFO(HEX_BIN, "argv0 [%s]", argv[1]);
-        strcpy(hex_file, argv[1]);
-        LOG_INFO(HEX_BIN, "FileName [%s]", hex_file);
-        res = true;
+    if ( 2 <= argc) {
+        res = try_str2uint8(argv[1], &com_port_num);
+        log_info_res(FW_LOADER ,res, "ComPort");
     }
 
-    if(res){
-        res = fw_loader_upload(num,hex_file);
-        log_info_res(FW_LOADER ,res, "UpLoad");
+    if ( 3 <= argc) {
+        res = try_str2uint32( argv[2], &bit_rate_hz);
+        log_info_res(FW_LOADER ,res, "BitRate");
+    }
+
+    if ( 4 <= argc) {
+        res = try_str2uint32( argv[3], &pause_ms);
+        log_info_res(FW_LOADER ,res, "Pause");
+    }
+
+    if(res) {
+        res = fw_loader_upload_file(fileName, com_port_num, bit_rate_hz, pause_ms);
+        log_info_res(FW_LOADER ,res, "UpLoadFile");
     }else {
-        LOG_ERROR(FW_LOADER, "Usage: fwl Num hex");
+        LOG_ERROR(FW_LOADER, "Usage: fwl FileName COMx BitRateHz BytePauseMs");
     }
 
     return res;
@@ -145,3 +153,40 @@ bool fw_loader_jump_command(int32_t argc, char* argv[]){
     return res;
 }
 
+/*
+ fwe 3 56000 20
+ * */
+bool fw_loader_erase_command(int32_t argc, char* argv[]){
+    bool res = false;
+    uint8_t com_port_num = 0 ;
+    uint32_t bit_rate_hz = 56000 ;
+    uint32_t pause_ms = 20;
+
+    if(0 <= argc) {
+        res = false;
+    }
+
+    if ( 1 <= argc) {
+        res = try_str2uint8(argv[0], &com_port_num);
+        log_info_res(FW_LOADER ,res, "ComPort");
+    }
+
+    if ( 2 <= argc) {
+        res = try_str2uint32( argv[1], &bit_rate_hz);
+        log_info_res(FW_LOADER ,res, "BitRate");
+    }
+
+    if ( 3 <= argc) {
+        res = try_str2uint32( argv[2], &pause_ms);
+        log_info_res(FW_LOADER ,res, "Pause");
+    }
+
+    if(res) {
+        res = fw_loader_erase_chip_cfg( com_port_num, bit_rate_hz, pause_ms);
+        log_info_res(FW_LOADER ,res, "EraseChip");
+    }else {
+        LOG_ERROR(FW_LOADER, "Usage: fwe   COMx BitRateHz BytePauseMs");
+    }
+
+    return res;
+}

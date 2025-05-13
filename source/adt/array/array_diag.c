@@ -206,9 +206,9 @@ const char* ArrayToAsciiStr(const uint8_t* const array, uint32_t size) {
 
 const char* ArrayToStr(const uint8_t* const array, uint32_t size) {
 	static char locText[300]={0};
-    memset(locText,0,300);
+    memset(locText,0,400);
     if(array) {
-        if(size) {
+        if((size*2) < (300)) {
             array2str(array, size, locText, sizeof(locText));
         }
     }

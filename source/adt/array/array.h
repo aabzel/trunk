@@ -48,7 +48,7 @@ bool array_u8_rand(uint8_t* const arr, uint32_t size, uint8_t min, uint8_t max);
 bool array_u8_sort(uint8_t* const arr, uint32_t size);
 bool array_add_front(uint8_t* arr, uint32_t size, uint8_t* prefix, uint32_t prefix_size);
 bool array_is_equal(const uint8_t* const array1, const uint8_t* const array2, uint32_t size);
-bool array_is_equal_ext(const uint8_t* const array1, const uint8_t* const array2, uint32_t size, uint32_t* const diff);
+bool array_is_equal_ext(const uint8_t* const array1, const uint8_t* const array2, const uint32_t size, uint32_t* const diff);
 bool array_is_same(const uint8_t* const addr, uint32_t len);
 bool array_pat_set(uint8_t* arr, uint32_t size, uint8_t patt);
 bool array_rand(uint8_t* arr, uint32_t size);

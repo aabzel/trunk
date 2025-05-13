@@ -12,8 +12,13 @@
 //#define TBFP_MAX_FRAME 512
 #define TBFP_MAX_TX_BUFF 512U
 
+#define TBFP_CNT 5
+
 typedef enum{
 	TBFP_NUM_UNDEF  =0,
+	TBFP_NUM_STDIO  =1,
+	TBFP_NUM_LOOPBACK  =2,
+	TBFP_NUM_BLACK_HOLE  =3,
 	TBFP_NUM_SERIAL_PORT  =4,
 }TbfpLegalNums_t;
 

@@ -19,13 +19,14 @@ char* HexQWord2Str(uint32_t qword) {
 
 char* HexQWordRevToStr(uint64_t qword) {
     uint64_t temp_qword = reverse_byte_order_uint64(qword);
-    // snprintf(text, sizeof(text), "0x%llx",temp_qword);
-    snprintf(text, sizeof(text), "0x%" PRIx64, temp_qword);
+    snprintf(text, sizeof(text), "0x%llx",temp_qword);
+    //snprintf(text, sizeof(text), "0x%" PRIx64, temp_qword);
     return text;
 }
 
 char* HexQWordToStr(uint64_t qword) {
-    snprintf(text, sizeof(text), "0x%" PRIx64, qword);
+    snprintf(text, sizeof(text), "0x%llu" , qword);
+    //snprintf(text, sizeof(text), "0x%" PRIx64, qword);
     return text;
 }
 

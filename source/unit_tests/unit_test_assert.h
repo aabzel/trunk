@@ -107,9 +107,9 @@
         uint64_t val1 = vala;                                                                                          \
         uint64_t val2 = valb;                                                                                          \
         if(val1 != val2) {                                                                                             \
-            LOG_ERROR(SYS, "%s():Line: %d in val1: %" PRIu64 " val2: %" PRIu64 "", __FUNCTION__, __LINE__, val1,       \
+            LOG_ERROR(SYS, "%s():Line: %d in val1: %llu"" val2: %llu" "", __FUNCTION__, __LINE__, val1,       \
                       val2);                                                                                           \
-            LOG_ERROR(SYS, "%s():Line: %d in val1: 0x%" PRIx64 " val2: 0x%" PRIx64 "", __FUNCTION__, __LINE__, val1,   \
+            LOG_ERROR(SYS, "%s():Line: %d in val1: 0x%llu"" val2: 0x%llu" "", __FUNCTION__, __LINE__, val1,   \
                       val2);                                                                                           \
             return false;                                                                                               \
         } else {                                                                                                       \
