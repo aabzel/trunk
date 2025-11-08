@@ -91,7 +91,7 @@
 #define IR_RECEIVER_TASK
 #endif
 
-#define SENSITIVITY_TASKS   \
+#define TASK_SENSITIVITY    \
     ADC_IF_TASK             \
     BUTTON_TASK             \
     HEALTH_MONITOR_TASK     \

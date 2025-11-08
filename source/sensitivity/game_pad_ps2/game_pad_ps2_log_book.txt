@@ -1,0 +1,23 @@
+
+
+Архитектура Хорошо Поддерживаемого Программного Компонента
+Well-Supported Software Component Architecture
+https://habr.com/ru/articles/683762/
+
+
+ll GamePadPs2 debug
+
+ll GamePadPs2 notice
+
+typedef union {
+    uint8_t byte;
+    struct{
+        uint8_t UP :1;        /* bit:0  */
+        uint8_t RIGHT :1;        /* bit:1  */
+        uint8_t DOWN :1;        /* bit:2  */
+        uint8_t LEFT :2;        /* bit:4-3  */
+        uint8_t L2 :1;     /* bit:5  */
+        uint8_t R2 :1;         /* bit:6  */
+        uint8_t L1 :1;    /* bit:7  */
+    };
+}GamePadPs2Data4_t;

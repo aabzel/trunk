@@ -1,0 +1,7 @@
+ifneq ($(GAME_PAD_PS2_PRECONFIG_INC),Y)
+    GAME_PAD_PS2_PRECONFIG_INC=Y
+    
+    GAME_PAD_PS2=Y
+    SPI=Y
+    GPIO=Y
+endif

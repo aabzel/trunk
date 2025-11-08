@@ -31,15 +31,7 @@
 #define CROSS_DETECT_INIT {.init_function=cross_detect_mcal_init, .name="CrossDetect",},
 #else
 #define CROSS_DETECT_INIT
-#endif
-
-#ifdef HAS_GAME_PAD_PS2
-#include "game_pad_ps2.h"
-#define GAME_PAD_PS2_INIT {.init_function=game_pad_ps2_mcal_init, .name="GamePadPs2",},
-#else
-#define GAME_PAD_PS2_INIT
-#endif
-
+#endif /*HAS_CROSS_DETECT*/
 
 #ifdef HAS_DISTANCE
 #include "distance_drv.h"
@@ -74,25 +66,16 @@
 #define HW_VERSION_INIT {.init_function=hw_version_mcal_init, .name="HwInit",},
 #else
 #define HW_VERSION_INIT
-#endif
-
-#ifdef HAS_IR_RECEIVER
-#include "ir_receiver_mcal.h"
-#define IR_RECEIVER_INIT {.init_function=ir_receiver_mcal_init, .name="IrRec",},
-#else
-#define IR_RECEIVER_INIT
-#endif
+#endif /*HAS_HW_VERSION*/
 
 /*order matters!*/
 #define SENSITIVITY_SW_INIT  \
      HEALTH_MONOTOR_INIT     \
      BUTTON_INIT             \
      DISTANCE_INIT           \
-     GAME_PAD_PS2_INIT       \
      HW_VERSION_INIT         \
      PHOTORESISTOR_INIT      \
      CROSS_DETECT_INIT       \
-     IR_RECEIVER_INIT        \
      LOAD_DETECT_INIT
 
 

@@ -50,10 +50,6 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
         include $(SENSITIVITY_DIR)/load_detect/load_detect.mk
     endif
 
-    ifeq ($(IR_RECEIVER),Y)
-        include $(SENSITIVITY_DIR)/ir_receiver/ir_receiver.mk
-    endif
-
     ifeq ($(PHOTORESISTOR),Y)
         include $(SENSITIVITY_DIR)/photoresistor/photoresistor.mk
     endif

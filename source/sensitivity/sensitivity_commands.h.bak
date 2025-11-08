@@ -83,17 +83,9 @@
 #define TIME_COMMANDS
 #endif
 
-#ifdef HAS_IR_RECEIVER_COMMANDS
-#include "ir_receiver_commands.h"
-#else
-#define IR_RECEIVER_COMMANDS
-#endif
-
-
 #define SENSITIVITY_COMMANDS    \
     BUTTON_COMMANDS             \
     DISTANCE_COMMANDS           \
-    IR_RECEIVER_COMMANDS        \
     CROSS_DETECT_COMMANDS       \
     GAME_PAD_PS2_COMMANDS       \
     GNSS_COMMANDS               \

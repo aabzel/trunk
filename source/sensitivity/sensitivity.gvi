@@ -6,4 +6,15 @@ subgraph cluster_sensitivity{
     color=oldlace;
 
 
+
 }
+
+#ifdef HAS_IR_RECEIVER
+#include "ir_receiver.gvi"
+#endif
+
+#ifdef HAS_BUTTON
+#include "button.gvi"
+#endif
+
+#include "time.gvi"

@@ -1,0 +1,4 @@
+
+config GAME_PAD_PS2
+    bool "Enable use of the GAME_PAD_PS2 drivers"
+
