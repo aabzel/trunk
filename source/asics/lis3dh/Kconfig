@@ -1,0 +1,4 @@
+
+config HW_AMP_LIS3DH
+    bool "Enable use of the LIS3DH driver"
+

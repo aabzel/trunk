@@ -1,0 +1,10 @@
+GPIO->LIS3DH
+
+#ifdef HAS_I2C
+    I2C->LIS3DH
+#endif
+
+#ifdef HAS_SPI
+    SPI->LIS3DH
+#endif
+

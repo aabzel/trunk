@@ -1,0 +1,80 @@
+scan I2C addresses
+
+tcr 1 0;tcr 0 0;ll i2c debug;i2cfc 1 0x19
+
+tcr 1 0;tcr 0 0;ll i2c debug;i2cfc 1 0x19;i2cfc 1 0x33
+
+tcr 1 0;tcr 0 0;ll i2c debug;i2cfc 1 0x32
+
+
+tcr 1 0;tcr 0 0;ll i2c debug;i2cfc 1 0x32;i2cfc 1 0x19;i2cfc 1 0x33
+
+tcr 1 0;tcr 0 0;ll i2c info;i2cfs 1 
+
+tcr 1 0;tcr 0 0;ll i2c debug;i2cfc 1 0x32;i2cfc 1 0x19;i2cfc 1 0x33
+i2csp 1 1
+
+Read register from I2C1 chip 0x31 reg 0x27
+i2crr 1 0x31 0x27;i2crr 1 0x19 0x27;i2crr 1 0x18 0x27;i2crr 1 0x33 0x27;i2cd ;
+
+lirm
+р 
+
+h i2c stop
+
+
+rpt lid 1000 1000
+
+ll BlackBox debug
+
+----+----------------+-----+----------+
+|  1 | 19 |       BlackBox |   0 |     INFO
+i2cs 1
+
+i2crr 1 0x19 0x0F
+
+raw reg
+i2cra 1
+
+i2crw 1 0x19 0x3B 0x00
+
+
+
+tdi
+
+
+h i2c scan
+
+tcr 1 0;tcr 0 0;ll i2c info;i2cfs 1
+ 
+tcr 1 0;tcr 0 0
+
+i2ci 1;i2cra 1
+
+ll i2c debug;i2cfc 1 0x19
+h i2c scan 1
+
+tcr 1 0;tcr 0 0;ll i2c debug;i2cfc 1 0x32;i2cfc 1 0x19,i2cfc 1 0x33;
+
+Не происходят прерывания по I2C1
+
+--прерывания активированы
+    I2C1_EVT_IRQn               = 31,     /*!< i2c1 event interrupt                                 */
+    I2C1_ERR_IRQn               = 32,     /*!< i2c1 error interrupt                                 */
+
+--базовый адрес  тот 0x40005400 (0x40005400 - 0x4000 57FF I2C1)
+
+
+IOMUX_REMAPx
+IOMUX_REMAP
+//Multiplexed function IO remap
+0011: SCL/PF6,SDA/PF7 SMBA/PB5
+ 54.225-->gl
++-----+-------+-------+--------+--------+-------+------+-----+-----+------------+---------------+
+| No  |  pad  | level |  mode  |  Fun   |  dir  | pull |MuxS |MuxG |  connect2  |     name      |
++-----+-------+-------+--------+--------+-------+------+-----+-----+------------+---------------+
+|   2 |   PF6 |   H   |   ALT2 |    Mux | OutOd |   Up |   0 |   0 |            |      I2C1_SCL |
+|   3 |   PF7 |   H   |   ALT2 |    Mux | OutOd |   Up |   0 |   0 |            |      I2C1_SDA |
++-----+-------+-------+--------+--------+-------+------+-----+-----+------------+---------------+
+
+0x4001 0000 - 0x4001 03FF IOMUX

@@ -1,0 +1,10 @@
+ifneq ($(LIS3DH_PRECONFIG_INC),Y)
+    LIS3DH_PRECONFIG_INC=Y
+
+    LIS3DH=Y
+    #I2C=Y
+    #SPI=Y
+    GPIO=Y
+    ACCELEROMETER=Y
+    VECTOR_MATH=Y
+endif
