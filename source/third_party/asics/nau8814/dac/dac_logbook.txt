@@ -1,0 +1,36 @@
+Ð’Ð¾Ñ�Ð¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÑ�Ñ‚Ð¸ 1kHz Ð½Ð° 10 Ñ�ÐµÐº
+no  1000 10000
+
+
+
+noc  10000 1000000
+
+h nau init 
+
+ÐŸÑ€Ð¸Ñ‡Ð¸Ð½Ð°
+ 
+ 
+ 
+ npc 2000 20000 3000000
+ 
+ i2sw 2 0x55555555 2
+ 
+ 
+  np FreqHz Amp DurationMs
+  
+  
+  
+  0.419,332 I,[SYS] F_Size:4032 kByte,ID:0x0D=AT32F435
+0.419,333 I,[SYS] Mem:0x5D93A03000C085402287E40D
+0.429,334 I,[SYS] UID:0x0DE487224085C00030A0935D
+0.429,335 I,[HMON] Init Mcu OK
+
+
+
+0.429,332 I,[SYS] F_Size:4032 kByte,ID:0x0D=AT32F435
+0.429,333 I,[SYS] Mem:0x5693A03000C085402287640D
+0.439,334 I,[SYS] UID:0x0D6487224085C00030A09356
+0.439,335 I,[HMON] Init Mcu OK
+
+
+

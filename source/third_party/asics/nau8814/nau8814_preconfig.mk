@@ -1,0 +1,14 @@
+ifneq ($(NAU8814_PRECONFIG_INC),Y)
+    NAU8814_PRECONFIG_INC=Y
+
+    NAU8814_DIR = $(ASICS_DIR)/nau8814
+
+    NAU8814=Y
+    #I2S=Y
+    ASICS=Y
+    PCM_16_BIT=Y
+    I2C=Y
+    PWM=Y
+    AUDIO=Y
+    GPIO=Y
+endif

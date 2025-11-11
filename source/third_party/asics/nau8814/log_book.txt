@@ -1,0 +1,61 @@
+h nau ehal
+
+noc 20000 5000
+
+  3.828-->
+  3.948-->h nau ehal
+argc 2
+AvailableCommands:Key1:nau
+Key2:ehal
+
+ll i2c info 
+nrr 5
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |       no |     nau8814_play1kHz | Nau8814Play1kHz
+|   2 |       np |         nau8814_play | Nau8814Play
+|   3 |       ng |     nau8814_dac_gain | Nau8814DacGain
+|   4 |      npi | nau8814_play_infinite | Nau8814PlayInfinite
+|   5 |      nal |       nau8814_listen | Nau8814Listen
+|   6 |      nad |     nau8814_adc_diag | Nau8814AdcDiag
+|   7 |      nap |         nau8814_ping | Nau8814Ping
+|   8 |      nrm |          nau8814_map | Nau8814RegMap
+|   9 |      nrh |         nau8814_hazy | Nau8814RegHazy
+|  10 |      nrr |         nau8814_read | Nau8814RegRead
+|  11 |      nrw |        nau8814_write | Nau8814RegWrite
+|  12 |      ndl |      nau8814_diag_ll | Nau8814DiagLowLevel
+|  13 |      ndh |  nau8814_diag_hi_lev | Nau8814DiagHiLevel
+|  14 |       ni |         nau8814_init | Nau8814Init
+|  15 |       nt |        nau8814_reset | Nau8814Reset
++-----+----------+----------------------+-------------+
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |     napc |         Nau8814_ping | Nau8814PingEhal
+|   2 |     nrmc |          Nau8814_map | Nau8814RegMapEhal
+|   3 |     nrhc |         Nau8814_hazy | Nau8814RegHazyEhal
+|   4 |     nrrc |         Nau8814_read | Nau8814RegReadEhal
+|   5 |     nrwc |        Nau8814_write | Nau8814RegWriteEhal
+|   6 |     ndhc | NAU8814_diagnostic_hi_lev | Nau8814DiagHiLevelEhal
+|   7 |      nic |         Nau8814_init | Nau8814InitEhal
+|   8 |     ndic |       Nau8814_deinit | Nau8814DeInitEhal
+|   9 |      ntc |        Nau8814_reset | Nau8814ResetEhal
+|  10 |     nadc |       Nau8814AdcDiag | Nau8814AdcDiagEhal
+|  11 |     nalc |        Nau8814Listen | Nau8814ListenEhal
+|  12 |      noc |     NAU8814_play1kHz | Nau8814Play1kHzEhal
+|  13 |      npc |         NAU8814_play | Nau8814PlayEhal
+|  14 |      ngc |      NAU8814_dacGain | Nau8814DacGainEhal
+|  15 |     npic | NAU8814_play_infinite | Nau8814PlayInfiniteEhal
++-----+----------+----------------------+-------------+
+
+
+
+uint8_t nau8814_compose_register_address(uint8_t const register_address) {
+    uint8_t addr_val = register_address;
+    addr_val = addr_val << 1;
+    RESET_BIT_NUM(addr_val, 0);
+    return addr_val;
+}
