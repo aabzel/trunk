@@ -1,0 +1,4 @@
+
+config HW_LIS3DH_EHAL
+    bool "Enable use of the EHAL LIS3DH driver"
+

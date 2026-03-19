@@ -1,0 +1,10 @@
+#ifndef DISCRETE_FOURIER_TRANSFORM_CONST_H
+#define DISCRETE_FOURIER_TRANSFORM_CONST_H
+
+#include "discrete_fourier_transform_dep.h"
+
+#define PI_VAL 3.14159
+#define DFT_ALLOWABLE_FREQ_ERR_HZ 150.0
+#define TWO_PI_VAL (2.0*PI_VAL)
+
+#endif /* DISCRETE_FOURIER_TRANSFORM_CONST_H */

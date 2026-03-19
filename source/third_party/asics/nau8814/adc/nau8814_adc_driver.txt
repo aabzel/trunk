@@ -1,0 +1,12 @@
+NAU8814_ADC_Ctrl function    126 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_Ctrl(const U8 num,
+NAU8814_ADC_CtrlRecord function    155 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_CtrlRecord(const U8 num,
+NAU8814_ADC_DeInit function    188 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_DeInit(const U8 num)
+NAU8814_ADC_GetAdc function    216 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_GetAdc(const U8 num,
+NAU8814_ADC_GetAuxGain function    241 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_GetAuxGain(const U8 num,
+NAU8814_ADC_GetPgaGain function    269 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_GetPgaGain(const U8 num,
+NAU8814_ADC_SetPgaGain function    297 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_SetPgaGain(const U8 num,
+NAU8814_ADC_GetPmicGain function    325 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_GetPmicGain(const U8 num,
+NAU8814_ADC_Init function    352 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_Init(const U8 num)
+NAU8814_ADC_Listen function    381 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_Listen(const U8 num,
+NAU8814_ADC_SetAuxGain function    415 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_SetAuxGain(const U8 num,
+NAU8814_ADC_SetPmicGain function    444 C:\\projects\\code_base_workspace\\era_test\\source\\third_party\\asics\\nau8814\\adc\\nau8814_adc_driver.c STD_RESULT NAU8814_ADC_SetPmicGain(const U8 num,
