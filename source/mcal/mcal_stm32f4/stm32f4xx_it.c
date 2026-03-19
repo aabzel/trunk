@@ -8,7 +8,7 @@
 
 #ifdef HAS_SD
 extern SD_HandleTypeDef hsd;
-#endif /*HAS_SD*/
+#endif
 
 #ifdef HAS_CRYP_HW
 void CRYP_IRQHandler(void) {
@@ -24,16 +24,25 @@ void NMI_Handler(void) {
     }
 }
 
-#ifdef HAS_CAN
-void CAN1_TX_IRQHandler(void) {}
-void CAN1_RX0_IRQHandler(void) {}
-void CAN2_TX_IRQHandler(void) {}
-void CAN2_RX0_IRQHandler(void) {}
-void CAN2_SCE_IRQHandler(void) {}
-void CAN2_RX1_IRQHandler(void) {}
-void CAN1_RX1_IRQHandler(void) {}
-void CAN1_SCE_IRQHandler(void) {}
+#ifdef HAS_CAN_CUSTOM_INTERRUPT
+
+#ifdef HAS_CAN1
+void CAN1_TX_IRQHandler(void) { CANx_IRQHandler(1); }
+void CAN1_RX0_IRQHandler(void) { CANx_IRQHandler(1); }
+void CAN1_RX1_IRQHandler(void) { CANx_IRQHandler(1); }
+void CAN1_SCE_IRQHandler(void) { CANx_IRQHandler(1); }
 #endif
+
+#ifdef HAS_CAN2
+void CAN2_TX_IRQHandler(void) { CANx_IRQHandler(2); }
+void CAN2_RX0_IRQHandler(void) { CANx_IRQHandler(2); }
+void CAN2_SCE_IRQHandler(void) { CANx_IRQHandler(2); }
+void CAN2_RX1_IRQHandler(void) { CANx_IRQHandler(2); }
+#endif
+
+#endif
+
+
 void FSMC_IRQHandler(void) {}
 void WWDG_IRQHandler(void) {}
 void RCC_IRQHandler(void) {}
@@ -231,15 +240,8 @@ void RTC_WKUP_IRQHandler(void) {
 #endif
 }
 
-void UART5_IRQHandler(void) {}
-//void OTG_HS_WKUP_IRQHandler(void) {}
-//void UART4_IRQHandler(void) {}
-//void TIM7_IRQHandler(void) {}
-//void TIM6_DAC_IRQHandler(void) {}
-//void TIM8_CC_IRQHandler(void) {}
-//void TIM8_TRG_COM_TIM14_IRQHandler(void) {}
-void TIM8_BRK_TIM12_IRQHandler(void) {}
-void TIM8_UP_TIM13_IRQHandler(void) {}
+// void OTG_HS_WKUP_IRQHandler(void) {}
+// void UART4_IRQHandler(void) {}
 void OTG_FS_WKUP_IRQHandler(void) {}
 
 void PVD_IRQHandler(void) {
@@ -256,9 +258,9 @@ void HardFault_Handler(void) {
         "MRSEQ %[ptr], MSP  \n" // Yes, keep the main stack pointer
         "MRSNE %[ptr], PSP  \n" // No, we keep the process stack pointer
         : [ ptr ] "=r"(stack_ptr));
+#endif
     while(1) {
     }
-#endif
 }
 
 void MemManage_Handler(void) {
@@ -300,13 +302,11 @@ void DebugMon_Handler(void) {
  */
 
 void SPI1_IRQHandler(void) {
-#if defined(HAS_SPI1) || defined(HAS_I2S1)
 #ifdef HAS_SPI1
-    SpiHandle_t* SpiNode = SpiGetNode(1);
-    if(SpiNode) {
-        HAL_SPI_IRQHandler(&SpiNode->handle);
-    }
-#endif /*HAS_SPI1*/
+    SPIx_IRQHandler(1);
+#endif
+
+#if defined(HAS_I2S1)
 
 #ifdef HAS_I2S1
     I2sHandle_t* I2sNode = I2sGetNode(1);
@@ -318,13 +318,12 @@ void SPI1_IRQHandler(void) {
 }
 
 void SPI2_IRQHandler(void) {
-#if defined(HAS_SPI2) || defined(HAS_I2S2)
 #ifdef HAS_SPI2
-    SpiHandle_t* SpiNode = SpiGetNode(2);
-    if(SpiNode) {
-        HAL_SPI_IRQHandler(&SpiNode->handle);
-    }
-#endif /*HAS_SPI2*/
+    SPIx_IRQHandler(2);
+#endif
+
+#if defined(HAS_I2S2)
+
 #ifdef HAS_I2S2
     I2sHandle_t* I2sNode = I2sGetNode(2);
     if(I2sNode) {
@@ -335,13 +334,11 @@ void SPI2_IRQHandler(void) {
 }
 
 void SPI3_IRQHandler(void) {
-#if defined(HAS_SPI3) || defined(HAS_I2S3)
 #ifdef HAS_SPI3
-    SpiHandle_t* SpiNode = SpiGetNode(3);
-    if(SpiNode) {
-        HAL_SPI_IRQHandler(&SpiNode->handle);
-    }
-#endif /*HAS_SPI3*/
+    SPIx_IRQHandler(3);
+#endif
+
+#if defined(HAS_I2S3)
 #ifdef HAS_I2S3
     I2sHandle_t* I2sNode = I2sGetNode(3);
     if(I2sNode) {
@@ -352,47 +349,43 @@ void SPI3_IRQHandler(void) {
 }
 
 void SPI4_IRQHandler(void) {
-#if defined(HAS_SPI4) || defined(HAS_I2S4)
 #ifdef HAS_SPI4
-    SpiHandle_t* SpiNode = SpiGetNode(4);
-    if(SpiNode) {
-        HAL_SPI_IRQHandler(&SpiNode->handle);
-    }
+    SPIx_IRQHandler(4);
 #endif
+
+#if defined(HAS_I2S4)
+
 #ifdef HAS_I2S4
     I2sHandle_t* I2sNode = I2sGetNode(4);
     if(I2sNode) {
         HAL_I2S_IRQHandler(&I2sNode->i2s_h);
     }
-#endif /*HAS_I2S4*/
+#endif
 #endif
 }
 
 void SPI5_IRQHandler(void) {
-#if defined(HAS_SPI5) || defined(HAS_I2S5)
 #ifdef HAS_SPI5
-    SpiHandle_t* SpiNode = SpiGetNode(5);
-    if(SpiNode) {
-        HAL_SPI_IRQHandler(&SpiNode->handle);
-    }
-#endif /**/
+    SPIx_IRQHandler(5);
+#endif
+
+#if defined(HAS_I2S5)
+
 #ifdef HAS_I2S5
     I2sHandle_t* I2sNode = I2sGetNode(5);
     if(I2sNode) {
         HAL_I2S_IRQHandler(&I2sNode->i2s_h);
     }
-#endif /*HAS_I2S5*/
+#endif
 #endif
 }
 
-#ifdef HAS_NORTOS
 void SysTick_Handler(void) {
     HAL_IncTick();
-#ifdef HAS_SYSTICK_INT
+#ifdef HAS_SYSTICK_INTERRUPT
     SysTickIntHandler();
-#endif /**/
+#endif
 }
-#endif /*HAS_NORTOS*/
 
 /******************************************************************************/
 /* STM32F4xx Peripheral Interrupt Handlers                                    */
@@ -409,9 +402,9 @@ void SDIO_IRQHandler(void) {
     SdioHandle_t* Node = SdioGetNode(1);
     if(Node) {
         Node->it_cnt++;
-        HAL_SD_IRQHandler(&Node->sdio_h);
+        HAL_SD_IRQHandler(&Node->Handle);
     }
-#endif /*HAS_SDIO*/
+#endif
 }
 
 void USART1_IRQHandler(void) {
@@ -420,7 +413,7 @@ void USART1_IRQHandler(void) {
     if(Node) {
         HAL_UART_IRQHandler(&Node->uart_h);
     }
-#endif /*HAS_UART1*/
+#endif
 }
 
 void USART2_IRQHandler(void) {
@@ -429,7 +422,7 @@ void USART2_IRQHandler(void) {
     if(Node) {
         HAL_UART_IRQHandler(&Node->uart_h);
     }
-#endif /*HAS_UART2*/
+#endif
 }
 
 void USART3_IRQHandler(void) {
@@ -438,7 +431,16 @@ void USART3_IRQHandler(void) {
     if(Node) {
         HAL_UART_IRQHandler(&Node->uart_h);
     }
-#endif /*HAS_UART3*/
+#endif
+}
+
+void UART5_IRQHandler(void) {
+#ifdef HAS_UART5
+    UartHandle_t* Node = UartGetNode(5);
+    if(Node) {
+        HAL_UART_IRQHandler(&Node->uart_h);
+    }
+#endif
 }
 
 void USART6_IRQHandler(void) {
@@ -447,118 +449,77 @@ void USART6_IRQHandler(void) {
     if(Node) {
         HAL_UART_IRQHandler(&Node->uart_h);
     }
-#endif /*HAS_UART6*/
+#endif
 }
 
+/*External interrupts*/
 void EXTI0_IRQHandler(void) {
-#ifdef HAS_EXTI
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+#ifdef HAS_EXT_INT
+    EXINTx_IRQHandler(0);
 #endif
 }
 
 void EXTI1_IRQHandler(void) {
-#ifdef HAS_EXTI
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+#ifdef HAS_EXT_INT
+    EXINTx_IRQHandler(1);
 #endif
 }
 
 void EXTI2_IRQHandler(void) {
-#ifdef HAS_EXTI
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
+#ifdef HAS_EXT_INT
+    EXINTx_IRQHandler(2);
 #endif
 }
 
 void EXTI3_IRQHandler(void) {
-#ifdef HAS_EXTI
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_3);
-#endif /**/
+#ifdef HAS_EXT_INT
+    EXINTx_IRQHandler(3);
+#endif
 }
 
 void EXTI4_IRQHandler(void) {
-#ifdef HAS_EXTI
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
-#endif /**/
+#ifdef HAS_EXT_INT
+    EXINTx_IRQHandler(4);
+#endif
 }
 
 void EXTI9_5_IRQHandler(void) {
-#ifdef HAS_EXTI
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_7);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);
-#endif /**/
+#ifdef HAS_EXT_INT
+    EXINTx_IRQHandler(5);
+    EXINTx_IRQHandler(6);
+    EXINTx_IRQHandler(7);
+    EXINTx_IRQHandler(8);
+    EXINTx_IRQHandler(9);
+#endif
 }
 
 void EXTI15_10_IRQHandler(void) {
-#ifdef HAS_EXTI
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
-    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
-#endif /*HAS_EXTI*/
-}
-
-void OTG_FS_IRQHandler(void) {
-#ifdef HAS_USB
-    UsbHandle_t* Node = NULL;
-#ifdef HAS_USB_DEVICE
-    // HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
-    Node = UsbGetNodeBySpeed(USB_SPEED_FS);
-    if(Node) {
-        HAL_PCD_IRQHandler(&Node->hpcd_USB_OTG);
-    }
-#endif /*HAS_USB_DEVICE*/
-
-#ifdef HAS_USB_HOST
-    Node = UsbGetNodeBySpeed(USB_SPEED_FS);
-    if(Node) {
-        HAL_HCD_IRQHandler(&Node->hhcd_USB_OTG);
-    }
-#endif /*HAS_USB_HOST*/
+#ifdef HAS_EXT_INT
+    EXINTx_IRQHandler(10);
+    EXINTx_IRQHandler(11);
+    EXINTx_IRQHandler(12);
+    EXINTx_IRQHandler(13);
+    EXINTx_IRQHandler(14);
+    EXINTx_IRQHandler(15);
 #endif
-}
-
-void OTG_HS_EP1_OUT_IRQHandler(void) {
-#ifdef HAS_USB
-    UsbHandle_t* Node = NULL;
-    Node = UsbGetNodeBySpeed(USB_SPEED_HS);
-    if(Node) {
-#ifdef HAS_USB_DEVICE
-        // HAL_PCD_IRQHandler(&hpcd_USB_OTG_HS);
-        if(USB_ROLE_DEVICE == Node->role) {
-            HAL_PCD_IRQHandler(&Node->hpcd_USB_OTG);
-        }
-#endif /*HAS_USB_DEVICE*/
-
-#ifdef HAS_USB_HOST
-        if(USB_ROLE_HOST == Node->role) {
-            HAL_HCD_IRQHandler(&Node->hhcd_USB_OTG);
-        }
-#endif
-    }
-#endif /*HAS_USB*/
 }
 
 /**
  * @brief This function handles USB On The Go HS End Point 1 In global interrupt.
  */
 void OTG_HS_EP1_IN_IRQHandler(void) {
-#ifdef HAS_USB
+#ifdef HAS_USB_INTERRUPT
     UsbHandle_t* Node = NULL;
-    Node = UsbGetNodeBySpeed(USB_SPEED_HS);
+    Node = UsbGetNodeBySpeed(USB_MCAL_SPEED_HS);
     if(Node) {
 #ifdef HAS_USB_DEVICE
-        // HAL_PCD_IRQHandler(&hpcd_USB_OTG_HS);
-        if(USB_ROLE_DEVICE == Node->role) {
-            HAL_PCD_IRQHandler(&Node->hpcd_USB_OTG);
+        if(USB_MCAL_ROLE_DEVICE == Node->role) {
+            HAL_PCD_IRQHandler(&Node->PcdHandle);
         }
-#endif /*HAS_USB_DEVICE*/
+#endif
 
 #ifdef HAS_USB_HOST
-        if(USB_ROLE_HOST == Node->role) {
+        if(USB_MCAL_ROLE_HOST == Node->role) {
             HAL_HCD_IRQHandler(&Node->hhcd_USB_OTG);
         }
 #endif
@@ -566,139 +527,124 @@ void OTG_HS_EP1_IN_IRQHandler(void) {
 #endif
 }
 
-void OTG_HS_IRQHandler(void) {
-#ifdef HAS_USB
-    UsbHandle_t* Node = UsbGetNodeBySpeed(USB_SPEED_HS);
-    if(Node) {
-#ifdef HAS_USB_DEVICE
-        // HAL_PCD_IRQHandler(&hpcd_USB_OTG_HS);
-        if(USB_ROLE_DEVICE == Node->role) {
-            HAL_PCD_IRQHandler(&(Node->hpcd_USB_OTG));
-        }
-#endif /*HAS_USB_DEVICE*/
-
-#ifdef HAS_USB_HOST
-        if(USB_ROLE_HOST == Node->role) {
-            HAL_HCD_IRQHandler(&(Node->hhcd_USB_OTG));
-        }
-#endif
-    }
-#endif
-}
+/* HW Timers */
 
 void TIM1_UP_TIM10_IRQHandler(void) {
-#if defined(HAS_TIMER1) || defined(HAS_TIMER10)
+
 #ifdef HAS_TIMER1
-    TimerHandle_t* Node = NULL;
-    Node = TimerGetNode(1);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER1*/
+    TIMx_IRQHandler(1);
+#endif
+
 #ifdef HAS_TIMER10
-    TimerHandle_t* Node = NULL;
-    Node = TimerGetNode(10);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER10*/
-#endif /*  HAS_TIMER1 HAS_TIMER10  */
+    TIMx_IRQHandler(10);
+#endif
 }
 
 void TIM1_TRG_COM_TIM11_IRQHandler(void) {
-#if defined(HAS_TIMER1) || defined(HAS_TIMER11)
-    TimerHandle_t* Node = NULL;
 #ifdef HAS_TIMER1
-    Node = TimerGetNode(1);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER10*/
+    TIMx_IRQHandler(1);
+#endif
+
 #ifdef HAS_TIMER11
-    Node = TimerGetNode(11);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER11*/
-#endif /**/
+    TIMx_IRQHandler(11);
+#endif
 }
 
 void TIM1_CC_IRQHandler(void) {
 #ifdef HAS_TIMER1
-    TimerHandle_t* Node = NULL;
-    Node = TimerGetNode(1);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER1*/
+    TIMx_IRQHandler(1);
+#endif
 }
 
 void TIM2_IRQHandler(void) {
 #ifdef HAS_TIMER2
-    TimerHandle_t* Node = NULL;
-    Node = TimerGetNode(2);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER2*/
+    TIMx_IRQHandler(2);
+#endif
 }
 
 void TIM3_IRQHandler(void) {
 #ifdef HAS_TIMER3
-    TimerHandle_t* Node = NULL;
-    Node = TimerGetNode(3);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER3*/
+    TIMx_IRQHandler(3);
+#endif
 }
 
 void TIM4_IRQHandler(void) {
 #ifdef HAS_TIMER4
-    TimerHandle_t* Node = NULL;
-    Node = TimerGetNode(4);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER4*/
+    TIMx_IRQHandler(4);
+#endif
 }
 
 void TIM5_IRQHandler(void) {
 #ifdef HAS_TIMER5
-    TimerHandle_t* Node = NULL;
-    Node = TimerGetNode(5);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER5*/
+    TIMx_IRQHandler(5);
+#endif
+}
+
+void TIM6_DAC_IRQHandler(void) {
+#ifdef HAS_TIMER6
+    TIMx_IRQHandler(6);
+#endif
+}
+
+void TIM7_IRQHandler(void) {
+#ifdef HAS_TIMER7
+    TIMx_IRQHandler(7);
+#endif
+}
+
+void TIM8_UP_TIM13_IRQHandler(void) {
+#ifdef HAS_TIMER8
+    TIMx_IRQHandler(8);
+#endif
+
+#ifdef HAS_TIMER13
+    TIMx_IRQHandler(13);
+#endif
+}
+
+void TIM8_BRK_TIM12_IRQHandler(void) {
+#ifdef HAS_TIMER8
+    TIMx_IRQHandler(8);
+#endif
+#ifdef HAS_TIMER12
+    TIMx_IRQHandler(12);
+#endif
+}
+
+void TIM8_CC_IRQHandler(void) {
+#ifdef HAS_TIMER8
+    TIMx_IRQHandler(8);
+#endif
+}
+
+void TIM8_TRG_COM_TIM14_IRQHandler(void) {
+#ifdef HAS_TIMER8
+    TIMx_IRQHandler(8);
+#endif
+
+#ifdef HAS_TIMER14
+    TIMx_IRQHandler(14);
+#endif
 }
 
 void TIM1_BRK_TIM9_IRQHandler(void) {
-#if defined(HAS_TIMER1) || defined(HAS_TIMER9)
-    TimerHandle_t* Node = NULL;
+
 #ifdef HAS_TIMER1
-    Node = TimerGetNode(1);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER1*/
+    TIMx_IRQHandler(1);
+#endif
 
 #ifdef HAS_TIMER9
-    Node = TimerGetNode(9);
-    if(Node) {
-        HAL_TIM_IRQHandler(&Node->timer_h);
-    }
-#endif /*HAS_TIMER9*/
-#endif /*HAS_TIMER1 or HAS_TIMER9*/
+    TIMx_IRQHandler(9);
+#endif
 }
-
+/**/
 void I2C1_ER_IRQHandler(void) {
 #ifdef HAS_I2C1
     I2cHandle_t* Node = I2cGetNode(1);
     if(Node) {
         HAL_I2C_ER_IRQHandler(&Node->i2c_h);
     }
-#endif /**/
+#endif
 }
 
 void I2C1_EV_IRQHandler(void) {
@@ -707,7 +653,7 @@ void I2C1_EV_IRQHandler(void) {
     if(Node) {
         HAL_I2C_EV_IRQHandler(&Node->i2c_h);
     }
-#endif /*HAS_I2C1*/
+#endif
 }
 
 void I2C2_ER_IRQHandler(void) {
@@ -716,7 +662,7 @@ void I2C2_ER_IRQHandler(void) {
     if(Node) {
         HAL_I2C_ER_IRQHandler(&Node->i2c_h);
     }
-#endif /*HAS_I2C2*/
+#endif
 }
 
 void I2C2_EV_IRQHandler(void) {
@@ -725,7 +671,7 @@ void I2C2_EV_IRQHandler(void) {
     if(Node) {
         HAL_I2C_EV_IRQHandler(&Node->i2c_h);
     }
-#endif /*HAS_I2C2*/
+#endif
 }
 
 void I2C3_EV_IRQHandler(void) {
@@ -734,7 +680,7 @@ void I2C3_EV_IRQHandler(void) {
     if(Node) {
         HAL_I2C_EV_IRQHandler(&Node->i2c_h);
     }
-#endif /**/
+#endif
 }
 
 void I2C3_ER_IRQHandler(void) {
@@ -743,11 +689,82 @@ void I2C3_ER_IRQHandler(void) {
     if(Node) {
         HAL_I2C_ER_IRQHandler(&Node->i2c_h);
     }
-#endif /*HAS_I2C3*/
+#endif
 }
 
+/**/
 void HASH_RNG_IRQHandler(void) {
-    // HAL_RNG_IRQHandler(&hrng);
+#ifdef HAS_RNG1
+    RngHandle_t* Node = RngGetNode(1);
+    if(Node) {
+        HAL_RNG_IRQHandler(&Node->Handler);
+    }
+#endif
 }
 
-//void RTC_Alarm_IRQHandler(void) {}
+/*USB*/
+
+// void RTC_Alarm_IRQHandler(void) {}
+
+/**/
+void OTG_FS_IRQHandler(void) {
+#ifdef HAS_USB_INTERRUPT
+    UsbHandle_t* Node = NULL;
+#ifdef HAS_USB_DEVICE
+    // HAL_PCD_IRQHandler(&PcdHandle_FS);
+    Node = UsbGetNodeBySpeed(USB_MCAL_SPEED_FS);
+    if(Node) {
+        HAL_PCD_IRQHandler(&Node->PcdHandle);
+    }
+#endif
+
+#ifdef HAS_USB_HOST
+    Node = UsbGetNodeBySpeed(USB_MCAL_SPEED_FS);
+    if(Node) {
+        HAL_HCD_IRQHandler(&Node->hhcd_USB_OTG);
+    }
+#endif
+#endif
+}
+
+
+void OTG_HS_EP1_OUT_IRQHandler(void) {
+#ifdef HAS_USB_INTERRUPT
+    UsbHandle_t* Node = NULL;
+    Node = UsbGetNodeBySpeed(USB_MCAL_SPEED_HS);
+    if(Node) {
+#ifdef HAS_USB_DEVICE
+        if(USB_MCAL_ROLE_DEVICE == Node->role) {
+            HAL_PCD_IRQHandler(&Node->PcdHandle);
+        }
+#endif
+
+#ifdef HAS_USB_HOST
+        if(USB_MCAL_ROLE_HOST == Node->role) {
+            HAL_HCD_IRQHandler(&Node->hhcd_USB_OTG);
+        }
+#endif
+    }
+#endif
+}
+
+
+void OTG_HS_IRQHandler(void) {
+#ifdef HAS_USB_INTERRUPT
+    UsbHandle_t* Node = UsbGetNodeBySpeed(USB_MCAL_SPEED_HS);
+    if(Node) {
+#ifdef HAS_USB_DEVICE
+        // HAL_PCD_IRQHandler(&PcdHandle_HS);
+        if(USB_MCAL_ROLE_DEVICE == Node->role) {
+            HAL_PCD_IRQHandler((PCD_HandleTypeDef *) &(Node->PcdHandle));
+        }
+#endif
+
+#ifdef HAS_USB_HOST
+        if(USB_MCAL_ROLE_HOST == Node->role) {
+            HAL_HCD_IRQHandler(&(Node->hhcd_USB_OTG));
+        }
+#endif
+    }
+#endif
+}

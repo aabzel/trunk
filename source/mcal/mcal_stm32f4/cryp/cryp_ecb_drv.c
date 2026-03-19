@@ -38,7 +38,7 @@ bool hw_aes256_ecb_init(const uint8_t* const key32byte) {
             LOG_INFO(LG_CRYP, "InitOk");
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -107,12 +107,12 @@ bool hw_aes256_ecb_encrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                     res = true;
                 } else {
                     res = false;
-                    LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatus2Str(ret));
+                    LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatusToStr(ret));
                 }
 
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -148,11 +148,11 @@ bool hw_aes256_ecb_decrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;

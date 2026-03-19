@@ -6,7 +6,7 @@
 #include "adc_const.h"
 #include "code_generator.h"
 #include "log.h"
-#include "sys_config.h"
+#include "microcontroller_const.h"
 
 COMPONENT_GET_NODE(Adc, adc)
 COMPONENT_GET_CONFIG(Adc, adc)

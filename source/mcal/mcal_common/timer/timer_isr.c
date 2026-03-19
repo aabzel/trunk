@@ -4,6 +4,16 @@
 #include "delta_sigma.h"
 #endif
 
+bool TimerISR(TimerHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+        Node->int_cnt++;
+        Node->int_done = true;
+        res = true;
+    }
+    return res;
+}
+
 bool TimerPeriodElapsedCallback(TimerHandle_t* const Node) {
     bool res = false;
     if(Node) {
@@ -12,7 +22,6 @@ bool TimerPeriodElapsedCallback(TimerHandle_t* const Node) {
             res = delta_sigma_isr_proc_one(1);
         }
 #endif
-        Node->overflow++;
         res = true;
     }
     return res;

@@ -1,0 +1,9 @@
+#ifndef FCSMU_GENERAL_CONST_H
+#define FCSMU_GENERAL_CONST_H
+
+#include "fcsmu_dep.h"
+
+#define FCSMU_COMPONENT_VERSION "2"
+#define FCSMU_POLL_PERIOD_US 100000
+
+#endif /* FCSMU_GENERAL_CONST_H */

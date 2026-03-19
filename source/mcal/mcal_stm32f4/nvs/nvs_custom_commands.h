@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
 #ifndef HAS_CLI
 #error "+HAS_CLI"
@@ -14,7 +13,7 @@ extern "C" {
 
 
 
-#define NVS_CUSTOM_COMMANDS                                                                                         \
+#define NVS_CUSTOM_COMMANDS
 
 
 

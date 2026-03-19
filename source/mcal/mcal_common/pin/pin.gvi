@@ -1,0 +1,9 @@
+ 
+REG->PIN
+MCU->PIN
+
+
+
+#ifdef HAS_TIME
+TIME->PIN
+#endif

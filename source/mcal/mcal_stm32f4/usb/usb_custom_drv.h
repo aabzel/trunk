@@ -9,8 +9,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-
+#include "std_includes.h"
 #include "usb_types.h"
 
 #ifndef HAS_USB

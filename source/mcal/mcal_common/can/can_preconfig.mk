@@ -7,7 +7,6 @@ ifneq ($(CAN_COMMON_MCAL_PRECONFIG_INC),Y)
     MCAL=Y
     INTERFACES=Y
     CONNECTIVITY=Y
-
 endif
 
 

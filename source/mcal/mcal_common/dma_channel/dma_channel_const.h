@@ -1,0 +1,53 @@
+#ifndef DMA_MCAL_CHANNEL_CONST_H
+#define DMA_MCAL_CHANNEL_CONST_H
+
+//#include "time_mcal.h"
+#include "dma_channel_dep.h"
+
+#define DMA_CHANNEL_VERSION "3"
+#define DMA_CHANNEL_PERIOD_US 500000
+#define DMA_CHANNEL_TRANSFER_TIMEOUT_MS 3000
+
+
+/* rename to abstract channel type
+  DMA_CHANNEL_0, DMA_CHANNEL_1 - busy names in DMA_ChannelType (module_driver_dma.h) */
+typedef enum {
+    DMA_MCAL_CHANNEL_0  = 0,
+    DMA_MCAL_CHANNEL_1  = 1,
+    DMA_MCAL_CHANNEL_2  = 2,
+    DMA_MCAL_CHANNEL_3  = 3,
+    DMA_MCAL_CHANNEL_4  = 4,
+    DMA_MCAL_CHANNEL_5  = 5,
+    DMA_MCAL_CHANNEL_6  = 6,
+    DMA_MCAL_CHANNEL_7  = 7,
+    DMA_MCAL_CHANNEL_8  = 8,
+    DMA_MCAL_CHANNEL_9  = 9,
+    DMA_MCAL_CHANNEL_10 = 10,
+    DMA_MCAL_CHANNEL_11 = 11,
+    DMA_MCAL_CHANNEL_12 = 12,
+    DMA_MCAL_CHANNEL_13 = 13,
+    DMA_MCAL_CHANNEL_14 = 14,
+    DMA_MCAL_CHANNEL_15 = 15,
+    DMA_MCAL_CHANNEL_16 = 16,
+    DMA_MCAL_CHANNEL_17 = 17,
+    DMA_MCAL_CHANNEL_18 = 18,
+    DMA_MCAL_CHANNEL_19 = 19,
+    DMA_MCAL_CHANNEL_20 = 20,
+    DMA_MCAL_CHANNEL_21 = 21,
+    DMA_MCAL_CHANNEL_22 = 22,
+    DMA_MCAL_CHANNEL_23 = 23,
+    DMA_MCAL_CHANNEL_24 = 24,
+    DMA_MCAL_CHANNEL_25 = 25,
+    DMA_MCAL_CHANNEL_26 = 26,
+    DMA_MCAL_CHANNEL_27 = 27,
+    DMA_MCAL_CHANNEL_28 = 28,
+    DMA_MCAL_CHANNEL_29 = 29,
+    DMA_MCAL_CHANNEL_30 = 30,
+    DMA_MCAL_CHANNEL_31 = 31,
+
+    DMA_MCAL_CHANNEL_UNDEF = 0xFF,
+} DmaMcalChannel_t;
+
+
+
+#endif /* DMA_MCAL_CHANNEL_CONST_H */

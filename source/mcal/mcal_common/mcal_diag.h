@@ -1,4 +1,3 @@
-
 #ifndef MCAL_DIAG_H
 #define MCAL_DIAG_H
 
@@ -11,6 +10,8 @@
 
 const char* McalMoveModeToStr(MoveMode_t move_mode);
 bool McalOkCntToRes(uint32_t okCnt, uint32_t dataQty);
+bool RegisterDiag(const uint32_t reg_val, const char* const name);
+
 
 #ifdef __cplusplus
 }

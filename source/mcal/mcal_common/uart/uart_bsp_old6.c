@@ -102,10 +102,10 @@ bool uart_send_banner(uint8_t uart_num, char* pattern) {
     banner[1] = 0x0D;
     banner[sizeof(banner) - 2] = 0x0A;
     banner[sizeof(banner) - 1] = 0x0D;
-    res = uart_mcal_send(uart_num, banner, sizeof(banner));
+    res = uart_send_api(uart_num, banner, sizeof(banner));
     memset(banner, 0, sizeof(banner));
     strcpy((char*)banner, pattern);
-    res = uart_mcal_send(uart_num, banner, strlen((char*)banner) + 1);
+    res = uart_send_api(uart_num, banner, strlen((char*)banner) + 1);
     return res;
 }
 #endif
@@ -227,7 +227,7 @@ bool uart_send_ll(uint8_t uart_num, uint8_t* array, uint16_t array_len, bool is_
 }
 #endif
 
-bool uart_mcal_send(uint8_t uart_num, uint8_t* array, uint16_t array_len) {
+bool uart_send_api(uint8_t uart_num, uint8_t* array, uint16_t array_len) {
     bool res = false;
 #ifdef HAS_NORTOS
     res = core_is_interrupt();

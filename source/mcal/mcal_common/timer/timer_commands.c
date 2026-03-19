@@ -2,20 +2,45 @@
 
 #include <inttypes.h>
 
-#include "clock.h"
+#include "clock_mcal.h"
 #include "common_diag.h"
 #include "convert.h"
 #include "data_utils.h"
 #include "log.h"
-#include "sys_config.h"
+#include "microcontroller_const.h"
 #include "time_mcal.h"
 #include "timer_mcal.h"
 #include "timer_utils.h"
+
+bool timer_init_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+
+    if(0 == argc) {
+        res = timer_mcal_init();
+        log_res(TIMER, res, "Init");
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_res(TIMER, res, "Num");
+    }
+
+    if(res) {
+        res = timer_init_one(num);
+        log_res(TIMER, res, "InitOne");
+    } else {
+        LOG_ERROR(TIMER, "Usage: tmi N");
+    }
+
+    return res;
+}
 
 bool timer_diag_compare_complimentary_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
         res = timer_diag_compare_complimentary();
+        log_res(TIMER, res, "ComCom");
     } else {
         LOG_ERROR(TIMER, "Usage: tdc");
     }
@@ -27,6 +52,7 @@ bool timer_diag_compare_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
         res = timer_diag_compare();
+        log_res(TIMER, res, "Com");
     } else {
         LOG_ERROR(TIMER, "Usage: tdc");
     }
@@ -38,6 +64,7 @@ bool timer_diag_ll_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
         res = timer_diag_ll();
+        log_res(TIMER, res, "LlDiag");
     } else {
         LOG_ERROR(TIMER, "Usage: tdl");
     }
@@ -49,6 +76,7 @@ bool timer_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
         res = timer_diag();
+        log_res(TIMER, res, "Diag");
     } else {
         LOG_ERROR(TIMER, "Usage: td");
     }
@@ -106,9 +134,7 @@ bool timer_set_laod_command(int32_t argc, char* argv[]) {
         res = true;
         if(res) {
             res = try_str2uint8(argv[0], &num);
-            if(false == res) {
-                LOG_ERROR(TIMER, "ParseErr num %s", argv[0]);
-            }
+            log_res(TIMER, res, "Num");
         }
 
         if(res) {
@@ -136,39 +162,39 @@ bool timer_set_laod_command(int32_t argc, char* argv[]) {
 
     return res;
 }
-
+// tp 1 810ns
 bool timer_period_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
-    uint32_t period_ms = 1000;
+    float period_s = 1.0;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr index %s", argv[0]);
-        }
+        log_res(TIMER, res, "Num");
     }
 
     if(2 <= argc) {
-        res = try_str2uint32(argv[1], &period_ms);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr period_ms %s", argv[1]);
-        }
+        res = try_str2float(argv[1], &period_s);
+        log_res(TIMER, res, "Period");
     }
 
     if(res) {
-        double pesiod_s = MSEC_2_SEC(period_ms);
         switch(argc) {
         case 2: {
-            LOG_INFO(TIMER, "Set:Timer:%u,Period:%f s", num, pesiod_s);
-            res = timer_period_set_s(num, MSEC_2_SEC(period_ms));
+            LOG_INFO(TIMER, "Set:Timer:%u,Period:%f s", num, period_s);
+            res = timer_period_set_s(num, period_s);
+            log_res(TIMER, res, "SetPeriod");
         } break;
         case 1: {
-            pesiod_s = timer_period_get_s(num);
-            LOG_INFO(TIMER, "Get,Timer:%u, Period:%f s", num, pesiod_s);
+            period_s = timer_period_get_s(num);
+            log_res(TIMER, res, "GetPeriod");
+            LOG_INFO(TIMER, "Get,Timer:%u, Period:%f s", num, period_s);
         } break;
+        default:
+            res = false;
+            break;
         }
     } else {
-        LOG_ERROR(TIMER, "Usage: tpr TimerMum PeriodMs");
+        LOG_ERROR(TIMER, "Usage: tpr Num PeriodS");
         res = false;
     }
     return res;
@@ -180,22 +206,46 @@ bool timer_ctrl_command(int32_t argc, char* argv[]) {
     uint8_t num = 0;
     if(2 == argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr TimerNum %s", argv[0]);
-        }
+        log_res(TIMER, res, "Num");
         res = try_str2bool(argv[1], &on_off);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr OnOff %s", argv[1]);
-        }
+        log_res(TIMER, res, "En");
     }
+
     if(res) {
         res = timer_ctrl(num, on_off);
-        if(res) {
-            LOG_INFO(TIMER, "Set %u %s", num, OnOff2Str(on_off));
-        } else {
-            LOG_ERROR(TIMER, "Set %u %s", num, OnOff2Str(on_off));
-        }
+        log_res(TIMER, res, "Ctrl");
+    } else {
+        LOG_ERROR(TIMER, "Usage: tct num OnOff");
     }
+
+    return res;
+}
+
+bool timer_channel_ctrl_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    bool on_off = 0;
+    TimerCapComChannel_t channel = TIMER_CC_UNDEF;
+    if(3 == argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_res(TIMER, res, "Num");
+        res = try_str2uint8(argv[1], &channel);
+        log_res(TIMER, res, "Ch");
+        res = try_str2bool(argv[2], &on_off);
+        log_res(TIMER, res, "En");
+    }
+
+    if(res) {
+        LOG_INFO(TIMER, "%u SetComp %u", num, channel);
+        res = timer_channel_ctrl(num, channel, on_off);
+        if(res) {
+        } else {
+            LOG_ERROR(TIMER, "%u  SetComp %u", num, channel);
+        }
+    } else {
+        LOG_ERROR(TIMER, "Usage: tcc num channel OnOff");
+    }
+
     return res;
 }
 
@@ -206,17 +256,13 @@ bool timer_compare_command(int32_t argc, char* argv[]) {
     TimerCapComChannel_t channel = TIMER_CC_UNDEF;
     if(3 == argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr TimerNum %s", argv[0]);
-        }
+        log_res(TIMER, res, "Num");
+
         res = try_str2uint8(argv[1], &channel);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr TimerNum %s", argv[1]);
-        }
+        log_res(TIMER, res, "Channel");
+
         res = try_str2uint32(argv[2], &compare_value);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr compare_value %s", argv[2]);
-        }
+        log_res(TIMER, res, "CompareValue");
     }
 
     if(res) {
@@ -246,16 +292,12 @@ bool timer_overflow_command(int32_t argc, char* argv[]) {
     uint8_t num = 0;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr TimerNum %s", argv[0]);
-        }
+        log_res(TIMER, res, "Num");
     }
 
     if(2 <= argc) {
         res = try_str2uint32(argv[1], &overflow);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr overflow %s", argv[1]);
-        }
+        log_res(TIMER, res, "Overflow");
     }
 
     if(res) {
@@ -268,9 +310,12 @@ bool timer_overflow_command(int32_t argc, char* argv[]) {
             res = timer_overflow_get(num, &overflow);
             LOG_INFO(TIMER, "Get,Timer:%u,Overflow:%u s", num, overflow);
         } break;
+        default:
+            res = false;
+            break;
         }
     } else {
-        LOG_ERROR(TIMER, "Usage: tpr TimerMum PeriodMs");
+        LOG_ERROR(TIMER, "Usage: tpr Num PeriodMs");
         res = false;
     }
 
@@ -285,6 +330,7 @@ bool timer_channel_diag_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = timer_channel_diag();
+        log_res(TIMER, res, "ChDiag");
     } else {
         LOG_ERROR(TIMER, "Usage: tcd");
     }
@@ -294,17 +340,15 @@ bool timer_channel_diag_command(int32_t argc, char* argv[]) {
 
 bool timer_frequency_command(int32_t argc, char* argv[]) {
     bool res = false;
+    float frequency_hz = 0.0;
     uint8_t num = 0;
-    double frequency_hz = 0.0;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(TIMER, "ParseErr TimerNum %s", argv[0]);
-        }
+        log_res(TIMER, res, "Num");
     }
 
     if(2 <= argc) {
-        res = try_str2double(argv[1], &frequency_hz);
+        res = try_str2float(argv[1], &frequency_hz);
         if(false == res) {
             LOG_ERROR(TIMER, "ParseErr FrequencyHz:%s", argv[1]);
         }
@@ -320,9 +364,45 @@ bool timer_frequency_command(int32_t argc, char* argv[]) {
             res = timer_frequency_get(num, &frequency_hz);
             LOG_INFO(TIMER, "Get,Timer:%u,Frequency:%u Hz", num, frequency_hz);
         } break;
+        default:
+            res = false;
+            break;
         }
     } else {
-        LOG_ERROR(TIMER, "Usage: tpr TimerMum PeriodMs");
+        LOG_ERROR(TIMER, "Usage: tpr Num PeriodMs");
+        res = false;
+    }
+
+    return res;
+}
+
+bool timer_diag_raw_reg_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_res(TIMER, res, "Num");
+    }
+
+    if(res) {
+        res = timer_raw_reg_diag(num);
+        log_res(TIMER, res, "RawReg");
+    } else {
+        LOG_ERROR(TIMER, "Usage: tdrr Num");
+        res = false;
+    }
+
+    return res;
+}
+
+bool timer_diag_interrupt_command(int32_t argc, char* argv[]) {
+    bool res = true;
+
+    if(res) {
+        res = timer_diag_interrupt();
+        log_res(TIMER, res, "DiagInterrupts");
+    } else {
+        LOG_ERROR(TIMER, "Usage: tdint Num");
         res = false;
     }
 

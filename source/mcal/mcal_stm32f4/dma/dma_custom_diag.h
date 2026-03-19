@@ -14,7 +14,7 @@ extern "C" {
 #error "+HAS_DMA"
 #endif
 
-const char* DmaDir2Str(uint8_t code);
+const char* DmaDirToStr(uint8_t code);
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
-#ifndef SDIO_GENERAL_DEP_H
-#define SDIO_GENERAL_DEP_H
+#ifndef SDIO_DEPENDEN_H
+#define SDIO_DEPENDEN_H
 
 #ifndef HAS_SDIO
 #error "+HAS_SDIO"
@@ -9,5 +9,8 @@
 #error "+HAS_MCAL"
 #endif
 
+#ifndef HAS_GPIO
+#error "+HAS_GPIO"
+#endif
 
-#endif /* SDIO_GENERAL_DEP_H */
+#endif /* SDIO_DEPENDEN_H */

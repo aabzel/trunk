@@ -1,4 +1,3 @@
-
 message(STATUS "NVS_MK_INC=${NVS_MK_INC}")
 if( NOT (Y STREQUAL NVS_MK_INC))
     set(NVS_MK_INC Y)

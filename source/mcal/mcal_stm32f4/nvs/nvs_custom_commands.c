@@ -9,7 +9,7 @@
 #include "crc32.h"
 #include "data_utils.h"
 #include "debug_info.h"
-#include "nvs_drv.h"
+#include "nvs_mcal.h"
 #include "log.h"
 #include "str_utils.h"
 #include "table_utils.h"

@@ -1,14 +1,12 @@
-#ifndef SPI_ISR_H
-#define SPI_ISR_H
+#ifndef SPI_CUSTOM_ISR_H
+#define SPI_CUSTOM_ISR_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
-#include "spi_drv.h"
 #include "spi_custom_types.h"
 #include "stm32f4xx_hal.h"
 #include "sys_config.h"
@@ -17,12 +15,14 @@ extern "C" {
 #error "+HAS_SPI"
 #endif
 
-#ifndef HAS_SPI_ISR
-#error "+HAS_SPI_ISR"
+#ifndef HAS_SPI_INTERRUPT
+#error "+HAS_SPI_INTERRUPT"
 #endif
+
+bool SPIx_IRQHandler(const uint8_t num);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* SPI_ISR_H  */
+#endif /* SPI_CUSTOM_ISR_H  */

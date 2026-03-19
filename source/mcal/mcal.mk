@@ -5,15 +5,18 @@ ifneq ($(MCAL_MK_INC),Y)
     $(info Build MCAL)
 
     MCAL_DIR = $(WORKSPACE_LOC)/mcal
+    MCAL_DIR:=$(realpath $(MCAL_DIR))
+    MCAL_DIR:=$(subst /cygdrive/c/,C:/,$(MCAL_DIR))
+    
     # $(error MCAL_DIR=$(MCAL_DIR))
-    OPT += -DHAS_MCAL
+    MCAL_OPT += -DHAS_MCAL
     INCDIR += -I$(MCAL_DIR)
 
     ifeq ($(MCAL),Y)
         # $(error MCAL=$(MCAL))
         include $(MCAL_DIR)/mcal_common/mcal_common.mk
     endif
-    
+
     #---------------------------------------------------------------------------
 
     ifeq ($(EHAL_MCAL),Y)

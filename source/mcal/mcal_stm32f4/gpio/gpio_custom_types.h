@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "stm32f4xx_hal.h"
 #include "gpio_custom_const.h"
 
@@ -52,11 +50,9 @@ typedef union {
 
 typedef struct {
     bool valid;
-    Port_t port;
-    //crm_periph_clock_type clock_type;
-    //scfg_port_source_type port_source;/*System configuration controller*/
+    GpioPort_t port;
     GPIO_TypeDef* GPIOx;
-}GpioInfo_t;
+}GpioPortInfo_t;
 
 
 

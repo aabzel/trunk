@@ -5,12 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#ifdef HAS_LOG
-#include "ostream.h"
-#endif
+#include "std_includes.h"
 
 #ifdef HAS_GPIO_CUSTOM_COMMANDS
 #include "gpio_custom_commands.h"
@@ -47,9 +42,11 @@ bool gpio_mux_command(int32_t argc, char* argv[]);
 bool gpio_dir_command(int32_t argc, char* argv[]);
 bool gpio_pull_command(int32_t argc, char* argv[]);
 bool gpio_toggle_command(int32_t argc, char* argv[]);
+bool gpio_reg_map_command(int32_t argc, char* argv[]);
 
 #define GPIO_COMMANDS                                                                                                  \
     GPIO_CUSTOM_COMMANDS                                                                                               \
+    SHELL_CMD("gpio_reg_map", "gr", gpio_reg_map_command, "GpioRegs"),                                                 \
     SHELL_CMD("gpio_list", "gl", gpio_list_command, "GpioList"),                                                       \
         SHELL_CMD("gpio_init", "gi", gpio_init_command, "GpioInit"),                                                   \
         SHELL_CMD("gpio_mux", "gm", gpio_mux_command, "GpioPinMux"),                                                   \

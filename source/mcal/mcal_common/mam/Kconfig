@@ -1,0 +1,4 @@
+
+config MAM
+    bool "Enable use of the MAM drivers"
+

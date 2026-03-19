@@ -6,5 +6,10 @@ ifneq ($(SPI_PRECONFIG_INC),Y)
     SPI=Y
     GPIO=Y
     TIME=Y
+    ARRAY=Y
+    INTERFACE=Y
+    INTERRUPT=Y
+    #DMA=Y
+    #DMA_CHANNEL=Y
 
 endif

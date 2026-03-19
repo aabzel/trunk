@@ -1,0 +1,16 @@
+#ifndef LOCKSTEP_DEP_H
+#define LOCKSTEP_DEP_H
+
+#ifndef HAS_MICROCONTROLLER
+#error "+HAS_MICROCONTROLLER"
+#endif /*HAS_MICROCONTROLLER*/
+
+#ifndef HAS_LOCKSTEP
+#error "+HAS_LOCKSTEP"
+#endif /*HAS_LOCKSTEP*/
+
+#ifndef HAS_INTERRUPT
+#error "+HAS_INTERRUPT"
+#endif /**/
+
+#endif /* LOCKSTEP_DEP_H */

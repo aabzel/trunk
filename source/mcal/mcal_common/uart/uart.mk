@@ -4,45 +4,45 @@ ifneq ($(UART_COMMON_MCAL_MK_INC),Y)
     UART_COMMON_MCAL_MK_INC=Y
 
     UART_MCAL_DIR = $(MCAL_COMMON_DIR)/uart
-    #@echo $(error UART_MCAL_DIR=$(UART_MCAL_DIR))
+    # $(error UART_MCAL_DIR=$(UART_MCAL_DIR))
 
     INCDIR += -I$(UART_MCAL_DIR)
-    OPT += -DHAS_UART
+    MCAL_OPT += -DHAS_UART
 
     ifeq ($(UART_EXT),Y)
-        OPT += -DHAS_UART_EXT
+        MCAL_OPT += -DHAS_UART_EXT
     endif
 
     ifeq ($(UART_PROC),Y)
-        OPT += -DHAS_UART_PROC
+        MCAL_OPT += -DHAS_UART_PROC
     endif
 
     ifeq ($(UART_INT),Y)
-        OPT += -DHAS_UART_INT
+        MCAL_OPT += -DHAS_UART_INT
     endif
 
     ifeq ($(UART0),Y)
-        OPT += -DHAS_UART0
+        MCAL_OPT += -DHAS_UART0
     endif
 
     ifeq ($(UART1),Y)
-        OPT += -DHAS_UART1
+        MCAL_OPT += -DHAS_UART1
     endif
 
     ifeq ($(UART2),Y)
-        OPT += -DHAS_UART2
+        MCAL_OPT += -DHAS_UART2
     endif
 
     ifeq ($(UART3),Y)
-        OPT += -DHAS_UART3
+        MCAL_OPT += -DHAS_UART3
     endif
 
     ifeq ($(UART4),Y)
-        OPT += -DHAS_UART4
+        MCAL_OPT += -DHAS_UART4
     endif
 
     ifeq ($(UART5),Y)
-        OPT += -DHAS_UART5
+        MCAL_OPT += -DHAS_UART5
     endif
 
     SOURCES_C += $(UART_MCAL_DIR)/uart_general.c
@@ -53,7 +53,7 @@ ifneq ($(UART_COMMON_MCAL_MK_INC),Y)
     endif
 
     ifeq ($(UART_COMMANDS),Y)
-        OPT += -DHAS_UART_COMMANDS
+        MCAL_OPT += -DHAS_UART_COMMANDS
         SOURCES_C += $(UART_MCAL_DIR)/uart_commands.c
     endif
 

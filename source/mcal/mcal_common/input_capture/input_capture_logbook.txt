@@ -1,0 +1,36 @@
+
+
+
+5535 |  On |     0 |    16794 |
+
+
+14.2 General-purpose timer (TMR2 to TMR5)
+
+trd 
+
+
+tcd 
+
+h timer
+tdl
+
+icr 1 
+
+incd
+ 
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |       to |       timer_overflow | TimerOvefflow
+|   2 |      tct |           timer_ctrl | TimerCtrl
+|   3 |      tsc |        timer_compare | TimerCompare
+|   4 |      tdc |   timer_diag_compare | TimerDiagCompare
+|   5 |     tdcc | timer_diag_compare_com | TimerDiagCompareComplimentary
+|   6 |      tdl |        timer_diag_ll | TimerDiagLowLevel
+|   7 |      trd |           timer_diag | TimerDiag
+|   8 |      tcd |   timer_channel_diag | TimerChannelDiag
+|   9 |      tsp |            timer_psc | TimerPrescaler
+|  10 |      tsl |       timer_set_load | TimerLoad
+|  11 |       tp |         timer_period | TimerPeriod
+|  12 |       tf |      timer_frequency | TimerFrequency
++-----+----------+----------------------+-------------+

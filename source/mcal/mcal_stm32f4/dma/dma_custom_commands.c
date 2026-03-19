@@ -40,11 +40,11 @@ static bool dma_diag_low_level_diag(char* key_word1, char* key_word2){
            strcpy(temp_str, TSEP);
                snprintf(temp_str, sizeof(temp_str), "%s %1u  " TSEP, temp_str, dma_num);
                snprintf(temp_str, sizeof(temp_str), "%s %3u " TSEP, temp_str, stream_num);
-               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,Bit2Str(Reg.tcif) );
-               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,Bit2Str(Reg.htif));
-               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,Bit2Str(Reg.teif));
-               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,Bit2Str(Reg.dmeif));
-               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,Bit2Str(Reg.feif));
+               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,BitToStr(Reg.tcif) );
+               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,BitToStr(Reg.htif));
+               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,BitToStr(Reg.teif));
+               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,BitToStr(Reg.dmeif));
+               snprintf(temp_str, sizeof(temp_str), "%s %1s " TSEP, temp_str,BitToStr(Reg.feif));
                if(is_contain(temp_str, key_word1, key_word2)) {
                    cli_printf(TSEP " %3u ", num);
                    cli_printf("%s" CRLF, temp_str);
@@ -89,13 +89,13 @@ bool dma_diag_stream_command(int32_t argc, char* argv[]){
                 snprintf(temp_str, sizeof(temp_str), "%s %1u " TSEP, temp_str, Reg.en);
                 snprintf(temp_str, sizeof(temp_str), "%s %1u " TSEP, temp_str, Reg.tcie);
                 snprintf(temp_str, sizeof(temp_str), "%s %1u " TSEP, temp_str, Reg.htie);
-                snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str, DmaDir2Str(Reg.dir));
+                snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str, DmaDirToStr(Reg.dir));
                 snprintf(temp_str, sizeof(temp_str), "%s %2u  " TSEP, temp_str, Reg.chsel);
-                snprintf(temp_str, sizeof(temp_str), "%s %2u  " TSEP, temp_str,  DmaDataSizeBits2Str(Reg.msize));
-                snprintf(temp_str, sizeof(temp_str), "%s %2u  " TSEP, temp_str,  DmaDataSizeBits2Str(Reg.psize));
-                snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str,  DmaIncr2Str(Reg.minc));
-                snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str,  DmaIncr2Str(Reg.pinc));
-                snprintf(temp_str, sizeof(temp_str), "%s %3s  " TSEP, temp_str, DmaMode2Str(Reg.circ));
+                snprintf(temp_str, sizeof(temp_str), "%s %2u  " TSEP, temp_str,  DmaDataSizeBitsToStr(Reg.msize));
+                snprintf(temp_str, sizeof(temp_str), "%s %2u  " TSEP, temp_str,  DmaDataSizeBitsToStr(Reg.psize));
+                snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str,  DmaIncrToStr(Reg.minc));
+                snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str,  DmaIncrToStr(Reg.pinc));
+                snprintf(temp_str, sizeof(temp_str), "%s %3s  " TSEP, temp_str, DmaModeToStr(Reg.circ));
                 cli_printf("%s" CRLF, temp_str);
         	}
         }

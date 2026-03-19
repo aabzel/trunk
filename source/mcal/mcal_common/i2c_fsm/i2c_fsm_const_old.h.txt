@@ -1,0 +1,58 @@
+#ifndef I2C_FSM_GENERAL_CONST_H
+#define I2C_FSM_GENERAL_CONST_H
+
+#include "i2c_fsm_dep.h"
+
+
+#define I2C_FSM_TIMEOUT_MS 400
+
+typedef enum {
+    I2C_FSM_OPERATION_CHECK_ADDR= 1,
+    I2C_FSM_OPERATION_WRITE = 2,
+    I2C_FSM_OPERATION_RAED = 3,
+    I2C_FSM_OPERATION_WRITE_MEM = 4,
+    I2C_FSM_OPERATION_READ_MEM = 5,
+    I2C_FSM_OPERATION_NOP = 6,
+    I2C_FSM_OPERATION_UNDEF = 0,
+} I2cFsmOperation_t;
+
+
+typedef enum {
+    I2C_FSM_STATE_IDLE = 1,
+    I2C_FSM_TX_START = 2,// wait start done
+    I2C_FSM_TX_7BIT_ADDR = 3,
+    I2C_FSM_TX_STOP = 4,// wait stop done
+    I2C_FSM_WAIT_BUSY = 5,// wait busy
+    I2C_FSM_STATE_UNDEF = 0,
+} I2cFsmState_t;
+
+typedef enum {
+    I2C_FSM_INPUT_START_DONE = 1,//start condition generation complete flag.
+    I2C_FSM_INPUT_STOP_SIGNAL_DONE = 2,// stop condition generation complete flag.
+    I2C_FSM_INPUT_7BITADDR_ACK = 3,//i2c 0~7 bit address match flag
+    I2C_FSM_INPUT_TX_DATA_DONE = 6,// transmit data complete flag.
+    I2C_FSM_INPUT_TX_MODE = 4,// transmission mode
+    I2C_FSM_INPUT_TX_DIR = 19,// transmission direction flag.
+    I2C_FSM_INPUT_TX_DATA_BUFF_EMPTY = 8,//transmit data buffer empty flag.
+    I2C_FSM_INPUT_BUS_BUSY = 18, //
+    I2C_FSM_INPUT_ACKNOWLEDGE_FAIL = 5, //
+    I2C_FSM_INPUT_RX_DATA_FULL = 7,//
+    I2C_FSM_INPUT_BUS_ERROR = 9,//
+    I2C_FSM_INPUT_GENERATE_START = 10,
+    I2C_FSM_INPUT_NONE = 11,
+    I2C_FSM_INPUT_ADDRH_9_8_ACK = 12,
+    I2C_FSM_INPUT_OVERFLOW_OR_UNDERFLOW = 13,
+    I2C_FSM_INPUT_RX_PEC = 14,
+    I2C_FSM_INPUT_SMBUS_TIMEOUT = 15,
+    I2C_FSM_INPUT_SMBUS_ALERT = 16,
+    I2C_FSM_INPUT_ARBITRATION_LOST = 17,
+    I2C_FSM_INPUT_GENERAL_CALL_ADDRESS_RECEIVED = 20,
+    I2C_FSM_INPUT_SMBUS_DEVICE_ADDRESS_RX = 21,
+    I2C_FSM_INPUT_SMBUS_HOST_ADDRESS_RX = 22,
+    I2C_FSM_INPUT_OWN_ADDRESS_2_RX = 23,
+
+    I2C_FSM_INPUT_UNDEF = 0,
+} I2cFsmInput_t;
+
+
+#endif /* I2C_FSM_GENERAL_CONST_H */

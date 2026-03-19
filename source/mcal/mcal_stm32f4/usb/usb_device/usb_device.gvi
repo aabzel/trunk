@@ -1,0 +1,7 @@
+
+USB->USB_DEVICE
+INTERRUPT->USB_DEVICE
+
+#ifdef HAS_USB_SERIAL
+    #include "usb_serial.gvi"
+#endif

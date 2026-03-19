@@ -1,54 +1,48 @@
 #ifndef SDIO_MCAL_H
 #define SDIO_MCAL_H
 
-#include "std_includes.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "std_includes.h"
 #include "sdio_types.h"
 #include "sdio_config.h"
+#include "sdio_custom.h"
+#include "sdio_dma.h"
+#include "sdio_int.h"
+#include "sdio_poll.h"
+
 #ifdef HAS_SDIO_DIAG
 #include "sdio_diag.h"
-#endif /*HAS_SDIO_DIAG*/
-
-bool SdioIsValid(uint8_t sdio_num);
-SdioHandle_t* SdioGetNode(uint8_t sdio_num);
-const SdioConfig_t* SdioGetConfNode(uint8_t sdio_num);
-
-
-bool sdio_proc(void);
-bool sdio_card_info_get(uint32_t sdio_num);
-// bool sdio_is_connected(uint32_t sdio_num);
-
-uint8_t SdioInstance2num(SD_TypeDef* Instance);
-bool sdio_read_sector_time_out(uint8_t sdio_num, uint32_t block_num, uint32_t number_of_blocks, uint8_t* const RxData);
-
-bool sdio_write_sector_time_out(uint8_t sdio_num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const TxData);
-
-#ifdef HAS_SDIO_INTERRUPT
-bool sdio_read_sector_it(uint8_t sdio_num, uint32_t block_num, uint32_t block_cnt, uint8_t* const RxData);
-
-bool sdio_write_sector_it(uint8_t sdio_num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const TxData);
 #endif
 
-#ifdef HAS_SDIO_DMA
-bool sdio_read_sector_dma(uint8_t sdio_num, uint32_t block_num, uint32_t block_cnt, uint8_t* const RxData);
+/*API*/
+SdioHandle_t* SdioGetNode(uint8_t num);
+const SdioConfig_t* SdioGetConfig(uint8_t num);
+const SdioInfo_t* SdioGetInfo(uint8_t num);
 
-bool sdio_write_sector_dma(uint8_t sdio_num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const RxData);
-#endif /*HAS_DMA*/
+bool sdio_init_common(const SdioConfig_t* const Config, SdioHandle_t* const Node) ;
+bool sdio_init_one(uint8_t num);
+bool sdio_mcal_init(void);
+bool sdio_proc_one(uint8_t num);
+bool sdio_proc(void);
+bool sdio_init_ll(uint32_t num);
 
-bool sdio_read_sector(uint8_t sdio_num, uint32_t block_num, uint32_t block_cnt, uint8_t* const RxData);
+/*setters*/
+bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const RxData);
+uint8_t sdio_ioctl(uint8_t pdrv, uint8_t cmd, void* buff);
 
-bool sdio_write_sector(uint8_t sdio_num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const RxData);
+/*getters*/
+bool SdioIsValid(uint8_t num);
+bool SdioIsValidConfig(const SdioConfig_t* const Config);
+bool sdio_read_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, uint8_t* const RxData);
+bool sdio_card_info_get(uint32_t num);
+bool sdio_init_test(SdioHandle_t* Node);
+bool sdio_is_connected(uint32_t num);
+uint16_t sdio_get_block_size(uint32_t num);
+uint32_t sdio_get_block_num(uint32_t num);
 
-bool sdio_scan(uint8_t sdio_num);
-
-bool sdio_init_ll(uint32_t sdio_num);
-bool sdio_init(void);
-uint16_t sdio_get_block_size(uint32_t sdio_num);
-uint32_t sdio_get_block_num(uint32_t sdio_num);
 
 #ifdef __cplusplus
 }

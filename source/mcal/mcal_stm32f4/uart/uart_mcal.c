@@ -1,21 +1,23 @@
 #include "uart_mcal.h"
 
 #include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "bit_utils.h"
+#include "clock_mcal.h"
 #include "code_generator.h"
-#include "hal_diag.h"
-#ifdef HAS_HEAP
-#include "heap_allocator.h"
-#endif
+#include "hal_mcal.h"
+#include "interrupt_mcal.h"
 #include "log.h"
+#include "std_includes.h"
 #include "stm32f4xx_hal.h"
 #include "time_mcal.h"
 #include "uart_custom_types.h"
+#ifdef HAS_HEAP
+#include "heap_allocator.h"
+#endif
 
 #ifdef HAS_TIMER
 #include "timer_mcal.h"
@@ -26,455 +28,181 @@
 #include "string_reader.h"
 #endif
 
-#include "sys_config.h"
+//#include "sys_config.h"
 
-uint32_t g_uart_rx_cnt = 0;
-static volatile uint8_t rx_buff[UART_COUNT][1];
+static uint32_t UasrtWordSizeBitsToWordLength(const uint8_t word_len_bit) {
+    uint32_t word_length = UART_WORDLENGTH_8B;
+    switch(word_len_bit) {
+    case 8:
+        word_length = UART_WORDLENGTH_8B;
+        break;
+    case 9:
+        word_length = UART_WORDLENGTH_9B;
+        break;
+    default:
+        word_length = UART_WORDLENGTH_8B;
+        break;
+    }
+    return word_length;
+}
+
+static uint32_t UasrtStopBitToStopBits(const uint8_t stop_bit_cnt) {
+    uint32_t stop_bits = UART_STOPBITS_2;
+    switch(stop_bit_cnt) {
+    case 1:
+        stop_bits = UART_STOPBITS_1;
+        break;
+    case 2:
+        stop_bits = UART_STOPBITS_2;
+        break;
+    default:
+        stop_bits = UART_STOPBITS_2;
+        break;
+    }
+    return stop_bits;
+}
 
 static USART_TypeDef* UartGetBase(uint8_t num) {
     USART_TypeDef* USARTx = NULL;
-    switch(num) {
-#ifdef USART1
-    case 1:
-        USARTx = USART1;
-        break;
-#endif /**/
-
-#ifdef USART2
-    case 2:
-        USARTx = USART2;
-        break;
-#endif /**/
-
-#ifdef USART3
-    case 3:
-        USARTx = USART3;
-        break;
-#endif /**/
-
-#ifdef UART4
-    case 4:
-        USARTx = UART4;
-        break;
-#endif /**/
-
-#ifdef UART5
-    case 5:
-        USARTx = UART5;
-        break;
-#endif /**/
-
-#ifdef USART6
-    case 6:
-        USARTx = USART6;
-        break;
-#endif /**/
-
-#ifdef UART7
-    case 7:
-        USARTx = UART7;
-        break;
-#endif /**/
-
-#ifdef UART8
-    case 8:
-        USARTx = UART8;
-        break;
-#endif /**/
-
-#ifdef UART9
-    case 9:
-        USARTx = UART9;
-        break;
-#endif /**/
-
-#ifdef UART10
-    case 10:
-        USARTx = UART10;
-        break;
-#endif /**/
-    default:
-        break;
+    const UartInfo_t* Info = UartGetInfo(num);
+    if(Info) {
+        USARTx = Info->UARTx;
     }
     return USARTx;
 }
 
-int8_t get_uart_index(USART_TypeDef* USARTx) {
+int8_t get_uart_index(const USART_TypeDef* const USARTx) {
     int8_t num = -1;
-#ifdef USART1
-    if(USART1 == USARTx) {
-        num = 1;
-    }
-#endif /*USART1*/
 
-#ifdef USART2
-    if(USART2 == USARTx) {
-        num = 2;
+    const UartInfo_t* Info = UartUSARTxToInfo(USARTx);
+    if(Info) {
+        num = Info->num;
     }
-#endif
-
-#ifdef USART3
-    if(USART3 == USARTx) {
-        num = 3;
-    }
-#endif
-
-#ifdef UART4
-    if(UART4 == USARTx) {
-        num = 4;
-    }
-#endif
-
-#ifdef UART5
-    if(UART5 == USARTx) {
-        num = 5;
-    }
-#endif
-
-#ifdef USART3
-    if(USART3 == USARTx) {
-        num = 3;
-    }
-#endif
-
-#ifdef UART4
-    if(UART4 == USARTx) {
-        num = 4;
-    }
-#endif
-
-#ifdef UART5
-    if(UART5 == USARTx) {
-        num = 5;
-    }
-#endif
-
-#ifdef USART6
-    if(USART6 == USARTx) {
-        num = 6;
-    }
-#endif
-
-#ifdef UART7
-    if(UART7 == USARTx) {
-    }
-#endif
-
-#ifdef UART7
-    if(UART7 == USARTx) {
-        num = 7;
-    }
-#endif /*UART7*/
-
-#ifdef UART8
-    if(UART8 == USARTx) {
-        num = 8;
-    }
-#endif /*UART8*/
-
-#ifdef UART9
-    if(UART9 == USARTx) {
-        num = 9;
-    }
-#endif /*UART9*/
-
-#ifdef UART10
-    if(UART10 == USARTx) {
-        num = 10;
-    }
-#endif /*UART10*/
 
     return num;
 }
 
-bool uart_init_one(uint8_t num) {
-    bool res = false;
-    UartHandle_t* Node = UartGetNode(num);
-    if(Node) {
-        const UartConfig_t* Config = UartGetConfig(num);
-        if(Config) {
-
-            res=uart_init_general_one(Config, Node);
-
-            // res=fifo_init(&Node->TxFifo, Node->tx_array, UART_TX_FIFO_SIZE);
-            Node->rx_buff = (volatile uint8_t*)&rx_buff[num][0];
-            Node->rx_buff_size = 1;
-            LOG_WARNING(UART, "UART%u Init %u Bit/s", num, Config->baud_rate);
-            Node->uart_h.Init.BaudRate = Config->baud_rate;
-            Node->uart_h.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-            Node->uart_h.Init.Mode = UART_MODE_TX_RX;
-            Node->uart_h.Init.OverSampling = UART_OVERSAMPLING_16;
-            Node->uart_h.Init.Parity = UART_PARITY_NONE;
-            Node->uart_h.Init.StopBits = UART_STOPBITS_1;
-            Node->uart_h.Init.WordLength = UART_WORDLENGTH_8B;
-            Node->uart_h.Instance = UartGetBase(num);
-            if(Node->uart_h.Instance) {
-                HAL_StatusTypeDef ret = HAL_ERROR;
-                ret = HAL_UART_Init(&Node->uart_h);
-                if(HAL_OK != ret) {
-                    res = false;
-                    LOG_ERROR(UART, "%u init Err", num);
-                } else {
-                    res = true;
-                    LOG_INFO(UART, "%u init Ok", num);
-                    Node->init_done = true;
-                }
-                ret = HAL_UART_Receive_IT(&Node->uart_h, (uint8_t*)Node->rx_buff, 1);
-                if(HAL_OK != ret) {
-                    res = false;
-                }
-                char str[40] = "UART";
-                uart_mcal_send(num, (uint8_t*)str, 4);
-                snprintf(str, sizeof(str), "UART%u", num);
-                size_t len = strlen(str);
-                uart_mcal_send(num, (uint8_t*)str, len);
-            }
-        }
-    }
+bool uart_init_node(UartHandle_t* Node) {
+    bool res = true;
     return res;
 }
 
-/*see Figure 4. STM32F413xG/H block diagram*/
-static const UartInfo_t UartInfo[] = {
-#ifdef USART1
-    {
-        .num = 1,
-        .clock_hz = APB2_CLOCK_HZ,
+#define UART_INFO_ONE(NUM, PHY, CLKBUS, IRQ_N)                                                                         \
+    {                                                                                                                  \
+        .num = NUM,                                                                                                    \
+        .UARTx = PHY,                                                                                                  \
+        .clock_bus = CLKBUS,                                                                                           \
+        .irq_n = IRQ_N,                                                                                                \
+        .valid = true,                                                                                                 \
     },
+
+#ifdef USART1
+#define UART_INFO_UART1 UART_INFO_ONE(1, USART1, CLOCK_BUS_APB2, USART1_IRQn)
+#else
+#define UART_INFO_UART1
 #endif
 
 #ifdef USART2
-    {
-        .num = 2,
-        .clock_hz = APB1_CLOCK_HZ,
-    },
+#define UART_INFO_UART2 UART_INFO_ONE(2, USART2, CLOCK_BUS_APB1, USART2_IRQn)
+#else
+#define UART_INFO_UART2
 #endif
 
 #ifdef USART3
-    {
-        .num = 3,
-        .clock_hz = APB1_CLOCK_HZ,
-    },
+#define UART_INFO_UART3 UART_INFO_ONE(3, USART3, CLOCK_BUS_APB1, USART3_IRQn)
+#else
+#define UART_INFO_UART3
 #endif
 
 #ifdef UART4
-    {
-        .num = 4,
-        .clock_hz = APB1_CLOCK_HZ,
-    },
+#define UART_INFO_UART4 UART_INFO_ONE(4, UART4, CLOCK_BUS_APB1, UART4_IRQn)
+#else
+#define UART_INFO_UART4
 #endif
 
 #ifdef UART5
-    {
-        .num = 5,
-        .clock_hz = APB1_CLOCK_HZ,
-    },
+#define UART_INFO_UART5 UART_INFO_ONE(5, UART5, CLOCK_BUS_APB1, UART5_IRQn)
+#else
+#define UART_INFO_UART5
 #endif
 
 #ifdef USART6
-    {
-        .num = 6,
-        .clock_hz = APB2_CLOCK_HZ,
-    },
+#define UART_INFO_UART6 UART_INFO_ONE(6, USART6, CLOCK_BUS_APB2, USART6_IRQn)
+#else
+#define UART_INFO_UART6
 #endif
 
 #ifdef UART7
-    {
-        .num = 7,
-        .clock_hz = APB1_CLOCK_HZ,
-    },
+#define UART_INFO_UART7 UART_INFO_ONE(7, UART7, CLOCK_BUS_APB1, UART7_IRQn)
+#else
+#define UART_INFO_UART7
 #endif
 
 #ifdef UART8
-    {
-        .num = 8,
-        .clock_hz = APB1_CLOCK_HZ,
-    },
+#define UART_INFO_UART8 UART_INFO_ONE(8, UART8, CLOCK_BUS_APB1, UART8_IRQn)
+#else
+#define UART_INFO_UART8
 #endif
 
 #ifdef UART9
-    {
-        .num = 9,
-        .clock_hz = APB2_CLOCK_HZ,
-    },
+#define UART_INFO_UART9 UART_INFO_ONE(9, UART9, CLOCK_BUS_APB2, UART9_IRQn)
+#else
+#define UART_INFO_UART9
 #endif
 
 #ifdef UART10
-    {
-        .num = 10,
-        .clock_hz = APB2_CLOCK_HZ,
-    },
+#define UART_INFO_UART10 UART_INFO_ONE(10,UART10,CLOCK_BUS_APB?,UART10_IRQn)
+#else
+#define UART_INFO_UART10
 #endif
-};
 
-UartInfo_t* UartGetInfo(uint8_t num) {
-    UartInfo_t* Node = NULL;
+#define UART_INFO_ALL                                                                                                  \
+    UART_INFO_UART1                                                                                                    \
+    UART_INFO_UART2                                                                                                    \
+    UART_INFO_UART3                                                                                                    \
+    UART_INFO_UART4                                                                                                    \
+    UART_INFO_UART5                                                                                                    \
+    UART_INFO_UART6                                                                                                    \
+    UART_INFO_UART7                                                                                                    \
+    UART_INFO_UART8                                                                                                    \
+    UART_INFO_UART9                                                                                                    \
+    UART_INFO_UART10
+
+/*see Figure 4. STM32F413xG/H block diagram*/
+static const UartInfo_t UartInfo[] = {UART_INFO_ALL};
+
+const UartInfo_t* UartUSARTxToInfo(const USART_TypeDef* const USARTx) {
+    const UartInfo_t* Info = NULL;
+    uint32_t i = 0;
+    uint32_t cnt = ARRAY_SIZE(UartInfo);
+    for(i = 0; i < cnt; i++) {
+        if(USARTx == UartInfo[i].UARTx) {
+            if(UartInfo[i].valid) {
+                Info = &UartInfo[i];
+                break;
+            }
+        }
+    }
+    return Info;
+}
+
+const UartInfo_t* UartGetInfo(uint8_t num) {
+    UartInfo_t* Info = NULL;
     uint32_t i = 0;
     uint32_t cnt = ARRAY_SIZE(UartInfo);
     for(i = 0; i < cnt; i++) {
         if(num == UartInfo[i].num) {
             if(UartInfo[i].valid) {
-                Node = &UartInfo[i];
+                Info = &UartInfo[i];
                 break;
             }
         }
     }
-    return Node;
-}
-
-#if 0
-bool uart_init(void) {
-    bool res = true;
-    LOG_WARNING(UART, "Init..");
-    bool out_res = true;
-    uint8_t i = 0;
-    uint32_t uart_cnt = uart_get_cnt();
-    LOG_INFO(UART, "Cnt: %u", uart_cnt);
-    for(i = 0; i <= 10; i++) {
-        UartHandle_t* Node = UartGetNode(i);
-        const UartConfig_t* Config = UartGetConfig(i);
-        if(Node && Config) {
-            LOG_DEBUG(UART, "%u SpotConfig", i);
-            res = uart_init_one(Node->num);
-            if(res) {
-                LOG_INFO(UART, "%u Init" LOG_OK, Node->num);
-            } else {
-                out_res = false;
-                LOG_ERROR(UART, "%u InitErr", Node->num);
-            }
-        }
-    }
-
-    return out_res;
-}
-
-static bool uart_wait_tx_done_ll(UartHandle_t* Node) {
-    bool res = true;
-    if(Node) {
-        Node->wait_iter = 0;
-#ifdef HAS_UART_TX_TIMEOUT
-        uint8_t num = get_uart_index(Node->uart_h.Instance);
-        uint32_t time_out_us = 0;
-        uint32_t baudrate = uart_get_cfg_baudrate(num);
-        uint32_t start_us = time_get_us();
-        uint32_t dutation_us = 0;
-        uint32_t cur_us = 0;
-        if(Node->tx_len) {
-            time_out_us = calc_transfer_time_us(baudrate, (uint32_t)Node->tx_len + 1);
-        } else { // for first call tx_len==0
-            time_out_us = calc_transfer_time_us(baudrate, 150);
-        }
-#endif
-        do {
-            Node->wait_iter++;
-#ifdef HAS_UART_TX_TIMEOUT
-            cur_us = time_get_us();
-            dutation_us = cur_us - start_us;
-            if(500 * time_out_us < dutation_us) {
-                Node->tx_time_out_cnt++;
-                Node->tx_done = true;
-                res = false;
-                break;
-            }
-#endif
-
-            if(Node->tx_done) {
-                res = true;
-                break;
-            }
-
-            if(HAL_UART_STATE_READY == Node->uart_h.gState) {
-                res = true; // was true
-                break;
-            }
-        } while(false == Node->tx_done);
-    }
-
-    return res;
-}
-#endif
-
-bool uart_wait_send_ll(UartHandle_t* Node, const uint8_t* const data, size_t len) {
-    bool res = false;
-    LOG_DEBUG(UART, "UART%u,Wait->Send,Data:0x%p,%u byte", Node->num, data, len);
-    if(Node) {
-        if(Node->init_done && (len) && data) {
-            res = uart_wait_tx_done_ll(Node);
-            if(res) {
-                Node->tx_done = false;
-                Node->tx_len = len;
-                HAL_StatusTypeDef ret = HAL_ERROR;
-                ret = HAL_UART_Transmit_IT(&Node->uart_h, data, len);
-                if(HAL_OK == ret) {
-                    res = true;
-                } else {
-                    res = false;
-                    LOG_ERROR(UART, "%u TxErr %s", Node->num, HalStatus2Str(ret));
-                }
-            } else {
-                Node->tx_done = true;
-                LOG_ERROR(UART, "%u WaitTxDoneErr", Node->num);
-            }
-        } else {
-            LOG_ERROR(UART, "ArgErr Len:%u Ptr:0x%p", len, data);
-        }
-    } else {
-        LOG_ERROR(UART, "%u NodeErr", Node->num);
-    }
-    return res;
-}
-
-bool uart_send_wait_ll(UartHandle_t* Node, const uint8_t* const  data, uint16_t len){
-    bool res = false;
-    // TODO make sure that global ISR enabled
-    // We send mainly from Stack. We need wait the end of transfer.
-    if(Node) {
-        if(Node->init_done && (len) && data) {
-            uint32_t init_tx_cnt = Node->tx_cnt;
-#ifdef HAS_UART_TX_TIMEOUT
-            uint32_t baudrate = uart_get_cfg_baudrate(Node->num);
-            uint32_t time_out_us = uart_calc_transfer_time_us(baudrate, (uint32_t)len);
-#endif
-            uint32_t dutation_us = 0;
-            uint32_t cur_us = 0;
-            uint32_t start_us = time_get_us();
-            HAL_StatusTypeDef stat = HAL_ERROR;
-            stat = HAL_UART_Transmit_IT(&Node->uart_h, data, len);
-            if(HAL_OK == stat) {
-                res = true;
-                // We send mainly from Stack. We need wait the end of transfer.
-                // Otherwise tx data will not be valid
-                while(init_tx_cnt == Node->tx_cnt) {
-                    cur_us = time_get_us();
-                    dutation_us = cur_us - start_us;
-#ifdef HAS_UART_TX_TIMEOUT
-                    if((4000 * time_out_us) < dutation_us) {
-                        res = false;
-                        Node->tx_time_out_cnt++;
-                        break;
-                    }
-
-                    if(HAL_UART_STATE_READY == Node->uart_h.gState) {
-                        res = true;
-                        break;
-                    }
-#endif
-                }
-                Node->real_byte_tx_time_us = dutation_us / len;
-            }
-
-        } else {
-            LOG_ERROR(UART, "SettingErr Len:%u Ptr:0x%p", len, data);
-        }
-    } else {
-        LOG_ERROR(UART, "NodeErr");
-    }
-    return res;
+    return Info;
 }
 
 bool uart_read(uint8_t num, uint8_t* out_array, uint16_t array_len) {
     bool res = false;
-
     return res;
 }
 
@@ -536,8 +264,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uart_handle) {
 #ifdef UART5
     if(UART5 == uart_handle->Instance) {
         __HAL_RCC_UART5_CLK_ENABLE();
-
-        HAL_NVIC_SetPriority(UART5_IRQn, 7, 7);
+        HAL_NVIC_SetPriority(UART5_IRQn, 0, 0);
         HAL_NVIC_EnableIRQ(UART5_IRQn);
     }
 #endif
@@ -559,20 +286,25 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uart_handle) {
         HAL_NVIC_EnableIRQ(UART7_IRQn);
     }
 #endif
+
+#ifdef UART8
+    if(UART8 == uart_handle->Instance) {
+        __HAL_RCC_UART8_CLK_ENABLE();
+
+        HAL_NVIC_SetPriority(UART8_IRQn, 7, 0);
+        HAL_NVIC_EnableIRQ(UART8_IRQn);
+    }
+#endif
 }
 
-static uint32_t UartGetBaseClock(uint8_t num) {
+uint32_t UartGetBaseClock(const uint8_t num) {
     uint32_t clock_hz = 0;
-    uint32_t i = 0;
-    for(i = 0; i < ARRAY_SIZE(UartInfo); i++) {
-        if(num == UartInfo[i].num) {
-            clock_hz = UartInfo[i].clock_hz;
-            break;
-        }
+    const UartInfo_t* Info = UartGetInfo(num);
+    if(Info) {
+        clock_hz = clock_freq_get(Info->clock_bus);
     }
     return clock_hz;
 }
-
 
 uint32_t uart_baud_rate_get_ll(uint8_t num, uint16_t* mantissa, uint16_t* fraction, uint8_t* over_sampling) {
     uint32_t baud_rate = 0;
@@ -595,6 +327,15 @@ uint32_t uart_baud_rate_get_ll(uint8_t num, uint16_t* mantissa, uint16_t* fracti
 }
 
 void HAL_UART_MspDeInit(UART_HandleTypeDef* uart_handle) {
+#ifdef USART1
+    if(uart_handle->Instance == USART1) {
+        __HAL_RCC_USART1_CLK_DISABLE();
+
+        /* USART1 interrupt Deinit */
+        HAL_NVIC_DisableIRQ(USART1_IRQn);
+    }
+#endif
+
 #ifdef USART2
     if(uart_handle->Instance == USART2) {
         __HAL_RCC_USART2_CLK_DISABLE();
@@ -618,13 +359,13 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uart_handle) {
     }
 #endif
 
-#ifdef UART7
-    if(uart_handle->Instance == UART7) {
-        __HAL_RCC_UART7_CLK_DISABLE();
-
-        HAL_NVIC_DisableIRQ(UART7_IRQn);
+#ifdef UART5
+    if(uart_handle->Instance == UART5) {
+        __HAL_RCC_UART5_CLK_DISABLE();
+        HAL_NVIC_DisableIRQ(UART5_IRQn);
     }
 #endif
+
 #ifdef USART6
     if(USART6 == uart_handle->Instance) {
         __HAL_RCC_USART6_CLK_DISABLE();
@@ -632,92 +373,143 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uart_handle) {
         HAL_NVIC_DisableIRQ(USART6_IRQn);
     }
 #endif
-}
 
-bool uart_send_ll(uint8_t num, uint8_t* array, uint16_t array_len, bool is_wait) {
-    bool res = false;
-    // We send mainly from Stack.
-    (void)is_wait;
-    res = uart_is_allowed(num);
-    if(res) {
-        if(array && array_len) {
-            UartHandle_t* Node = UartGetNode(num);
-            if(Node) {
-                if(Node->init_done) {
-                    Node->tx_buff = NULL;
-                } else {
-                    res = false;
-                }
-            } else {
-                res = false;
-            }
-            if(res) {
+#ifdef UART7
+    if(uart_handle->Instance == UART7) {
+        __HAL_RCC_UART7_CLK_DISABLE();
 
-                /*print from heap*/
-#if 0
-                    res = uart_wait_send_ll(Node, Node->tx_buff, array_len);
-                    if(false == res) {
-                        LOG_ERROR(UART, "%u WaitSendErr", num);
-                    }
-#endif
-
-                /*Print from stack*/
-                res = uart_send_wait_ll(Node, array, array_len);
-                if(false == res) {
-                    LOG_ERROR(UART, "%u SendWaitErr", num);
-                }
-            }
-
-        } else {
-#ifdef HAS_LOG
-            LOG_ERROR(UART, "DataErr L:%u", array_len);
-#endif
-        }
-    } else {
-#ifdef HAS_LOG
-        LOG_ERROR(UART, "%u NotAllowed", num);
-#endif
+        HAL_NVIC_DisableIRQ(UART7_IRQn);
     }
-    return res;
+#endif
+
+#ifdef UART8
+    if(uart_handle->Instance == UART8) {
+        __HAL_RCC_UART8_CLK_DISABLE();
+
+        HAL_NVIC_DisableIRQ(UART8_IRQn);
+    }
+#endif
 }
 
-#if 0
-bool uart_flush(uint8_t num) {
+bool uart_check(void) { return false; }
+
+bool uart_heartbeat_proc_one(uint8_t num) {
     bool res = false;
     UartHandle_t* Node = UartGetNode(num);
     if(Node) {
+        char str[60] = "UART";
+        strcpy(str, "");
+        snprintf(str, sizeof(str), "%sUART%u,", str, num);
+        snprintf(str, sizeof(str), "%sSN%u,", str, Node->sn++);
+        uint32_t len = strlen(str);
+        uart_mcal_send(num, (uint8_t*)str, len);
+
+        HAL_StatusTypeDef ret = HAL_UART_Receive_IT(&Node->uart_h, (uint8_t*)Node->rx_data, 1);
+        res = HAL_retToRes(ret);
+    }
+    return res;
+}
+
+/*can be called form ISR TODO rename to uart_tx_next */
+bool uart_tx_next(const uint8_t num) {
+    bool res = false;
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+        // uint32_t count = fifo_get_count(&Node->TxFifo);
         if(Node->init_done) {
-            FifoIndex_t cnt = 0;
-            do {
-                cnt = fifo_get_count(&Node->TxFifo);
-                if(cnt) {
-                    char TxBuff[50];
-                    FifoIndex_t out_len = 0;
-                    res = fifo_pull_array(&Node->TxFifo, TxBuff, sizeof(TxBuff), &out_len);
+            if(HAL_UART_STATE_READY == Node->uart_h.gState) {
+                uint32_t outLen = 0;
+                res = fifo_pull_array(&Node->TxFifo, Node->txBlock, sizeof(Node->txBlock), &outLen);
+                if(res) {
+                    HAL_StatusTypeDef ret = HAL_UART_Transmit_IT(&Node->uart_h, Node->txBlock, outLen);
+                    res = HAL_retToRes(ret);
                     if(res) {
-                        if(out_len) {
-                            res = uart_send_ll(num, (uint8_t*)TxBuff, out_len, true);
-                        } else {
-                            res = false;
-                        }
+                        Node->tx_start_ms = time_get_ms32();
+                        Node->tx_done = false;
                     }
                 }
-            } while(cnt);
+            }
         }
     }
     return res;
 }
-#endif
 
-#if 0
-bool proc_uarts(void) {
+bool uart_proc_one(uint8_t num) {
     bool res = false;
-    uint8_t num = 0;
-    for(num = 0; num <= 10; num++) {
-        res = uart_flush(num);
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+#if 0
+        HAL_StatusTypeDef ret = HAL_ERROR;
+        ret = HAL_UART_Receive_IT(&Node->uart_h, (uint8_t*) Node->rx_data, 1);
+        res = HAL_retToRes(ret);
+#endif
+        UartInfo_t* Info = UartGetInfo(num);
+        if(Info) {
+            res = interrupt_is_active(Info->irq_n);
+            if(!res) {
+                res = interrupt_control(Info->irq_n, true);
+            }
+        }
     }
     return res;
 }
-#endif
 
-bool uart_check(void) { return false; }
+static bool uart_init_hal_struct(const UartConfig_t* Config, UART_InitTypeDef* const Init) {
+    bool res = true;
+    Init->BaudRate = Config->baud_rate;
+    Init->WordLength = UasrtWordSizeBitsToWordLength(Config->word_len_bit);
+    Init->StopBits = UasrtStopBitToStopBits(Config->stop_bit_cnt);
+    Init->HwFlowCtl = UART_HWCONTROL_NONE;
+    Init->Mode = UART_MODE_TX_RX;
+    Init->OverSampling = UART_OVERSAMPLING_16;
+    Init->Parity = UART_PARITY_NONE;
+    return res;
+}
+
+bool uart_init_one(uint8_t num) {
+    bool res = false;
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+        const UartConfig_t* Config = UartGetConfig(num);
+        if(Config) {
+#ifdef HAS_UART_DIAG
+            LOG_WARNING(UART, "%s", UartConfigToStr(Config));
+#endif
+            res = UartIsValidConfig(Config);
+            if(res) {
+                UartInfo_t* Info = UartGetInfo(num);
+                if(Info) {
+                    Node->uart_h.Instance = Info->UARTx; // UartGetBase(num);
+
+                    res = uart_init_common(Config, Node);
+                    res = uart_init_node(Node);
+                    res = interrupt_control(Info->irq_n, Config->interrupts_on);
+                    res = interrupt_set_priority(Info->irq_n, Config->irq_priority);
+                    res = uart_init_hal_struct(Config, &Node->uart_h.Init);
+                    if(Node->uart_h.Instance) {
+                        HAL_StatusTypeDef ret = HAL_ERROR;
+                        interrupt_control_all(false);
+                        ret = HAL_UART_Init(&Node->uart_h);
+                        res = HAL_retToRes(ret);
+                        if(res) {
+                            LOG_INFO(UART, "UART%u,init,Ok", num);
+                            Node->init_done = true;
+                            ret = HAL_UART_Receive_IT(&Node->uart_h, (uint8_t*)Node->rx_data, 1);
+                            res = HAL_retToRes(ret);
+                            char str[40] = "UART";
+                            res = uart_mcal_send(num, (uint8_t*)str, 4);
+                            snprintf(str, sizeof(str), "UART%u", num);
+                            uint32_t len = strlen(str);
+                            res = uart_mcal_send(num, (uint8_t*)str, len);
+                        } else {
+                            LOG_ERROR(UART, "UART%u,init,Err", num);
+                        }
+
+                        interrupt_control_all(true);
+                    }
+                }
+            }
+        }
+    }
+    return res;
+}

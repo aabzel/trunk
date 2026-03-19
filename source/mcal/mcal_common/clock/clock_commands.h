@@ -5,10 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-
+#include "std_includes.h"
 
 #ifdef HAS_CLOCK_CUSTOM_COMMANDS
 #include "clock_custom_commands.h"
@@ -35,16 +32,20 @@ extern "C" {
 bool clock_core_set_command(int32_t argc, char* argv[]);
 bool clock_diag_command(int32_t argc, char* argv[]);
 bool clock_hw_pause_command(int32_t argc, char* argv[]);
+bool clock_init_command(int32_t argc, char* argv[]);
 bool clock_sw_pause_command(int32_t argc, char* argv[]);
 bool clock_up_time_command(int32_t argc, char* argv[]);
+bool clock_mux_command(int32_t argc, char* argv[]);
 
 #define CLOCK_COMMANDS                                                                   \
     CLOCK_CUSTOM_COMMANDS                                                                \
     SHELL_CMD("clock_core_set", "ccs", clock_core_set_command, "ClockCoreSet"),          \
     SHELL_CMD("clock_diag", "cld", clock_diag_command, "ClockDiag"),                     \
-    SHELL_CMD("clock_up_time", "ut", clock_up_time_command, "ClockUpTime"),              \
+    SHELL_CMD("clock_hw_pause", "hwp", clock_hw_pause_command, "ClockHwPauseMs"),        \
+    SHELL_CMD("clock_init", "cli", clock_init_command, "ClockInit"),                     \
+    SHELL_CMD("clock_mux", "cmc", clock_mux_command, "ClockMux"),                        \
     SHELL_CMD("clock_sw_pause", "swp", clock_sw_pause_command, "ClockSwPauseMs"),        \
-    SHELL_CMD("clock_hw_pause", "hwp", clock_hw_pause_command, "ClockHwPauseMs"),
+    SHELL_CMD("clock_up_time", "cut", clock_up_time_command, "ClockUpTime"),
 
 #ifdef __cplusplus
 }

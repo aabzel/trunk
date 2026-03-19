@@ -9,24 +9,26 @@ extern "C" {
 #include <stdint.h>
 
 #include "ext_int_const.h"
+#include "gpio_types.h"
 #include "ext_int_custom_types.h"
-#include "sys_config.h"
+#include "microcontroller_const.h"
 
 #define EXT_INT_COMMON_VARIABLES                             \
     uint8_t num;                                             \
+    uint8_t irq_priority;                                    \
     bool interrupt_on;                                       \
     Pad_t Pad;                                               \
-    uint8_t irq_priority;                                    \
+    char* name;                                              \
     PinIntEdge_t edge;                                       \
     bool valid;
 
 typedef struct {
     EXT_INT_COMMON_VARIABLES
-    char* name;
 } ExtIntConfig_t;
 
 #define EXT_INT_ISR_VARIABLES                               \
     volatile bool it_done;                                  \
+    volatile bool unprocessed;                              \
     volatile bool rising_done;                              \
     volatile bool falling_done;                             \
     volatile uint32_t rising_cnt;                           \

@@ -7,14 +7,12 @@
 #include "common_diag.h"
 #include "convert.h"
 #include "data_utils.h"
-#include "gpio_mcal.h"
-#include "gpio_types.h"
-#include "gpio_custom_drv.h"
-#include "gpio_diag.h"
 #include "gpio_custom_diag.h"
-#include "log_utils.h"
+#include "gpio_custom_drv.h"
+#include "gpio_mcal.h"
 #include "log.h"
 #include "log_constants.h"
+#include "log_utils.h"
 #include "str_utils.h"
 #include "sys_config.h"
 #include "table_utils.h"
@@ -35,10 +33,10 @@ static bool diag_gpio_interrupt(char* key_word1, char* key_word2) {
 #endif
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %2u  " TSEP, log_line, pin);
-        snprintf(log_line, sizeof(log_line), "%s %3s " TSEP, log_line, OnOff2Str(pin_get_int(pin)));
-        snprintf(log_line, sizeof(log_line), "%s %3s " TSEP, log_line, OnOff2Str(pin_get_int_pend(pin)));
+        snprintf(log_line, sizeof(log_line), "%s %3s " TSEP, log_line, OnOffToStr(pin_get_int(pin)));
+        snprintf(log_line, sizeof(log_line), "%s %3s " TSEP, log_line, OnOffToStr(pin_get_int_pend(pin)));
 #ifdef HAS_PIN_INT
-        snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioEdge2Str(edge));
+        snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioEdgeToStr(edge));
         if(PinIntNode) {
             snprintf(log_line, sizeof(log_line), "%s %4u " TSEP, log_line, (unsigned int)PinIntNode->int_cnt);
         }
@@ -147,6 +145,3 @@ bool ext_int_mask_reset_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
-
-
-

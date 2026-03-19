@@ -1,5 +1,4 @@
-#include "sdio_diag.h"
-
+#include <mcal/mcal_stm32f4/sdio/sdio_custom_diag.h>
 #include <stdio.h>
 
 #include "data_types.h"

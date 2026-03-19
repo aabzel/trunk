@@ -3,8 +3,9 @@
  */
 
 #include "usbd_conf.h"
+
 #include "usbd_core.h"
-#include "usbd_desc.h"
+#include "usbd_fs_desc_serial.h"
 
 #define USBD_VID 1155
 #define USBD_LANGID_STRING 1033

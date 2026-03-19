@@ -1,0 +1,4 @@
+
+config NVS
+    bool "Enable use of the NVS drivers"
+

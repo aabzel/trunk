@@ -7,12 +7,13 @@
 #include "ext_int_mcal.h"
 #include "gpio_diag.h"
 #include "log.h"
+#include "microcontroller_const.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
 const char* ExtIntEdgeToStr(PinIntEdge_t code) {
     const char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case PIN_INT_EDGE_NONE:
         name = "None";
         break;
@@ -25,21 +26,35 @@ const char* ExtIntEdgeToStr(PinIntEdge_t code) {
     case PIN_INT_EDGE_BOTH:
         name = "Both";
         break;
+    default:
+        name = "?";
+        break;
     }
     return name;
 }
 
+const char* ExtIntNodeToStr(const ExtIntHandle_t* const Node) {
+    if(Node) {
+        sprintf(text, "N:%u,", Node->num);
+        snprintf(text, sizeof(text), "%sPad:%s,", text, GpioPadToStr(Node->Pad));
+        snprintf(text, sizeof(text), "%s%s,", text, Node->name);
+        snprintf(text, sizeof(text), "%sITcnt:%u,", text, Node->it_cnt);
+        snprintf(text, sizeof(text), "%sRcnt:%u,", text, Node->rising_cnt);
+        snprintf(text, sizeof(text), "%sFcnt:%u,", text, Node->falling_cnt);
+        // snprintf(text, sizeof(text), "%sBcnt:%u,", text, Node->both_cnt);
+    }
+    return text;
+}
+
 const char* ExtIntConfigToStr(const ExtIntConfig_t* const Config) {
-    static char text[200] = "";
     if(Config) {
-        sprintf(text, "N:%u", Config->num);
+        sprintf(text, "N:%u,", Config->num);
         snprintf(text, sizeof(text), "%sEdge:%s,", text, ExtIntEdgeToStr(Config->edge));
-        snprintf(text, sizeof(text), "%sPad:%s,", text, GpioPad2Str(Config->Pad.byte));
+        snprintf(text, sizeof(text), "%sPad:%s,", text, GpioPadToStr(Config->Pad));
         snprintf(text, sizeof(text), "%sInt:%s,", text, OnOffToStr(Config->interrupt_on));
         snprintf(text, sizeof(text), "%sPri:%u,", text, Config->irq_priority);
         snprintf(text, sizeof(text), "%s%s,", text, Config->name);
     }
-
     return text;
 }
 
@@ -56,7 +71,7 @@ bool ext_int_diag(void) {
     bool res = false;
     uint8_t num = 0;
     static const table_col_t cols[] = {{5, "Num"},  {5, "Pad"},  {6, "Edge"}, {8, "IT"},
-                                       {8, "Rise"}, {8, "fall"}, {8, "Both"}, {6, "name"}};
+                                       {8, "Rise"}, {8, "fall"}, {8, "Both"}, {11, "name"}};
     char temp_str[120] = {0};
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     for(num = 0; num < EXT_INT_COUNT; num++) {
@@ -75,7 +90,7 @@ bool ext_int_diag(void) {
                 snprintf(temp_str, sizeof(temp_str), "%s %8s " TSEP, temp_str, Config->name);
             }
             snprintf(temp_str, sizeof(temp_str), "%s" CRLF, temp_str);
-            cli_printf("%s" CRLF, temp_str);
+            cli_printf("%s", temp_str);
         }
     }
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));

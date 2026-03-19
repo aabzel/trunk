@@ -1,10 +1,34 @@
 #include "hal_mcal.h"
 
-#include <stdbool.h>
-
-#include "stm32f4xx_hal_def.h"// err
+#include "std_includes.h"
+#include "stm32f4xx_hal_def.h" // err
+#ifdef HAS_LOG
+#include "log.h"
+#endif
 
 uint32_t critical_nesting_level = 0U;
+
+bool HAL_retToRes(const HAL_StatusTypeDef ret) {
+    bool res = false;
+    switch(ret) {
+    case HAL_OK:
+        res = true;
+        break;
+    case HAL_ERROR:
+        res = false;
+        break;
+    case HAL_BUSY:
+        res = false;
+        break;
+    case HAL_TIMEOUT:
+        res = false;
+        break;
+    default:
+        res = false;
+        break;
+    }
+    return res;
+}
 
 bool isFromInterrupt(void) {
     bool res = false;
@@ -16,9 +40,7 @@ bool isFromInterrupt(void) {
 bool hal_init(void) {
     bool res = false;
     HAL_StatusTypeDef ret = HAL_Init();
-    if(HAL_OK == ret) {
-        res = true;
-    }
+    res = HAL_retToRes(ret);
     return res;
 }
 
@@ -39,5 +61,15 @@ void exit_critical(void) {
                 _enable_interrupt_();
             }
         }
+    }
+}
+
+
+void Error_Handler(void) {
+#ifdef HAS_LOG
+    LOG_ERROR(SYS, "Error");
+#endif
+    __disable_irq();
+    while(1) {
     }
 }

@@ -1,15 +1,11 @@
 #include "usb_mcal.h"
-/**
- * @brief   This file provides code for the configuration
- *          of the USB_OTG instances.
- *
- * This software component is licensed by ST under Ultimate Liberty license
- * SLA0044, the "License"; You may not use this file except in compliance with
- * the License. You may obtain a copy of the License at:
- *                             www.st.com/SLA0044
- */
 
 #include "usb_config.h"
+#include "code_generator.h"
+
+#ifdef HAS_USB_SERIAL
+#include "usb_serial.h"
+#endif
 
 #ifdef HAS_USB_DEVICE
 #include "usb_device.h"
@@ -19,17 +15,114 @@
 #include "usb_host.h"
 #endif
 
-bool usb_mcal_init(void) {
-    LOG_INFO(USB, "Init");
+static const UsbInfo_t UsbInfo[] = {
+    {
+        .num = 1,
+        .valid = true,
+        .USBx = USB_OTG_FS,
+    },
+    {
+        .num = 2,
+        .valid = true,
+        .USBx = USB_OTG_HS,
+    },
+};
+
+COMPONENT_GET_INFO(Usb)
+
+
+bool usb_device_mcal_init(void) {
+    LOG_INFO(USB, "DevInit");
     bool res = false;
-#ifdef HAS_USB_HOST
-    res = usb_host_init();
-#endif /*HAS_USB_HOST*/
+
+#ifdef HAS_USB_SERIAL
+    //res = usb_serial_init(1);
+#endif
 
 #ifdef HAS_USB_DEVICE
-    res = usb_device_init();
-#endif /*HAS_USB_DEVICE*/
+    res = usb_device_init(1);
+#endif
 
+    return res;
+}
+
+bool usb_init_clock(const UsbHandle_t* const Node ){
+    bool res = false;
+    switch(Node->device_speed){
+    case USB_DEVICE_SPEED_FS:{
+        __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+    } break;
+    case USB_DEVICE_SPEED_HS:{
+        __HAL_RCC_USB_OTG_HS_CLK_ENABLE();
+    } break;
+    default : res = false; break;
+    }
+    return res;
+}
+
+bool usb_init_common(const UsbConfig_t* const Config,
+                     UsbHandle_t* const Node) {
+    bool res = false;
+    if(Config) {
+        if(Node) {
+            Node->device_speed = Config->device_speed;
+            Node->PadDP = Config->PadDP;
+            Node->PadDM = Config->PadDM;
+            Node->host_speed = Config->host_speed;
+            Node->Descriptors = Config->Descriptors;
+            Node->num = Config->num;
+            Node->role = Config->role;
+            Node->interrupt_on = Config->interrupt_on;
+            Node->speed = Config->speed;
+            Node->name = Config->name;
+            res = true;
+        }
+    }
+    return res;
+}
+
+
+bool usb_init_one(uint8_t num) {
+    bool res = false;
+    LOG_WARNING(USB, "USB%u", num);
+    const UsbConfig_t* Config = UsbGetConfig(num);
+    if(Config) {
+        res = UsbIsValidConfig(Config);
+        if(res) {
+#ifdef HAS_USB_DIAG
+            LOG_WARNING(USB, "%s", UsbConfigToStr(Config));
+#endif
+            UsbHandle_t* Node = UsbGetNode(num);
+            if(Node) {
+                res = usb_init_common(Config,Node);
+
+                switch(Node->role) {
+                    case USB_MCAL_ROLE_HOST: {
+#ifdef HAS_USB_HOST
+                        res = usb_host_init();
+#endif
+
+                    }break;
+                    case USB_MCAL_ROLE_DEVICE: {
+#ifdef HAS_USB_DEVICE
+                       res = usb_device_init(num);
+#endif
+
+                    }break;
+                    default: break;
+                }
+                Node->valid = true;
+                Node->init = true;
+                res = true;
+            } else {
+                LOG_ERROR(USB, "NodeErr:%u", num);
+            }
+        } else {
+            LOG_ERROR(USB, "ConfigErr:%u", num);
+        }
+    } else {
+        LOG_PARN(USB, "ConfigErr:%u", num);
+    }
     return res;
 }
 
@@ -211,47 +304,30 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle) {
 }
 #endif
 
-UsbHandle_t* UsbGetNode(uint8_t usb_num) {
-    UsbHandle_t* InstNode = NULL;
-    uint32_t i = 0;
-    uint32_t usb_cnt = usb_get_cnt();
-    for(i = 0; i < usb_cnt; i++) {
-        if(usb_num == UsbInstance[i].num) {
-            if(UsbInstance[i].valid) {
-                InstNode = &UsbInstance[i];
-                break;
-            }
-        }
-    }
-    return InstNode;
-}
-
 UsbHandle_t* UsbGetNodeBySpeed(UsbSpeed_t speed) {
-    UsbHandle_t* InstNode = NULL;
+    UsbHandle_t* Node = NULL;
     uint32_t i = 0;
     uint32_t usb_cnt = usb_get_cnt();
     for(i = 0; i < usb_cnt; i++) {
         if(speed == UsbConfig[i].speed) {
             if(UsbConfig[i].valid) {
-                InstNode = &UsbInstance[i];
+                Node = &UsbInstance[i];
                 break;
             }
         }
     }
-    return InstNode;
+    return Node;
 }
 
-const UsbConfig_t* UsbGetConfNode(uint8_t usb_num) {
-    const UsbConfig_t* ConfNode = NULL;
-    uint32_t i = 0;
-    uint32_t usb_cnt = usb_get_cnt();
-    for(i = 0; i < usb_cnt; i++) {
-        if(usb_num == UsbConfig[i].num) {
-            if(UsbConfig[i].valid) {
-                ConfNode = &UsbConfig[i];
-                break;
-            }
-        }
+bool usb_proc_one(const uint8_t num) {
+    bool res = false;
+    LOG_PARN(USB, "Proc:%u", num);
+    UsbHandle_t* Node = UsbGetNode(num);
+    if(Node) {
+#ifdef HAS_USB_DEVICE
+        res = usb_device_proc_one(num);
+#endif
+        Node->spin++;
     }
-    return ConfNode;
+    return res;
 }

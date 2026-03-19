@@ -1,5 +1,5 @@
-#ifndef SPI_STM_CONST_H
-#define SPI_STM_CONST_H
+#ifndef SPI_CUSTOM_CONST_H
+#define SPI_CUSTOM_CONST_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,8 +7,8 @@ extern "C" {
 
 #include "spi_dep.h"
 
-#define SPI_TX_DONE_TIME_OUT_MS 300
-#define SPI_RX_DONE_TIME_OUT_MS 300
+//#define SPI_TX_DONE_TIME_OUT_MS 300
+//#define SPI_RX_DONE_TIME_OUT_MS 300
 
 typedef enum  {
     SPI0_INX = 0,
@@ -25,4 +25,4 @@ typedef enum  {
 }
 #endif
 
-#endif /* SPI_STM_CONST_H  */
+#endif /* SPI_CUSTOM_CONST_H  */

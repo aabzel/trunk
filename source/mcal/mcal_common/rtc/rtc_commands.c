@@ -41,9 +41,9 @@ bool rtc_ctrl_command(int32_t argc, char* argv[]) {
     if(res) {
         res = rtc_ctrl(num, on_off);
         if(res) {
-            LOG_INFO(LG_RTC, "Set %u %s", num, OnOff2Str(on_off));
+            LOG_INFO(LG_RTC, "Set %u %s", num, OnOffToStr(on_off));
         } else {
-            LOG_ERROR(LG_RTC, "Set %u %s", num, OnOff2Str(on_off));
+            LOG_ERROR(LG_RTC, "Set %u %s", num, OnOffToStr(on_off));
         }
     } else {
         LOG_ERROR(LG_RTC, "Usage: rtc Num OnOff");
@@ -68,7 +68,7 @@ bool rtc_get_command(int32_t argc, char* argv[]) {
         if(Node) {
             res = rtc_get(num, &Node->TimeDate);
             if(res) {
-                LOG_INFO(LG_RTC, "RTC%u,%s", num, TimeDate2StrShort(&Node->TimeDate));
+                LOG_INFO(LG_RTC, "RTC%u,%s", num, TimeDateToStrShort(&Node->TimeDate));
             } else {
                 LOG_ERROR(LG_RTC, "Get,Err");
             }

@@ -1,0 +1,14 @@
+#ifndef INDEPANDENT_WATCHDOG_CONST_H
+#define INDEPANDENT_WATCHDOG_CONST_H
+
+#include "sys_config.h"
+#include "timer_utils.h"
+
+#define IWDG_TIMEOUT_MS 10000
+#define IWDG_POLL_PERIOD_US MSEC_2_USEC(100)
+#define IWDG_BASE_ADDR IWDG_BASE
+
+#define PRESCALER_VAL_MAX 256
+#define RELOAD_VAL_MAX 4095
+
+#endif /* INDEPANDENT_WATCHDOG_CONST_H  */

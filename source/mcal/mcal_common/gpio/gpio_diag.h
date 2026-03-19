@@ -1,9 +1,7 @@
 #ifndef GPIO_GENERAL_DIAG_H
 #define GPIO_GENERAL_DIAG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "gpio_types.h"
 
 #ifdef HAS_GPIO_CUSTOM
@@ -26,26 +24,28 @@
 #error "+HAS_GPIO_DIAG"
 #endif
 
-const char* GpioConfToStr(const GpioConfig_t* Config);
-
-const char* GpioAltFun2Str(uint8_t code);
-const char* GpioAlterFun2Str(uint8_t code);
+const char* GpioConfigToStr(const GpioConfig_t* const Config);
+const char* GpioPortToStr(const GpioPort_t port);
+const char* GpioAltFunToStr(  uint8_t alt_foo);
+const char* GpioAlterFunToStr(Pad_t Pad);
 #ifdef HAS_EXT_INT
 const char* GpioEdgeToStr(PinIntEdge_t code);
 #endif
-const char* GpioDir2Str(GpioDir_t code);
+const char* GpioDirToStr(GpioDir_t code);
 const char* GpioFunToStr(GpioPinFunction_t function);
-const char* GpioLevel2Str(GpioLogicLevel_t code);
-const char* GpioMode2Str(GpioApiMode_t code);
-const char* GpioOutType2Str(uint8_t code);
-const char* GpioPad2Str(uint8_t pad);
-const char* GpioPadToStr(Pad_t pad);
-const char* GpioPad2WireName(uint8_t pad);
-const char* GpioPull2Str(GpioPullMode_t code);
-const char* GpioSpeed2Str(uint8_t code);
-const char* GpioType2Str(uint8_t code);
+const char* GpioLevelToStr(GpioLogicLevel_t code);
+const char* GpioModeToStr(GpioApiMode_t code);
+const char* GpioOutTypeToStr(Pad_t Pad);
+const char* GpioPadToStr(Pad_t Pad);
+const char* GpioDriveSelectToStr(const GpioDriveSelect_t drive_select);
+const char* GpioPad2WireName(Pad_t Pad);
+const char* GpioPullToStr(GpioPullMode_t code);
+const char* GpioSpeedToStr(const GpioSpeed_t speed) ;
+const char* GpioTypeToStr(Pad_t Pad);
 
+bool diag_gpio(char* key_word1, char* key_word2) ;
 bool gpio_diag(char* key_word1, char* key_word2);
+bool gpio_raw_reg_diag(const GpioPort_t port);
 bool GpioConfigDiag(const GpioConfig_t* Config);
 
 #endif /* GPIO_GENERAL_DIAG_H  */

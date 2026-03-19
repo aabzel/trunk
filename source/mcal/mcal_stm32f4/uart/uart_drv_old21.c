@@ -231,10 +231,10 @@ bool uart_init_ll(uint8_t uart_num) {
                 res = false;
             }
             char str[40] = "UART";
-            uart_mcal_send(uart_num, (uint8_t*)str, 4);
+            uart_send_api(uart_num, (uint8_t*)str, 4);
             snprintf(str, sizeof(str), "UART%u", uart_num);
             size_t len = strlen(str);
-            uart_mcal_send(uart_num, (uint8_t*)str, len);
+            uart_send_api(uart_num, (uint8_t*)str, len);
         }
     }
     return res;
@@ -394,7 +394,7 @@ bool uart_wait_send_ll(uint8_t uart_num, uint8_t* tx_buffer, uint16_t len) {
                 if(HAL_OK == ret) {
                     res = true;
                 } else {
-                    LOG_ERROR(UART, "%u TxErr %s", uart_num, HalStatus2Str(ret));
+                    LOG_ERROR(UART, "%u TxErr %s", uart_num, HalStatusToStr(ret));
                 }
             } else {
                 UartNode->tx_done = true;

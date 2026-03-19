@@ -11,9 +11,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t gpio_pin) {
     uint16_t bit = 0;
     for(bit = 0; bit <= 15; bit++) {
         if(CHECK_BIT_NUM(gpio_pin, bit)) {
-            PinInt_t* Node = PinIntGetNode((uint16_t) bit);
+            PinInt_t* Node = PinIntGetNode((uint16_t)bit);
             if(Node) {
                 Node->int_cnt++;
+                break;
             }
         }
     }

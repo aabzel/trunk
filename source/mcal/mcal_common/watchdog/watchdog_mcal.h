@@ -2,7 +2,6 @@
 #define WATCHDOG_MCAL_H
 
 #include "std_includes.h"
-
 #include "watchdog_types.h"
 #include "watchdog_config.h"
 #include "watchdog_diag.h"

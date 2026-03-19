@@ -4,16 +4,36 @@
 #include <stdio.h>
 
 #include "data_utils.h"
-#include "key_board_drv.h"
-#include "keyboard.h"
 #include "log.h"
 #include "none_blocking_pause.h"
-#include "usb_config.h"
 #include "usb_device_types.h"
 #include "usb_mcal.h"
 #include "string_reader_const.h"
+#include "usbd_cdc.h"
 #include "usbd_core.h"
-#include "usbd_desc.h"
+#include "code_generator.h"
+
+#ifdef HAS_USB_FS
+#include "usbd_fs_cdc_if.h"
+#endif
+
+#ifdef HAS_USB_HS
+#include "usbd_hs_cdc_if.h"
+#endif
+
+#ifdef HAS_USB_SERIAL
+#include "usb_serial.h"
+#endif
+
+#ifdef HAS_KEYBOARD
+#include "key_board_drv.h"
+#include "keyboard.h"
+#endif
+
+#ifdef HAS_PCAN_PRO
+#include "usb_device_pcan_desc.h"
+#include "pcanpro_usbd.h"
+#endif
 
 #ifdef HAS_HID
 #include "usbd_hid.h"
@@ -24,79 +44,204 @@
 #include "usbd_storage_if.h"
 #endif
 
+uint8_t usb_device_speed_to_id(const UsbSpeed_t speed) {
+    uint8_t id = DEVICE_FS;
+    switch (speed) {
+        case USB_MCAL_SPEED_FS:
+            id = DEVICE_FS;
+            break;
+        case USB_MCAL_SPEED_HS:
+            id = DEVICE_HS;
+            break;
+        default:
+            id = DEVICE_FS;
+            break;
+    }
+    return id;
+}
+
+bool usb_device_status_to_res(const USBD_StatusTypeDef status) {
+    bool res = false;
+    switch (status) {
+        case USBD_OK:
+            res = true;
+            break;
+        case USBD_BUSY:
+            res = false;
+            break;
+        case USBD_EMEM:
+            res = false;
+            break;
+        case USBD_FAIL:
+            res = false;
+            break;
+        default:
+            res = false;
+            break;
+    }
+    return res;
+}
+
+USBD_StatusTypeDef usb_device_res_to_ret(const bool res) {
+    USBD_StatusTypeDef status = USBD_FAIL;
+    if(res){
+        status = USBD_OK;
+    }
+    return status;
+}
+
 /* USB Device Core handle declaration. */
 // USBD_HandleTypeDef hUsbDeviceHS;
-
 uint32_t key_insert_timeout_ms = BUTTON_INSERT_TIMEOUT_MS;
 
-bool usb_device_init(void) {
-    bool res = false;
-    LOG_WARNING(USB_DEVICE, "Init");
-    // set_log_level(HID,LOG_LEVEL_WARNING);
-    USBD_StatusTypeDef ret = USBD_FAIL;
-    UsbHandle_t* Node = UsbGetNode(USB_DEVICE_NUM);
-    if(Node) {
-        key_insert_timeout_ms = BUTTON_INSERT_TIMEOUT_MS;
-        const UsbConfig_t* UsbConfNode = UsbGetConfNode(USB_DEVICE_NUM);
-        if(UsbConfNode) {
-            ret = USBD_Init(&Node->hUsbDevice, &USB_Dev_Desc, UsbConfNode->speed);
-            if(USBD_OK == ret) {
-                LOG_INFO(USB_DEVICE, "DevInitOk");
-                res = true;
-            } else {
-                res = false;
-            }
-        }
-#ifdef HAS_HID
-        if(res) {
-            // ret = USBD_RegisterClass(&Node->hUsbDevice, &USBD_CUSTOM_HID);
-            ret = USBD_RegisterClass(&Node->hUsbDevice, &USBD_HID);
-            if(USBD_OK == ret) {
-                LOG_INFO(HID, "RegisterHidOk");
-                res = true;
-            } else {
-                res = false;
-            }
-        }
-#endif /*HAS_HID*/
+USBD_HandleTypeDef* UsbDeviceGetHandle(const uint8_t num) {
+    USBD_HandleTypeDef *pHandle = NULL;
+    UsbHandle_t *Node = UsbGetNode(num);
+    if (Node) {
+        pHandle = &Node->hUsbDevice;
+    }
+    return pHandle;
+}
+
+PCD_HandleTypeDef* UsbDeviceGetPcdHandle(const uint8_t num) {
+    PCD_HandleTypeDef *pPcdHandle = NULL;
+    UsbHandle_t *Node = UsbGetNode(num);
+    if (Node) {
+        pPcdHandle = &Node->PcdHandle;
+    }
+    return pPcdHandle;
+}
 
 #ifdef HAS_MSC
-        ret = USBD_RegisterClass(&Node->hUsbDevice, &USBD_MSC);
-        if(USBD_OK == ret) {
-            LOG_INFO(USB_DEVICE, "RegMSCOk");
-            res = true;
-        } else {
-            res = false;
+static bool usb_device_init_msd(UsbHandle_t *const Node) {
+    bool res = false;
+    USBD_StatusTypeDef status = USBD_FAIL;
+    status = USBD_RegisterClass(&Node->hUsbDevice, &USBD_MSC);
+    res = usb_device_status_to_res( status);
+    if (res) {
+        LOG_INFO(USB_DEVICE, "RegMSCOk");
+        status = USBD_MSC_RegisterStorage(&Node->hUsbDevice, &USBD_Storage_Interface_fops_HS);
+        res = usb_device_status_to_res( status);
+        if (res) {
+            LOG_INFO(USB_DEVICE, "MSCRegStoreOk");
         }
-        if(res) {
-            ret = USBD_MSC_RegisterStorage(&Node->hUsbDevice, &USBD_Storage_Interface_fops_HS);
-            if(USBD_OK == ret) {
-                res = true;
-                LOG_INFO(USB_DEVICE, "MSCRegStoreOk");
-            } else {
-                res = false;
+    }
+    return res;
+}
+#endif
+
+static bool usb_devise_register_class(UsbHandle_t* const Node) {
+    bool res = false;
+    USBD_StatusTypeDef status = USBD_FAIL;
+
+#ifdef HAS_USB_SERIAL
+    status = USBD_RegisterClass((USBD_HandleTypeDef*) &Node->hUsbDevice, &USBD_CDC);
+#endif
+
+#ifdef HAS_PCAN_PRO
+    status = USBD_RegisterClass( &Node->hUsbDevice, &usbd_pcanpro ) ;
+#endif
+    res = usb_device_status_to_res(status);
+    return res;
+}
+
+static bool usb_devise_register_interface(UsbHandle_t* const Node) {
+    bool res = false;
+    USBD_StatusTypeDef status = USBD_FAIL;
+
+#ifdef HAS_USB_SERIAL
+
+#ifdef HAS_USB_FS
+    status = USBD_CDC_RegisterInterface(&Node->hUsbDevice, &USBD_Interface_fops_FS);
+#endif
+
+#ifdef HAS_USB_HS
+    status = USBD_CDC_RegisterInterface(&Node->hUsbDevice, &USBD_Interface_fops_HS);
+#endif
+
+#endif
+
+    res = usb_device_status_to_res(status);
+    return res;
+}
+
+bool usb_device_proc_one(uint8_t num){
+    bool res = false;
+    LOG_PARN(USB_DEVICE, "Proc:%u", num);
+#ifdef HAS_USB_SERIAL
+    res = usb_serial_proc_one(num);
+#endif
+    return res;
+}
+
+bool usb_device_init(uint8_t num) {
+    bool res = false;
+    LOG_WARNING(USB_DEVICE, "Init:%u", num);
+    USBD_StatusTypeDef status = USBD_FAIL;
+    UsbHandle_t *Node = UsbGetNode(num);
+    if (Node) {
+        key_insert_timeout_ms = BUTTON_INSERT_TIMEOUT_MS;
+        const UsbConfig_t *Config = UsbGetConfig(num);
+        if (Config) {
+            res = UsbIsValidConfig(Config);
+        }
+
+        if (res) {
+            res = false;
+            uint8_t id = usb_device_speed_to_id(Config->speed);
+            if (Node->Descriptors) {
+                status = USBD_Init((USBD_HandleTypeDef*) &Node->hUsbDevice,
+                        (USBD_DescriptorsTypeDef*) Node->Descriptors, id);
+                res = usb_device_status_to_res(status);
+                if (res) {
+                    LOG_INFO(USB_DEVICE, "DevInitOk");
+                    res = true;
+                }
             }
         }
-#endif /*HAS_MSC*/
+
+        if (res) {
+            res = usb_devise_register_class(Node);
+        }
+        if (res) {
+            res = usb_devise_register_interface(Node);
+        }
+
+#ifdef HAS_HID
+        bool usb_device_init_hid(Node);
+#endif
+
+#ifdef HAS_MSC
+        res = usb_device_init_msd(Node);
+#endif
 
 #if defined(HAS_MSC) && defined(HAS_HID)
         USBD_Init(&USB_OTG_dev, USB_OTG_FS_CORE_ID, &USR_desc, &USBD_MSC_HID_cb, &USR_cb);
         LOG_INFO(USB_DEVICE, "MSC+HIDRegStoreOk");
 #endif /* HAS_MSC HAS_HID */
-        if(res) {
-            ret = USBD_Start(&Node->hUsbDevice);
-            if(USBD_OK == ret) {
-                LOG_INFO(USB_DEVICE, "DevStartOk");
-                res = true;
-            } else {
-                LOG_ERROR(USB_DEVICE, "DevStartErr");
-                res = false;
-            }
+
+#if 0
+        status = USBD_Stop( &Node->hUsbDevice );
+        res = usb_device_status_to_res( status);
+
+        HAL_Delay( 1000 );
+#endif
+
+        if (res) {
+            status = USBD_Start(&Node->hUsbDevice);
+            res = usb_device_status_to_res(status);
+            log_info_res(USB_DEVICE, res, "DevStart");
         }
+
+#ifdef HAS_USB_SERIAL
+        res = usb_serial_init_one(num);
+#endif
+
     }
     return res;
 }
 
+#ifdef HAS_HID
 bool HID_IsIdle(USBD_HandleTypeDef* pdev) {
     bool res = false;
     if(HID_IDLE == ((USBD_HID_HandleTypeDef*)pdev->pClassData)->state) {
@@ -104,138 +249,5 @@ bool HID_IsIdle(USBD_HandleTypeDef* pdev) {
     }
     return res;
 }
-
-#ifdef HAS_HID
-bool usb_dev_send(KeyBoard_t* const key_code) {
-    bool res = false;
-#ifdef HAS_KEYBOARD_DIAG
-    LOG_DEBUG(HID, "SentKeyCode %s", KeyBoard2Str(key_code));
-#endif
-    UsbHandle_t* Node = UsbGetNode(USB_DEVICE_NUM);
-    if(Node) {
-        // uint8_t status=USBD_CUSTOM_HID_SendReport(&Node->hUsbDevice,(uint8_t *) key_code, sizeof(KeyBoard_t));
-        uint8_t status = USBD_HID_SendReport(&Node->hUsbDevice, (uint8_t*)key_code, sizeof(KeyBoard_t));
-        if(USBD_OK == status) {
-            res = true;
-        } else {
-            LOG_ERROR(HID, "SendErr,Status:%u", status );
-            res = false;
-        }
-    }
-    return res;
-}
 #endif
 
-bool usb_keyboard_unpress(uint32_t time_out_ms) {
-    bool res = false;
-    KeyBoard_t key_code;
-    memset(&key_code, 0, sizeof(KeyBoard_t));
-    res = usb_dev_send(&key_code);
-    if(false == res) {
-        LOG_ERROR(KEYBOARD, "UnPressErr");
-    }
-    wait_ms(time_out_ms);
-    return res;
-}
-#ifdef HAS_KEYBOARD
-bool usb_dev_press_key(KeyBoard_t key_code, uint32_t wait_pause_ms) {
-    bool res = false;
-    LOG_DEBUG(KEYBOARD, "PressKey");
-    res = false;
-#ifdef HAS_HID
-    res = usb_dev_send(&key_code);
-    if(false == res) {
-        LOG_ERROR(KEYBOARD, "PressErr");
-    }
-#endif
-
-    wait_ms(wait_pause_ms);
-
-    res = usb_keyboard_unpress(wait_pause_ms);
-    return res;
-}
-#endif
-
-bool usb_device_proc(void) {
-    bool res = false;
-    keyBoardCode.modifier.byte = 0x00;
-    keyBoardCode.modifier.left_shift = 1,
-    keyBoardCode.key_code[0] = 0x05; // Press B key
-    keyBoardCode.key_code[1] = 0x06; // Press C key
-
-    res = usb_dev_press_key(keyBoardCode, 50);
-
-    return res;
-}
-
-
-#ifdef HAS_KEYBOARD
-bool usb_key_board_press(uint8_t ascii_code, uint32_t time_out_ms) {
-    bool res = false;
-
-    if(ASCII_BACKSPACE==ascii_code){
-        keyBoardCode.modifier.byte = 0;
-        keyBoardCode.key_code[0] =  AsicCodeToKeyBoardKeyCode( ascii_code);
-    }else{
-        keyBoardCode.modifier.byte = 0;
-        LOG_DEBUG(KEYBOARD, "Press: [%c]=0x%02x", ascii_code, ascii_code);
-        int ret = isupper(ascii_code);
-        if(ret) {
-            LOG_DEBUG(KEYBOARD, "UpperCase");
-            keyBoardCode.modifier.left_shift = 1;
-            ascii_code = tolower(ascii_code);
-        }
-        const KeyCodeInfo_t* KeyInfo = Ascii2KeyInfo(ascii_code);
-        if(KeyInfo) {
-            keyBoardCode.key_code[0] = KeyInfo->key_code;
-            if(KeyInfo->is_upper_case) {
-                LOG_DEBUG(KEYBOARD, "UpperCase");
-                keyBoardCode.modifier.left_shift = 1;
-            }
-        } else {
-            LOG_DEBUG(KEYBOARD, "Undef [%c] Error", ascii_code);
-            keyBoardCode.key_code[0] = 0x38;
-            keyBoardCode.modifier.left_shift = 1;
-        }
-
-        keyBoardCode.key_code[1] = 0x00;
-    }
-        res = usb_dev_press_key(keyBoardCode, time_out_ms);
-        if(false == res) {
-            LOG_ERROR(KEYBOARD, "PushKeyErr");
-        }
-    return res;
-}
-#endif
-
-bool usb_key_board_send_text(const char* const text, uint32_t time_out) {
-    bool res = false;
-    if(text) {
-        size_t len = strlen(text);
-        if(len) {
-            LOG_INFO(KEYBOARD, "SendText [%s] Len:%u", text, len);
-            uint32_t i = 0;
-            for(i = 0; i < len; i++) {
-                res = usb_key_board_press(text[i], time_out); // 40
-                if(false == res) {
-                    LOG_ERROR(KEYBOARD, "SendErr %u", text[i]);
-                }
-            }
-        }
-    }
-    return res;
-}
-
-bool usb_key_board_send_array(uint8_t* array, uint32_t size, uint32_t time_out) {
-    bool res = false;
-    if(array && size) {
-        uint32_t i = 0;
-        for(i = 0; i < size; i++) {
-            res = usb_key_board_press(array[i], time_out); // 40
-            if(false == res) {
-                LOG_ERROR(KEYBOARD, "SendErr 0x%x=%c", array[i], array[i]);
-            }
-        }
-    }
-    return res;
-}

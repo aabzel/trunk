@@ -1,0 +1,11 @@
+#ifndef LOCKSTEP_GENERAL_CONST_H
+#define LOCKSTEP_GENERAL_CONST_H
+
+#include "lockstep_dep.h"
+
+#define LOCKSTEP_COMPONENT_VERSION "1"
+#define LOCKSTEP_POLL_PERIOD_US 10
+
+
+
+#endif /* LOCKSTEP_GENERAL_CONST_H */

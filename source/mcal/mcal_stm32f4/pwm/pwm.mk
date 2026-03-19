@@ -1,25 +1,31 @@
-ifneq ($(PWM_DRV_MK_INC),Y)
-    PWM_DRV_MK_INC=Y
+ifneq ($(PWM_CUSTOM_DRV_MK_INC),Y)
+    PWM_CUSTOM_DRV_MK_INC=Y
 
+    PWM_CUSTOM_DIR = $(MCAL_STM32F4_DIR)/pwm
+    # $(error PWM_CUSTOM_DIR=$(PWM_CUSTOM_DIR))
 
-    PWM_DIR = $(MCAL_STM32F4_DIR)/pwm
-    #@echo $(error PWM_DIR=$(PWM_DIR))
+    INCDIR += -I$(PWM_CUSTOM_DIR)
+    MCAL_OPT += -DHAS_PWM_CUSTOM
+    MCAL_OPT += -DHAS_HAL_TIM_OC
+    MCAL_OPT += -DHAS_HAL_TIM_PWM
 
-    INCDIR += -I$(PWM_DIR)
-    OPT += -DHAS_PWM_CUSTOM
+    SOURCES_C += $(PWM_CUSTOM_DIR)/pwm_mcal.c
 
-    SOURCES_C += $(PWM_DIR)/pwm_drv.c
+    ifeq ($(PWM_INTERRUPT),Y)
+        SOURCES_C += $(PWM_CUSTOM_DIR)/pwm_custom_isr.c
+    endif
 
     ifeq ($(DIAG),Y)
         ifeq ($(DIAG_PWM),Y)
-            SOURCES_C += $(PWM_DIR)/pwm_stm32_diag.c
+            MCAL_OPT += -DHAS_PWM_CUSTOM_DIAG
+            SOURCES_C += $(PWM_CUSTOM_DIR)/pwm_custom_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(PWM_COMMANDS),Y)
-            OPT += -DHAS_PWM_COMMANDS
-            SOURCES_C += $(PWM_DIR)/pwm_commands.c
+            MCAL_OPT += -DHAS_PWM_CUSTOM_COMMANDS
+            SOURCES_C += $(PWM_CUSTOM_DIR)/pwm_custom_commands.c
         endif
     endif
 endif

@@ -1,27 +1,122 @@
 #include "gpio_diag.h"
 
 #include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "bit_utils.h"
 #include "data_utils.h"
+#include "diag_inc.h"
 #include "gpio_mcal.h"
 #include "log.h"
+#include "shared_array.h"
+#include "std_includes.h"
 #include "str_utils.h"
+#include "table_utils.h"
+#include "writer_config.h"
+
 #ifdef HAS_EXT_INT
 #include "ext_int_const.h"
 #include "ext_int_diag.h"
 #endif
-#include "table_utils.h"
-#include "writer_config.h"
 
-#include "shared_array.h"
+#ifdef HAS_DEBUGGER
+#include "debugger.h"
+#endif
 
-const char* GpioAltFun2Str(uint8_t code) {
-    snprintf(text, sizeof(text), "AF%u", code);
-    return text;
+const char* GpioDriveSelectToStr(const GpioDriveSelect_t drive_select) {
+    char* name = "?";
+    switch(drive_select) {
+    case GPIO_DRIVE_SELECT_2MA:
+        name = "2mA";
+        break;
+    case GPIO_DRIVE_SELECT_4MA:
+        name = "4mA";
+        break;
+    case GPIO_DRIVE_SELECT_8MA:
+        name = "8mA";
+        break;
+    default:
+        break;
+    }
+    return name;
+}
+
+const char* GpioSpeedToStr(const GpioSpeed_t speed) {
+    char* name = "?";
+    switch(speed) {
+    case GPIO_SPEED_LOW_SPEED:
+        name = "Slow";
+        break;
+    case GPIO_SPEED_MEDIUM_SPEED:
+        name = "Medium";
+        break;
+    case GPIO_SPEED_FAST_SPEED:
+        name = "Fast";
+        break;
+    case GPIO_SPEED_HIGH_SPEED:
+        name = "High";
+        break;
+    default:
+        break;
+    }
+    return name;
+}
+
+static char lText[40] = {0};
+
+const char* GpioGetCon2(Pad_t pad) {
+    const char* name = "-";
+#ifdef HAS_PINS
+    uint32_t cnt = gpio_get_cnt();
+    uint8_t i = 0;
+    for(i = 0; i < cnt; i++) {
+        if(pad.byte == GpioConfig[i].Pad.byte) {
+            name = GpioConfig[i].connector2;
+            break;
+        }
+    }
+#endif
+    return name;
+}
+
+const char* GpioGetCon1(Pad_t Pad) {
+    const char* name = "?";
+#ifdef HAS_PINS
+    uint32_t cnt = gpio_get_cnt();
+    uint8_t i = 0;
+    for(i = 0; i < cnt; i++) {
+        if(Pad.byte == GpioConfig[i].Pad.byte) {
+            name = GpioConfig[i].connector1;
+            break;
+        }
+    }
+#endif
+    return name;
+}
+
+const char* GpioPullToStr(GpioPullMode_t code) {
+    const char* name = "?";
+    switch(code) {
+    case GPIO__PULL_DOWN:
+        name = "Down";
+        break;
+    case GPIO__PULL_UP:
+        name = "Up";
+        break;
+    case GPIO__PULL_AIR:
+        name = "Air";
+        break;
+    case GPIO__PULL_BOTH:
+        name = "UpDown";
+        break;
+    default:
+        break;
+    }
+    return name;
+}
+
+const char* GpioAltFunToStr(uint8_t alt_foo) {
+    snprintf(lText, sizeof(lText), "AF%u", alt_foo);
+    return lText;
 }
 
 const char* GpioFunToStr(GpioPinFunction_t function) {
@@ -46,9 +141,9 @@ const char* GpioFunToStr(GpioPinFunction_t function) {
     return name;
 }
 
-const char* GpioDir2Str(GpioDir_t code) {
+const char* GpioDirToStr(GpioDir_t code) {
     const char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case GPIO_DIR_IN:
         name = "In";
         break;
@@ -73,13 +168,15 @@ const char* GpioDir2Str(GpioDir_t code) {
     case GPIO_DIR_UNDEF:
         name = "?";
         break;
+    default:
+        break;
     }
     return name;
 }
 
-const char* GpioMode2Str(GpioApiMode_t mode) {
+const char* GpioModeToStr(GpioApiMode_t mode) {
     const char* name = "?";
-    switch((uint8_t)mode) {
+    switch(mode) {
     case GPIO_API_MODE_GPIO:
         name = "GPIO";
         break;
@@ -108,88 +205,89 @@ const char* GpioMode2Str(GpioApiMode_t mode) {
     case GPIO_DIR_UNDEF:
         name = "?";
         break;
+    default:
+        break;
     }
     return name;
 }
 
-const char* GpioPad2Str(uint8_t pad) {
-
-    Pad_t Pad;
-    Pad.byte = pad;
-    if(gpio_is_valid_pad(pad)) {
-#ifdef HAS_GPIO_DIAG
-        snprintf(text, sizeof(text), "P%s%u", GpioPort2Str(Pad.port), Pad.pin);
-#else
-        snprintf(text, sizeof(text), "P%u.%u", Pad.port, Pad.pin);
-#endif
-    } else {
-        snprintf(text, sizeof(text), "--");
+const char* GpioPortToStr(const GpioPort_t port) {
+    const char* name = "?";
+    switch(port) {
+    case GPIO_PORT_A:
+        name = "A";
+        break;
+    case GPIO_PORT_B:
+        name = "B";
+        break;
+    case GPIO_PORT_C:
+        name = "C";
+        break;
+    case GPIO_PORT_D:
+        name = "D";
+        break;
+    case GPIO_PORT_E:
+        name = "E";
+        break;
+    case GPIO_PORT_F:
+        name = "F";
+        break;
+    case GPIO_PORT_G:
+        name = "G";
+        break;
+    case GPIO_PORT_H:
+        name = "H";
+        break;
+    case GPIO_PORT_I:
+        name = "I";
+        break;
+    default:
+        name = "GPIO";
+        break;
     }
-    return text;
+    return name;
 }
 
 const char* GpioPadToStr(Pad_t Pad) {
-
-    if(gpio_is_valid_pad(Pad.byte)) {
+    strcpy(lText, "");
+    if(gpio_is_valid_pad(Pad)) {
 #ifdef HAS_GPIO_DIAG
-        snprintf(text, sizeof(text), "P%s%u", GpioPort2Str(Pad.port), Pad.pin);
+        snprintf(lText, sizeof(lText), "P%s%u", GpioPortToStr(Pad.port), Pad.pin);
 #else
-        snprintf(text, sizeof(text), "P%u.%u", Pad.port, Pad.pin);
+        snprintf(lText, sizeof(lText), "P%u.%u", Pad.port, Pad.pin);
 #endif
     } else {
-        snprintf(text, sizeof(text), "--");
+        snprintf(lText, sizeof(lText), "--");
     }
-    return text;
+    return lText;
 }
 
-const char* GpioOutType2Str(uint8_t code) {
+const char* GpioOutTypeToStr(Pad_t Pad) {
     char* name = "?";
 
     return name;
 }
 
-const char* GpioSpeed2Str(uint8_t code) {
+const char* GpioLevelToStr(GpioLogicLevel_t code) {
     char* name = "?";
-    return name;
-}
-
-const char* GpioLevel2Str(GpioLogicLevel_t code) {
-    char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case GPIO_LVL_HI:
         name = "H";
         break;
     case GPIO_LVL_LOW:
         name = "L";
         break;
-    }
-    return name;
-}
-
-const char* GpioPull2Str(GpioPullMode_t code) {
-    const char* name = "?";
-    switch((uint8_t)code) {
-    case GPIO__PULL_DOWN:
-        name = "Down";
-        break;
-    case GPIO__PULL_UP:
-        name = "Up";
-        break;
-    case GPIO__PULL_AIR:
-        name = "Air";
-        break;
-    case GPIO__PULL_BOTH:
-        name = "UpDown";
+    default:
         break;
     }
     return name;
 }
 
-const char* GpioPad2WireName(uint8_t pad) {
+const char* GpioPad2WireName(Pad_t Pad) {
     const char* pin_name = "?";
     uint8_t i = 0;
     for(i = 0; i < gpio_get_cnt(); i++) {
-        if(((uint8_t)GpioConfig[i].pad.byte) == pad) {
+        if((GpioConfig[i].Pad.byte) == Pad.byte) {
             pin_name = GpioConfig[i].name;
             break;
         }
@@ -205,38 +303,16 @@ const char* GpioEdgeToStr(PinIntEdge_t code) {
 }
 #endif
 
-const char* GpioConfToStr(const GpioConfig_t* Config) {
-    if(Config) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%s%s,", text, GpioPad2Str(Config->pad.byte));
-        snprintf(text, sizeof(text), "%s%s,", text, Config->name);
-        snprintf(text, sizeof(text), "%sDir:%s,", text, GpioDir2Str(Config->dir));
-        snprintf(text, sizeof(text), "%sMode:%s,", text, GpioMode2Str(Config->mode));
-        snprintf(text, sizeof(text), "%sMux:%u,", text, Config->mux);
-        snprintf(text, sizeof(text), "%sLL:%s,", text, GpioLevel2Str(Config->logic_level));
-        snprintf(text, sizeof(text), "%sPull:%s,", text, GpioPull2Str(Config->pull));
-        snprintf(text, sizeof(text), "%sPin:%u,", text, Config->mcu_pin);
-        snprintf(text, sizeof(text), "%sLD:%u,", text, Config->load_detect);
-    }
-    return text;
-}
-
-bool GpioConfigDiag(const GpioConfig_t* const Config) {
-    bool res = false;
-    LOG_WARNING(GPIO, "%s", GpioConfToStr(Config));
-    return res;
-}
-
 bool gpio_diag(char* key_word1, char* key_word2) {
     bool res = false;
-    static const table_col_t cols[] = {{5, "No"},        {7, "pad"},  {7, "level"}, {6, "dir"}, {6, "pull"},
+    static const table_col_t cols[] = {{5, "No"},        {7, "pad"}, {7, "level"}, {6, "dir"}, {6, "pull"},
 #ifdef HAS_GPIO_NRFX
                                        {6, "mux"},
 #endif
 #ifdef HAS_BOARD_INFO_DIAG
                                        {12, "connect1"},
 #endif
-                                       {12, "connect2"}, {15, "name"}};
+                                       {15, "name"}};
     uint16_t num = 0;
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     GpioLogicLevel_t logic_level = GPIO_LVL_UNDEF;
@@ -244,27 +320,28 @@ bool gpio_diag(char* key_word1, char* key_word2) {
     char log_line[150];
     uint16_t gpio_cnt = gpio_get_cnt();
     for(i = 0; i < gpio_cnt; i++) {
-        if(PORT_UNDEF != GpioConfig[i].pad.port) {
-            GpioDir_t dirr = gpio_dir_get(GpioConfig[i].pad.byte);
-            GpioPullMode_t pull = gpio_pull_get(GpioConfig[i].pad.byte);
+        if(GPIO_PORT_UNDEF != GpioConfig[i].Pad.port) {
+            GpioDir_t dir = gpio_dir_get(GpioConfig[i].Pad);
+            GpioPullMode_t pull = gpio_pull_get(GpioConfig[i].Pad);
 #ifdef HAS_GPIO_NRFX
-            nrf_gpio_pin_mcusel_t mcu_sel = nrf_gpio_pin_mcu_select_get(GpioConfig[i].pad.byte);
+            nrf_gpio_pin_mcusel_t mcu_sel = nrf_gpio_pin_mcu_select_get(GpioConfig[i].Pad);
 #endif
             strcpy(log_line, TSEP);
             logic_level = GPIO_LVL_UNDEF;
-            gpio_get_state(GpioConfig[i].pad.byte, &logic_level);
-            snprintf(log_line, sizeof(log_line), "%s %5s " TSEP, log_line, GpioPad2Str(GpioConfig[i].pad.byte));
-            snprintf(log_line, sizeof(log_line), "%s   %s   " TSEP, log_line, GpioLevel2Str(logic_level));
-            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioDir2Str(dirr));
-            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioPull2Str(pull));
+            gpio_get_state(GpioConfig[i].Pad, &logic_level);
+            snprintf(log_line, sizeof(log_line), "%s %5s " TSEP, log_line, GpioPadToStr(GpioConfig[i].Pad));
+            snprintf(log_line, sizeof(log_line), "%s   %s   " TSEP, log_line, GpioLevelToStr(logic_level));
+            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioDirToStr(dir));
+            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioPullToStr(pull));
 #ifdef HAS_GPIO_NRFX
-            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, McuSel2Str(mcu_sel));
+            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, McuSelToStr(mcu_sel));
 #endif
+
 #ifdef HAS_BOARD_INFO_DIAG
-            snprintf(log_line, sizeof(log_line), "%s %10s " TSEP, log_line, Pad2ConnectorPin(GpioConfig[i].pad));
-#endif /*HAS_BOARD_INFO_DIAG*/
-            snprintf(log_line, sizeof(log_line), "%s %10s " TSEP, log_line, GpioGetCon2(GpioConfig[i].pad.byte));
-            snprintf(log_line, sizeof(log_line), "%s %13s " TSEP, log_line, GpioPad2WireName(GpioConfig[i].pad.byte));
+            snprintf(log_line, sizeof(log_line), "%s %10s " TSEP, log_line, Pad2ConnectorPin(GpioConfig[i].Pad));
+#endif
+
+            snprintf(log_line, sizeof(log_line), "%s %13s " TSEP, log_line, GpioPad2WireName(GpioConfig[i].Pad));
             if(is_contain(log_line, key_word1, key_word2)) {
                 cli_printf(TSEP " %3u ", num);
                 cli_printf("%s" CRLF, log_line);
@@ -277,5 +354,111 @@ bool gpio_diag(char* key_word1, char* key_word2) {
 
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
+    return res;
+}
+
+bool diag_gpio(char* key_word1, char* key_word2) {
+    bool res = false;
+    static const table_col_t cols[] = {{5, "No"},        {7, "pad"},  {8, "mode"}, {7, "level"}, {8, "Fun"},
+                                       {6, "dir"},       {6, "pull"}, {5, "MuxS"}, {5, "MuxG"},
+#ifdef HAS_BOARD_INFO_DIAG
+                                       {12, "connect1"},
+#endif
+                                       {15, "name"}};
+    uint16_t num = 0;
+    table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+    uint8_t i = 0;
+    uint16_t gpio_cnt = gpio_get_cnt();
+    for(i = 0; i < gpio_cnt; i++) {
+        if(GPIO_PORT_UNDEF != GpioConfig[i].Pad.port) {
+            GpioDir_t dir = gpio_dir_get(GpioConfig[i].Pad);
+            GpioPullMode_t pull = gpio_pull_get(GpioConfig[i].Pad);
+            GpioPinFunction_t function = GPIO_FUN_UNDEF;
+            res = gpio_pin_fun_get(GpioConfig[i].Pad, &function);
+            GpioApiMode_t mode = gpio_mode_get(GpioConfig[i].Pad);
+
+            uint8_t pin_mux = 0;
+
+            res = gpio_pin_mux_get(GpioConfig[i].Pad, &pin_mux);
+#ifdef HAS_GPIO_NRFX
+            nrf_gpio_pin_mcusel_t mcu_sel = nrf_gpio_pin_mcu_select_get(GpioConfig[i].Pad);
+#endif
+            char log_line[150];
+            strcpy(log_line, TSEP);
+            GpioLogicLevel_t logic_level = GPIO_LVL_UNDEF;
+            gpio_get_state(GpioConfig[i].Pad, &logic_level);
+            snprintf(log_line, sizeof(log_line), "%s %5s " TSEP, log_line, GpioPadToStr(GpioConfig[i].Pad));
+            snprintf(log_line, sizeof(log_line), "%s %6s " TSEP, log_line, GpioModeToStr(mode));
+            snprintf(log_line, sizeof(log_line), "%s   %s   " TSEP, log_line, GpioLevelToStr(logic_level));
+            snprintf(log_line, sizeof(log_line), "%s %6s " TSEP, log_line, GpioFunToStr(function));
+            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioDirToStr(dir));
+            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, GpioPullToStr(pull));
+            snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, GpioConfig[i].mux);
+            snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, pin_mux);
+#ifdef HAS_GPIO_NRFX
+            snprintf(log_line, sizeof(log_line), "%s %4s " TSEP, log_line, McuSelToStr(mcu_sel));
+#endif
+#ifdef HAS_BOARD_INFO_DIAG
+            snprintf(log_line, sizeof(log_line), "%s %10s " TSEP, log_line, Pad2ConnectorPin(GpioConfig[i].Pad));
+#endif
+            snprintf(log_line, sizeof(log_line), "%s %13s " TSEP, log_line, GpioPad2WireName(GpioConfig[i].Pad));
+            if(is_contain(log_line, key_word1, key_word2)) {
+                cli_printf(TSEP " %3u ", num);
+                cli_printf("%s" CRLF, log_line);
+                // cli_printf(CRLF);
+                num++;
+                res = true;
+            }
+        }
+    }
+
+    table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+
+    if(num) {
+        res = true;
+    } else {
+        res = false;
+    }
+    return res;
+}
+
+bool gpio_raw_reg_diag(const GpioPort_t port) {
+    bool res = false;
+#ifdef HAS_GPIO_CUSTOM
+    const GpioPortInfo_t* Info = GpioGetPortInfo(port);
+    if(Info) {
+        LOG_INFO(GPIO, "GPIO%u,Base:0x%p", port, Info->GPIOx);
+        uint32_t reg_cnt = gpio_reg_cnt();
+        res = debug_raw_reg_diag(GPIO, (uint32_t)Info->GPIOx, GpioReg, reg_cnt);
+#ifdef HAS_GPIO_PORT
+        uint32_t port_cnt = port_reg_cnt();
+        res = debug_raw_reg_diag(GPIO, (uint32_t)Info->PORTx, PortReg, port_cnt);
+#endif
+    }
+
+#endif
+    return res;
+}
+
+const char* GpioConfigToStr(const GpioConfig_t* const Config) {
+    if(Config) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%s%s,", text, GpioPadToStr(Config->Pad));
+        snprintf(text, sizeof(text), "%sDrvSel:%s,", text, GpioDriveSelectToStr(Config->drive_select));
+        snprintf(text, sizeof(text), "%s%s,", text, Config->name);
+        snprintf(text, sizeof(text), "%sDir:%s,", text, GpioDirToStr(Config->dir));
+        snprintf(text, sizeof(text), "%sMode:%s,", text, GpioModeToStr(Config->mode));
+        snprintf(text, sizeof(text), "%sMux:%u,", text, Config->mux);
+        snprintf(text, sizeof(text), "%sLL:%s,", text, GpioLevelToStr(Config->logic_level));
+        snprintf(text, sizeof(text), "%sPull:%s,", text, GpioPullToStr(Config->pull));
+        snprintf(text, sizeof(text), "%sSpeed:%s,", text, GpioSpeedToStr(Config->speed));
+        snprintf(text, sizeof(text), "%sPin:%u,", text, Config->mcu_pin);
+    }
+    return text;
+}
+
+bool GpioConfigDiag(const GpioConfig_t* const Config) {
+    bool res = false;
+    LOG_WARNING(GPIO, "%s", GpioConfigToStr(Config));
     return res;
 }

@@ -12,9 +12,9 @@ extern "C" {
 #define SYSTICK_PERIOD (SYS_FREQ/1000)
 
 typedef enum {
-    STK_CLK_SRC_AHB_DIV_8=0,
-    STK_CLK_SRC_AHB=1,
-    STK_CLK_SRC_UNDEF=2,
+    STK_CLK_SRC_AHB_DIV_8 = 0,
+    STK_CLK_SRC_AHB = 1,
+    STK_CLK_SRC_UNDEF = 2,
 }StkClkSrc_t;
 
 #ifdef __cplusplus

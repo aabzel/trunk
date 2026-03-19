@@ -210,7 +210,7 @@ bool gpio_get_state(uint8_t pad_num, GpioLogicLevel_t* logic_level) {
     Pad_t pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Get P%s%u", GpioPort2Str(pad.port), pad.pin);
+    LOG_DEBUG(GPIO, "Get P%s%u", GpioPortToStr(pad.port), pad.pin);
 #endif
     GPIO_PinState value = HAL_GPIO_ReadPin(Port2PortPtr(pad.port), 1 << pad.pin);
     (*logic_level) = (uint8_t)value;
@@ -222,7 +222,7 @@ uint32_t gpio_read(uint8_t pad_num) {
     Pad_t pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Get P%s%u", GpioPort2Str(pad.port), pad.pin);
+    LOG_DEBUG(GPIO, "Get P%s%u", GpioPortToStr(pad.port), pad.pin);
 #endif
     GPIO_PinState value = HAL_GPIO_ReadPin(Port2PortPtr(pad.port), 1 << pad.pin);
     ret = (uint32_t)value;
@@ -233,7 +233,7 @@ bool gpio_set_state(uint8_t pad_num, GpioLogicLevel_t logic_level) {
     Pad_t pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Set P%s%u LL:%u", GpioPort2Str(pad.port), pad.pin, logic_level);
+    LOG_DEBUG(GPIO, "Set P%s%u LL:%u", GpioPortToStr(pad.port), pad.pin, logic_level);
 #endif
     HAL_GPIO_WritePin(Port2PortPtr(pad.port), 1 << pad.pin, (GPIO_PinState)logic_level);
     return true;
@@ -410,7 +410,7 @@ GpioPullMode_t gpio_get_pull(uint8_t pad_num) {
         mode = GpioStm32Pull2GeneralPull((GpioStm32Pull_t)code);
     } else {
 #ifdef HAS_GPIO_DIAG
-        LOG_ERROR(GPIO, "PortErr P%s", GpioPort2Str(pad.port));
+        LOG_ERROR(GPIO, "PortErr P%s", GpioPortToStr(pad.port));
 #endif
     }
     return mode;
@@ -456,7 +456,7 @@ bool gpio_toggle(uint8_t pad_num) {
     Pad_t pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Toggle P%s%u", GpioPort2Str(pad.port), pad.pin);
+    LOG_DEBUG(GPIO, "Toggle P%s%u", GpioPortToStr(pad.port), pad.pin);
 #endif
     GPIO_PinState value = HAL_GPIO_ReadPin(Port2PortPtr(pad.port), 1 << pad.pin);
     switch(value) {
@@ -500,7 +500,7 @@ bool gpio_config_one(Pad_t pad, uint32_t Mode, uint32_t Pull, uint32_t Speed, ui
     GPIO_TypeDef* GpioPort = Port2PortPtr(pad.port);
     if(GpioPort) {
 #ifdef HAS_GPIO_DIAG
-        LOG_INFO(GPIO, "InitPad %s", GpioPad2Str(pad.byte));
+        LOG_INFO(GPIO, "InitPad %s", GpioPadToStr(pad.byte));
 #endif
         /*Configure GPIO pin Output Level */
         uint32_t pin_mask = PinNum2PinMask(pad.pin);
@@ -559,7 +559,7 @@ bool gpio_init_one(const GpioConfig_t* Inst) {
             }
         } else {
 #ifdef HAS_GPIO_DIAG
-            LOG_ERROR(GPIO, "ReDefine P%s%u", GpioPort2Str(Inst->pad.port), Inst->pad.pin);
+            LOG_ERROR(GPIO, "ReDefine P%s%u", GpioPortToStr(Inst->pad.port), Inst->pad.pin);
 #endif
         }
     }

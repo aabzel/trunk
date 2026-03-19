@@ -7,9 +7,7 @@ extern "C" {
 
 #include "stm32f4xx_hal.h"
 
-//void HAL_IncTick(void);
-//void HAL_MspInit(void);
-//uint32_t HAL_GetTick(void);
+void HAL_MspInit(void);
 
 #ifdef __cplusplus
 }

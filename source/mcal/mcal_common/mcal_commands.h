@@ -17,6 +17,12 @@
 #error "+HAS_MCAL_COMMANDS"
 #endif
 
+#ifdef HAS_ACC_COMMANDS
+#include "acc_commands.h"
+#else
+#define ACC_COMMANDS
+#endif
+
 #ifdef HAS_ADC_COMMANDS
 #include "adc_commands.h"
 #else
@@ -35,6 +41,12 @@
 #define CRYP_COMMANDS
 #endif
 
+#ifdef HAS_DMA_CHANNEL_COMMANDS
+#include "dma_channel_commands.h"
+#else
+#define DMA_CHANNEL_COMMANDS
+#endif
+
 #ifdef HAS_FLASH_COMMANDS
 #include "flash_commands.h"
 #else
@@ -51,6 +63,12 @@
 #include "gpio_commands.h"
 #else
 #define GPIO_COMMANDS
+#endif
+
+#ifdef HAS_MULTICORE_COMMANDS
+#include "multicore_commands.h"
+#else
+#define MULTICORE_COMMANDS
 #endif
 
 #ifdef HAS_I2C_COMMANDS
@@ -108,17 +126,25 @@
 #define TIMER_COMMANDS
 #endif
 
+#ifdef HAS_LOCKSTEP_COMMANDS
+#include "lockstep_commands.h"
+#else
+#define LOCKSTEP_COMMANDS
+#endif
+
 #ifdef HAS_PWM_COMMANDS
 #include "pwm_commands.h"
 #else
 #define PWM_COMMANDS
 #endif
 
-#ifdef HAS_UART_COMMANDS
-#include "uart_commands.h"
+#ifdef HAS_MPU_COMMANDS
+#include "mpu_commands.h"
 #else
-#define UART_COMMANDS
+#define MPU_COMMANDS
 #endif
+
+
 
 
 
@@ -127,6 +153,13 @@
 #else
 #define SYSTICK_COMMANDS
 #endif
+
+#ifdef HAS_CLOCK_OUT_COMMANDS
+#include "clock_out_commands.h"
+#else
+#define CLOCK_OUT_COMMANDS
+#endif
+
 
 #ifdef HAS_CLOCK_COMMANDS
 #include "clock_commands.h"
@@ -152,6 +185,30 @@
 #define QSPI_COMMANDS
 #endif
 
+#ifdef HAS_EIM_COMMANDS
+#include "eim_commands.h"
+#else
+#define EIM_COMMANDS
+#endif
+
+#ifdef HAS_FCSMU_COMMANDS
+#include "fcsmu_commands.h"
+#else
+#define FCSMU_COMMANDS
+#endif
+
+#ifdef HAS_MAILBOX_COMMANDS
+#include "mailbox_commands.h"
+#else
+#define MAILBOX_COMMANDS
+#endif
+
+#ifdef HAS_MAM_COMMANDS
+#include "mam_commands.h"
+#else
+#define MAM_COMMANDS
+#endif
+
 #ifdef HAS_INPUT_CAPTURE_COMMANDS
 #include "input_capture_commands.h"
 #else
@@ -170,12 +227,24 @@
 #define SDIO_COMMANDS
 #endif
 
+#ifdef HAS_TRNG_COMMANDS
+#include "trng_commands.h"
+#else
+#define TRNG_COMMANDS
+#endif
+
 #ifdef HAS_IOMUX_COMMANDS
 #include "iomux_commands.h"
 #else
 #define IOMUX_COMMANDS
 #endif
 
+
+#ifdef HAS_UART_COMMANDS
+#include "uart_commands.h"
+#else
+#define UART_COMMANDS
+#endif
 
 #ifdef HAS_USB_COMMANDS
 #include "usb_commands.h"
@@ -191,11 +260,18 @@
 
 
 #define MCAL_CONTROL_COMMANDS         \
-    POWER_COMMANDS                    \
+    ACC_COMMANDS                      \
     BOOT_MANAGER_COMMANDS             \
     DMA_COMMANDS                      \
-    IOMUX_COMMANDS                    \
+    DMA_CHANNEL_COMMANDS              \
+    CLOCK_OUT_COMMANDS                \
+    EIM_COMMANDS                      \
     GPIO_COMMANDS                     \
+    FCSMU_COMMANDS                    \
+    IOMUX_COMMANDS                    \
+    MAM_COMMANDS                      \
+    MULTICORE_COMMANDS                \
+    MPU_COMMANDS                      \
     PWM_COMMANDS                      \
     WATCHDOG_COMMANDS
 
@@ -213,6 +289,7 @@
     USB_COMMANDS
 
 #define MCAL_CONNECTIVITY_COMMANDS      \
+    MAILBOX_COMMANDS                    \
     MCAL_INTERFACE_COMMANDS
 
 #define MCAL_SENSITIVITY_COMMANDS \
@@ -220,16 +297,16 @@
     INPUT_CAPTURE_COMMANDS        \
     RTC_COMMANDS                  \
     TIMER_COMMANDS                \
+    LOCKSTEP_COMMANDS             \
     EXT_INT_COMMANDS              \
-    SYSTICK_COMMANDS              \
     CLOCK_COMMANDS
 
-#define MCAL_STORAGE_COMMANDS \
-    EEPROM_COMMANDS           \
-    FLASH_COMMANDS            \
+#define MCAL_STORAGE_COMMANDS   \
+    EEPROM_COMMANDS             \
+    FLASH_COMMANDS            
 
-#define MCAL_SECURITY_COMMANDS \
-    CRYP_COMMANDS              \
+#define MCAL_SECURITY_COMMANDS   \
+    CRYP_COMMANDS                \
     TRNG_COMMANDS
 
 #define MCAL_COMMANDS            \

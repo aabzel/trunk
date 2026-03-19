@@ -3,43 +3,41 @@
 #include "usb_mcal.h"
 //#include "usbd_def.h"
 
-#if 0
-const char* UsbErr2Str(uint8_t status) {
+
+const char* UsbDeviceErrToStr(const USBD_StatusTypeDef status) {
     const char* name = "?";
     switch(status) {
-    case USBD_OK:
-        name = "USBD_OK";
-        break;
-    case USBD_BUSY:
-        name = "USBD_BUSY";
-        break;
-    case USBD_FAIL:
-        name = "USBD_FAIL";
-        break;
+        case USBD_OK:        name = "OK";        break;
+        case USBD_BUSY:      name = "BUSY";        break;
+        case USBD_EMEM:      name = "EMEM";        break;
+        case USBD_FAIL:      name = "FAIL";        break;
+        default:      name = "?";        break;
     }
     return name;
 }
-#endif
 
-bool UsbDeviveDiag(const USBD_HandleTypeDef* const UsbDeviceNode) {
+
+
+
+bool UsbDeviveDiag(const USBD_HandleTypeDef* const Node) {
     bool res = false;
-    if(UsbDeviceNode) {
-        LOG_INFO(HID, "Id:%u", UsbDeviceNode->id);
-        LOG_INFO(HID, "DevConfig:%u", UsbDeviceNode->dev_config);
-        LOG_INFO(HID, "DevDefault_config:%u", UsbDeviceNode->dev_default_config);
-        LOG_INFO(HID, "DevConfig_status:%u", UsbDeviceNode->dev_config_status);
-        LOG_INFO(HID, "DevSpeed:%u", UsbDeviceNode->dev_speed);
-        LOG_INFO(HID, "ep0State:%u", UsbDeviceNode->ep0_state);
-        LOG_INFO(HID, "ep0Data_len:%u", UsbDeviceNode->ep0_data_len);
-        LOG_INFO(HID, "DevState:%u", UsbDeviceNode->dev_state);
-        LOG_INFO(HID, "DevOldState:%u", UsbDeviceNode->dev_old_state);
-        LOG_INFO(HID, "Devaddress:%u", UsbDeviceNode->dev_address);
-        LOG_INFO(HID, "Devconnection_status:%u", UsbDeviceNode->dev_connection_status);
-        LOG_INFO(HID, "Devtest_mode:%u", UsbDeviceNode->dev_test_mode);
-        LOG_INFO(HID, "Devremote_wakeup:%u", UsbDeviceNode->dev_remote_wakeup);
-        LOG_INFO(HID, "classId:%u", UsbDeviceNode->classId);
-        LOG_INFO(HID, "ConfIdx:%u", UsbDeviceNode->ConfIdx);
-        LOG_INFO(HID, "NumClasses:%u", UsbDeviceNode->NumClasses);
+    if(Node) {
+        LOG_INFO(USB_DEVICE, "Id:%u", Node->id);
+        LOG_INFO(USB_DEVICE, "DevConfig:%u", Node->dev_config);
+        LOG_INFO(USB_DEVICE, "DevDefault_config:%u", Node->dev_default_config);
+        LOG_INFO(USB_DEVICE, "DevConfig_status:%u", Node->dev_config_status);
+        LOG_INFO(USB_DEVICE, "DevSpeed:%u", Node->dev_speed);
+        LOG_INFO(USB_DEVICE, "ep0State:%u", Node->ep0_state);
+        LOG_INFO(USB_DEVICE, "ep0Data_len:%u", Node->ep0_data_len);
+        LOG_INFO(USB_DEVICE, "DevState:%u", Node->dev_state);
+        LOG_INFO(USB_DEVICE, "DevOldState:%u", Node->dev_old_state);
+        LOG_INFO(USB_DEVICE, "Devaddress:%u", Node->dev_address);
+        LOG_INFO(USB_DEVICE, "Devconnection_status:%u", Node->dev_connection_status);
+        LOG_INFO(USB_DEVICE, "Devtest_mode:%u", Node->dev_test_mode);
+        LOG_INFO(USB_DEVICE, "Devremote_wakeup:%u", Node->dev_remote_wakeup);
+        //LOG_INFO(USB_DEVICE, "classId:%u", Node->classId);
+        LOG_INFO(USB_DEVICE, "ConfIdx:%u", Node->ConfIdx);
+    //    LOG_INFO(USB_DEVICE, "NumClasses:%u", Node->NumClasses);
         //  USBD_SetupReqTypedef    request;
         // USBD_DescriptorsTypeDef *pDesc;
         // USBD_ClassTypeDef       *pClass[USBD_MAX_SUPPORTED_CLASS];

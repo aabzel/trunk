@@ -1,0 +1,4 @@
+
+config DMA_CHANNEL
+    bool "Enable use of the DMA_CHANNEL drivers"
+

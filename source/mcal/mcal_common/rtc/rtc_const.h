@@ -12,7 +12,7 @@
 
 typedef enum {
     RTC_LOCATION_INTERNAL = 1,
-    RTC_LOCATION_EXTERAL = 2,
+    RTC_LOCATION_EXTERNAL = 2,
 
     RTC_LOCATION_UNDEF = 0
 }RtcLocation_t;

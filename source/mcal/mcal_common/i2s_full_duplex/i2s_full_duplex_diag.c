@@ -1,143 +1,112 @@
-#include "i2s_diag.h"
+#include "i2s_full_duplex_diag.h"
 
 #include <stdio.h>
 #include <string.h>
 
-#include "common_diag.h"
-#include "i2s_types.h"
+#include "i2s_full_duplex.h"
 #include "log.h"
+#include "table_utils.h"
+#include "writer_config.h"
 
-static char name[80];
-
-const char* I2sAudioFreq2Str(AudioFreq_t freq) {
-    snprintf(name, sizeof(name), "%u Hz",freq);
-    return name;
-}
-
-const char* I2sResolution2Str(I2sDataFormat_t code){
-    const char* name="?";
-    switch((uint8_t)code){
-        case I2S_DATA_FORMAT_8B:     name="8"; break;
-        case I2S_DATA_FORMAT_16B:     name="16"; break;
-        case I2S_DATA_FORMAT_16B_EXTENDED:  name="16"; break;
-        case I2S_DATA_FORMAT_24B:   name="24"; break;
-        case I2S_DATA_FORMAT_32B:   name="32"; break;
-
-        default : name="??"; break;
-    }
-    return name;
-}
-
-const char* I2sBusRole2Str(I2sRole_t code){
-    const char* name="?";
-    switch((uint8_t)code){
-        case I2SMODE_SLAVE:     name="Slave"; break;
-        case I2SMODE_SLAVE_RX:  name="SlaveRx"; break;
-        case I2SMODE_SLAVE_TX:  name="SlaveTx"; break;
-        case I2SMODE_MASTER:    name="Master"; break;
-        case I2SMODE_MASTER_TX: name="MasterTx"; break;
-        case I2SMODE_MASTER_RX: name="MasterRx"; break;
-        default : name="??"; break;
-    }
-    return name;
-}
-
-const char* I2sSampleMode2Str(SampleMode_t sample_mode) {
-    const char* name="?";
-    switch((uint8_t)sample_mode){
-        case SAMPLE_MODE_MONO:    name="Mono"; break;
-        case SAMPLE_MODE_STEREO:  name="Stereo"; break;
-
-        default : name="??"; break;
-    }
-    return name;
-}
-
-const char* I2sStandard2Str(Standard_t standard) {
-    const char* name="?";
-    switch((uint8_t)standard) {
-        case I2S_STD_PHILIPS:     name="Philips"; break;
-        case I2S_STD_MSB:  name="MSB"; break;
-        case I2S_STD_LSB:  name="LSB"; break;
-        case I2S_STD_PCM_SHORT:  name="PCM_SHORT"; break;
-        case I2S_STD_PCM_LONG:  name="PCM_LONG"; break;
-
-
-        default : name="??"; break;
-    }
-    return name;
-}
-
-const char* I2sClockSource2Str(  I2sClockSource_t clock_source){
-    const char* name="?";
-    switch((uint8_t)clock_source){
-        case I2S_CLK_PLL:     name="PLL"; break;
-        case I2S_CLK_EXT:  name="Exp"; break;
-
-        default : name="??"; break;
-    }
-    return name;
-}
-
-const char* I2sFullDuplex2Str(FullDuplex_t full_duplex){
-    const char* name="?";
-    switch((uint8_t)full_duplex){
-        case FULL_DUPLEX_OFF: name="Simplex"; break;
-        case FULL_DUPLEX_ON:  name="FullDuplex"; break;
-
-        default : name="??"; break;
-    }
-    return name;
-}
-
-const char* I2sState2Str(I2sState_t state){
-    const char* name="?";
-    switch((uint8_t)state){
-        case I2S_STATE_OFF: name="Off"; break;
-        case I2S_STATE_AMP: name="Amp"; break;
-        case I2S_STATE_RUN: name="Run"; break;
-        case I2S_STATE_DEC:  name="Dec"; break;
-
-        default : name="??"; break;
-    }
-    return name;
-}
-
-
-bool I2sDiagConfig(const I2sConfig_t* const Config) {
-    bool res = false;
-    if(Config){
-        char line[120]="";
-        strncpy(line,"",sizeof(line)-1);
-        snprintf(line,sizeof(line),"%s SampleRate:%u Hz,", line,Config->audio_freq);
-        snprintf(line,sizeof(line),"%s RxBuff:%u Sample,", line,Config->samples_cnt);
-        snprintf(line,sizeof(line),"%s BusRole %s,",line, I2sBusRole2Str(Config->mode));
-
-        snprintf(line,sizeof(line),"%s DataFormat %u bit,", line, Config->data_format);
-        snprintf(line,sizeof(line),"%s SckFreq %u Hz,", line, Config->sck_freq_hz);
-        snprintf(line,sizeof(line),"%s FullDuplex %s,", line, I2sFullDuplex2Str(Config->full_duplex));
-        snprintf(line,sizeof(line),"%s SampleMode %s,", line, I2sSampleMode2Str(Config->sample_mode));
-        snprintf(line,sizeof(line),"%s MclkOut %s,", line, OnOff2Str(Config->mclk_out));
-        snprintf(line,sizeof(line),"%s Std %s,", line, I2sStandard2Str(Config->standard));
-        snprintf(line,sizeof(line),"%s Clock %s", line, I2sClockSource2Str(Config->clock_source));
-
+const char* I2sFullDuplexToStr(const I2sFullDuplexConfig_t* const Config) {
+    static char line[120] = "";
+    if(Config) {
+        strncpy(line, "", sizeof(line) - 1);
+        snprintf(line, sizeof(line), "%sN:%u,", line, Config->num);
+        snprintf(line, sizeof(line), "%sI2sTx:%u,", line, Config->i2s_tx_num);
+        snprintf(line, sizeof(line), "%sI2sRx:%u,", line, Config->i2s_rx_num);
+        snprintf(line, sizeof(line), "%sRxBuff:%s", line, Config->name);
         LOG_INFO(I2S, "%s", line);
+    }
+    return line;
+}
+
+bool I2sFullDuplexDiagConfig(const I2sFullDuplexConfig_t* const Config) {
+    bool res = false;
+    if(Config) {
+        LOG_INFO(I2S, "%s", I2sFullDuplexToStr(Config));
         res = true;
     }
 
     return res;
 }
 
-#ifdef HAS_I2S_VOLUME
-const char* I2sFsmDiag2Str(const I2sHandle_t* const Node ){
-    static char line[120]="";
-    if(Node){
-        strncpy(line,"",sizeof(line)-1);
-        snprintf(line,sizeof(line),"%s State %s,", line, I2sState2Str(Node->state));
-        snprintf(line,sizeof(line),"%s PCMmaxSet %d,", line, Node->pcm_max_set);
-        snprintf(line,sizeof(line),"%s PCMmaxGet %d,", line, Node->pcm_max_get);
+const char* I2sFullDuplexStateToStr(I2sFullDuplexState_t state) {
+    const char* name = "?";
+    switch((uint32_t)state) {
+    case I2S_FULL_DUPLEX_STATE_IDLE:
+        name = "Idle";
+        break;
+    case I2S_FULL_DUPLEX_STATE_TX:
+        name = "Tx";
+        break;
+    case I2S_FULL_DUPLEX_STATE_RX:
+        name = "Rx";
+        break;
+    case I2S_FULL_DUPLEX_STATE_RX_TX:
+        name = "RxTx";
+        break;
+    }
+    return name;
+}
+
+const char* I2sFullDuplexInputToStr(I2sFullDuplexInputs_t input) {
+    const char* name = "?";
+    switch((uint32_t)input) {
+    case I2S_FULL_DUPLEX_INPUTS_RX_HALF:
+        name = "RxHalf";
+        break;
+    case I2S_FULL_DUPLEX_INPUTS_RX_DONE:
+        name = "RxDone";
+        break;
+    case I2S_FULL_DUPLEX_INPUTS_TX_HALF:
+        name = "TxHalf";
+        break;
+    case I2S_FULL_DUPLEX_INPUTS_TX_DONE:
+        name = "TxDone";
+        break;
+    case I2S_FULL_DUPLEX_INPUTS_START:
+        name = "Start";
+        break;
+    case I2S_FULL_DUPLEX_INPUTS_STOP:
+        name = "Stop";
+        break;
+    }
+    return name;
+}
+
+bool i2s_full_duplex_diag(void) {
+    bool res = false;
+    static const table_col_t cols[] = {
+        {5, "Num"},    {9, "PrCnt"},  {8, "State"},  {8, "Input"}, {9, "RxHalf"},
+        {9, "RxDone"}, {9, "TxHalf"}, {9, "TxDone"}, {7, "Start"}, {6, "stop"},
+    };
+    uint16_t cnt = 0;
+    cnt = i2s_full_duplex_get_cnt();
+    table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+    uint8_t num = 0;
+    char text[200];
+    for(num = 0; num <= cnt; num++) {
+        I2sFullDuplexHandle_t* Node = I2sFullDuplexGetNode(num);
+        if(Node) {
+            strcpy(text, TSEP);
+            snprintf(text, sizeof(text), "%s %3u " TSEP, text, Node->num);
+            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->proc_cnt);
+            snprintf(text, sizeof(text), "%s %6s " TSEP, text, I2sFullDuplexStateToStr(Node->state));
+            snprintf(text, sizeof(text), "%s %6s " TSEP, text, I2sFullDuplexInputToStr(Node->input));
+            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->rx_half_cnt);
+            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->rx_done_cnt);
+            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->tx_half_cnt);
+            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->tx_done_cnt);
+            snprintf(text, sizeof(text), "%s %5u " TSEP, text, Node->start_cnt);
+            snprintf(text, sizeof(text), "%s %4u " TSEP, text, Node->stop_cnt);
+            cli_printf("%s" CRLF, text);
+
+            res = true;
+        }
     }
 
-    return line;
+    table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+
+    return res;
 }
-#endif

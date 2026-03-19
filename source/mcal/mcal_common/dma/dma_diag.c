@@ -101,7 +101,6 @@ const char* DmaPriority2Str(DmaPriority_t code) {
 }
 
 const char* DmaConfigToStr(const DmaConfig_t* const Config) {
-    static char text[250] = "";
     if(Config) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sDMA:%u,", text, Config->dma_num);
@@ -110,7 +109,6 @@ const char* DmaConfigToStr(const DmaConfig_t* const Config) {
 }
 
 const char* DmaPadToStr(DmaPad_t DmaPad) {
-    static char text[30] = "";
     strcpy(text, "");
     snprintf(text, sizeof(text), "%sDMA:%u,", text, DmaPad.dma_num);
     snprintf(text, sizeof(text), "%sCH:%u", text, DmaPad.channel);
@@ -118,7 +116,6 @@ const char* DmaPadToStr(DmaPad_t DmaPad) {
 }
 
 const char* DmaChannelConfigToStr(const DmaChannelConfig_t* const Config) {
-    static char text[250] = "";
     if(Config) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sDMA:%u,", text, Config->dma_num);

@@ -8,7 +8,7 @@ extern "C" {
 #include "std_includes.h"
 
 #include "dma_const.h"
-#ifdef HAS_DMA_COSTOM
+#ifdef HAS_DMA_CUSTOM
 #include "dma_custom_types.h"
 #else
 #define DMA_CUSTOM_TYPES

@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "writer_generic.h"
+#include "writer.h"
 
 #define USB_HID_TX_ARRAY_SIZE 600U
 

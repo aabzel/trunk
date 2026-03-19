@@ -524,7 +524,7 @@ bool i2s_stm_play_command(int32_t argc, char* argv[]) {
                 if(HAL_OK == ret) {                                                                                    \
                     LOG_INFO(I2S, #FLAG_C LOG_OK);                                                                     \
                 } else {                                                                                               \
-                    LOG_ERROR(I2S, "Dma" #FLAG_C " %s", HalStatus2Str(ret));                                           \
+                    LOG_ERROR(I2S, "Dma" #FLAG_C " %s", HalStatusToStr(ret));                                           \
                 }                                                                                                      \
             } else {                                                                                                   \
                 LOG_ERROR(I2S, "NodeGetErr");                                                                          \

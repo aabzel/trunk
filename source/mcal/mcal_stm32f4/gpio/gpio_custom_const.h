@@ -18,8 +18,9 @@ typedef enum {
     PORT_F = 5,
     PORT_G = 6,
     PORT_H = 7,
+    PORT_I = 8,
 
-    PORT_UNDEF = 8,
+    PORT_UNDEF = 9,
 } Port_t;
 
 /*see 7.4.4 GPIO port pull-up/pull-down register (GPIOx_PUPDR)*/

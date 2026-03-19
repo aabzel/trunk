@@ -1,0 +1,7 @@
+DFT->POWER [color=darkgreen]
+COMPLEX->POWER [color=blue]
+TIME->POWER [color=darkseagreen]
+GPIO->POWER  [color=deepskyblue]
+AUDIO->POWER [color=gold]
+ARRAY->POWER [color=fuchsia]
+

@@ -40,15 +40,14 @@ typedef enum {
 } Cpol_t;
 
 typedef enum {
-    I2SMODE_SLAVE = 1,    /*He clocks I2S,*/
-    I2SMODE_MASTER = 4,   /*I clock I2S,*/
-    I2SMODE_SLAVE_TX = 2, /*He clocks I2S, I out Tx*/
-    I2SMODE_SLAVE_RX = 3, /*He clocks I2S, I in RX*/
-    I2SMODE_MASTER_TX = 5,/*I clock I2S, I Out TX*/
-    I2SMODE_MASTER_RX = 6,/*I clock I2S, I In Rx*/
-
-    I2SMODE_UNDEF = 0,
-} I2sRole_t;
+    I2S_DIR_BUS_MODE_SLAVE = 1,    /*He clocks I2S,*/
+    I2S_DIR_BUS_MODE_MASTER = 4,   /*I clock I2S,*/
+    I2S_DIR_BUS_MODE_SLAVE_TX = 2, /*He clocks I2S, I out Tx*/
+    I2S_DIR_BUS_MODE_SLAVE_RX = 3, /*He clocks I2S, I in RX*/
+    I2S_DIR_BUS_MODE_MASTER_TX = 5,/*I clock I2S, I Out TX*/
+    I2S_DIR_BUS_MODE_MASTER_RX = 6,/*I clock I2S, I In Rx*/
+    I2S_DIR_BUS_MODE_UNDEF = 0,
+} I2sDirRole_t;
 
 typedef enum {
     I2S_DATA_FORMAT_8B = 8,

@@ -1,8 +1,7 @@
 #ifndef GPIO_GENERAL_CONST_H
 #define GPIO_GENERAL_CONST_H
 
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "gpio_dep.h"
 
 #ifdef HAS_GPIO_CUSTOM
@@ -14,6 +13,21 @@
 #define GPIO_TRANSITION_PROCESS_TIMEOUT_MS 300
 #define GPIO_POLL_PERIOD_US 2000000
 
+
+typedef enum {
+    GPIO_PORT_A = 0,
+    GPIO_PORT_B = 1,
+    GPIO_PORT_C = 2,
+    GPIO_PORT_D = 3,
+    GPIO_PORT_E = 4,
+    GPIO_PORT_F = 5,
+    GPIO_PORT_G = 6,
+    GPIO_PORT_H = 7,
+    GPIO_PORT_I = 8,
+    GPIO_PORT_UNDEF = 9,
+} GpioPort_t;
+
+
 typedef enum {
 /*GPIO_PULL_DOWN Was in conflict with Zephyr constants*/
     GPIO__PULL_DOWN = 1,
@@ -21,11 +35,18 @@ typedef enum {
     GPIO__PULL_AIR = 3,
     GPIO__PULL_BOTH = 4,
 
-    GPIO__PULL_UNDEF = 5,
+    GPIO__PULL_UNDEF = 0,
 }GpioPullMode_t;
 
+typedef enum {
+    GPIO_DRIVE_STRENGTH_LOW = 1,
+    GPIO_DRIVE_STRENGTH_HIGH = 2,
+
+    GPIO_DRIVE_STRENGTH_UNDEF = 0,
+}GpioDrive_t;
+
 typedef enum  {
-    GPIO_DIR_UNDEF = 0,
+
     GPIO_DIR_OUT = 1,
     GPIO_DIR_OUT_PUSH_PULL = 2,
     GPIO_DIR_OUT_OPEN_DRAIN =3,
@@ -33,7 +54,23 @@ typedef enum  {
     GPIO_DIR_NONE = 5,
     GPIO_DIR_INOUT_OPEN_DRAIN = 6,
     GPIO_DIR_IN = 7,
+
+    GPIO_DIR_UNDEF = 0,
 } GpioDir_t;
+
+typedef enum {
+    GPIO_RATE_SLOW = 1,
+    GPIO_RATE_FAST = 2,
+
+    GPIO_RATE_UNDEF = 0,
+} GpioRate_t;
+
+typedef enum {
+    GPIO_TYPE_PUSH_PULL = 1,
+    GPIO_TYPE_OPEN_DRAIN = 2,
+
+    GPIO_TYPE_UNDEF = 0,
+} GpioType_t;
 
 typedef enum {
     GPIO_API_MODE_GPIO = 1,
@@ -47,6 +84,14 @@ typedef enum {
     GPIO_API_MODE_INPUT_EXINT = 9,
     GPIO_API_MODE_INPUT_EXINT_FAILLING = 10,
     GPIO_API_MODE_INPUT_EXINT_RISING = 11,
+    GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE = 12,
+    GPIO_API_MODE_INPUT_EXINT_LOGIC_0= 13,
+    GPIO_API_MODE_INPUT_EXINT_LOGIC_1= 14,
+	GPIO_API_MODE_DMA_RISING ,
+	GPIO_API_MODE_DMA_FALLING  ,
+	GPIO_API_MODE_DMA_BOTH_EDGE,
+	GPIO_API_MODE_TOOGLED_WHEN_LOGIC_0 ,
+	GPIO_API_MODE_TOOGLED_WHEN_LOGIC_1 ,
 
     GPIO_API_MODE_UNDEF = 0,
 } GpioApiMode_t;
@@ -55,6 +100,7 @@ typedef enum {
     GPIO_DRIVE_SELECT_2MA = 2,
     GPIO_DRIVE_SELECT_4MA = 4,
     GPIO_DRIVE_SELECT_8MA = 8,
+
     GPIO_DRIVE_SELECT_UNDEF = 0,
 } GpioDriveSelect_t;
 
@@ -68,27 +114,29 @@ typedef enum {
 } GpioLogicLevel_t;
 
 typedef enum  {
-    GPIO_CORE_MUX_APP=0,
-    GPIO_CORE_MUX_NET=1,
-    GPIO_CORE_MUX_UNDEF=2,
+    GPIO_CORE_MUX_APP=1,
+    GPIO_CORE_MUX_NET=2,
+
+    GPIO_CORE_MUX_UNDEF=0,
 } GpioCoreMux_t;
 
 //GPIOx_CFGR
 typedef enum {
-    GPIO_FUN_INPUT=0,
-    GPIO_FUN_OUT=1,
-    GPIO_FUN_MULTIPLEXED=2,
-    GPIO_FUN_ANALOG=3,
+    GPIO_FUN_INPUT=1,
+    GPIO_FUN_OUT=2,
+    GPIO_FUN_MULTIPLEXED=3,
+    GPIO_FUN_ANALOG=4,
 
-    GPIO_FUN_UNDEF=4,
+    GPIO_FUN_UNDEF=0,
 }GpioPinFunction_t;
 
 typedef enum {
-    GPIO_SPEED_LOW_SPEED = 0,
-    GPIO_SPEED_MEDIUM_SPEED = 1,
-    GPIO_SPEED_FAST_SPEED = 2,
-    GPIO_SPEED_HIGH_SPEED = 3,
-    GPIO_SPEED_UNDEF = 4,
+    GPIO_SPEED_LOW_SPEED = 1,
+    GPIO_SPEED_MEDIUM_SPEED = 2,
+    GPIO_SPEED_FAST_SPEED = 3,
+    GPIO_SPEED_HIGH_SPEED = 4,
+
+    GPIO_SPEED_UNDEF = 0,
 } GpioSpeed_t;
 
 typedef struct  {

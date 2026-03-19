@@ -1,0 +1,134 @@
+tsr i2c_fsm1_write_byte+
+
+ll I2c debug ;ll I2cFsm debug;tsr i2c_fsm1_write_byte
+
+
+tsa i2c_fsm
+
+tsr i2c_fsm+
+
+
+    case I2C_FSM_INPUT_BUS_BUSY:  {
+    	res = true;
+    } break;
+    
+
+tsr test_i2c_fsm2_check+
+
+tsr _check+
+
+ll I2c notice ;ll I2cFsm notice; tsr i2c_fsm1_check_asic_ack
+
+
+
+i2cfsb 1
+
+tsr  i2c_fsm+
+
+ll I2c debug ;ll I2cFsm debug;tsr i2c_fsm1_read_byte
+
+Run read word test
+tcr 0 0;hmr;i2ci 2;ll I2cFsm debug ;tsr i2c_fsm2_read_word
+i2cfsb 1
+
+tsa i2c_fsm
+
+
+tcr 0 0; hmr; ll I2cFsm debug ;ll I2c debug ; tsr i2c_fsm2+
+
+
+tcr 0 0; hmr; ll I2cFsm debug ;ll I2c debug ; tsr i2c_fsm2_check_asic_ack
+
+
+i2c_fsm2_check_asic_nak
+
+tcr 0 0; hmr; ll I2cFsm debug ;ll I2c debug ; tsr i2c_fsm2_check_asic_nak
+i2c_fsm2_check_asic_nak
+
+
+tsr i2c_fsm2_check_asic_ack
+
+i2c_fsm2_check_asic_ack.142
+i2c_fsm2_check_asic_nak.143
+
+
+Run write word test
+
+tcr 0 0; hmr; ll I2cFsm debug ;; ll I2c debug ;i2ci 2; tsr i2c_fsm2_write_word
+
+
+Run read word test
+
+tcr 0 0;hmr;i2ci 2;tsr i2c_fsm2_read_word
+
+
+tcr 0 0;tcr 1 0
+
+i2ci 1
+
+i2ci 1;ll i2c info ;i2cfrr 1 0x19 0x0F
+i2ci 1;ll i2c info ;i2cfrr 1 0x19 0x0A
+i2ci 1;ll i2c info ;i2cfrr 1 0x19 0x07
+
+i2ci 1;ll i2c debug ;i2cfrr 1 0x19 0x0F
+
+i2ci 1;ll I2cFsm debug ;i2cfrr 1 0x19 0x10
+
+
+i2ci 1;ll i2c info ;i2cfrr 1 0x19 0x10
+i2ci 1;ll i2c debug ;i2cfrr 1 0x19 0x07
+
+
+tcr 0 0;tcr 1 0 ;ll i2c debug ; i2cfc 1 0x32; i2cfc 1 0x32;i2cfc 1 0x33
+
+    Node->I2Cx->dt_bit.dt = i2c_fsm_addr;
+
+
+
++----+----+-----------------+-----+--------+--------+---------+--------+---------+
+|Num | id |    TaskName     | On  | Calls  |Calls/s |  Idle   | Idle/s | CPU[%]  |
++----+----+-----------------+-----+--------+--------+---------+--------+---------+
+|  0 |  0 |          lis3dh |  On |    356 |      4 |  581934 |   7489 |  15.437 |
+|  1 |  1 |      lis3dhLink |  On |     15 |      0 |  582275 |   7494 |   0.636 |
+|  2 |  2 |            UART |  On |   5845 |     75 |  576445 |   7419 |   5.313 |
+|  3 |  3 |             CLI |  On |   2160 |     27 |  580130 |   7466 |   1.343 |
+|  4 |  4 |    StringReader |  On |  53621 |    690 |  528669 |   6804 |  58.766 |
+|  5 |  5 |          script |  On |     73 |      0 |  582216 |   7493 |   2.625 |
+|  6 |  6 |        HEAL_MON |  On |     19 |      0 |  582270 |   7494 |   0.012 |
+|  7 |  7 |            TIME |  On |      2 |      0 |  582287 |   7494 |   0.012 |
+|  8 |  8 |       BLACK_BOX |  On |   5845 |     75 |  576444 |   7419 |  15.856 |
++----+----+-----------------+-----+--------+--------+---------+--------+---------+
+
+ll i2c debug ;i2cfe 1
+
+tcr 0 0;tcr 1 0
+tcr 0 0;tcr 1 0;i2cfe 1 
+
+i2cfsp 1 1
+
+tcr 0 0;tcr 1 0
+
+i2ci 1
+tcr 0 0;tcr 1 0
+tcr 0 0;tcr 1 0;i2cfs 1 
+
+tcr 0 0;tcr 1 0;ll i2c info;i2cfs 1
+
+tcr 0 0;tcr 1 0;ll i2c debug ; i2cfc 1 0x19;
+
+tcr 0 0;tcr 1 0;ll i2c info ; i2cfc 1 0x19;
+
+i2ci 1;tcr 0 0;tcr 1 0;ll i2c info ; i2cfc 1 0x32;
+
+i2ci 1;tcr 0 0;tcr 1 0;ll i2c debug ; i2cfc 1 0x32;
+tcr 0 0;tcr 1 0; i2cfc 1 0x33;
+
+tcr 0 0;tcr 1 0; i2cfc 1 0x35;
+
+tcr 0 0;tcr 1 0;ll i2c debug ; i2cfc 1 0x32;
+tcr 0 0;tcr 1 0;ll i2c debug ; i2cfc 1 0x32;i2cfc 1 0x33
+i2csp 1 1;i2ci 1
+tcr 0 0;tcr 1 0;ll i2c debug ; i2cfc 1 0x32
+tcr 0 0;tcr 1 0;ll i2c debug ; i2cfc 1 0x32; i2cfc 1 0x19;i2cfc 1 0x33
+
+tcr 0 0;tcr 1 0;ll i2c debug ; i2cfc 1 0x33;

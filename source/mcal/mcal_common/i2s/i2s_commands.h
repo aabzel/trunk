@@ -28,6 +28,7 @@ extern "C" {
 #error "+ HAS_CLI"
 #endif
 
+bool i2s_set_dac_command(int32_t argc, char* argv[]);
 bool i2s_bus_role_command(int32_t argc, char* argv[]);
 bool i2s_test_command(int32_t argc, char* argv[]);
 bool i2s_config_command(int32_t argc, char* argv[]);
@@ -44,6 +45,7 @@ bool i2s_set_iir_command(int32_t argc, char* argv[]);
 bool i2s_set_loopback_command(int32_t argc, char* argv[]);
 bool i2s_set_echo_command(int32_t argc, char* argv[]);
 bool i2s_init_command(int32_t argc, char* argv[]);
+bool i2s_diag_rx_command(int32_t argc, char* argv[]);
 
 #ifdef HAS_DDS
 bool i2s_set_dac_num_command(int32_t argc, char* argv[]);
@@ -57,6 +59,7 @@ bool i2s_set_dac_num_command(int32_t argc, char* argv[]);
 #define I2S_DIAG_COMMANDS                                                                                              \
     SHELL_CMD("i2s_diag_cfg", "i2sdc", i2s_diag_configs_command, "I2sDiagConfig"),                                     \
     SHELL_CMD("i2s_diag", "i2sd", i2s_diag_command, "I2sDiag"),                                                        \
+    SHELL_CMD("i2s_rx_diag", "i2sdx", i2s_diag_rx_command, "I2sDiagRx"),                                                        \
     SHELL_CMD("i2s_diag_err", "i2ser", i2s_diag_errors_command, "I2sDiagErrors"),                                      \
     SHELL_CMD("i2s_stream_diag", "i2ssd", i2s_stream_diag_command, "I2sStreamDiag"),                                   \
     SHELL_CMD("i2s_diag_sample", "i2sa", i2s_diag_sample_command, "I2sDiagSample"),

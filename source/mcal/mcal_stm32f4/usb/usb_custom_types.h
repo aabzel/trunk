@@ -1,70 +1,70 @@
-#ifndef USB_TYPES_H
-#define USB_TYPES_H
+#ifndef USB_CUSTOM_TYPES_H
+#define USB_CUSTOM_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "usb_const.h"
+#include "stm32f4xx_hal_pcd.h"
+
+#ifdef HAS_USB_SERIAL
+#include "usb_serial_types.h"
+#else
+#define USB_SERIAL_VARIABLE
+#endif
 
 #ifdef HAS_USB_DEVICE
 #include "usbd_def.h"
-#endif /*HAS_USB_DEVICE*/
+#endif
 
 #ifdef HAS_USB_HOST
 #include "usbh_def.h"
-#endif /*HAS_USB_HOST*/
-
-#ifndef HAS_USB
-#error "+HAS_USB"
 #endif
 
-typedef struct{
-    uint8_t num;
-    bool valid;
 #ifdef HAS_USB_DEVICE
-    USBD_DescriptorsTypeDef* hs_desc;
-    USBD_ClassTypeDef* usbd_hid;
-#endif /*HAS_USB_DEVICE*/
+#define USB_DEVICE_CUSTOM_VARIABLE                  \
+    USB_SERIAL_VARIABLE                             \
+    USBD_ClassTypeDef* usbd_hid;                    \
+    PCD_HandleTypeDef PcdHandle;                    \
+    USBD_HandleTypeDef hUsbDevice;
+
+#else
+#define USB_DEVICE_CUSTOM_VARIABLE
+#endif
+
 
 #ifdef HAS_USB_HOST
-    USBH_ClassTypeDef* hid_class;
+#define USB_HOST_CUSTOM_VARIABLE                \
+    USBH_ClassTypeDef* hid_class;               \
+    bool host_init_done;                        \
+    USBH_HandleTypeDef hUsbHost;                \
+    HCD_HandleTypeDef hhcd_USB_OTG;
+
+#else
+#define USB_HOST_CUSTOM_VARIABLE
 #endif
-    //uint8_t low_level_core_index;
-    char name[20];
-    UsbDeviceSpeed_t device_speed;
-    UsbHostSpeed_t host_speed;
-    UsbSpeed_t speed;
-    UsbRole_t role;
-}UsbConfig_t;
+
+#define USB_DEVIVE_CONFIG_CUSTOM_VARIABLE     \
+        USBD_DescriptorsTypeDef* Descriptors;
+
+#define USB_CONFIG_CUSTOM_VARIABLE          \
+        USB_DEVIVE_CONFIG_CUSTOM_VARIABLE
+
+#define USB_CUSTOM_VARIABLE     \
+    USB_HOST_CUSTOM_VARIABLE    \
+    USB_DEVICE_CUSTOM_VARIABLE
 
 typedef struct {
-	uint32_t prev_init_ms;
-#ifdef HAS_USB_HOST
-	bool host_init_done;
-    USBH_HandleTypeDef hUsbHost;
-    HCD_HandleTypeDef hhcd_USB_OTG;
-#endif /*HAS_USB_HOST*/
-
-#ifdef HAS_USB_DEVICE
-//  PCD_HandleTypeDef usb_h;//hpcd_USB_OTG_HS;
-    PCD_HandleTypeDef hpcd_USB_OTG;
-    USBD_HandleTypeDef hUsbDevice;
-#endif /*HAS_USB_DEVICE*/
     uint8_t num;
     bool valid;
-    UsbRole_t role;
-    UsbSpeed_t speed;
-    UsbDeviceSpeed_t device_speed;
-    UsbHostSpeed_t host_speed;
-}UsbHandle_t;
+    USB_OTG_GlobalTypeDef * USBx;
+}UsbInfo_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* USB_TYPES_H */
+#endif /* USB_CUSTOM_TYPES_H */
 

@@ -8,7 +8,6 @@ extern "C" {
 #include "std_includes.h"
 
 #ifdef HAS_USB_DEVICE_COMMANDS
-// compile
 #include "usb_device_commands.h"
 #else
 #define USB_DEVICE_COMMANDS

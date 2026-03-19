@@ -1,9 +1,7 @@
 #ifndef FLASH_CUSTOM_DIAG_H
 #define FLASH_CUSTOM_DIAG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "flash_const.h"
 #include "flash_diag.h"
 

@@ -69,7 +69,7 @@ bool hw_aes256_cbc_init(const uint8_t* key32byte, const uint8_t* init_vector, Iv
                 LOG_INFO(LG_CRYP, "AesCbcInitOk");
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             LOG_INFO(LG_CRYP, "Aes256CbcReInit");
@@ -89,7 +89,7 @@ bool hw_aes256_cbc_init(const uint8_t* key32byte, const uint8_t* init_vector, Iv
                 LOG_INFO(LG_CRYP, "AesCbcConfigOk");
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "ConfigCbcErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "ConfigCbcErr %d=%s", ret, HalStatusToStr(ret));
             }
         }
     } else {
@@ -129,11 +129,11 @@ bool hw_aes256_cbc_encrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -169,11 +169,11 @@ bool hw_aes256_cbc_decrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -216,7 +216,7 @@ uint32_t hw_aes256_cbc_decrypt_stream(const uint8_t* key32byte, uint8_t* data_in
             return_len = datalen;
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "EncryptCbcStreamErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "EncryptCbcStreamErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     LOG_DEBUG(LG_CRYP,"HwCbcDecryptOk Len:%u", datalen);

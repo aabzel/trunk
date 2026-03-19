@@ -23,35 +23,35 @@ ifneq ($(USB_HOST_DRV_MK_INC),Y)
 
     USB=Y
     USB_HOST=Y
-    OPT += -DHAS_USB_HOST
+    MCAL_OPT += -DHAS_USB_HOST
 
     ifeq ($(USB_HOST_PROC),Y)
-        OPT += -DHAS_USB_HOST_PROC
+        MCAL_OPT += -DHAS_USB_HOST_PROC
     endif
 
     ifeq ($(KEYBOARD_FORWARDING),Y)
-        OPT += -DHAS_KEYBOARD_FORWARDING
+        MCAL_OPT += -DHAS_KEYBOARD_FORWARDING
     endif
 
     ifeq ($(KEYBOARD_LOGING),Y)
-        OPT += -DHAS_KEYBOARD_LOGING
+        MCAL_OPT += -DHAS_KEYBOARD_LOGING
     endif
 
     ifeq ($(HID),Y)
-        OPT += -DHAS_HID
+        MCAL_OPT += -DHAS_HID
         SOURCES_C += $(USB_CUSTOM_HOST_DIR)/usb_hid.c
     endif
 
     ifeq ($(DIAG),Y)
         ifeq ($(USB_HOST_DIAG),Y)
-            OPT += -DHAS_USB_HOST_DIAG
+            MCAL_OPT += -DHAS_USB_HOST_DIAG
             SOURCES_C += $(USB_CUSTOM_HOST_DIR)/usb_host_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(USB_HOST_COMMANDS),Y)
-            OPT += -DHAS_USB_HOST_COMMANDS
+            MCAL_OPT += -DHAS_USB_HOST_COMMANDS
             SOURCES_C += $(USB_CUSTOM_HOST_DIR)/usb_host_commands.c
         endif
     endif

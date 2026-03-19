@@ -17,7 +17,8 @@ typedef struct  {
     uint32_t size;
     uint8_t sector;
     MemContent_t content;
-} FlashSectorConfig_t;
+    char* name;
+} MemoryConfig_t;
 
 
 #define FLASH_COMMON_VARIABLES          \
@@ -25,7 +26,7 @@ typedef struct  {
     uint32_t size;                      \
     uint32_t app_start;                 \
     uint32_t boot_start;                \
-    FlashSectorConfig_t* PageArray;     \
+    MemoryConfig_t* PageArray;          \
     uint32_t page_cnt;                  \
     uint32_t page_size; /*sector_size*/ \
     bool is_equal_sectors;              \

@@ -6,23 +6,24 @@
 
 #include "array.h"
 #include "dma_custom_bindings.h"
+#include "dma_custom_types.h"
 #include "hal_diag.h"
 #include "log.h"
 #include "stm32f4xx_hal.h"
-#include "dma_custom_types.h"
 
 #define DMA_INT_PRIORITY 0
 
-static const DmaInfo_t DmaInfo[] = {{
-                                        .dma_num = 1,
-                                        .DMAx = DMA1,
-                                        .valid = true,
-                                    },
-                                    {
-                                        .dma_num = 2,
-                                        .DMAx = DMA2,
-                                        .valid = true,
-                                    },
+static const DmaInfo_t DmaInfo[] = {
+    {
+        .dma_num = 1,
+        .DMAx = DMA1,
+        .valid = true,
+    },
+    {
+        .dma_num = 2,
+        .DMAx = DMA2,
+        .valid = true,
+    },
 };
 
 #define DMA1_CHANNEL_INFO                                                                                              \
@@ -269,6 +270,7 @@ static uint32_t DmaGetChannel(uint8_t channel) {
         code = DMA_CHANNEL_15;
         break;
 #endif /**/
+    default: break;
     }
     return code;
 }
@@ -282,6 +284,7 @@ static uint32_t DmaGetPeriphInc(uint8_t per_inc) {
     case DMA_INC_ON:
         code = DMA_PINC_ENABLE;
         break;
+    default: break;
     }
     return code;
 }
@@ -295,6 +298,7 @@ static uint32_t DmaGetMemInc(uint8_t mem_inc) {
     case DMA_INC_ON:
         code = DMA_MINC_ENABLE;
         break;
+    default: break;
     }
     return code;
 }
@@ -311,6 +315,7 @@ static uint32_t DmaGetPeriphDataAlignment(uint8_t aligment_per) {
     case DMA_ALIG_WORD:
         code = DMA_PDATAALIGN_WORD;
         break;
+    default: break;
     }
     return code;
 }
@@ -330,6 +335,7 @@ static uint32_t MemoryBurst2StmMemoryBurst(uint8_t mem_burst) {
     case DMA_BURST_INC16:
         stm32_code = DMA_MBURST_INC16;
         break;
+    default: break;
     }
     return stm32_code;
 }
@@ -349,6 +355,7 @@ static uint32_t PeriphBurst2StmPeriphBurst(DmaBurst_t periph_burst) {
     case DMA_BURST_INC16:
         stm32_code = DMA_PBURST_INC16;
         break;
+    default: break;
     }
     return stm32_code;
 }
@@ -365,6 +372,7 @@ static uint32_t DmaGetMemDataAlignment(DmaAligmant_t aligment_mem) {
     case DMA_ALIG_WORD:
         code = DMA_MDATAALIGN_WORD;
         break;
+    default: break;
     }
     return code;
 }
@@ -381,6 +389,7 @@ static uint32_t DmaGetMode(DmaMode_t mode) {
     case DMA_MODE_PFCTRL:
         code = DMA_PFCTRL;
         break;
+    default: break;
     }
     return code;
 }
@@ -400,6 +409,7 @@ static uint32_t DmaGetPriority(DmaPriority_t priority) {
     case DMA_PRIOR_VERY_HIGH:
         code = DMA_PRIORITY_VERY_HIGH;
         break;
+    default: break;
     }
     return code;
 }
@@ -413,6 +423,7 @@ static uint32_t DmaGetFiFoNode(DmaFifo_t fifo) {
     case DMA_FIFO_ON:
         code = DMA_FIFOMODE_ENABLE;
         break;
+    default: break;
     }
     return code;
 }
@@ -426,6 +437,7 @@ DMA_TypeDef* DmaNum2DMAx(uint8_t num) {
     case 2:
         DMAx = DMA2;
         break;
+    default: break;
     }
     return DMAx;
 }
@@ -460,6 +472,7 @@ DmaStreamIntStatusReg_t DmaGetStream(uint8_t dma_num, uint8_t channel_num) {
             case 3: {
                 COPY_DMA_STREAM_BITS(3)
             } break;
+            default: break;
             }
         }
         if((4 <= channel_num) && (channel_num <= 7)) {
@@ -478,6 +491,7 @@ DmaStreamIntStatusReg_t DmaGetStream(uint8_t dma_num, uint8_t channel_num) {
             case 7: {
                 COPY_DMA_STREAM_BITS(7)
             } break;
+            default: break;
             }
         }
     }
@@ -505,7 +519,7 @@ bool dma_channel_init_one(uint8_t num) {
     if(ChannelConfig) {
         uint8_t dma_num = ChannelConfig->dma_num;
         uint8_t channel_num = ChannelConfig->channel;
-        LOG_WARNING(DMA, "%u,DMA%u,Channel%u,Init", num, dma_num, channel_num);
+        LOG_WARNING(LG_DMA, "%u,DMA%u,Channel%u,Init", num, dma_num, channel_num);
         DMA_Stream_TypeDef* DMAx = NULL;
         DMAx = DmaChannelToDMAx(dma_num, channel_num);
         if(DMAx) {
@@ -525,8 +539,7 @@ bool dma_channel_init_one(uint8_t num) {
                         Node->dma_h.Init.Direction = DmaDirToStm32DmaDir(ChannelConfig->dir);
                         Node->dma_h.Init.PeriphInc = DmaGetPeriphInc(ChannelConfig->per_inc);
                         Node->dma_h.Init.MemInc = DmaGetMemInc(ChannelConfig->mem_inc);
-                        Node->dma_h.Init.PeriphDataAlignment =
-                            DmaGetPeriphDataAlignment(ChannelConfig->aligment_per);
+                        Node->dma_h.Init.PeriphDataAlignment = DmaGetPeriphDataAlignment(ChannelConfig->aligment_per);
                         Node->dma_h.Init.MemDataAlignment = DmaGetMemDataAlignment(ChannelConfig->aligment_mem);
                         Node->dma_h.Init.Mode = DmaGetMode(ChannelConfig->mode);
                         Node->dma_h.Init.Priority = DmaGetPriority(ChannelConfig->priority);
@@ -537,10 +550,10 @@ bool dma_channel_init_one(uint8_t num) {
                         // Node->dma_h.XferAbortCallback=;
                         HAL_StatusTypeDef ret = HAL_DMA_Init(&Node->dma_h);
                         if(HAL_OK == ret) {
-                            LOG_INFO(DMA, "Init Id:%u Dma:%u Stream:%u " LOG_OK, num, dma_num, channel_num);
+                            LOG_INFO(LG_DMA, "Init Id:%u Dma:%u Stream:%u " LOG_OK, num, dma_num, channel_num);
                             res = true;
                         } else {
-                            LOG_ERROR(DMA, "%u Stream %u InitErr %s", dma_num, channel_num, HalStatus2Str(ret));
+                            LOG_ERROR(LG_DMA, "%u Stream %u InitErr %s", dma_num, channel_num, HalStatusToStr(ret));
                             res = false;
                         }
                     }
@@ -548,10 +561,10 @@ bool dma_channel_init_one(uint8_t num) {
             }
 
         } else {
-            LOG_ERROR(DMA, "InstErr");
+            LOG_ERROR(LG_DMA, "InstErr");
         }
     } else {
-        LOG_ERROR(DMA, "ConfigErr");
+        LOG_ERROR(LG_DMA, "ConfigErr");
     }
     return res;
 }
@@ -565,7 +578,7 @@ static bool dma_check_const(void) {
 
 static bool dma_init_interrupts(void) {
 #if 0
-    LOG_WARNING(DMA, "DMA1 ISR init");
+    LOG_WARNING(LG_DMA, "DMA1 ISR init");
     HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, DMA_INT_PRIORITY, DMA_INT_PRIORITY);
     HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
 
@@ -592,7 +605,7 @@ static bool dma_init_interrupts(void) {
 #endif /*HAS_DMA1*/
 
 #if 0
-    LOG_WARNING(DMA, "DMA2 ISR init");
+    LOG_WARNING(LG_DMA, "DMA2 ISR init");
     HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, DMA_INT_PRIORITY, DMA_INT_PRIORITY);
     HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
@@ -623,13 +636,13 @@ static bool dma_init_interrupts(void) {
 static bool dma_init_clock(void) {
     bool res = false;
 #ifdef HAS_DMA1
-    LOG_INFO(DMA, "DMA1InitClk");
+    LOG_INFO(LG_DMA, "DMA1InitClk");
     __DMA1_CLK_ENABLE();
     res = true;
 #endif /*HAS_DMA1*/
 
 #ifdef HAS_DMA2
-    LOG_INFO(DMA, "DMA2InitClk");
+    LOG_INFO(LG_DMA, "DMA2InitClk");
     __DMA2_CLK_ENABLE();
     res = true;
 #endif /*HAS_DMA2*/
@@ -639,7 +652,7 @@ static bool dma_init_clock(void) {
 
 bool dma_init_custom(void) {
     bool res = true;
-    LOG_INFO(DMA, "Init,Custom");
+    LOG_INFO(LG_DMA, "Init,Custom");
     res = dma_init_clock() && res;
     res = dma_init_interrupts() && res;
     res = dma_check_const() && res;
@@ -656,7 +669,7 @@ bool dma_stop(uint8_t num) {
             res = true;
             __HAL_DMA_RESET_HANDLE_STATE(&DmaNode->dma_h);
         } else {
-            LOG_ERROR(DMA, "DmaAbort %s", HalStatus2Str(ret));
+            LOG_ERROR(LG_DMA, "DmaAbort %s", HalStatusToStr(ret));
         }
     }
     return res;
@@ -686,7 +699,7 @@ bool dma_start(uint8_t num, uint32_t src_address, uint32_t dst_address, uint32_t
         if(HAL_OK == ret) {
             res = true;
         } else {
-            LOG_ERROR(DMA, "DmaStart %s", HalStatus2Str(ret));
+            LOG_ERROR(LG_DMA, "DmaStart %s", HalStatusToStr(ret));
         }
     }
     return res;

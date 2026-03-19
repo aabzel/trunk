@@ -20,6 +20,25 @@ typedef enum {
     CLOCK_SRC_UNDEF = 0,
 } ClockSource_t;
 
+typedef enum {
+    CLOCK_MUX_INTERNAL_RC_FAST = 1,
+    CLOCK_MUX_INTERNAL_RC_SLOW = 2,
+    CLOCK_MUX_EXTERNAL_XTAL = 3,
+    CLOCK_MUX_PLL = 4,
+    CLOCK_MUX_UNDEF =0 ,
+} ClockMux_t;
+
+typedef enum {
+    CLOCK_CORE_SRC_PLL0 = 1,  /* System PLL0. */
+    CLOCK_CORE_SRC_PLL1 = 2,  /* System PLL1. */
+    CLOCK_CORE_SRC_SIRC = 3,  /* Slow Internal Reference Clock. */
+    CLOCK_CORE_SRC_FOSC = 4,  /* Fast Oscillator clock */
+    CLOCK_CORE_SRC_FIRC = 5,  /* Fast Internal Reference Clock  */
+
+    CLOCK_CORE_SRC_UNDEF = 0,
+} ClockCoreSrc_t;
+
+
 typedef enum{
     CLK_HI_FREQ_32MHZ = 32000000,
     CLK_HI_FREQ_25MHZ = 25000000,
@@ -51,11 +70,11 @@ typedef enum {
     CLOCK_BUS_AHB2,    /*Advanced High-performance Bus2*/    \
     CLOCK_BUS_AHB3,    /*Advanced High-performance Bus2*/
 
-#define CLOCK_BUS_APB_ALL                                    \
-    CLOCK_BUS_APB1,    /*Advanced Peripheral Bus1 */         \
-    CLOCK_BUS_APB1_TIMERS,    /*Advanced Peripheral Bus1 */  \
-    CLOCK_BUS_APB2,    /*Advanced Peripheral Bus2*/          \
-    CLOCK_BUS_APB2_TIMERS,    /*Advanced Peripheral Bus2*/
+#define CLOCK_BUS_APB_ALL                                            \
+    CLOCK_BUS_APB1,           /* Advanced Peripheral Bus1 */         \
+    CLOCK_BUS_APB1_TIMERS,    /* Advanced Peripheral Bus1 */         \
+    CLOCK_BUS_APB2,           /* Advanced Peripheral Bus2 */         \
+    CLOCK_BUS_APB2_TIMERS,    /* Advanced Peripheral Bus2 */
 
 
 typedef enum {
@@ -67,6 +86,8 @@ typedef enum {
     CLOCK_BUS_AHB_TIMERS,   /**/
     CLOCK_BUS_LOW_POWER,    /**/
     CLOCK_BUS_SYS,     /*system clock*/
+    CLOCK_BUS_PLL0,
+    CLOCK_BUS_PLL1,
 
     CLOCK_BUS_UNDEF,
 }ClockBus_t;

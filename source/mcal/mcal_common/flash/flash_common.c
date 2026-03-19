@@ -2,9 +2,15 @@
 
 #include <string.h>
 
+#include "code_generator.h"
 #include "compiler_const.h"
-#include "flash_config.h"
+#include "debugger.h"
+#include "flash_Config.h"
 #include "microcontroller_const.h"
+
+#ifdef HAS_ARRAY
+#include "array.h"
+#endif
 
 #ifdef HAS_DEBUG_INFO
 #include "debug_info.h"
@@ -18,10 +24,6 @@
 #include "flash_diag.h"
 #endif
 
-#ifdef HAS_ARRAY
-#include "array.h"
-#endif
-
 #ifdef HAS_INTERVAL
 #include "interval.h"
 #endif
@@ -29,6 +31,60 @@
 #ifdef HAS_LOG
 #include "log.h"
 #endif
+
+/**
+ * @brief  read data using halfword mode
+ * @param  read_addr: the address of reading
+ * @param  p_buffer: the buffer of reading data
+ * @param  size: the number of reading data in words
+ * @retval none
+ */
+void flash_read_word(uint32_t address, uint16_t* const word, uint16_t size) {
+    uint16_t i;
+    for(i = 0; i < size; i++) {
+        word[i] = *(uint16_t*)(address);
+        address += 2;
+    }
+}
+
+#ifdef HAS_FLASH_EX
+bool Addr2SectorSize(uint32_t addr, uint32_t* sector, uint32_t* sec_size) {
+    bool res = false;
+    if(sector && sec_size) {
+        uint32_t cnt = flash_get_sector_cnt();
+        uint32_t i = 0;
+        for(i = 0; i < cnt; i++) {
+            uint32_t end_addr = FlashSectorConfig[i].start + FlashSectorConfig[i].size;
+            if((FlashSectorConfig[i].start <= addr) && (addr <= end_addr)) {
+                (*sector) = (uint32_t)FlashSectorConfig[i].sector;
+                (*sec_size) = (uint32_t)FlashSectorConfig[i].size;
+                res = true;
+            }
+        }
+    }
+    return res;
+}
+#endif
+
+#ifdef HAS_INTERVAL
+bool is_flash_address_range(uint32_t address, uint32_t size) {
+    bool res = false;
+    IntervalE_t big = {0};
+    big.start = FlashConfig.start;
+    big.end = FlashConfig.start + FlashConfig.size;
+
+    IntervalE_t small = {0};
+    small.start = address;
+    small.end = address + size;
+
+    res = interval_is_a_in_b(&small, &big);
+
+
+    return res;
+}
+#endif
+
+
 
 FlashHandle_t* FlashGetNode(uint8_t num) {
     FlashHandle_t* Node = &FlashInstance;
@@ -40,7 +96,7 @@ const FlashConfig_t* FlashGetConfig(uint8_t num) {
     return Config;
 }
 
-bool flash_is_valid_config(const FlashConfig_t* const Config) {
+bool FlashIsValidConfig(const FlashConfig_t* const Config) {
     bool res = false;
     if(Config) {
         res = true;
@@ -73,81 +129,110 @@ bool flash_is_valid_config(const FlashConfig_t* const Config) {
         }
     }
 
-    if(res) {
-        if(Config->page_cnt) {
-            res = true;
-        } else {
+    ifn(Config->page_cnt) {
 #ifdef HAS_LOG
-            LOG_ERROR(LG_FLASH, "NoFlashPageCntInfo");
+        LOG_ERROR(LG_FLASH, "NoFlashPageCntInfo");
 #endif
-            res = false;
-        }
+        res = false;
     }
 
-    if(res) {
+#if 0
         /* YTM32 can start flash from 0x0 */
-        if(0 <= Config->start) {
-            res = true;
-        } else {
+        ifn(0 <= Config->start) {
 #ifdef HAS_LOG
             LOG_ERROR(LG_FLASH, "FlashStartErr");
 #endif
             res = false;
         }
-    }
 
-    if(res) {
-        if(0 <= Config->app_start) {
-            res = true;
-        } else {
+        ifn(0 <= Config->app_start) {
 #ifdef HAS_LOG
             LOG_ERROR(LG_FLASH, "FlashAppSizeErr");
 #endif
             res = false;
         }
-    }
 
-    if(res) {
-        if(0 <= Config->boot_start) {
-            res = true;
-        } else {
+        ifn(0 <= Config->boot_start) {
 #ifdef HAS_LOG
             LOG_ERROR(LG_FLASH, "FlashBootSizeErr");
 #endif
             res = false;
         }
-    }
-
-    if(res) {
-        if(0 < Config->size) {
-
-        } else {
-#ifdef HAS_LOG
-            LOG_ERROR(LG_FLASH, "FlashSizeErr");
 #endif
-            res = false;
-        }
+
+    ifn(0 < Config->size) {
+#ifdef HAS_LOG
+        LOG_ERROR(LG_FLASH, "FlashSizeErr");
+#endif
+        res = false;
     }
 
     return res;
 }
 
 #ifdef HAS_FLASH_EX
-_WEAK_FUN_
-bool is_flash_addr(uint32_t address) {
-    bool res = false;
-    if(FlashConfig.start <= address) {
-        if(address < (FlashConfig.size + FlashConfig.start)) {
-            res = true;
+
+/*
+ * starting_point - the starting address from which to start searching
+ * search_size - the size of the area in which to search
+ * alignment - address start alignment
+ * size - the size of the free interval to be found
+ */
+uint32_t flash_get_first_spare_size_aligned(uint32_t starting_point, uint32_t search_size, const uint32_t alignment,
+                                            const uint32_t size) {
+    uint32_t start = 0;
+    FlashHandle_t* Node = FlashGetNode(1);
+    if(Node) {
+        start = 0;
+        uint32_t end = starting_point + search_size;
+        for(start = starting_point; start < (end - size); start += alignment) {
+            bool res = is_flash_spare(start, size);
+            if(res) {
+                break;
+            }
         }
-    } else {
-        res = false; /*Just for step-by-step debugging*/
     }
-    return res;
+#ifdef HAS_LOG
+    LOG_INFO(LG_FLASH, "Align:0x%08X,Size:%u,StartSpareAddr:0x%08X", alignment, size, start);
+#endif
+    return start;
+}
+
+uint32_t flash_get_first_spare_size(const uint32_t size) {
+    uint32_t start = 0xFFFFFFFF;
+    const FlashConfig_t* Config = FlashGetConfig(1);
+    if(Config) {
+        start = flash_get_first_spare_size_aligned(Config->start, Config->size, 1, size);
+    }
+    return start;
 }
 #endif
 
-#ifdef HAS_INTERVAL
+#ifdef HAS_FLASH_EX
+_WEAK_FUN_
+bool is_flash_addr(const uint32_t address) {
+    bool res = false;
+    if(address) {
+        res = true;
+    }
+
+    uint32_t f = 0;
+    uint32_t cnt = flash_get_sector_cnt();
+    for(f = 0; f < cnt; f++) {
+        if(FlashSectorConfig[f].start < address) {
+            uint32_t rom_end = FlashSectorConfig[f].start + FlashSectorConfig[f].size;
+            if(address < rom_end) {
+                res = true;
+                break;
+            }
+        }
+    }
+    return res;
+}
+
+#endif
+
+#if 0
 bool is_address_range(uint32_t address, uint32_t size) {
     bool res = false;
     IntervalE_t IntervalFlash = {0};
@@ -160,7 +245,7 @@ bool is_address_range(uint32_t address, uint32_t size) {
 #endif
 
 #ifdef HAS_FLASH_EX
-bool flash_scan(uint8_t* base, uint32_t size, float* usage_pec, uint32_t* spare, uint32_t* busy) {
+bool flash_scan(uint8_t* base, uint32_t size, float* usage_pec, uint32_t* spare, uint32_t* busy, uint8_t pattern) {
     bool res = false;
     if(usage_pec && spare && busy) {
         res = true;
@@ -173,7 +258,7 @@ bool flash_scan(uint8_t* base, uint32_t size, float* usage_pec, uint32_t* spare,
             if(false == res) {
                 break;
             }
-            if(0xFF == (*addr)) {
+            if(pattern == (*addr)) {
                 (*spare)++;
             } else {
                 (*busy)++;
@@ -191,23 +276,35 @@ bool flash_scan(uint8_t* base, uint32_t size, float* usage_pec, uint32_t* spare,
 bool flash_init_common(const FlashConfig_t* const Config, FlashHandle_t* const Node) {
     bool res = false;
     if(Config) {
-        res = flash_is_valid_config(Config);
+        if(Node) {
+            Node->start = Config->start;
+            Node->size = Config->size;
+            Node->app_start = Config->app_start;
+            Node->boot_start = Config->boot_start;
+            Node->page_cnt = Config->page_cnt;
+            Node->page_size = Config->page_size;
+            Node->interrupt_on = Config->interrupt_on;
+            Node->is_equal_sectors = Config->is_equal_sectors;
+            res = true;
+        }
+    }
+    return res;
+}
+
+static bool flash_init_ll(const FlashConfig_t* const Config, FlashHandle_t* const Node) {
+    bool res = false;
+    if(Config) {
+        res = FlashIsValidConfig(Config);
 #ifdef HAS_DEBUGGER
         ASSERT_CRITICAL(true == res);
 #endif
         if(res) {
+#ifdef HAS_FLASH_DIAG
+            LOG_WARNING(LG_FLASH, "Config:[%s]", FlashConfigToStr(Config));
+#endif
             res = false;
             if(Node) {
-                Node->start = Config->start;
-                Node->size = Config->size;
-                Node->app_start = Config->app_start;
-                Node->boot_start = Config->boot_start;
-                Node->page_cnt = Config->page_cnt;
-                Node->page_size = Config->page_size;
-                Node->interrupt_on = Config->interrupt_on;
-                Node->is_equal_sectors = Config->is_equal_sectors;
-                res = true;
-
+                res = flash_init_common(Config, Node);
                 Node->operation = FLASH_OPERATION_NOPE;
                 Node->input = FLASH_INPUT_NONE;
                 Node->state = FLASH_STATE_IDLE;
@@ -228,7 +325,7 @@ bool flash_init_common(const FlashConfig_t* const Config, FlashHandle_t* const N
 #ifdef HAS_ARRAY
 bool is_erased(uint32_t addr, uint32_t size) {
     bool res = false;
-    res = is_arr_pat((uint8_t*)addr, size, 0xff);
+    res = is_arr_pat((uint8_t*)addr, size, FLASH_ERASE_PATTERN);
     return res;
 }
 #endif
@@ -261,21 +358,39 @@ bool flash_zero(uint32_t address, uint32_t size) {
 #endif
 
 #ifdef HAS_FLASH_EX
+
 /*
  Is there a continuously free block of given size starting at the address
  */
-bool is_flash_spare(uint32_t address, uint32_t size) {
+bool is_flash_pattern(uint32_t address, uint32_t size, uint8_t pattern) {
     uint32_t spare_size = 0;
     uint32_t busy_size = 0;
     bool res = false;
     float usage_pec = 0.0f;
-    res = flash_scan((uint8_t*)address, size, &usage_pec, &spare_size, &busy_size);
+    res = flash_scan((uint8_t*)address, size, &usage_pec, &spare_size, &busy_size, pattern);
     if(size == spare_size) {
         res = true;
     } else {
         res = false;
     }
 
+    return res;
+}
+
+/*
+ Is there a continuously free block of given size starting at the address
+ */
+bool is_flash_spare(uint32_t address, uint32_t size) {
+    bool res = false;
+    uint32_t busy_size = 0;
+    uint32_t spare_size = 0;
+    float usage_pec = 0.0f;
+    res = flash_scan((uint8_t*)address, size, &usage_pec, &spare_size, &busy_size, 0xFF);
+    if(size == spare_size) {
+        res = true;
+    } else {
+        res = false;
+    }
     return res;
 }
 #endif
@@ -327,7 +442,7 @@ bool flash_is_generic(uint32_t* address) {
         res = false;
         for(sector_num = 0; sector_num < cnt; sector_num++) {
             res = false;
-            switch((uint8_t)FlashSectorConfig[sector_num].content) {
+            switch(FlashSectorConfig[sector_num].content) {
             case MEM_CONTENT_GENERIC_APP:
             case MEM_CONTENT_GENERIC_NET:
             case MEM_CONTENT_GENERIC: {
@@ -335,14 +450,15 @@ bool flash_is_generic(uint32_t* address) {
                 if(res) {
 #ifdef HAS_FLASH_DIAG
                     LOG_INFO(LG_FLASH, "Addr: 0x%p Region:%s", address,
-                             MemContent2Str(FlashSectorConfig[sector_num].content));
+                             MemContentToStr(FlashSectorConfig[sector_num].content));
 #endif
                     sector_num = cnt * 2;
                     break;
                 }
 
             } break;
-
+            default:
+                break;
             } // switch
         }     // for
     }         // if
@@ -398,30 +514,24 @@ bool flash_is_mbr(uint32_t address) {
 }
 #endif
 
-#ifdef HAS_FLASH_WRITE
-_WEAK_FUN_ bool flash_mcal_erase(uint32_t addr, uint32_t size) {
-    bool res = false;
-    return res;
-}
-#endif
-
 #ifdef HAS_FLASH_EX
 // flash_read - busy name in Zephyr project
-_WEAK_FUN_
-bool flash_mcal_read(uint32_t address, uint8_t* const rx_array, uint32_t size) {
+_WEAK_FUN_ bool flash_mcal_read(uint32_t address, uint8_t* const rx_array, uint32_t size) {
     bool res = false;
 #ifdef HAS_LOG
     LOG_DEBUG(LG_FLASH, "Read,Addr:0x%08X,Size:%u", address, size);
 #endif
-    res = is_address_range(address, size);
+    res = true;
+    //res = is_flash_address_range(address, size);
     if(res) {
+        // uint8_t* p_address = (uint8_t*)address;
         uint32_t i = 0;
-        uint8_t* p_address = (uint8_t*)address;
         for(i = 0; i < size; i++) {
-            res = is_flash_addr((uint32_t)p_address);
+            res = is_flash_addr(address + i);
             if(res) {
-                rx_array[i] = *(p_address);
-                p_address++;
+                rx_array[i] = read_addr_8bit(address + i);
+                // rx_array[i] = *(p_address);
+                // p_address++;
             } else {
                 break;
             }
@@ -475,6 +585,53 @@ bool flash_is_legal_change_array(uint32_t flash_addr, const uint8_t* const wr_ar
     }
     return res;
 }
+
+_WEAK_FUN_ bool flash_mcal_erase(uint32_t address, uint32_t size) {
+    bool res = false;
+    res = is_erased(address, size);
+    if(false == res) {
+        res = flash_mcal_erase_ll(address, size);
+    }
+
+    return res;
+}
+
+/*
+  address- any unaligned flash address
+  data - data to write in flash
+  size - size of data to write
+  */
+_WEAK_FUN_ bool flash_mcal_write(uint32_t address, const uint8_t* const data, uint32_t size) {
+    bool res = false;
+    LOG_DEBUG(LG_FLASH, "Write,Addr:0x%08X,Size:%u", address, size);
+    if(size) {
+        FlashHandle_t* Node = FlashGetNode(1);
+        if(Node) {
+            res = is_flash_spare(address, size);
+            if(res) {
+                LOG_DEBUG(LG_FLASH, "WrInSpare");
+            } else {
+                LOG_WARNING(LG_FLASH, "NotSpare,%u Byte", size);
+                res = flash_is_legal_change_array(address, data, size);
+                log_res(LG_FLASH,res,"IsLegalChangeArray");
+            }
+
+            if(res) {
+                res = flash_is_the_same(address, data, size);
+                if(false == res) {
+#ifdef HAS_FLASH_CUSTOM
+                    res = flash_mcal_write(address, data, size);
+                    log_res(LG_FLASH,res,"Write");
+#endif
+                } else {
+                    LOG_WARNING(LG_FLASH, "AlreadyTheSame");
+                }
+            }
+        }
+    }
+    return res;
+}
+
 #endif
 
 #ifdef HAS_FLASH_WRITE
@@ -485,10 +642,11 @@ bool flash_mcal_erasepage(uint32_t addr) {
 }
 
 _WEAK_FUN_
-bool flash_mcal_write(uint32_t flash_addr, uint8_t* data, uint32_t size) {
+bool flash_mcal_erase_ll(uint32_t address, uint32_t size) {
     bool res = false;
     return res;
 }
+
 #endif
 
 #ifdef HAS_FLASH_EX
@@ -614,15 +772,18 @@ int32_t flash_get_fragment_number(uint32_t in_addr, uint32_t fragment_size) {
 }
 #endif
 
-#ifdef HAS_FLASH_EX
 _WEAK_FUN_
-bool flash_init(void) {
+bool flash_mcal_init(void) {
     bool res = true;
+#ifdef HAS_FLASH_CUSTOM
+    res = flash_init_custom();
+#endif
     // LOG_INFO(LG_FLASH, "Init");
-    res = flash_is_valid_config(&FlashConfig);
+    res = FlashIsValidConfig(&FlashConfig);
     if(res) {
-        res = flash_init_common(&FlashConfig, &FlashInstance);
+        res = flash_init_ll(&FlashConfig, &FlashInstance);
     }
     return res;
 }
+#ifdef HAS_FLASH_EX
 #endif

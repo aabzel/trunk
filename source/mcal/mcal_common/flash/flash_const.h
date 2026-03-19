@@ -3,6 +3,8 @@
 
 #include "flash_dep.h"
 
+#define FLASH_ERASE_PATTERN 0xFF
+
 typedef enum {
     MEM_CONTENT_MBR = 0,
     MEM_CONTENT_FLASH_FS_PAGE1 = 1,
@@ -12,7 +14,9 @@ typedef enum {
     MEM_CONTENT_GENERIC_APP = 5,
     MEM_CONTENT_GENERIC_NET = 6,
     MEM_CONTENT_CONFIG = 7,
-    MEM_CONTENT_UNDEF = 8,
+    MEM_CONTENT_NVRAM = 11,
+    MEM_CONTENT_SRAM = 9,
+    MEM_CONTENT_UNDEF = 10,
 } MemContent_t;
 
 typedef enum {

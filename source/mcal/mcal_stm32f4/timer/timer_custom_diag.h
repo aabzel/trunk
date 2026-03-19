@@ -1,9 +1,12 @@
-#ifndef TIM_DIAG_H
-#define TIM_DIAG_H
+#ifndef TIM_CUSTOM_DIAG_H
+#define TIM_CUSTOM_DIAG_H
 
-#include <stdint.h>
+#include "mcal_types.h"
 
-char *BusClock2Str(uint32_t bus_clock);
-char *TimDir2Str(uint8_t code);
+extern const Reg32_t TimerRegs[];
 
-#endif /* TIM_DIAG_H  */
+uint32_t time_register_cnt(void);
+char *TimDirToStr(uint8_t code);
+const char* TimerInfoToStr(const TimerInfo_t* const Info) ;
+
+#endif /* TIM_CUSTOM_DIAG_H  */

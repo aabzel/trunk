@@ -12,6 +12,10 @@
 #include "nmea_protocol.h"
 #endif
 
+#ifdef HAS_ESP_01
+#include "esp_01.h"
+#endif
+
 #ifdef HAS_GM67
 #include "gm67_drv.h"
 #endif
@@ -22,11 +26,19 @@
 
 #ifdef HAS_RS232
 #include "rs232_mcal.h"
-#endif /*HAS_RS232*/
+#endif /**/
 
 #ifdef HAS_RS485
 #include "rs485_mcal.h"
-#endif /*HAS_RS485*/
+#endif /**/
+
+static bool UartErrorProcIsrLL(UartHandle_t* const Node) {
+    bool res = false;
+    Node->error_cnt++;
+    Node->error_done = true;
+    res = true;
+    return res;
+}
 
 bool UartTxProcIsrLL(UartHandle_t* const Node) {
     bool res = false;
@@ -34,6 +46,15 @@ bool UartTxProcIsrLL(UartHandle_t* const Node) {
     Node->tx_done = true;
     Node->cnt.byte_tx++;
     res = true;
+    return res;
+}
+
+bool UartErrorProcIsr(uint8_t num) {
+    bool res = false;
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+        res = UartErrorProcIsrLL(Node);
+    }
     return res;
 }
 
@@ -53,7 +74,7 @@ bool UartRxProcIsrLL(UartHandle_t* Node, uint8_t rx_byte) {
     Node->rx_done = true;
     Node->cnt.byte_rx++;
 #ifdef HAS_STRING_READER
-    Interfaces_t interface_if = UartNumToInterface(Node->num);
+    InterfaceType_t interface_if = UartNumToInterface(Node->num);
     res = string_reader_rx_byte(interface_if, rx_byte);
 #endif
 
@@ -68,6 +89,10 @@ bool UartRxProcIsrLL(UartHandle_t* Node, uint8_t rx_byte) {
 #ifdef HAS_RS485
     res = rs485_rx_byte_isr(Node->num, rx_byte);
 #endif /*HAS_RS485*/
+
+#ifdef HAS_ESP_01
+    res = esp_01_proc_byte_isr(Node->num, rx_byte);
+#endif
 
 #ifdef HAS_GM67
     res = gm67_proc_byte_isr(Node->num, rx_byte);

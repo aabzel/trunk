@@ -1,0 +1,5 @@
+#ifndef I_WATCHDOG_PARAMS_H
+#define I_WATCHDOG_PARAMS_H
+
+
+#endif /* I_WATCHDOG_PARAMS_H  */

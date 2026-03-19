@@ -1,8 +1,44 @@
+
+tr can+
+
+tr can1_phy_disconnect
+
+tr can0_phy_disconnect
+
+
+tr can2_phy_disconnect
+
+
+tr can_filter_allow_std_0_1
+
+
+
+
+tr can0_loop_back_send
+
+cdr
+
+tr can0_loop_back_send
+
+tr can0_loop_back_send
+
+tr can1_loop_back_send
+
+
+can_test_loopback_id
+
+
 Send CAN frame ID:0x55 to CAN2
 cs 2 0x55 0x55AA01
 отправляет хорошо 
 
+ll can debug
+
+ll can notice
+
 cs_2_0x55_0x55AA01
+
+cs 0 0x21 0x55AA22
 
 cs 1 0x21 0x55AA22
 cs 1 0x55 0x55AA01
@@ -15,7 +51,10 @@ cs 1 0x20 0x11223344556677
 
 CAN2_RX0_IRQHandler зависает
 
+tr can0_phy_disconnect
 
+
+tr can3_phy_disconnect
 
 rpt cs_1_0x55_0x55AA01 2000 555
 
@@ -24,6 +63,15 @@ rpt cs_1_0x55_0x55AA01 2000 555
 
 cs 1 0x405 0x334455667755AA01
 
+can_test_loopback_id 2 0x2
+
+can_test_loopback_id 1 0xc2
+can_test_loopback_id 1 0xc3
+
+can_test_loopback_id 1 0xc1
+
+can_test_loopback_id 1 0xc4
 
 can_diag
 Dominant bit error
+

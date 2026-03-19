@@ -27,19 +27,21 @@
 
 #include "data_utils.h"
 #include "sys_config.h"
-#ifdef HAS_CLOCK
-#include "none_blocking_pause.h"
-#endif
 #include "flash_custom_const.h"
 #include "stm32f4xx_hal.h"
+#ifdef HAS_TIME
+#include "none_blocking_pause.h"
+#endif
 
 #ifdef HAS_FREE_RTOS
 SemaphoreHandle_t xFlashWrireSem = NULL;
 #endif
 
-bool flash_init(void) {
+bool flash_mcal_init(void) {
     bool res = true;
+#ifdef HAS_LOG
     LOG_INFO(LG_FLASH, "Init");
+#endif
     HAL_StatusTypeDef ret = HAL_ERROR;
 
 #ifdef HAS_DEBUGGER
@@ -59,12 +61,14 @@ bool flash_init(void) {
     for(i = 0; i < 5; i++) {
         ret = FLASH_WaitForLastOperation(5000);
         if(HAL_OK == ret) {
+#ifdef HAS_LOG
             LOG_INFO(LG_FLASH, "Ready");
+#endif
             res = true;
             break;
         } else {
 #ifdef HAS_DIAG
-            LOG_ERROR(LG_FLASH, "Err %u=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_FLASH, "Err %u=%s", ret, HalStatusToStr(ret));
 #endif
             res = false;
         }
@@ -75,8 +79,13 @@ bool flash_init(void) {
     return res;
 }
 
+bool flash_init_custom(void) {
+    bool res = true;
+    return res;
+}
+
 #ifdef HAS_FLASH_WRITE
-bool flash_mcal_write(uint32_t flash_addr, uint8_t* wr_array, uint32_t size) {
+bool flash_mcal_write(uint32_t flash_addr, const uint8_t* const wr_array, uint32_t size) {
     bool res = false;
     LOG_DEBUG(LG_FLASH, "Write:Addr:0x%08x,Size:%u", flash_addr, size);
 
@@ -104,7 +113,7 @@ bool flash_mcal_write(uint32_t flash_addr, uint8_t* wr_array, uint32_t size) {
             if(HAL_OK == ret) {
             } else {
 #ifdef HAS_DIAG
-                LOG_ERROR(LG_FLASH, "BusyErr %u=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_FLASH, "BusyErr %u=%s", ret, HalStatusToStr(ret));
 #endif
                 res = false;
                 //break;
@@ -117,7 +126,7 @@ bool flash_mcal_write(uint32_t flash_addr, uint8_t* wr_array, uint32_t size) {
             ok_cnt++;
         } else {
 #ifdef HAS_DIAG
-            LOG_ERROR(LG_FLASH, "ProgramErr Array[%u]=0x%02x Err %u=%s", j, wr_array[j], ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_FLASH, "ProgramErr Array[%u]=0x%02x Err %u=%s", j, wr_array[j], ret, HalStatusToStr(ret));
 #endif /*HAS_LOG*/
             res = false;
             break;
@@ -165,25 +174,6 @@ bool flash_mcal_writeite_dword(uint32_t flash_addr, uint32_t* wr_array, size_t s
             }
         }
         HAL_FLASH_Lock();
-    }
-    return res;
-}
-#endif
-
-#ifdef HAS_FLASH_EX
-bool Addr2SectorSize(uint32_t addr, uint32_t* sector, uint32_t* sec_size) {
-    bool res = false;
-    if(sector && sec_size) {
-        uint32_t cnt = flash_get_sector_cnt();
-        uint32_t i = 0;
-        for(i = 0; i < cnt; i++) {
-            uint32_t end_addr = FlashSectorConfig[i].start + FlashSectorConfig[i].size;
-            if((FlashSectorConfig[i].start <= addr) && (addr <= end_addr)) {
-                (*sector) = (uint32_t)FlashSectorConfig[i].sector;
-                (*sec_size) = (uint32_t)FlashSectorConfig[i].size;
-                res = true;
-            }
-        }
     }
     return res;
 }

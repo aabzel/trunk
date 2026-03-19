@@ -5,77 +5,87 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#ifdef HAS_NRF
-#include "nrf_saadc.h"
-#include "nrfx_saadc.h"
-#endif /*HAS_NRF*/
-
+#include "std_includes.h"
 #include "adc_const.h"
-#ifdef USE_HAL_DRIVER
-#include "stm32f4xx_hal.h"
-#endif
+#include "gpio_types.h"
 
 #ifdef HAS_ADC_CUSTOM
 #include "adc_custom_types.h"
 #endif
 
-#include "gpio_types.h"
-
-typedef struct {
-    uint8_t num;
-    bool valid;
-    AdcResolution_t resolution; /*12bit */
-    uint8_t irq_priority;
-    double v_ref_voltage;
-} AdcConfig_t;
-
-#define ADC_CHANNEL_COMMON_VARIABLES   \
-    AdcNum_t num;              \
-    bool valid;                \
-    Pad_t pad;                 \
-    AdcChannel_t channel;
+#define ADC_CHANNEL_COMMON_VARIABLES                       \
+    uint8_t num;                                           \
+    AdcNum_t adc_num; /*ADC number*/                       \
+    uint8_t sequence;                                      \
+    float scale; /*1.0/volt_div*/                          \
+    bool valid;                                            \
+    Pad_t Pad;                                             \
+    AdcChannel_t channel;                                  \
+    char* name;
 
 typedef struct {
     ADC_CHANNEL_COMMON_VARIABLES
-    char* name;
 } AdcChannelConfig_t;
 
 typedef struct {
     ADC_CHANNEL_COMMON_VARIABLES
-    double volts;
-    double gained_ref_voltage;
-    double code_to_volt_factor;
-    int32_t code;
+    float voltage;
+    float voltage_real;
+    bool new_val;
+    bool is_reading;
+    uint32_t code;
     uint32_t read_cnt;
     uint32_t err_cnt;
+    uint32_t spin_cnt;
+    bool init_done;
 } AdcChannelHandle_t;
 
-typedef struct  {
-    uint8_t num;
-    bool valid;
+#define ADC_COMMON_VARIABLES                                                                                           \
+    uint8_t num;                                                                                                       \
+    bool valid;                                                                                                        \
+    AdcResolution_t resolution; /*12bit */                                                                             \
+    float v_ref_voltage;
+
+typedef struct {
+    ADC_COMMON_VARIABLES
+    uint8_t irq_priority;
+} AdcConfig_t;
+
+#define ADC_ISR_VARIABLES                                                                                              \
+    volatile uint32_t it_cnt;                                                                                          \
+    volatile bool overflow;                                                                                            \
+    volatile bool it;                                                                                                  \
+    volatile bool preempt_chan_conv_end;                                                                               \
+    volatile bool data_valid;                                                                                          \
+    volatile bool preempt_chan_conv_start;                                                                             \
+    volatile bool ready;                                                                                               \
+    volatile bool is_idle;                                                                                             \
+    volatile bool chan_conv_end;                                                                                       \
+    volatile bool conv_done;                                                                                           \
+    volatile bool conversion_start;                                                                                    \
+    volatile bool vmor;                                                                                                \
+    volatile bool fetch_done; /*sample extracted*/                                                                     \
+    volatile uint32_t overflow_cnt;                                                                                    \
+    volatile uint32_t vmor_flag_cnt;                                                                                   \
+    volatile uint32_t preempt_chan_conv_end_cnt;                                                                       \
+    volatile uint32_t preempt_chan_conv_start_cnt;                                                                     \
+    volatile uint32_t conversion_start_cnt;                                                                            \
+    volatile uint32_t ready_cnt;                                                                                       \
+    volatile uint32_t chan_conv_end_cnt;
+
+typedef struct {
+    ADC_COMMON_VARIABLES
+    ADC_ISR_VARIABLES
+    ADC_CUSTOM_VARIABLES
+
+    AdcChannel_t channel_cur;
+    uint8_t cur_channel_node;
     bool init_done;
-    volatile int32_t code;
-    volatile bool conv_done;
-    uint32_t it_cnt;
+    uint32_t code;
+    uint32_t max_code; /*code at Vref*/
     uint32_t err_cnt;
+    uint32_t spin_cnt;
     uint32_t read_cnt;
-    uint32_t ref_code;
-    uint32_t code_at_vref;
-    double v_ref_voltage;
-#ifdef HAS_ADC_NRF53
-    nrf_saadc_value_t samples[SAADC_CH_NUM];
-    nrf_saadc_oversample_t oversampling;
-    nrfx_saadc_channel_t ch_cfgs[SAADC_CH_NUM];
-    nrfx_saadc_event_handler_t event_handler;
-#endif /*HAS_NRF53*/
-
-#ifdef USE_HAL_DRIVER
-    ADC_HandleTypeDef adc_h;
-#endif /*USE_HAL_DRIVER*/
-
 } AdcHandle_t;
 
 #ifdef __cplusplus

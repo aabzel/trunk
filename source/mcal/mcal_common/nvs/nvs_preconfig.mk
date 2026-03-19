@@ -1,0 +1,9 @@
+ifneq ($(GENERAL_NVS_PRECONFIG_MK),Y)
+    GENERAL_NVS_PRECONFIG_MK=Y
+
+    CRC16=Y
+    STORAGE=Y
+    FLASH=Y
+    INTERVAL=Y
+    NVS=Y
+endif

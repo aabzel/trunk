@@ -1,11 +1,15 @@
-#include "clock.h"
+#include "clock_mcal.h"
+
+#include "compiler_const.h"
+#include "sys_config.h"
+#include "data_utils.h"
 
 #ifdef HAS_CORE
 #include "core_driver.h"
 #endif
 
-#ifdef HAS_PARAM
-#include "param_drv.h"
+#ifdef HAS_STORE_FS
+#include "store_fs.h"
 #endif
 
 #ifdef HAS_NUM_DIAG
@@ -15,11 +19,39 @@
 #ifdef HAS_LOG
 #include "log.h"
 #endif
-#include "compiler_const.h"
-#include "sys_config.h"
+
 #ifdef HAS_TIME
 #include "time_mcal.h"
 #endif
+
+bool clock_is_valid_config(const ClockConfig_t* const Config) {
+    bool res = false;
+    if(Config) {
+        res = true;
+#ifdef HAS_DATA_MISC
+        res = is_range_uint32(Config->core_clock_hz, 10000, 310000000);
+        if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CLK, "CoreClk,Err,%u Hz", Config->core_clock_hz);
+#endif
+        }
+#endif
+    }
+    return res;
+}
+
+_WEAK_FUN_
+bool clock_core_mux_get(ClockMux_t* const clock_mux) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool clock_core_mux_set(const ClockMux_t clock_mux) {
+    uint32_t core_freq_hz = 0;
+    /*TODO*/
+    return core_freq_hz;
+}
 
 _WEAK_FUN_ uint32_t clock_core_freq_get(void) {
     uint32_t core_freq_hz = 0;
@@ -53,32 +85,38 @@ uint32_t ClockSourcToHz(const ClockSource_t clock_source) {
     }
     return frequency_hz;
 }
-/*
-W,[SYS] Set: Freq:100000000 Hz
-I,[PLL] FreqXtal:8000000 Hz,FreqSys:100000000  Hz
-{ [ (  {Xtal:8000000Hz} /M )*N ]/FR  }= Sys:100000000 Hz
-1: MS: 1,NS:100,FR: 8
-2: MS: 2,NS:200,FR: 8
-3: MS: 3,NS:300,FR: 8
-4: MS: 4,NS:400,FR: 8
-I,[PLL] SpotPllVals! 4 Solutions
-I,[SYS] Pll:M: 4,N:400,FR: 8
-I,[SYS] SetOk,Freq:100000000 Hz
- */
-_WEAK_FUN_ bool clock_init(void) {
+
+_WEAK_FUN_ bool clock_config_default(void) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_ bool clock_mcal_init(void) {
     bool res = true;
-#ifdef HAS_PARAM
 #ifdef HAS_LOG
-    LOG_WARNING(SYS, "ClockInit XTAL:%u Hz", XTALL_FREQ_HZ);
+#ifdef XTALL_FREQ_HZ
+    LOG_WARNING(SYS, "ClockInit,XTAL:%u Hz", XTALL_FREQ_HZ);
 #endif
-    uint32_t core_freq_hz = 100000000;
-    bool out_res = true;
-    (void)out_res;
-    LOAD_PARAM(CLK, PAR_ID_SYS_CLOCK_HZ, core_freq_hz, 100000000)
-    res = clock_core_freq_set(core_freq_hz);
-#else
-    clock_config_100mhz();
 #endif
+
+    res = clock_is_valid_config(&ClockConfig);
+    if(res) {
+#ifdef HAS_CLOCK_DIAG
+        LOG_WARNING(SYS, "%s", ClockConfigToStr(&ClockConfig));
+#endif
+        uint32_t core_freq_hz = ClockConfig.core_clock_hz;
+#ifdef HAS_STORE_FS
+        res = store_fs_get(1, PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
+        if(!res) {
+            core_freq_hz = ClockConfig.core_clock_hz;
+        }
+#endif
+        res = clock_core_freq_set(core_freq_hz);
+    }
+
+    if(!res) {
+        res = clock_config_default();
+    }
 
     return res;
 }
@@ -123,7 +161,14 @@ uint32_t clock_int_per_ms(uint32_t delay_ms) {
 }
 #endif
 
-#ifdef HAS_CLOCK_EXT
+_WEAK_FUN_ uint64_t pause_1ms(void) {
+    uint64_t in = 0, cnt = 0;
+    for(in = 0; in < 1397; in++) {
+        cnt++;
+    }
+    return cnt;
+}
+
 uint64_t clock_sw_pause_ms(uint32_t delay_ms) {
     uint64_t cnt = 0;
     uint32_t t = 0;
@@ -132,42 +177,46 @@ uint64_t clock_sw_pause_ms(uint32_t delay_ms) {
     }
     return cnt;
 }
+#ifdef HAS_CLOCK_EXT
 #endif
 
-#ifdef HAS_CLOCK_EXT
 /* in order to that the power supply has time to
  * spread across the electronic board PCB*/
 bool clock_start_pause_init(void) {
     bool res = true;
-    clock_sw_pause_ms(200);
+    clock_sw_pause_ms(1000);
     return res;
 }
+#ifdef HAS_CLOCK_EXT
 #endif
 
 #ifdef HAS_CLOCK_EXT
+/*
+  timeout_ms - desired timer overflow duration
+  TODO test it
+ */
 bool clock_calc_prescaler(uint32_t base_freq_hz, uint32_t max_val, uint32_t timeout_ms, ClockSetting_t* const Node) {
 
 #ifdef HAS_LOG
     LOG_INFO(CLK, "Clock:%uHz,Max:%u,Period:%u s", base_freq_hz, max_val, timeout_ms);
 #endif
-    uint32_t cur_div = 0;
     bool res = false;
-    double timeout_s = MSEC_2_SEC(timeout_ms);
-
-    double bus_tick_s = 1.0 / ((double)base_freq_hz);
+    float timeout_s = MSEC_2_SEC(timeout_ms);
+    float bus_tick_s = 1.0f / ((float)base_freq_hz);
 #ifdef HAS_LOG
     LOG_INFO(CLK, "bus_tick:%f s", bus_tick_s);
 #endif
-    double tick_s = bus_tick_s;
+    float tick_s = bus_tick_s;
+    uint32_t cur_div = 0;
     for(cur_div = 1;; cur_div++) {
-        tick_s = bus_tick_s * ((double)cur_div);
-        double period_max_s = tick_s * ((double)max_val);
+        tick_s = bus_tick_s * ((float)cur_div);
+        float period_max_s = tick_s * ((float)max_val);
 #ifdef HAS_LOG
         LOG_DEBUG(CLK, "Div:%u,Max:%f s", cur_div, period_max_s);
 #endif
         if(timeout_s < period_max_s) {
             Node->divider = cur_div;
-            Node->period = timeout_s / tick_s;
+            Node->period = (uint32_t)(timeout_s / tick_s);
             res = true;
             break;
         }
@@ -188,10 +237,10 @@ uint32_t calc_prescaler(int32_t bus_freq, int32_t bit_rate) {
 #ifdef HAS_LOG
     LOG_INFO(SYS, "BitRate:%u bit/s,Bus:%u Hz", bit_rate, bus_freq);
 #endif
-    double bus_tick_s = 1.0 / ((double)bus_freq);
-    double bit_rate_tick_s = 1.0 / ((double)bit_rate);
+    float bus_tick_s = 1.0f / ((float)bus_freq);
+    float bit_rate_tick_s = 1.0f / ((float)bit_rate);
 
-    prescaler1 = (uint32_t)(bit_rate_tick_s / bus_tick_s);
+    prescaler1 = (uint32_t)rintf(bit_rate_tick_s / bus_tick_s);
 
     prescaler2 = (uint32_t)(bus_freq / bit_rate);
 #ifdef HAS_LOG
@@ -203,10 +252,10 @@ uint32_t calc_prescaler(int32_t bus_freq, int32_t bit_rate) {
 #endif
 
 #ifdef HAS_CLOCK_EXT
-double clock_calc_period_s(uint32_t clock_hz, uint32_t prescaler, uint32_t reload) {
-    double bus_tick_s = 1.0 / ((double)clock_hz);
-    double tick_s = bus_tick_s * ((double)prescaler);
-    double period_s = tick_s * ((double)reload);
+float clock_calc_period_s(uint32_t clock_hz, uint32_t prescaler, uint32_t reload) {
+    float bus_tick_s = 1.0f / ((float)clock_hz);
+    float tick_s = bus_tick_s * ((float)prescaler);
+    float period_s = tick_s * ((float)reload);
 #ifdef HAS_LOG
     LOG_INFO(CLK, "Clock:%u Hz,Div:%u,Period:%u,Period:%f s", clock_hz, prescaler, reload, period_s);
 #endif
@@ -215,6 +264,7 @@ double clock_calc_period_s(uint32_t clock_hz, uint32_t prescaler, uint32_t reloa
 #endif
 
 #ifdef HAS_CLOCK_EXT
+
 bool clock_core_set_reboot(uint32_t core_freq_hz) {
     bool res = false;
 #ifdef HAS_NUM_DIAG
@@ -225,14 +275,16 @@ bool clock_core_set_reboot(uint32_t core_freq_hz) {
 #endif
 #endif
 
-#ifdef HAS_PARAM
-    res = param_set(PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
+#ifdef HAS_STORE_FS
+    res = store_fs_set(1, PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
     // res = clock_core_freq_set(core_freq_hz);
     if(res) {
 #ifdef HAS_LOG
         LOG_INFO(SYS, "SetOk:%u Hz", core_freq_hz);
 #endif
+#ifdef HAS_CORE
         res = core_reboot();
+#endif
     } else {
         res = false;
 #ifdef HAS_LOG
@@ -242,4 +294,18 @@ bool clock_core_set_reboot(uint32_t core_freq_hz) {
 #endif
     return res;
 }
+
+_WEAK_FUN_ bool clock_core_freq_set(const uint32_t core_freq_hz) {
+    bool res = false;
+#ifdef HAS_LOG
+    LOG_INFO(CLK, "Set,Clock:%u Hz", core_freq_hz);
 #endif
+    if(core_freq_hz) {
+#ifdef HAS_STORE_FS
+        res = store_fs_set(1, PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
+#endif
+    }
+    return res;
+}
+
+#endif /*HAS_CLOCK_EXT*/

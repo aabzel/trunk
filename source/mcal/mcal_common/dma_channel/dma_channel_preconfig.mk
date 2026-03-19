@@ -1,0 +1,7 @@
+ifneq ($(DMA_CHANNEL_PRECONFIG_INC),Y)
+    DMA_CHANNEL_PRECONFIG_INC=Y
+    
+    DMA_CHANNEL=Y
+    DMA=Y
+    INTERUPT=Y
+endif

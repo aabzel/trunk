@@ -6,7 +6,12 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
+
+#ifdef HAS_WATCHDOG_CUSTOM
 #include "watchdog_custom_commands.h"
+#else
+#define WATCHDOG_CUSTOM_COMMANDS
+#endif
 
 bool watchdog_ctrl_command(int32_t argc, char* argv[]);
 bool watchdog_diag_command(int32_t argc, char* argv[]);

@@ -64,7 +64,7 @@ bool cryp_init_one(uint8_t cryp_num) {
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "InitErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "InitErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             LOG_ERROR(LG_CRYP, "ConfErr %d", cryp_num);
@@ -93,7 +93,7 @@ bool hw_aes256_cbc_init(const uint8_t* key, const uint8_t* init_vector) {
                 LOG_ERROR(LG_CRYP, "InitOk");
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             LOG_ERROR(LG_CRYP, "ConfErr 1");
@@ -122,7 +122,7 @@ bool hw_aes256_ecb_init(const uint8_t* const key32byte) {
             res = true;
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -147,11 +147,11 @@ bool hw_aes256_ecb_encrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -176,11 +176,11 @@ bool hw_aes256_ecb_decrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "EncryptEcbErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitEcbErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -205,11 +205,11 @@ bool hw_aes256_cbc_encrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -234,11 +234,11 @@ bool hw_aes256_cbc_decrypt(const uint8_t* key32byte, uint8_t* data_in, uint32_t 
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(LG_CRYP, "EncryptCbcErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "InitCbcErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -261,7 +261,7 @@ bool hw_aes256_cbc_decrypt_stream(const uint8_t* key32byte, uint8_t* data_in, ui
             res = true;
         } else {
             res = false;
-            LOG_ERROR(LG_CRYP, "EncryptCbcStreamErr %d=%s", ret, HalStatus2Str(ret));
+            LOG_ERROR(LG_CRYP, "EncryptCbcStreamErr %d=%s", ret, HalStatusToStr(ret));
         }
     }
     return res;

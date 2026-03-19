@@ -10,7 +10,7 @@ extern "C" {
 
 typedef struct  {
     const char *name;
-    int16_t int_n;
+    int16_t int_n;/*IRQn_Type*/
 }IntNumInfo_t;
 
 typedef struct {
@@ -19,12 +19,10 @@ typedef struct {
 } IntPriorityName_t;
 
 typedef struct {
-#ifdef HAS_LOG
-    const char* name;
-#endif
-    IRQn_Type irq_n;
+    int16_t irq_n; /*IRQn_Type*/
     uint32_t priority;
     bool on_off;
+    bool valid;
 } InterruptConfig_t;
 
 #ifdef __cplusplus

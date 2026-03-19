@@ -379,7 +379,7 @@ static bool i2s_clock_init(uint8_t num) {
             if(Node) {
                 Node->error_cnt++;
             }
-            LOG_ERROR(I2S, "%u %s", ret, HalStatus2Str(ret));
+            LOG_ERROR(I2S, "%u %s", ret, HalStatusToStr(ret));
         } else {
             LOG_INFO(I2S, "%u InitClockOk", num);
             res = true;
@@ -672,7 +672,7 @@ static bool i2s_write_wait(uint8_t num, uint16_t* array, uint16_t words) {
                 }
             }
         } else {
-            LOG_ERROR(I2S, "WrErr:%u %s", ret, HalStatus2Str(ret));
+            LOG_ERROR(I2S, "WrErr:%u %s", ret, HalStatusToStr(ret));
         }
     } else {
         LOG_ERROR(I2S, "%u NodeErr", num);
@@ -701,7 +701,7 @@ bool i2s_read_write(uint8_t num, uint32_t tx_sample) {
         HAL_StatusTypeDef ret = HAL_ERROR;
         ret = HAL_I2SEx_TransmitReceive_DMA(&Node->i2s_h, (uint16_t*)&Node->tx_sample, (uint16_t*)&Node->rx_sample, 2);
         if(HAL_OK != ret) {
-            LOG_ERROR(I2S, "%u DmaTxRxErr %u %s", num, ret, HalStatus2Str(ret));
+            LOG_ERROR(I2S, "%u DmaTxRxErr %u %s", num, ret, HalStatusToStr(ret));
             Node->error_cnt++;
             res = false;
         } else {
@@ -731,7 +731,7 @@ bool i2s_api_read(uint8_t num, uint32_t* array, size_t words) {
                 }
             }
         } else {
-            LOG_ERROR(I2S, "ReadErr:%u %s", ret, HalStatus2Str(ret));
+            LOG_ERROR(I2S, "ReadErr:%u %s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -938,7 +938,7 @@ bool i2s_play_rx_tx(uint8_t num, uint8_t dac_num, bool status) {
                                                         (uint16_t*)&DacNode->rx_sample_array[0], DacNode->sample_cnt);
                     if(HAL_OK != ret) {
                         Node->error_cnt++;
-                        LOG_ERROR(I2S, "DmaTxRxErr %s", HalStatus2Str(ret));
+                        LOG_ERROR(I2S, "DmaTxRxErr %s", HalStatusToStr(ret));
                     } else {
                         LOG_INFO(I2S, "DmaTxRx" LOG_OK);
                         res = true;
@@ -988,7 +988,7 @@ bool i2s_play_static_tx(uint8_t num, uint8_t dac_num, bool status) {
 
                 if(HAL_OK != ret) {
                     Node->error_cnt++;
-                    LOG_ERROR(I2S, "DmaTxErr %s", HalStatus2Str(ret));
+                    LOG_ERROR(I2S, "DmaTxErr %s", HalStatusToStr(ret));
                 } else {
                     LOG_INFO(I2S, "DmaTxOk %u Samples", DacNode->sample_cnt);
                     res = true;
@@ -1041,7 +1041,7 @@ bool i2s_play_tx(uint8_t num, uint8_t dac_num, bool status) {
 
                     if(HAL_OK != ret) {
                         Node->error_cnt++;
-                        LOG_ERROR(I2S, "DmaTxErr %s", HalStatus2Str(ret));
+                        LOG_ERROR(I2S, "DmaTxErr %s", HalStatusToStr(ret));
                     } else {
                         LOG_INFO(I2S, "DmaTxOk %u Samples", DacNode->sample_cnt);
                         res = true;
@@ -1073,7 +1073,7 @@ bool i2s_read_sample(uint8_t num, size_t size) {
         ret = HAL_I2S_Receive_DMA(&Node->i2s_h, (uint16_t*)&Node->rx_sample.u32[0], size);
         if(HAL_OK != ret) {
             Node->error_cnt++;
-            LOG_ERROR(I2S, "RxDmaErr: %u %s", ret, HalStatus2Str(ret));
+            LOG_ERROR(I2S, "RxDmaErr: %u %s", ret, HalStatusToStr(ret));
         } else {
             LOG_INFO(I2S, "RxDma" LOG_OK);
             res = true;
@@ -1139,7 +1139,7 @@ bool i2s_dma_pause(uint8_t num) {
             res = true;
             LOG_INFO(I2S, "DmaPause" LOG_OK);
         } else {
-            LOG_ERROR(I2S, "DmaPause %s", HalStatus2Str(ret));
+            LOG_ERROR(I2S, "DmaPause %s", HalStatusToStr(ret));
         }
     } else {
         LOG_ERROR(I2S, "NodeGetErr");
@@ -1157,7 +1157,7 @@ bool i2s_dma_stop(uint8_t num) {
             res = true;
             LOG_INFO(I2S, "DmaStop" LOG_OK);
         } else {
-            LOG_ERROR(I2S, "DmaStop %s", HalStatus2Str(ret));
+            LOG_ERROR(I2S, "DmaStop %s", HalStatusToStr(ret));
         }
     } else {
         LOG_ERROR(I2S, "NodeGetErr");

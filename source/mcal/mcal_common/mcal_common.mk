@@ -6,40 +6,77 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
 
     INCDIR += -I$(MCAL_COMMON_DIR)
 
-    OPT += -DHAS_MCAL
-    OPT += -DHAS_MCAL_COMMANDS
+    MCAL_OPT += -DHAS_MCAL
+    MCAL_OPT += -DHAS_MCAL_COMMANDS
 
     ifeq ($(DIAG),Y)
         SOURCES_C += $(MCAL_COMMON_DIR)/mcal_diag.c
+    endif
+
+    ifeq ($(ACC),Y)
+        include $(MCAL_COMMON_DIR)/acc/acc.mk
     endif
 
     ifeq ($(ADC),Y)
         include $(MCAL_COMMON_DIR)/adc/adc.mk
     endif
 
+    ifeq ($(LOCKSTEP),Y)
+        #  $(error LOCKSTEP=$(LOCKSTEP))
+        include $(MCAL_COMMON_DIR)/lockstep/lockstep.mk
+    endif
+    
+    ifeq ($(MULTICORE),Y)
+        #  $(error MULTICORE=$(MULTICORE))
+        include $(MCAL_COMMON_DIR)/multicore/multicore.mk
+    endif
+
+    ifeq ($(MAILBOX),Y)
+        include $(MCAL_COMMON_DIR)/mailbox/mailbox.mk
+    endif
+
+    ifeq ($(CLOCK_OUT),Y)
+        #  $(error CLOCK_OUT=$(CLOCK_OUT))
+        include $(MCAL_COMMON_DIR)/clock_out/clock_out.mk
+    endif
+
     ifeq ($(CAN),Y)
-        #@echo $(error CAN=$(CAN))
+        #  $(error CAN=$(CAN))
         include $(MCAL_COMMON_DIR)/can/can.mk
     endif
 
+    ifeq ($(EIM),Y)
+        #  $(error EIM=$(EIM))
+        include $(MCAL_COMMON_DIR)/eim/eim.mk
+    endif
+
+    ifeq ($(ERM),Y)
+        #  $(error ERM=$(ERM))
+        include $(MCAL_COMMON_DIR)/erm/erm.mk
+    endif
+
     ifeq ($(EEPROM),Y)
-        #@echo $(error EEPROM=$(EEPROM))
+        #  $(error EEPROM=$(EEPROM))
         include $(MCAL_COMMON_DIR)/eeprom/eeprom.mk
     endif
 
     ifeq ($(CLOCK),Y)
-        #@echo $(error CLOCK=$(CLOCK))
+        #  $(error CLOCK=$(CLOCK))
         include $(MCAL_COMMON_DIR)/clock/clock.mk
     endif
 
     ifeq ($(POWER),Y)
-        #@echo $(error POWER=$(POWER))
+        #  $(error POWER=$(POWER))
         include $(MCAL_COMMON_DIR)/power/power.mk
     endif
 
+    ifeq ($(PIN),Y)
+        #  $(error PIN=$(PIN))
+        include $(MCAL_COMMON_DIR)/pin/pin.mk
+    endif
 
     ifeq ($(DAC),Y)
-        #@echo $(error DAC=$(DAC))
+        #  $(error DAC=$(DAC))
         include $(MCAL_COMMON_DIR)/dac/dac.mk
     endif
     
@@ -47,13 +84,22 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
         include $(MCAL_COMMON_DIR)/dma/dma.mk
     endif
 
+    ifeq ($(DMA_CHANNEL),Y)
+        include $(MCAL_COMMON_DIR)/dma_channel/dma_channel.mk
+    endif
+
     ifeq ($(EXT_INT),Y)
-        #@echo $(error EXT_INT=[$(EXT_INT)])
+        #  $(error EXT_INT=[$(EXT_INT)])
         include $(MCAL_COMMON_DIR)/ext_int/ext_int.mk
     endif
 
+    ifeq ($(FCSMU),Y) 
+        #  $(error FCSMU=[$(FCSMU)])
+        include $(MCAL_COMMON_DIR)/fcsmu/fcsmu.mk
+    endif
+
     ifeq ($(FLASH),Y) 
-        #@echo $(error FLASH=[$(FLASH)])
+        #  $(error FLASH=[$(FLASH)])
         include $(MCAL_COMMON_DIR)/flash/flash.mk
     endif
 
@@ -74,17 +120,17 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
     endif
 
     ifeq ($(I2S),Y)
-        #@echo $(error I2S=$(I2S))
+        #  $(error I2S=$(I2S))
         include $(MCAL_COMMON_DIR)/i2s/i2s.mk
     endif
     
     ifeq ($(I2S_FULL_DUPLEX),Y)
-        #@echo $(error I2S_FULL_DUPLEX=$(I2S_FULL_DUPLEX))
+        #  $(error I2S_FULL_DUPLEX=$(I2S_FULL_DUPLEX))
         include $(MCAL_COMMON_DIR)/i2s_full_duplex/i2s_full_duplex.mk
     endif
 
     ifeq ($(INPUT_CAPTURE),Y)
-        #@echo $(error INPUT_CAPTURE=$(INPUT_CAPTURE))
+        #  $(error INPUT_CAPTURE=$(INPUT_CAPTURE))
         include $(MCAL_COMMON_DIR)/input_capture/input_capture.mk
     endif
 
@@ -96,13 +142,18 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
         include $(MCAL_COMMON_DIR)/nvs/nvs.mk
     endif
 
-    ifeq ($(PDM),Y) 
-        #@echo $(error PDM=$(PDM))
-        include $(MCAL_COMMON_DIR)/pdm/pdm.mk
+    ifeq ($(MAM),Y)
+        #MAM Matrix Access Monitor
+        include $(MCAL_COMMON_DIR)/mam/mam.mk
     endif
 
-    ifeq ($(QSPI),Y)
-        include $(MCAL_COMMON_DIR)/qspi/qspi.mk
+    ifeq ($(MPU),Y) 
+        include $(MCAL_COMMON_DIR)/mpu/mpu.mk
+    endif
+
+    ifeq ($(PDM),Y) 
+        #  $(error PDM=$(PDM))
+        include $(MCAL_COMMON_DIR)/pdm/pdm.mk
     endif
 
     ifeq ($(RTC),Y)
@@ -110,8 +161,12 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
     endif
 
     ifeq ($(PWM),Y) 
-        #@echo $(error PWM=$(PWM))
+        #  $(error PWM=$(PWM))
         include $(MCAL_COMMON_DIR)/pwm/pwm.mk
+    endif
+
+    ifeq ($(QSPI),Y)
+        include $(MCAL_COMMON_DIR)/qspi/qspi.mk
     endif
 
     ifeq ($(SPIFI),Y)
@@ -119,32 +174,42 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
     endif
 
     ifeq ($(SWD),Y)
-        #@echo $(error SWD=$(SWD))
+        #  $(error SWD=$(SWD))
         include $(MCAL_COMMON_DIR)/swd/swd.mk
     endif
 
     ifeq ($(SDIO),Y) 
-        #@echo $(error SDIO=$(SDIO))
+        #  $(error SDIO=$(SDIO))
         include $(MCAL_COMMON_DIR)/sdio/sdio.mk
     endif
 
     ifeq ($(SPI),Y) 
-        #@echo $(error SPI=$(SPI))
+        #  $(error SPI=$(SPI))
         include $(MCAL_COMMON_DIR)/spi/spi.mk
     endif
 
+    ifeq ($(TRNG),Y) 
+        #  $(error TRNG=[$(TRNG)])
+        include $(MCAL_COMMON_DIR)/trng/trng.mk
+    endif
+
     ifeq ($(TIMER),Y)
-        #@echo $(error TIMER=[$(TIMER)])
+        #  $(error TIMER=[$(TIMER)])
         include $(MCAL_COMMON_DIR)/timer/timer.mk
     endif
 
     ifeq ($(UART),Y) 
-        #@echo $(error UART=$(UART))
+        #  $(error UART=$(UART))
         include $(MCAL_COMMON_DIR)/uart/uart.mk
     endif
 
-    ifeq ($(USB),Y)
-        #@echo $(error USB=$(USB))
+    ifeq ($(TRG),Y)
+        # True random generator
+        include $(MCAL_COMMON_DIR)/trg/trg.mk
+    endif
+
+    ifeq ($(MCAL_USB),Y)
+        #  $(error USB=$(USB))
         include $(MCAL_COMMON_DIR)/usb/usb.mk
     endif
 

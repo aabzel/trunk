@@ -11,8 +11,8 @@ extern "C" {
 #include "stm32f4xx_hal.h"
 
 bool interrupt_clear(void);
-bool interrupt_init(void);
 bool interrupt_disable(void);
+bool interrupt_init_custom(void);
 
 #ifdef __cplusplus
 }

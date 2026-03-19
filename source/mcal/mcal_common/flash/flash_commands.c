@@ -17,53 +17,67 @@
 #include "flash_config.h"
 #include "flash_diag.h"
 #include "flash_mcal.h"
-#ifdef HAS_FLASH_CUSTOM
-#include "flash_custom_diag.h"
-#endif
 #include "log.h"
 #include "microcontroller_const.h"
 #include "str_utils.h"
 #include "table_utils.h"
 #include "writer_config.h"
+#ifdef HAS_FLASH_CUSTOM
+#include "flash_custom_diag.h"
+#endif
 
 bool flash_diag_cmd(int32_t argc, char* argv[]) {
     bool res = false;
+
+    uint32_t flash_start = ROM_START;
+    uint32_t flash_size = ROM_SIZE;
     uint32_t piece_size = 1024;
+
     LOG_INFO(LG_FLASH, "Usage: fd pieceSizeBytes");
     if(0 <= argc) {
-        piece_size = 16 * 1024;
+        piece_size = 128 * 1024;
+        flash_start = ROM_START;
+        flash_size = ROM_SIZE;
         res = true;
     }
+
     if(1 <= argc) {
-        res = try_str2uint32(argv[0], &piece_size);
+        res = try_str2uint32(argv[0], &flash_start);
+        log_info_res(LG_FLASH, res, "FlashStart");
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &flash_size);
+        log_info_res(LG_FLASH, res, "FlashSize");
+    }
+
+    if(3 <= argc) {
+        res = try_str2uint32(argv[2], &piece_size);
+        log_info_res(LG_FLASH, res, "PieceSize");
     }
 
     if(res) {
-        res = flash_diag_usage(piece_size);
-        log_res(LG_FLASH, res, "DiagUsage");
+        res = flash_diag_usage(flash_start, flash_size, piece_size);
+        log_info_res(LG_FLASH, res, "DiagUsage");
     } else {
-        LOG_ERROR(LG_FLASH, "Usage: fd piece_size");
+        LOG_ERROR(LG_FLASH, "Usage: fd start size piece_size");
     }
 
     return res;
 }
 
-bool flash_mcal_erasecmd(int32_t argc, char* argv[]) {
+bool flash_erase_cmd(int32_t argc, char* argv[]) {
     bool res = false;
     uint32_t size = 0;
     uint32_t address = 0;
     if(1 <= argc) {
         res = try_str2uint32(argv[0], &address);
-        if(false == res) {
-            LOG_ERROR(LG_FLASH, "ParseErr Address %s", argv[0]);
-        }
+        log_info_res(LG_FLASH, res, "Addr");
     }
 
     if(2 <= argc) {
         res = try_str2uint32(argv[1], &size);
-        if(false == res) {
-            LOG_ERROR(LG_FLASH, "ParseErr Size %s", argv[1]);
-        }
+        log_info_res(LG_FLASH, res, "Size");
     }
 
     if(res) {
@@ -84,22 +98,13 @@ bool flash_read_cmd(int32_t argc, char* argv[]) {
     uint32_t flash_addr = 0;
     uint32_t num_bytes = 0;
     if(2 == argc) {
-        res = true;
-        if(res) {
-            res = try_str2uint32(argv[0], &flash_addr);
-            if(false == res) {
-                LOG_ERROR(LG_FLASH, "Unable to parse in_flash_addr %s", argv[0]);
-            }
-        }
-        if(res) {
-            res = try_str2uint32(argv[1], &num_bytes);
-            if(false == res) {
-                LOG_ERROR(LG_FLASH, "Unable to parse num_bytes %s", argv[1]);
-            }
-        }
+        res = try_str2uint32(argv[0], &flash_addr);
+        log_info_res(LG_FLASH, res, "Addr");
+        res = try_str2uint32(argv[1], &num_bytes);
+        log_info_res(LG_FLASH, res, "Size");
     }
     if(res) {
-        LOG_INFO(LG_FLASH, "Read Addr 0x%08x Size %u", flash_addr, num_bytes);
+        LOG_INFO(LG_FLASH, "ReadAddr:0x%08x,Size %u", flash_addr, num_bytes);
         cli_printf(CRLF);
         uint8_t read_val = 0;
         uint32_t i = 0;
@@ -119,36 +124,27 @@ bool flash_read_cmd(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool flash_mcal_writeite_cmd(int32_t argc, char* argv[]) {
+bool flash_write_cmd(int32_t argc, char* argv[]) {
     bool res = false;
     uint16_t crc16_read = 0;
-    uint32_t flash_address = 0;
+    uint32_t address = 0;
     uint32_t count = 0;
     uint8_t DataBuffer[256] = {0};
     memset(DataBuffer, 0xFF, sizeof(DataBuffer));
     if(1 <= argc) {
-        res = try_str2uint32(argv[0], &flash_address);
-        if(false == res) {
-            LOG_ERROR(LG_FLASH, "Unable to parse sector_address %s", argv[0]);
-        } else {
-            res = is_flash_addr(flash_address);
-            if(false == res) {
-                LOG_ERROR(LG_FLASH, "not flash addr 0x%08x", flash_address);
-            }
-        }
+        res = try_str2uint32(argv[0], &address);
+        log_info_res(LG_FLASH, res, "Addr");
     }
     if(2 <= argc) {
         res = try_str2array(argv[1], DataBuffer, sizeof(DataBuffer), &count);
-        if(false == res) {
-            LOG_ERROR(LG_FLASH, "Unable to extract hex_string %s", argv[1]);
-        }
+        log_info_res(LG_FLASH, res, "Data");
+        LOG_INFO(LG_FLASH, "ReadSize:%u", count);
     }
 
     if(3 <= argc) {
         res = try_str2uint16(argv[2], &crc16_read);
-        if(false == res) {
-            LOG_ERROR(LG_FLASH, "Unable to parse crc16_read %s", argv[2]);
-        } else {
+        log_info_res(LG_FLASH, res, "ReadCrc16");
+        if(res) {
             uint16_t crc16_calc = 0;
 #ifdef HAS_CRC16
             res = crc16_check(DataBuffer, count, crc16_read, &crc16_calc);
@@ -164,18 +160,20 @@ bool flash_mcal_writeite_cmd(int32_t argc, char* argv[]) {
     }
 
     if(res) {
+        res = is_flash_addr(address);
+        if(false == res) {
+            LOG_ERROR(LG_FLASH, "not flash addr 0x%08x", address);
+        }
         res = false;
 #ifdef HAS_FLASH_WRITE
-        res = flash_mcal_write(flash_address, DataBuffer, count);
+        res = flash_mcal_write(address, DataBuffer, count);
 #endif
-        log_res(LG_FLASH, res, "Write");
-    }
-
-    if(false == res) {
-        LOG_ERROR(LG_FLASH, "Usage: fw sector_address hex_string crc16_read");
-        LOG_INFO(LG_FLASH, "sector_address");
-        LOG_INFO(LG_FLASH, "hex_string 0x[0...F]+");
-        LOG_INFO(LG_FLASH, "crc16_read");
+        log_info_res(LG_FLASH, res, "Write");
+    } else {
+        LOG_ERROR(LG_FLASH, "Usage: fw address hexString crc16Read");
+        LOG_INFO(LG_FLASH, "address");
+        LOG_INFO(LG_FLASH, "hexString 0x[0...F]+");
+        LOG_INFO(LG_FLASH, "crc16Read");
     }
     return res;
 }
@@ -185,6 +183,7 @@ bool flash_lock_cmd(int32_t argc, char* argv[]) {
     bool on_off = true;
     if(1 <= argc) {
         res = try_str2bool(argv[0], &on_off);
+        log_info_res(LG_FLASH, res, "Ctrl");
     }
 
     if(res) {
@@ -196,14 +195,27 @@ bool flash_lock_cmd(int32_t argc, char* argv[]) {
 
 bool flash_scan_cmd(int32_t argc, char* argv[]) {
     bool res = false;
-    if(0 == argc) {
+    uint32_t address = ROM_START;
+    uint32_t size = ROM_SIZE;
+    if(0 <= argc) {
         res = true;
-    } else {
-        LOG_ERROR(LG_FLASH, "Usage: fs");
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &address);
+        log_res(LG_FLASH, res, "Addr");
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &size);
+        log_res(LG_FLASH, res, "Size");
     }
 
     if(res) {
-        res = flash_scan_diag(ROM_START, ROM_SIZE);
+        res = flash_scan_diag(address, size);
+        log_res(LG_FLASH, res, "Scan");
+    } else {
+        LOG_ERROR(LG_FLASH, "Usage: fs address size");
     }
     return res;
 }
@@ -211,10 +223,38 @@ bool flash_scan_cmd(int32_t argc, char* argv[]) {
 bool flash_init_cmd(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
-        res = flash_init();
+        res = flash_mcal_init();
         log_res(LG_FLASH, res, "Init");
     } else {
         LOG_ERROR(LG_FLASH, "Usage: fi");
+    }
+    return res;
+}
+
+bool flash_get_spare_aligne_cmd(int32_t argc, char* argv[]) {
+    bool res = false;
+
+    uint32_t aligne = 128;
+    uint32_t size = 128;
+
+    if(0 <= argc) {
+        res = true;
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &aligne);
+        log_res(LG_FLASH, res, "Align");
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &size);
+        log_res(LG_FLASH, res, "Rize");
+    }
+
+    const FlashConfig_t* Config = FlashGetConfig(1);
+    if(Config) {
+        uint32_t spare_addr = flash_get_first_spare_size_aligned(Config->start, Config->size, aligne, size);
+        LOG_INFO(LG_FLASH, "StartAddr:0x%08X", spare_addr);
     }
     return res;
 }

@@ -54,7 +54,7 @@ generic_writer_t swd_o = {
 #ifdef HAS_FIFO
     .fifo = {.fifoState = {.size = sizeof(swd_o_data), .start = 0, .end = 0, .count = 0, .errors = 0},
              .array = swd_o_data,
-             .initDone = true},
+             .init_done = true},
 #endif
     .f_transmit = swd_writer_transmit,
     .enable = true,

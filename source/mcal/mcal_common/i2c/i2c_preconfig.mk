@@ -1,0 +1,6 @@
+ifneq ($(I2C_PRECONFIG_MK_INC),Y)
+    I2C_PRECONFIG_MK_INC=Y
+
+    I2C=Y
+    GPIO=Y
+endif

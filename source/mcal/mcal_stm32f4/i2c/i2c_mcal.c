@@ -1,12 +1,13 @@
 #include "i2c_mcal.h"
 
-#include <stdbool.h>
 #include <string.h>
 
 #include "debug_info.h"
 #include "hal_diag.h"
 #include "i2c_types.h"
 #include "log.h"
+#include "hal_mcal.h"
+#include "std_includes.h"
 #include "stm32f4xx_hal.h"
 #include "time_mcal.h"
 
@@ -63,7 +64,7 @@ I2C_TypeDef* i2c_get_instance(uint8_t num) {
 
 bool i2c_init_one(uint8_t num) {
     bool res = true;
-    LOG_WARNING(I2C, "I2C%u Init ", num);
+    LOG_WARNING(I2C, "I2C%u, Init ", num);
     const I2cConfig_t* Config = I2cGetConfig(num);
     if(Config) {
         I2cHandle_t* Node = I2cGetNode(num);
@@ -92,7 +93,7 @@ bool i2c_init_one(uint8_t num) {
                     Node->init_done = true;
                     res = true;
                 } else {
-                    LOG_ERROR(I2C, "%u Init" LOG_ER " %s", num, HalStatus2Str(ret));
+                    LOG_ERROR(I2C, "%u Init" LOG_ER " %s", num, HalStatusToStr(ret));
                     res = false;
                 }
             } else {
@@ -108,10 +109,8 @@ bool i2c_init_one(uint8_t num) {
         res = false;
     }
 
-
     return res;
 }
-
 
 void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle) {
 
@@ -178,7 +177,7 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle) {
 #endif
 }
 
-bool i2c_api_write(uint8_t num, uint8_t chip_addr, const uint8_t* const array, size_t size) {
+bool i2c_mcal_write(uint8_t num, uint8_t chip_addr, const uint8_t* const array, uint32_t size) {
     bool res = false;
     uint8_t i2c_addr = chip_addr;
     i2c_addr = i2c_compose_write_address(chip_addr);
@@ -190,16 +189,13 @@ bool i2c_api_write(uint8_t num, uint8_t chip_addr, const uint8_t* const array, s
             if(size) {
                 Node->tx_int = false;
                 Node->tx_done = false;
-                ret = HAL_I2C_Master_Transmit_IT((I2C_HandleTypeDef*)&Node->i2c_h,
-                                                 (uint16_t)i2c_addr,
-                                                 array,
-                                                 size);
+                ret = HAL_I2C_Master_Transmit_IT((I2C_HandleTypeDef*)&Node->i2c_h, (uint16_t)i2c_addr, array, size);
                 if(HAL_OK == ret) {
-                    res= i2c_wait_tx_done_ll(Node, I2C_SEND_TIME_OUT_MS);
+                    res = i2c_wait_tx_done_ll(Node, I2C_SEND_TIME_OUT_MS);
                 } else {
                     res = false;
-                    LOG_ERROR(I2C, "I2C%u,TxErr:%u=%s", num, ret, HalStatus2Str(ret));
-                    //i2c_init_one(num);
+                    LOG_ERROR(I2C, "I2C%u,TxErr:%u=%s", num, ret, HalStatusToStr(ret));
+                    // i2c_init_one(num);
                 }
             }
         }
@@ -207,19 +203,19 @@ bool i2c_api_write(uint8_t num, uint8_t chip_addr, const uint8_t* const array, s
     return res;
 }
 
-bool i2c_api_write_reg(uint8_t num, uint8_t chip_addr, uint8_t addr, uint8_t reg_val) {
+bool i2c_mcal_write_reg(uint8_t num, uint8_t chip_addr, uint8_t addr, uint8_t reg_val) {
     bool res = false;
     LOG_DEBUG(I2C, "%u WriteReg ChipID 0x%02x RegAddr:0x%02X Val:0x%02X", num, chip_addr, addr, reg_val);
     uint8_t frame[2] = {addr, reg_val};
-    res = i2c_api_write(num, chip_addr, &frame[0], 2);
+    res = i2c_mcal_write(num, chip_addr, &frame[0], 2);
     return res;
 }
 
-bool i2c_api_read(uint8_t num, uint8_t chip_addr, uint8_t* array, uint32_t size) {
+bool i2c_mcal_read(uint8_t num, uint8_t chip_addr, uint8_t* array, uint32_t size) {
     bool res = false;
     uint8_t i2c_addr = chip_addr;
     i2c_addr = i2c_compose_read_address(chip_addr);
-    LOG_DEBUG(I2C, "%u Read Chip:0x%x Len: %u", num, i2c_addr, size);
+    LOG_DEBUG(I2C, "I2C%u,Read,Chip:0x%x,Len:%u", num, i2c_addr, size);
     HAL_StatusTypeDef ret;
     I2cHandle_t* Node = I2cGetNode(num);
     if(Node) {
@@ -234,8 +230,8 @@ bool i2c_api_read(uint8_t num, uint8_t chip_addr, uint8_t* array, uint32_t size)
                 LOG_ERROR(I2C, "I2C%u ReadTimeOut", num);
             }
         } else {
-            LOG_ERROR(I2C, "I2C%u, RxErr %u=%s", num, ret, HalStatus2Str(ret));
-           // i2c_init_one(num);
+            LOG_ERROR(I2C, "I2C%u, RxErr %u=%s", num, ret, HalStatusToStr(ret));
+            // i2c_init_one(num);
         }
     } else {
         LOG_ERROR(I2C, "Node" LOG_ER);
@@ -268,17 +264,17 @@ bool i2c_send_signal(uint8_t num, I2cSignal_t signal) {
     return res;
 }
 
-bool i2c_api_read_byte_naive(uint8_t num, uint8_t dev_addr, uint8_t addr, uint8_t* value) {
+bool i2c_mcal_read_byte_naive(uint8_t num, uint8_t dev_addr, uint8_t addr, uint8_t* value) {
     bool res = false;
     LOG_DEBUG(I2C, "I2C%u Read, Chip 0x%x, Reg 0x%x", num, dev_addr, addr);
-    res = i2c_api_write(num, dev_addr, &addr, 1);
+    res = i2c_mcal_write(num, dev_addr, &addr, 1);
     if(res) {
-        res = i2c_api_read(num, dev_addr, value, 1);
+        res = i2c_mcal_read(num, dev_addr, value, 1);
     }
     return res;
 }
 
-bool i2c_api_read_byte(uint8_t num, uint8_t chip_addr, uint8_t addr, uint8_t* value) {
+bool i2c_mcal_read_byte(uint8_t num, uint8_t chip_addr, uint8_t addr, uint8_t* value) {
     bool res = false;
     uint8_t i2c_addr = chip_addr;
     i2c_addr = i2c_compose_read_address(chip_addr);
@@ -294,15 +290,13 @@ bool i2c_api_read_byte(uint8_t num, uint8_t chip_addr, uint8_t addr, uint8_t* va
                 LOG_DEBUG(I2C, "I2C%u,MemReadOk", num);
             }
         } else {
-            LOG_ERROR(I2C, "I2C%u RegReadErr %s, RegAddr:0x%04x", num, HalStatus2Str(ret), (uint16_t)addr);
-           // i2c_init_one(num);
+            LOG_ERROR(I2C, "I2C%u RegReadErr %s, RegAddr:0x%04x", num, HalStatusToStr(ret), (uint16_t)addr);
+            // i2c_init_one(num);
             res = false;
         }
     }
     return res;
 }
-
-
 
 static bool i2c_master_check_addr(I2C_HandleTypeDef* hi2c, uint16_t DevAddress) {
     bool res = false;
@@ -364,7 +358,7 @@ bool i2c_check_addr(uint8_t num, uint8_t i2c_addr) {
     return res;
 }
 
-uint16_t RegAddr2Word(uint8_t* const addr, size_t addr_size) {
+uint16_t RegAddr2Word(uint8_t* const addr, uint32_t addr_size) {
     uint16_t word_addr = 0;
     switch(addr_size) {
     case 1:
@@ -380,9 +374,8 @@ uint16_t RegAddr2Word(uint8_t* const addr, size_t addr_size) {
     return word_addr;
 }
 
-bool i2c_api_read_mem(uint8_t num, uint8_t chip_addr, uint8_t* const addr,
-                      size_t addr_size, uint8_t* const data,
-                      size_t size) {
+bool i2c_mcal_read_mem(uint8_t num, uint8_t chip_addr, uint8_t* const addr, uint32_t addr_size, uint8_t* const data,
+                       uint32_t size) {
     bool res = false;
     uint8_t i2c_addr = chip_addr;
     i2c_addr = i2c_compose_read_address(chip_addr);
@@ -418,12 +411,32 @@ bool i2c_api_read_mem(uint8_t num, uint8_t chip_addr, uint8_t* const addr,
                 LOG_ERROR(I2C, "I2C%u MemReadTimeOut", num);
             }
         } else {
-            LOG_ERROR(I2C, "I2C%u MemReadErr %u=%s", num, ret, HalStatus2Str(ret));
-           // i2c_init_one(num);
+            LOG_ERROR(I2C, "I2C%u MemReadErr %u=%s", num, ret, HalStatusToStr(ret));
+            // i2c_init_one(num);
             res = false;
         }
     } else {
         LOG_ERROR(I2C, "I2C%u NodeErr", num);
+    }
+    return res;
+}
+
+bool i2c_mcal_write_word(uint8_t num, uint8_t chip_addr, uint16_t reg_address, const uint16_t word) {
+    bool res = false;
+    LOG_DEBUG(I2C, "I2C%u,WriteWord,Chip:0x%x,Reg:0x%02x,Data:0x%04x", num, chip_addr, reg_address, word);
+    I2cHandle_t* Node = I2cGetNode(num);
+    if(Node) {
+        HAL_StatusTypeDef ret = HAL_ERROR;
+        uint8_t data[4] = {0};
+        data[0] = reg_address;
+        memcpy(&data[1], &word, 2);
+
+        uint8_t i2c_addr = chip_addr;
+        i2c_addr = i2c_compose_read_address(chip_addr);
+
+        ret = HAL_I2C_Master_Transmit_IT(&Node->i2c_h, i2c_addr, data, 3);
+        res = HAL_retToRes(ret);
+        res = i2c_wait_tx_done_ll(Node, I2C_WRITE_TIME_OUT_MS);
     }
     return res;
 }

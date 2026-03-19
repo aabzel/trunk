@@ -1,5 +1,5 @@
-#ifndef HAL_DIAG_H
-#define HAL_DIAG_H
+#ifndef HAL_STM_DIAG_H
+#define HAL_STM_DIAG_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,19 +7,17 @@ extern "C" {
 
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_def.h"
+#include "std_includes.h"
 
-#include <stdbool.h>
-#include <stdint.h>
-
-const char* HalStatus2Str(HAL_StatusTypeDef code);
+const char* HalStatusToStr(const HAL_StatusTypeDef ret);
 
 #if 0
-#define assert_param( expr)                                                    \
-                                   do{                                                \
+#define assert_param( expr)                                                             \
+                                   do{                                                  \
                                       if(0==(expr)){                                    \
-	                                      LOG_ERROR(SYS,"Assert! Line:%u", __LINE__); \
-	                                      res = true;                                 \
-                                      }                                               \
+                                        LOG_ERROR(SYS,"Assert! Line:%u", __LINE__);     \
+                                        res = true;                                     \
+                                      }                                                 \
                                    }while(0);
 #endif
 
@@ -27,4 +25,4 @@ const char* HalStatus2Str(HAL_StatusTypeDef code);
 }
 #endif
 
-#endif /* HAL_DIAG_H */
+#endif /* HAL_STM_DIAG_H */

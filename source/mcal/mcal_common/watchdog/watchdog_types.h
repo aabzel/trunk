@@ -5,7 +5,7 @@
 #include "watchdog_custom_types.h"
 
 #define WATCHDOG_COMMON_VARIABLE   \
-    bool valid;    \
+    bool valid;                    \
     bool on;       \
     uint8_t bitness;    \
     uint32_t base_freq_hz; \
@@ -17,7 +17,7 @@ typedef struct  {
 
 typedef struct  {
     WATCHDOG_COMMON_VARIABLE
-    WATCHDOG_COSTOM_VARIABLE
+    WATCHDOG_CUSTOM_VARIABLE
     bool init;
 } WatchDogHandle_t;
 

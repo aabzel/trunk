@@ -1,0 +1,35 @@
+#add_library(pin)
+message(STATUS "PIN_GENERAL_MK_INC=${PIN_GENERAL_MK_INC}")
+if( NOT (PIN_GENERAL_MK_INC STREQUAL Y))
+    set(PIN_GENERAL_MK_INC Y)
+    message(STATUS "+ PIN General")
+
+    set(PIN_GENERAL_DIR ${MCAL_COMMON_DIR}/pin)
+    message(STATUS "PIN_GENERAL_DIR=${PIN_GENERAL_DIR}")
+
+    include_directories(${PIN_GENERAL_DIR})
+    target_include_directories(app PUBLIC ${PIN_GENERAL_DIR})
+    target_compile_definitions(app PUBLIC HAS_PIN)
+
+    add_compile_definitions(HAS_PIN)
+    #add_compile_options(-DHAS_PIN)
+    target_sources(app PRIVATE ${PIN_GENERAL_DIR}/pin_general_drv.c)
+
+    if(DIAG STREQUAL Y)
+        if(PIN_DIAG STREQUAL Y)
+            message(STATUS "+ PIN Diag")
+            target_compile_definitions(app PUBLIC HAS_PIN_DIAG)
+            target_sources(app PRIVATE ${PIN_GENERAL_DIR}/pin_diag.c)
+        endif()
+    endif()
+
+    if(CLI STREQUAL Y)
+        if(PIN_COMMANDS STREQUAL Y)
+            message(STATUS "+ PIN Commands")
+            target_compile_definitions(app PUBLIC HAS_PIN_COMMANDS)
+            target_sources(app PRIVATE ${PIN_GENERAL_DIR}/pin_commands.c)
+        endif()
+    endif()
+
+    #target_include_directories(pin PUBLIC ${PIN_GENERAL_DIR})
+endif()

@@ -2,11 +2,13 @@
 
 #include <inttypes.h>
 
+#include "array_diag.h"
 #include "common_diag.h"
 #include "convert.h"
 #include "data_utils.h"
 #include "debug_info.h"
 #include "i2c_mcal.h"
+#include "microcontroller_const.h"
 #include "num_to_str.h"
 
 #ifdef HAS_MCAL_CUSTOM
@@ -28,7 +30,7 @@ bool i2c_write_command(int32_t argc, char* argv[]) {
         res = true;
         uint8_t num = 0;
         uint8_t chip_addr = 0;
-        uint8_t array[256] = {0};
+        uint8_t array[256];
         uint32_t array_len = 0;
         if(res) {
             res = try_str2uint8(argv[0], &num);
@@ -52,7 +54,7 @@ bool i2c_write_command(int32_t argc, char* argv[]) {
         }
 
         if(res) {
-            res = i2c_api_write(num, chip_addr, array, (uint16_t)array_len);
+            res = i2c_mcal_write(num, chip_addr, array, (uint16_t)array_len);
             if(false == res) {
                 LOG_ERROR(I2C, "%u SendErr Addr 0x%x Len: %u", num, chip_addr, array_len);
             } else {
@@ -72,9 +74,7 @@ bool i2c_write_command(int32_t argc, char* argv[]) {
 bool i2c_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
-#ifdef HAS_I2C_DIAG
         res = i2c_diag();
-#endif
     } else {
         LOG_ERROR(I2C, "Usage: i2d");
     }
@@ -112,9 +112,11 @@ bool i2c_read_word_command(int32_t argc, char* argv[]) {
         if(res) {
             LOG_INFO(I2C, "I2C%u,Chip:0x%02x,Addr:0x%02x", num, chip_addr, word_addr);
             uint16_t word = 0xFFFF;
-            res = i2c_api_read_word(num, chip_addr, word_addr, &word);
+            res = i2c_mcal_read_word(num, chip_addr, word_addr, &word);
             if(res) {
+#ifdef HAS_BIN_2_STR
                 LOG_INFO(I2C, "Word[%u]=0x%04X=0b%s", word_addr, word, utoa_bin16(word));
+#endif
                 cli_printf(CRLF);
             } else {
                 LOG_ERROR(I2C, "ReadError");
@@ -157,12 +159,14 @@ bool i2c_read_reg_command(int32_t argc, char* argv[]) {
 
         if(res) {
             LOG_INFO(I2C, "I2C%u,Chip:0x%02x,Addr:0x%02x", num, chip_addr, reg_addr);
-            res = i2c_api_read_byte(num, chip_addr, reg_addr, value);
+            res = i2c_mcal_read_byte(num, chip_addr, reg_addr, value);
             if(false == res) {
                 LOG_ERROR(I2C, "Unable to send I2C");
             } else {
+#ifdef HAS_BIN_2_STR
                 LOG_INFO(I2C, "Reg[%u]=0x%02x=0b%s", reg_addr, value[0], utoa_bin8(value[0]));
                 cli_printf(CRLF);
+#endif
             }
         }
     } else {
@@ -206,14 +210,14 @@ bool i2c_read_command(int32_t argc, char* argv[]) {
         }
 
         if(res) {
-            res = i2c_api_read(num, chip_addr, array, array_len);
+            res = i2c_mcal_read(num, chip_addr, array, array_len);
             if(false == res) {
                 LOG_ERROR(I2C, "Unable to send I2C");
             } else {
 #ifdef HAS_ARRAY_DIAG
                 res = print_mem(array, array_len, true, false, true, false);
-                cli_printf(CRLF);
 #endif
+                cli_printf(CRLF);
             }
         }
     } else {
@@ -249,20 +253,16 @@ bool i2c_scan_command(int32_t argc, char* argv[]) {
             for(num = 0; num <= cnt; num++) {
                 I2cHandle_t* Node = I2cGetNode(num);
                 if(Node) {
-#ifdef HAS_I2C_DIAG
                     res = i2c_scan_diag(num);
                     if(res) {
                         LOG_INFO(I2C, "%u ScanOk", num);
                     } else {
                         LOG_ERROR(I2C, "%u ScanErr", num);
                     }
-#endif
                 }
             }
         } else {
-#ifdef HAS_I2C_DIAG
             res = i2c_scan_diag(num);
-#endif
             if(res) {
                 LOG_INFO(I2C, "%u ScanOk", num);
             } else {
@@ -311,6 +311,7 @@ bool i2c_check_addr_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+// i2csp 1 1
 bool i2c_start_stop_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t signal = 0;
@@ -336,7 +337,7 @@ bool i2c_start_stop_command(int32_t argc, char* argv[]) {
             LOG_ERROR(I2C, "I2C%u SignalErr", num);
         }
     } else {
-        LOG_ERROR(I2C, "Usage: i2ss num signal");
+        LOG_ERROR(I2C, "Usage: i2csp num signal");
         LOG_INFO(I2C, "%u-Statr %u-Stop", I2C_START, I2C_STOP);
     }
     return res;
@@ -398,15 +399,15 @@ bool i2c_read_memory_command(int32_t argc, char* argv[]) {
 
     if(res) {
         LOG_INFO(I2C, "I2C%u,Chip:0x%02x,Reg:0x%02x,Size:%u", num, chip_addr, reg_addr, size);
-        res = i2c_api_read_mem(num, chip_addr, &reg_addr, 1, buff, size);
+        res = i2c_mcal_read_mem(num, chip_addr, &reg_addr, 1, buff, size);
         if(res) {
-            LOG_INFO(I2C, "RegMemOk");
+            LOG_INFO(I2C, "Read,Mem,Ok");
 #ifdef HAS_ARRAY_DIAG
             print_mem(buff, size, true, true, true, true);
             cli_printf(CRLF);
-#endif
+#endif // HAS_ARRAY_DIAG
         } else {
-            LOG_ERROR(I2C, "ReadMemErr");
+            LOG_ERROR(I2C, "Read,Mem,Err");
         }
     } else {
         LOG_ERROR(I2C, "Usage: i2crm I2cNum ChipAddr RegAddr Size");
@@ -453,7 +454,7 @@ bool i2c_reg_write_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = i2c_api_reg_write(num, chip_addr, reg_addr, value);
+        res = i2c_mcal_reg_write(num, chip_addr, reg_addr, value);
         if(res) {
             LOG_INFO(I2C, "RegWriteOk");
             cli_printf(CRLF);
@@ -502,7 +503,7 @@ bool i2c_reg_write_verify_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = i2c_api_reg_write_verify(num, chip_addr, reg_addr, value);
+        res = i2c_mcal_reg_write_verify(num, chip_addr, reg_addr, value);
         if(res) {
             LOG_INFO(I2C, "RegWriteVerifyOk");
             cli_printf(CRLF);

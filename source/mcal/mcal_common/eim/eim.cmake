@@ -1,0 +1,58 @@
+message(STATUS "EIM_GENERAL_MK_INC=${EIM_GENERAL_MK_INC}")
+if( NOT (Y STREQUAL EIM_GENERAL_MK_INC))
+    set(EIM_GENERAL_MK_INC Y)
+    message(STATUS "+ EIM General")
+    message(STATUS "+ EIM_DIAG=[${EIM_DIAG}]")
+    message(STATUS "+ EIM0_MASTER=[${EIM0_MASTER}]")
+    message(STATUS "+ EIM0=[${EIM0}]")
+    message(STATUS "+ EIM_COMMANDS=[${EIM_COMMANDS}]")
+
+    set(EIM_GENERAL_DIR ${MCAL_COMMON_DIR}/eim)
+    message(STATUS "EIM_GENERAL_DIR=${EIM_GENERAL_DIR}")
+
+    add_compile_definitions(HAS_EIM)
+    include_directories(${EIM_GENERAL_DIR})
+
+    target_compile_definitions(app PUBLIC HAS_EIM)
+    target_include_directories(app PUBLIC ${EIM_GENERAL_DIR})
+    target_sources(app PRIVATE ${EIM_GENERAL_DIR}/eim_general.c)
+
+    if(EIM_POSTPONE_INIT STREQUAL Y)
+        message(STATUS "+ EIM_POSTPONE_INIT")
+        target_compile_definitions(app PUBLIC HAS_EIM_POSTPONE_INIT)
+    endif()
+
+    if(EIM_DIAG STREQUAL Y)
+        message(STATUS "+ EIM diagnostic")
+        target_compile_definitions(app PUBLIC HAS_EIM_DIAG)
+        target_sources(app PRIVATE ${EIM_GENERAL_DIR}/eim_diag.c)
+    endif()
+
+    if(EIM0 STREQUAL Y)
+        message(STATUS "+ EIM0")
+        target_compile_definitions(app PUBLIC HAS_EIM0)
+    endif()
+
+    if(EIM1 STREQUAL Y)
+        message(STATUS "+ EIM1")
+        target_compile_definitions(app PUBLIC HAS_EIM1)
+    endif()
+
+    if(EIM2 STREQUAL Y)
+        message(STATUS "+ EIM2")
+        target_compile_definitions(app PUBLIC HAS_EIM2)
+    endif()
+
+    if(EIM3 STREQUAL Y)
+        message(STATUS "+ EIM3")
+        target_compile_definitions(app PUBLIC HAS_EIM3)
+    endif()
+
+    if(CLI STREQUAL Y)
+        if(EIM_COMMANDS STREQUAL Y)
+            message(STATUS "+ EIM Commands")
+            target_compile_definitions(app PUBLIC HAS_EIM_COMMANDS)
+            target_sources(app PRIVATE ${EIM_GENERAL_DIR}/eim_commands.c)
+        endif()
+    endif()
+endif()

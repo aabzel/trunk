@@ -1,0 +1,4 @@
+
+config TRNG
+    bool "Enable use of the TRNG drivers"
+

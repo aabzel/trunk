@@ -14,7 +14,7 @@
 
 #ifndef HAS_INTERRUPT_COMMANDS
 #error "+HAS_INTERRUPT_COMMANDS"
-#endif /*HAS_INTERRUPT_COMMANDS*/
+#endif /**/
 
 bool interrupt_get_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -91,11 +91,23 @@ bool interrupt_enable_irq_command(int32_t argc, char* argv[]) {
         }
     }
 
-    if(res && (2 == argc)) {
-        res = interrupt_control(irq_n, on_off);
-        log_res(LG_INT, res, "Ctrl");
+    if(res) {
+        switch(argc) {
+        case 1: {
+            on_off = interrupt_is_active(irq_n);
+            LOG_INFO(LG_INT, "Get,IrqN:%u,En:%u", irq_n, on_off);
+        } break;
+        case 2: {
+            LOG_WARNING(LG_INT, "Set,IrqN:%u,En:%u", irq_n, on_off);
+            res = interrupt_control(irq_n, on_off);
+            log_info_res(LG_INT, res, "Ctrl");
+        } break;
+        default: {
+            res = false;
+        } break;
+        }
     } else {
-        LOG_ERROR(LG_INT, "Usage: ien IrqN on_off");
+        LOG_ERROR(LG_INT, "Usage: inten IrqN on_off");
     }
     return res;
 }
@@ -111,15 +123,18 @@ bool interrupt_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     char keyWord1[20] = "";
     char keyWord2[20] = "";
+
     if(0 <= argc) {
         strncpy(keyWord1, "", sizeof(keyWord1));
         strncpy(keyWord2, "", sizeof(keyWord2));
         res = true;
     }
+
     if(1 <= argc) {
         strncpy(keyWord1, argv[0], sizeof(keyWord1));
         res = true;
     }
+
     if(2 <= argc) {
         strncpy(keyWord2, argv[1], sizeof(keyWord2));
         res = true;
@@ -128,7 +143,8 @@ bool interrupt_diag_command(int32_t argc, char* argv[]) {
     if(2 < argc) {
         LOG_ERROR(SYS, "Usage: id keyWord");
     }
-    if(true == res) {
+
+    if(res) {
 #ifdef HAS_INTERRUPT_DIAG
         res = interrupt_diag(keyWord1, keyWord2);
 #endif

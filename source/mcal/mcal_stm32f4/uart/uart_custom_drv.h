@@ -6,7 +6,7 @@
 #include "sys_config.h"
 #include "uart_custom_types.h"
 
-
-int8_t get_uart_index(USART_TypeDef* USARTx);
+const UartInfo_t* UartUSARTxToInfo(const USART_TypeDef* const USARTx);
+int8_t get_uart_index(const USART_TypeDef* const USARTx);
 
 #endif /* USART_CUSTOM_DRV_H  */

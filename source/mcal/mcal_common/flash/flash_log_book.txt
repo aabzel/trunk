@@ -1,0 +1,55 @@
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |      fcd |    flash_custom_diag | FlashCustomDiag
+|   2 |      frr |        flash_raw_reg | FlashReadRawReg
+|   3 |     fgsa | flash_get_spare_aligne | FlashGetSpareAligne
+|   4 |       fl |           flash_lock | FlashLock
+|   5 |       fd |           flash_diag | FlashDiag
+|   6 |       fi |           flash_init | FlashInit
+|   7 |       fw |          flash_write | FlashWrite
+|   8 |       fr |           flash_read | FlashRead
+|   9 |       fe |          flash_erase | FlashErase
+|  10 |       fs |           flash_scan | FlashScan
++-----+----------+----------------------+-------------+
+
+
+
+fgsa 128 128
+
+fgsa 128 256
+672.330,149 I,[FLASH] Align:0x00000080,Size:256,StartAddr:0x01037580
+
+fr 0x01037680 128
+
+ 
+ll flash debug
+fw 0x01037680 0x1122334455667788
+
+ll flash info;  fr 0x01037680 80
+
+
+
+
+2:38-->fw
+172.499,134 E,[FLASH] Usage: fw sector_address hex_string crc16_read
+172.505,135 I,[FLASH] sector_address
+172.508,136 I,[FLASH] hex_string 0x[0...F]+
+172.512,137 I,[FLASH] crc16_read
+172.515,138 E,[CLI] CmdError:[fw]
+
+
+
+fr 0x01037780 40
+
+
+fr 0x01037780 128
+
+fr 0x01037780 256
+
+
+
+fr 0x01037780 128
+
+
+fr 0x01037780 129

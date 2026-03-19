@@ -7,7 +7,7 @@ extern "C" {
 
 #ifndef HAS_EXT_INT
 #error "+HAS_EXT_INT"
-#endif /*HAS_EXT_INT*/
+#endif
 
 #include <stdint.h>
 
@@ -17,6 +17,7 @@ const char* ExtIntEdgeToStr(PinIntEdge_t code);
 bool ext_int_diag(void);
 bool ExtIntDiagConfig(const ExtIntConfig_t* const Config);
 const char* ExtIntConfigToStr(const ExtIntConfig_t* const Config);
+const char* ExtIntNodeToStr(const ExtIntHandle_t* const Node);
 
 #ifdef __cplusplus
 }

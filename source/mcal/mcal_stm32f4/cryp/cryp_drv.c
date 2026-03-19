@@ -62,7 +62,7 @@ bool cryp_init_one(uint8_t num) {
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(HW_CRYP, "InitErr %d=%s", ret, HalStatus2Str(ret));
+                LOG_ERROR(HW_CRYP, "InitErr %d=%s", ret, HalStatusToStr(ret));
             }
         } else {
             LOG_ERROR(HW_CRYP, "ConfErr %d", num);

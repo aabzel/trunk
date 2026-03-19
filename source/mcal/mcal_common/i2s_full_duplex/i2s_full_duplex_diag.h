@@ -1,33 +1,14 @@
-#ifndef I2S_GENERAL_DIAG_H
-#define I2S_GENERAL_DIAG_H
+#ifndef I2S_FULL_DUPLEX_GENERAL_DIAG_H
+#define I2S_FULL_DUPLEX_GENERAL_DIAG_H
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
-#include "i2s_types.h"
+#include "i2s_full_duplex_types.h"
 
-#ifndef HAS_I2S
-#error "Add HAS_I2S"
-#endif /*HAS_I2S*/
+const char*  I2sFullDuplexInputToStr(I2sFullDuplexInputs_t input);
+const char*  I2sFullDuplexStateToStr(I2sFullDuplexState_t state);
+const char* I2sFullDuplexToStr(const I2sFullDuplexConfig_t* const Config);
+bool I2sFullDuplexDiagConfig(const I2sFullDuplexConfig_t* const Config);
+bool i2s_full_duplex_diag(void);
 
-#ifndef HAS_I2S_DIAG
-#error "+ HAS_I2S_DIAG"
-#endif /*HAS_I2S_DIAG*/
-
-#ifndef HAS_DIAG
-#error "+ HAS_DIAG"
-#endif /*HAS_DIAG*/
-
-bool i2s_diag_one(uint8_t num);
-
-#ifdef HAS_I2S_VOLUME
-const char* I2sState2Str(I2sState_t state);
-#endif
-
-const char* I2sAudioFreq2Str(AudioFreq_t freq);
-const char* I2sResolution2Str(I2sDataFormat_t code);
-const char* I2sBusRole2Str(I2sRole_t code);
-const char* I2sFsmDiag2Str(const I2sHandle_t* const Node );
-bool I2sDiagConfig(const I2sConfig_t* const Config  );
-
-#endif /* I2S_GENERAL_DIAG_H */
+#endif /* I2S_FULL_DUPLEX_GENERAL_DIAG_H */

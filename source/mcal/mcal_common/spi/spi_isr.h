@@ -12,21 +12,19 @@ extern "C" {
 #endif
 #include "spi_types.h"
 
-/*tx*/
-bool SpiTxHalfCpltCallBack(SpiHandle_t* const Node);
-bool SpiTxCpltCallBack(SpiHandle_t* const Node);
+bool SpiCallBackError(uint8_t num);
 
-/*Rx*/
-bool SpiRxHalfCpltCallBack(SpiHandle_t* const Node);
-bool SpiRxCpltCallBack(SpiHandle_t* const Node);
+bool SpiCallBackMoveStart(uint8_t num);
+bool SpiCallBackMoveCplt(uint8_t num);
 
-/*Err*/
-bool SpiErrorCallBack(SpiHandle_t* const Node);
+bool SpiCallBackRxHalfCplt(uint8_t num);
+bool SpiCallBackRxCplt(uint8_t num);
 
-/*RxTx*/
-bool SpiTxRxHalfCpltCallBack(SpiHandle_t* const Node);
-bool SpiTxRxCpltCallBack(SpiHandle_t* const Node);
+bool SpiCallBackTxHalfCplt(uint8_t num);
+bool SpiCallBackTxCplt(uint8_t num);
 
+bool SpiCallBackTxRxHalfCplt(uint8_t num);
+bool SpiCallBackTxRxCplt(uint8_t num);
 
 #ifdef __cplusplus
 }

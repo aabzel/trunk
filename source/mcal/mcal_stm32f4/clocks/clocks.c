@@ -1,11 +1,12 @@
 #include "clock.h"
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "clock_config.h"
 #include "log.h"
 #include "stm32f4xx_hal.h"
+#ifdef HAS_LOG
+#include "log.h"
+#endif
 //#include "time_mcal.h"
 
 #include "clock_custom.h"
@@ -39,6 +40,33 @@ uint64_t sw_pause_ms(uint32_t delay_in_ms) {
         cnt += pause_1ms();
     }
     return cnt;
+}
+
+uint32_t clock_freq_get(const ClockBus_t clock_bus) {
+    uint32_t clock_freq_hz = 0;
+    switch(clock_bus) {
+    case CLOCK_BUS_SYS: {
+        clock_freq_hz = HAL_RCC_GetSysClockFreq();
+
+    } break;
+    case CLOCK_BUS_APB2: {
+        clock_freq_hz = HAL_RCC_GetPCLK2Freq();
+
+    } break;
+    case CLOCK_BUS_APB1: {
+        clock_freq_hz = HAL_RCC_GetPCLK1Freq();
+
+    } break;
+    case CLOCK_BUS_AHB: {
+        clock_freq_hz = HAL_RCC_GetHCLKFreq();
+
+    } break;
+    default:
+        clock_freq_hz = 0;
+        break;
+    }
+
+    return clock_freq_hz;
 }
 
 uint32_t clock_core_freq_get(void) { return 0; }

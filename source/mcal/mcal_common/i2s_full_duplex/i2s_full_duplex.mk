@@ -1,37 +1,37 @@
+$(info I2S_FULL_DUPLEX_GENERAL_MK_INC=  $(I2S_FULL_DUPLEX_GENERAL_MK_INC) )
+ifneq ($(I2S_FULL_DUPLEX_GENERAL_MK_INC),Y)
+    I2S_FULL_DUPLEX_GENERAL_MK_INC=Y
 
-$(info I2S_GENERAL_MK_INC=  $(I2S_GENERAL_MK_INC) )
-ifneq ($(I2S_GENERAL_MK_INC),Y)
-    I2S_GENERAL_MK_INC=Y
+    I2S_FULL_DUPLEX_MCAL_DIR = $(MCAL_COMMON_DIR)/i2s_full_duplex
+    #@echo $(error I2S_FULL_DUPLEX_MCAL_DIR=$(I2S_FULL_DUPLEX_MCAL_DIR))
+    MCAL_OPT += -DHAS_I2S_FULL_DUPLEX
+    MCAL_OPT += -DHAS_I2S_FULL_DUPLEX_PROC
 
-    mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
-    $(info Build  $(mkfile_path) )
-
-    #I2S_VOLUME=Y
-
-    I2S_MCAL_DIR = $(MCAL_COMMON_DIR)/i2s
-    #@echo $(error I2S_MCAL_DIR=$(I2S_MCAL_DIR))
-
-    INCDIR += -I$(I2S_MCAL_DIR)
-
-    ifeq ($(I2S_VOLUME),Y)
-        OPT += -DHAS_I2S_VOLUME
-        SOURCES_C += $(I2S_MCAL_DIR)/i2s_volume.c
+    ifeq ($(I2S_FULL_DUPLEX_DEBUG),Y)
+        MCAL_OPT += -DHAS_I2S_FULL_DUPLEX_DEBUG
     endif
 
-    #SOURCES_C += $(I2S_MCAL_DIR)/i2s_diag.c
-    SOURCES_C += $(I2S_MCAL_DIR)/i2s_drv_general.c
+    INCDIR += -I$(I2S_FULL_DUPLEX_MCAL_DIR)
 
-    ifeq ($(DIAG),Y)
-        ifeq ($(I2S_DIAG),Y)
-            OPT += -DHAS_I2S_DIAG
-            SOURCES_C += $(I2S_MCAL_DIR)/i2s_diag.c
-        endif
+    I2S_FULL_DUPLEX_SELF_SYNC=Y
+    ifeq ($(I2S_FULL_DUPLEX_SELF_SYNC),Y)
+        MCAL_OPT += -DHAS_I2S_FULL_DUPLEX_SELF_SYNC
     endif
     
+    SOURCES_C += $(I2S_FULL_DUPLEX_MCAL_DIR)/i2s_full_duplex.c
+    SOURCES_C += $(I2S_FULL_DUPLEX_MCAL_DIR)/i2s_full_duplex_isr.c
+
+    ifeq ($(DIAG),Y)
+        ifeq ($(I2S_FULL_DUPLEX_DIAG),Y)
+            MCAL_OPT += -DHAS_I2S_FULL_DUPLEX_DIAG
+            SOURCES_C += $(I2S_FULL_DUPLEX_MCAL_DIR)/i2s_full_duplex_diag.c
+        endif
+    endif
+
     ifeq ($(CLI),Y)
-        ifeq ($(I2S_COMMANDS),Y)
-            OPT += -DHAS_I2S_COMMANDS
-            SOURCES_C += $(I2S_MCAL_DIR)/i2s_commands.c
+        ifeq ($(I2S_FULL_DUPLEX_COMMANDS),Y)
+            MCAL_OPT += -DHAS_I2S_FULL_DUPLEX_COMMANDS
+            SOURCES_C += $(I2S_FULL_DUPLEX_MCAL_DIR)/i2s_full_duplex_commands.c
         endif
     endif
 endif

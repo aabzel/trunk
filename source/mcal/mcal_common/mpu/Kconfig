@@ -1,0 +1,4 @@
+
+config MPU
+    bool "Enable use of the MPU drivers"
+

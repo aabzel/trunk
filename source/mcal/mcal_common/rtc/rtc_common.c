@@ -15,14 +15,20 @@ bool rtc_set(uint8_t num, const struct tm* const date_time) {
     if(res) {
         RtcHandle_t* Node = RtcGetNode(num);
         if(Node) {
-            switch((uint32_t)Node->rtc_location) {
-                case RTC_LOCATION_INTERNAL: {
-                    res = rtc_internal_set(num, date_time);
-                }break;
+            switch(Node->rtc_location) {
+            case RTC_LOCATION_INTERNAL: {
+                res = rtc_internal_set(num, date_time);
+            } break;
+            case RTC_LOCATION_EXTERNAL: {
+#ifdef HAS_RTC_EXTERNAL
+                res = rtc_external_set(num, date_time);
+#endif
+            } break;
+            default: break;
             }
         }
-        LOG_WARNING(LG_RTC, "RTC%u,Set:%s", num, TimeDate2StrShort(date_time));
         if(res) {
+            LOG_WARNING(LG_RTC, "RTC%u,Set:%s", num, TimeDateToStrShort(date_time));
             LOG_INFO(LG_RTC, "Date,Time,Set,Ok!");
         } else {
             LOG_ERROR(LG_RTC, "Date,Time,Set,Err");
@@ -37,7 +43,7 @@ bool rtc_set_time(uint8_t num, const struct tm* const date_time) {
     bool res = false;
     res = is_valid_time(date_time);
     if(res) {
-        LOG_WARNING(LG_RTC, "RTC%u,Set:%s", num, Time2StrShort(date_time));
+        LOG_WARNING(LG_RTC, "RTC%u,Set:%s", num, TimeToStrShort(date_time));
         res = rtc_internal_set_time(num, date_time);
         if(res) {
             LOG_INFO(LG_RTC, "DTSetTimeOk!");
@@ -50,24 +56,26 @@ bool rtc_set_time(uint8_t num, const struct tm* const date_time) {
     return res;
 }
 
-
 bool rtc_set_date(uint8_t num, const struct tm* const date_time) {
     bool res = false;
     res = is_valid_date(date_time);
     if(res) {
-        LOG_WARNING(LG_RTC, "RTC%u,Set:%s", num, Date2StrShort(date_time));
+        LOG_WARNING(LG_RTC, "RTC%u,Set:%s", num, DateToStrShort(date_time));
 
         RtcHandle_t* Node = RtcGetNode(num);
         if(Node) {
             switch((uint32_t)Node->rtc_location) {
-                case RTC_LOCATION_INTERNAL: {
-                    res = rtc_internal_set_date(num, date_time);
-                } break;
-                case RTC_LOCATION_EXTERAL: {
-
-                } break;
-            }// switch(Node->rtc_location)
-        }// if(Node)
+            case RTC_LOCATION_INTERNAL: {
+                res = rtc_internal_set_date(num, date_time);
+            } break;
+            case RTC_LOCATION_EXTERNAL: {
+#ifdef HAS_RTC_EXTERNAL
+                res = rtc_external_set_date(num, date_time);
+#endif
+            } break;
+            default: break;
+            } // switch(Node->rtc_location)
+        }     // if(Node)
 
         if(res) {
             LOG_INFO(LG_RTC, "DTSetDateOk!");
@@ -82,7 +90,24 @@ bool rtc_set_date(uint8_t num, const struct tm* const date_time) {
 
 bool rtc_get(uint8_t num, struct tm* const date_time) {
     bool res = false;
-    res = rtc_internal_get(num, date_time);
+
+    RtcHandle_t* Node = RtcGetNode(num);
+    if(Node) {
+        switch(Node->rtc_location) {
+        case RTC_LOCATION_INTERNAL: {
+            res = rtc_internal_get(num, date_time);
+        } break;
+
+        case RTC_LOCATION_EXTERNAL: {
+#ifdef HAS_RTC_EXTERNAL
+            res = rtc_external_get(num, date_time);
+#endif
+        } break;
+        default:
+            break;
+        }
+    }
+
     if(res) {
         res = is_valid_time(date_time);
         if(res) {
@@ -106,8 +131,6 @@ bool rtc_stop(uint8_t num) {
     return res;
 }
 
-
-
 bool rtc_ctrl(uint8_t num, bool on_off) {
     bool res = false;
     if(on_off) {
@@ -118,7 +141,7 @@ bool rtc_ctrl(uint8_t num, bool on_off) {
     return res;
 }
 
-static bool rtc_init_common_one(const RtcConfig_t*const Config, RtcHandle_t* const Node) {
+static bool rtc_init_common_one(const RtcConfig_t* const Config, RtcHandle_t* const Node) {
     bool res = false;
     if(Node) {
         if(Config) {
@@ -138,12 +161,10 @@ static bool rtc_init_common_one(const RtcConfig_t*const Config, RtcHandle_t* con
     return res;
 }
 
-
-bool rtc_init_custom(void){
+bool rtc_init_custom(void) {
     bool res = true;
     return res;
 }
-
 
 bool rtc_adjust_by_build_time(uint8_t num) {
     bool res = false;
@@ -155,7 +176,7 @@ bool rtc_adjust_by_build_time(uint8_t num) {
     if(res) {
         res = time_parse(&time_date_compile, __TIME__);
         if(res) {
-            //res = print_time_date("Compile", &time_date_compile, true);
+            // res = print_time_date("Compile", &time_date_compile, true);
 
             RtcHandle_t* Node = RtcGetNode(num);
             int32_t diff = time_date_cmp(&Node->TimeDate, &time_date_compile);
@@ -176,27 +197,28 @@ bool rtc_adjust_by_build_time(uint8_t num) {
 }
 
 bool rtc_init_one(uint8_t num) {
-    bool res = false ;
-    LOG_WARNING(LG_RTC,"RTC%u,Init...", num);
-    const RtcConfig_t* Config=RtcGetConfig(num);
+    bool res = false;
+    LOG_WARNING(LG_RTC, "RTC%u,Init", num);
+    const RtcConfig_t* Config = RtcGetConfig(num);
     if(Config) {
         RtcHandle_t* Node = RtcGetNode(num);
         if(Node) {
             res = rtc_init_common_one(Config, Node);
 
             switch(Node->rtc_location) {
-                case RTC_LOCATION_INTERNAL: {
-                    res = rtc_internal_init_one(num) ;
-                } break;
-                case RTC_LOCATION_EXTERAL: {
-                    res = false ;
-                } break;
-                   default: {
-                        res = false ;
-                } break;
+            case RTC_LOCATION_INTERNAL: {
+                res = rtc_internal_init_one(num);
+            } break;
+            case RTC_LOCATION_EXTERNAL: {
+#ifdef HAS_RTC_EXTERNAL
+                res = rtc_external_init_one(num);
+#endif
+            } break;
+            default: {
+                res = false;
+            } break;
             }
-            //res =  rtc_adjust_by_build_time(num);
-
+            // res =  rtc_adjust_by_build_time(num);
         }
     }
     return res;

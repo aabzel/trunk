@@ -7,8 +7,8 @@ ifneq ($(SWD_COMMON_MCAL_MK_INC),Y)
     #@echo $(error SWD_MCAL_DIR=$(SWD_MCAL_DIR))
 
     INCDIR += -I$(SWD_MCAL_DIR)
-    OPT += -DHAS_SWD
-    #OPT += -DHAS_SWD_PROC
+    MCAL_OPT += -DHAS_SWD
+    #MCAL_OPT += -DHAS_SWD_PROC
 
     SOURCES_C += $(SWD_MCAL_DIR)/swd_general.c
 
@@ -17,7 +17,7 @@ ifneq ($(SWD_COMMON_MCAL_MK_INC),Y)
     endif
 
     ifeq ($(SWD_COMMANDS),Y)
-        OPT += -DHAS_SWD_COMMANDS
+        MCAL_OPT += -DHAS_SWD_COMMANDS
         SOURCES_C += $(SWD_MCAL_DIR)/swd_commands.c
     endif
 endif

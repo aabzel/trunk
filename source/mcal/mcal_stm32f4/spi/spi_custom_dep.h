@@ -7,7 +7,7 @@ extern "C" {
 
 #ifndef HAS_MICROCONTROLLER
 #error "+HAS_MICROCONTROLLER"
-#endif /*HAS_MICROCONTROLLER*/
+#endif /**/
 
 #ifndef HAS_SPI
 #error "+HAS_SPI"
@@ -15,7 +15,7 @@ extern "C" {
 
 #ifndef HAS_SPI_ISR
 #error "+HAS_SPI_ISR"
-#endif /*HAS_SPI_ISR*/
+#endif /**/
 
 
 #ifdef __cplusplus

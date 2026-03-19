@@ -6,12 +6,26 @@
 #include "gpio_diag.h"
 #include "i2c_mcal.h"
 #include "log.h"
+#include "microcontroller_const.h"
 #include "none_blocking_pause.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
+const char* I2cSignalToStr(const I2cSignal_t Signal) {
+    char* name = "?";
+    switch(Signal) {
+    case I2C_START:
+        name = "Start";
+        break;
+    case I2C_STOP:
+        name = "Stop";
+        break;
+    }
+    return name;
+}
+
 const char* I2cConfigToStr(const I2cConfig_t* const Config) {
-    static char text[80] = "";
+    // static char text[80] = "";
     if(Config) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sI2C%u,", text, Config->num);
@@ -101,7 +115,7 @@ bool i2c_scan_diag(uint8_t num) {
     return res;
 }
 
-bool i2s_diag_one(uint8_t num) {
+bool i2c_diag_one(uint8_t num) {
     bool res = false;
     return res;
 }

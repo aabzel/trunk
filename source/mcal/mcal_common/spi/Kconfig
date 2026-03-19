@@ -1,0 +1,4 @@
+
+config SPI
+    bool "Enable use of the SPI drivers"
+

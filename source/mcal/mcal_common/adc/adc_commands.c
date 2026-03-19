@@ -1,6 +1,5 @@
 #include "adc_commands.h"
 
-
 #include "adc_mcal.h"
 #include "convert.h"
 #include "log.h"
@@ -72,7 +71,7 @@ bool adc_voltage_read_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        double voltage = 0;
+        float voltage = 0;
         LOG_INFO(LG_ADC, "TryRead Adc %u Channel %u", adc, channel);
         res = adc_channel_read_voltage(adc, channel, &voltage);
         if(res) {
@@ -119,7 +118,7 @@ bool adc_code_read_command(int32_t argc, char* argv[]) {
 bool adc_set_vref_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t adc = 0;
-    double v_ref = 3.3;
+    float v_ref = 3.3;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &adc);
         if(false == res) {
@@ -128,7 +127,7 @@ bool adc_set_vref_command(int32_t argc, char* argv[]) {
     }
 
     if(2 <= argc) {
-        res = try_str2double(argv[1], &v_ref);
+        res = try_str2float(argv[1], &v_ref);
         if(false == res) {
             LOG_ERROR(SYS, "ParseErr Vref %s", argv[1]);
         }
@@ -145,8 +144,7 @@ bool adc_set_vref_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-bool adc_isr_command(int32_t argc, char* argv[]){
+bool adc_isr_command(int32_t argc, char* argv[]) {
     bool res = false;
     char keyWord1[20] = "";
     char keyWord2[20] = "";
@@ -177,8 +175,7 @@ bool adc_isr_command(int32_t argc, char* argv[]){
     return res;
 }
 
-
-bool adc_channel_diag_command(int32_t argc, char* argv[]){
+bool adc_channel_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     char keyWord1[20] = "";
     char keyWord2[20] = "";

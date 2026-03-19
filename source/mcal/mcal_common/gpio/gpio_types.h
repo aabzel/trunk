@@ -1,13 +1,8 @@
 #ifndef GPIO_MCAL_TYPES_H
 #define GPIO_MCAL_TYPES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
+#include "microcontroller_types.h"
 #include "gpio_const.h"
 #ifdef HAS_EXT_INT
 #include "ext_int_const.h"
@@ -32,12 +27,7 @@ typedef struct {
     GpioLogicLevel_t Real;
 } GpioLogicLevelState_t;
 
-typedef struct {
-    Pad_t pad;
-    uint16_t mcu_pin; /*up to pin 400*/
-    char* name;
-    bool valid;
-} PinData_t;
+
 
 typedef struct {
     uint16_t gpio_pin;
@@ -46,7 +36,7 @@ typedef struct {
 
 typedef struct {
     uint32_t mux; /*STM32-4byte, AT32-1byte*/
-    Pad_t pad;
+    Pad_t Pad;
     uint8_t mcu_pin;
     uint8_t config_number;
 #ifdef HAS_LOG
@@ -54,7 +44,6 @@ typedef struct {
     char* function;
     char* connector1;
     char* connector2;
-    bool load_detect;
     bool testable;
 #endif
     GpioDir_t dir;
@@ -68,8 +57,5 @@ typedef struct {
 #endif
 } GpioConfig_t;
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* GPIO_MCAL_TYPES_H  */

@@ -6,13 +6,17 @@
 #include "compiler_const.h"
 #include "microcontroller_const.h"
 
+#ifdef HAS_LOG
+#include "log.h"
+#endif
+
 const InterruptConfig_t* InterruptGetConfig(int16_t int_n) {
     InterruptConfig_t* Config = NULL;
     uint32_t cnt = interrupt_get_cnt();
     uint32_t i = 0;
     for(i = 0; i < cnt; i++) {
         if(InterruptConfig[i].irq_n == int_n) {
-            Config = &InterruptConfig[i];
+            Config = (InterruptConfig_t*)&InterruptConfig[i];
             break;
         }
     }
@@ -20,6 +24,12 @@ const InterruptConfig_t* InterruptGetConfig(int16_t int_n) {
 }
 
 _WEAK_FUN_ uint32_t interrupt_get_isr_handler(int16_t irq_n) { return 0; }
+
+_WEAK_FUN_
+uint32_t interrupt_get_priority1(const int16_t irq_n){
+    uint32_t priority = 0XFFFFFFFF;
+    return priority;
+}
 
 _WEAK_FUN_ bool interrupt_clear(void) {
     bool res = false;
@@ -81,7 +91,7 @@ _WEAK_FUN_ bool interrupt_disable(void) {
 #endif
 
 #ifdef HAS_INTERRUPT_EXT
-bool interrupt_is_valid_irq_num(int16_t irq_n) {
+_WEAK_FUN_ bool interrupt_is_valid_irq_num(int16_t irq_n) {
     bool res = false;
     if(irq_n <= MAX_IRQ_NUM) {
         res = true;
@@ -108,11 +118,14 @@ _WEAK_FUN_ bool interrupt_mcal_init(void) {
     uint32_t i = 0;
     res = interrupt_init_custom();
     uint32_t cnt = interrupt_get_cnt();
+#ifdef HAS_LOG
+    LOG_INFO(SYS, "Cnt:%u", cnt);
+#endif
     if(cnt) {
         for(i = 0; i < cnt; i++) {
             res = interrupt_init_one(&InterruptConfig[i]);
         }
     }
-    interrupt_enable(); // hang on here
+    interrupt_enable();
     return res;
 }

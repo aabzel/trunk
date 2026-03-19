@@ -5,10 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "ostream.h"
+#include "std_includes.h"
 
 #ifndef HAS_GPIO_COMMANDS
 #error "+HAS_GPIO_COMMANDS"

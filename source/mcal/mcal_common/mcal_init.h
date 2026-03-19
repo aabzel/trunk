@@ -5,12 +5,34 @@
 #error "+HAS_MCAL"
 #endif
 
+#ifdef HAS_ACC
+#include "acc_mcal.h"
+#define ACC_INIT {.init_function=acc_mcal_init, .name="ACC",},
+
+#else
+#define ACC_INIT
+#endif
+
+
+#ifdef HAS_DWT
+#include "dwt_mcal.h"
+#else
+#define DWT_INIT
+#endif
+
 #ifdef HAS_ADC
 #include "adc_mcal.h"
 #define ADC_INIT {.init_function=adc_mcal_init, .name="ADC",}, \
-  {.init_function=adc_channel_mcal_init, .name="AdcChannels",},
+                 {.init_function=adc_channel_mcal_init, .name="AdcChannels",},
 #else
 #define ADC_INIT
+#endif
+
+#ifdef HAS_LOCKSTEP
+#include "lockstep_mcal.h"
+#define LOCKSTEP_INIT {.init_function=lockstep_mcal_init, .name="LockStep",},
+#else
+#define LOCKSTEP_INIT
 #endif
 
 #ifdef HAS_CRYP_HW
@@ -20,11 +42,19 @@
 #define CRYP_HW_INIT
 #endif
 
+#ifdef HAS_DMA_CHANNEL
+#include "dma_channel_mcal.h"
+#define DMA_CHANNEL_INIT   \
+  {.init_function=dma_channel_mcal_init, .name="DmaChannels",},
+#else
+#define DMA_CHANNEL_INIT
+#endif
+
 #ifdef HAS_DMA
 #include "dma_mcal.h"
 #define DMA_INIT   \
   {.init_function=dma_mcal_init, .name="DMA",},       \
-  {.init_function=dma_channel_mcal_init, .name="DmaChannels",},
+  DMA_CHANNEL_INIT
 #else
 #define DMA_INIT
 #endif
@@ -38,10 +68,55 @@
 #define FLASH_INIT_NAME
 #endif
 
-#define FLASH_INIT {.init_function = flash_init, FLASH_INIT_NAME},
+#define FLASH_INIT {.init_function = flash_mcal_init, FLASH_INIT_NAME},
 #else
 #define FLASH_INIT
 #endif
+
+
+#ifdef HAS_FCSMU
+#include "fcsmu_mcal.h"
+
+#define FCSMU1_INIT {.init_function = fcsmu1_mcal_init, .name = "FCSMU1",},
+#define FCSMU2_INIT {.init_function = fcsmu2_mcal_init, .name = "FCSMU2",},
+#define FCSMU3_INIT {.init_function = fcsmu3_mcal_init, .name = "FCSMU3",},
+#else
+#define FCSMU1_INIT
+#define FCSMU2_INIT
+#define FCSMU3_INIT
+#endif
+
+
+#ifdef HAS_ERM
+#include "erm_mcal.h"
+
+#ifdef HAS_LOG
+#define ERM_INIT_NAME .name = "Erm",
+#else
+#define ERM_INIT_NAME
+#endif
+
+#define ERM_INIT {.init_function = erm_mcal_init, ERM_INIT_NAME},
+#else
+#define ERM_INIT
+#endif
+
+
+
+#ifdef HAS_EIM
+#include "eim_mcal.h"
+
+#ifdef HAS_LOG
+#define EIM_INIT_NAME .name = "EIM",
+#else
+#define EIM_INIT_NAME
+#endif
+
+#define EIM_INIT {.init_function = eim_mcal_init, EIM_INIT_NAME},
+#else
+#define EIM_INIT
+#endif
+
 
 #ifdef HAS_GPIO
 #include "gpio_mcal.h"
@@ -157,6 +232,43 @@
 #define MICROCONTROLLER_INIT
 #endif
 
+#ifdef HAS_MULTICORE
+#include "multicore_mcal.h"
+#define MULTICORE_INIT { .init_function=multicore_mcal_init, .name="MultiCore",},
+#else
+#define MULTICORE_INIT
+#endif
+
+
+#ifdef HAS_MAILBOX
+#include "mailbox_mcal.h"
+
+#ifdef HAS_LOG
+#define MAILBOX1_INIT_NAME .name = "MAILBOX1",
+#define MAILBOX2_INIT_NAME .name = "MAILBOX2",
+#define MAILBOX3_INIT_NAME .name = "MAILBOX3",
+#else
+#define MAILBOX1_INIT_NAME
+#define MAILBOX2_INIT_NAME
+#define MAILBOX3_INIT_NAME
+#endif
+
+#define MAILBOX_INIT                                                       \
+    { .init_function=mailbox_mcal_init, .name="MailBox",},                 \
+    { .init_function=mailbox_channel_mcal_init, .name="MailBoxChannel",},
+
+#define MAILBOX1_INIT {.init_function=mailbox1_init, MAILBOX1_INIT_NAME},
+#define MAILBOX2_INIT {.init_function=mailbox2_init, MAILBOX2_INIT_NAME},
+#define MAILBOX3_INIT {.init_function=mailbox3_init, MAILBOX3_INIT_NAME},
+#else
+#define MAILBOX_INIT
+#define MAILBOX1_INIT
+#define MAILBOX2_INIT
+#define MAILBOX3_INIT
+#endif /*HAS_MULTICORE*/
+
+
+
 #ifdef HAS_RTC
 #include "rtc_mcal.h"
 #define RTC_INIT {.init_function=rtc_mcal_init, .name="RTC",},
@@ -166,7 +278,14 @@
 
 #if defined(HAS_NORTOS) && defined(HAS_SYSTICK)
 #include "systick_mcal.h"
-#define SYSTICK_INIT {.init_function=systick_init, .name= "SysTick",},
+
+#ifdef HAS_LOG
+#define SYSTICK_INIT_NAME .name = "SysTick",
+#else
+#define SYSTICK_INIT_NAME
+#endif
+
+#define SYSTICK_INIT {.init_function=systick_mcal_init, SYSTICK_INIT_NAME},
 #else
 #define SYSTICK_INIT
 #endif /*HAS_NORTOS and HAS_SYSTICK*/
@@ -186,7 +305,7 @@
 #endif
 
 #if defined(HAS_CLOCK) && defined(HAS_MICROCONTROLLER)
-#include "clock/clock.h"
+#include "clock/clock_mcal.h"
 
 #ifdef HAS_LOG
 #define CLOCK_INIT_NAME .name = "Clk",
@@ -194,9 +313,23 @@
 #define CLOCK_INIT_NAME
 #endif
 
-#define CLOCK_INIT {.init_function = clock_init, CLOCK_INIT_NAME},
+#define CLOCK_INIT {.init_function = clock_mcal_init, CLOCK_INIT_NAME},
 #else
 #define CLOCK_INIT
+#endif
+
+#ifdef HAS_CLOCK_OUT
+#include "clock_out_mcal.h"
+
+#ifdef HAS_LOG
+#define CLOCK_OUT_INIT_NAME .name = "ClkOut",
+#else
+#define CLOCK_OUT_INIT_NAME
+#endif
+
+#define CLOCK_OUT_INIT {.init_function = clock_out_mcal_init, CLOCK_OUT_INIT_NAME},
+#else
+#define CLOCK_OUT_INIT
 #endif
 
 #ifdef HAS_QSPI
@@ -234,16 +367,12 @@
 #define POWER_INIT
 #endif /*HAS_POWER*/
 
-
 #ifdef HAS_BOOT_MANAGER
 #include "boot_manager.h"
 #define BOOT_MANAGER_INIT { .init_function  =boot_manager_init, .name="BootManager",},
 #else
 #define BOOT_MANAGER_INIT
 #endif /*HAS_POWER*/
-
-
-
 
 #ifdef HAS_INPUT_CAPTURE
 #include "input_capture_mcal.h"
@@ -272,6 +401,7 @@
 #else
 #define IPC_INIT
 #endif
+
 
 #ifdef HAS_HW_DAC
 #include "dac_mcal.h"
@@ -329,34 +459,42 @@
 
 
 
-
+/*Order matters*/
 #define MCAL_INIT_SENSITIVITY         \
     EXT_INT_INIT                      \
     RTC_INIT                          \
     ADC_INIT                          \
     INPUT_CAPTURE_INIT                \
+    LOCKSTEP_INIT                     \
     PDM_INIT
 
-/*Order matters*/
+//    GPIO_INIT
+/*  Order matters!  */
 #define MCAL_INIT         \
     INTERRUPT_INIT        \
     CLOCK_INIT            \
-    POWER_INIT            \
+    DWT_INIT              \
     SYSTICK_INIT          \
-    GPIO_INIT             \
+    POWER_INIT            \
     IOMUX_INIT            \
     TIMER_INIT            \
     DMA_INIT              \
     EEPROM_INIT           \
     FLASH_INIT            \
     MCAL_WIRE_IF          \
+    CLOCK_OUT_INIT        \
     MCAL_INIT_SENSITIVITY \
     MCAL_INIT_SECURITY    \
     IPC_INIT              \
     SPIFI_INIT            \
     BOOT_MANAGER_INIT     \
     MCAL_INIT_CONTROL     \
-    MICROCONTROLLER_INIT
+    MICROCONTROLLER_INIT  \
+    MULTICORE_INIT        \
+    MAILBOX1_INIT         \
+    ERM_INIT              \
+    EIM_INIT              \
+    FCSMU1_INIT
 
 
 #endif /* MCAL_INIT_H */

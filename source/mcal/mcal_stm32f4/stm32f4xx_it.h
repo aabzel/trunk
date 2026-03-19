@@ -1,5 +1,5 @@
-#ifndef STM32F4XX_ISR_PROTOTYPES_H
-#define STM32F4XX_ISR_PROTOTYPES_H
+#ifndef STM32F4X_ISR_PROTOTYPES_H
+#define STM32F4X_ISR_PROTOTYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,14 +16,30 @@ void UART5_IRQHandler(void);
 void FSMC_IRQHandler(void);
 void HASH_RNG_IRQHandler(void);
 
+
+#ifdef HAS_TIMER
+#endif /*HAS_TIMER*/
+void TIM1_BRK_TIM9_IRQHandler(void);
+void TIM1_UP_TIM10_IRQHandler(void);
+void TIM1_TRG_COM_TIM11_IRQHandler(void);
+void TIM1_CC_IRQHandler(void);
+void TIM2_IRQHandler(void);
+void TIM3_IRQHandler(void);
+void TIM4_IRQHandler(void);
+void TIM5_IRQHandler(void);
+void TIM6_DAC_IRQHandler(void);
+void TIM7_IRQHandler(void);
+void TIM8_BRK_TIM12_IRQHandler(void);
+void TIM8_CC_IRQHandler(void);
+void TIM8_TRG_COM_TIM14_IRQHandler(void);
+void TIM8_UP_TIM13_IRQHandler(void);
+
 void BusFault_Handler(void);
 void DebugMon_Handler(void);
 void HardFault_Handler(void);
 void NMI_Handler(void);
-void TIM8_BRK_TIM12_IRQHandler(void);
 void MemManage_Handler(void);
 void UsageFault_Handler(void);
-void TIM8_UP_TIM13_IRQHandler(void);
 void OTG_FS_WKUP_IRQHandler(void);
 void SVC_Handler(void);
 void PendSV_Handler(void);
@@ -67,7 +83,6 @@ void SPI5_IRQHandler(void);
 #if defined(HAS_SPI5) || defined(HAS_I2S5)
 #endif /**/
 
-#ifdef HAS_UART
 void USART1_IRQHandler(void);
 #ifdef HAS_UART1
 #endif /*HAS_UART1*/
@@ -98,7 +113,7 @@ void USART9_IRQHandler(void);
 void USART10_IRQHandler(void);
 #ifdef HAS_UART10
 #endif /*HAS_UART10*/
-#endif /*HAS_UART*/
+
 
 void I2C1_ER_IRQHandler(void);
 void I2C1_EV_IRQHandler(void);
@@ -114,17 +129,6 @@ void I2C3_ER_IRQHandler(void);
 void I2C3_EV_IRQHandler(void);
 #ifdef HAS_I2C3
 #endif /**/
-
-void TIM1_BRK_TIM9_IRQHandler(void);
-void TIM1_UP_TIM10_IRQHandler(void);
-void TIM1_TRG_COM_TIM11_IRQHandler(void);
-void TIM1_CC_IRQHandler(void);
-void TIM2_IRQHandler(void);
-void TIM3_IRQHandler(void);
-void TIM4_IRQHandler(void);
-void TIM5_IRQHandler(void);
-#ifdef HAS_TIMER
-#endif /*HAS_TIMER*/
 
 void DMA1_Stream1_IRQHandler(void);
 void DMA1_Stream2_IRQHandler(void);
@@ -160,4 +164,4 @@ void EXTI15_10_IRQHandler(void);
 }
 #endif
 
-#endif /* STM32F4XX_ISR_PROTOTYPES_H */
+#endif /* STM32F4X_ISR_PROTOTYPES_H */

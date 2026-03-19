@@ -5,13 +5,12 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
-const char* SysTickCountFlag2Str(uint8_t code);
-const char* SysTickClkSrc2Str(uint8_t code);
-const char* SysTickInt2Str(uint8_t code);
-const char* SysTickEn2Str(uint8_t code);
+const char* SysTickCountFlagToStr(uint8_t code);
+const char* SysTickClkSrcToStr(uint8_t code);
+const char* SysTickIntToStr(uint8_t code);
+const char* SysTickEnToStr(uint8_t code);
 
 #ifdef __cplusplus
 }

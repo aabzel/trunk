@@ -24,7 +24,7 @@ bool RtcDiagConfig(const RtcConfig_t* const Config) {
 }
 
 const char* RtcConfigToStr(const RtcConfig_t* const Config) {
-    static char line[150]={0};
+    static char line[150] = {0};
     if(Config) {
         strcpy(line, "");
         snprintf(line, sizeof(line), "%sN:%1u," TSEP, line, Config->num);
@@ -37,10 +37,9 @@ const char* RtcConfigToStr(const RtcConfig_t* const Config) {
     return line;
 }
 
-
 bool rtc_diag(void) {
     bool res = false;
-    char line[150]={0};
+    char line[150] = {0};
     LOG_INFO(LG_RTC, "CompileDate:[%s]", __DATE__);
     LOG_INFO(LG_RTC, "CompileTime:[%s]", __TIME__);
     LOG_INFO(LG_RTC, "CompileTimeStamp:[%s]", __TIMESTAMP__);
@@ -55,14 +54,14 @@ bool rtc_diag(void) {
     for(i = 0; i <= cnt; i++) {
         RtcHandle_t* Node = RtcGetNode(i);
         if(Node) {
-            //SecondsToTimeDate(Node->raw_sec, &Node->TimeDate);
+            // SecondsToTimeDate(Node->raw_sec, &Node->TimeDate);
             res = rtc_get(i, &Node->TimeDate);
             strcpy(line, TSEP);
             snprintf(line, sizeof(line), "%s %1u " TSEP, line, Node->num);
             snprintf(line, sizeof(line), "%s %10u " TSEP, line, Node->raw_sec);
-            snprintf(line, sizeof(line), "%s %8s " TSEP, line, Time2StrShort(&Node->TimeDate));
-            snprintf(line, sizeof(line), "%s %10s " TSEP, line, Date2StrShort(&Node->TimeDate));
-            snprintf(line, sizeof(line), "%s %3s " TSEP, line, OnOff2Str(Node->init_done));
+            snprintf(line, sizeof(line), "%s %8s " TSEP, line, TimeToStrShort(&Node->TimeDate));
+            snprintf(line, sizeof(line), "%s %10s " TSEP, line, DateToStrShort(&Node->TimeDate));
+            snprintf(line, sizeof(line), "%s %3s " TSEP, line, OnOffToStr(Node->init_done));
             snprintf(line, sizeof(line), "%s %10u " TSEP, line, Node->int_cnt);
             snprintf(line, sizeof(line), "%s %10u " TSEP, line, Node->error_cnt);
             cli_printf("%s" CRLF, line);
@@ -71,4 +70,15 @@ bool rtc_diag(void) {
     }
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     return res;
+}
+
+const char* rtc_get_str(const uint8_t rtc_num) {
+    static char lText[30] = "";
+    memset(lText, 0, sizeof(lText));
+    struct tm DateTime = {0};
+    bool res = rtc_get(rtc_num, &DateTime);
+    if(res) {
+        res = DateToStr(&DateTime, lText, sizeof(lText));
+    }
+    return lText;
 }

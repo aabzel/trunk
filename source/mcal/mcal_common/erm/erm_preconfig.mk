@@ -1,0 +1,7 @@
+$(info ERM_PRECONFIG_INC=$(ERM_PRECONFIG_INC) )
+
+ifneq ($(ERM_PRECONFIG_INC),Y)
+    ERM_PRECONFIG_INC=Y
+
+    ERM=Y
+endif

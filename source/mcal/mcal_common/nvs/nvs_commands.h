@@ -1,39 +1,35 @@
 #ifndef NVS_COMMANDS_H
 #define NVS_COMMANDS_H
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#ifndef HAS_CLI
-#error "+HAS_CLI"
-#endif
+#include "std_includes.h"
 
 #ifndef HAS_NVS
-#error "+HAS_NVS"
+#error "+ HAS_NVS"
 #endif
 
-#ifndef HAS_FLASH
-#error "+HAS_FLASH"
+#ifndef HAS_NVS_COMMANDS
+#error "+ HAS_NVS_COMMANDS"
 #endif
 
-bool nvs_init_command(int32_t argc, char* argv[]);
 bool nvs_diag_command(int32_t argc, char* argv[]);
+bool nvs_init_command(int32_t argc, char* argv[]);
+bool nvs_read_command(int32_t argc, char* argv[]);
 bool nvs_erase_command(int32_t argc, char* argv[]);
-bool nvs_mcal_readcommand(int32_t argc, char* argv[]);
-bool nvs_mcal_writecommand(int32_t argc, char* argv[]);
+bool nvs_write_command(int32_t argc, char* argv[]);
 bool nvs_dump_command(int32_t argc, char* argv[]);
 
-#define NVS_COMMANDS                                                   \
-    SHELL_CMD("nvs_init", "nvsi", nvs_init_command, "NvsInit"),        \
-    SHELL_CMD("nvs_dump", "nvsm", nvs_dump_command, "NvsDump"),        \
-    SHELL_CMD("nvs_diag", "nvsd", nvs_diag_command, "NvsDiag"),        \
-    SHELL_CMD("nvs_erase", "nvse", nvs_erase_command, "NvsErase"),     \
-    SHELL_CMD("nvs_read", "nvsr", nvs_mcal_readcommand, "NvsRead"),        \
-    SHELL_CMD("nvs_write", "nvsw", nvs_mcal_writecommand, "NvsWrite"),
+#define NVS_COMMANDS                                                       \
+        SHELL_CMD("nvs_diag", "nvd", nvs_diag_command, "NvsDiag"),          \
+        SHELL_CMD("nvs_init", "ni", nvs_init_command, "NvsInit"),          \
+        SHELL_CMD("nvs_dump", "nm", nvs_dump_command, "NvsDump"),          \
+        SHELL_CMD("nvs_erase", "nve", nvs_erase_command, "NvsErase"),       \
+        SHELL_CMD("nvs_read", "nr", nvs_read_command, "NvsRead"),          \
+        SHELL_CMD("nvs_write", "nw", nvs_write_command, "NvsWrite"),
 
 #ifdef __cplusplus
 }

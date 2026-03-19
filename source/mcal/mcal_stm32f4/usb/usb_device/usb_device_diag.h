@@ -12,6 +12,7 @@ extern "C" {
 //const char* UsbErr2Str(uint8_t status);
 bool usb_device_diag(void);
 bool UsbDeviveDiag(const USBD_HandleTypeDef* const UsbDeviceNode) ;
+const char* UsbDeviceErrToStr(const USBD_StatusTypeDef status) ;
 
 #ifdef __cplusplus
 }

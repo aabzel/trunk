@@ -5,14 +5,11 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 
 #ifndef HAS_SPI
 #error "+HAS_SPI"
 #endif /*HAS_SPI*/
-
 
 #ifndef HAS_SPI_COMMANDS
 #error "+HAS_SPI_COMMANDS"

@@ -12,7 +12,7 @@
 #endif
 
 #include "usb_device.h"
-#include "writer_generic.h"
+#include "writer.h"
 
 #define MAX_USB_HID_BLOCK 100U
 
@@ -46,7 +46,7 @@ generic_writer_t usb_hid_o = {
     .error_count = 0,
     .fifo = {.fifoState = {.size = sizeof(usb_hid_o_data), .start = 0, .end = 0, .count = 0, .errors = 0},
              .array = usb_hid_o_data,
-             .initDone = true},
+             .init_done = true},
     .f_transmit = usb_hid_writer_transmit,
     .enable = true,
     .busy = false,

@@ -7,8 +7,8 @@
 #include "data_utils.h"
 #include "dma_mcal.h"
 #include "log.h"
+#include "microcontroller_const.h"
 #include "str_utils.h"
-#include "sys_config.h"
 
 bool dma_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -85,6 +85,7 @@ bool dma_channel_mux_command(int32_t argc, char* argv[]) {
                 LOG_ERROR(SYS, "SetErr");
             }
         } break;
+        default: break;
         }
     } else {
         LOG_ERROR(SYS, "Usage: dcm DmaNum Channel Mux");

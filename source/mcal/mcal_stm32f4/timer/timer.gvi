@@ -1,0 +1,19 @@
+
+
+#ifdef HAS_TIMER5
+TIMER5->TIMER
+#endif
+
+#ifdef HAS_TIMER2
+TIMER2->TIMER
+#endif
+
+#ifdef HAS_TIMER3
+TIMER3->TIMER
+#endif
+
+#ifdef HAS_TIMER9
+TIMER9->TIMER
+#endif
+
+

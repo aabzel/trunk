@@ -7,9 +7,13 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include "timer_custom_isr.h"
 #include "timer_mcal.h"
 
+#ifdef HAS_TIMER_CUSTOM
+#include "timer_custom_isr.h"
+#endif
+
+bool TimerISR(TimerHandle_t* const Node);
 bool TimerPeriodElapsedCallback(TimerHandle_t* const Node);
 
 #ifdef __cplusplus

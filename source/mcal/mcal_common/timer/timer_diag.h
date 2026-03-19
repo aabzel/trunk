@@ -14,10 +14,12 @@ bool timer_diag_compare(void);
 bool timer_diag_compare_complimentary(void);
 bool timer_diag(void);
 bool timer_diag_ll(void);
+bool timer_diag_interrupt(void);
 bool timer_channel_diag(void);
 
-const char *TimerDirToStr(TimerDir_t code);
+bool timer_raw_reg_diag(uint8_t i);
+const char *TimerDirToStr(const TimerDir_t code);
 const char *TimerConfigToStr(const TimerConfig_t* const Config);
-//const char *BusClock2Str(uint32_t bus_clock);
+const char *BusClockToStr(uint32_t bus_clock);
 
 #endif /* TIMER_MCAL_DIAG_H */

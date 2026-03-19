@@ -3,7 +3,7 @@
 #include "common_diag.h"
 #include "systick_types.h"
 
-const char* SysTickCountFlag2Str(uint8_t code) {
+const char* SysTickCountFlagToStr(uint8_t code) {
     const char* name = "?";
     switch(code) {
     case 0:
@@ -12,11 +12,13 @@ const char* SysTickCountFlag2Str(uint8_t code) {
     case 1:
         name = "Expired";
         break;
+    default:
+        break;
     }
     return name;
 }
 
-const char* SysTickClkSrc2Str(uint8_t code) {
+const char* SysTickClkSrcToStr(uint8_t code) {
     const char* name = "?";
     switch(code) {
     case 0:
@@ -25,10 +27,12 @@ const char* SysTickClkSrc2Str(uint8_t code) {
     case 1:
         name = "AHB";
         break;
+    default:
+        break;
     }
     return name;
 }
 
-const char* SysTickInt2Str(uint8_t code) { return OnOff2Str(code); }
+const char* SysTickIntToStr(uint8_t code) { return OnOffToStr(code); }
 
-const char* SysTickEn2Str(uint8_t code) { return OnOff2Str(code); }
+const char* SysTickEnToStr(uint8_t code) { return OnOffToStr(code); }

@@ -6,13 +6,12 @@ extern "C" {
 #endif
 
 #include "i2c_types.h"
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
 I2C_TypeDef* i2c_get_instance(uint8_t i2c_num);
 bool i2c_init_ll(uint8_t i2c_num);
 bool i2c_init(void);
-bool i2c_write_wait(uint8_t i2c_num, uint8_t i2c_addr, uint8_t* array, uint16_t array_len);
+//bool i2c_write_wait(uint8_t i2c_num, uint8_t i2c_addr, uint8_t* array, uint16_t array_len);
 bool i2c_read(uint8_t i2c_num, uint8_t i2c_addr, uint8_t* array, uint16_t array_len);
 bool i2c_check_addr(uint8_t i2c_num, uint8_t i2c_addr);
 bool i2c_send_signal(uint8_t i2c_num, I2cSignal_t signal);

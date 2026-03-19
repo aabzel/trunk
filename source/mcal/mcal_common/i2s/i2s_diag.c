@@ -12,15 +12,15 @@
 #include "dma_diag.h"
 #endif
 #include "byte_utils.h"
-#include "sys_config.h"
+#include "microcontroller_const.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
-static char name[80] = {0};
+static char text[200] = {0};
 
 const char* I2sAudioFreq2Str(AudioFreq_t freq) {
-    snprintf(name, sizeof(name), "%u Hz", freq);
-    return name;
+    snprintf(text, sizeof(text), "%u Hz", freq);
+    return text;
 }
 
 const char* I2sResolution2Str(I2sDataFormat_t code) {
@@ -49,25 +49,25 @@ const char* I2sResolution2Str(I2sDataFormat_t code) {
     return name;
 }
 
-const char* I2sBusRole2Str(I2sRole_t code) {
+const char* I2sBusRole2Str(I2sDirRole_t code) {
     const char* name = "?";
     switch((uint8_t)code) {
-    case I2SMODE_SLAVE:
+    case I2S_DIR_BUS_MODE_SLAVE:
         name = "Slave";
         break;
-    case I2SMODE_SLAVE_RX:
+    case I2S_DIR_BUS_MODE_SLAVE_RX:
         name = "SlaveRx";
         break;
-    case I2SMODE_SLAVE_TX:
+    case I2S_DIR_BUS_MODE_SLAVE_TX:
         name = "SlaveTx";
         break;
-    case I2SMODE_MASTER:
+    case I2S_DIR_BUS_MODE_MASTER:
         name = "Master";
         break;
-    case I2SMODE_MASTER_TX:
+    case I2S_DIR_BUS_MODE_MASTER_TX:
         name = "MasterTx";
         break;
-    case I2SMODE_MASTER_RX:
+    case I2S_DIR_BUS_MODE_MASTER_RX:
         name = "MasterRx";
         break;
     default:
@@ -195,7 +195,6 @@ const char* I2sModeToStr(I2sMode_t mode) {
 }
 
 const char* I2sConfigToStr(const I2sConfig_t* const Config) {
-    static char text[200] = "";
     strncpy(text, "", sizeof(text) - 1);
 
     if(Config) {
@@ -231,7 +230,6 @@ bool I2sDiagConfig(const I2sConfig_t* const Config) {
 
 #ifdef HAS_I2S_VOLUME
 const char* I2sFsmDiag2Str(const I2sHandle_t* const Node) {
-    static char text[120] = "";
     if(Node) {
         strncpy(text, "", sizeof(text) - 1);
         snprintf(text, sizeof(text), "%s State %s,", text, I2sState2Str(Node->state));
@@ -261,28 +259,28 @@ bool i2s_diag_sample(void) {
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
     // HAL_I2S_StateTypeDef state;
-    char text[120];
+    char line[120];
     for(num = 1; num <= I2S_COUNT; num++) {
         I2sHandle_t* Node = I2sGetNode(num);
         if(Node) {
-            strcpy(text, TSEP);
-            snprintf(text, sizeof(text), "%s %u " TSEP, text, Node->num);
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->rx_sample.u32[0]));
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->tx_sample.u32[0]));
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->rx_sample_fixed.u32[0]));
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->tx_sample_fixed.u32[0]));
+            strcpy(line, TSEP);
+            snprintf(line, sizeof(line), "%s %u " TSEP, line, Node->num);
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->rx_sample.u32[0]));
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->tx_sample.u32[0]));
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->rx_sample_fixed.u32[0]));
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->tx_sample_fixed.u32[0]));
 
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->rx_sample.u32[1]));
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->tx_sample.u32[1]));
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->rx_sample_fixed.u32[1]));
-            snprintf(text, sizeof(text), "%s 0x%08x " TSEP, text, (unsigned int)(Node->tx_sample_fixed.u32[1]));
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->rx_sample.u32[1]));
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->tx_sample.u32[1]));
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->rx_sample_fixed.u32[1]));
+            snprintf(line, sizeof(line), "%s 0x%08x " TSEP, line, (unsigned int)(Node->tx_sample_fixed.u32[1]));
             const I2sConfig_t* I2sConfNode = I2sGetConfig(num);
             if(I2sConfNode) {
-                snprintf(text, sizeof(text), "%s %6s " TSEP, text, I2sConfNode->name);
+                snprintf(line, sizeof(line), "%s %6s " TSEP, line, I2sConfNode->name);
             }
 
             cli_printf(TSEP " %3u ", cnt);
-            cli_printf("%s" CRLF, text);
+            cli_printf("%s" CRLF, line);
             cnt++;
             res = true;
         }
@@ -302,27 +300,27 @@ bool i2s_diag_errors(void) {
     uint16_t cnt = 0;
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
-    char text[120];
+    char line[120];
     for(num = 0; num <= I2S_COUNT; num++) {
 
         I2sHandle_t* Node = I2sGetNode(num);
         if(Node) {
             uint32_t err = i2s_err_total(&(Node->Err));
-            strcpy(text, TSEP);
-            snprintf(text, sizeof(text), "%s %1u   " TSEP, text, Node->num);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)err);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)Node->Err.write);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)Node->Err.read);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)Node->Err.start);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)Node->Err.tx_next);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)Node->Err.rx_next);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)Node->total_stop_cnt);
+            strcpy(line, TSEP);
+            snprintf(line, sizeof(line), "%s %1u   " TSEP, line, Node->num);
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)err);
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)Node->Err.write);
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)Node->Err.read);
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)Node->Err.start);
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)Node->Err.tx_next);
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)Node->Err.rx_next);
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)Node->total_stop_cnt);
             const I2sConfig_t* I2sConfNode = I2sGetConfig(num);
             if(I2sConfNode) {
-                snprintf(text, sizeof(text), "%s %6s " TSEP, text, I2sConfNode->name);
+                snprintf(line, sizeof(line), "%s %6s " TSEP, line, I2sConfNode->name);
             }
             cli_printf(TSEP " %3u ", cnt);
-            cli_printf("%s" CRLF, text);
+            cli_printf("%s" CRLF, line);
             cnt++;
             res = true;
         }
@@ -341,25 +339,57 @@ bool i2s_diag_config(void) {
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
-    char text[200];
+    char line[200];
     for(num = 0; num <= I2S_COUNT; num++) {
 
         I2sHandle_t* Node = I2sGetNode(num);
         if(Node) {
             I2sDataFormat_t data_format = I2S_DATA_FORMAT_UNDEF;
             uint32_t audio_freq_hz = 0;
-            I2sRole_t bus_role = I2SMODE_UNDEF;
+            I2sDirRole_t bus_role = I2S_DIR_BUS_MODE_UNDEF;
             uint8_t sample_size = i2s_sample_size_get(num);
-            res = i2s_bus_role_get(num, &bus_role);
+            res = i2s_dir_bus_role_get(num, &bus_role);
             res = i2s_data_format_get(num, &data_format);
             res = i2s_sample_freq_get(num, &audio_freq_hz);
-            strcpy(text, TSEP);
-            snprintf(text, sizeof(text), "%s %2u " TSEP, text, Node->num);
-            snprintf(text, sizeof(text), "%s %6u " TSEP, text, sample_size);
-            snprintf(text, sizeof(text), "%s %7u " TSEP, text, audio_freq_hz);
-            snprintf(text, sizeof(text), "%s %8s " TSEP, text, I2sBusRole2Str(bus_role));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, I2sResolution2Str(data_format));
-            cli_printf("%s" CRLF, text);
+            strcpy(line, TSEP);
+            snprintf(line, sizeof(line), "%s %2u " TSEP, line, Node->num);
+            snprintf(line, sizeof(line), "%s %6u " TSEP, line, sample_size);
+            snprintf(line, sizeof(line), "%s %7u " TSEP, line, audio_freq_hz);
+            snprintf(line, sizeof(line), "%s %8s " TSEP, line, I2sBusRole2Str(bus_role));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, I2sResolution2Str(data_format));
+            cli_printf("%s" CRLF, line);
+            res = true;
+        }
+    }
+
+    table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+
+    return res;
+}
+
+bool i2s_diag_rx(void) {
+    bool res = false;
+    static const table_col_t cols[] = {
+        {5, "No"}, {5, "num"}, {9, "RxBuffFull"}, {6, "RxDone"}, {6, "rec"},
+    };
+
+    uint16_t cnt = 0;
+    table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+    uint8_t num = 0;
+    char line[200];
+    for(num = 0; num <= I2S_COUNT; num++) {
+
+        I2sHandle_t* Node = I2sGetNode(num);
+        if(Node) {
+            strcpy(line, TSEP);
+            snprintf(line, sizeof(line), "%s %1u   " TSEP, line, Node->num);
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->rx_buff_full_cnt));
+            snprintf(line, sizeof(line), "%s %3s " TSEP, line, OnOffToStr(Node->rx_buff_full));
+            snprintf(line, sizeof(line), "%s %3s " TSEP, line, OnOffToStr(Node->rec));
+
+            cli_printf(TSEP " %3u ", cnt);
+            cli_printf("%s" CRLF, line);
+            cnt++;
             res = true;
         }
     }
@@ -372,48 +402,51 @@ bool i2s_diag_config(void) {
 bool i2s_diag_all(void) {
     bool res = false;
     static const table_col_t cols[] = {
-        {5, "No"},        {5, "num"},           {9, "TxSampleCnt"}, {9, "ToggleCnt"}, {9, "ItCnt"},
-        {9, "StopCnt"},   {9, "StatusStopCnt"},
+        {5, "No"},        {5, "num"},     {7, "WS,Freq"},       {9, "TxSampleCnt"}, {9, "ToggleCnt"},
+        {9, "ItCnt"},     {9, "StopCnt"}, {9, "StatusStopCnt"},
 #ifdef HAS_DDS
         {5, "Dac"},
 #endif
-        {6, "echo"},      {6, "loop"},          {6, "iir"},         {6, "Err"},       {9, "rxHalfCnt"},
-        {9, "txHalfCnt"}, {9, "rxCnt"},         {9, "txCnt"},       {8, "name"},
+        {6, "echo"},      {6, "loop"},    {6, "iir"},           {6, "Err"},         {9, "rxHalfCnt"},
+        {9, "txHalfCnt"}, {9, "rxCnt"},   {9, "txCnt"},         {8, "name"},
     };
     uint16_t cnt = 0;
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
-    char text[200];
+    char line[200];
     for(num = 0; num <= I2S_COUNT; num++) {
 
         I2sHandle_t* Node = I2sGetNode(num);
         // TODO: get bittness
         if(Node) {
+            uint32_t audio_freq_hz = 0;
+            res = i2s_sample_freq_get(num, &audio_freq_hz);
             uint32_t err = i2s_err_total(&(Node->Err));
-            strcpy(text, TSEP);
-            snprintf(text, sizeof(text), "%s %1u   " TSEP, text, Node->num);
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->tx_sample_cnt));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->toggle_cnt));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->it_cnt));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->total_stop_cnt));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->status_stop_cnt));
+            strcpy(line, TSEP);
+            snprintf(line, sizeof(line), "%s %1u   " TSEP, line, Node->num);
+            snprintf(line, sizeof(line), "%s %5u " TSEP, line, audio_freq_hz);
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->tx_sample_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->toggle_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->it_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->total_stop_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->status_stop_cnt));
 #ifdef HAS_DDS
-            snprintf(text, sizeof(text), "%s %3u " TSEP, text, Node->dac_num);
+            snprintf(line, sizeof(line), "%s %3u " TSEP, line, Node->dac_num);
 #endif
-            snprintf(text, sizeof(text), "%s %3s  " TSEP, text, OnOffToStr(Node->echo));
-            snprintf(text, sizeof(text), "%s %3s  " TSEP, text, OnOffToStr(Node->loopback));
-            snprintf(text, sizeof(text), "%s %3s  " TSEP, text, OnOffToStr(Node->iir));
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, (unsigned int)err);
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->rx_half_cnt));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->tx_half_cnt));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->rx_done_cnt));
-            snprintf(text, sizeof(text), "%s %7s " TSEP, text, u32val2Str(Node->tx_done_cnt));
+            snprintf(line, sizeof(line), "%s %3s  " TSEP, line, OnOffToStr(Node->echo));
+            snprintf(line, sizeof(line), "%s %3s  " TSEP, line, OnOffToStr(Node->loopback));
+            snprintf(line, sizeof(line), "%s %3s  " TSEP, line, OnOffToStr(Node->iir));
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)err);
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->rx_half_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->tx_half_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->rx_done_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->tx_done_cnt));
             const I2sConfig_t* I2sConfNode = I2sGetConfig(num);
             if(I2sConfNode) {
-                snprintf(text, sizeof(text), "%s %6s " TSEP, text, I2sConfNode->name);
+                snprintf(line, sizeof(line), "%s %6s " TSEP, line, I2sConfNode->name);
             }
             cli_printf(TSEP " %3u ", cnt);
-            cli_printf("%s" CRLF, text);
+            cli_printf("%s" CRLF, line);
             cnt++;
             res = true;
         }
@@ -427,7 +460,6 @@ bool i2s_diag_all(void) {
 static bool stream_diag(uint8_t num, char const* prefix, SampleStream_t* const Node) {
     bool res = false;
     if(Node) {
-        char text[200] = "";
         strcpy(text, TSEP);
         snprintf(text, sizeof(text), "%s %3u " TSEP, text, num);
         snprintf(text, sizeof(text), "%s %3s " TSEP, text, prefix);
@@ -495,30 +527,35 @@ bool i2s_print_rx_ll(const I2sHandle_t* const Node) {
     LOG_INFO(I2S, "RxBuff,%u byte,SamSize:%u Byte,I2Ssam:%u Sam", rx_size, sizeof(SampleType_t), i2s_sample_cnt);
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     for(t = 0; t < i2s_sample_cnt; t++) {
-        char text[200] = "";
-        strcpy(text, TSEP);
+        char line[200] = "";
+        strcpy(line, TSEP);
         up_time = ((double)t) * t_step;
         offset = t * double_sample_size;
         I2sSampleType_t I2sSampleType = {0};
         /// I2sSampleType_t* I2sSamplePtr= (I2sSampleType_t*)    ( ((void*)Node->RxBuffer)+ offset);
         memcpy(&I2sSampleType, (void*)((void*)Node->RxBuffer) + offset, sizeof(I2sSampleType_t));
-        snprintf(text, sizeof(text), "%s %3u " TSEP, text, t);
-        snprintf(text, sizeof(text), "%s %4u " TSEP, text, offset);
-        snprintf(text, sizeof(text), "%s %6s " TSEP, text, DoubleToStr(up_time));
-        snprintf(text, sizeof(text), "%s %6d " TSEP, text, I2sSampleType.left);
-        snprintf(text, sizeof(text), "%s %6d " TSEP, text, I2sSampleType.right);
-        snprintf(text, sizeof(text), "%s 0x%04x " TSEP, text, (uint16_t)I2sSampleType.left);
-        snprintf(text, sizeof(text), "%s 0x%04x " TSEP, text, (uint16_t)I2sSampleType.right);
+        snprintf(line, sizeof(line), "%s %3u " TSEP, line, t);
+        snprintf(line, sizeof(line), "%s %4u " TSEP, line, offset);
+        snprintf(line, sizeof(line), "%s %6s " TSEP, line, DoubleToStr(up_time));
+        snprintf(line, sizeof(line), "%s %6d " TSEP, line, I2sSampleType.left);
+        snprintf(line, sizeof(line), "%s %6d " TSEP, line, I2sSampleType.right);
+        snprintf(line, sizeof(line), "%s 0x%04x " TSEP, line, (uint16_t)I2sSampleType.left);
+        snprintf(line, sizeof(line), "%s 0x%04x " TSEP, line, (uint16_t)I2sSampleType.right);
 
-        cli_printf("%s" CRLF, text);
+        cli_printf("%s" CRLF, line);
         res = true;
     }
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     return res;
 }
 
+bool i2s_diag_one(uint8_t num) {
+    bool res = false;
+    return res;
+}
+
 bool i2s_print_rx(uint8_t num) {
-    bool res;
+    bool res = false;
     I2sHandle_t* Node = I2sGetNode(num);
     if(Node) {
         res = i2s_print_rx_ll(Node);
@@ -528,12 +565,12 @@ bool i2s_print_rx(uint8_t num) {
 
 #ifdef HAS_DFT
 const char* I2sDftInfoToStr(const I2sHandle_t* const Node) {
-    static char text[120] = "";
     if(Node) {
         strcpy(text, "");
-        double freq_err_hz = Node->exp_freq_hz - Node->max_freq_hz;
+        double freq_err_hz = Node->exp_freq_hz - Node->maxFreq.frequency_hz;
         snprintf(text, sizeof(text), "%sExp:%6.1f Hz,", text, Node->exp_freq_hz);
-        snprintf(text, sizeof(text), "%sReal:%6.1f Hz,", text, Node->max_freq_hz);
+        snprintf(text, sizeof(text), "%sReal:%6.1f Hz,", text, Node->maxFreq.frequency_hz);
+        snprintf(text, sizeof(text), "%sAmp:%6.1f PCM,", text, Node->maxFreq.amplitude);
         snprintf(text, sizeof(text), "%sErr:%6.1f Hz", text, freq_err_hz);
     }
 

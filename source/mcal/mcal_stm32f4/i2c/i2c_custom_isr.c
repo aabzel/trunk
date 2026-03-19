@@ -1,7 +1,7 @@
 #include "i2c_mcal.h"
 
-#include "stm32f4xx_hal.h"
 #include "i2c_custom_diag.h"
+#include "stm32f4xx_hal.h"
 
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef* hi2c) {
     int8_t num;

@@ -1,21 +1,21 @@
 #include "interrupt_custom_commands.h"
 
-#include <string.h>
 #include <inttypes.h>
 #include <stdio.h>
+#include <string.h>
 
+#include "common_diag.h"
+#include "convert.h"
+#include "data_utils.h"
+#include "interrupt_diag.h"
 #include "log.h"
 #include "str_utils.h"
-#include "data_utils.h"
-#include "convert.h"
-#include "common_diag.h"
-#include "interrupt_diag.h"
 #include "table_utils.h"
 #include "writer_config.h"
 //#include "nvic_diag.h"
 //#include "nvic_diag.h"
-#include "sys_config.h"
 #include "stm32f4xx_hal.h"
+#include "sys_config.h"
 
 #ifndef HAS_INTERRUPT_COMMANDS
 #error "+HAS_INTERRUPT_COMMANDS"
@@ -23,21 +23,21 @@
 
 bool interrupt_custom_get_command(int32_t argc, char* argv[]) {
     bool res = false;
-    uint32_t PreemptPriority=0;
-    uint32_t SubPriority=0;
-    int8_t irq_n=0;
-    if(1==argc){
+    uint32_t PreemptPriority = 0;
+    uint32_t SubPriority = 0;
+    int8_t irq_n = 0;
+    if(1 == argc) {
         res = try_str2int8(argv[0], &irq_n);
         if(false == res) {
             LOG_ERROR(LG_NVIC, "Unable to parse IrqN");
         }
     }
     uint32_t PriorityGroup = HAL_NVIC_GetPriorityGrouping();
-    LOG_INFO(SYS, "PriorityGroup %u",PriorityGroup);
-    if(res){
-        HAL_NVIC_GetPriority((IRQn_Type) irq_n, PriorityGroup, &PreemptPriority, &SubPriority);
-        LOG_INFO(SYS, "irq_n: %d  PreemptPriority:%u SubPriority:%u",irq_n,PreemptPriority,SubPriority);        
-    }else{
+    LOG_INFO(SYS, "PriorityGroup %u", PriorityGroup);
+    if(res) {
+        HAL_NVIC_GetPriority((IRQn_Type)irq_n, PriorityGroup, &PreemptPriority, &SubPriority);
+        LOG_INFO(SYS, "irq_n: %d  PreemptPriority:%u SubPriority:%u", irq_n, PreemptPriority, SubPriority);
+    } else {
         LOG_ERROR(LG_NVIC, "Usage: ig IrqN");
     }
     return res;
@@ -45,10 +45,10 @@ bool interrupt_custom_get_command(int32_t argc, char* argv[]) {
 
 bool interrupt_custom_set_command(int32_t argc, char* argv[]) {
     bool res = false;
-    uint32_t PreemptPriority=0;
-    uint32_t SubPriority=0;
-    int8_t irq_n=0;
-    if(3==argc){
+    uint32_t PreemptPriority = 0;
+    uint32_t SubPriority = 0;
+    int8_t irq_n = 0;
+    if(3 == argc) {
         res = try_str2int8(argv[0], &irq_n);
         if(false == res) {
             LOG_ERROR(LG_NVIC, "Unable to parse IrqN");
@@ -57,52 +57,51 @@ bool interrupt_custom_set_command(int32_t argc, char* argv[]) {
         if(false == res) {
             LOG_ERROR(LG_NVIC, "Unable to parse PreemptPriority");
         }
-        
+
         res = try_str2uint32(argv[1], &SubPriority);
         if(false == res) {
             LOG_ERROR(LG_NVIC, "Unable to parse SubPriority");
         }
     }
-        
-    if(res){
-        HAL_NVIC_SetPriority((IRQn_Type) irq_n,   PreemptPriority,   SubPriority);
-    }else{
+
+    if(res) {
+        HAL_NVIC_SetPriority((IRQn_Type)irq_n, PreemptPriority, SubPriority);
+    } else {
         LOG_ERROR(LG_NVIC, "Usage: is irq_n PreemptPriority SubPriority");
     }
-  return res;
+    return res;
 }
 
 bool interrupt_custom_enable_irq_command(int32_t argc, char* argv[]) {
     bool res = false;
-    int8_t irq_n=0;
+    int8_t irq_n = 0;
     bool on_off = false;
-    if(1<=argc){
+    if(1 <= argc) {
         res = try_str2int8(argv[0], &irq_n);
         if(false == res) {
             LOG_ERROR(LG_NVIC, "Unable to parse IrqN");
         }
     }
-    if(2<=argc){
+    if(2 <= argc) {
         res = try_str2bool(argv[1], &on_off);
         if(false == res) {
             LOG_ERROR(LG_NVIC, "Unable to parse IrqN");
         }
     }
 
-    if(res && (2==argc)){
-        if(on_off){
-            LOG_INFO(LG_NVIC, "Ok %d %u Enable",irq_n,on_off);
-            HAL_NVIC_EnableIRQ((IRQn_Type) irq_n);
-        }else{
-            LOG_INFO(LG_NVIC, "Ok %d %u Disable",irq_n,on_off);
+    if(res && (2 == argc)) {
+        if(on_off) {
+            LOG_INFO(LG_NVIC, "Ok %d %u Enable", irq_n, on_off);
+            HAL_NVIC_EnableIRQ((IRQn_Type)irq_n);
+        } else {
+            LOG_INFO(LG_NVIC, "Ok %d %u Disable", irq_n, on_off);
             HAL_NVIC_DisableIRQ((IRQn_Type)irq_n);
         }
-    }else{
+    } else {
         LOG_ERROR(LG_NVIC, "Usage: ien IrqN on_off");
     }
-  return res;
+    return res;
 }
-
 
 bool interrupt_custom_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -134,20 +133,20 @@ bool interrupt_custom_diag_command(int32_t argc, char* argv[]) {
 bool interrupt_custom_enable_command(int32_t argc, char* argv[]) {
     bool status = false;
     bool res = false;
-    if(1==argc){
+    if(1 == argc) {
         res = try_str2bool(argv[0], &status);
         if(false == res) {
             LOG_ERROR(LG_NVIC, "Unable to parse status");
         }
     }
-    if(res){
-        if(false==status){
+    if(res) {
+        if(false == status) {
             __disable_irq();
-            
-        }else{
+
+        } else {
             __enable_irq();
         }
-    }else{
+    } else {
         LOG_ERROR(SYS, "Usage: ie");
     }
     return res;

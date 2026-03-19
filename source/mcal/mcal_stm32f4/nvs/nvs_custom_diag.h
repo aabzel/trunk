@@ -1,13 +1,10 @@
+#ifndef NVS_CUSTOM_DIAG_H
+#define NVS_CUSTOM_DIAG_H
 
 
-
-
-
-#ifndef NVS_COSTOM_DIAG_H
-#define NVS_COSTOM_DIAG_H
-
-#include <stdbool.h>
+#include "std_includes.h"
 
 bool nvs_custom_diag(void);
+bool nvs_custom_diag_one(uint8_t num);
 
-#endif /* NVS_COSTOM_DIAG_H */
+#endif /* NVS_CUSTOM_DIAG_H */

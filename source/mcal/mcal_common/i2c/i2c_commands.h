@@ -16,6 +16,12 @@ extern "C" {
 #error "+HAS_I2C"
 #endif
 
+#ifdef HAS_I2C_FSM_COMMANDS
+#include "i2c_fsm_commands.h"
+#else
+#define I2C_FSM_COMMANDS
+#endif
+
 #ifdef HAS_I2C_CUSTOM_COMMANDS
 #include "i2c_custom_commands.h"
 #else
@@ -53,6 +59,7 @@ bool i2c_diag_command(int32_t argc, char* argv[]);
 
 #define I2C_COMMANDS                                                                       \
     I2C_CUSTOM_COMMANDS                                                                    \
+    I2C_FSM_COMMANDS                                                                    \
     I2C_READ_COMMANDS                                                                      \
     I2C_WRITE_COMMANDS                                                                     \
     SHELL_CMD("i2c_diag", "i2cd", i2c_diag_command, "I2cDiag"),                            \

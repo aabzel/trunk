@@ -11,20 +11,22 @@ extern "C" {
 #define BLOCK_SIZE_BYTE (512U)
 #define SDIO_RX_TIME_OUT_MS 4000U
 #define SDIO_TX_TIME_OUT_MS 4000U
-#define SDIO_TIME_OUT_MS 40U
+#define SDIO_TIME_OUT_MS 200U
 //1-err < SDIO_TIME_OUT_MS <64
 //2-err
 //4-err
 //8-err
+//10-err
 //16-err err
 //32-err
 //32-ok
 //33-ok err
 //34-ok
 //36-ok
-//40-ok
-//48-ok
+//40-ok err
+//48-ok err
 //64-ok
+//80-err
 
 //5-ok
 //10-ok

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "array_diag.h"
 #include "bit_utils.h"
 #include "clock.h"
 #include "data_utils.h"
@@ -17,34 +18,72 @@
 #include "time_mcal.h"
 #include "utils_math.h"
 
-static const SpiBusClock_t SpiBusClock[] = {
-#ifdef HAS_SPI1
-    {.num = 1, .bus_clock = 84000000},
+
+static const SpiClockTimingInfo_t SpiClockTimingInfo[] = {
+   { .polarity=SPI_POLARITY_LATCH_RISING,  .phase = SPI_CLK_IDLE_LEVEL_1,  .clk_polarity=SPI_POLARITY_HIGH,  .clk_phase=SPI_PHASE_2EDGE, .valid=true, },
+   { .polarity=SPI_POLARITY_LATCH_FALING,  .phase = SPI_CLK_IDLE_LEVEL_0,  .clk_polarity=SPI_POLARITY_LOW,  .clk_phase=SPI_PHASE_2EDGE, .valid=true, },
+   { .polarity=SPI_POLARITY_LATCH_FALING,  .phase = SPI_CLK_IDLE_LEVEL_1,  .clk_polarity=SPI_POLARITY_HIGH,  .clk_phase=SPI_PHASE_1EDGE, .valid=true,   },
+   { .polarity=SPI_POLARITY_LATCH_RISING,  .phase = SPI_CLK_IDLE_LEVEL_0,  .clk_polarity=SPI_POLARITY_LOW, .clk_phase=SPI_PHASE_1EDGE,    .valid=true,    },
+};
+
+
+static uint32_t SpiDirectionToStmDirection(const SpiDirection_t direction){
+    uint32_t direction_code = 0;
+    switch(direction) {
+        case SPI_DIRECTION_1WIRE:  direction_code=SPI_DIRECTION_1LINE; break;
+        case SPI_DIRECTION_2WIRES: direction_code=SPI_DIRECTION_2LINES; break;
+        case SPI_DIRECTION_1WIRE_RX_ONLY: direction_code=SPI_DIRECTION_2LINES_RXONLY; break;
+        default : direction_code = 0; break;
+    }
+    return direction_code;
+}
+
+static const SpiInfo_t SpiInfo[]={
+#ifdef SPI1
+        {.num = 1,
+         .irq_n = SPI1_IRQn,
+         .SPIx = SPI1,
+         .clock_bus = CLOCK_BUS_APB2,
+         .valid = true, },
 #endif
 
-#ifdef HAS_SPI2
-    {.num = 2, .bus_clock = 42000000},
+#ifdef SPI2
+        {.num = 2,
+         .irq_n = SPI2_IRQn,
+         .SPIx = SPI2,
+         .clock_bus = CLOCK_BUS_APB1,
+         .valid = true, },
 #endif
 
-#ifdef HAS_SPI3
-    {.num = 3, .bus_clock = 42000000},
-#endif
-
-#ifdef HAS_SPI4
-    {.num = 4, .bus_clock = 84000000}
+#ifdef SPI3
+        {.num = 3,
+         .irq_n = SPI3_IRQn,
+         .SPIx = SPI3,
+         .clock_bus = CLOCK_BUS_APB1,
+         .valid = true, },
 #endif
 };
 
-uint32_t spi_num_2_bus_clock(uint8_t num) {
-    uint32_t bus_clock = 84000000;
+const SpiInfo_t* SpiGetInfo(const uint8_t num) {
+    SpiInfo_t* Info = NULL;
     uint32_t i = 0;
-    uint32_t cnt = ARRAY_SIZE(SpiBusClock);
-    for(i = 0; i < cnt; i++) {
-        if(num == SpiBusClock[i].num) {
-            bus_clock = SpiBusClock[i].bus_clock;
+    uint32_t cnt = ARRAY_SIZE(SpiInfo);
+    for(i=0;i<cnt;i++) {
+        if(num==SpiInfo[i].num) {
+            Info = &SpiInfo[i];
             break;
         }
     }
+    return Info;
+}
+
+uint32_t spi_num_to_bus_clock(const uint8_t num) {
+    uint32_t bus_clock = 84000000;
+    const SpiInfo_t* Info = SpiGetInfo(num);
+    if(Info) {
+        bus_clock= clock_freq_get(Info->clock_bus);
+    }
+
     return bus_clock;
 }
 
@@ -82,46 +121,16 @@ uint8_t spi_base_2_num(SPI_TypeDef* Instance) {
     return num;
 }
 
-static SPI_TypeDef* SpiNum2Base(uint8_t num) {
-    SPI_TypeDef* Instance = NULL;
-    switch(num) {
-#ifdef HAS_SPI1
-    case 1:
-        Instance = SPI1;
-        break;
-#endif
 
-#ifdef HAS_SPI2
-    case 2:
-        Instance = SPI2;
-        break;
-#endif
-
-#ifdef HAS_SPI3
-    case 3:
-        Instance = SPI3;
-        break;
-#endif
-
-#ifdef HAS_SPI4
-    case 4:
-        Instance = SPI4;
-        break;
-#endif
-#ifdef HAS_SPI5
-    case 5:
-        Instance = SPI5;
-        break;
-#endif
-    default:
-        Instance = NULL;
-        break;
+SPI_TypeDef* SpiNum2Base(const uint8_t num) {
+    SPI_TypeDef* SPIx=NULL;
+    const SpiInfo_t* Info=SpiGetInfo( num);
+    if(Info){
+        SPIx=Info->SPIx;
     }
-    if(NULL == Instance) {
-        LOG_ERROR(SPI, "%u NoInstance", num);
-    }
-    return Instance;
+    return SPIx;
 }
+
 
 uint32_t Index2prescaler(uint8_t prescaler_index) {
     uint32_t prescaler = SPI_BAUDRATEPRESCALER_256;
@@ -181,22 +190,23 @@ static uint32_t BitRate2Prescaler(int32_t bit_rate, int32_t bus_freq) {
     return prescaler;
 }
 
-static uint32_t SpiFirstBit2NrfFirstBit(IfBitOrder_t bit_order) {
+static uint32_t SpiFirstBitToStmFirstBit(const IfBitOrder_t bit_order) {
     uint32_t mode = SPI_FIRSTBIT_MSB;
-    switch((uint8_t)bit_order) {
+    switch(bit_order) {
     case BIT_ORDER_MSB:
         mode = SPI_FIRSTBIT_MSB;
         break;
     case BIT_ORDER_LSB:
         mode = SPI_FIRSTBIT_LSB;
         break;
+    default: break;
     }
     return mode;
 }
 
-static uint32_t SpiChipSelect2NrfChipSelect(ChipSelect_t chip_select) {
+static uint32_t SpiChipSelectToStmChipSelect(ChipSelect_t chip_select) {
     uint32_t ss_mode = SPI_NSS_SOFT;
-    switch((uint8_t)chip_select) {
+    switch(chip_select) {
     case SPI_CHIP_SEL_HW:
         LOG_INFO(SPI, "HwChipSel");
         ss_mode = SPI_NSS_HARD_OUTPUT;
@@ -205,16 +215,14 @@ static uint32_t SpiChipSelect2NrfChipSelect(ChipSelect_t chip_select) {
         LOG_INFO(SPI, "SwChipSel");
         ss_mode = SPI_NSS_SOFT;
         break;
+    default: break;
     }
     return ss_mode;
 }
 
-bool spi_api_write(uint8_t num, const uint8_t* const tx_array, uint32_t tx_array_len) {
+bool spi_mcal_write(uint8_t num, const uint8_t* const tx_array, uint32_t tx_array_len) {
     bool res = false;
-    log_level_t ll = log_level_get(SPI);
-    if(LOG_LEVEL_DEBUG == ll) {
-        print_hex_buf(tx_array, tx_array_len);
-    }
+    LOG_DEBUG(SPI, "Write:%s", ArrayToStr(tx_array,tx_array_len));
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node && tx_array) {
         Node->tx_done = false;
@@ -228,17 +236,18 @@ bool spi_api_write(uint8_t num, const uint8_t* const tx_array, uint32_t tx_array
                 Node->tx_byte_cnt += tx_array_len;
             }
         } else {
-            LOG_ERROR(SPI, "TxErr %u %s", ret, HalStatus2Str(ret));
+            LOG_ERROR(SPI, "TxErr %u %s", ret, HalStatusToStr(ret));
         }
     }
     return res;
 }
 
-bool spi_api_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* rx_array, uint32_t size) {
+bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* rx_array, uint32_t size) {
     bool res = false;
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         Node->txrx_done = false;
+        Node->it_done = false;
         HAL_StatusTypeDef ret = HAL_ERROR;
         ret = HAL_SPI_TransmitReceive_IT(&Node->handle, (uint8_t*)tx_array, rx_array, size);
         if(HAL_OK == ret) {
@@ -249,13 +258,13 @@ bool spi_api_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* rx_
                 Node->tx_byte_cnt += size;
             }
         } else {
-            LOG_ERROR(SPI, "TxRxErr %u %s", ret, HalStatus2Str(ret));
+            LOG_ERROR(SPI, "TxRxErr %u %s", ret, HalStatusToStr(ret));
         }
     }
     return res;
 }
 
-bool spi_api_read(uint8_t num, uint8_t* rx_array, uint32_t rx_array_len) {
+bool spi_mcal_read(uint8_t num, uint8_t* rx_array, uint32_t rx_array_len) {
     bool res = false;
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
@@ -269,7 +278,7 @@ bool spi_api_read(uint8_t num, uint8_t* rx_array, uint32_t rx_array_len) {
                 Node->rx_byte_cnt += rx_array_len;
             }
         } else {
-            LOG_ERROR(SPI, "RxErr %u %s", ret, HalStatus2Str(ret));
+            LOG_ERROR(SPI, "RxErr %u %s", ret, HalStatusToStr(ret));
         }
     }
     return res;
@@ -281,8 +290,8 @@ uint32_t spi_get_clock(uint8_t num) {
     return spi_bit_rate;
 }
 
-SpiPhase_t spi_get_phase(uint8_t num) {
-    SpiPhase_t phase = SPI_PHASE_UNDEF;
+SpiClkIdleLevel_t spi_get_phase(uint8_t num) {
+    SpiClkIdleLevel_t phase = SPI_CLK_IDLE_LEVEL_UNDEF;
     /*TODO*/
     return phase;
 }
@@ -362,77 +371,85 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle) {
 #endif
 }
 
-static uint32_t SpiPhase2Stm32Phase(SpiPhase_t phase) {
-    uint32_t stm_phase = SPI_PHASE_1EDGE;
-    switch((uint8_t)phase) {
-    case SPI_PHASE_0:
-        stm_phase = SPI_PHASE_1EDGE;
-        break;
-    case SPI_PHASE_1:
-        stm_phase = SPI_PHASE_2EDGE;
-        break;
+
+static SpiClockTimingInfo_t* SpiConfigToClockTimingInfo(const SpiConfig_t* const Config) {
+    SpiClockTimingInfo_t* TimingInfo = NULL;
+    uint32_t i = 0;
+    for(i=0;i<4;i++) {
+        if(Config->phase==SpiClockTimingInfo[i].phase) {
+            if(Config->polarity==SpiClockTimingInfo[i].polarity) {
+                TimingInfo = &SpiClockTimingInfo[i];
+                break;
+            }
+        }
     }
-    return stm_phase;
+
+    return TimingInfo;
 }
 
-uint32_t SpiPolarity2Stm32Polarity(SpiPolarity_t polarity) {
-    uint32_t stm_polarity = SPI_POLARITY_LOW;
-    switch((uint8_t)polarity) {
-    case SPI_PHASE_0:
-        stm_polarity = SPI_POLARITY_LOW;
-        break;
-    case SPI_PHASE_1:
-        stm_polarity = SPI_POLARITY_HIGH;
-        break;
+static uint32_t SpiPhaseToStm32Phase(const SpiConfig_t* const Config) {
+    uint32_t clk_phase = SPI_PHASE_1EDGE;
+    SpiClockTimingInfo_t* TimingInfo = SpiConfigToClockTimingInfo(Config) ;
+    if(TimingInfo){
+        clk_phase = TimingInfo->clk_phase;
     }
-    return stm_polarity;
+    return clk_phase;
 }
 
-const SpiInfo_t* SpiGetInfo(uint8_t num){
-	SpiInfo_t* Info=NULL;
-	return Info;
+/*see Figure 194. Data clock timing diagram*/
+uint32_t SpiPolarityToStm32Polarity(const SpiConfig_t* const Config) {
+    uint32_t clk_polarity = SPI_POLARITY_LOW;
+    SpiClockTimingInfo_t* TimingInfo = SpiConfigToClockTimingInfo(Config) ;
+    if(TimingInfo){
+        clk_polarity = TimingInfo->clk_polarity;
+    }
+    return clk_polarity;
 }
+
 
 bool spi_init_one(uint8_t num) {
     bool res = false;
     const SpiConfig_t* Config = SpiGetConfig(num);
     if(Config) {
-        uint32_t bus_clock = spi_num_2_bus_clock(num);
-        LOG_WARNING(SPI, "%u BusClock: %u Hz", num, bus_clock);
+        LOG_WARNING(SPI, "%s", SpiConfigToStr(Config));
+        uint32_t bus_clock = spi_num_to_bus_clock(num);
+        LOG_INFO(SPI, "SPI%u BusClock: %u Hz", num, bus_clock);
+        uint32_t stm_prescaler = BitRate2Prescaler(Config->bit_rate_hz, bus_clock);
         SpiHandle_t* Node = SpiGetNode(num);
         if(Node) {
-            uint32_t stm_prescaler = BitRate2Prescaler(Config->bit_rate_hz, bus_clock);
-            SPI_TypeDef* SPIx = SpiNum2Base(num);
-            if(SPIx) {
-                Node->handle.Instance = SPIx;
+            SpiInfo_t* Info = SpiGetInfo(num);
+            if(Info) {
+                Node->SPIx = Info->SPIx;
+                Node->handle.Instance = Info->SPIx;
                 Node->handle.Init.Mode = SPI_MODE_MASTER;
-                Node->handle.Init.Direction = SPI_DIRECTION_2LINES;
-                Node->handle.Init.DataSize = SPI_DATASIZE_8BIT;
-                Node->handle.Init.CLKPolarity = SpiPolarity2Stm32Polarity(Config->polarity);
-                Node->handle.Init.CLKPhase = SpiPhase2Stm32Phase(Config->phase);
-                Node->handle.Init.NSS = SpiChipSelect2NrfChipSelect(Config->chip_select);
+                Node->handle.Init.CLKPolarity = SpiPolarityToStm32Polarity(Config);
+                Node->handle.Init.CLKPhase = SpiPhaseToStm32Phase(Config);
+
                 Node->handle.Init.BaudRatePrescaler = stm_prescaler;
-                Node->handle.Init.FirstBit = SpiFirstBit2NrfFirstBit(Config->bit_order);
+                Node->handle.Init.DataSize = SPI_DATASIZE_8BIT;
+                Node->handle.Init.Direction =  SpiDirectionToStmDirection(Config->direction);
+                Node->handle.Init.NSS = SpiChipSelectToStmChipSelect(Config->chip_select);
+                Node->handle.Init.FirstBit = SpiFirstBitToStmFirstBit(Config->bit_order);
                 Node->handle.Init.TIMode = SPI_TIMODE_DISABLE;
                 Node->handle.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
                 Node->handle.Init.CRCPolynomial = 10;
                 HAL_StatusTypeDef ret = HAL_SPI_Init(&Node->handle);
                 if(HAL_OK == ret) {
                     res = true;
-                    Node->init_done = true;
-                    LOG_INFO(SPI, "%u InitOk", num);
+                    Node->init = true;
+                    LOG_INFO(SPI, "SPI%u,Init,Ok", num);
                 } else {
+                    LOG_ERROR(SPI, "SPI%u InitErr %s", num, HalStatusToStr(ret));
                     res = false;
-                    LOG_ERROR(SPI, "%u InitErr %s", num, HalStatus2Str(ret));
                 }
-            } else {
-                LOG_ERROR(SPI, "%u InstErr", num);
+            }else {
+                LOG_ERROR(SPI, "SPI%u Info,Err", num);
             }
         } else {
-            LOG_ERROR(SPI, "%u NodeErr", num);
+            LOG_ERROR(SPI, "SPI%u NodeErr", num);
         }
     } else {
-        LOG_DEBUG(SPI, "%u ConfErr", num);
+        LOG_DEBUG(SPI, "SPI%u ConfErr", num);
     }
     return res;
 }

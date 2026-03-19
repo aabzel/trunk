@@ -19,14 +19,24 @@ extern "C" {
 #error "+HAS_MICROCONTROLLER"
 #endif
 
-#ifdef HAS_USB_COMMANDS
+#ifdef HAS_USB_CUSTOM_COMMANDS
 #include "usb_custom_commands.h"
-#else /*HAS_USB_COMMANDS*/
+#else
 #define USB_CUSTOM_COMMANDS
-#endif /*HAS_USB_COMMANDS*/
+#endif
 
-#define USB_COMMANDS           \
-    USB_CUSTOM_COMMANDS
+
+bool usb_re_plug_command(int32_t argc, char* argv[]);
+
+#if 0
+#define USB_DEVICE_COMMANDS     \
+        USB_SERIAL_COMMANDS
+#endif
+
+
+#define USB_COMMANDS                                                     \
+    USB_CUSTOM_COMMANDS                                                  \
+    SHELL_CMD("usb_re_plug", "urp", usb_re_plug_command, "UsbRePlug"),
 
 #ifdef __cplusplus
 }

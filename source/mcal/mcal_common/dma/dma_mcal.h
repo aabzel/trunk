@@ -8,7 +8,7 @@
 #include "dma_config.h"
 #include "dma_diag.h"
 #include "dma_isr.h"
-#ifdef HAS_DMA_COSTOM
+#ifdef HAS_DMA_CUSTOM
 #include "dma_custom_drv.h"
 #endif
 
@@ -20,7 +20,7 @@ bool dma_init_custom(void) ;
 bool dma_init_one(uint8_t num) ;
 bool dma_wait_done(uint8_t num, DmaChannel_t channel);
 
-#ifdef HAS_DMA_COSTOM
+#ifdef HAS_DMA_CUSTOM
 const DmaInfo_t* DmaGetInfo(uint8_t num);
 const DmaChannelInfo_t * DmaChannelGetInfo(uint8_t num, DmaChannel_t channel);
 #endif
@@ -37,6 +37,7 @@ bool dma_channel_init_one_ll(const DmaChannelConfig_t* const Config);
 DmaChannelHandle_t* DmaPadGetNodeItem(DmaPad_t DmaPad);
 DmaChannelHandle_t* DmaChannelGetNode(uint8_t num);
 const DmaChannelConfig_t* DmaChannelGetConfig(uint8_t num);
+const DmaChannelInfo_t * DmaChannelGetInfo(uint8_t num, DmaChannel_t channel);
 DmaChannelHandle_t * DmaChannelGetNodeItem(uint8_t dma_num, DmaChannel_t channel);
 
 /*getters*/

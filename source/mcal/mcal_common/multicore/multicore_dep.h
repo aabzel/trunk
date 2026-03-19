@@ -1,0 +1,13 @@
+#ifndef MULTICORE_DEP_H
+#define MULTICORE_DEP_H
+
+#ifndef HAS_MICROCONTROLLER
+#error "+HAS_MICROCONTROLLER"
+#endif /*HAS_MICROCONTROLLER*/
+
+#ifndef HAS_MULTICORE
+#error "+HAS_MULTICORE"
+#endif /*HAS_MULTICORE*/
+
+
+#endif /* MULTICORE_DEP_H */

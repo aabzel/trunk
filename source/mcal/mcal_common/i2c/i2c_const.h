@@ -4,12 +4,13 @@
 #include "i2c_dep.h"
 
 #define I2C_POLL_PERIOD_US 10000
-#define I2C_SEND_TIME_OUT_MS 100U
-#define I2C_READ_TIME_OUT_MS 100U
+#define I2C_SEND_TIME_OUT_MS (0x0FFFFFFF/400096)//(0x0FFFFFFF)
+#define I2C_READ_TIME_OUT_MS (0xFFFFFFF/400096)
+#define I2C_WRITE_TIME_OUT_MS I2C_SEND_TIME_OUT_MS
 
 typedef enum {
-    I2C_START=0,
-    I2C_STOP=1,
+    I2C_START = 0,
+    I2C_STOP = 1,
 }I2cSignal_t;
 
 #endif /* I2C_GENERAL_CONST_H */

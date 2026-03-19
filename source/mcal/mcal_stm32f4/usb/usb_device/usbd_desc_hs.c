@@ -2,7 +2,7 @@
  *This file implements the USB device descriptors.
  */
 
-#include "usbd_conf.h"
+#include <mcal/mcal_stm32f4/usb/usb_device/Target_old/usbd_conf.h>
 #include "usbd_core.h"
 #include "usbd_desc.h"
 

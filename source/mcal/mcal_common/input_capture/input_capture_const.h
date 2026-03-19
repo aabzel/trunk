@@ -1,0 +1,38 @@
+#ifndef INPUT_CAPTURE_CONST_H
+#define INPUT_CAPTURE_CONST_H
+
+#include "input_capture_dep.h"
+
+typedef enum {
+    INPUT_CAPTURE_CHANNEL_0 = 0,
+    INPUT_CAPTURE_CHANNEL_1 = 1,
+    INPUT_CAPTURE_CHANNEL_2 = 2,
+    INPUT_CAPTURE_CHANNEL_3 = 3,
+    INPUT_CAPTURE_CHANNEL_4 = 4,
+    INPUT_CAPTURE_CHANNEL_5 = 5,
+
+    INPUT_CAPTURE_CHANNEL_UNDEF = 0x55,
+} InputCaptureChannel_t;
+
+typedef enum {
+    INPUT_CAPTURE_MODE_OFF = 0,
+    INPUT_CAPTURE_MODE_ON = 1,
+
+    INPUT_CAPTURE_MODE_UNDEF = 0x55,
+} InputCaptureMode_t;
+
+typedef enum {
+    INPUT_CAPTURE_CNT_DIRR_DOWN = 1,
+    INPUT_CAPTURE_CNT_DIRR_UP = 2,
+    INPUT_CAPTURE_CNT_DIRR_UNDEF = 0,
+} InputCaptureCountDirection_t;
+
+typedef enum {
+    INPUT_CAPTURE_EDGE_FALING = 1,
+    INPUT_CAPTURE_EDGE_RISING = 2,
+    INPUT_CAPTURE_EDGE_BOTH = 3,
+
+    INPUT_CAPTURE_EDGE_UNDEF = 0,
+} InputCapturePolarity_t;
+
+#endif /* INPUT_CAPTURE_CONST_H */

@@ -5,6 +5,10 @@
 #error "+HAS_PWM"
 #endif
 
+#ifndef HAS_TIMER
+#error "+HAS_TIMER"
+#endif
+
 #ifndef HAS_GPIO
 #error "+HAS_GPIO"
 #endif

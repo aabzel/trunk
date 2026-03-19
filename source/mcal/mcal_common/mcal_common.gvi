@@ -10,8 +10,20 @@
     #include "mcal_common/dma/dma.gvi"
 #endif
 
+#ifdef HAS_ERM
+    #include "mcal_common/erm/erm.gvi"
+#endif
+
+#ifdef HAS_EIM
+    #include "mcal_common/eim/eim.gvi"
+#endif
+
 #ifdef HAS_EEPROM
     #include "mcal_common/eeprom/eeprom.gvi"
+#endif
+
+#ifdef HAS_FCSMU
+    #include "mcal_common/fcsmu/fcsmu.gvi"
 #endif
 
 #ifdef HAS_FLASH
@@ -28,6 +40,19 @@
 
 #ifdef HAS_I2S
     #include "mcal_common/i2s/i2s.gvi"
+#endif
+
+#ifdef HAS_LOCKSTEP
+    #include "mcal_common/lockstep/lockstep.gvi"
+#endif
+
+
+#ifdef HAS_MAILBOX
+    #include "mcal_common/mailbox/mailbox.gvi"
+#endif
+
+#ifdef HAS_MULTICORE
+    #include "mcal_common/multicore/multicore.gvi"
 #endif
 
 #ifdef HAS_NVS
@@ -73,7 +98,4 @@
 #ifdef HAS_WDG
     #include "mcal_common/wdg/wdg.gvi"
 #endif
-
-
-
 

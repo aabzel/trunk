@@ -3,22 +3,28 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HAS_ARRAY_DIAG
 #include "array_diag.h"
-#endif
+#include "common_diag.h"
 #include "debug_info.h"
 #include "flash_mcal.h"
+#include "float_diag.h"
 #include "log.h"
 #include "microcontroller_const.h"
 #include "shared_array.h"
 #include "table_utils.h"
+#ifdef HAS_ARRAY_DIAG
+#include "array_diag.h"
+#endif
 #ifdef HAS_LOG_UTILS
 #include "writer_config.h"
 #endif
+#ifdef HAS_FLASH_CUSTOM
+#include "flash_custom.h"
+#endif
 
-const char* MemContent2Str(MemContent_t code) {
+const char* MemContentToStr(const MemContent_t code) {
     const char* name = "?";
-    switch((uint16_t)code) {
+    switch(code) {
     case MEM_CONTENT_BOOTLADER:
         name = "Bootloader";
         break;
@@ -40,43 +46,50 @@ const char* MemContent2Str(MemContent_t code) {
     case MEM_CONTENT_FLASH_FS_PAGE2:
         name = "FlashFsPage2";
         break;
+    default:
+        break;
     }
     return name;
 }
 
-bool flash_diag_usage(uint32_t chunk_size) {
+bool flash_diag_usage(uint32_t flash_start, uint32_t flash_size, uint32_t chunk_size) {
     bool res = false;
-    const table_col_t cols[] = {{5, "No"}, {12, "start"}, {8, "size"}, {8, "busy"}, {8, "usage"}, {8, "total"}};
-    uint32_t cnt = ROM_SIZE / chunk_size;
-    LOG_INFO(LG_FLASH, "number of parts %u PartSize %u byte TotalSize %u byte", cnt, chunk_size, ROM_SIZE);
+    LOG_INFO(LG_FLASH, "Explore:Start:0x%x,Size:%u byte,Chunk:%u byte", flash_start, flash_size, chunk_size);
+    uint32_t chunk_cnt = flash_size / chunk_size;
+    LOG_INFO(LG_FLASH, "ChunkCnt:%u ", chunk_cnt);
+    const table_col_t cols[] = {
+        {5, "No"}, {12, "Start"}, {8, "Size"}, {8, "Busy"}, {8, "Usage"}, {8, "Total"},
+    };
+    LOG_INFO(LG_FLASH, "number of parts %u PartSize %u byte TotalSize %u byte", chunk_cnt, chunk_size, flash_size);
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    uint32_t spare = 0, i = 0;
-    uint32_t busy = 0, num = 0;
+    uint32_t num = 0;
+
+    uint32_t start = 0;
+    start = flash_start;
     uint32_t total = 0;
-    uint32_t start = ROM_START;
-    float usage_pec = 0.0;
-    char temp_str[120];
-
-    for(i = 0; i < cnt; i++) {
-        strcpy(temp_str, TSEP);
-
-        snprintf(temp_str, sizeof(temp_str), "%s 0x%08x " TSEP, temp_str, (unsigned int)start);
-        snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, (unsigned int)chunk_size);
+    uint32_t i = 0;
+    for(i = 0; i < chunk_cnt; i++) {
+        uint32_t busy = 0;
+        uint32_t spare = 0;
         total += chunk_size;
-        busy = 0;
-        spare = 0;
-        usage_pec = 0.0;
-        res = flash_scan((uint8_t*)start, chunk_size, &usage_pec, &spare, &busy);
-        if(res) {
-            snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, (unsigned int)busy);
-            snprintf(temp_str, sizeof(temp_str), "%s %6.2f " TSEP, temp_str, usage_pec);
+        float usage_pec = 0.0;
+        bool scan_res = flash_scan((uint8_t*)start, chunk_size, &usage_pec, &spare, &busy, 0xFF);
+
+        char tempo[120] = {0};
+        strcpy(tempo, TSEP);
+        snprintf(tempo, sizeof(tempo), "%s %3u " TSEP, tempo, num);
+        snprintf(tempo, sizeof(tempo), "%s 0x%08X " TSEP, tempo, start);
+        snprintf(tempo, sizeof(tempo), "%s %6u " TSEP, tempo, chunk_size);
+
+        if(scan_res) {
+            snprintf(tempo, sizeof(tempo), "%s %6u " TSEP, tempo, busy);
+            snprintf(tempo, sizeof(tempo), "%s %6s " TSEP, tempo, FloatToStr(usage_pec, 2));
         } else {
             LOG_ERROR(LG_FLASH, "ScanErr");
         }
-        snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, (unsigned int)total / 1024);
+        snprintf(tempo, sizeof(tempo), "%s %6u " TSEP, tempo, total / 1024);
 
-        cli_printf(TSEP " %3u ", num);
-        cli_printf("%s" CRLF, temp_str);
+        cli_printf("%s" CRLF, tempo);
         num++;
         start += chunk_size;
         res = true;
@@ -99,7 +112,7 @@ bool flash_region_print(uint32_t addr, uint32_t size) {
     bool res = false;
 #ifdef HAS_ARRAY_DIAG
     uint8_t* buff = (uint8_t*)addr;
-    res = print_hex(buff, size);
+    res = array_print_hex(buff, size);
     cli_printf(CRLF);
 #endif
     return res;
@@ -189,6 +202,22 @@ const char* FlashFsmInputToStr(const FlashInput_t input) {
     return name;
 }
 
+const char* FlashConfigToStr(const FlashConfig_t* const Config) {
+    if(Config) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%sStart:0x%x,", text, Config->start);
+        snprintf(text, sizeof(text), "%sSize:%u Byte,", text, Config->size);
+        snprintf(text, sizeof(text), "%sPageSize:%u", text, Config->page_size);
+        snprintf(text, sizeof(text), "%sINT:%s,", text, OnOffToStr(Config->interrupt_on));
+        snprintf(text, sizeof(text), "%sEqSector:%s,", text, OnOffToStr(Config->is_equal_sectors));
+        snprintf(text, sizeof(text), "%sPages:%u", text, Config->page_cnt);
+        snprintf(text, sizeof(text), "%sApp:0x%x,", text, Config->app_start);
+        snprintf(text, sizeof(text), "%sBoot:0x%x,", text, Config->boot_start);
+        snprintf(text, sizeof(text), "%sPageArray:%p,", text, Config->PageArray);
+    }
+    return text;
+}
+
 const char* FlashNodeToStr(const FlashHandle_t* const Node) {
     if(Node) {
         strcpy(text, "");
@@ -208,15 +237,35 @@ bool flash_scan_diag(uint32_t mem_start, uint32_t mem_size) {
     float usage_pec = 0.0f;
     uint32_t spare = 0;
     uint32_t busy = 0;
-    cli_printf("FlashStart: 0x%08x" CRLF, mem_start);
-    cli_printf("FlashSize: %u Byte" CRLF, mem_size);
-    res = mem_scan((uint8_t*)mem_start, mem_size, &usage_pec, &spare, &busy);
+    LOG_INFO(LG_FLASH, "Start:0x%08x,Size:%u Byte", mem_start, mem_size);
+   // res = mem_scan((uint8_t*)mem_start, mem_size, &usage_pec, &spare, &busy);
     log_res(LG_FLASH, res, "Scan");
     if(res) {
-        cli_printf("usage: %f %%" CRLF, usage_pec);
-        cli_printf("spare: %u Bytes %u kBytes" CRLF, spare, spare / 1024);
-        cli_printf("busy : %u Bytes %u kBytes" CRLF, busy, busy / 1024);
+        LOG_INFO(LG_FLASH, "usage:[%s] %%", FloatToStr(usage_pec, 3));
+        LOG_INFO(LG_FLASH, "spare:%u Bytes %u kBytes", spare, spare / 1024);
+        LOG_INFO(LG_FLASH, "busy :%u Bytes %u kBytes", busy, busy / 1024);
     }
+
+    return res;
+}
+
+bool flash_custom_diag(void) {
+    bool res = false;
+#ifdef HAS_FC7300X
+    LOG_INFO(LG_FLASH, "PFLASH_BANK_SIZE:%u Bytes", PFLASH_BANK_SIZE);
+
+    const FlashInfo_t* Info = FlashGetInfo(1);
+    if(Info) {
+        LOG_INFO(LG_FLASH, "Info:[%s]", FlashInfoToStr(Info));
+    }
+#endif
+
+#ifdef HAS_FLASH_CUSTOM
+    const FlashConfig_t* Config = FlashGetConfig(1);
+    if(Config) {
+        LOG_INFO(LG_FLASH, "Config:[%s]", FlashConfigToStr(Config));
+    }
+#endif
 
     return res;
 }

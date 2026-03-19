@@ -55,6 +55,7 @@ bool diag_flash_usage(char* keyWord1, char* keyWord2) {
     return res;
 }
 
+#if 0
 bool diag_flash_prot(char* key_word1, char* key_word2) {
     bool res = false;
     static const table_col_t cols[] = {
@@ -74,13 +75,14 @@ bool diag_flash_prot(char* key_word1, char* key_word2) {
         snprintf(temp_str, sizeof(temp_str), "%s 0x%08x " TSEP, temp_str, (unsigned int)FlashSectorConfig[i].start);
         snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, (unsigned int)FlashSectorConfig[i].size);
         total += FlashSectorConfig[i].size;
-        res = flash_scan((uint8_t*)FlashSectorConfig[i].start, FlashSectorConfig[i].size, &usage_pec, &spare, &busy);
+        res = flash_scan((uint8_t*)FlashSectorConfig[i].start,
+                FlashSectorConfig[i].size, &usage_pec, &spare, &busy, 0xff);
         if(res) {
             snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, (unsigned int)busy);
             snprintf(temp_str, sizeof(temp_str), "%s %5.2f " TSEP, temp_str, usage_pec);
         }
         snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, (unsigned int)total / 1024);
-        snprintf(temp_str, sizeof(temp_str), "%s %12s " TSEP, temp_str, MemContent2Str(FlashSectorConfig[i].content));
+        snprintf(temp_str, sizeof(temp_str), "%s %12s " TSEP, temp_str, MemContentToStr(FlashSectorConfig[i].content));
 
         if(is_contain(temp_str, key_word1, key_word2)) {
             cli_printf(TSEP " %3u ", num);
@@ -91,3 +93,4 @@ bool diag_flash_prot(char* key_word1, char* key_word2) {
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     return res;
 }
+#endif

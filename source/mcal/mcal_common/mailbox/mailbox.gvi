@@ -1,0 +1,4 @@
+
+ARRAY->MAILBOX [color = red]
+TIME->MAILBOX [color = red]
+INTERRUPT->MAILBOX [color = blue]

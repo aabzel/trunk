@@ -8,11 +8,11 @@ extern "C" {
 #include "std_includes.h"
 #include "interrupt_types.h"
 
-//const char* IntPri2Str(int8_t priority);
+//const char* IntPriToStr(int8_t priority);
 const char* InterruptConfigToStr(const InterruptConfig_t* const Config);
 bool interrupt_diag(char* key_word1, char* key_word2);
-const char* InterruptNumToStr(int16_t int_n);
-const char* interrupt2Str(int8_t int_n);
+const char* InterruptNumToStr(const int16_t int_n);
+const char* interruptToStr(int8_t int_n);
 
 #ifdef __cplusplus
 }

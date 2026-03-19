@@ -9,11 +9,15 @@ extern "C" {
 
 #include "i2c_types.h"
 
+#ifdef HAS_I2C_CUSTOM_DIAG
 #include "i2c_custom_diag.h"
+#endif
 
+bool i2c_diag_one(uint8_t num);
+bool i2c_diag(void);
 bool i2c_scan_diag(uint8_t num);
 const char* I2cConfigToStr(const I2cConfig_t* const Config);
-bool i2c_diag(void);
+const char* I2cSignalToStr(const I2cSignal_t Signal);
 
 #ifdef __cplusplus
 }

@@ -19,11 +19,11 @@ bool interrupt_custom_get_command(int32_t argc, char* argv[]) ;
 bool interrupt_custom_set_command(int32_t argc, char* argv[]) ;
 
 #define INTERRUPT_CUSTOM_COMMANDS                                                    \
-    SHELL_CMD("int_diag", "id", interrupt_custom_diag_command, "IntDiag"),           \
-    SHELL_CMD("int_en_irq", "ien", interrupt_custom_enable_irq_command, "IntEnIrq"),           \
-    SHELL_CMD("int_en", "ie", interrupt_custom_enable_command, "IntEnable"),         \
-    SHELL_CMD("int_set", "is", interrupt_custom_set_command, "IntSet"),              \
-    SHELL_CMD("int_get", "ig", interrupt_custom_get_command, "IntGet"),
+    SHELL_CMD("int_diag", "icd", interrupt_custom_diag_command, "IntDiag"),           \
+    SHELL_CMD("int_en_irq", "icen", interrupt_custom_enable_irq_command, "IntEnIrq"),           \
+    SHELL_CMD("int_en", "ice", interrupt_custom_enable_command, "IntEnable"),         \
+    SHELL_CMD("int_set", "ics", interrupt_custom_set_command, "IntSet"),              \
+    SHELL_CMD("int_get", "icg", interrupt_custom_get_command, "IntGet"),
 
 #ifdef __cplusplus
 }

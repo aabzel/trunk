@@ -5,11 +5,9 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "debug_info.h"
-#include "ostream.h"
+
 
 #ifndef HAS_UART
 #error "+HAS_UART"
@@ -19,7 +17,7 @@ extern "C" {
 #error "+HAS_MICROCONTROLLER"
 #endif
 
-#ifdef HAS_UART_CUSTOM
+#ifdef HAS_UART_CUSTOM_COMMANDS
 #include "uart_custom_commands.h"
 #else /*HAS_UART_CUSTOM*/
 #define UART_CUSTOM_COMMANDS

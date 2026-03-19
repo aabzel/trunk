@@ -250,12 +250,13 @@ bool i2s_diag_configs_command(int32_t argc, char* argv[]) {
     if(res) {
         res = i2s_diag_config();
     } else {
-        LOG_ERROR(I2S, "Usage: I2sNum");
-        LOG_INFO(I2S, "I2sNum [0..%u]", I2S_COUNT);
+        LOG_ERROR(I2S, "Usage: i2sdc");
     }
     return res;
 }
-
+/*
+ i2sd 2
+ */
 bool i2s_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -276,6 +277,30 @@ bool i2s_diag_command(int32_t argc, char* argv[]) {
         res = i2s_diag_all();
     } else {
         LOG_ERROR(I2S, "Usage: i2sd i2sNum");
+        LOG_INFO(I2S, "i2sNum [0..%u]", I2S_COUNT);
+    }
+    return res;
+}
+
+bool i2s_diag_rx_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    if(0 <= argc) {
+        res = true;
+        num = 0;
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        if(false == res) {
+            LOG_ERROR(I2S, "ParseErr I2SNum [0-%u]", I2S_COUNT);
+        }
+    }
+
+    if(res) {
+        res = i2s_diag_rx();
+    } else {
+        LOG_ERROR(I2S, "Usage: i2sdx i2sNum");
         LOG_INFO(I2S, "i2sNum [0..%u]", I2S_COUNT);
     }
     return res;
@@ -846,13 +871,13 @@ bool i2s_bus_role_command(int32_t argc, char* argv[]) {
     if(res) {
         switch(argc) {
         case 1: {
-            I2sRole_t bus_role = I2SMODE_UNDEF;
-            res = i2s_bus_role_get(num, &bus_role);
+            // I2sDirRole_t bus_role = I2S_DIR_BUS_MODE_UNDEF;
+            res = i2s_dir_bus_role_get(num, (I2sDirRole_t*)&bus_role);
             LOG_INFO(I2S, "Get,I2S_%u,Role:%s", num, I2sBusRole2Str(bus_role));
         } break;
         case 2: {
-            LOG_INFO(I2S, "Set,I2S_%u,Role:%s", num, I2sBusRole2Str((I2sRole_t)bus_role));
-            res = i2s_bus_role_set(num, (I2sRole_t)bus_role);
+            LOG_INFO(I2S, "Set,I2S_%u,Role:%s", num, I2sBusRole2Str((I2sDirRole_t)bus_role));
+            res = i2s_dir_bus_role_set(num, (I2sDirRole_t)bus_role);
 
         } break;
         }

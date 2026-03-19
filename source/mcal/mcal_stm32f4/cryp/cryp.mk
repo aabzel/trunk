@@ -9,9 +9,9 @@ ifneq ($(CRYP_MK_INC),Y)
     #@echo $(error CRYP_DIR=$(CRYP_DIR))
 
     INCDIR += -I$(CRYP_DIR)
-    OPT += -DCRYP
-    OPT += -DHAS_CRYP_HW
-    OPT += -DHAS_HW_CRYP
+    MCAL_OPT += -DCRYP
+    MCAL_OPT += -DHAS_CRYP_HW
+    MCAL_OPT += -DHAS_HW_CRYP
 
     SOURCES_C += $(CRYP_DIR)/cryp_drv.c
     SOURCES_C += $(CRYP_DIR)/cryp_isr.c
@@ -19,11 +19,11 @@ ifneq ($(CRYP_MK_INC),Y)
     SOURCES_C += $(CRYP_DIR)/cryp_cbc_drv.c
 
     ifeq ($(CRYP1),Y)
-        OPT += -DHAS_CRYP1
+        MCAL_OPT += -DHAS_CRYP1
     endif
 
     ifeq ($(CRYP2),Y)
-        OPT += -DHAS_CRYP2
+        MCAL_OPT += -DHAS_CRYP2
     endif
 
     ifeq ($(CRYP_DIAG),Y)
@@ -34,7 +34,7 @@ ifneq ($(CRYP_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(CRYP_COMMANDS),Y)
             $(info Add CRYP commands)
-            OPT += -DHAS_CRYP_CUSTOM_COMMANDS
+            MCAL_OPT += -DHAS_CRYP_CUSTOM_COMMANDS
             SOURCES_C += $(CRYP_DIR)/cryp_custom_commands.c
         endif
     endif

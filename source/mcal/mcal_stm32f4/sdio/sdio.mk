@@ -1,46 +1,58 @@
-$(info SDIO_MK_INC=$(SDIO_MK_INC) )
-ifneq ($(SDIO_MK_INC),Y)
-    SDIO_MK_INC=Y
-    $(info Add STM32 SDIO driver)
+$(info SDIO_CUSTOM_MK_INC=$(SDIO_CUSTOM_MK_INC) )
+ifneq ($(SDIO_CUSTOM_MK_INC),Y)
+    SDIO_CUSTOM_MK_INC=Y
 
-    SDIO_DIR = $(MCAL_STM32F4_DIR)/sdio
-    #@echo $(error SDIO_DIR=$(SDIO_DIR))
+    SDIO_CUSTOM_DIR = $(MCAL_STM32F4_DIR)/sdio
+    # $(error SDIO_CUSTOM_DIR=$(SDIO_CUSTOM_DIR))
 
-    INCDIR += -I$(SDIO_DIR)
-    DMA=Y
-    #OPT += -DHAS_DMA
-    SOURCES_C += $(SDIO_DIR)/sdio_drv.c
-    SOURCES_C += $(SDIO_DIR)/sdio_isr.c
+    INCDIR += -I$(SDIO_CUSTOM_DIR)
 
-    OPT += -DHAS_SDIO_4BIT
-    OPT += -DHAS_SDIO_CUSTOM
-    OPT += -DHAS_SDIO_ISR
-    OPT += -DHAS_SDIO_INTERRUPT
-    OPT += -DSDMMC_DATATIMEOUT=12000
+    SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_mcal.c
+    MCAL_OPT += -DHAS_SDIO_4BIT
+    MCAL_OPT += -DHAS_SDIO_CUSTOM
 
-    #OPT += -DHAS_SDIO_INT
-    OPT += -DHAS_SD_CARD_INIT
+    ifeq ($(SDIO_DMA),Y)
+          MCAL_OPT += -DHAS_SDIO_DMA
+        SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_dma.c
+    endif
+
+    ifeq ($(SDIO_POLLING),Y)
+        MCAL_OPT += -DHAS_SDIO_POLL
+        SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_poll.c
+    endif
+
+    ifeq ($(SDIO_INTERRUPT),Y)
+       #  $(error SDIO_INTERRUPT=$(SDIO_INTERRUPT))
+        MCAL_OPT += -DHAS_SDIO_ISR
+        MCAL_OPT += -DHAS_SDIO_INTERRUPT
+        SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_int.c
+        SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_isr.c
+    endif
+
+    MCAL_OPT += -DSDMMC_DATATIMEOUT=12000
+
+    #MCAL_OPT += -DHAS_SDIO_INT
+    MCAL_OPT += -DHAS_SD_CARD_INIT
 
     ifeq ($(SDIO1),Y)
-        OPT += -DHAS_SDIO1
+        MCAL_OPT += -DHAS_SDIO1
     endif
 
     ifeq ($(SDIO2),Y)
-        OPT += -DHAS_SDIO2
+        MCAL_OPT += -DHAS_SDIO2
     endif
 
     ifeq ($(DIAG),Y)
         ifeq ($(SDIO_DIAG),Y)
-            OPT += -DHAS_SDIO_DIAG
-            SOURCES_C += $(SDIO_DIR)/sdio_diag.c
+            MCAL_OPT += -DHAS_SDIO_CUSTOM_DIAG
+            SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_custom_diag.c
         endif
     endif
-    
+
     ifeq ($(CLI),Y)
         ifeq ($(SDIO_COMMANDS),Y)
-            OPT += -DHAS_SDIO_COMMANDS
-            SOURCES_C += $(SDIO_DIR)/sdio_commands.c
+            MCAL_OPT += -DHAS_SDIO_CUSTOM_COMMANDS
+            SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_custom_commands.c
         endif
     endif
-    
 endif

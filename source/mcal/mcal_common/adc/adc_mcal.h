@@ -23,6 +23,7 @@ extern "C" {
 bool adc_proc(void);
 bool adc_proc_one(uint8_t num);
 bool adc_channel_proc(void);
+void AdcConvCpltCallback(AdcHandle_t* Node) ;
 
 const AdcChannelInfo_t* AdcChannelToInfo(uint8_t adc_num, AdcChannel_t channel) ;
 

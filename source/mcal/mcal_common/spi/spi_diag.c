@@ -1,15 +1,21 @@
 #include "spi_diag.h"
 
-#include <stdio.h>
-#include <string.h>
-
+#include "common_diag.h"
+#include "debugger.h"
+#include "diag_inc.h"
 #include "gpio_diag.h"
+#include "interfaces_diag.h"
 #include "log.h"
+#include "mcal_diag.h"
+#include "spi_custom_diag.h"
 #include "spi_mcal.h"
 #include "table_utils.h"
 #include "writer_config.h"
+#ifdef HAS_DMA_CHANNEL
+#include "dma_channel_diag.h"
+#endif
 
-const char* ChipSelectSignal2Str(ChipSelectSignal_t state) {
+const char* ChipSelectSignalToStr(ChipSelectSignal_t state) {
     const char* name = "";
     switch(state) {
     case SPI_CHIP_ENABLE:
@@ -24,75 +30,108 @@ const char* ChipSelectSignal2Str(ChipSelectSignal_t state) {
     return name;
 }
 
-const char* SpiPolarity2Str(SpiPolarity_t polarity) {
+const char* SpiPolarityToStr(SpiPolarity_t polarity) {
     const char* name = "?";
-    switch((uint8_t)polarity) {
-    case SPI_POLARITY_LATCH_RISING:
-        name = "RISING";
-        break;
-    case SPI_POLARITY_LATCH_FALING:
-        name = "FALING";
-        break;
+    switch(polarity) {
+    case SPI_POLARITY_LATCH_RISING:        name = "RISING";        break;
+    case SPI_POLARITY_LATCH_FALING:        name = "FALING";        break;
+    default:          name = "?";          break;
     }
     return name;
 }
 
-const char* SpiBitOrder2Str(IfBitOrder_t bit_order) {
+const char* SpiBitOrderToStr(IfBitOrder_t bit_order) {
     const char* name = "?";
-    switch((uint8_t)bit_order) {
-    case SPI_MOST_SIGNIFICANT_BIT_FIRST:
-        name = "Msb1st";
-        break;
-    case SPI_LEAST_SIGNIFICANT_BIT_FIRST:
-        name = "Lsb1st";
-        break;
+    switch(bit_order) {
+    case BIT_ORDER_MSB:        name = "Msb1st";        break;
+    case BIT_ORDER_LSB:        name = "Lsb1st";        break;
+    default:          name = "?";          break;
     }
     return name;
 }
 
-const char* SpiPhase2Str(SpiPhase_t phase) {
+const char* SpiPhaseToStr(const SpiClkIdleLevel_t spi_phase) {
     const char* name = "?";
-    switch((uint8_t)phase) {
-    case SPI_PHASE_0:
-        name = "0";
-        break;
-    case SPI_PHASE_1:
-        name = "1";
-        break;
+    switch(spi_phase) {
+        case SPI_CLK_IDLE_LEVEL_0:        name = "0";        break;
+        case SPI_CLK_IDLE_LEVEL_1:        name = "1";        break;
+        default:          name = "?";          break;
     }
     return name;
 }
 
-const char* SpiChipSelMode2Str(ChipSelect_t chip_select) {
+const char* SpiTxModeToStr(const SpiTxMode_t tx_mode) {
     const char* name = "?";
-    switch((uint8_t)chip_select) {
-    case SPI_CHIP_SEL_HW:
-        name = "HW";
-        break;
-    case SPI_CHIP_SEL_SW:
-        name = "SW";
-        break;
+    switch(tx_mode) {
+    case SPI_TX_FULL_DUPLEX:        name = "TxFullDuplex";        break;
+    case SPI_TX_SIMPLEX_RX:        name = "Tx";        break;
+    case SPI_TX_HALF_DUPLEX_RX:        name = "TxHalfDuplexRx";        break;
+    case SPI_TX_HALF_DUPLEX_TX:        name = "TxHalfDuplexTx";        break;
+    default:        name = "TxHalfDuplexTx";        break;
+    }
+    return name;
+}
+
+const char* SpiChipSelModeToStr(ChipSelect_t chip_select) {
+    const char* name = "?";
+    switch(chip_select) {
+    case SPI_CHIP_SEL_HW:        name = "HW";        break;
+    case SPI_CHIP_SEL_SW:        name = "SW";        break;
+    default:          name = "?";          break;
     }
     return name;
 }
 
 const char* SpiConfigToStr(const SpiConfig_t* const Config) {
-    static char text[200] = "";
     if(Config) {
-        sprintf(text, "SPI%u", Config->num);
+        memset(text, 0, sizeof(text));
+        strcpy(text, "");
+        sprintf(text, "SPI%u,", Config->num);
         snprintf(text, sizeof(text), "%sRate:%u Hz,", text, Config->bit_rate_hz);
-        snprintf(text, sizeof(text), "%sBitOrder:%s,", text, SpiBitOrder2Str(Config->bit_order));
-        snprintf(text, sizeof(text), "%sPha:%s", text, SpiPhase2Str(Config->phase));
-        snprintf(text, sizeof(text), "%sPol:%s,", text, SpiPolarity2Str(Config->polarity));
-        snprintf(text, sizeof(text), "%sChipSel:%s,", text, SpiChipSelMode2Str(Config->chip_select));
+        snprintf(text, sizeof(text), "%sBitOrder:%s,", text, SpiBitOrderToStr(Config->bit_order));
+        snprintf(text, sizeof(text), "%sFrameSize:%u bit,", text, Config->frame_size);
+        snprintf(text, sizeof(text), "%sPha:%s,", text, SpiPhaseToStr(Config->phase));
+        snprintf(text, sizeof(text), "%sPol:%s,", text, SpiPolarityToStr(Config->polarity));
+        snprintf(text, sizeof(text), "%sChipSel:%s,", text, SpiChipSelModeToStr(Config->chip_select));
+        snprintf(text, sizeof(text), "%sTxMode:%s,", text, SpiTxModeToStr(Config->tx_mode));
+        snprintf(text, sizeof(text), "%sINT:%s,", text, OnOffToStr(Config->interrupt_on));
+        snprintf(text, sizeof(text), "%sMvMode:%s,", text, McalMoveModeToStr(Config->move_mode));
         snprintf(text, sizeof(text), "%sIRQp:%u,", text, Config->irq_priority);
         snprintf(text, sizeof(text), "%s%s,", text, Config->name);
-        snprintf(text, sizeof(text), "%sMOSI:%s,", text, GpioPad2Str(Config->PadMosi.byte));
-        snprintf(text, sizeof(text), "%sMISO:%s,", text, GpioPad2Str(Config->PadMiso.byte));
-        snprintf(text, sizeof(text), "%sCS:%s,", text, GpioPad2Str(Config->PadCs.byte));
-        snprintf(text, sizeof(text), "%sSCK:%s,", text, GpioPad2Str(Config->PadSck.byte));
+        snprintf(text, sizeof(text), "%sMOSI:%s,", text, GpioPadToStr(Config->PadMosi));
+        snprintf(text, sizeof(text), "%sMISO:%s,", text, GpioPadToStr(Config->PadMiso));
+        snprintf(text, sizeof(text), "%sCS:%s,", text, GpioPadToStr(Config->PadCs));
+        snprintf(text, sizeof(text), "%sSCK:%s,", text, GpioPadToStr(Config->PadSck));
+        snprintf(text, sizeof(text), "%sRole:%s,", text, IfBusRoleToStr(Config->bus_role));
+#ifdef HAS_SPI_DMA
+        snprintf(text, sizeof(text), "%sDmaTx:%s,", text, DmaPadToStr(Config->DmaTx));
+        snprintf(text, sizeof(text), "%sDmaRx:%s,", text, DmaPadToStr(Config->DmaRx));
+#endif
     }
 
+    return text;
+}
+
+const char* SpiNodeToStr(const SpiHandle_t* const Node) {
+    if(Node) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%sSpin:%u,", text, Node->spin);
+        snprintf(text, sizeof(text), "%sInit:%s,", text, OnOffToStr(Node->init));
+    }
+    return text;
+}
+
+const char* SpiNodeIsrToStr(const SpiHandle_t* const Node) {
+    if(Node) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%sSPI%u,", text, Node->num);
+        snprintf(text, sizeof(text), "%sIt:%u,", text, Node->it_cnt);
+        snprintf(text, sizeof(text), "%sRx:%u,", text, Node->rx_cnt);
+        snprintf(text, sizeof(text), "%sTx:%u,", text, Node->tx_cnt);
+        snprintf(text, sizeof(text), "%sTxRx:%u,", text, Node->txrx_cnt);
+        snprintf(text, sizeof(text), "%sMov:%u,", text, Node->move_cnt);
+        snprintf(text, sizeof(text), "%sErr:%u,", text, Node->error_cnt);
+    }
     return text;
 }
 
@@ -159,6 +198,18 @@ bool spi_diag_int(void) {
         }
     }
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+
+    return res;
+}
+
+bool spi_raw_reg_diag(uint8_t num) {
+    bool res = false;
+    const SpiInfo_t* Info = SpiGetInfo(num);
+    if(Info) {
+        LOG_INFO(SPI, "SPI%u,Base:0x%p", num, Info->SPIx);
+        uint32_t reg_cnt = spi_reg_cnt();
+        res = debug_raw_reg_diag(SPI, (uint32_t)Info->SPIx, SpiRegs, reg_cnt);
+    }
 
     return res;
 }

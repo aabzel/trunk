@@ -3,8 +3,8 @@
 #include "code_generator.h"
 #include "dma_config.h"
 #include "log.h"
+#include "microcontroller_const.h"
 #include "std_includes.h"
-#include "sys_config.h"
 #include "time_mcal.h"
 
 COMPONENT_GET_CONFIG(Dma, dma)
@@ -100,7 +100,7 @@ bool dma_wait_done(uint8_t num, DmaChannel_t channel) {
             if(DMA_TRANSFER_TIMEOUT_MS < diff_ms) {
                 loop = false;
                 res = false;
-                LOG_ERROR(DMA, "DmaTxTimeOut");
+                LOG_ERROR(LG_DMA, "DmaTxTimeOut");
             }
             wait_us(100);
 #endif
@@ -110,34 +110,34 @@ bool dma_wait_done(uint8_t num, DmaChannel_t channel) {
 }
 
 __attribute__((weak)) bool dma_mux_get(uint8_t dma_num, DmaChannel_t channel, uint8_t* const dmamux) {
-    LOG_ERROR(DMA, "%s NotInplemented", __FUNCTION__);
+    LOG_ERROR(LG_DMA, "%s NotInplemented", __FUNCTION__);
     return false;
 }
 
 __attribute__((weak)) bool dma_channel_init_custom(void) {
-    LOG_ERROR(DMA, "%s NotInplemented", __FUNCTION__);
+    LOG_ERROR(LG_DMA, "%s NotInplemented", __FUNCTION__);
     return false;
 }
 
 __attribute__((weak)) bool dma_channel_init_one(uint8_t num) {
-    LOG_ERROR(DMA, "%s NotInplemented", __FUNCTION__);
+    LOG_ERROR(LG_DMA, "%s NotInplemented", __FUNCTION__);
     return false;
 }
 
 __attribute__((weak)) bool dma_init_one(uint8_t num) {
-    LOG_ERROR(DMA, "%s NotInplemented", __FUNCTION__);
+    LOG_ERROR(LG_DMA, "%s NotInplemented", __FUNCTION__);
     return false;
 }
 
 __attribute__((weak)) bool dma_init_custom(void) {
-    LOG_ERROR(DMA, "%s NotInplemented", __FUNCTION__);
+    LOG_ERROR(LG_DMA, "%s NotInplemented", __FUNCTION__);
     return false;
 }
 
 __attribute__((weak)) bool dma_mux_set(uint8_t dma_num, DmaChannel_t channel, uint8_t dmamux) {
-    LOG_ERROR(DMA, "%s NotInplemented", __FUNCTION__);
+    LOG_ERROR(LG_DMA, "%s NotInplemented", __FUNCTION__);
     return false;
 }
 
-COMPONENT_INIT_PATTERT_CNT(DMA, DMA, dma_channel, DMA_CHANNEL_COUNT)
-COMPONENT_INIT_PATTERT_CNT(DMA, DMA, dma, DMA_COUNT)
+COMPONENT_INIT_PATTERT_CNT(LG_DMA, DMA, dma_channel, DMA_CHANNEL_COUNT)
+COMPONENT_INIT_PATTERT_CNT(LG_DMA, DMA, dma, DMA_COUNT)

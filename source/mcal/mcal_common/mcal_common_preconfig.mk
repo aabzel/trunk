@@ -18,8 +18,20 @@ ifneq ($(MCAL_COMMON_PRECONFIG_MK_INC),Y)
         include $(MCAL_COMMON_DIR)/adc/adc_preconfig.mk
     endif
 
+    ifeq ($(LOCKSTEP),Y)
+        include $(MCAL_COMMON_DIR)/lockstep/lockstep_preconfig.mk
+    endif
+
     ifeq ($(DMA),Y)
         include $(MCAL_COMMON_DIR)/dma/dma_preconfig.mk
+    endif
+
+    ifeq ($(ERM),Y)
+        include $(MCAL_COMMON_DIR)/erm/erm_preconfig.mk
+    endif
+
+    ifeq ($(EIM),Y)
+        include $(MCAL_COMMON_DIR)/eim/eim_preconfig.mk
     endif
 
     ifeq ($(EEPROM),Y)
@@ -33,14 +45,18 @@ ifneq ($(MCAL_COMMON_PRECONFIG_MK_INC),Y)
     ifeq ($(GPIO),Y) 
         include $(MCAL_COMMON_DIR)/gpio/gpio_preconfig.mk
     endif
-    
+
     ifeq ($(I2C),Y) 
         include $(MCAL_COMMON_DIR)/i2c/i2c_preconfig.mk
     endif
-    
+
     ifeq ($(I2S),Y) 
         #@echo $(error I2S=$(I2S))
         include $(MCAL_COMMON_DIR)/i2s/i2s_preconfig.mk
+    endif
+
+    ifeq ($(MPU),Y)
+        include $(MCAL_COMMON_DIR)/mpu/mpu_preconfig.mk
     endif
 
     ifeq ($(NVS),Y) 

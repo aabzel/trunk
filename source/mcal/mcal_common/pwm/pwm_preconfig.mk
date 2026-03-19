@@ -1,0 +1,7 @@
+ifneq ($(PWM_PRECONFIG_MK_INC),Y)
+    PWM_PRECONFIG_MK_INC=Y
+
+    GPIO=Y
+    TIMER=Y
+    PWM=Y
+endif
