@@ -1,50 +1,49 @@
 ifneq ($(CODE_BASE_MK),Y)
     CODE_BASE_MK=Y
     $(info CodeBase Config)
-    AUTO_INIT=Y
-    AUTO_VERSION_BUILD=Y
-    DEPENDENCIES_GRAPHVIZ=Y
+    #AUTO_INIT=Y
+    #AUTO_VERSION_BUILD=Y
+    #DEPENDENCIES_GRAPHVIZ=Y
 
-    WORKSPACE_LOC:=$(realpath $(WORKSPACE_LOC) )
-    #@echo $(error WORKSPACE_LOC=$(WORKSPACE_LOC))
+    WORKSPACE_LOC:=$(realpath $(WORKSPACE_LOC))
+    WORKSPACE_LOC:=$(subst /cygdrive/c/,C:/,$(WORKSPACE_LOC))
+    # $(error WORKSPACE_LOC=$(WORKSPACE_LOC))
     include $(WORKSPACE_LOC)/make_scripts/code_base_preconfig.mk
     include $(WORKSPACE_LOC)/make_scripts/verify_build.mk
 
-    #@echo $(error WORKSPACE_LOC=$(WORKSPACE_LOC))
+    # $(error WORKSPACE_LOC=$(WORKSPACE_LOC))
     INCDIR += -I$(WORKSPACE_LOC)
     $(info WORKSPACE_LOC=$(WORKSPACE_LOC))
 
     GIT_SHA := $(shell git rev-parse --short HEAD)
-    OPT += -DGIT_SHA=0x0$(GIT_SHA)
-    OPT += -DHAS_MAKEFILE_BUILD
+    MCAL_OPT += -DGIT_SHA=0x0$(GIT_SHA)
+    MCAL_OPT += -DHAS_MAKEFILE_BUILD
 
     ifeq ($(START_PAUSE),Y)
-        OPT += -DHAS_START_PAUSE
+        MCAL_OPT += -DHAS_START_PAUSE
     endif
 
     ifeq ($(NORTOS),Y)
-        OPT += -DHAS_NORTOS
+        MCAL_OPT += -DHAS_NORTOS
     endif
 
     ifeq ($(MULTIMEDIA),Y)
-        #@echo $(error MULTIMEDIA=$(MULTIMEDIA))
-        OPT += -DHAS_MULTIMEDIA
+        # $(error MULTIMEDIA=$(MULTIMEDIA))
+        MCAL_OPT += -DHAS_MULTIMEDIA
     endif
 
     ifeq ($(DEBUG),Y)
-        OPT += -DHAS_DEBUG
+        MCAL_OPT += -DHAS_DEBUG
     endif
 
     ifeq ($(DIAG),Y)
-        OPT += -DHAS_DIAG
+        MCAL_OPT += -DHAS_DIAG
     endif
 
-    ifeq ($(EHAL),Y)
-        include $(WORKSPACE_LOC)/Include/Include.mk
-    endif
+    include $(WORKSPACE_LOC)/Include/Include.mk
 
     ifeq ($(MODULES),Y)
-        #@echo $(error MODULES=$(MODULES))
+        # $(error MODULES=$(MODULES))
         include $(WORKSPACE_LOC)/modules/modules.mk
     endif
 
@@ -57,7 +56,7 @@ ifneq ($(CODE_BASE_MK),Y)
     endif
 
     ifeq ($(NRF5340),Y)
-        #@echo $(error NRF5340=$(NRF5340))
+        # $(error NRF5340=$(NRF5340))
         include $(WORKSPACE_LOC)/make_scripts/nrf5340_preconfig.mk
     endif
 
@@ -68,104 +67,102 @@ ifneq ($(CODE_BASE_MK),Y)
 
     ifeq ($(MICROCONTROLLER),Y)
         FIRMWARE=Y
-        #@echo $(error MICROCONTROLLER=$(MICROCONTROLLER))
+        # $(error MICROCONTROLLER=$(MICROCONTROLLER))
         include $(WORKSPACE_LOC)/microcontroller/microcontroller.mk
     endif
 
     ifeq ($(BOARD),Y)
-        #@echo $(error BOARD=$(BOARD))
+        # $(error BOARD=$(BOARD))
         include $(WORKSPACE_LOC)/boards/boards.mk
     endif
 
     ifeq ($(PROTOTYPE),Y)
-        #@echo $(error PROTOTYPE=$(PROTOTYPE))
+        # $(error PROTOTYPE=$(PROTOTYPE))
         include $(WORKSPACE_LOC)/prototypes/prototypes.mk
     endif
 
 
-    #@echo $(error TIME=$(TIME))
+    # $(error TIME=$(TIME))
 
 
     #  @echo $(error UART=$(UART))
 
     ifeq ($(X86),Y)
-        SUPER_CYCLE=Y
-        OPT += -DX86
-        OPT += -DHAS_X86
+        MCAL_OPT += -DX86
+        MCAL_OPT += -DHAS_X86
         FLOAT_UTILS=Y
     endif
 
     ifeq ($(X86_64),Y)
-        SUPER_CYCLE=Y
-        #@echo $(error stop)
-        OPT += -DX86_64
-        OPT += -DHAS_X86_64
+        # $(error stop)
+        MCAL_OPT += -DX86_64
+        MCAL_OPT += -DHAS_X86_64
     endif
 
     ifeq ($(THIRD_PARTY),Y)
-        #@echo $(error THIRD_PARTY=$(THIRD_PARTY))
+        # $(error THIRD_PARTY=$(THIRD_PARTY))
         include $(WORKSPACE_LOC)/third_party/third_party.mk
     endif
 
     ifeq ($(CORE),Y)
-        #@echo $(error CORE=$(CORE))
+        # $(error CORE=$(CORE))
         include $(WORKSPACE_LOC)/core/core.mk
     endif
 
     ifeq ($(APPLICATIONS),Y)
-        #@echo $(error APPLICATIONS=$(APPLICATIONS))
+        # $(error APPLICATIONS=$(APPLICATIONS))
         include $(WORKSPACE_LOC)/applications/applications.mk
     endif
 
     ifeq ($(GAMES),Y)
-        #@echo $(error GAMES=$(GAMES))
+        # $(error GAMES=$(GAMES))
         include $(WORKSPACE_LOC)/games/games.mk
     endif
 
     ifeq ($(MCAL),Y)
-        #@echo $(error MCAL=$(MCAL))
+        # $(error MCAL=$(MCAL))
         include $(WORKSPACE_LOC)/mcal/mcal.mk
     endif
 
     ifeq ($(ADT),Y)
-        #@echo $(error ADT=$(ADT))
+        # $(error ADT=$(ADT))
         include $(WORKSPACE_LOC)/adt/adt.mk
     endif
 
     ifeq ($(CONNECTIVITY),Y)
-        #@echo $(error CONNECTIVITY=$(CONNECTIVITY))
+        # $(error CONNECTIVITY=$(CONNECTIVITY))
         include $(WORKSPACE_LOC)/connectivity/connectivity.mk
     endif
 
     ifeq ($(CONTROL),Y)
-        #@echo $(error CONTROL=$(CONTROL))
+        # $(error CONTROL=$(CONTROL))
         include $(WORKSPACE_LOC)/control/control.mk
     endif
     
     ifeq ($(COMPONENTS),Y)
-        #@echo $(error COMPONENTS=$(COMPONENTS))
+        # $(error COMPONENTS=$(COMPONENTS))
         include $(WORKSPACE_LOC)/components/components.mk
     endif
 
     ifeq ($(COMPUTING),Y)
-        #@echo $(error COMPUTING=$(COMPUTING))
+        # $(error COMPUTING=$(COMPUTING))
         include $(WORKSPACE_LOC)/computing/computing.mk
     endif
 
     include $(WORKSPACE_LOC)/compiler/compiler.mk
         
     ifeq ($(SENSITIVITY),Y)
-        #@echo $(error SENSITIVITY=$(SENSITIVITY))
+        # $(error SENSITIVITY=$(SENSITIVITY))
         include $(WORKSPACE_LOC)/sensitivity/sensitivity.mk
     endif
 
     ifeq ($(STORAGE),Y)
-        #@echo $(error STORAGE=$(STORAGE))
+        # $(error STORAGE=$(STORAGE))
         include $(WORKSPACE_LOC)/storage/storage.mk
     endif
 
     ifeq ($(SECURITY),Y)
-        #@echo $(error SECURITY=$(SECURITY))
+        # $(error SECURITY=$(SECURITY))
         include $(WORKSPACE_LOC)/security/security.mk
     endif
 
@@ -174,7 +171,7 @@ ifneq ($(CODE_BASE_MK),Y)
     endif
 
     ifeq ($(COMMON),Y)
-        #@echo $(error COMMON=$(COMMON))
+        # $(error COMMON=$(COMMON))
         include $(WORKSPACE_LOC)/common/common.mk
     endif
 
@@ -194,8 +191,8 @@ ifneq ($(CODE_BASE_MK),Y)
         include $(WORKSPACE_LOC)/leet_code/leet_code.mk
     endif
 
-    ifeq ($(FIRMWARE),Y)
-            #@echo $(error FIRMWARE=$(FIRMWARE))
+    ifneq ($(MAIN_CUSTOM),Y)
+        # $(error FIRMWARE=$(FIRMWARE))
         SOURCES_C += $(WORKSPACE_LOC)/main.c
     endif
 endif

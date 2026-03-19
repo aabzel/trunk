@@ -43,6 +43,6 @@ SOURCES_SA := $(subst .c,.sa, $(SOURCES_C))
 static_analysis_code_base : $(SOURCES_SA)
 
 %.sa:  %.c
-	cd $(dir $<) && pwd && $(STATIC_ANALYSIS_TOOL) -preproc $(SPLINT_OPT) $(INCDIR) $(OPT) $(notdir $<)
+	cd $(dir $<) && pwd && $(STATIC_ANALYSIS_TOOL) -preproc $(SPLINT_OPT) $(INCDIR) $(MCAL_OPT) $(notdir $<)
 
 

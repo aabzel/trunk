@@ -12,7 +12,7 @@
 #include "nvs_const.h"
 
 
-const FlashFsConfig_t FlashFsConfig = {
+const FlashFsConfig_t SECTION_CFG_DATA FlashFsConfig = {
 		.page={{    .offset=MEMORY_MANAGER1_OFFSET, .num=1, .size=MEMORY_MANAGER1_LENGTH,},
 		       {    .offset=MEMORY_MANAGER2_OFFSET, .num=2, .size=MEMORY_MANAGER2_LENGTH,},},
 };

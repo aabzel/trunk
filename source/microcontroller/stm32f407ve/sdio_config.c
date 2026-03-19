@@ -13,7 +13,7 @@
 /*5MHz  - Err*/
 
 /*constant compile-time known settings in Flash*/
-const SdioConfig_t SdioConfig[] = {
+const SdioConfig_t SECTION_CFG_DATA SdioConfig[] = {
     {
         .num = 1,
         .bit_rate_hz = 1000000,

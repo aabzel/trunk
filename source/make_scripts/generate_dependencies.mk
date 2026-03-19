@@ -1,7 +1,7 @@
 #CC=C:/cygwin64/bin/dot.exe
 $(info Generate Dependencies)
 
-CC_DOT="C:/Program Files/Graphviz/bin/dot.exe"
+DOT_TOOL=dot.exe
 RENDER="C:/Program Files/Google/Chrome/Application/chrome.exe"
 
 $(info MK_PATH=$(MK_PATH))
@@ -45,7 +45,7 @@ CPP_GV_OPT += -P
 CPP_GV_OPT += -E
 CPP_GV_OPT += -nostdinc
 
-CPP_GV_OPT += $(OPT)
+CPP_GV_OPT += $(MCAL_OPT)
 
 #DOT_OPT +=-L10
 #DOT_OPT +=-v 
@@ -57,10 +57,11 @@ CPP_GV_OPT += $(OPT)
 #LAYOUT_ENGINE = -Kpatchwork
 LAYOUT_ENGINE = -Kdot
 #DEPENDENCY_GRAPH += generate_dep
+#$(error SOURCES_DOT_RES=$(SOURCES_DOT_RES))
 
 .PHONY: preproc_graphviz
 
-preproc_graphviz: $(SOURCES_DOT) $(ARTIFACTS) sort_config
+preproc_graphviz: $(SOURCES_DOT) $(ARTIFACTS)
 	$(info Preproc...)
 	mkdir -p $(ARTEFACTS_DIR)
 	$(PREPROCESSOR_TOOL) $(SOURCES_DOT)  $(CPP_GV_OPT) $(INCDIR) -E -o $(SOURCES_DOT_RES)
@@ -69,22 +70,22 @@ preproc_graphviz: $(SOURCES_DOT) $(ARTIFACTS) sort_config
 
 generate_dep_jpeg: preproc_graphviz
 	$(info route graph...)
-	$(CC_DOT) -V
-	$(CC_DOT) -Tjpeg $(LAYOUT_ENGINE) $(SOURCES_DOT_RES) -o $(ARTEFACTS_DIR)/$(TARGET).jpeg
+	$(DOT_TOOL) -V
+	$(DOT_TOOL) -Tjpeg $(LAYOUT_ENGINE) $(SOURCES_DOT_RES) -o $(ARTEFACTS_DIR)/$(TARGET).jpeg
 
 .PHONY: generate_dep_pdf
 
 generate_dep_pdf: preproc_graphviz
 	$(info route graph...)
-	$(CC_DOT) -V
-	$(CC_DOT) -Tpdf $(LAYOUT_ENGINE) $(SOURCES_DOT_RES) -o $(ARTEFACTS_DIR)/$(TARGET).pdf
+	$(DOT_TOOL) -V
+	$(DOT_TOOL) -Tpdf $(LAYOUT_ENGINE) $(SOURCES_DOT_RES) -o $(ARTEFACTS_DIR)/$(TARGET).pdf
 
 .PHONY: generate_dep_svg
 
 generate_dep_svg: preproc_graphviz
 	$(info route graph...)
-	$(CC_DOT) -V
-	$(CC_DOT) -Tsvg $(SOURCES_DOT_RES) -o $(ARTEFACTS_DIR)/$(TARGET).svg
+	$(DOT_TOOL) -V
+	$(DOT_TOOL) -Tsvg $(SOURCES_DOT_RES) -o $(ARTEFACTS_DIR)/$(TARGET).svg
 
 .PHONY: generate_dep
 

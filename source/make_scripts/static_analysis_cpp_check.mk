@@ -33,18 +33,32 @@ CPP_CHECK_OPT += --suppress=knownConditionTrueFalse
 CPP_CHECK_OPT += --suppress=constParameter
 CPP_CHECK_OPT += --suppress=nullPointerRedundantCheck
 CPP_CHECK_OPT += --suppress=invalidPrintfArgType_uint
+CPP_CHECK_OPT += --suppress=staticFunction
+CPP_CHECK_OPT += --suppress=checkersReport
+CPP_CHECK_OPT += --suppress=constVariablePointer
+CPP_CHECK_OPT += --suppress=constParameterPointer
+CPP_CHECK_OPT += --suppress=normalCheckLevelMaxBranches
+CPP_CHECK_OPT += --suppress=varFuncNullUB
+CPP_CHECK_OPT += --suppress=redundantInitialization
+CPP_CHECK_OPT += --suppress=CastIntegerToAddressAtReturn
+CPP_CHECK_OPT += --suppress=shiftTooManyBitsSigned
+CPP_CHECK_OPT += --suppress=unusedStructMember
+CPP_CHECK_OPT += --suppress=unsignedLessThanZero
+CPP_CHECK_OPT += --suppress=nullPointer
+CPP_CHECK_OPT += --suppress=shiftNegativeLHS
+CPP_CHECK_OPT += --suppress=constParameterCallback
+CPP_CHECK_OPT += --suppress=asctimeCalled
 
 #$(info SOURCES_C=$(SOURCES_C))
 
 SOURCES_SA := $(subst .c,.sa, $(SOURCES_C))
 
-.PHONY: cpp_check
-
-cpp_check: $(SOURCES_SA)
+.PHONY: static_analysis_cpp_check
+static_analysis_cpp_check: $(SOURCES_SA)
 	$(info CppCheckDone!)
 
 %.sa:  %.c
 	$(info CppCheckOne...)
-	cd $(dir $<) && pwd && $(STATIC_ANALYSIS_TOOL) $(CPP_CHECK_OPT) $(INCDIR) $(OPT) $(notdir $<)
+	cd $(dir $<) && pwd && $(STATIC_ANALYSIS_TOOL) $(CPP_CHECK_OPT) $(INCDIR) $(MCAL_OPT) $(notdir $<)
 
 

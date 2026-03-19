@@ -1,4 +1,5 @@
-CSTANDARD = -std=c99
+CSTANDARD = -std=c11
+SOURCES_TOTAL_C =
 #CSTANDARD = -std=c11 c99
 #CSTANDARD = -std=gnu99
 
@@ -6,7 +7,7 @@ mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 $(info mkfile_path:$(mkfile_path) )
 #$(info MAKE:$(MAKE))
 #$(info MAKEFILE_LIST:$(MAKEFILE_LIST))
-MK_PATH := $(subst /cygdrive/c/,C:/, $(MK_PATH))
+MK_PATH:=$(subst /cygdrive/c/,C:/,$(MK_PATH))
 $(info MK_PATH=$(MK_PATH))
 
 BUILD_DIR=build
@@ -41,6 +42,7 @@ endif
 
 INCDIR := $(subst /cygdrive/c/,C:/, $(INCDIR))
 #@echo $(error INCDIR=$(INCDIR))
+#$(error SOURCES_C=$(SOURCES_C))
 #$(error SOURCES_DIAG_C=$(SOURCES_DIAG_C))
 #$(error SOURCES_THIRD_PARTY_C=$(SOURCES_THIRD_PARTY_C))
 SOURCES_TOTAL_C += $(SOURCES_C)
@@ -69,8 +71,8 @@ AS_INCLUDES =
 # OPT_C += -O0
 
 include $(WORKSPACE_LOC)/make_scripts/compiler_options.mk
-#include $(WORKSPACE_LOC)/make_scripts/error_options.mk
-#include $(WORKSPACE_LOC)/make_scripts/warning_options.mk
+include $(WORKSPACE_LOC)/make_scripts/compiler_errors.mk
+include $(WORKSPACE_LOC)/make_scripts/warning_options.mk
 include $(WORKSPACE_LOC)/make_scripts/linker_options.mk
 
 #OPT_C += -finline-small-functions
@@ -80,12 +82,18 @@ include $(WORKSPACE_LOC)/make_scripts/linker_options.mk
 #OPT_C += -fstack-usage
 #OPT_C += -fzero-initialized-in-bss
 
-OPT += $(OPT_C)
+MCAL_OPT += $(OPT_C)
+CFLAGS += $(MCAL_OPT)
+
+ifeq ($(GCC), Y)
+    @echo $(error GCC=$(GCC))
+    CFLAGS += $(COMPILE_GCC_OPT)
+endif
 
 ASFLAGS += $(MCU)
 ASFLAGS += $(AS_DEFS)
 ASFLAGS += $(AS_INCLUDES)
-ASFLAGS += $(OPT)
+ASFLAGS += $(MCAL_OPT)
 ASFLAGS += $(COMPILE_OPT)
 ASFLAGS += -Wall
 ASFLAGS +=-fdata-sections
@@ -94,10 +102,10 @@ ASFLAGS += -ffunction-sections
 
 #CFLAGS += $(CSTANDARD)
 #CFLAGS += -Wformat-overflow=1
-#CFLAGS += $(MCU) $(OPT) -fdata-sections -ffunction-sections $(INCDIR)
+#CFLAGS += $(MCU) $(MCAL_OPT) -fdata-sections -ffunction-sections $(INCDIR)
 
 
-#CPP_FLAGS += $(CSTANDARD) $(INCDIR)  $(OPT)
+#CPP_FLAGS += $(CSTANDARD) $(INCDIR)  $(MCAL_OPT)
 # LDFLAGS
 
 
@@ -106,17 +114,28 @@ ASFLAGS += -ffunction-sections
 #@echo $(error LDSCRIPT=$(LDSCRIPT))
 LIBDIR = 
 
+ifeq ($(ARCHIVE_ARTIFACTS), Y)
+    EXTRA_TARGETS += archive_artifacts
+endif
 
-EXTRA_TARGETS += sort_config
-EXTRA_TARGETS += archive_artifacts
-EXTRA_TARGETS += generate_definitions
+ifeq ($(GENERATE_DEFINITIONS), Y)
+    EXTRA_TARGETS += generate_definitions
+endif
+
 ifeq ($(AUTO_INIT), Y)
     EXTRA_TARGETS += auto_init
 endif
 
+ifeq ($(SORT_CONFIG), Y)
+    EXTRA_TARGETS += sort_config
+endif
+
 ARTIFACTS += $(BUILD_DIR)/$(TARGET).bin
 ARTIFACTS += $(BUILD_DIR)/$(TARGET).hex
-ARTIFACTS += $(BUILD_DIR)/$(TARGET).elf
+ARTIFACTS += $(BUILD_DIR)/$(MAIN_TARGET_FILE)
+
+#@echo $(error ARTIFACTS=$(ARTIFACTS))
+
 
 .PHONY: all
 
@@ -137,31 +156,67 @@ OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_TOTAL_C:.c=.o)))
 vpath %.c $(sort $(dir $(SOURCES_TOTAL_C)))
 
 # list of ASM program objects
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_ASM:.S=.o)))
-vpath %.S $(sort $(dir $(SOURCES_ASM)))
+ifeq ($(GCC),Y)
+    OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_ASM:.S=.o)))
+    #@echo $(error OBJECTS=$(OBJECTS))
+endif
+
+
+#@echo $(error SOURCES_ASM=$(SOURCES_ASM))
+ASM_OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_ASM:.s=.o)))
+#@echo $(error ASM_OBJECTS=$(ASM_OBJECTS))
+ELF_OBJECTS  += $(OBJECTS)
+
+
+#@echo $(error ASM_OBJECTS=$(ASM_OBJECTS))
+ELF_OBJECTS  += $(ASM_OBJECTS)
+#@echo $(error ELF_OBJECTS=$(ELF_OBJECTS))
+ifeq ($(GCC),Y)
+    vpath %.S $(sort $(dir $(SOURCES_ASM)))
+endif
+
+ifeq ($(IAR),Y)
+    vpath %.s $(sort $(dir $(SOURCES_ASM)))
+endif
 
 TOTAL_FILES := $(words $(OBJECTS))
 $(info TOTAL_FILES:$(TOTAL_FILES) )
 
+#@echo $(error CFLAGS=$(CFLAGS))
+#@echo $(error COMPILE_GCC_OPT=$(COMPILE_GCC_OPT))
+ifeq ($(IAR),Y)
+$(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR) 
+	@echo Compile Asm $@
+	#@ $(CC) -c -MD $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	$(AS) -c  $(ASM_FLAGS)  $< -o $@
+endif
+
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
 	$(eval CURRENT_CNT=$(shell echo $$(($(CURRENT_CNT)+1))))
 	@echo Compiling $(CURRENT_CNT)/$(TOTAL_FILES) $@
-	@ $(CC) -c -MD $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
-	@#$(CC) -c -MD $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	#@ $(CC) -c -MD $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	$(CC) -c  $(CFLAGS)  $< -o $@
 
 $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+
+
+#@echo $(error MAIN_TARGET_FILE=$(MAIN_TARGET_FILE))
+#@echo $(error LDFLAGS=$(LDFLAGS))
+$(BUILD_DIR)/$(MAIN_TARGET_FILE): $(ELF_OBJECTS) Makefile $(BUILD_DIR)
+	@echo GenerateMainArtifact $@
+	$(LD) $(ELF_OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
 
-$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
+$(BUILD_DIR)/%.hex: $(BUILD_DIR)/$(MAIN_TARGET_FILE) | $(BUILD_DIR)
+	@echo GenerateHex $@
 	$(HEX) $< $@
-	
-$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	$(BIN) $< $@	
 
+#@echo $(error MAIN_TARGET_FILE=$(MAIN_TARGET_FILE))
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/$(MAIN_TARGET_FILE)   $(BUILD_DIR)
+	@echo GenerateBin $@
+	$(BIN) $< $@
 
 ifeq ($(AUTO_INIT), Y)
     include $(WORKSPACE_LOC)/make_scripts/auto_init.mk
@@ -183,12 +238,6 @@ ifeq ($(STATIC_ANALYSIS_CPP_CHECK), Y)
     include $(WORKSPACE_LOC)/make_scripts/static_analysis_cpp_check.mk
 endif
 
-include $(WORKSPACE_LOC)/make_scripts/archive_artifacts.mk
-include $(WORKSPACE_LOC)/make_scripts/sort_config.mk
-include $(WORKSPACE_LOC)/make_scripts/clang_format.mk
-include $(WORKSPACE_LOC)/make_scripts/flash_target.mk
-
-
 ifeq ($(AUTO_VERSION_BUILD), Y)
     include $(WORKSPACE_LOC)/make_scripts/auto_version_target.mk
 endif
@@ -205,6 +254,17 @@ $(BUILD_DIR):
 
 clean:
 	-rm -fR $(BUILD_DIR)
+
+ifeq ($(SORT_CONFIG), Y)
+    include $(WORKSPACE_LOC)/make_scripts/sort_config.mk
+endif
+
+ifeq ($(ARCHIVE_ARTIFACTS), Y)
+    include $(WORKSPACE_LOC)/make_scripts/archive_artifacts.mk
+endif
+
+include $(WORKSPACE_LOC)/make_scripts/clang_format.mk
+include $(WORKSPACE_LOC)/make_scripts/flash_target.mk
 
 # dependencies
 -include $(wildcard $(BUILD_DIR)/*.d)

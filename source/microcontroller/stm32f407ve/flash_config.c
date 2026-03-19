@@ -7,10 +7,11 @@
 #include "data_utils.h"
 #include "flash_types.h"
 #include "macro_utils.h"
+#include "microcontroller_const.h"
 
 FlashHandle_t FlashInstance = {0};
 
-const FlashSectorConfig_t FlashSectorConfig[] = {
+const MemoryConfig_t SECTION_CFG_DATA FlashSectorConfig[] = {
     {
         .sector = 0,
         .start = 0x08000000,
@@ -61,20 +62,43 @@ const FlashSectorConfig_t FlashSectorConfig[] = {
     },
 };
 
-const FlashConfig_t FlashConfig = {
-    .boot_start = BOOT_START_ADDRESS,
-    .app_start = APP_START_ADDRESS,
+const FlashConfig_t SECTION_CFG_DATA FlashConfig = {
     .start = ROM_START,
-    .end = ROM_END,
     .size = ROM_SIZE,
+    .app_start = APP_START_ADDRESS,
+    .boot_start = BOOT_START_ADDRESS,
+ //   .end = ROM_END,
     .PageArray = FlashSectorConfig,
     .page_cnt= ARRAY_SIZE(FlashSectorConfig),
     .page_size = 16* K_BYTES,
     .is_equal_sectors = false,
+    .interrupt_on = false,
 };
 
 uint32_t flash_get_sector_cnt(void) {
     uint32_t cnt = 0;
     cnt = ARRAY_SIZE(FlashSectorConfig);
+    return cnt;
+}
+
+const MemoryConfig_t RamSectorConfig[] = {
+    {
+        .sector = 0,          // CCMRAM
+        .start = 0x10000000,  //
+        .size = 64 * K_BYTES, //
+        .content = MEM_CONTENT_SRAM,
+    },
+    {
+        .sector = 1,           // RAM
+        .start = 0x20000000,   //
+        .size = 128 * K_BYTES, //
+        .content = MEM_CONTENT_SRAM,
+    },
+
+};
+
+uint32_t ram_get_sector_cnt(void) {
+    uint32_t cnt = 0;
+    cnt = ARRAY_SIZE(RamSectorConfig);
     return cnt;
 }

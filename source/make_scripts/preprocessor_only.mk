@@ -18,7 +18,7 @@ preprocess_code_base : preprocess_code_base_init $(SOURCES_PP)
 
 %.pp:  %.c
 	$(info Preproc...)
-	$(PREPROCESSOR_TOOL) -E $(INCDIR) $(OPT) $< -o $@
+	$(PREPROCESSOR_TOOL) -E $(INCDIR) $(MCAL_OPT) $< -o $@
 	mv $@ $(PREPROC_DIR)
 
 .PHONY: preprocess_code_base_init

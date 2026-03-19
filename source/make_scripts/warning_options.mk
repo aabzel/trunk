@@ -1,19 +1,22 @@
 
 
-OPT_C += -Wextra
+COMPILE_GCC_OPT += -Wextra
 
-#OPT_C += -Wpedantic
-#OPT_C += -Wsign-compare
+#COMPILE_GCC_OPT += -Wpedantic
+#COMPILE_GCC_OPT += -Wsign-compare
 
-#OPT_C += -Werror=int-conversion
+#COMPILE_GCC_OPT += -Werror=int-conversion
+ifeq ($(EXTRA_VERIFICATION),Y)
+    COMPILE_OPT += -Wconversion
+endif
 
 
-OPT_C += -Wno-sign-compare
-OPT_C += -Wno-unused-parameter
-OPT_C += -Wno-implicit-fallthrough
-OPT_C += -Wno-stringop-truncation
-OPT_C += -Wno-format-truncation
-OPT_C += -Wno-restrict
-OPT_C += -Wno-format
-OPT_C += -Wno-cpp #TODO temp
-OPT_C += -Wno-discarded-qualifiers
+COMPILE_GCC_OPT += -Wno-sign-compare
+COMPILE_GCC_OPT += -Wno-unused-parameter
+COMPILE_GCC_OPT += -Wno-implicit-fallthrough
+COMPILE_GCC_OPT += -Wno-stringop-truncation
+COMPILE_GCC_OPT += -Wno-format-truncation
+COMPILE_GCC_OPT += -Wno-restrict
+COMPILE_GCC_OPT += -Wno-format
+COMPILE_GCC_OPT += -Wno-cpp #TODO temp
+COMPILE_GCC_OPT += -Wno-discarded-qualifiers

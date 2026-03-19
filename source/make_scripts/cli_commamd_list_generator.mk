@@ -28,7 +28,7 @@ cli_commamd_list_generator : preprocess_code_base_init  cli_general_config.pp
 
 cli_general_config.pp: $(CLI_COMMAND_FILE)
 	$(info Preproc...)
-	$(PREPROCESSOR_TOOL) $(PREPROCESSOR_OPT) $(INCDIR) $(OPT) $^ -o $@
+	$(PREPROCESSOR_TOOL) $(PREPROCESSOR_OPT) $(INCDIR) $(MCAL_OPT) $^ -o $@
 	mv $@ $(PREPROC_DIR)
 
 preprocess_code_base_init: 

@@ -6,7 +6,7 @@
 static char FifoData[100] = {0};
 static char LineData[100] = {0};
 
-const StringReaderConfig_t StringReaderConfig[] = {{
+const StringReaderConfig_t SECTION_CFG_DATA StringReaderConfig[] = {{
     .num = 1,
     .valid = true,
     .echo = true,

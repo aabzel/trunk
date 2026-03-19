@@ -1,52 +1,52 @@
-#OPT_C += -Werror=cast-align
-#OPT_C += -Werror=conversion
-#OPT_C += -Werror=duplicate-decl-specifier
-#OPT_C += -Werror=duplicated-branches # usefull
-#OPT_C += -Werror=enum-conversion
-#OPT_C += -Werror=sign-compare
-#OPT_C += -Werror=sign-conversion
-#OPT_C += -Werror=string-compare
-OPT_C += -Werror=address
-OPT_C += -Werror=array-bounds=1
-OPT_C += -Werror=comment
-OPT_C += -Werror=duplicated-cond
-OPT_C += -Werror=empty-body
-OPT_C += -Werror=enum-compare
-OPT_C += -Werror=float-equal
-OPT_C += -Werror=logical-op
-OPT_C += -Werror=incompatible-pointer-types
-OPT_C += -Werror=maybe-uninitialized
-OPT_C += -Werror=misleading-indentation
-OPT_C += -Werror=missing-field-initializers
-OPT_C += -Werror=missing-parameter-type
-OPT_C += -Werror=old-style-declaration
-OPT_C += -Werror=overflow
-OPT_C += -Werror=override-init
-OPT_C += -Werror=pointer-sign
-OPT_C += -Werror=duplicate-decl-specifier
-OPT_C += -Werror=return-type
-OPT_C += -Werror=shift-count-overflow
-OPT_C += -Werror=shift-negative-value
-OPT_C += -Werror=switch
-OPT_C += -Werror=type-limits
-OPT_C += -Werror=missing-braces
-OPT_C += -Werror=uninitialized
-OPT_C += -Werror=unused-but-set-parameter
-OPT_C += -Werror=unused-but-set-variable
-OPT_C += -Werror=unused-function
-OPT_C += -Werror=unused-value
-OPT_C += -Werror=unused-variable
-OPT_C += -Werror=int-conversion # StrDup
-#OPT_C += -Werror=redundant-decls # freeRTOSErr
-OPT_C += -Werror=implicit-function-declaration
+#COMPILE_GCC_OPT += -Werror=cast-align
+#COMPILE_GCC_OPT += -Werror=conversion
+#COMPILE_GCC_OPT += -Werror=duplicate-decl-specifier
+#COMPILE_GCC_OPT += -Werror=duplicated-branches # usefull
+#COMPILE_GCC_OPT += -Werror=enum-conversion
+#COMPILE_GCC_OPT += -Werror=sign-compare
+#COMPILE_GCC_OPT += -Werror=sign-conversion
+#COMPILE_GCC_OPT += -Werror=string-compare
+COMPILE_GCC_OPT += -Werror=address
+COMPILE_GCC_OPT += -Werror=array-bounds=1
+COMPILE_GCC_OPT += -Werror=comment
+COMPILE_GCC_OPT += -Werror=duplicated-cond
+COMPILE_GCC_OPT += -Werror=empty-body
+COMPILE_GCC_OPT += -Werror=enum-compare
+COMPILE_GCC_OPT += -Werror=float-equal
+COMPILE_GCC_OPT += -Werror=logical-op
+COMPILE_GCC_OPT += -Werror=incompatible-pointer-types
+COMPILE_GCC_OPT += -Werror=maybe-uninitialized
+COMPILE_GCC_OPT += -Werror=misleading-indentation
+COMPILE_GCC_OPT += -Werror=missing-field-initializers
+COMPILE_GCC_OPT += -Werror=missing-parameter-type
+COMPILE_GCC_OPT += -Werror=old-style-declaration
+COMPILE_GCC_OPT += -Werror=overflow
+COMPILE_GCC_OPT += -Werror=override-init
+COMPILE_GCC_OPT += -Werror=pointer-sign
+COMPILE_GCC_OPT += -Werror=duplicate-decl-specifier
+COMPILE_GCC_OPT += -Werror=return-type
+COMPILE_GCC_OPT += -Werror=shift-count-overflow
+COMPILE_GCC_OPT += -Werror=shift-negative-value
+COMPILE_GCC_OPT += -Werror=switch
+COMPILE_GCC_OPT += -Werror=type-limits
+COMPILE_GCC_OPT += -Werror=missing-braces
+COMPILE_GCC_OPT += -Werror=uninitialized
+COMPILE_GCC_OPT += -Werror=unused-but-set-parameter
+COMPILE_GCC_OPT += -Werror=unused-but-set-variable
+COMPILE_GCC_OPT += -Werror=unused-function
+COMPILE_GCC_OPT += -Werror=unused-value
+COMPILE_GCC_OPT += -Werror=unused-variable
+COMPILE_GCC_OPT += -Werror=int-conversion # StrDup
+#COMPILE_GCC_OPT += -Werror=redundant-decls # freeRTOSErr
+COMPILE_GCC_OPT += -Werror=implicit-function-declaration
 
 CFLAGS += -Wall
 
 ifneq ($(EHAL),Y)
    ifneq ($(EHAL_MCAL),Y)
-        OPT_C += -Werror=unused-but-set-variable
-        #OPT_C += -Werror=implicit-function-declaration
-        OPT_C += -Werror=unused-variable
+        COMPILE_GCC_OPT += -Werror=unused-but-set-variable
+        #COMPILE_GCC_OPT += -Werror=implicit-function-declaration
+        COMPILE_GCC_OPT += -Werror=unused-variable
     endif
 endif
 
