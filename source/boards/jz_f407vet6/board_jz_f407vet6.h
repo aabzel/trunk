@@ -1,0 +1,14 @@
+#ifndef BOARD_JZ_F407VET6_H407_H
+#define BOARD_JZ_F407VET6_H407_H
+
+#include "stm32f407ve.h"
+
+#define BOARD_NAME "JZ-F407VET6"
+
+#define BUTTON_COUNT 3
+#define LED_COUNT 3
+
+#define XTALL_FREQ_HZ (HSE_VALUE)
+
+
+#endif /* BOARD_JZ_F407VET6_H407_H   */
