@@ -49,6 +49,10 @@ ifneq ($(MCAL_STM32F4_DRV_MK_INC),Y)
         # $(error CLOCK_OUT=$(CLOCK_OUT)) 
         include $(MCAL_CUSTOM_DIR)/clock_out/clock_out.mk
     endif
+
+    ifeq ($(DAC),Y)
+        include $(MCAL_CUSTOM_DIR)/dac/dac.mk
+    endif
     
     ifeq ($(DMA),Y)   
         # $(error DMA=$(DMA))

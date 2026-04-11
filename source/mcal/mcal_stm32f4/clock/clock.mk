@@ -13,8 +13,8 @@ ifneq ($(CLOCK_CUSTOM_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(CLOCK_DIAG),Y)
-            MCAL_OPT += -DHAS_CLOCK_DIAG
-            SOURCES_C += $(CLOCK_CUSTOM_DIR)/clock_custom_diag.c
+            MCAL_OPT += -DHAS_CLOCK_CUSTOM_DIAG
+            SOURCES_DIAG_C += $(CLOCK_CUSTOM_DIR)/clock_custom_diag.c
         endif
     endif
 

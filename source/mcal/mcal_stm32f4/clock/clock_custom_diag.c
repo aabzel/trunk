@@ -130,3 +130,36 @@ bool clock_custom_diag(void) {
     LOG_INFO(CLK, "InstrPerMs %u", instrictions / 100);
     return res;
 }
+
+const char* Stm32RccCsrToStr(const Stm32RccCsr_t* const Reg) {
+    static char temp_str[80] = "";
+    strcpy(temp_str, "Rst");
+    if(Reg->BORRSRSTF) {
+        snprintf(temp_str, sizeof(temp_str), "%s,POR/PDRorBOR", temp_str);
+    }
+    if(Reg->PINRSTF) {
+        snprintf(temp_str, sizeof(temp_str), "%s,NRST", temp_str);
+    }
+
+    if(Reg->PORRSTF) {
+        snprintf(temp_str, sizeof(temp_str), "%s,POR/PDR", temp_str);
+    }
+
+    if(Reg->SFTRSTF) {
+        snprintf(temp_str, sizeof(temp_str), "%s,SW", temp_str);
+    }
+
+    if(Reg->IWDGRSTF) {
+        snprintf(temp_str, sizeof(temp_str), "%s,IWDT", temp_str);
+    }
+
+    if(Reg->WWDGRSTF) {
+        snprintf(temp_str, sizeof(temp_str), "%s,WWDG", temp_str);
+    }
+
+    if(Reg->LPWRRSTF) {
+        snprintf(temp_str, sizeof(temp_str), "%s,LP", temp_str);
+    }
+
+    return temp_str;
+}

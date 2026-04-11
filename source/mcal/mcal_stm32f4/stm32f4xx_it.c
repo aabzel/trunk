@@ -42,7 +42,6 @@ void CAN2_RX1_IRQHandler(void) { CANx_IRQHandler(2); }
 
 #endif
 
-
 void FSMC_IRQHandler(void) {}
 void WWDG_IRQHandler(void) {}
 void RCC_IRQHandler(void) {}
@@ -727,7 +726,6 @@ void OTG_FS_IRQHandler(void) {
 #endif
 }
 
-
 void OTG_HS_EP1_OUT_IRQHandler(void) {
 #ifdef HAS_USB_INTERRUPT
     UsbHandle_t* Node = NULL;
@@ -748,7 +746,6 @@ void OTG_HS_EP1_OUT_IRQHandler(void) {
 #endif
 }
 
-
 void OTG_HS_IRQHandler(void) {
 #ifdef HAS_USB_INTERRUPT
     UsbHandle_t* Node = UsbGetNodeBySpeed(USB_MCAL_SPEED_HS);
@@ -756,7 +753,7 @@ void OTG_HS_IRQHandler(void) {
 #ifdef HAS_USB_DEVICE
         // HAL_PCD_IRQHandler(&PcdHandle_HS);
         if(USB_MCAL_ROLE_DEVICE == Node->role) {
-            HAL_PCD_IRQHandler((PCD_HandleTypeDef *) &(Node->PcdHandle));
+            HAL_PCD_IRQHandler((PCD_HandleTypeDef*)&(Node->PcdHandle));
         }
 #endif
 

@@ -1,7 +1,7 @@
 #include "stm32f4xx_hal_msp.h"
 
-#include "stm32f4xx_hal.h"
 #include "compiler_const.h"
+#include "stm32f4xx_hal.h"
 
 #ifdef HAS_DWT
 #include "dwt_mcal.h"
@@ -17,7 +17,7 @@ uint32_t HAL_GetTick(void) {
     uint32_t ret_val = 0;
 #ifdef HAS_SYSTICK
     bool res = systick_is_run();
-    if (res) {
+    if(res) {
         ret_val = uwTick;
     } else {
         ret_val = local_cnt;
@@ -25,7 +25,7 @@ uint32_t HAL_GetTick(void) {
 #endif
 
 #ifdef HAS_DWT
-    ret_val= dwt_get_time_ms32(1);
+    ret_val = dwt_get_time_ms32(1);
 #endif
 
     return ret_val;
@@ -36,14 +36,14 @@ void HAL_Delay(uint32_t Delay) {
     uint32_t wait = Delay;
 
     /* Add a freq to guarantee minimum wait */
-    if (wait < HAL_MAX_DELAY) {
-        wait += (uint32_t) (uwTickFreq);
+    if(wait < HAL_MAX_DELAY) {
+        wait += (uint32_t)(uwTickFreq);
     }
 
-    while (1) {
+    while(1) {
         uint32_t cur = HAL_GetTick();
         uint32_t diff = cur - tickstart;
-        if (wait < diff) {
+        if(wait < diff) {
             break;
         }
     }

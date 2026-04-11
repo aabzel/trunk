@@ -137,7 +137,23 @@ typedef union {
     };
 }RccApb2PeriphClkEnReg_t;
 
-
+/*RCC clock control & status register (RCC_CSR)*/
+typedef union{
+    uint32_t dword;
+    struct{
+        uint32_t LSION:1; /*     Bit 0 LSION: Internal low-speed oscillator enable       */
+        uint32_t LSIRDY:1; /*    Bit 1 LSIRDY: Internal low-speed oscillator ready        */
+        uint32_t RES:22; /*    Bits 23:2 Reserved, must be kept at reset value.        */
+        uint32_t RMVF:1; /* Bit 24 RMVF: Remove reset flag           */
+        uint32_t BORRSRSTF:1; /*  Bit 25 BORRSTF: BOR reset flag          */
+        uint32_t PINRSTF:1; /*   Bit 26 PINRSTF: PIN reset flag         */
+        uint32_t PORRSTF:1; /*   Bit 27 PORRSTF: POR/PDR reset flag         */
+        uint32_t SFTRSTF:1; /*   Bit 28 SFTRSTF: Software reset flag         */
+        uint32_t IWDGRSTF:1; /*  Bit 29 IWDGRSTF: Independent watchdog reset flag          */
+        uint32_t WWDGRSTF:1; /*  Bit 30 WWDGRSTF: Window watchdog reset flag          */
+        uint32_t LPWRRSTF:1; /*  Bit 31 LPWRRSTF: Low-power reset flag          */
+    };
+}Stm32RccCsr_t;
 
 #ifdef __cplusplus
 }

@@ -7,20 +7,20 @@
 #include "bit_utils.h"
 #include "board_config.h"
 #include "data_utils.h"
+#include "gpio_config.h"
+#include "gpio_custom_drv.h"
+#include "gpio_custom_isr.h"
+#include "gpio_custom_types.h"
 #include "std_includes.h"
+#include "stm32f4xx_hal.h"
+
 #ifdef HAS_DEBUGGER
 #include "debugger.h"
 #endif
-#include "gpio_config.h"
 
-#include "gpio_custom_drv.h"
-#include "gpio_custom_isr.h"
-
-#include "gpio_custom_types.h"
 #ifdef HAS_LOG
 #include "log.h"
 #endif
-#include "stm32f4xx_hal.h"
 
 static GpioDir_t GpioStmDirToDir(GpioStm32Mode_t mode) {
     GpioDir_t dirr = GPIO_DIR_UNDEF;
@@ -124,7 +124,7 @@ const GpioPortInfo_t* GpioGetPortInfo(const GpioPort_t port) {
     for(i = 0; i < cnt; i++) {
         if(port == GPIOxInfo[i].port) {
             if(GPIOxInfo[i].valid) {
-                Info = (GpioPortInfo_t* ) &GPIOxInfo[i];
+                Info = &GPIOxInfo[i];
                 break;
             }
         }
@@ -356,7 +356,7 @@ static GpioSpeed_t GpioStmSpeedToSpeed(GpioStm32Speed_t stm_speed) {
 
 static uint32_t GpioModeToStm32Mode(GpioApiMode_t mode) {
     uint32_t stm_mode = 0;
-    switch((uint32_t)mode) {
+    switch(mode) {
 
     case GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE:
         stm_mode = GPIO_MODE_IT_RISING_FALLING;
@@ -377,21 +377,27 @@ static uint32_t GpioModeToStm32Mode(GpioApiMode_t mode) {
     case GPIO_API_MODE_GPIO:
         stm_mode = GPIO_MODE_OUTPUT_PP;
         break;
+
     case GPIO_API_MODE_OUTPUT:
         stm_mode = GPIO_MODE_OUTPUT_PP;
         break;
+
     case GPIO_API_MODE_I2C:
         stm_mode = GPIO_MODE_AF_OD;
         break;
+
     case GPIO_API_MODE_INPUT:
         stm_mode = GPIO_MODE_INPUT;
         break;
+
     case GPIO_API_MODE_ALT1:
         stm_mode = GPIO_MODE_AF_PP;
         break;
+
     case GPIO_API_MODE_HW_PWM:
         stm_mode = GPIO_MODE_AF_PP;
         break;
+
     case GPIO_API_MODE_ANALOG:
         stm_mode = GPIO_MODE_ANALOG;
         break;
@@ -408,6 +414,169 @@ GPIO_TypeDef* GpioPortToPortPtr(const GpioPort_t port) {
         GPIOx = Info->GPIOx;
     }
     return GPIOx;
+}
+
+static uint32_t gpio_pin_mux_lh_set(const uint32_t afr_lh, const uint8_t pin, const uint8_t mux) {
+    GpioRegAFR_LH_t AFR_LH;
+    AFR_LH.dword = afr_lh;
+    switch(pin) {
+    case 0:
+        AFR_LH.AFR_LH_0_8 = mux;
+        break;
+    case 1:
+        AFR_LH.AFR_LH_1_9 = mux;
+        break;
+    case 2:
+        AFR_LH.AFR_LH_2_10 = mux;
+        break;
+    case 3:
+        AFR_LH.AFR_LH_3_11 = mux;
+        break;
+    case 4:
+        AFR_LH.AFR_LH_4_12 = mux;
+        break;
+    case 5:
+        AFR_LH.AFR_LH_5_13 = mux;
+        break;
+    case 6:
+        AFR_LH.AFR_LH_6_14 = mux;
+        break;
+    case 7:
+        AFR_LH.AFR_LH_7_15 = mux;
+        break;
+    default:
+        break;
+    }
+    return AFR_LH.dword;
+}
+
+bool gpio_mode_set(const Pad_t Pad, const GpioApiMode_t mode) {
+    bool res = false;
+    uint32_t stm_mode = GpioModeToStm32Mode(mode);
+    const GpioPortInfo_t* Info = GpioGetPortInfo(Pad.port);
+    if(Info) {
+        GpioRegMODE_t MODE;
+        MODE.dword = Info->GPIOx->MODER;
+        switch(Pad.pin) {
+        case 0:
+            MODE.pin0_mode = stm_mode;
+            res = true;
+            break;
+        case 1:
+            MODE.pin1_mode = stm_mode;
+            res = true;
+            break;
+        case 2:
+            MODE.pin2_mode = stm_mode;
+            res = true;
+            break;
+        case 3:
+            MODE.pin3_mode = stm_mode;
+            res = true;
+            break;
+        case 4:
+            MODE.pin4_mode = stm_mode;
+            res = true;
+            break;
+        case 5:
+            MODE.pin5_mode = stm_mode;
+            res = true;
+            break;
+        case 6:
+            MODE.pin6_mode = stm_mode;
+            res = true;
+            break;
+        case 7:
+            MODE.pin7_mode = stm_mode;
+            res = true;
+            break;
+        case 8:
+            MODE.pin8_mode = stm_mode;
+            res = true;
+            break;
+        case 9:
+            MODE.pin9_mode = stm_mode;
+            res = true;
+            break;
+        case 10:
+            MODE.pin10_mode = stm_mode;
+            res = true;
+            break;
+        case 11:
+            MODE.pin11_mode = stm_mode;
+            res = true;
+            break;
+        case 12:
+            MODE.pin12_mode = stm_mode;
+            res = true;
+            break;
+        case 13:
+            MODE.pin13_mode = stm_mode;
+            res = true;
+            break;
+        case 14:
+            MODE.pin14_mode = stm_mode;
+            res = true;
+            break;
+        case 15:
+            MODE.pin15_mode = stm_mode;
+            res = true;
+            break;
+        default:
+            res = false;
+            break;
+        }
+        Info->GPIOx->MODER = MODE.dword;
+    }
+    return res;
+}
+
+GpioApiMode_t gpio_pin_mux_to_mode(const uint8_t mux) {
+    GpioApiMode_t mode = GPIO_API_MODE_GPIO;
+    if(mux) {
+        mode = GPIO_API_MODE_ALT1;
+    }
+    return mode;
+}
+
+bool gpio_pin_mux_set(GpioPort_t port, uint8_t pin, uint8_t mux) {
+    bool res = false;
+    GpioApiMode_t mode = gpio_pin_mux_to_mode(mux);
+    Pad_t Pad = {
+        .port = port,
+        .pin = pin,
+    };
+    res = gpio_mode_set(Pad, mode);
+
+    GpioPortInfo_t* Info = GpioGetPortInfo(port);
+    if(Info) {
+        // 8.3.2 I/O pin multiplexer and mapping
+        if(pin <= 7) {
+            GpioRegAFRL_t AFRL;
+            AFRL.dword = Info->GPIOx->AFR[0];
+            AFRL.dword = gpio_pin_mux_lh_set(AFRL.dword, pin, mux);
+            Info->GPIOx->AFR[0] = AFRL.dword;
+            res = true;
+        } else if((8 <= pin) && (pin <= 15)) {
+            GpioRegAFRH_t AFRH;
+            AFRH.dword = Info->GPIOx->AFR[1];
+            AFRH.dword = gpio_pin_mux_lh_set(AFRH.dword, pin - 8, mux);
+            Info->GPIOx->AFR[1] = AFRH.dword;
+            res = true;
+        } else {
+            res = false;
+        }
+    }
+    return res;
+}
+
+bool gpio_pad_mux_set(const Pad_t Pad, const uint8_t mux) {
+    bool res = false;
+#ifdef HAS_GPIO_DIAG
+    LOG_INFO(GPIO, "Set,%s,Mux:%u", GpioPadToStr(Pad), mux);
+#endif
+    res = gpio_pin_mux_set(Pad.port, Pad.pin, mux);
+    return res;
 }
 
 /* Get Pin Mux */
@@ -443,6 +612,17 @@ bool gpio_get_state(const Pad_t pad, GpioLogicLevel_t* const logic_level) {
     GPIO_PinState value = HAL_GPIO_ReadPin(GpioPortToPortPtr(pad.port), 1 << pad.pin);
     (*logic_level) = (uint8_t)value;
     return true;
+}
+
+/*can be called from isr*/
+GpioLogicLevel_t gpio_get_state_short(const Pad_t pad) {
+#ifdef HAS_GPIO_DIAG
+    // LOG_DEBUG(GPIO, "Get,P%s%u", GpioPortToStr(pad.port), pad.pin);
+#endif
+    GpioLogicLevel_t logic_level = GPIO_LVL_UNDEF;
+    GPIO_PinState value = HAL_GPIO_ReadPin(GpioPortToPortPtr(pad.port), 1 << pad.pin);
+    logic_level = (uint8_t)value;
+    return logic_level;
 }
 
 uint32_t gpio_read(Pad_t pad) {
@@ -523,7 +703,8 @@ PinIntEdge_t pin_get_edge(uint8_t pin) {
     case 3:
         edge = PIN_INT_EDGE_BOTH;
         break;
-    default: break;
+    default:
+        break;
     }
 
     return edge;
@@ -644,15 +825,36 @@ bool ext_int_reset_mask(uint32_t mask) {
 }
 
 bool gpio_toggle(const Pad_t Pad) {
-    bool res = true;
+    bool res = false;
 #ifdef HAS_GPIO_DIAG
     LOG_DEBUG(GPIO, "Toggle,%s", GpioPadToStr(Pad));
 #endif
 
     HAL_GPIO_TogglePin(GpioPortToPortPtr(Pad.port), 1 << Pad.pin);
+    res = true;
     return res;
 }
 
+bool gpio_toggle_slow(Pad_t Pad) {
+    bool res = false;
+#ifdef HAS_GPIO_DIAG
+    LOG_DEBUG(GPIO, "Toggle,%s", GpioPadToStr(Pad));
+#endif
+    GPIO_PinState value = HAL_GPIO_ReadPin(GpioPortToPortPtr(Pad.port), 1 << Pad.pin);
+    switch(value) {
+    case GPIO_PIN_RESET:
+        HAL_GPIO_WritePin(GpioPortToPortPtr(Pad.port), 1 << Pad.pin, GPIO_PIN_SET);
+        res = true;
+        break;
+    case GPIO_PIN_SET:
+        HAL_GPIO_WritePin(GpioPortToPortPtr(Pad.port), 1 << Pad.pin, GPIO_PIN_RESET);
+        res = true;
+        break;
+    default:
+        break;
+    }
+    return res;
+}
 
 bool gpio_config_one(Pad_t pad, uint32_t Mode, uint32_t Pull, uint32_t Speed, uint32_t Alternate,
                      GPIO_PinState PinState) {
@@ -706,7 +908,7 @@ bool gpio_dir_set(Pad_t Pad, GpioDir_t dir) {
 }
 #endif
 
-bool gpio_is_valid_pad(Pad_t Pad) {
+bool gpio_is_valid_pad(const Pad_t Pad) {
     bool res = false;
     if(Pad.pin <= GPIO_PIN_COUNT) {
         if(Pad.port <= PORT_H) {
@@ -737,7 +939,7 @@ bool gpio_init_one(const GpioConfig_t* const Config) {
     bool res = false;
     if(Config) {
 #ifdef HAS_GPIO_DIAG
-        // gpio_diag_conf(Config);
+        LOG_WARNING(GPIO, "%s", GpioConfigToStr(Config));
 #endif
         res = gpio_is_valid_pad(Config->Pad);
 #ifdef HAS_DEBUGGER
@@ -779,13 +981,3 @@ bool gpio_init_one(const GpioConfig_t* const Config) {
     }
     return res;
 }
-
-bool gpio_init_pad(const Pad_t Pad) {
-    bool res = false;
-    const GpioConfig_t *Config = gpio_get_config(Pad);
-    if(Config) {
-        res = gpio_init_one(Config);
-    }
-    return res;
-}
-

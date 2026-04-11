@@ -16,7 +16,7 @@ ifneq ($(SDIO_CUSTOM_MK_INC),Y)
         SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_dma.c
     endif
 
-    ifeq ($(SDIO_POLLING),Y)
+    ifeq ($(SDIO_POLL),Y)
         MCAL_OPT += -DHAS_SDIO_POLL
         SOURCES_C += $(SDIO_CUSTOM_DIR)/sdio_poll.c
     endif

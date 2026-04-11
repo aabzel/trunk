@@ -3,10 +3,10 @@
 #include "board_config.h"
 #include "clock_config.h"
 #include "clock_custom.h"
+#include "data_utils.h"
 #include "hal_mcal.h"
 #include "std_includes.h"
 #include "stm32f4xx_hal.h"
-#include "data_utils.h"
 
 #ifdef HAS_LOG
 #include "log.h"
@@ -129,30 +129,30 @@ static bool clock_init_rcc_osc_struct(const PllStm32Config_t* const Config, RCC_
  Table 11. Number of wait states according to CPU clock (HCLK) frequency
            (STM32F405xx/07xx and STM32F415xx/17xx)
  */
-uint32_t clock_freq_to_flash_latency_2_7v_3_6v(const int32_t core_freq_hz ) {
-    bool res = false ;
+uint32_t clock_freq_to_flash_latency_2_7v_3_6v(const int32_t core_freq_hz) {
+    bool res = false;
     uint32_t flash_latency = FLASH_LATENCY_7;
-    res = is_range_uint32( core_freq_hz, CLOCK_MHZ_TO_HZ(150), CLOCK_MHZ_TO_HZ(168));
+    res = is_range_uint32(core_freq_hz, CLOCK_MHZ_TO_HZ(150), CLOCK_MHZ_TO_HZ(168));
     if(res) {
         flash_latency = FLASH_LATENCY_5;
     }
-    res = is_range_uint32( core_freq_hz,  CLOCK_MHZ_TO_HZ(120), CLOCK_MHZ_TO_HZ(150));
+    res = is_range_uint32(core_freq_hz, CLOCK_MHZ_TO_HZ(120), CLOCK_MHZ_TO_HZ(150));
     if(res) {
         flash_latency = FLASH_LATENCY_4;
     }
-    res = is_range_uint32( core_freq_hz, CLOCK_MHZ_TO_HZ(90),  CLOCK_MHZ_TO_HZ(120));
+    res = is_range_uint32(core_freq_hz, CLOCK_MHZ_TO_HZ(90), CLOCK_MHZ_TO_HZ(120));
     if(res) {
         flash_latency = FLASH_LATENCY_3;
     }
-    res = is_range_uint32( core_freq_hz, CLOCK_MHZ_TO_HZ(60), CLOCK_MHZ_TO_HZ(90));
+    res = is_range_uint32(core_freq_hz, CLOCK_MHZ_TO_HZ(60), CLOCK_MHZ_TO_HZ(90));
     if(res) {
         flash_latency = FLASH_LATENCY_2;
     }
-    res = is_range_uint32( core_freq_hz, CLOCK_MHZ_TO_HZ(30), CLOCK_MHZ_TO_HZ(60));
+    res = is_range_uint32(core_freq_hz, CLOCK_MHZ_TO_HZ(30), CLOCK_MHZ_TO_HZ(60));
     if(res) {
         flash_latency = FLASH_LATENCY_1;
     }
-    res = is_range_uint32( core_freq_hz, 0, CLOCK_MHZ_TO_HZ(30));
+    res = is_range_uint32(core_freq_hz, 0, CLOCK_MHZ_TO_HZ(30));
     if(res) {
         flash_latency = FLASH_LATENCY_0;
     }
@@ -172,7 +172,7 @@ static bool clock_init_rcc_clock(const int32_t core_freq_hz) {
     RccClkInit.APB1CLKDivider = RCC_HCLK_DIV4;
     RccClkInit.APB2CLKDivider = RCC_HCLK_DIV2;
 
-    uint32_t latency_flash = clock_freq_to_flash_latency_2_7v_3_6v( core_freq_hz );
+    uint32_t latency_flash = clock_freq_to_flash_latency_2_7v_3_6v(core_freq_hz);
     ret = HAL_RCC_ClockConfig(&RccClkInit, latency_flash);
     res = HAL_retToRes(ret);
     HAL_SuspendTick();
@@ -196,7 +196,7 @@ static bool clock_runtime_init(const PllStm32Config_t* const Config) {
     res = HAL_retToRes(ret);
 
     if(res) {
-        res = clock_init_rcc_clock( Config->core_freq_hz);
+        res = clock_init_rcc_clock(Config->core_freq_hz);
         if(!res) {
             res = false;
 #ifdef HAS_HAL_DIAG

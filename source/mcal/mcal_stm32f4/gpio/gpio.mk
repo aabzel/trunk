@@ -10,7 +10,10 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
     INCDIR += -I$(GPIO_DIR)
 
     SOURCES_C += $(GPIO_DIR)/gpio_mcal.c
-    SOURCES_C += $(GPIO_DIR)/gpio_custom_isr.c
+
+    ifeq ($(INTERRUPT),Y)
+        SOURCES_C += $(GPIO_DIR)/gpio_custom_isr.c
+    endif
 
     ifeq ($(CLI),Y)
         ifeq ($(GPIO_COMMANDS),Y)

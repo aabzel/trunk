@@ -31,7 +31,6 @@
 #include "crc32.h"
 #endif
 
-
 bool flash_diag_reg_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {

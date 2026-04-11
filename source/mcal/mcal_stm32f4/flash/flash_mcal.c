@@ -26,9 +26,9 @@
 #endif
 
 #include "data_utils.h"
-#include "sys_config.h"
 #include "flash_custom_const.h"
 #include "stm32f4xx_hal.h"
+#include "sys_config.h"
 #ifdef HAS_TIME
 #include "none_blocking_pause.h"
 #endif

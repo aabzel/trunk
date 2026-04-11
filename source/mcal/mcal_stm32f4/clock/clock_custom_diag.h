@@ -20,7 +20,7 @@ extern "C" {
 #error "+HAS_CLOCK"
 #endif
 
-
+const char*  Stm32RccCsrToStr(const  Stm32RccCsr_t* const  Reg) ;
 bool periph_clock_diag(char *keyWord1,char *keyWord2);
 bool clock_custom_diag(void);
 

@@ -65,70 +65,70 @@ void FPU_IRQHandler(void);
 
 void SPI1_IRQHandler(void);
 #if defined(HAS_SPI1) || defined(HAS_I2S1)
-#endif /**/
+#endif
 
 void SPI2_IRQHandler(void);
 #if defined(HAS_SPI2) || defined(HAS_I2S2)
-#endif /**/
+#endif
 
 void SPI3_IRQHandler(void);
 #if defined(HAS_SPI3) || defined(HAS_I2S3)
-#endif /**/
+#endif
 
 void SPI4_IRQHandler(void);
 #if defined(HAS_SPI4) || defined(HAS_I2S4)
-#endif /**/
+#endif
 
 void SPI5_IRQHandler(void);
 #if defined(HAS_SPI5) || defined(HAS_I2S5)
-#endif /**/
+#endif
 
 void USART1_IRQHandler(void);
 #ifdef HAS_UART1
-#endif /*HAS_UART1*/
+#endif
 void USART2_IRQHandler(void);
 #ifdef HAS_UART2
-#endif /*HAS_UART2*/
-#ifdef HAS_UART3
+#endif
 void USART3_IRQHandler(void);
-#endif /*HAS_UART3*/
+#ifdef HAS_UART3
+#endif
 void USART4_IRQHandler(void);
 #ifdef HAS_UART4
-#endif /*HAS_UART4*/
+#endif
 void USART5_IRQHandler(void);
 #ifdef HAS_UART5
-#endif /*HAS_UART5*/
+#endif
 void USART6_IRQHandler(void);
 #ifdef HAS_UART6
-#endif /*HAS_UART6*/
+#endif
 void USART7_IRQHandler(void);
 #ifdef HAS_UART7
-#endif /*HAS_UART7*/
+#endif
 void USART8_IRQHandler(void);
 #ifdef HAS_UART8
-#endif /*HAS_UART8*/
+#endif
 void USART9_IRQHandler(void);
 #ifdef HAS_UART9
-#endif /*HAS_UART9*/
+#endif
 void USART10_IRQHandler(void);
 #ifdef HAS_UART10
-#endif /*HAS_UART10*/
+#endif
 
 
 void I2C1_ER_IRQHandler(void);
 void I2C1_EV_IRQHandler(void);
 #ifdef HAS_I2C1
-#endif /**/
+#endif
 
 void I2C2_ER_IRQHandler(void);
 void I2C2_EV_IRQHandler(void);
 #ifdef HAS_I2C2
-#endif /**/
+#endif
 
 void I2C3_ER_IRQHandler(void);
 void I2C3_EV_IRQHandler(void);
 #ifdef HAS_I2C3
-#endif /**/
+#endif
 
 void DMA1_Stream1_IRQHandler(void);
 void DMA1_Stream2_IRQHandler(void);

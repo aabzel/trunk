@@ -7,13 +7,13 @@ ifneq ($(IWDG_MK_INC),Y)
     #@echo $(error IWDG_DIR=$(IWDG_DIR))
     IWDG=Y
     INCDIR += -I$(IWDG_DIR)
-    OPT += -DHAS_IWDG_CUSTOM
+    MCAL_OPT += -DHAS_IWDG_CUSTOM
 
     SOURCES_C += $(IWDG_DIR)/iwdg_drv.c
 
     ifeq ($(CLI),Y)
         ifeq ($(IWDG_COMMANDS),Y)
-            OPT += -DHAS_IWDG_COMMANDS
+            MCAL_OPT += -DHAS_IWDG_COMMANDS
             SOURCES_C += $(IWDG_DIR)/iwdg_commands.c
         endif
     endif
