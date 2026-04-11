@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "mbr_types.h"
 #include "mbr_config.h"
 

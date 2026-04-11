@@ -26,7 +26,6 @@ static bool mbr_init_ll(const MbrConfig_t* const Config, MbrHandle_t* const Node
     if(Config) {
         if(Node) {
             Node->boot_start_address = Config->boot_start_address;
-            Node->led_num = Config->led_num;
 #ifdef HAS_PARAM
             res = param_get(PAR_ID_BOOT_START, (uint8_t*) &boot_start_address);
 #endif
@@ -63,9 +62,6 @@ bool mbr_proc(void) {
     bool res = false;
     if(MbrInstance.init) {
         res = boot_jump_to_code(MbrInstance.boot_start_address);
-        if(!res) {
-            led_mono_frequency_set(    MbrInstance.led_num, 10.0f);
-        }
     } else {
         res = mbr_init();
     }

@@ -1,8 +1,8 @@
 #ifndef MBR_DEP_H
 #define MBR_DEP_H
 
-#ifndef HAS_STORAGE
-#warning "+HAS_STORAGE"
+#ifndef HAS_MBR
+#error "+HAS_MBR"
 #endif
 
-#endif /* MBR_DEP_H */
+#endif

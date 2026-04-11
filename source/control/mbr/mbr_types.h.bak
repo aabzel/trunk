@@ -10,12 +10,10 @@ extern "C" {
 
 typedef struct  {
     uint32_t boot_start_address;
-    uint32_t led_num;
 } MbrConfig_t;
 
 typedef struct  {
     uint32_t boot_start_address;
-    uint32_t led_num;
     bool init;
 } MbrHandle_t;
 
