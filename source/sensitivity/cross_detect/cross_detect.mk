@@ -11,15 +11,15 @@ ifneq ($(CROSS_DETECT_MK_INC),Y)
 
     INCDIR += -I$(CROSS_DETECT_DIR)
 
-    OPT += -DHAS_CROSS_DETECT
-    OPT += -DHAS_CROSS_DETECT_PROC
-    OPT += -DHAS_IO_BANG
+    MCAL_OPT += -DHAS_CROSS_DETECT
+    MCAL_OPT += -DHAS_CROSS_DETECT_PROC
+    MCAL_OPT += -DHAS_IO_BANG
 
     SOURCES_C += $(CROSS_DETECT_DIR)/cross_detect_drv.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(CROSS_DETECT_DIAG),Y)
-            OPT += -DHAS_CROSS_DETECT_DIAG
+            MCAL_OPT += -DHAS_CROSS_DETECT_DIAG
             #@echo $(error CROSS_DETECT_DIAG=$(CROSS_DETECT_DIAG))
             SOURCES_C += $(CROSS_DETECT_DIR)/cross_detect_diag.c
         endif
@@ -29,7 +29,7 @@ ifneq ($(CROSS_DETECT_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(CROSS_DETECT_COMMANDS),Y)
-            OPT += -DHAS_CROSS_DETECT_COMMANDS
+            MCAL_OPT += -DHAS_CROSS_DETECT_COMMANDS
             SOURCES_C += $(CROSS_DETECT_DIR)/cross_detect_commands.c
         endif
     endif

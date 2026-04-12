@@ -2,7 +2,7 @@ ifneq ($(STORAGE_PRECONFIG_INC),Y)
     STORAGE_PRECONFIG_INC=Y
 
     STORAGE_DIR = $(WORKSPACE_LOC)/storage
-    #@echo $(error STORAGE_DIR= $(STORAGE_DIR))
+    # $(error STORAGE_DIR= $(STORAGE_DIR))
 
 
     ifeq ($(HEX_BIN),Y)
@@ -18,12 +18,12 @@ ifneq ($(STORAGE_PRECONFIG_INC),Y)
     endif
 
     ifeq ($(CALIBRATION_DATA),Y)
-        #@echo $(error CALIBRATION_DATA=$(CALIBRATION_DATA))
+        # $(error CALIBRATION_DATA=$(CALIBRATION_DATA))
         include $(STORAGE_DIR)/calibration_data/calibration_data_preconfig.mk
     endif
 
     ifeq ($(FLASH_FS),Y)
-        #@echo $(error FLASH_FS=$(FLASH_FS))
+        # $(error FLASH_FS=$(FLASH_FS))
         include $(STORAGE_DIR)/flash_fs/flash_fs_preconfig.mk
     endif
 
@@ -44,12 +44,12 @@ ifneq ($(STORAGE_PRECONFIG_INC),Y)
     endif
 
     ifeq ($(FILE_PC),Y)
-        #@echo $(error FILE_PC=$(FILE_PC)) 
+        # $(error FILE_PC=$(FILE_PC)) 
         include $(STORAGE_DIR)/file_pc/file_pc_preconfig.mk
     endif
 
     ifeq ($(NOR_FLASH),Y)
-        #@echo $(error NOR_FLASH=$(NOR_FLASH)) 
+        # $(error NOR_FLASH=$(NOR_FLASH)) 
         include $(STORAGE_DIR)/nor_flash/nor_flash_preconfig.mk
     endif
 
@@ -58,7 +58,7 @@ ifneq ($(STORAGE_PRECONFIG_INC),Y)
     endif
     
     ifeq ($(SW_NOR_FLASH),Y)
-        #@echo $(error SW_NOR_FLASH= $(SW_NOR_FLASH)) 
+        # $(error SW_NOR_FLASH= $(SW_NOR_FLASH)) 
         include $(STORAGE_DIR)/sw_nor_flash/sw_nor_flash_preconfig.mk
     endif
 

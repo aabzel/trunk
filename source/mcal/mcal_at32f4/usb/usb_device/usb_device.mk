@@ -23,31 +23,31 @@ ifneq ($(USB_DEVICE_DRV_MK_INC),Y)
         SOURCES_C += $(USB_DEVICE_DIR)/usbd_desc_fs.c
     endif
 
-    #OPT += -DUSB_OTG_HS_CORE
+    #MCAL_OPT += -DUSB_OTG_HS_CORE
     ifeq ($(MSC),Y)
-        OPT += -DHAS_MSC
-        OPT += -DHAS_MASS_STORAGE_CLASS
+        MCAL_OPT += -DHAS_MSC
+        MCAL_OPT += -DHAS_MASS_STORAGE_CLASS
         SOURCES_C += $(USB_DEVICE_DIR)/usbd_storage_if.c
     endif
 
     ifeq ($(MSC),Y)
         ifeq ($(HID),Y)
-            OPT += -DHAS_COMPOSIT_MSC_HID
+            MCAL_OPT += -DHAS_COMPOSIT_MSC_HID
             SOURCES_C += $(USB_DEVICE_DIR)/usbd_composit_msc_hid.c
         endif
     endif
 
     USB_DEVICE=Y
-    OPT += -DHAS_USB_DEVICE
+    MCAL_OPT += -DHAS_USB_DEVICE
 
     ifeq ($(HID),Y)
-        OPT += -DHAS_HID
+        MCAL_OPT += -DHAS_HID
         SOURCES_C += $(USB_DEVICE_DIR)/usbd_custom_hid_if.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(USB_DEVICE_COMMANDS),Y)
-            OPT += -DHAS_USB_DEVICE_COMMANDS
+            MCAL_OPT += -DHAS_USB_DEVICE_COMMANDS
             SOURCES_C += $(USB_DEVICE_DIR)/usb_device_commands.c
         endif
     endif

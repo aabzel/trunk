@@ -7,13 +7,13 @@ ifneq ($(MODULATOR_MK_INC),Y)
     #@echo $(error MODULATOR_DIR=$(MODULATOR_DIR))
 
     INCDIR += -I$(MODULATOR_DIR)
-    OPT +=-DHAS_MODULATOR
+    MCAL_OPT +=-DHAS_MODULATOR
 
     SOURCES_C += $(MODULATOR_DIR)/modulator.c
 
     ifeq ($(CLI),Y)
         ifeq ($(MODULATOR_COMMANDS),Y)
-            OPT +=-DHAS_MODULATOR_COMMANDS
+            MCAL_OPT +=-DHAS_MODULATOR_COMMANDS
         endif
     endif
 

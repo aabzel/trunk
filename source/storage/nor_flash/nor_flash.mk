@@ -7,21 +7,21 @@ ifneq ($(NOR_FLASH_MK_INC),Y)
 
     INCDIR += -I$(NOR_FLASH_DIR)
 
-    OPT += -DHAS_NOR_FLASH
+    MCAL_OPT += -DHAS_NOR_FLASH
 
     SOURCES_C += $(NOR_FLASH_DIR)/nor_flash_drv.c
     SOURCES_C += $(NOR_FLASH_DIR)/nor_flash_api.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(NOR_FLASH_DIAG),Y)
-            OPT += -DHAS_NOR_FLASH_DIAG
+            MCAL_OPT += -DHAS_NOR_FLASH_DIAG
             SOURCES_C += $(NOR_FLASH_DIR)/nor_flash_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(NOR_FLASH_COMMANDS),Y)
-            OPT += -DHAS_NOR_FLASH_COMMANDS
+            MCAL_OPT += -DHAS_NOR_FLASH_COMMANDS
             BIN_2_STR=Y
             SOURCES_C += $(NOR_FLASH_DIR)/nor_flash_commands.c
         endif

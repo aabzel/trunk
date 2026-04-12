@@ -7,15 +7,15 @@ ifneq ($(UWB_MK_INC),Y)
     $(info + UWB)
 
     INCDIR += -I$(UWB_DIR)
-    #OPT += -DHAS_UWB_PROC
-    OPT += -DHAS_UWB
+    #MCAL_OPT += -DHAS_UWB_PROC
+    MCAL_OPT += -DHAS_UWB
     UWB_DIAG=Y
     SOURCES_C += $(UWB_DIR)/uwb_if.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(UWB_DIAG),Y)
             $(info +UWB_DIAG)
-            OPT += -DHAS_UWB_DIAG
+            MCAL_OPT += -DHAS_UWB_DIAG
              SOURCES_C += $(UWB_DIR)/uwb_diag.c
         endif
     endif
@@ -24,7 +24,7 @@ ifneq ($(UWB_MK_INC),Y)
         ifeq ($(UWB_COMMANDS),Y)
             #@echo $(error UWB_COMMANDS=$(UWB_COMMANDS))
             $(info +UWB_COMMANDS)
-            OPT += -DHAS_UWB_COMMANDS
+            MCAL_OPT += -DHAS_UWB_COMMANDS
             #SOURCES_C += $(UWB_DIR)/uwb_commands.c
         endif
     endif

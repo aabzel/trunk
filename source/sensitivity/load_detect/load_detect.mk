@@ -11,14 +11,14 @@ ifneq ($(LOAD_DETECT_MK_INC),Y)
 
     INCDIR += -I$(LOAD_DETECT_DIR)
 
-    OPT += -DHAS_LOAD_DETECT
-    OPT += -DHAS_LOAD_DETECT_PROC
+    MCAL_OPT += -DHAS_LOAD_DETECT
+    MCAL_OPT += -DHAS_LOAD_DETECT_PROC
     
     SOURCES_C += $(LOAD_DETECT_DIR)/load_detect_drv.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(LOAD_DETECT_DIAG),Y)
-            OPT += -DHAS_LOAD_DETECT_DIAG
+            MCAL_OPT += -DHAS_LOAD_DETECT_DIAG
             #@echo $(error LOAD_DETECT_DIAG=$(LOAD_DETECT_DIAG))
             SOURCES_C += $(LOAD_DETECT_DIR)/load_detect_diag.c
         endif
@@ -26,7 +26,7 @@ ifneq ($(LOAD_DETECT_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(LOAD_DETECT_COMMANDS),Y)
-            OPT += -DHAS_LOAD_DETECT_COMMANDS
+            MCAL_OPT += -DHAS_LOAD_DETECT_COMMANDS
             SOURCES_C += $(LOAD_DETECT_DIR)/load_detect_commands.c
         endif
     endif

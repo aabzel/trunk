@@ -12,10 +12,10 @@ ifneq ($(KEYBOARD_MK_INC),Y)
     SOURCES_C += $(KEYBOARD_DIR)/key_board_drv.c
     SOURCES_C += $(KEYBOARD_DIR)/keyboard.c
 
-    OPT += -DHAS_KEYBOARD
+    MCAL_OPT += -DHAS_KEYBOARD
     ifeq ($(DIAG),Y)
         ifeq ($(KEYBOARD_DIAG),Y)
-            OPT += -DHAS_KEYBOARD_DIAG
+            MCAL_OPT += -DHAS_KEYBOARD_DIAG
             SOURCES_C += $(KEYBOARD_DIR)/keyboard_diag.c
         endif
     endif

@@ -2,9 +2,13 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
     COMPUTING_PRECONFIG_MK_INC=Y
 
     COMPUTING_DIR = $(WORKSPACE_LOC)/computing
-    #@echo $(error COMPUTING_DIR= $(COMPUTING_DIR))
+    # $(error COMPUTING_DIR= $(COMPUTING_DIR))
 
     include $(COMPUTING_DIR)/interval/interval_preconfig.mk
+
+    ifeq ($(HW_CALC_KIT),Y)
+        include $(COMPUTING_DIR)/hw_calc_kit.mk
+    endif
 
     ifeq ($(ANALOG_FILTER),Y)
         include $(COMPUTING_DIR)/analog_filter/analog_filter_preconfig.mk
@@ -31,7 +35,7 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
     endif
 
     ifeq ($(DELTA_SIGMA),Y)
-        #@echo $(error DELTA_SIGMA=$(DELTA_SIGMA))
+        # $(error DELTA_SIGMA=$(DELTA_SIGMA))
         include $(COMPUTING_DIR)/delta_sigma/delta_sigma_preconfig.mk
     endif
 
@@ -66,7 +70,7 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
     endif
 
     ifeq ($(PLL_CALC),Y)
-        #@echo $(error PLL_CALC= $(PLL_CALC))
+        # $(error PLL_CALC= $(PLL_CALC))
         include $(COMPUTING_DIR)/pll_calc/pll_calc_preconfig.mk
     endif
 
@@ -75,12 +79,12 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
     endif
 
     ifeq ($(SHA256),Y)
-        #@echo $(error SHA256=$(SHA256))
+        # $(error SHA256=$(SHA256))
         include $(COMPUTING_DIR)/sha256/sha256_preconfig.mk
     endif
 
     ifeq ($(SOLVER),Y)
-       #@echo $(error SOLVER=$(SOLVER))
+       # $(error SOLVER=$(SOLVER))
        include $(COMPUTING_DIR)/solver/solver_preconfig.mk    
     endif
 
@@ -89,12 +93,12 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
     endif
 
     ifeq ($(DDS),Y)
-        #@echo $(error DDS=$(DDS))
+        # $(error DDS=$(DDS))
         include $(COMPUTING_DIR)/dds/dds_preconfig.mk
     endif
 
     ifeq ($(TIMER_CALC),Y)
-        #@echo $(error TIMER_CALC= $(TIMER_CALC))
+        # $(error TIMER_CALC= $(TIMER_CALC))
         include $(COMPUTING_DIR)/timer_calc/timer_calc_preconfig.mk
     endif
 

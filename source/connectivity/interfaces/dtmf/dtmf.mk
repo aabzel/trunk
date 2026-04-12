@@ -6,7 +6,7 @@ ifneq ($(DTMF_MK_INC),Y)
     #@echo $(error DTMF_DIR=$(DTMF_DIR))
 
     INCDIR += -I$(DTMF_DIR)
-    OPT += -DHAS_DTMF
+    MCAL_OPT += -DHAS_DTMF
 
     #SOURCES_C += $(DTMF_DIR)/dtmf_config.c
     SOURCES_C += $(DTMF_DIR)/dtmf_drv.c
@@ -14,7 +14,7 @@ ifneq ($(DTMF_MK_INC),Y)
     ifeq ($(DIAG),Y)
         ifeq ($(DTMF_DIAG),Y)
             #@echo $(error DTMF_DIAG=$(DTMF_DIAG))
-            OPT += -DHAS_DTMF_DIAG
+            MCAL_OPT += -DHAS_DTMF_DIAG
             SOURCES_C += $(DTMF_DIR)/dtmf_diag.c
         endif
     endif
@@ -22,7 +22,7 @@ ifneq ($(DTMF_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(DTMF_COMMANDS),Y)
             #@echo $(error DTMF_COMMANDS=$(DTMF_COMMANDS))
-            OPT += -DHAS_DTMF_COMMANDS
+            MCAL_OPT += -DHAS_DTMF_COMMANDS
             SOURCES_C += $(DTMF_DIR)/dtmf_commands.c
         endif
     endif

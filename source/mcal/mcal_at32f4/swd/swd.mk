@@ -8,7 +8,7 @@ ifneq ($(SWD_MK_INC),Y)
     INCDIR += -I$(SWD_DIR)
     SOURCES_C += $(SWD_DIR)/swd_mcal.c
     SOURCES_C += $(SWD_DIR)/writer_swd.c
-    OPT += -DHAS_SWD
+    MCAL_OPT += -DHAS_SWD
 
     ifeq ($(DIAG),Y)
         SOURCES_C += $(SWD_DIR)/swd_custom_diag.c
@@ -16,7 +16,7 @@ ifneq ($(SWD_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(SWD_COMMANDS),Y)
-            OPT += -DHAS_SWD_COMMANDS
+            MCAL_OPT += -DHAS_SWD_COMMANDS
             SOURCES_C += $(SWD_DIR)/swd_custom_commands.c
         endif
     endif

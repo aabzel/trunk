@@ -16,6 +16,6 @@ ifneq ($(CONNECTIVITY_PRECONFIG_MK_INC),Y)
 
     ifeq ($(PROTOCOLS),Y)  
         #@echo $(error PROTOCOLS=$(PROTOCOLS))
-        include $(CONNECTIVITY_DIR)/protocols/protocols_preconfig.mk
+        #include $(CONNECTIVITY_DIR)/protocols/protocols_preconfig.mk
     endif
 endif

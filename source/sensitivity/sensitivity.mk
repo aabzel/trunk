@@ -2,11 +2,15 @@ $(info SENSITIVITY_MK_INC=$(SENSITIVITY_MK_INC) )
 ifneq ($(SENSITIVITY_MK_INC),Y)
     SENSITIVITY_MK_INC=Y
 
-    OPT += -DHAS_SENSITIVITY
+    MCAL_OPT += -DHAS_SENSITIVITY
     SENSITIVITY_DIR = $(WORKSPACE_LOC)/sensitivity
-    #@echo $(error SENSITIVITY_DIR=$(SENSITIVITY_DIR))
+    #  $(error SENSITIVITY_DIR=$(SENSITIVITY_DIR))
 
     INCDIR += -I$(SENSITIVITY_DIR)
+
+    ifeq ($(BUTTON),Y)
+        include $(SENSITIVITY_DIR)/button_fsm/button.mk
+    endif
 
     ifeq ($(CROSS_DETECT),Y)
         include $(SENSITIVITY_DIR)/cross_detect/cross_detect.mk
@@ -24,12 +28,8 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
         include $(SENSITIVITY_DIR)/keyboard/keyboard.mk
     endif
 
-    ifeq ($(BUTTON),Y)
-        include $(SENSITIVITY_DIR)/button_fsm/button.mk
-    endif
-
     ifeq ($(DISTANCE),Y)
-        #@echo $(error DISTANCE=$(DISTANCE))
+        #  $(error DISTANCE=$(DISTANCE))
         include $(SENSITIVITY_DIR)/distance/distance.mk
     endif
     
@@ -46,7 +46,7 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
     endif
 
     ifeq ($(LOAD_DETECT),Y)
-        #@echo $(error LOAD_DETECT= $(LOAD_DETECT))
+        #  $(error LOAD_DETECT= $(LOAD_DETECT))
         include $(SENSITIVITY_DIR)/load_detect/load_detect.mk
     endif
 
@@ -59,7 +59,7 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
     endif
 
     ifeq ($(TIME),Y)
-        #@echo $(error TIME=$(TIME))
+        # $(error TIME=$(TIME))
         include $(SENSITIVITY_DIR)/time/time.mk
     endif
 
@@ -70,7 +70,7 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
     endif
 
     ifeq ($(SENSITIVITY_COMMANDS),Y)
-        OPT += -DHAS_SENSITIVITY_COMMANDS
+        MCAL_OPT += -DHAS_SENSITIVITY_COMMANDS
         SOURCES_C += $(SENSITIVITY_DIR)/sensitivity_commands.c
     endif
         

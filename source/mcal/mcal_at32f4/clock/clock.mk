@@ -8,20 +8,20 @@ ifneq ($(CLOCK_AT32_MK_INC),Y)
 
     INCDIR += -I$(CLOCK_AT32_DIR)
 
-    OPT += -DHAS_CLOCK_CUSTOM
+    MCAL_OPT += -DHAS_CLOCK_CUSTOM
     #PLL_CALC=Y
     SOURCES_C += $(CLOCK_AT32_DIR)/clock.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(CLOCK_DIAG),Y)
-            OPT += -DHAS_CLOCK_DIAG
+            MCAL_OPT += -DHAS_CLOCK_DIAG
             SOURCES_C += $(CLOCK_AT32_DIR)/clock_custom_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(CLOCK_COMMANDS),Y)
-            OPT += -DHAS_CLOCK_CUSTOM_COMMANDS
+            MCAL_OPT += -DHAS_CLOCK_CUSTOM_COMMANDS
             SOURCES_C += $(CLOCK_AT32_DIR)/clock_custom_commands.c
         endif
     endif

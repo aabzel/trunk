@@ -9,7 +9,7 @@ ifneq ($(FM_TUNER_MK_INC),Y)
     INCDIR += -I$(FM_TUNER_DIR)
 
     FM_TUNER=Y
-    OPT += -DHAS_FM_TUNER
-    OPT += -DHAS_MULTIMEDIA
+    MCAL_OPT += -DHAS_FM_TUNER
+    MCAL_OPT += -DHAS_MULTIMEDIA
     SOURCES_C += $(FM_TUNER_DIR)/fm_tuner_rus.c
 endif

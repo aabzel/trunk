@@ -9,15 +9,15 @@ ifneq ($(ALLOCATOR_MK_INC),Y)
     #@echo $(error ALLOCATOR_DIR = $(ALLOCATOR_DIR))
     INCDIR += -I$(ALLOCATOR_DIR)
 
-    OPT += -DHAS_HEAP
-    OPT += -DHAS_ALLOCATOR
+    MCAL_OPT += -DHAS_HEAP
+    MCAL_OPT += -DHAS_ALLOCATOR
 
     SOURCES_C += $(ALLOCATOR_DIR)/heap_allocator.c
     ifeq ($(CLI),Y)
         #@echo $(error CLI=$(CLI))
         ifeq ($(ALLOCATOR_COMMANDS),Y)
             #@echo $(error ALLOCATOR_COMMANDS = $(ALLOCATOR_COMMANDS))
-            OPT += -DHAS_HEAP_COMMANDS
+            MCAL_OPT += -DHAS_HEAP_COMMANDS
             SOURCES_C += $(ALLOCATOR_DIR)/allocator_commands.c
         endif
     endif

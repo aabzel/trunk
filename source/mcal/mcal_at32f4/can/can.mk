@@ -6,14 +6,14 @@ ifneq ($(CAN_DRV_MK_INC),Y)
     #@echo $(error CAN_CUSTOM_DIR=$(CAN_CUSTOM_DIR))
 
     INCDIR += -I$(CAN_CUSTOM_DIR)
-    OPT += -DHAS_CAN
+    MCAL_OPT += -DHAS_CAN
 
     ifeq ($(CAN1),Y)
-        OPT += -DHAS_CAN1
+        MCAL_OPT += -DHAS_CAN1
     endif
 
     ifeq ($(CAN2),Y)
-        OPT += -DHAS_CAN2
+        MCAL_OPT += -DHAS_CAN2
     endif
 
     SOURCES_C += $(CAN_CUSTOM_DIR)/can_mcal.c
@@ -21,14 +21,14 @@ ifneq ($(CAN_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(CAN_DIAG),Y)
-            OPT += -DHAS_CAN_DIAG
+            MCAL_OPT += -DHAS_CAN_DIAG
             SOURCES_C += $(CAN_CUSTOM_DIR)/can_custom_diag.c
         endif
     endif
     
     ifeq ($(CLI),Y)
         ifeq ($(CAN_COMMANDS),Y)
-            OPT += -DHAS_CAN_COMMANDS
+            MCAL_OPT += -DHAS_CAN_COMMANDS
             SOURCES_C += $(CAN_CUSTOM_DIR)/can_custom_commands.c
         endif
     endif

@@ -15,18 +15,18 @@ ifneq ($(VOLTAGE_DIVIDER_MK_INC),Y)
 
     SOURCES_C += $(VOLTAGE_DIVIDER_DIR)/voltage_divider.c
 
-    OPT += -DHAS_VOLTAGE_DIVIDER
+    MCAL_OPT += -DHAS_VOLTAGE_DIVIDER
 
     ifeq ($(DIAG),Y)
         ifeq ($(VOLTAGE_DIVIDER_DIAG),Y)
-            OPT += -DHAS_VOLTAGE_DIVIDER_DIAG
+            MCAL_OPT += -DHAS_VOLTAGE_DIVIDER_DIAG
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(VOLTAGE_DIVIDER_COMMANDS),Y)
             #@echo $(error VOLTAGE_DIVIDER_COMMANDS=$(VOLTAGE_DIVIDER_COMMANDS))
-            OPT += -DHAS_VOLTAGE_DIVIDER_COMMANDS
+            MCAL_OPT += -DHAS_VOLTAGE_DIVIDER_COMMANDS
             SOURCES_C += $(VOLTAGE_DIVIDER_DIR)/voltage_divider_commands.c
         endif
     endif

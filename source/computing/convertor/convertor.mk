@@ -9,7 +9,7 @@ ifneq ($(CONVERTOR_MK_INC),Y)
 
     CONVERTOR_DIR = $(COMPUTING_DIR)/convertor
     INCDIR += -I$(CONVERTOR_DIR)
-    OPT += -DHAS_CONVERTOR
+    MCAL_OPT += -DHAS_CONVERTOR
 
 
     SOURCES_C += $(CONVERTOR_DIR)/convertor.c
@@ -17,14 +17,14 @@ ifneq ($(CONVERTOR_MK_INC),Y)
     ifeq ($(DIAG),Y)
         ifeq ($(CONVERTOR_DIAG),Y)
             #@echo $(error CONVERTOR_DIAG=$(CONVERTOR_DIAG))
-            OPT += -DHAS_CONVERTOR_DIAG
+            MCAL_OPT += -DHAS_CONVERTOR_DIAG
             SOURCES_C += $(CONVERTOR_DIR)/convertor_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(CONVERTOR_COMMANDS),Y)
-            OPT += -DHAS_CONVERTOR_COMMANDS
+            MCAL_OPT += -DHAS_CONVERTOR_COMMANDS
             SOURCES_C += $(CONVERTOR_DIR)/convertor_commands.c
         endif
     endif

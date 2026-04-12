@@ -15,17 +15,17 @@ ifneq ($(BUTTON_MK_INC),Y)
     SOURCES_H += $(BUTTON_DIR)/button_drv.h
 
     BUTTON=Y
-    OPT += -DHAS_BUTTON
-    OPT += -DHAS_BUTTON_PROC
+    MCAL_OPT += -DHAS_BUTTON
+    MCAL_OPT += -DHAS_BUTTON_PROC
 
     ifeq ($(BUTTON_DIAG),Y)
-        OPT += -DHAS_BUTTON_DIAG
+        MCAL_OPT += -DHAS_BUTTON_DIAG
         SOURCES_C += $(BUTTON_DIR)/button_diag.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(BUTTON_COMMANDS),Y)
-            OPT += -DHAS_BUTTON_COMMANDS
+            MCAL_OPT += -DHAS_BUTTON_COMMANDS
             SOURCES_C += $(BUTTON_DIR)/button_commands.c
         endif
     endif

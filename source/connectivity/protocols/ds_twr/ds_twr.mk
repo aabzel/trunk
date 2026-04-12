@@ -8,8 +8,8 @@ ifneq ($(DS_TWR_MK_INC),Y)
 
     INCDIR += -I$(DS_TWR_DIR)
 
-    OPT += -DHAS_DS_TWR
-    OPT += -DHAS_DS_TWR_PROC
+    MCAL_OPT += -DHAS_DS_TWR
+    MCAL_OPT += -DHAS_DS_TWR_PROC
 
     SOURCES_C += $(DS_TWR_DIR)/ds_twr.c
     SOURCES_C += $(DS_TWR_DIR)/ds_twr_initiator.c
@@ -18,7 +18,7 @@ ifneq ($(DS_TWR_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(DS_TWR_DIAG),Y)
-            OPT += -DHAS_DS_TWR_DIAG
+            MCAL_OPT += -DHAS_DS_TWR_DIAG
             SOURCES_C += $(DS_TWR_DIR)/ds_twr_diag.c
         endif
     endif
@@ -26,7 +26,7 @@ ifneq ($(DS_TWR_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(DS_TWR_COMMANDS),Y)
             $(info +DS_TWR_COMMANDS)
-            OPT += -DHAS_DS_TWR_COMMANDS
+            MCAL_OPT += -DHAS_DS_TWR_COMMANDS
             SOURCES_C += $(DS_TWR_DIR)/ds_twr_commands.c
         endif
     endif

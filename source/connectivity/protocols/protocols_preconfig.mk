@@ -37,6 +37,12 @@ ifneq ($(PROTOCOLS_PRECONFIG_MK),Y)
         include $(PROTOCOLS_DIR)/rds_protocol/rds_protocol_preconfig.mk
     endif
 
+
+    ifeq ($(IR_SAMSUNG),Y)
+        include $(PROTOCOLS_DIR)/ir_samsung/ir_samsung_preconfig.mk
+    endif
+
+
     ifeq ($(RTCM3),Y)
         include $(PROTOCOLS_DIR)/rtcm3_protocol/rtcm3_protocol_preconfig.mk
     endif

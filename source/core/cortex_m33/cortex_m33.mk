@@ -2,15 +2,12 @@ $(info CORTEX_M33_MK_INC=$(CORTEX_M33_MK_INC) )
 ifneq ($(CORTEX_M33_MK_INC),Y)
     CORTEX_M33_MK_INC=Y
 
-    mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
-    $(info Build  $(mkfile_path) )
-
     CORTEX_M33_DIR = $(CORE_DIR)/cortex_m33
     INCDIR += -I$(CORTEX_M33_DIR)
     #@echo $(error CORTEX_M33=$(CORTEX_M33))
     MCU=Y
-    OPT += -DHAS_ARM
-    OPT += -DHAS_CORTEX_M33
+    MCAL_OPT += -DHAS_ARM
+    MCAL_OPT += -DHAS_CORTEX_M33
     
     ifeq ($(CORE_NET), Y)
         FPU +=

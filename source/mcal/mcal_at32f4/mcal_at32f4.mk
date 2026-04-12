@@ -7,11 +7,11 @@ ifneq ($(MCAL_AT32F4_DRV_MK_INC),Y)
     INCDIR += -I$(MCAL_AT32F4_DIR)
     #RCC=Y
     MCAL_AT32=Y
-    OPT += -DHAS_MCAL_AT32
+    MCAL_OPT += -DHAS_MCAL_AT32
 
     ifeq ($(DIAG),Y)
         #@echo $(error DIAG=$(DIAG))
-        OPT += -DHAS_HAL_DIAG
+        MCAL_OPT += -DHAS_HAL_DIAG
         SOURCES_C += $(MCAL_AT32F4_DIR)/hal_diag.c
     endif
 

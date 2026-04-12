@@ -7,7 +7,7 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
 
     GPIO_NRF_DIR = $(WORKSPACE_LOC)bsp/bsp_nrf5340/gpio
     #@echo $(error GPIO_NRF_DIR=$(GPIO_NRF_DIR))
-    OPT += -DHAS_GPIO
+    MCAL_OPT += -DHAS_GPIO
 
     INCDIR += -I$(GPIO_NRF_DIR)
 
@@ -15,7 +15,7 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(GPIO_COMMANDS),Y)
-            OPT += -DHAS_GPIO_COMMANDS
+            MCAL_OPT += -DHAS_GPIO_COMMANDS
             SOURCES_C += $(GPIO_NRF_DIR)/gpio_nrf_commands.c
         endif
     endif

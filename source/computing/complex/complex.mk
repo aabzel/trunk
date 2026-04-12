@@ -8,12 +8,12 @@ ifneq ($(COMPLEX_MK_INC),Y)
 
     SOURCES_C += $(COMPLEX_DIR)/complex_math.c
 
-    OPT += -DHAS_COMPLEX
+    MCAL_OPT += -DHAS_COMPLEX
 
     FIFO_ARRAY=Y
     ifeq ($(DIAG),Y)
         ifeq ($(COMPLEX_DIAG),Y)
-            OPT += -DHAS_COMPLEX_DIAG
+            MCAL_OPT += -DHAS_COMPLEX_DIAG
             #@echo $(error COMPLEX_DIAG= $(COMPLEX_DIAG))
             SOURCES_C += $(COMPLEX_DIR)/complex_diag.c
         endif

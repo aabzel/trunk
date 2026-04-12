@@ -7,8 +7,8 @@ ifneq ($(CLOCK_DIVIDER_MK_INC),Y)
     CLOCK_DIVIDER_DIR = $(COMPUTING_DIR)/clock_divider
     #@echo $(error CLOCK_DIVIDER_DIR = $(CLOCK_DIVIDER_DIR))
 
-    OPT += -DHAS_CLOCK_DIVIDER
-    OPT += -DHAS_CLOCK_DIVIDER_PROC
+    MCAL_OPT += -DHAS_CLOCK_DIVIDER
+    MCAL_OPT += -DHAS_CLOCK_DIVIDER_PROC
     
     INCDIR += -I$(CLOCK_DIVIDER_DIR)
 
@@ -17,7 +17,7 @@ ifneq ($(CLOCK_DIVIDER_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(CLOCK_DIVIDER_DIAG),Y)
-            OPT += -DHAS_CLOCK_DIVIDER_DIAG
+            MCAL_OPT += -DHAS_CLOCK_DIVIDER_DIAG
             SOURCES_C += $(CLOCK_DIVIDER_DIR)/clock_divider_diag.c
         endif
     endif
@@ -25,7 +25,7 @@ ifneq ($(CLOCK_DIVIDER_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(CLOCK_DIVIDER_COMMANDS),Y)
             #@echo $(error CLOCK_DIVIDER_COMMANDS = $(CLOCK_DIVIDER_COMMANDS))
-            OPT += -DHAS_CLOCK_DIVIDER_COMMANDS
+            MCAL_OPT += -DHAS_CLOCK_DIVIDER_COMMANDS
             SOURCES_C += $(CLOCK_DIVIDER_DIR)/clock_divider_commands.c
         endif
     endif

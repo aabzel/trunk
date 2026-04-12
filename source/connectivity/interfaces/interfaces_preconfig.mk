@@ -12,13 +12,18 @@ ifneq ($(INTERFACE_PRECONFIG_INC),Y)
         include $(INTERFACES_DIR)/a2b/a2b_preconfig.mk
     endif
 
+    ifeq ($(SW_UART),Y)
+        # $(error SW_UART=$(SW_UART))
+        include $(INTERFACES_DIR)/sw_uart/sw_uart_preconfig.mk
+    endif
+
     ifeq ($(RS485),Y)
-        #@echo $(error RS485=$(RS485))
+        # $(error RS485=$(RS485))
         include $(INTERFACES_DIR)/rs485/rs485_preconfig.mk
     endif
 
     ifeq ($(RS232),Y)
-        #@echo $(error RS232=$(RS232))
+        # $(error RS232=$(RS232))
         include $(INTERFACES_DIR)/rs232/rs232_preconfig.mk
     endif
 
@@ -27,12 +32,12 @@ ifneq ($(INTERFACE_PRECONFIG_INC),Y)
     endif
 
     ifeq ($(SOCKET),Y)
-        #@echo $(error SOCKET=$(SOCKET))
+        # $(error SOCKET=$(SOCKET))
         include $(INTERFACES_DIR)/socket/socket_preconfig.mk
     endif
 
     ifeq ($(DTMF),Y)
-        #@echo $(error DTMF=$(DTMF))
+        # $(error DTMF=$(DTMF))
         include $(INTERFACES_DIR)/dtmf/dtmf_preconfig.mk
     endif
 

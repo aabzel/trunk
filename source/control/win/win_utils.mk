@@ -4,37 +4,41 @@ ifneq ($(WIN_MK_INC),Y)
     WIN_MK_INC=Y
 
     WIN_UTILS_DIR =$(CONTROL_DIR)/win
-    #@echo $(error WIN_UTILS_DIR=$(WIN_UTILS_DIR))
+    # $(error WIN_UTILS_DIR=$(WIN_UTILS_DIR))
 
     INCDIR += -I$(WIN_UTILS_DIR)
 
-    OPT += -DHAS_WIN_UTILS
-    OPT += -DHAS_PC
-    OPT += -DHAS_WIN
-
+    MCAL_OPT += -DHAS_WIN_UTILS
+    MCAL_OPT += -DHAS_PC
+    MCAL_OPT += -DHAS_WIN
+    
+    ifeq ($(WIN_COLOR),Y)
+        MCAL_OPT += -DHAS_WIN_COLOR
+    endif
+    
     ifeq ($(MINGW),Y)
-        OPT += -DHAS_MINGW
+        MCAL_OPT += -DHAS_MINGW
     endif
 
     SOURCES_C += $(WIN_UTILS_DIR)/win_utils.c
 
-    ifeq ($(SERIAL_PORT),Y)
-        #@echo $(error SERIAL_PORT=$(SERIAL_PORT))
-        #OPT += -DHAS_COM
-        #OPT += -DDEBUG_SERIAL
-        #OPT += -DHAS_SERIAL_PORT
-        #OPT += -DHAS_SERIAL
-        #SOURCES_C += $(WIN_UTILS_DIR)/cli_wrappers.c
-        #SOURCES_C += $(WIN_UTILS_DIR)/scan_serial_port.c
-    endif
+    #ifeq ($(SERIAL_PORT),Y)
+        # $(error SERIAL_PORT=$(SERIAL_PORT))
+        #MCAL_OPT += -DHAS_COM
+        #MCAL_OPT += -DDEBUG_SERIAL
+        #MCAL_OPT += -DHAS_SERIAL_PORT
+        #MCAL_OPT += -DHAS_SERIAL
+        # SOURCES_C += $(WIN_UTILS_DIR)/cli_wrappers.c
+        # SOURCES_C += $(WIN_UTILS_DIR)/scan_serial_port.c
+    #endif
 
-    OPT += -DHAS_PC_COMMANDS
+    MCAL_OPT += -DHAS_PC_COMMANDS
     SOURCES_C += $(WIN_UTILS_DIR)/pc_commands.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(WIN_DIAG),Y)
-            #@echo $(error DIAG_WIN=$(DIAG_WIN))
-            OPT += -DHAS_WIN_DIAG
+            # $(error DIAG_WIN=$(DIAG_WIN))
+            MCAL_OPT += -DHAS_WIN_DIAG
             SOURCES_C += $(WIN_UTILS_DIR)/win_diag.c
         endif
     endif

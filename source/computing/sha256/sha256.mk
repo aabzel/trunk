@@ -11,6 +11,6 @@ ifneq ($(SHA256_MK_INC),Y)
 
     INCDIR += -I$(SHA256_DIR)
 
-    OPT += -DHAS_SHA256
+    MCAL_OPT += -DHAS_SHA256
     SOURCES_C += $(SHA256_DIR)/sha256.c
 endif

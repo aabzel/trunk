@@ -5,8 +5,8 @@ ifneq ($(SYSTICK_CUSTOM_MK_INC),Y)
     CUSTOM_SYSTICK_DIR = $(MCAL_AT32F4_DIR)/systick
     #@echo $(error SYSTICK_DIR=$(SYSTICK_DIR))
     INCDIR += -I$(CUSTOM_SYSTICK_DIR)
-    OPT += -DHAS_CUSTOM_SYSTICK
-    OPT += -DHAS_SYSTICK_INT
+    MCAL_OPT += -DHAS_CUSTOM_SYSTICK
+    MCAL_OPT += -DHAS_SYSTICK_INT
 
     SOURCES_C += $(CUSTOM_SYSTICK_DIR)/systick_custom.c
 
@@ -16,7 +16,7 @@ ifneq ($(SYSTICK_CUSTOM_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(CUSTOM_SYSTICK_COMMANDS),Y)
-            OPT += -DHAS_CUSTOM_SYSTICK_COMMANDS
+            MCAL_OPT += -DHAS_CUSTOM_SYSTICK_COMMANDS
             SOURCES_C += $(CUSTOM_SYSTICK_DIR)/systick_custom_commands.c
         endif
     endif

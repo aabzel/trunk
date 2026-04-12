@@ -5,8 +5,8 @@ ifneq ($(DOT_MK_INC),Y)
     DOT_DIR = $(WORKSPACE_LOC)components/dot
     #@echo $(error DOT_DIR=$(DOT_DIR))
     INCDIR += -I$(DOT_DIR)
-    #OPT += -Dio_printf=printf
-    OPT += -DHAS_DOT
+    #MCAL_OPT += -Dio_printf=printf
+    MCAL_OPT += -DHAS_DOT
 
     mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
     $(info Build  $(mkfile_path) )

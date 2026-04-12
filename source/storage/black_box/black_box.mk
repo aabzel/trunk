@@ -10,18 +10,18 @@ ifneq ($(BLACK_BOX_MK_LOG),Y)
     INCDIR += -I$(BLACK_BOX_DRV_DIR)
 
     BLACK_BOX=Y
-    OPT += -DHAS_BLACK_BOX
-    OPT += -DHAS_BLACK_BOX_PROC
+    MCAL_OPT += -DHAS_BLACK_BOX
+    MCAL_OPT += -DHAS_BLACK_BOX_PROC
 
     SOURCES_C += $(BLACK_BOX_DRV_DIR)/black_box.c
 
     ifeq ($(DIAG),Y)
-        OPT += -DHAS_BLACK_BOX_DIAG
+        MCAL_OPT += -DHAS_BLACK_BOX_DIAG
         SOURCES_C += $(BLACK_BOX_DRV_DIR)/black_box_diag.c
     endif
 
     ifeq ($(BLACK_BOX_COMMANDS),Y)
-        OPT += -DHAS_BLACK_BOX_COMMANDS
+        MCAL_OPT += -DHAS_BLACK_BOX_COMMANDS
         #@echo $(error BLACK_BOX_COMMANDS= $(BLACK_BOX_COMMANDS))
         SOURCES_C +=  $(BLACK_BOX_DRV_DIR)/black_box_commands.c
     endif

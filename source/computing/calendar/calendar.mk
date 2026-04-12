@@ -9,6 +9,6 @@ ifneq ($(CALENDAR_MK_INC),Y)
     INCDIR += -I$(CALENDAR_DIR)
 
     CALENDAR=Y
-    OPT += -DHAS_CALENDAR
+    MCAL_OPT += -DHAS_CALENDAR
     SOURCES_C += $(CALENDAR_DIR)/calendar.c
 endif

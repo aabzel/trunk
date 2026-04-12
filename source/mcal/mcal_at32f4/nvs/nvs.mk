@@ -8,7 +8,7 @@ ifneq ($(NVS_CUSTOM_MK),Y)
     #@echo $(error NVS_DIR=$(NVS_DIR))
 
     INCDIR += -I$(NVS_DIR)
-    OPT += -DHAS_NVS
+    MCAL_OPT += -DHAS_NVS
 
     NVS=Y
     SOURCES_C += $(NVS_DIR)/nvs_drv.c
@@ -23,7 +23,7 @@ ifneq ($(NVS_CUSTOM_MK),Y)
     ifeq ($(NVS_WRITE),Y)
         $(info Add NVS write)
         #@echo $(error NVS_WRITE=$(NVS_WRITE))
-        OPT += -DHAS_NVS_WRITE
+        MCAL_OPT += -DHAS_NVS_WRITE
     endif
 
     ifeq ($(CLI),Y)

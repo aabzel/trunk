@@ -5,8 +5,8 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
 
     GPIO_DIR = $(MCAL_AT32F4_DIR)/gpio
     #@echo $(error GPIO_DIR=$(GPIO_DIR))
-    OPT += -DHAS_GPIO
-    OPT += -DHAS_GPIO_CUSTOM
+    MCAL_OPT += -DHAS_GPIO
+    MCAL_OPT += -DHAS_GPIO_CUSTOM
 
     INCDIR += -I$(GPIO_DIR)
 
@@ -19,14 +19,14 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(GPIO_COMMANDS),Y)
-            OPT += -DHAS_GPIO_COMMANDS
+            MCAL_OPT += -DHAS_GPIO_COMMANDS
             SOURCES_C += $(GPIO_DIR)/gpio_custom_commands.c
         endif
     endif
 
     ifeq ($(DIAG),Y)
         ifeq ($(GPIO_DIAG),Y)
-            OPT += -DHAS_GPIO_DIAG
+            MCAL_OPT += -DHAS_GPIO_DIAG
             #@echo $(error GPIO_DIAG=$(GPIO_DIAG))
             SOURCES_C += $(GPIO_DIR)/gpio_custom_diag.c
         endif

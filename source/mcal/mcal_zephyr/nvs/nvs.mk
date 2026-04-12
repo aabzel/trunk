@@ -6,20 +6,20 @@ ifneq ($(ZEPHYR_NVS_MK),Y)
     #@echo $(error ZEPHYR_NVS_DIR=$(ZEPHYR_NVS_DIR))
     
     INCDIR += -I$(ZEPHYR_NVS_DIR)
-    OPT += -DHAS_ZEPHYR_NVS
-    OPT += -DHAS_NVS
+    MCAL_OPT += -DHAS_ZEPHYR_NVS
+    MCAL_OPT += -DHAS_NVS
 
     SOURCES_C += $(ZEPHYR_NVS_DIR)/nvs_drv.c
 
     ifeq ($(NVS_DIAG),Y)
         #@echo $(error NVS_DIAG=$(NVS_DIAG))
-        OPT += -DHAS_NVS_DIAG
+        MCAL_OPT += -DHAS_NVS_DIAG
         SOURCES_C += $(ZEPHYR_NVS_DIR)/nvs_custom_diag.c
     endif
 
     ifeq ($(NVS_WRITE),Y)
         #@echo $(error NVS_WRITE=$(NVS_WRITE))
-        OPT += -DHAS_NVS_WRITE
+        MCAL_OPT += -DHAS_NVS_WRITE
     endif
 
     ifeq ($(CLI),Y)

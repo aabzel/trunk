@@ -15,18 +15,18 @@ ifneq ($(INDICATION_MK_INC),Y)
 
     SOURCES_C += $(INDICATION_DIR)/indication.c
 
-    OPT += -DHAS_INDICATION
+    MCAL_OPT += -DHAS_INDICATION
 
     ifeq ($(DIAG),Y)
         ifeq ($(INDICATION_DIAG),Y)
-            OPT += -DHAS_INDICATION_DIAG
+            MCAL_OPT += -DHAS_INDICATION_DIAG
             SOURCES_C += $(INDICATION_DIR)/indication_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(INDICATION_COMMANDS),Y)
-            OPT += -DHAS_INDICATION_COMMANDS
+            MCAL_OPT += -DHAS_INDICATION_COMMANDS
             SOURCES_C += $(INDICATION_DIR)/indication_commands.c
         endif
     endif

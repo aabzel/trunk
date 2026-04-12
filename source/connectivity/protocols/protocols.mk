@@ -2,10 +2,9 @@ ifneq ($(PROTOCOLS_MK),Y)
     PROTOCOLS_MK=Y
 
     PROTOCOLS_DIR = $(CONNECTIVITY_DIR)/protocols
-    #@echo $(error PROTOCOLS_DIR=$(PROTOCOLS_DIR))
-    #@echo $(error CFLAGS= $(CFLAGS))
-    OPT += -DHAS_PROTOCOLS
-    OPT += -DHAS_PROTOCOLS_COMMANDS
+    # $(error PROTOCOLS_DIR=$(PROTOCOLS_DIR))
+    MCAL_OPT += -DHAS_PROTOCOLS
+    MCAL_OPT += -DHAS_PROTOCOLS_COMMANDS
 
     INCDIR += -I$(PROTOCOLS_DIR)
 
@@ -20,24 +19,24 @@ ifneq ($(PROTOCOLS_MK),Y)
     ifeq ($(PROTOCOLS),Y)
         include $(PROTOCOLS_DIR)/protocol/protocol.mk
     endif
-   
+
     ifeq ($(CLI),Y)
-        #@echo $(error CLI=$(CLI))
+        # $(error CLI=$(CLI))
         include $(PROTOCOLS_DIR)/cli_drv/cli_drv.mk
     endif
 
     ifeq ($(CSV),Y)
-        #@echo $(error CSV=$(CSV))
+        # $(error CSV=$(CSV))
         include $(PROTOCOLS_DIR)/csv/csv.mk
     endif
 
     ifeq ($(DECAWAVE),Y)
-        #@echo $(error DECAWAVE=$(DECAWAVE))
+        # $(error DECAWAVE=$(DECAWAVE))
         include $(PROTOCOLS_DIR)/decawave/decawave.mk
     endif
 
     ifeq ($(DECAWAVE_NATIVE),Y)
-        #@echo $(error DECAWAVE_NATIVE=$(DECAWAVE_NATIVE))
+        # $(error DECAWAVE_NATIVE=$(DECAWAVE_NATIVE))
         include $(PROTOCOLS_DIR)/decawave_native/decawave_native.mk
     endif
 
@@ -50,7 +49,7 @@ ifneq ($(PROTOCOLS_MK),Y)
     endif
 
     ifeq ($(NMEA),Y)
-        #@echo $(error NMEA=$(NMEA))
+        # $(error NMEA=$(NMEA))
         include $(PROTOCOLS_DIR)/nmea/nmea.mk
     endif
 
@@ -64,6 +63,19 @@ ifneq ($(PROTOCOLS_MK),Y)
 
     ifeq ($(RTCM3),Y)
         include $(PROTOCOLS_DIR)/rtcm3_protocol/rtcm3_protocol.mk
+    endif
+
+    ifeq ($(IR_SAMSUNG),Y)
+        include $(PROTOCOLS_DIR)/ir_samsung/ir_samsung.mk
+    endif
+
+    ifeq ($(PCAN),Y)
+        # $(error PCAN=$(PCAN))
+        include $(PROTOCOLS_DIR)/pcan/pcan.mk
+    endif
+
+    ifeq ($(SLCAN),Y)
+        include $(PROTOCOLS_DIR)/slcan/slcan.mk
     endif
 
     ifeq ($(STRING_READER),Y)

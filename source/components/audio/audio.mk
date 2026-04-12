@@ -6,18 +6,18 @@ ifneq ($(AUDIO_MK_INC),Y)
     AUDIO_DIR = $(COMPONENTS_DIR)/audio
     #@echo $(error AUDIO_DIR = $(AUDIO_DIR))
 
-    OPT += -DHAS_AUDIO
+    MCAL_OPT += -DHAS_AUDIO
 
     INCDIR += -I$(AUDIO_DIR)
     
     ifeq ($(PCM_16_BIT),Y)
-        OPT += -DPCM_SAMPLE_SIZE=2
-        OPT += -DHAS_PCM_16_BIT
+        MCAL_OPT += -DPCM_SAMPLE_SIZE=2
+        MCAL_OPT += -DHAS_PCM_16_BIT
     endif
 
     ifeq ($(PCM_32_BIT),Y)
-        OPT += -DPCM_SAMPLE_SIZE=4
-        OPT += -DHAS_PCM_32_BIT
+        MCAL_OPT += -DPCM_SAMPLE_SIZE=4
+        MCAL_OPT += -DHAS_PCM_32_BIT
     endif
 
     SOURCES_C += $(AUDIO_DIR)/audio.c

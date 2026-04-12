@@ -15,17 +15,17 @@ ifneq ($(PHOTORESISTOR_MK_INC),Y)
 
     SOURCES_C += $(PHOTORESISTOR_DIR)/photoresistor.c
 
-    OPT += -DHAS_PHOTORESISTOR
+    MCAL_OPT += -DHAS_PHOTORESISTOR
 
     ifeq ($(DIAG),Y)
         ifeq ($(PHOTORESISTOR_DIAG),Y)
-            OPT += -DHAS_PHOTORESISTOR_DIAG
+            MCAL_OPT += -DHAS_PHOTORESISTOR_DIAG
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(PHOTORESISTOR_COMMANDS),Y)
-            OPT += -DHAS_PHOTORESISTOR_COMMANDS
+            MCAL_OPT += -DHAS_PHOTORESISTOR_COMMANDS
             SOURCES_C += $(PHOTORESISTOR_DIR)/photoresistor_commands.c
         endif
     endif

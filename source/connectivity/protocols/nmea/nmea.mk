@@ -8,17 +8,17 @@ ifneq ($(NMEA_MK),Y)
     
     #@ echo $(error NMEA_DIR = $(NMEA_DIR)) 
 
-    OPT += -DHAS_NMEA
-    OPT += -DHAS_NMEA_PROC
+    MCAL_OPT += -DHAS_NMEA
+    MCAL_OPT += -DHAS_NMEA_PROC
 
-    OPT += -DHAS_NMEA_GGA
-    OPT += -DHAS_NMEA_GLL
-    OPT += -DHAS_NMEA_GSA
-    OPT += -DHAS_NMEA_GSV
-    OPT += -DHAS_NMEA_PBUX
-    OPT += -DHAS_NMEA_RMC
-    OPT += -DHAS_NMEA_VTG
-    OPT += -DHAS_NMEA_ZDA
+    MCAL_OPT += -DHAS_NMEA_GGA
+    MCAL_OPT += -DHAS_NMEA_GLL
+    MCAL_OPT += -DHAS_NMEA_GSA
+    MCAL_OPT += -DHAS_NMEA_GSV
+    MCAL_OPT += -DHAS_NMEA_PBUX
+    MCAL_OPT += -DHAS_NMEA_RMC
+    MCAL_OPT += -DHAS_NMEA_VTG
+    MCAL_OPT += -DHAS_NMEA_ZDA
 
     INCDIR += -I$(NMEA_DIR)
 
@@ -27,14 +27,14 @@ ifneq ($(NMEA_MK),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(NMEA_DIAG),Y)
-            OPT += -DHAS_NMEA_DIAG
+            MCAL_OPT += -DHAS_NMEA_DIAG
             SOURCES_C +=$(NMEA_DIR)/nmea_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(NMEA_COMMANDS),Y)
-            OPT += -DHAS_NMEA_COMMANDS
+            MCAL_OPT += -DHAS_NMEA_COMMANDS
             SOURCES_C +=$(NMEA_DIR)/nmea_commands.c
         endif
     endif
