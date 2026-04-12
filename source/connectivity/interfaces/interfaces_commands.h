@@ -35,10 +35,22 @@
 #define DTMF_COMMANDS
 #endif
 
-#ifdef HAS_LORA_COMMANDS
-#include "sx1262_lora_commands.h"
+#ifdef HAS_SEGGER_RTT_COMMANDS
+#include "segger_rtt_commands.h"
 #else
-#define SX1262_LORA_COMMANDS
+#define SEGGER_RTT_COMMANDS
+#endif
+
+#ifdef HAS_LORA_COMMANDS
+#include "lora_commands.h"
+#else
+#define LORA_COMMANDS
+#endif
+
+#ifdef HAS_SW_UART_COMMANDS
+#include "sw_uart_commands.h"
+#else
+#define SW_UART_COMMANDS
 #endif
 
 #ifdef HAS_RS232_COMMANDS
@@ -71,14 +83,30 @@
 #define SERIAL_PORT_COMMANDS
 #endif
 
-#define INTERFACES_COMMANDS              \
+#ifdef HAS_WIFI_COMMANDS
+#include "wifi_commands.h"
+#else
+#define WIFI_COMMANDS
+#endif
+
+#define INTERFACE_WIRELESS_COMMANDS      \
     BLUETOOTH_COMMANDS                   \
-    BLE_AUDIO_COMMANDS                   \
+    LORA_COMMANDS                        \
+    WIFI_COMMANDS                        \
+    BLE_AUDIO_COMMANDS
+
+#define INTERFACE_WIRED_COMMANDS      \
+    SW_UART_COMMANDS                  \
+    SEGGER_RTT_COMMANDS               \
+    ONE_WIRE_COMMANDS                 \
+    RS232_COMMANDS                    \
+    RS485_COMMANDS                    \
+    SERIAL_PORT_COMMANDS               
+    
+#define INTERFACES_COMMANDS              \
+    INTERFACE_WIRELESS_COMMANDS          \
+    INTERFACE_WIRED_COMMANDS             \
     DTMF_COMMANDS                        \
-    ONE_WIRE_COMMANDS                    \
-    SERIAL_PORT_COMMANDS                 \
-    SOCKET_COMMANDS                      \
-    RS232_COMMANDS                       \
-    RS485_COMMANDS
+    SOCKET_COMMANDS                      
 
 #endif /* INTERFACES_COMMANDS_H */

@@ -54,13 +54,13 @@ bool sw_timer_diag_command(int32_t argc, char* argv[]) {
             fill = (double)100 * Node->cnt / Node->period_ms;
             cli_printf(TSEP);
             cli_printf(" %02u  " TSEP, sw_tim_num);
-            cli_printf(" %3s " TSEP, OnOff2Str(Node->on_off));
+            cli_printf(" %3s " TSEP, OnOffToStr(Node->on_off));
             cli_printf(" %8u " TSEP, Node->cnt);
             cli_printf(" %8u " TSEP, Node->period_ms);
             cli_printf(" %8u " TSEP, Node->phase_ms);
             cli_printf(" %6.2f " TSEP, fill);
-            cli_printf(" %04s " TSEP, SwTimDir2Str(Node->dir));
-            cli_printf(" %04s " TSEP, SwTimMode2Str(Node->mode));
+            cli_printf(" %04s " TSEP, SwTimDirToStr(Node->dir));
+            cli_printf(" %04s " TSEP, SwTimModeToStr(Node->mode));
             cli_printf(" 0x%08x " TSEP, (uint32_t)Node->handler);
             cli_printf(" %5u " TSEP, Node->handler_cnt);
             cli_printf(" %03u " TSEP, Node->err_cnt);

@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "software_timer_isr.h"
 #include "software_timer_types.h"
 #include "sw_timer_config.h"

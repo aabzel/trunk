@@ -3,6 +3,7 @@
 #include "data_utils.h"
 // TODO move to interfaces folder
 
+#if 0
 const Interfaces_t AvailableInterfacesLUT[] = {
     IF_BLACK_HOLE, IF_LOOPBACK,
 #ifdef HAS_LORA
@@ -43,6 +44,22 @@ const Interfaces_t AvailableInterfacesLUT[] = {
 
 #ifdef HAS_CAN
     IF_CAN,
+#endif
+
+#ifdef HAS_CAN1
+    IF_CAN1,
+#endif
+
+#ifdef HAS_CAN0
+    IF_CAN0,
+#endif
+
+#ifdef HAS_CAN2
+    IF_CAN2,
+#endif
+
+#ifdef HAS_CAN3
+    IF_CAN3,
 #endif
 
 #ifdef HAS_GFSK
@@ -86,3 +103,4 @@ uint32_t interface_get_cnt(void) {
     uint32_t cnt = ARRAY_SIZE(AvailableInterfacesLUT);
     return cnt;
 }
+#endif

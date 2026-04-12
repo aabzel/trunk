@@ -1,18 +1,18 @@
 
 
+
 #ifdef HAS_INTERFACES
-    #include "interfaces.gvi"
+    #include "connectivity/interfaces/interfaces.gvi"
 #endif
 
-#ifdef HAS_PROTOCOLS
-    #include "protocols.gvi"
-#endif
 
+#ifdef HAS_PROTOCOL
+    #include "connectivity/protocols/protocols.gvi"
+#endif
 
 #ifdef HAS_LOG
-    #include "log.gvi"
+    #include "connectivity/log/log.gvi"
 #endif
-
 
 
 

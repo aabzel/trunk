@@ -88,7 +88,7 @@ static bool sw_timer_init_one(uint32_t num) {
 
 bool sw_timer_fast_ctrl(uint32_t num, bool on_off) {
     bool res = false;
-    LOG_DEBUG(SW_TIMER, "Set Num:%u En:%s", num, OnOff2Str(on_off));
+    LOG_DEBUG(SW_TIMER, "Set Num:%u En:%s", num, OnOffToStr(on_off));
     SoftwareTimer_t* Node = SwTimerGetNode(num);
     if(Node) {
         Node->on_off = on_off;
@@ -105,7 +105,7 @@ bool sw_timer_ctrl(uint32_t num, uint32_t period_ms, uint32_t phase_ms, SwTimerM
     bool res = false;
 #ifdef HAS_SOFTWARE_TIMER_DIAG
     LOG_INFO(SW_TIMER, "Set Num:%u Per:%u ms Phase %u ms Mode:%s Dir:%s En:%s", num, period_ms, phase_ms,
-             SwTimMode2Str(mode), SwTimDir2Str(dir), OnOff2Str(on_off));
+             SwTimModeToStr(mode), SwTimDirToStr(dir), OnOffToStr(on_off));
 #endif
     SoftwareTimer_t* Node = SwTimerGetNode(num);
     if(Node) {
@@ -212,7 +212,7 @@ bool sw_timer_poll(void) {
             if(Node->isr) {
                 Node->isr = false;
 #ifdef HAS_SOFTWARE_TIMER_DIAG
-                LOG_WARNING(SW_TIMER, "%u=%s Overflow IsrCnt %u", i, SwTimNum2Str(i), Node->handler_cnt);
+                LOG_WARNING(SW_TIMER, "%u=%s Overflow IsrCnt %u", i, SwTimNumToStr(i), Node->handler_cnt);
 #endif
                 res = is_flash_addr((uint32_t)Node->handler);
                 if(res) {

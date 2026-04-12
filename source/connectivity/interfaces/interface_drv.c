@@ -20,30 +20,12 @@
 #include "uart_mcal.h"
 #endif
 
-#ifdef HAS_INTERFACE_EXT
-bool interface_valid(Interfaces_t interface_if) {
-    bool res = false;
-    uint32_t i = 0;
-    uint32_t cnt = interface_get_cnt();
-    for(i = 0; i < cnt; i++) {
-        if(AvailableInterfacesLUT[i] == interface_if) {
-            res = true;
-            break;
-        }
-    }
-    return res;
-}
+#ifdef HAS_SPI
+#include "spi_mcal.h"
 #endif
 
-#if defined(HAS_HARVESTER_V1) && defined(UART_NUM_ZED_F9P) && defined(HAS_UART)
-bool sys_bypass_nmea_rs232(void) {
-    bool res = true;
-    UartHandle_t* UartNode = uart_get_int_node(UART_NUM_ZED_F9P);
-    if(UartNode) {
-        UartNode->is_uart_fwd[UART_NUM_CLI] = true;
-    }
-    return res;
-}
+#ifdef HAS_CAN
+#include "can_mcal.h"
 #endif
 
 #ifdef HAS_SX1262
@@ -52,7 +34,7 @@ static bool sys_sent_sx1262(uint8_t* array, uint32_t size, IfRetx_t retx) {
     switch(retx) {
     case RETX_NEED:
 #ifdef HAS_TBFP
-        res = tbfp_retx_start(&TbfpProtocol[IF_SX1262], array, size);
+        res = tbfp_retx_start(&TbfpProtocol[INTERFACE_NAME_SX1262], array, size);
         if(false == res) {
             LOG_ERROR(TBFP, "TbfpRetxStartErr");
         }
@@ -96,78 +78,89 @@ bool system_calc_byte_rate(void) {
   interface_if - interface to send
   retx - retransmit
   */
-bool sys_send_if(const uint8_t* const array,
-                 const uint32_t size,
-                 const Interfaces_t interface_if,
-                 const IfRetx_t retx) {
+bool interface_send(const uint8_t* const array, const uint32_t size, const InterfaceType_t interface_if,
+                    const IfRetx_t retx) {
     bool res = false;
 #ifdef HAS_SYSTEM_DIAG
-    LOG_DEBUG(SYS, "%s Send", InterfaceToStr(interface_if));
+    LOG_DEBUG(SYS, "Send,IF:%s,SZ:%u Byte", InterfaceTypeToStr(interface_if), size);
 #endif
 
-    switch(interface_if) {
-
-#ifdef HAS_SERIAL_PORT
-    case IF_SERIAL_PORT: {
-        res = serial_port_send( 0, array, size) ;
-        log_res(SYS, res, "SerialPortSend");
+    switch(interface_if.interface_name) {
+    case INTERFACE_NAME_LOOPBACK: {
+        res = interface_rx(interface_if, array, size);
+        log_res(SYS, res, "LoopBack");
     } break;
-#endif /**/
-
-#ifdef HAS_UART0
-    case IF_UART0: {
-        res = uart_mcal_send(0, array, size);
-    } break;
-#endif
-
-#ifdef HAS_UART1
-    case IF_UART1: {
-        res = uart_mcal_send(1, array, size);
-    } break;
-#endif
-
-    case IF_LOOPBACK: {
-#ifdef HAS_TBFP_EXT
-        res = tbfp_rx(array, size, IF_LOOPBACK);
-        log_res(SYS, res, "TbfpProcLoopBack");
-#endif
-    } break;
-
-#ifdef HAS_PC
-    case IF_STDIO: {
-        res = stdio_send(array, size);
-    } break;
-#endif
 
 #ifdef HAS_INTERFACE_EXT
-    case IF_BLACK_HOLE:
+    case INTERFACE_NAME_BLACKHOLE:
         /*That is interface for test and debug*/
         res = true;
         break;
 #endif
 
+#ifdef HAS_CAN
+    case INTERFACE_NAME_CAN: {
+        CanHandle_t* Can = CanGetNode(interface_if.num);
+        if(Can) {
+            res = can_mcal_transmit_buff(interface_if.num, Can->my_id, array, size);
+            log_res(SYS, res, "CanSen");
+        }
+    } break;
+#endif
+
+#ifdef HAS_SERIAL_PORT
+    case INTERFACE_NAME_SERIAL_PORT: {
+        res = serial_port_send(interface_if.num, array, size);
+        log_res(SYS, res, "SerialPortSend");
+    } break;
+#endif /**/
+
+#ifdef HAS_SPI
+    case INTERFACE_NAME_SPI: {
+        res = spi_mcal_write(interface_if.num, array, size);
+    } break;
+#endif
+
+#ifdef HAS_UART
+    case INTERFACE_NAME_UART: {
+        res = uart_mcal_send(interface_if.num, array, size);
+    } break;
+#endif
+
+#ifdef HAS_RS232
+    case INTERFACE_NAME_RS232: {
+        res = rs232_send(interface_if.num, array, size);
+    } break;
+#endif
+
+#ifdef HAS_PC
+    case INTERFACE_NAME_STDIO: {
+        res = stdio_send(array, size);
+    } break;
+#endif
+
 #ifdef HAS_BLE
-    case IF_BLE: {
+    case INTERFACE_NAME_BLE: {
         res = ble_send(array, size);
     } break;
-#endif /*HAS_BLE*/
+#endif /**/
 
 #ifdef HAS_SX1262
-    case IF_SX1262: {
+    case INTERFACE_NAME_SX1262: {
         res = sys_sent_sx1262(array, size, retx);
         if(false == res) {
             LOG_ERROR(SX1262, "SysSentSx1262");
         }
     } break;
-#endif /*HAS_SX1262*/
+#endif /**/
 
     /*ForUnitTest on PC*/
 #ifdef HAS_TBFP
-    // res = tbfp_proc(&array[0], size, IF_SX1262, true);
+    // res = tbfp_proc(&array[0], size, INTERFACE_NAME_SX1262, true);
 #endif /*HAS_TBFP*/
 
 #ifdef HAS_LORA
-    case IF_LORA: {
+    case INTERFACE_NAME_LORA: {
         res = radio_send_queue(array, size);
         if(false == res) {
             LOG_ERROR(RADIO, "SendErr");
@@ -175,53 +168,35 @@ bool sys_send_if(const uint8_t* const array,
     } break;
 #endif
 
-#ifdef HAS_CAN
-    case IF_CAN: {
-        res = can_if_send(array, size);
-    } break;
-#endif
-
-#ifdef HAS_SPI0
-    case IF_SPI0: {
-        res = spi_write(SPI0_INX, array, size);
-    } break;
-#endif
-
-#ifdef HAS_RS232
-    case IF_RS232: {
-        res = rs232_send(1, array, size);
-    } break;
-#endif
-
 #ifdef HAS_UWB
-    case IF_UWB: {
+    case INTERFACE_NAME_UWB: {
         res = uwb_send(array, size);
     } break;
 #endif /*HAS_UWB*/
 
     default: {
 #ifdef HAS_SYSTEM_DIAG
-        LOG_ERROR(SYS, "UndefIf: %u=%s", interface_if, InterfaceToStr(interface_if));
+        LOG_ERROR(SYS, "UndefIf: %u=%s", interface_if, InterfaceTypeToStr(interface_if));
 #endif
         res = false;
     } break;
     }
+
     if(false == res) {
 #ifdef HAS_SYSTEM_DIAG
-        LOG_DEBUG(SYS, "SendIfErr: %u=%s", interface_if, InterfaceToStr(interface_if));
+        LOG_DEBUG(SYS, "SendIfErr: %u=%s", interface_if, InterfaceTypeToStr(interface_if));
 #endif
-        // send_err_cnt++;
     }
     return res;
 }
 
-#ifdef HAS_INTERFACE_EXT
+#if 0
 bool sys_available_interfaces(void) {
     bool res = false;
     uint32_t i = 0;
     uint32_t ok_cnt = 0;
 
-    for(i = 0; i < IF_CNT; i++) {
+    for(i = 0; i < INTERFACE_NAME_CNT; i++) {
         res = interface_valid(i);
         if(res) {
             ok_cnt++;
@@ -240,11 +215,16 @@ bool sys_available_interfaces(void) {
 }
 #endif
 
-
-#ifdef HAS_PC
-Interfaces_t InterfaceComPortToInterface(uint8_t com_port_num){
-    Interfaces_t inter_face = IF_SERIAL_PORT;
-    (void)com_port_num;
+#ifdef HAS_SERIAL_PORT
+InterfaceType_t InterfaceComPortToInterface(uint8_t com_port_num) {
+    InterfaceType_t inter_face = {0};
+    inter_face.interface_name = INTERFACE_NAME_SERIAL_PORT;
+    inter_face.num = com_port_num;
     return inter_face;
 }
 #endif
+
+bool interface_rx(const InterfaceType_t interface_if, const uint8_t* const array, const uint32_t len) {
+    bool res = false;
+    return res;
+}

@@ -1,13 +1,17 @@
 /*CRC-24Q*/
 #include "crc24_q.h"
 
-#include <stdbool.h>
-#include <stdint.h>
+//#include <string.h>
 
+#ifdef HAS_BIT_UTILS
 #include "bit_utils.h"
-#include "log.h"
+#endif
 
-const static uint32_t Crc24qLut[256] = {
+#ifdef HAS_LOG
+#include "log.h"
+#endif
+
+static const uint32_t Crc24qLut[256] = {
     0x00000000, 0x01864CFB, 0x028AD50D, 0x030C99F6, 0x0493E6E1, 0x0515AA1A, 0x061933EC, 0x079F7F17, 0x08A18139,
     0x0927CDC2, 0x0A2B5434, 0x0BAD18CF, 0x0C3267D8, 0x0DB42B23, 0x0EB8B2D5, 0x0F3EFE2E, 0x10C54E89, 0x11430272,
     0x124F9B84, 0x13C9D77F, 0x1456A868, 0x15D0E493, 0x16DC7D65, 0x175A319E, 0x1864CFB0, 0x19E2834B, 0x1AEE1ABD,

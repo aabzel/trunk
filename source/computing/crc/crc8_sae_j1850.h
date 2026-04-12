@@ -1,8 +1,7 @@
 #ifndef CRC8_SAE_J1850_H_
 #define CRC8_SAE_J1850_H_
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
 #ifdef __cplusplus
 extern "C" {

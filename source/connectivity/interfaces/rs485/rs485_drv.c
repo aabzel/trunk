@@ -15,7 +15,7 @@ bool addr_is_mask(ProtocolNode_t * const BusNet,Addr32Mask_t* Mask){
         if(Mask) {
             if(0==Mask->size) {
                 res = true;
-                LOG_DEBUG(RS485,"Match Mask: %s=Addr %s", Mask322Str(&Mask), utoa_bin32(BusNet->addr) );
+                LOG_DEBUG(RS485,"Match Mask: %s=Addr %s", Mask32ToStr(&Mask), utoa_bin32(BusNet->addr) );
             }else {
                 if(Mask->size<=32) {
                     uint32_t range=generate_32bit_mask(Mask->size);
@@ -24,7 +24,7 @@ bool addr_is_mask(ProtocolNode_t * const BusNet,Addr32Mask_t* Mask){
                     uint32_t addr_val =BusNet->addr&range;
                     if(addr_val == mask_val ){
                         LOG_DEBUG(RS485,"Match Mask: %s=Addr %s",
-                                Mask322Str(&Mask),
+                                Mask32ToStr(&Mask),
                                 utoa_bin32(BusNet->addr)
                                 );
                         res = true;
@@ -60,7 +60,7 @@ static bool rs485_is_mask_exist(Addr32Mask_t Mask,
         ){
     bool res = false;
     Rs485Bus->ask_cnt++;
-    LOG_INFO(RS485,"%4u: IsAnyBodyWith %s",Rs485Bus->ask_cnt,Mask322Str(&Mask));
+    LOG_INFO(RS485,"%4u: IsAnyBodyWith %s",Rs485Bus->ask_cnt,Mask32ToStr(&Mask));
     bool out_res = false;
 
     if(BusNet) {
@@ -71,7 +71,7 @@ static bool rs485_is_mask_exist(Addr32Mask_t Mask,
             if(res) {
                 if(0==BusNet[i].status.mute) {
                     out_res = true;
-                    LOG_WARNING(RS485,"ACK Addr 0x%x=%s Mask:%s",BusNet[i].addr,utoa_bin32(BusNet[i].addr),Mask322Str(&Mask));
+                    LOG_WARNING(RS485,"ACK Addr 0x%x=%s Mask:%s",BusNet[i].addr,utoa_bin32(BusNet[i].addr),Mask32ToStr(&Mask));
                 }
             }
         }
@@ -119,7 +119,7 @@ bool rs485_scan_ll(Rs485Bus_t* Rs485Bus,
                         add_addr(Rs485Bus,Mask.addr);
                     }
                 }else{
-                    LOG_NOTICE(RS485,"NoMask %s!", Mask322Str(&Mask));
+                    LOG_NOTICE(RS485,"NoMask %s!", Mask32ToStr(&Mask));
 
                 }
 
@@ -134,7 +134,7 @@ bool rs485_scan_ll(Rs485Bus_t* Rs485Bus,
                         add_addr(Rs485Bus,Mask.addr);
                     }
                 }else{
-                    LOG_NOTICE(RS485,"NoMask %s!", Mask322Str(&Mask));
+                    LOG_NOTICE(RS485,"NoMask %s!", Mask32ToStr(&Mask));
 
                 }
 

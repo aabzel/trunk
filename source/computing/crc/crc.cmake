@@ -1,37 +1,43 @@
-
-if( NOT (CRC_MK_INC STREQUAL Y))
+# crc.cmake (с группировкой)
+if(NOT CRC_MK_INC STREQUAL Y)
     set(CRC_MK_INC Y)
-    message(STATUS "+ CRC")
+    
+    set(CRC_DIR "${COMPUTING_DIR}/crc")
+    include_directories(${CRC_DIR})
+        
+    string(APPEND MCAL_OPT " -DHAS_CRC")
 
-    set(CRC_DIR ${COMPUTING_DIR}/crc)
-
-    target_compile_definitions(app PUBLIC HAS_CRC)
-    target_include_directories(app PUBLIC ${CRC_DIR})
-
-    if (CRC8 STREQUAL Y)
-        message(STATUS "+ CRC8")
-        target_compile_definitions(app PUBLIC HAS_CRC8)
-        target_sources(app PRIVATE ${CRC_DIR}/crc8_sae_j1850.c)
-        target_sources(app PRIVATE ${CRC_DIR}/crc8_autosar.c)
+    
+    if(CRC_DIAG STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_CRC_DIAG")
+        string(APPEND SOURCES_C " ${CRC_DIR}/crc_diag.c")
     endif()
-
-    if (CRC16 STREQUAL Y)
-        message(STATUS "+ CRC16")
-        target_compile_definitions(app PUBLIC HAS_CRC16)
-        target_sources(app PRIVATE ${CRC_DIR}/crc16_ccitt.c)
+    
+    if(CRC8_AUTOSAR STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_CRC8")
+        string(APPEND MCAL_OPT " -DHAS_CRC8_AUTOSAR")
+        string(APPEND SOURCES_C " ${CRC_DIR}/crc8_autosar.c")
     endif()
-
-    if (CRC24 STREQUAL Y)
-        message(STATUS "+ CRC24")
-        target_compile_definitions(app PUBLIC HAS_CRC24)
-        target_sources(app PRIVATE ${CRC_DIR}/crc24_q.c)
+    
+    if(CRC8 STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_CRC8")
+        string(APPEND SOURCES_C " ${CRC_DIR}/crc8_sae_j1850.c")
     endif()
-
-    if (CRC32 STREQUAL Y)
-        message(STATUS "+ CRC32")
-        #@echo ${error CRC32=${CRC32))
-        target_compile_definitions(app PUBLIC HAS_CRC32)
-        target_sources(app PRIVATE ${CRC_DIR}/crc32.c)
+    
+    if(CRC16 STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_CRC16")
+        string(APPEND SOURCES_C " ${CRC_DIR}/crc16_ccitt.c")
     endif()
+    
+    if(CRC24 STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_CRC24")
+        string(APPEND SOURCES_C " ${CRC_DIR}/crc24_q.c")
+    endif()
+    
+    if(CRC32 STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_CRC32")
+        string(APPEND SOURCES_C " ${CRC_DIR}/crc32.c")
+    endif()
+    
 endif()
 

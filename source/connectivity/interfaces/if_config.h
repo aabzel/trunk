@@ -9,15 +9,15 @@ extern "C" {
 #error "+HAS_SYSTEM"
 #endif
 
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "sys_constants.h"
+
 #ifdef HAS_INTERFACES
 #include "interfaces_const.h"
-extern const Interfaces_t AvailableInterfacesLUT[];
+//extern const Interfaces_t AvailableInterfacesLUT[];
 #endif
 
-uint32_t interface_get_cnt(void);
+//uint32_t interface_get_cnt(void);
 
 #ifdef __cplusplus
 }

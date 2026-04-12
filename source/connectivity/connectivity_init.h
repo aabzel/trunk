@@ -3,6 +3,21 @@
 
 #include "std_includes.h"
 
+
+#ifdef HAS_LOG_DISABLE
+#include "log.h"
+#define LOG_DISABLE_INIT  { .init_function = log_mcal_init_disable, .name="LogOff",},
+#else
+#define LOG_DISABLE_INIT
+#endif
+
+#ifdef HAS_LOG
+#include "log.h"
+#define LOG_ENABLE  { .init_function = log_enable, .name="LogEnable",},
+#else
+#define LOG_ENABLE
+#endif
+
 #ifdef HAS_LOG
 #include "log.h"
 #define LOG_INIT  { .init_function = log_mcal_init, .name="Log",},
@@ -21,9 +36,9 @@
 #error  "+HAS_CONNECTIVITY"
 #endif
 
-#ifdef HAS_LOG_UTILS
-#include "writer_generic.h"
-#define WRITER_INIT {.init_function=writer_init, .name="Writer",},
+#ifdef HAS_WRITER
+#include "writer.h"
+#define WRITER_INIT {.init_function=writer_mcal_init, .name="Writer",},
 #else
 #define WRITER_INIT
 #endif
@@ -60,11 +75,19 @@
 #endif /*HAS_CAN*/
 
 #ifdef HAS_LORA
-#include "radio_drv.h"
-#define LORA_INIT {.init_function=lora_init, .name="LoRa",},
+#include "lora_mcal.h"
+#define LORA_INIT {.init_function=lora_mcal_init, .name="LoRa",},
 #else
 #define LORA_INIT
 #endif /*HAS_LORA*/
+
+#ifdef HAS_WIFI
+#include "wifi_mcal.h"
+#define WIFI_INIT {.init_function=wifi_mcal_init, .name="WiFi",},
+#else
+#define WIFI_INIT
+#endif /**/
+
 
 #ifdef HAS_SERIAL
 #include "scan_serial_port.h"
@@ -73,9 +96,9 @@
 #define SERIAL_INIT
 #endif /*HAS_SERIAL*/
 
-#ifdef HAS_WIN
+#ifdef HAS_WIN_COLOR
 #include "win_utils.h"
-#define WIN_COLOR_INIT {.init_function=win_color_init, .name="WinColor",},
+#define WIN_COLOR_INIT {.init_function = win_color_init, .name="WinColor",},
 #else
 #define WIN_COLOR_INIT
 #endif

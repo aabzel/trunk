@@ -9,19 +9,31 @@
 
 #ifdef HAS_CAN_HEARTBEAT_PROC
 #include "can_mcal.h"
-#define CAN_HEARTBEAT_TASK  \
+#define CAN_HEARTBEAT_TASK                                \
    {.name="CAN_HB", .period_us=CAN_HEARTBEAT_PERIOD_US, .limiter.function=can_heartbeat_proc,},
 #else
 #define CAN_HEARTBEAT_TASK
 #endif
 
+#ifdef HAS_SW_UART_PROC
+#include "sw_uart_mcal.h"
+#define SW_UART_TASK                                \
+                 {.name="SwUart", .period_us=SW_UART_PERIOD_US, .limiter.function=sw_uart_proc,},
+#else
+#define SW_UART_TASK
+#endif
+
+
+
 #ifdef HAS_CAN_PROC
 #include "can_mcal.h"
-#define CAN_TASK  \
-    CAN_HEARTBEAT_TASK \
-    {.name="CAN", .period_us=CAN_PERIOD_US, .limiter.function=can_proc,},
+#define CAN_TASKS                                     \
+    CAN_HEARTBEAT_TASK                                \
+    {.name="CanHm", .period_us = CAN_HEALTH_MONITOR_PERIOD_US, .limiter.function = can_health_monitor_proc,}, \
+    {.name="CAN", .period_us = CAN_PERIOD_US, .limiter.function = can_proc,},
+
 #else
-#define CAN_TASK
+#define CAN_TASKS
 #endif
 
 #ifdef HAS_RF_PROC
@@ -36,6 +48,17 @@
 #else
 #define LORA_TASK
 #endif
+
+
+
+#ifdef HAS_WIFI_PROC
+#include "wifi_mcal.h"
+#define WIFI_TASK {.name="WiFi", .period_us=WIFI_PERIOD_US, .limiter.function=wifi_proc,},
+#else
+#define WIFI_TASK
+#endif
+
+
 
 #ifdef HAS_QSPI_PROC
 #define QSPI_TASK {.name="QSPI", .period_us=QSPI_PERIOD_US, .limiter.function=qspi_process,},
@@ -83,6 +106,16 @@
 #define RS232_TASK
 #endif
 
+
+
+#ifdef HAS_SEGGER_RTT_PROC
+#include "segger_rtt_mcal.h"
+#define SEGGER_RTT_TASK  {.name="SeggerRtt", .period_us=SEGGER_RTT_PERIOD_US, .limiter.function=segger_rtt_proc,},
+#else
+#define SEGGER_RTT_TASK
+#endif
+
+
 #ifdef HAS_SDIO_PROC
 #include "sdio_mcal.h"
 #define SDIO_TASKS  {.name="SDIO", .period_us=SDIO_PERIOD_US, .limiter.function=sdio_proc,},
@@ -104,17 +137,12 @@
 #define USB_HOST_TASK
 #endif
 
-
 #ifdef HAS_SERIAL_PORT_PROC
 #include "serial_port.h"
 #define SERIAL_PORT_TASK {.name="SerialPort", .period_us=SERIAL_PORT_PERIOD_US, .limiter.function=serial_port_proc,},
 #else
 #define SERIAL_PORT_TASK
 #endif
-
-
-
-
 
 #ifdef HAS_UWB_PROC
 #include "uwb_if.h"
@@ -125,30 +153,31 @@
 
 #ifdef HAS_SOCKET_PROC
 #include "socket_if.h"
-#define SOCKET_TASK {.name="Socket", .period_us=SOCKET_PERIOD_US, .limiter.function=socket_proc,},
+#define SOCKET_TASK  { .name="Socket", .period_us = SOCKET_PERIOD_US, .limiter.function = socket_proc,},
 #else
 #define SOCKET_TASK
 #endif
-
 
 #define USB_TASKS USB_HOST_TASK
 
 #define CONNECTIVITY_WIRELESS_TASKS    \
     BLUETOOTH_TASK                     \
     LORA_TASK                          \
+    WIFI_TASK                          \
     RF_TASKS                           \
     UWB_TASK
 
 #define CONNECTIVITY_WIRE_TASKS  \
-    CAN_TASK                     \
-    RF_TASK                      \
+    CAN_TASKS                    \
     ONE_WIRE_TASK                \
+    SEGGER_RTT_TASK              \
     QSPI_TASK                    \
     RS232_TASK                   \
     SERIAL_PORT_TASK             \
     RS485_TASKS                  \
     SDIO_TASKS                   \
     SWD_TASKS                    \
+    SW_UART_TASK                 \
     USB_TASKS
 
 #define INTERFACES_TASKS         \

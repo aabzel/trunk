@@ -10,6 +10,74 @@ typedef enum {
 } IfBusRole_t;
 
 
+typedef enum {
+    INTERFACE_NAME_UNDEF = 0,
+    INTERFACE_NAME_UART=1 ,
+    INTERFACE_NAME_CAN= 2 ,
+    INTERFACE_NAME_SDIO =3,
+    INTERFACE_NAME_SERIAL_PORT =4,
+    INTERFACE_NAME_RS485 = 5,
+    INTERFACE_NAME_UWB = 6,
+    INTERFACE_NAME_WIFI = 7,
+    INTERFACE_NAME_RS232 = 8 ,
+    INTERFACE_NAME_LORA = 9,
+    INTERFACE_NAME_GFSK = 10,
+    INTERFACE_NAME_CAN_FD = 11,
+    INTERFACE_NAME_LOOPBACK=12 ,
+    INTERFACE_NAME_STDIO = 13 ,
+    INTERFACE_NAME_BLACKHOLE = 14,
+    INTERFACE_NAME_BLUETOOTH  = 15 ,
+    INTERFACE_NAME_SPI =16,
+    INTERFACE_NAME_I2C=17 ,
+    INTERFACE_NAME_LIN =18,
+    INTERFACE_NAME_I2S =19,
+    INTERFACE_NAME_USB=20,
+    INTERFACE_NAME_1_WIRE=21 ,
+    INTERFACE_NAME_BLE = 22,
+    INTERFACE_NAME_ISO_TP = 23,
+    INTERFACE_NAME_RAM = 24,
+    INTERFACE_NAME_FLASH = 25,
+    INTERFACE_NAME_NVRAM = 26,
+    INTERFACE_NAME_ESP_01 = 27,
+    INTERFACE_NAME_SEGGER_RTT = 28,
+    INTERFACE_NAME_RS422,
+    INTERFACE_NAME_IR,
+    INTERFACE_NAME_ISO7816,
+    INTERFACE_NAME_PDM ,
+    INTERFACE_NAME_HDMI,
+    INTERFACE_NAME_PWM ,
+    INTERFACE_NAME_PCI,
+    INTERFACE_NAME_MII ,
+    INTERFACE_NAME_RMII,
+    INTERFACE_NAME_SMBUS ,
+    INTERFACE_NAME_GMII,
+    INTERFACE_NAME_SWD,
+    INTERFACE_NAME_DDR3,
+    INTERFACE_NAME_DDR4,
+    INTERFACE_NAME_JTAG,
+    INTERFACE_NAME_MDIO,
+    INTERFACE_NAME_NFC,
+    INTERFACE_NAME_RFID,
+    INTERFACE_NAME_LVDS ,
+    INTERFACE_NAME_CNT ,
+} InterfaceName_t;
+
+
+
+/*
+ for SPI, I2S
+ Some microcontrollers (FC7300x ) do not have separate interrupts for receiving or transmitting.
+ Just one move-done interrupt.
+ There you need to explicitly indicate to the interrupt what is happening by bypassing a RAM variable.
+ */
+typedef enum {
+    INTERFACE_OPERATION_IDLE = 1,
+    INTERFACE_OPERATION_RECEPTION = 2,  /*RX*/
+    INTERFACE_OPERATION_SEND = 3,       /*TX*/
+    INTERFACE_OPERATION_RECEPTION_AND_TRANSMISSION = 4,  /*TXRX*/
+    INTERFACE_OPERATION_UNDEF = 0,
+} IfOperation_t;
+
 
 typedef enum {
     RETX_NO_NEED = 0,
@@ -25,146 +93,5 @@ typedef enum {
 } IfBitOrder_t;
 
 
-typedef enum {
-    IF_UNDEF = 0,
-    IF_LOOPBACK = 1, /*for self Test*/
-    IF_BLACK_HOLE = 2,
-
-#ifdef HAS_SERIAL_PORT
-    IF_SERIAL_PORT = 3,
-#endif
-
-#ifdef HAS_LORA
-    IF_LORA, /*RTCM3 source*/
-#endif
-
-#ifdef HAS_SX1262
-    IF_SX1262,
-#endif
-
-#ifdef HAS_UART0
-    IF_UART0, /*for CLI*/
-#endif
-
-#ifdef HAS_UART1
-    IF_UART1,
-#endif
-
-#ifdef HAS_STACK_FRAME
-    STACK_FRAME,
-#endif
-
-#ifdef HAS_UART2
-    IF_UART2,
-#endif
-
-#ifdef HAS_UART3
-    IF_UART3,
-#endif
-
-#ifdef HAS_UART6
-    IF_UART6,
-#endif
-
-#ifdef HAS_UART8
-    IF_UART8,
-#endif
-
-#ifdef HAS_USB
-    IF_USB,
-    IF_USB_HID,
-#endif
-
-#ifdef HAS_UART4
-    IF_UART4,
-#endif
-
-#ifdef HAS_RS232
-    IF_RS232, /*for Debug*/
-#endif
-
-#ifdef HAS_CAN
-    IF_CAN, /*for Debug*/
-#endif
-
-#ifdef HAS_CAN1
-    IF_CAN1,
-#endif
-
-#ifdef HAS_CAN2
-    IF_CAN2,
-#endif
-
-#ifdef HAS_GFSK
-    IF_GFSK,
-#endif
-
-#ifdef HAS_BLE
-    IF_BLE,
-#endif
-
-#ifdef HAS_CALCULATOR
-    CALC,
-#endif
-
-#ifdef HAS_SPI0
-    IF_SPI0,
-#endif
-
-#ifdef HAS_I2C0
-    IF_I2C0,
-#endif
-
-#ifdef HAS_I2C1
-    IF_I2C1,
-#endif
-
-#ifdef HAS_I2C2
-    IF_I2C2,
-#endif
-
-#ifdef HAS_I2C3
-    IF_I2C3,
-#endif
-
-#ifdef HAS_SPI1
-    IF_SPI1,
-#endif
-
-#ifdef HAS_SPI2
-    IF_SPI2,
-#endif
-
-#ifdef HAS_SPI3
-    IF_SPI3,
-#endif
-
-#ifdef HAS_SPI4
-    IF_SPI4,
-#endif
-
-#ifdef HAS_UWB
-    IF_UWB,
-#endif
-
-#ifdef HAS_PC
-    IF_STDIO,
-#endif
-
-#ifdef HAS_ISO_TP
-    IF_ISO_TP1,
-    IF_ISO_TP2,
-#endif
-
-#ifdef HAS_KEYBOARD
-    IF_USB_KEYBOARD,
-#endif
-
-#ifdef HAS_FAT_FS
-    IF_FAT_FS,
-#endif
-    IF_CNT,
-
-} Interfaces_t;
 
 #endif /* INTERFACES_CONST_H */

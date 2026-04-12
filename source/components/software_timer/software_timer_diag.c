@@ -2,7 +2,7 @@
 
 #include "software_timer.h"
 
-char* SwTimDir2Str(SwTimerCntDir_t code) {
+char* SwTimDirToStr(SwTimerCntDir_t code) {
     char* name = "?";
     switch(code) {
     case SW_TIMER_CNT_DIR_UP:
@@ -18,7 +18,7 @@ char* SwTimDir2Str(SwTimerCntDir_t code) {
     return name;
 }
 
-char* SwTimMode2Str(SwTimerMode_t code) {
+char* SwTimModeToStr(SwTimerMode_t code) {
     char* name = "?";
     switch(code) {
     case SW_TIMER_MODE_SINGLE:
@@ -34,7 +34,7 @@ char* SwTimMode2Str(SwTimerMode_t code) {
     return name;
 }
 
-const char* SwTimNum2Str(uint32_t sw_tim_num) {
+const char* SwTimNumToStr(uint32_t sw_tim_num) {
     const char* name = "?";
     const SoftwareTimerConfig_t* Node = SwTimerGetConfigNode(sw_tim_num);
     if(Node) {
