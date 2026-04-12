@@ -10,8 +10,6 @@
 #include "usb_device.h"
 #endif
 
-//#include "none_blocking_pause.h"
-
 bool board_init(void) {
     bool res = true;
 #ifdef HAS_LOG
@@ -19,21 +17,16 @@ bool board_init(void) {
     LOG_INFO(SYS,"XTall:%u Hz",XTAL_FREQ_HZ);
 #endif
 
-#ifdef HAS_PASTILDA
-    set_log_level(PASTILDA,LOG_LEVEL_INFO);
-#endif
-
-#ifdef HAS_KEEPASS
-    set_log_level(KEEPASS,LOG_LEVEL_INFO);
+#ifdef HAS_ISO_TP
+    set_log_level(ISO_TP,LOG_LEVEL_DEBUG);
 #endif
 
 #ifdef HAS_USB
     set_log_level(USB, LOG_LEVEL_INFO);
-
 #endif
 
 #ifdef HAS_USB_HOST
-    set_log_level(USB_HOST,LOG_LEVEL_INFO);
+    set_log_level(USB_HOST, LOG_LEVEL_INFO);
 #endif
     return res;
 }
@@ -61,8 +54,9 @@ uint32_t wires_get_cnt(void) {
 
 #endif
 
-
 bool board_proc(void) {
+    bool res = true;
     Pad_t Pad={.port=PORT_C,.pin=0,};
     gpio_toggle(  Pad);
+    return res;
 }

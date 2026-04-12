@@ -2,7 +2,7 @@
 
 #include "data_utils.h"
 
-const LogConfig_t LogConfig[] = {
+const LogConfig_t SECTION_CFG_DATA LogConfig[] = {
     {
         .num = 1,
         .valid = true,

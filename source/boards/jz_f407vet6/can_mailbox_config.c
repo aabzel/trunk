@@ -43,7 +43,7 @@
     CAN_MESSAGE_BUFFER_CAN_RX                              \
     CAN_MESSAGE_BUFFER_CAN_TX
 
-const CanMessageBufferConfig_t CanMessageBufferConfig[] = {
+const CanMessageBufferConfig_t SECTION_CFG_DATA CanMessageBufferConfig[] = {
         CAN_MESSAGE_BUFFER_CAN                                  \
 };
 

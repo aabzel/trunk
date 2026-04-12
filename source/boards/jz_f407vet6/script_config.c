@@ -13,7 +13,7 @@ static const ScriptCmd_t CommandArray[] = {
 };
 
 /*constant compile-time known settings*/
-const ScriptConfig_t ScriptConfig[] = {
+const ScriptConfig_t SECTION_CFG_DATA ScriptConfig[] = {
     {
         .num = 1,
         .cli_num = 1,

@@ -9,6 +9,4 @@ extern CanHandle_t CanInstance[];
 
 uint32_t can_get_cnt(void);
 
-
-
 #endif /* CAN_CONFIG_H  */

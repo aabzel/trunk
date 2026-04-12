@@ -4,7 +4,7 @@
 #include "iqueue_types.h"
 #include "can_types.h"
 
-#ifdef HAS_ISO_TP
+#ifdef HAS_ISO_TP_CUSTOM
 #include "lib_iso15765.h"
 #include "iso_tp_config.h"
 #endif
@@ -24,7 +24,7 @@ static iqueue_t iQueueHandleU8 = {0};
 static iqueue_t iQueueHandleCAN1 = {0};
 static iqueue_t iQueueHandleCAN2 = {0};
 
-const iQueueConfig_t iQueueConfig[] = {
+const iQueueConfig_t SECTION_CFG_DATA iQueueConfig[] = {
     { .num = IQUEUE_NUN_U8_5,
       .Interface={.interface_name=INTERFACE_NAME_RAM, .num=1,},
 #if 0
@@ -48,7 +48,8 @@ const iQueueConfig_t iQueueConfig[] = {
       .element_size = sizeof(int16_t),
       .name = "S16", .valid = true, },
 
-    { .num = IQUEUE_NUN_CAN1,
+    {
+      .num = IQUEUE_NUN_CAN1,
       .Interface={.interface_name=INTERFACE_NAME_CAN, .num = 1,},
 #if 0
       .type=TYPE_STRUCT,
@@ -58,19 +59,22 @@ const iQueueConfig_t iQueueConfig[] = {
       .element_cnt = ARRAY_SIZE(ArrayCan1Frames),
       .element_size = sizeof(CanMessage_t),
       .name = "CAN1",
-      .valid = true, },
+      .valid = true,
+    },
 
-      { .num = IQUEUE_NUN_CAN2,
+    {
+        .num = IQUEUE_NUN_CAN2,
         .Interface={.interface_name=INTERFACE_NAME_CAN, .num = 2,},
-  #if 0
+#if 0
         .type=TYPE_STRUCT,
-  #endif
+#endif
         .pHandle = ( iqueue_t *) (&iQueueHandleCAN2),
         .storage = (void* ) ArrayCan2Frames,
         .element_cnt = ARRAY_SIZE(ArrayCan2Frames),
         .element_size = sizeof(CanMessage_t),
         .name = "CAN2",
-        .valid = true, },
+        .valid = true,
+    },
 };
 
 iQueueHandle_t iQueueInstance[] = {
@@ -81,5 +85,3 @@ iQueueHandle_t iQueueInstance[] = {
 };
 
 COMPONENT_GET_CNT(iQueue, iqueue)
-
-

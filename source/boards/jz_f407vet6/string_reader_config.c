@@ -23,7 +23,7 @@ const StringReaderConfig_t StringReaderConfig[] = {
         .valid = true,
         .echo = true,
         .cli_num = 1,
-        .interface_if =  {.interface_name = INTERFACE_NAME_UART, .num = 1,},
+        .interface_if = { .interface_name = INTERFACE_NAME_UART, .num = 1,},
         .name = "UART1",
         .fifo_heap = FifoData1,
         .fifo_heap_size = sizeof(FifoData1),
@@ -80,6 +80,3 @@ StringReaderHandle_t StringReaderInstance[]={
 };
 
 COMPONENT_GET_CNT(StringReader, string_reader)
-
-
-

@@ -5,16 +5,16 @@
 
 static const CliCmdInfo_t CliCommands[] = {CLI_COMMANDS COMMANDS_END};
 
-const CliConfig_t CliConfig[] = {
+const CliConfig_t SECTION_CFG_DATA CliConfig[] = {
     {
-    .num = 1,
-    .valid = true,
-    .CommandArray = (CliCmdInfo_t*) CliCommands,
-    .cmd_cnt = ARRAY_SIZE(CliCommands),
+        .num = 1,
+        .valid = true,
+        .CommandArray = (CliCmdInfo_t*) CliCommands,
+        .cmd_cnt = ARRAY_SIZE(CliCommands),
 #ifdef HAS_LED
-    .feedback_led = 1,
+        .feedback_led = 1,
 #endif
-    }
+    },
 };
 
 CliHandle_t CliInstance[] = {

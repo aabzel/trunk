@@ -4,7 +4,6 @@
 #include "log_types.h"
 
 #define LOG_UART_NUM 1
-#define LOG_UART_BAUD_RATE 460800
 
 extern const LogConfig_t LogConfig[];
 extern LogHandle_t LogInstance[];

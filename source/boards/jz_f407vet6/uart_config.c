@@ -168,6 +168,3 @@ UartHandle_t UartInstance[]={
 };
 
 COMPONENT_GET_CNT(Uart, uart)
-
-
-

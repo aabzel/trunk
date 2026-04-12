@@ -5,7 +5,7 @@
 
 #define GARLAND_AMP 20.0
 
-const GarLandConfig_t GarLandConfig[] = {
+const GarLandConfig_t SECTION_CFG_DATA GarLandConfig[] = {
     { .num = 1, .valid = true, .name = "RX1", .pwm_num = PWM_NUM_RX1_LED, .pwm_frequency_hz = 500.0,
       .signal_amplitude = GARLAND_AMP, .signal_offset = GARLAND_AMP, .signal_phase_ms = 0, .signal_frequency = 1.0,    },
 

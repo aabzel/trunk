@@ -13,6 +13,13 @@
 
 
 const GpioConfig_t GpioConfig[] = {
+        { .Pad = { .port = PORT_A, .pin = 5 },
+          .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,
+    #ifdef HAS_LOG
+          .name = "LedRed",
+    #endif
+        },
+
     { .Pad = { .port = PORT_E, .pin = 13 },
       .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,
 #ifdef HAS_LOG

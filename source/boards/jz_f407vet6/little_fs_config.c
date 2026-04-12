@@ -94,7 +94,7 @@ static struct lfs_attr attrs={
         .size = 0,
 };
 
-const LittleFsConfig_t LittleFsConfig[] = {
+const LittleFsConfig_t SECTION_CFG_DATA LittleFsConfig[] = {
         {
           .num = 1,
           .base_address = DFLASH_START,
