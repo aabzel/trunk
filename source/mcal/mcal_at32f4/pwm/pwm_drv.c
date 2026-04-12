@@ -249,7 +249,7 @@ bool tim_oc_start(uint8_t timer_num, TimChannel_t channel) {
             LOG_INFO(TIM, "OcStartOk");
             res = true;
         } else {
-            LOG_ERROR(TIM, "OcStartErr %s", HalStatus2Str(ret));
+            LOG_ERROR(TIM, "OcStartErr %s", HalStatusToStr(ret));
             res = false;
         }
     }
@@ -267,7 +267,7 @@ bool tim_oc_stop(uint8_t timer_num, TimChannel_t channel) {
             LOG_INFO(TIM, "OcStopOk");
             res = true;
         } else {
-            LOG_ERROR(TIM, "OcStopErr %s", HalStatus2Str(ret));
+            LOG_ERROR(TIM, "OcStopErr %s", HalStatusToStr(ret));
             res = false;
         }
     }
@@ -285,7 +285,7 @@ bool pwm_start(uint8_t timer_num, TimChannel_t channel) {
             LOG_INFO(PWM, "StartOk");
             res = true;
         } else {
-            LOG_ERROR(PWM, "StartErr %s", HalStatus2Str(ret));
+            LOG_ERROR(PWM, "StartErr %s", HalStatusToStr(ret));
             res = false;
         }
     }
@@ -303,7 +303,7 @@ bool pwm_stop(uint8_t timer_num, TimChannel_t channel) {
             LOG_INFO(PWM, "StopOk");
             res = true;
         } else {
-            LOG_ERROR(PWM, "StopErr %s", HalStatus2Str(ret));
+            LOG_ERROR(PWM, "StopErr %s", HalStatusToStr(ret));
             res = false;
         }
     }

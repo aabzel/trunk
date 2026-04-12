@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 
-//#include "boot_const.h"
+#include "generic_const.h"
 
 
 #ifdef __cplusplus

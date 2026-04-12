@@ -1,9 +1,7 @@
 #ifndef INDICATION_H
 #define INDICATION_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "indication_types.h"
 
 #ifndef HAS_SYSTEM

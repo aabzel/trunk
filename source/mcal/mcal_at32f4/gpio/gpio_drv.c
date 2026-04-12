@@ -207,7 +207,7 @@ bool gpio_get_state(uint8_t pad_num, GpioLogicLevel_t* logic_level) {
     bool res = false;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Get P%s%u", GpioPort2Str(pad.port), pad.pin);
+    LOG_DEBUG(GPIO, "Get P%s%u", GpioPortToStr(pad.port), pad.pin);
 #endif
     gpio_type* PORTx = Port2PortPtr(pad.port);
     if(PORTx) {
@@ -226,7 +226,7 @@ uint32_t gpio_read(uint8_t pad_num) {
     (void) pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Get P%s%u", GpioPort2Str(pad.port), pad.pin);
+    LOG_DEBUG(GPIO, "Get P%s%u", GpioPortToStr(pad.port), pad.pin);
 #endif
    // GPIO_PinState value = HAL_GPIO_ReadPin(Port2PortPtr(pad.port), 1 << pad.pin);
     ret = (uint32_t)0;
@@ -238,7 +238,7 @@ bool gpio_set_logic_level(uint8_t pad_num, GpioLogicLevel_t logic_level) {
     (void) pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Set P%s%u LL:%u", GpioPort2Str(pad.port), pad.pin, logic_level);
+    LOG_DEBUG(GPIO, "Set P%s%u LL:%u", GpioPortToStr(pad.port), pad.pin, logic_level);
 #endif
     gpio_type* GPIOx = Port2PortPtr(pad.port);
     if(GPIOx){
@@ -355,7 +355,7 @@ GpioPullMode_t gpio_get_pull(uint8_t pad_num) {
         LOG_DEBUG(GPIO, "mode 0x%x", mode);
     } else {
 #ifdef HAS_GPIO_DIAG
-        LOG_ERROR(GPIO, "PortErr P%s", GpioPort2Str(pad.port));
+        LOG_ERROR(GPIO, "PortErr P%s", GpioPortToStr(pad.port));
 #endif
     }
     return mode;
@@ -512,14 +512,14 @@ bool gpio_init_one(const GpioConfig_t* const Config) {
                     //res = true;
                 } else {
 #ifdef HAS_GPIO_DIAG
-                    LOG_ERROR(GPIO, "ModeErr P%s%u", GpioPort2Str(Config->pad.port), Config->pad.pin);
+                    LOG_ERROR(GPIO, "ModeErr P%s%u", GpioPortToStr(Config->pad.port), Config->pad.pin);
 #endif
                     res = false;
                 }
             }
         } else {
 #ifdef HAS_GPIO_DIAG
-            LOG_ERROR(GPIO, "ReDefine P%s%u", GpioPort2Str(Config->pad.port), Config->pad.pin);
+            LOG_ERROR(GPIO, "ReDefine P%s%u", GpioPortToStr(Config->pad.port), Config->pad.pin);
 #endif
         }
     }

@@ -1,0 +1,7 @@
+//https://graphviz.org/doc/info/colors.html
+
+DMA->UART [color = red]
+FIFO->UART [color = blue]
+GPIO->UART
+
+UART->LOG

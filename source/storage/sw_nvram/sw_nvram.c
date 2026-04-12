@@ -205,7 +205,7 @@ bool sw_nvram_init_one(uint8_t num) {
 
         NorFlashItem_t* FlashNode = NorFlashGetNode(Node->nor_flash_num);
         if(FlashNode) {
-            LOG_INFO(NVRAM,"WorkWith NorFlash %u=%s", FlashNode->option, NorFlashOption2Str(FlashNode->option));
+            LOG_INFO(NVRAM,"WorkWith NorFlash %u=%s", FlashNode->option, NorFlashOptionToStr(FlashNode->option));
         }
         Node->active_page = sw_nvram_calc_active_page(Node, Config);
         if(NVRAM_PAGE_UNDEF!=Node->active_page ){

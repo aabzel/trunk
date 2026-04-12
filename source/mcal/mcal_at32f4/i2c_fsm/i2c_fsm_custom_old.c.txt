@@ -1,0 +1,884 @@
+#include "i2c_fsm_custom.h"
+
+#include <stdbool.h>
+#include <string.h>
+
+//#include "c_defines_generated.h"
+#include "array_diag.h"
+#include "artery_at32f4xx.h"
+#include "byte_utils.h"
+#include "data_types.h"
+#include "debug_info.h"
+#include "hal_diag.h"
+#include "i2c_mcal.h"
+#include "log.h"
+#include "mcal_types.h"
+#include "num_to_str.h"
+#include "time_mcal.h"
+
+static bool i2c_fsm_generate_stop(I2cHandle_t *Node) {
+    bool res = false;
+    if (Node) {
+        //i2c_enable(Node->I2Cx, FALSE );
+        // i2c_enable(Node->I2Cx, TRUE );
+        LOG_DEBUG(I2C, "Gen,Stop");
+        Node->fsm_state = I2C_FSM_TX_STOP;
+        i2c_stop_generate(Node->I2Cx);
+        res = true;
+    }
+    return res;
+}
+
+bool i2c_fsm_proc_frame_wait_busy(I2cHandle_t *Node) {
+    bool res = false;
+    switch (Node->fsm_input) {
+    case I2C_FSM_INPUT_BUS_BUSY: {
+        res = true;
+        Node->fsm_state = I2C_FSM_WAIT_BUSY;
+        i2c_software_reset(Node->I2Cx, TRUE);
+    }
+        break;
+    case I2C_FSM_INPUT_GENERATE_START: {
+    }
+        break;
+    case I2C_FSM_INPUT_START_DONE: {
+    }
+        break;
+    case I2C_FSM_INPUT_STOP_SIGNAL_DONE: {
+    }
+        break;
+    case I2C_FSM_INPUT_7BITADDR_ACK: {
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DATA_DONE: {
+    }
+        break;
+    case I2C_FSM_INPUT_TX_MODE: {
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DIR: {
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DATA_BUFF_EMPTY: {
+    }
+        break;
+    case I2C_FSM_INPUT_ACKNOWLEDGE_FAIL: {
+    }
+        break;
+    case I2C_FSM_INPUT_RX_DATA_FULL: {
+    }
+        break;
+    case I2C_FSM_INPUT_BUS_ERROR: {
+    }
+        break;
+    case I2C_FSM_INPUT_NONE: {
+    }
+        break;
+    case I2C_FSM_INPUT_ADDRH_9_8_ACK: {
+    }
+        break;
+    case I2C_FSM_INPUT_OVERFLOW_OR_UNDERFLOW: {
+    }
+        break;
+    case I2C_FSM_INPUT_RX_PEC: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_TIMEOUT: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_ALERT: {
+    }
+        break;
+    case I2C_FSM_INPUT_ARBITRATION_LOST: {
+    }
+        break;
+    case I2C_FSM_INPUT_GENERAL_CALL_ADDRESS_RECEIVED: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_DEVICE_ADDRESS_RX: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_HOST_ADDRESS_RX: {
+    }
+        break;
+    case I2C_FSM_INPUT_OWN_ADDRESS_2_RX: {
+    }
+        break;
+    default: {
+    }
+        break;
+    }
+    return res;
+}
+
+static bool i2c_fsm_all_flag_clear(I2cHandle_t* const Node) {
+	bool res = true;
+    // I2C_BUSERR_FLAG: bus error
+	i2c_flag_clear(Node->I2Cx, I2C_BUSERR_FLAG);
+    // I2C_ARLOST_FLAG: arbitration lost
+	i2c_flag_clear(Node->I2Cx, I2C_ARLOST_FLAG);
+    // I2C_ACKFAIL_FLAG: acknowledge failure
+	i2c_flag_clear(Node->I2Cx, I2C_ACKFAIL_FLAG);
+    // I2C_OUF_FLAG: overflow or underflow
+	i2c_flag_clear(Node->I2Cx, I2C_OUF_FLAG);
+    // I2C_PECERR_FLAG: pec receive error
+	i2c_flag_clear(Node->I2Cx, I2C_PECERR_FLAG);
+    // I2C_TMOUT_FLAG: smbus timeout
+	i2c_flag_clear(Node->I2Cx, I2C_TMOUT_FLAG);
+    // I2C_ALERTF_FLAG: smbus alert
+	i2c_flag_clear(Node->I2Cx, I2C_ALERTF_FLAG);
+    // I2C_STOPF_FLAG: stop condition generation complete
+	i2c_flag_clear(Node->I2Cx, I2C_STOPF_FLAG);
+    // I2C_ADDR7F_FLAG: i2c 0~7 bit address match
+	i2c_flag_clear(Node->I2Cx, I2C_ADDR7F_FLAG);
+	return res;
+}
+
+bool i2c_fsm_proc_timeout(I2cHandle_t* Node){
+    bool res = false ;
+   // res= i2c_fsm_all_flag_clear(Node);
+ //   res = i2c_fsm_generate_stop(Node);
+    LOG_DEBUG(I2C, "TimeOut");
+    return res;
+}
+
+
+bool i2c_fsm_proc_frame_idle(I2cHandle_t *Node) {
+    bool res = false;
+    switch (Node->fsm_input) {
+    case I2C_FSM_INPUT_GENERATE_START: {
+        LOG_DEBUG(I2C, "GenStart");
+
+       // i2c_enable(Node->I2Cx, FALSE);
+        i2c_enable(Node->I2Cx, TRUE);
+        //i2c_software_reset(Node->I2Cx, TRUE);
+        i2c_smbus_enable(Node->I2Cx, FALSE);
+        res= i2c_fsm_all_flag_clear( Node);
+
+        i2c_master_receive_ack_set(Node->I2Cx, I2C_MASTER_ACK_CURRENT);
+        i2c_ack_enable(Node->I2Cx, TRUE);
+        i2c_start_generate(Node->I2Cx);
+
+        Node->fsm_state = I2C_FSM_TX_START;
+    }
+        break;
+
+    case I2C_FSM_INPUT_START_DONE: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_STOP_SIGNAL_DONE: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DATA_DONE: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_RX_DATA_FULL: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DATA_BUFF_EMPTY: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_BUS_ERROR: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_7BITADDR_ACK: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_NONE: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_ADDRH_9_8_ACK: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_ARBITRATION_LOST: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_ACKNOWLEDGE_FAIL: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_OVERFLOW_OR_UNDERFLOW: {
+        res = false;
+    }
+        break;
+    case I2C_FSM_INPUT_RX_PEC: {
+        res = false;
+    }
+        break;
+
+    default:
+        break;
+    }
+    return res;
+}
+
+bool i2c_fsm_proc_frame_wait_start_done(I2cHandle_t *Node) {
+    bool res = false;
+    switch (Node->fsm_input) {
+    case I2C_FSM_INPUT_START_DONE: {
+        res = true;
+        LOG_DEBUG(I2C, "Set7BitAddr");
+        Node->fsm_state = I2C_FSM_TX_7BIT_ADDR;
+        Node->I2Cx->dt_bit.dt = Node->fsm_slave_addr;
+    }
+        break;
+    case I2C_FSM_INPUT_STOP_SIGNAL_DONE: {
+    }
+        break;
+    case I2C_FSM_INPUT_RX_PEC: {
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DATA_DONE: {
+    }
+        break;
+    case I2C_FSM_INPUT_RX_DATA_FULL: {
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DATA_BUFF_EMPTY: {
+    }
+        break;
+    case I2C_FSM_INPUT_BUS_ERROR: {
+    }
+        break;
+    case I2C_FSM_INPUT_GENERATE_START: {
+    }
+        break;
+    case I2C_FSM_INPUT_7BITADDR_ACK: {
+    }
+        break;
+    case I2C_FSM_INPUT_NONE: {
+    }
+        break;
+    case I2C_FSM_INPUT_ADDRH_9_8_ACK: {
+    }
+        break;
+    case I2C_FSM_INPUT_ARBITRATION_LOST: {
+    }
+        break;
+    case I2C_FSM_INPUT_ACKNOWLEDGE_FAIL: {
+    }
+        break;
+    case I2C_FSM_INPUT_OVERFLOW_OR_UNDERFLOW: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_TIMEOUT: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_ALERT: {
+    }
+        break;
+    case I2C_FSM_INPUT_TX_MODE: {
+    }
+        break;
+    case I2C_FSM_INPUT_BUS_BUSY: {
+        i2c_software_reset(Node->I2Cx, TRUE);
+        //Node->fsm_state=I2C_FSM_WAIT_BUSY;
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DIR: {
+    }
+        break;
+    case I2C_FSM_INPUT_GENERAL_CALL_ADDRESS_RECEIVED: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_DEVICE_ADDRESS_RX: {
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_HOST_ADDRESS_RX: {
+    }
+        break;
+    case I2C_FSM_INPUT_OWN_ADDRESS_2_RX: {
+    }
+        break;
+
+    default: {
+    }
+        break;
+    }
+    return res;
+}
+
+bool i2c_fsm_proc_frame_tx_7bitaddr(I2cHandle_t *Node) {
+    bool res = false;
+    switch (Node->fsm_input) {
+    case I2C_FSM_INPUT_TX_MODE: {
+        res = true;
+    }
+        break;
+
+    case I2C_FSM_INPUT_STOP_SIGNAL_DONE: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_ACKNOWLEDGE_FAIL: {
+        LOG_DEBUG(I2C, "7Bit,Nak!");
+        Node->spot_addr = false;
+
+        res = i2c_fsm_generate_stop(Node);
+    }
+        break;
+
+    case I2C_FSM_INPUT_7BITADDR_ACK: {
+        LOG_DEBUG(I2C, "7Bit,Ack!");
+        Node->spot_addr = true;
+        res = i2c_fsm_generate_stop(Node);
+
+    }
+        break;
+    case I2C_FSM_INPUT_START_DONE: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_RX_PEC: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_TX_DATA_DONE: {
+        LOG_DEBUG(I2C, "Proc,Tx,Dat,Done");
+        res = i2c_fsm_generate_stop(Node);
+    }
+        break;
+
+    case I2C_FSM_INPUT_RX_DATA_FULL: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_TX_DATA_BUFF_EMPTY: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_BUS_ERROR: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_GENERATE_START: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_NONE: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_ADDRH_9_8_ACK: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_ARBITRATION_LOST: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_OVERFLOW_OR_UNDERFLOW: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_SMBUS_TIMEOUT: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_SMBUS_ALERT: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_BUS_BUSY: {
+        //Node->fsm_state=I2C_FSM_WAIT_BUSY;
+    }
+        break;
+
+    case I2C_FSM_INPUT_TX_DIR: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_GENERAL_CALL_ADDRESS_RECEIVED: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_SMBUS_DEVICE_ADDRESS_RX: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_SMBUS_HOST_ADDRESS_RX: {
+    }
+        break;
+
+    case I2C_FSM_INPUT_OWN_ADDRESS_2_RX: {
+    }
+        break;
+
+    default: {
+    }
+        break;
+    }
+    return res;
+}
+
+bool i2c_fsm_proc_frame_wait_stop_done(I2cHandle_t *Node) {
+    bool res = false;
+    switch (Node->fsm_input) {
+
+    case I2C_FSM_INPUT_STOP_SIGNAL_DONE: {
+        LOG_DEBUG(I2C, "Proc,Stop,Done");
+        res = true;
+        Node->loop = false;
+
+    }
+        break;
+
+    case I2C_FSM_INPUT_ACKNOWLEDGE_FAIL: {
+        Node->I2Cx->ctrl1_bit.i2cen = 0;
+        //res = i2c_fsm_generate_stop(Node);
+        Node->loop = false;
+
+    }
+        break;
+
+    case I2C_FSM_INPUT_7BITADDR_ACK: {
+        //res = i2c_fsm_generate_stop(Node);
+        Node->loop = false;
+
+    }
+        break;
+
+    case I2C_FSM_INPUT_START_DONE: {
+        res = false;
+        Node->loop = false;
+
+    }
+        break;
+
+    case I2C_FSM_INPUT_BUS_BUSY: {
+        //Node->fsm_state=I2C_FSM_WAIT_BUSY;
+    }
+        break;
+
+    case I2C_FSM_INPUT_RX_PEC: {
+        Node->loop = false;
+
+    }
+        break;
+
+    case I2C_FSM_INPUT_TX_DATA_DONE: {
+      //  res = i2c_fsm_generate_stop(Node);
+        Node->loop = false;
+
+    }
+        break;
+    case I2C_FSM_INPUT_RX_DATA_FULL: {
+        Node->loop = false;
+
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DATA_BUFF_EMPTY: {
+        Node->loop = false;
+
+    }
+        break;
+    case I2C_FSM_INPUT_BUS_ERROR: {
+        Node->loop = false;
+
+    }
+        break;
+    case I2C_FSM_INPUT_GENERATE_START: {
+        Node->loop = false;
+
+    }
+        break;
+    case I2C_FSM_INPUT_NONE: {
+        Node->loop = false;
+
+    }
+        break;
+    case I2C_FSM_INPUT_ADDRH_9_8_ACK: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_ARBITRATION_LOST: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_OVERFLOW_OR_UNDERFLOW: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_TIMEOUT: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_ALERT: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_TX_MODE: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_TX_DIR: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_GENERAL_CALL_ADDRESS_RECEIVED: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_DEVICE_ADDRESS_RX: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_SMBUS_HOST_ADDRESS_RX: {
+        Node->loop = false;
+    }
+        break;
+    case I2C_FSM_INPUT_OWN_ADDRESS_2_RX: {
+        Node->loop = false;
+    }
+        break;
+
+    default: {
+    }
+        break;
+    }
+    return res;
+}
+
+#ifdef HAS_SMBUS
+static bool i2c_fsm_inpit_smbus_get(I2cHandle_t* const Node) {
+    bool res = false;
+    //  I2C_TMOUT_FLAG: smbus timeout
+    if(false==Node->fsm_input_exist) {
+
+        ret = i2c_flag_get(Node->I2Cx, I2C_TMOUT_FLAG);
+        if(SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_SMBUS_TIMEOUT;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist=true;
+            res = true;
+        }
+    }
+
+    if(false==Node->fsm_input_exist) {
+
+        //  I2C_ALERTF_FLAG: smbus alert
+        ret = i2c_flag_get(Node->I2Cx, I2C_ALERTF_FLAG);
+        if(SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_SMBUS_ALERT;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist=true;
+            res = true;
+        }
+    }
+
+    if(false==Node->fsm_input_exist) {
+
+        //  I2C_DEVADDRF_FLAG: smbus device address received
+        ret = i2c_flag_get(Node->I2Cx, I2C_DEVADDRF_FLAG);
+        if(SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_SMBUS_DEVICE_ADDRESS_RX;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist=true;
+            res = true;
+        }
+    }
+
+    if(false==Node->fsm_input_exist) {
+
+        //  I2C_HOSTADDRF_FLAG: smbus host address received
+        ret = i2c_flag_get(Node->I2Cx, I2C_HOSTADDRF_FLAG);
+        if(SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_SMBUS_HOST_ADDRESS_RX;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist=true;
+            res = true;
+        }
+    }
+    return res;
+}
+#endif
+
+#define I2C_FSM_GET_FLAG(FLAG, ENUM)                                                                                   \
+    do {                                                                                                               \
+        ret = i2c_flag_get(Node->I2Cx, FLAG);                                                                          \
+        if(SET == ret) {                                                                                               \
+            Node->fsm_input = ENUM;                                                                                    \
+            Node->fsm_input_cnt++;                                                                                     \
+            res = true;                                                                                                \
+        }                                                                                                              \
+    } while(0);
+
+bool i2c_fsm_inpit_get(I2cHandle_t *const Node) {
+    bool res = false;
+    flag_status ret = 0;
+    Node->fsm_input_cnt = 0;
+
+    if (false == Node->fsm_input_exist) {
+        //   I2C_STOPF_FLAG: stop condition generation complete
+        ret = i2c_flag_get(Node->I2Cx, I2C_STOPF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_STOP_SIGNAL_DONE;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        // i2c 0~7 bit address match flag
+        ret = i2c_flag_get(Node->I2Cx, I2C_ADDR7F_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_7BITADDR_ACK;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_ACKFAIL_FLAG: acknowledge failure
+        ret = i2c_flag_get(Node->I2Cx, I2C_ACKFAIL_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_ACKNOWLEDGE_FAIL;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_STARTF_FLAG: start condition generation complete
+        ret = i2c_flag_get(Node->I2Cx, I2C_STARTF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_START_DONE;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_TDBE_FLAG: transmit data buffer empty
+        ret = i2c_flag_get(Node->I2Cx, I2C_RDBF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_TX_DATA_BUFF_EMPTY;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_ADDRHF_FLAG: master 9~8 bit address header match
+        ret = i2c_flag_get(Node->I2Cx, I2C_ADDRHF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_ADDRH_9_8_ACK;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_RDBF_FLAG: receive data buffer full
+        ret = i2c_flag_get(Node->I2Cx, I2C_RDBF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_RX_DATA_FULL;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_ARLOST_FLAG: arbitration lost
+        ret = i2c_flag_get(Node->I2Cx, I2C_ARLOST_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_ARBITRATION_LOST;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_OUF_FLAG: overflow or underflow
+        ret = i2c_flag_get(Node->I2Cx, I2C_OUF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_OVERFLOW_OR_UNDERFLOW;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_PECERR_FLAG: pec receive error
+        ret = i2c_flag_get(Node->I2Cx, I2C_PECERR_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_RX_PEC;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_GCADDRF_FLAG: general call address received
+        ret = i2c_flag_get(Node->I2Cx, I2C_GCADDRF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_GENERAL_CALL_ADDRESS_RECEIVED;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_ADDR2_FLAG: own address 2 received
+        ret = i2c_flag_get(Node->I2Cx, I2C_ADDR2_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_OWN_ADDRESS_2_RX;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_DIRF_FLAG: transmission direction
+        ret = i2c_flag_get(Node->I2Cx, I2C_DIRF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_TX_DIR;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_TDC_FLAG: transmit data complete
+        ret = i2c_flag_get(Node->I2Cx, I2C_TDC_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_TX_DATA_DONE;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_BUSYF_FLAG: bus busy flag transmission mode.
+        ret = i2c_flag_get(Node->I2Cx, I2C_BUSYF_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_BUS_BUSY;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_BUSERR_FLAG: bus error
+        ret = i2c_flag_get(Node->I2Cx, I2C_BUSERR_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_BUS_ERROR;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+    if (false == Node->fsm_input_exist) {
+        //  I2C_TRMODE_FLAG: transmission mode.
+        ret = i2c_flag_get(Node->I2Cx, I2C_TRMODE_FLAG);
+        if (SET == ret) {
+            Node->fsm_input = I2C_FSM_INPUT_TX_MODE;
+            Node->fsm_input_cnt++;
+            Node->fsm_input_exist = true;
+            res = true;
+        }
+    }
+
+#ifdef HAS_SMBUS
+    res = i2c_fsm_inpit_smbus_get(Node);
+#endif
+
+    if (1 < Node->fsm_input_cnt) {
+        LOG_ERROR(I2C, "I2C%u,MultIn:%u", Node->num, Node->fsm_input_cnt);
+    } else if (1 == Node->fsm_input_cnt) {
+        LOG_NOTICE(I2C, "I2C%u,In:%s", Node->num, I2cFsmInputToStr(Node->fsm_input));
+    }
+    return res;
+}
+
+#if 0
+bool i2c_fsm_check_addr_cus(uint8_t num, uint8_t i2c_addr) {
+    bool res = false;
+    I2cHandle_t* Node = I2cGetNode(num);
+    if(Node) {
+
+        uint32_t start = 0;
+        uint32_t diff = 0;
+        flag_status ret = 0;
+        i2c_master_receive_ack_set(Node->I2Cx, I2C_MASTER_ACK_NEXT);
+        i2c_ack_enable(Node->I2Cx, TRUE);
+        res = true;
+        Node->ack_done = false;
+        Node->ack_fail = false;
+        i2c_start_generate(Node->I2Cx);
+        while(1) {
+            ret = i2c_fsm_flag_get(Node->I2Cx, I2C_STARTF_FLAG);
+            if(SET == ret) {
+ break;
+            }
+        }
+
+        Node->I2Cx->dt_bit.dt = i2c_fsm_addr;
+
+        // i2c_fsm_7bit_address_send(Node->I2Cx,   i2c_fsm_addr, I2C_DIRECTION_RECEIVE);
+
+        start = time_get_ms32();
+
+        while(1) {
+            ret = i2c_fsm_flag_get(Node->I2Cx, I2C_ADDR7F_FLAG);
+            if(SET == ret) {
+ break;
+            }
+            uint32_t cur = time_get_ms32();
+            diff = cur - start;
+            if(50 < diff) {
+                res = false;
+ break;
+            }
+        }
+
+        if(Node->ack_fail) {
+            res = false;
+            res = i2c_fsm_wait_ack_ll(Node, 50);
+        }
+
+        i2c_stop_generate(Node->I2Cx);
+
+        start = time_get_ms32();
+        while(1) {
+            ret = i2c_fsm_flag_get(Node->I2Cx, I2C_STOPF_FLAG);
+            if(SET == ret) {
+ break;
+            }
+            uint32_t cur = time_get_ms32();
+            diff = cur - start;
+            if(50 < diff) {
+                // res = false;
+ break;
+            }
+        }
+    }
+    return res;
+}
+#endif

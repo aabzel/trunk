@@ -6,9 +6,9 @@
 
 #include "cross_detect_types.h"
 
-const char* CrossDetectSolution2Str(CrossDetectSolution_t solution);
-const char* CrossDetectState2Str(CrossDetectState_t state);
-const char* CrossDetectRead2Str(CrossDetectGpioRead_t read);
+const char* CrossDetectSolutionToStr(CrossDetectSolution_t solution);
+const char* CrossDetectStateToStr(CrossDetectState_t state);
+const char* CrossDetectReadToStr(CrossDetectGpioRead_t read);
 const char* CrossDetectFaultToStr(CrossDetectFault_t fault);
 bool CrossDetectDiagPair(const CrossDetectPairInfo_t* const pair);
 bool cross_detect_diag(void);

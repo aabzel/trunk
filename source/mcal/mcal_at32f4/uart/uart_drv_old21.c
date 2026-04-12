@@ -231,10 +231,10 @@ bool uart_init_ll(uint8_t uart_num) {
                 res = false;
             }
             char str[40] = "UART";
-            uart_mcal_send(uart_num, (uint8_t*)str, 4);
+            uart_send_api(uart_num, (uint8_t*)str, 4);
             snprintf(str, sizeof(str), "UART%u", uart_num);
             size_t len = strlen(str);
-            uart_mcal_send(uart_num, (uint8_t*)str, len);
+            uart_send_api(uart_num, (uint8_t*)str, len);
         }
     }
     return res;

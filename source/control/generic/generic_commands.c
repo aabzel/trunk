@@ -16,7 +16,7 @@ bool generic_jump_to_bootloader_command(int32_t argc, char* argv[]) {
         } else {
             LOG_ERROR(BOOT, "JumpBootErr");
         }
-    }else {
+    } else {
         LOG_ERROR(BOOT, "Usage: jb");
     }
     return res;

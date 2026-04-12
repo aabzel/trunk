@@ -1,6 +1,10 @@
 #ifndef SENSITIVITY_COMMANDS_H
 #define SENSITIVITY_COMMANDS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
@@ -103,5 +107,9 @@
     LIGHT_NAVIGATOR_COMMANDS    \
     PDM_COMMANDS                \
     TIME_COMMANDS
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* SENSITIVITY_COMMANDS_H */

@@ -88,7 +88,7 @@ bool sw_nvram_draw_tree_compose(char* name){
     return res;
 }
 
-static const char* Fresh2Str(uint8_t freshness){
+static const char* FreshToStr(uint8_t freshness){
     char* name = "?";
     switch(freshness) {
         case ENTRY_FRESHNESS_OBSOLATE: name = "Old"; break;
@@ -98,7 +98,7 @@ static const char* Fresh2Str(uint8_t freshness){
     return name;
 }
 
-static const char* Delete2Str(uint8_t deleted){
+static const char* DeleteToStr(uint8_t deleted){
     char* name = "?";
     switch(deleted) {
         case ENTRY_DELETE: name = "Delete"; break;
@@ -122,8 +122,8 @@ bool entry_diag(NvRamItem_t* Node, NvRamHeader_t* Header, uint32_t base){
         snprintf(Node->temp_str, sizeof(Node->temp_str), "%s 0x%08x " TSEP, Node->temp_str, Header->right_node_addr);
         snprintf(Node->temp_str, sizeof(Node->temp_str), "%s %10u " TSEP, Node->temp_str, Header->write_time_stamp);
         snprintf(Node->temp_str, sizeof(Node->temp_str), "%s 0x%02x " TSEP, Node->temp_str, Header->state.byte);
-        snprintf(Node->temp_str, sizeof(Node->temp_str), "%s %5s " TSEP, Node->temp_str, Fresh2Str(Header->state.freshness));
-        snprintf(Node->temp_str, sizeof(Node->temp_str), "%s %6s " TSEP, Node->temp_str, Delete2Str(Header->state.not_deleted));
+        snprintf(Node->temp_str, sizeof(Node->temp_str), "%s %5s " TSEP, Node->temp_str, FreshToStr(Header->state.freshness));
+        snprintf(Node->temp_str, sizeof(Node->temp_str), "%s %6s " TSEP, Node->temp_str, DeleteToStr(Header->state.not_deleted));
         cli_printf("%s" CRLF, Node->temp_str);
     }
     return res;

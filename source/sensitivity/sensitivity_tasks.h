@@ -1,19 +1,16 @@
 #ifndef SENSITIVITY_TASKS_H
 #define SENSITIVITY_TASKS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef HAS_ADC_IF_PROC
 #include "adc_if_mcal.h"
 #define ADC_IF_TASK {.name="ADC_IF", .period_us=ADC_IF_POLL_PERIOD_US, .limiter.function=adc_if_proc,},
 #else
 #define ADC_IF_TASK
 #endif
-
-#ifdef HAS_HEALTH_MONITOR_PROC
-#include "health_monitor.h"
-#define HEALTH_MONITOR_TASK {.name="HEAL_MON", .period_us=HEAL_MON_PERIOD_US, .limiter.function=health_monotor_proc,},
-#else
-#define HEALTH_MONITOR_TASK
-#endif /**/
 
 #ifdef HAS_BUTTON_PROC
 #include "button_drv.h"
@@ -34,7 +31,7 @@
 #define DISTANCE_TASK {.name="DISTANCE", .period_us=DISTANCE_POLL_PERIOD_US, .limiter.function=distance_proc,},
 #else
 #define DISTANCE_TASK
-#endif /* */
+#endif
 
 #ifdef HAS_GAME_PAD_PS2_PROC
 #include "game_pad_ps2.h"
@@ -43,11 +40,18 @@
 #define GAME_PAD_PS2_TASK
 #endif
 
+#ifdef HAS_HEALTH_MONITOR_PROC
+#include "health_monitor.h"
+#define HEALTH_MONITOR_TASK {.name="HEAL_MON", .period_us=HEAL_MON_PERIOD_US, .limiter.function=health_monotor_proc,},
+#else
+#define HEALTH_MONITOR_TASK
+#endif
+
 #ifdef HAS_GNSS_PROC
 #define GNSS_TASK
 #else
 #define GNSS_TASK
-#endif /*HAS_GNSS_PROC*/
+#endif
 
 #ifdef HAS_LOAD_DETECT_PROC
 #include "load_detect_drv.h"
@@ -105,6 +109,10 @@
     PHOTORESISTOR_TASK      \
     SOFTWARE_TIMER_TASK     \
     TIME_TASK
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* SENSITIVITY_TASKS_H */

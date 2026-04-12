@@ -16,7 +16,7 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-const char* ShortVcc2Str(uint8_t code) {
+const char* ShortVccToStr(uint8_t code) {
     const char* name = "";
     if(code) {
         name = "Vcc";
@@ -26,7 +26,7 @@ const char* ShortVcc2Str(uint8_t code) {
     return name;
 }
 
-const char* CdCross2Str(uint8_t code) {
+const char* CdCrossToStr(uint8_t code) {
     const char* name = "";
     if(code) {
         name = "Cross";
@@ -36,7 +36,7 @@ const char* CdCross2Str(uint8_t code) {
     return name;
 }
 
-char* ShortGnd2Str(uint8_t code) {
+char* ShortGndToStr(uint8_t code) {
     char* text = "";
     if(code) {
         text = "Gnd";
@@ -46,7 +46,7 @@ char* ShortGnd2Str(uint8_t code) {
     return text;
 }
 
-const char* CrossDetectState2Str(CrossDetectState_t state) {
+const char* CrossDetectStateToStr(CrossDetectState_t state) {
     const char* name = "?";
 
     switch((uint8_t)state) {
@@ -89,7 +89,7 @@ const char* CrossDetectState2Str(CrossDetectState_t state) {
     return name;
 }
 
-const char* CrossDetectRead2Str(CrossDetectGpioRead_t read) {
+const char* CrossDetectReadToStr(CrossDetectGpioRead_t read) {
     const char* name = "?";
 
     switch((uint8_t)read) {
@@ -113,7 +113,7 @@ const char* CrossDetectRead2Str(CrossDetectGpioRead_t read) {
     return name;
 }
 
-const char* CrossDetectSolution2Str(CrossDetectSolution_t solution) {
+const char* CrossDetectSolutionToStr(CrossDetectSolution_t solution) {
     const char* name = "?";
 
     switch((uint8_t)solution) {
@@ -170,22 +170,22 @@ bool cross_detect_pin_diag(const char* const key_word1, const char* const key_wo
                 Pad_t right = CrossDetectPinConfig[r].pad;
                 strcpy(line, TSEP);
                 snprintf(line, sizeof(line), "%s %4s " TSEP, line,
-                         ShortGnd2Str(CrossDetectResult[l][r].Fault.left_short_gnd));
+                         ShortGndToStr(CrossDetectResult[l][r].Fault.left_short_gnd));
                 snprintf(line, sizeof(line), "%s %4s " TSEP, line,
-                         ShortVcc2Str(CrossDetectResult[l][r].Fault.left_short_vcc));
+                         ShortVccToStr(CrossDetectResult[l][r].Fault.left_short_vcc));
 #ifdef HAS_BOARD_INFO_DIAG
                 snprintf(line, sizeof(line), "%s %12s " TSEP, line, Pad2ValidWireName(left));
 #endif
                 snprintf(line, sizeof(line), "%s %5s " TSEP, line, GpioPadToStr(left));
-                snprintf(line, sizeof(line), "%s %5s " TSEP, line, CdCross2Str(CrossDetectResult[l][r].Fault.cross));
+                snprintf(line, sizeof(line), "%s %5s " TSEP, line, CdCrossToStr(CrossDetectResult[l][r].Fault.cross));
                 snprintf(line, sizeof(line), "%s %5s " TSEP, line, GpioPadToStr(right));
 #ifdef HAS_BOARD_INFO_DIAG
                 snprintf(line, sizeof(line), "%s %12s " TSEP, line, Pad2ValidWireName(right));
 #endif
                 snprintf(line, sizeof(line), "%s %4s " TSEP, line,
-                         ShortGnd2Str(CrossDetectResult[l][r].Fault.right_short_gnd));
+                         ShortGndToStr(CrossDetectResult[l][r].Fault.right_short_gnd));
                 snprintf(line, sizeof(line), "%s %4s " TSEP, line,
-                         ShortVcc2Str(CrossDetectResult[l][r].Fault.right_short_vcc));
+                         ShortVccToStr(CrossDetectResult[l][r].Fault.right_short_vcc));
                 snprintf(line, sizeof(line), "%s %4u " TSEP, line, CrossDetectResult[l][r].update_cnt);
 
                 if(is_contain(line, key_word1, key_word2)) {
@@ -216,8 +216,8 @@ bool cross_detect_diag_lut(const char* const key_word1, const char* const key_wo
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     for(i = 0; i < cnt; i++) {
         strcpy(line, TSEP);
-        snprintf(line, sizeof(line), "%s %5s " TSEP, line, CrossDetectState2Str(CrossDetectSolutionInfo[i].state));
-        snprintf(line, sizeof(line), "%s %5s " TSEP, line, CrossDetectRead2Str(CrossDetectSolutionInfo[i].read));
+        snprintf(line, sizeof(line), "%s %5s " TSEP, line, CrossDetectStateToStr(CrossDetectSolutionInfo[i].state));
+        snprintf(line, sizeof(line), "%s %5s " TSEP, line, CrossDetectReadToStr(CrossDetectSolutionInfo[i].read));
         snprintf(line, sizeof(line), "%s %5s " TSEP, line,
                  (CONF_YES == CrossDetectSolutionInfo[i].cross) ? "Cross" : "");
         snprintf(line, sizeof(line), "%s %4s " TSEP, line,
@@ -283,12 +283,12 @@ bool cross_detect_diag(void) {
     return res;
 }
 
-bool CrossDetectPair2Str(const CrossDetectPairInfo_t* const pair, char* const text, size_t size) {
+bool CrossDetectPairToStr(const CrossDetectPairInfo_t* const pair, char* const text, size_t size) {
     bool res = false;
     if(pair) {
         snprintf(text, size, "%s Left:%s", text, GpioPadToStr(pair->left));
         snprintf(text, size, "%s Right:%s", text, GpioPadToStr(pair->right));
-        snprintf(text, size, "%s State:%s", text, CrossDetectState2Str(pair->state));
+        snprintf(text, size, "%s State:%s", text, CrossDetectStateToStr(pair->state));
         snprintf(text, size, "%s Spin:%u", text, pair->spin_cnt);
         res = true;
     }
@@ -298,14 +298,14 @@ bool CrossDetectPair2Str(const CrossDetectPairInfo_t* const pair, char* const te
 bool CrossDetectDiagPair(const CrossDetectPairInfo_t* const pair) {
     bool res = false;
     char text[80] = "";
-    res = CrossDetectPair2Str(pair, text, sizeof(text));
+    res = CrossDetectPairToStr(pair, text, sizeof(text));
     if(res) {
         LOG_NOTICE(CROSS_DETECT, "%s", text);
     }
     return res;
 }
 
-const char* LeftShortGnd2Str(uint8_t code) {
+const char* LeftShortGndToStr(uint8_t code) {
     const char* name = "";
     if(code) {
         name = "LeftShortGnd";
@@ -313,7 +313,7 @@ const char* LeftShortGnd2Str(uint8_t code) {
     return name;
 }
 
-const char* LeftShortVcc2Str(uint8_t code) {
+const char* LeftShortVccToStr(uint8_t code) {
     const char* name = "";
     if(code) {
         name = "LeftShortVcc";
@@ -321,7 +321,7 @@ const char* LeftShortVcc2Str(uint8_t code) {
     return name;
 }
 
-const char* RightShortGnd2Str(uint8_t code) {
+const char* RightShortGndToStr(uint8_t code) {
     const char* name = "";
     if(code) {
         name = "RightShortGnd";
@@ -329,7 +329,7 @@ const char* RightShortGnd2Str(uint8_t code) {
     return name;
 }
 
-const char* RightShortVcc2Str(uint8_t code) {
+const char* RightShortVccToStr(uint8_t code) {
     const char* name = "";
     if(code) {
         name = "RightShortVcc";
@@ -339,13 +339,13 @@ const char* RightShortVcc2Str(uint8_t code) {
 
 const char* CrossDetectFaultToStr(CrossDetectFault_t fault) {
     static char text[80];
-    sprintf(text, "%s %s %s %s %s", CdCross2Str(fault.cross), LeftShortGnd2Str(fault.left_short_gnd),
-            LeftShortVcc2Str(fault.left_short_vcc), RightShortGnd2Str(fault.right_short_gnd),
-            RightShortVcc2Str(fault.right_short_vcc));
+    sprintf(text, "%s %s %s %s %s", CdCrossToStr(fault.cross), LeftShortGndToStr(fault.left_short_gnd),
+            LeftShortVccToStr(fault.left_short_vcc), RightShortGndToStr(fault.right_short_gnd),
+            RightShortVccToStr(fault.right_short_vcc));
     return text;
 }
 
-static char* CrossDetectFault2Str(CrossDetectFault_t Fault, Pad_t left, Pad_t right) {
+static char* CrossDetectFaultToStr(CrossDetectFault_t Fault, Pad_t left, Pad_t right) {
     static char text[100] = "";
     memset(text, 0, sizeof(text));
     strcpy(text, "_");
@@ -381,7 +381,7 @@ bool CrossDetectDiagFault(const CrossDetectHandle_t* const Node) {
     Pad_t left = CrossDetectPinConfig[Node->left_num].pad;
     Pad_t right = CrossDetectPinConfig[Node->right_num].pad;
     if(Node->pair.Fault.fault_code) {
-        LOG_WARNING(CROSS_DETECT, "%s", CrossDetectFault2Str(Node->pair.Fault, left, right));
+        LOG_WARNING(CROSS_DETECT, "%s", CrossDetectFaultToStr(Node->pair.Fault, left, right));
     } else {
         res = true;
     }

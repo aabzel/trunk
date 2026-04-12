@@ -259,7 +259,7 @@ bool gpio_get_state(uint8_t pad_num, GpioLogicLevel_t* logic_level) {
     bool res = false;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    // LOG_DEBUG(GPIO, "Get P%s%u", GpioPort2Str(pad.port), pad.pin);
+    // LOG_DEBUG(GPIO, "Get P%s%u", GpioPortToStr(pad.port), pad.pin);
 #endif
     gpio_type* PORTx = Port2PortPtr(pad.port);
     if(PORTx) {
@@ -278,7 +278,7 @@ uint32_t gpio_read(uint8_t pad_num) {
     (void)pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    LOG_DEBUG(GPIO, "Get P%s%u", GpioPort2Str(pad.port), pad.pin);
+    LOG_DEBUG(GPIO, "Get P%s%u", GpioPortToStr(pad.port), pad.pin);
 #endif
     // GPIO_PinState value = HAL_GPIO_ReadPin(Port2PortPtr(pad.port), 1 << pad.pin);
     ret = (uint32_t)0;
@@ -291,7 +291,7 @@ bool gpio_logic_level_set(uint8_t pad_num, GpioLogicLevel_t logic_level) {
     (void)pad;
     pad.byte = pad_num;
 #ifdef HAS_GPIO_DIAG
-    // LOG_DEBUG(GPIO, "Set P%s%u LL:%u", GpioPort2Str(pad.port), pad.pin, logic_level);
+    // LOG_DEBUG(GPIO, "Set P%s%u LL:%u", GpioPortToStr(pad.port), pad.pin, logic_level);
 #endif
     gpio_type* GPIOx = Port2PortPtr(pad.port);
     if(GPIOx) {
@@ -541,7 +541,7 @@ GpioPullMode_t gpio_pull_get(uint8_t pad_num) {
 #endif       // HAS_AT32F43X
     } else { // if(GPIOx) {
 #ifdef HAS_GPIO_DIAG
-        LOG_ERROR(GPIO, "PortErr P%s", GpioPort2Str(Pad.port));
+        LOG_ERROR(GPIO, "PortErr P%s", GpioPortToStr(Pad.port));
 #endif
     }
     return mode;
@@ -758,7 +758,7 @@ bool gpio_deinit_one(Pad_t Pad) {
         if(Info) {
             crm_periph_clock_enable(Info->clock_type, TRUE);
 #ifdef HAS_GPIO_DIAG
-            LOG_INFO(GPIO, "%s,ClkOn", GpioPort2Str(Pad.port));
+            LOG_INFO(GPIO, "%s,ClkOn", GpioPortToStr(Pad.port));
 #endif
         }
         /*Configure GPIO pin Output Level */
@@ -867,7 +867,7 @@ bool gpio_init_one(const GpioConfig_t* const Config) {
         res = gpio_is_pin_single(Config->pad.byte);
         if(res) {
 #ifdef HAS_GPIO_DIAG
-            LOG_DEBUG(GPIO, "Single P%s%u", GpioPort2Str(Config->pad.port), Config->pad.pin);
+            LOG_DEBUG(GPIO, "Single P%s%u", GpioPortToStr(Config->pad.port), Config->pad.pin);
 #endif
             res = false;
             gpio_type* GPIOx = Port2PortPtr(Config->pad.port);
@@ -876,7 +876,7 @@ bool gpio_init_one(const GpioConfig_t* const Config) {
                 if(Info) {
                     crm_periph_clock_enable(Info->clock_type, TRUE);
 #ifdef HAS_GPIO_DIAG
-                    LOG_INFO(GPIO, "%s,ClkOn", GpioPort2Str(Config->pad.port));
+                    LOG_INFO(GPIO, "%s,ClkOn", GpioPortToStr(Config->pad.port));
 #endif
                 }
                 /*Configure GPIO pin Output Level */
@@ -942,14 +942,14 @@ bool gpio_init_one(const GpioConfig_t* const Config) {
 
                 } else {
 #ifdef HAS_GPIO_DIAG
-                    LOG_ERROR(GPIO, "ModeErr P%s%u", GpioPort2Str(Config->pad.port), Config->pad.pin);
+                    LOG_ERROR(GPIO, "ModeErr P%s%u", GpioPortToStr(Config->pad.port), Config->pad.pin);
 #endif
                     res = false;
                 }
             }
         } else {
 #ifdef HAS_GPIO_DIAG
-            LOG_ERROR(GPIO, "ReDefine P%s%u", GpioPort2Str(Config->pad.port), Config->pad.pin);
+            LOG_ERROR(GPIO, "ReDefine P%s%u", GpioPortToStr(Config->pad.port), Config->pad.pin);
 #endif
         }
     }

@@ -16,7 +16,7 @@ const char* GpioStm32AltFun2Str(uint8_t code) {
     return name;
 }
 
-const char* GpioPort2Str(uint8_t port_num) {
+const char* GpioPortToStr(uint8_t port_num) {
     const char* name = "?";
     switch(port_num) {
     case PORT_A:

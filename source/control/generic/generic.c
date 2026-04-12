@@ -46,8 +46,8 @@
 
 #include "log.h"
 
-#ifdef HAS_PARAM
-#include "param_drv.h"
+#ifdef HAS_STORE_FS
+#include "store_fs.h"
 #endif
 
 #ifdef HAS_TIME
@@ -67,9 +67,9 @@ static bool fine_start_event = false;
 
 bool generic_jump_to_bootloader(void) {
     bool res = false;
-#ifdef HAS_PARAM
+#ifdef HAS_STORE_FS
     uint8_t boot_cmd = BOOT_CMD_STAY_ON;
-    res = param_set(PAR_ID_BOOT_CMD, (uint8_t*)&boot_cmd);
+    res = store_fs_set(1, PAR_ID_BOOT_CMD, (uint8_t*)&boot_cmd);
     log_info_res(GENERIC, res, "SetBoot");
 #endif
 
@@ -89,10 +89,10 @@ bool generic_proc(void) {
             LOG_INFO(GENERIC, "AppLoadedFine!");
             /*Indicate boot that Application loaded fine*/
             res = true;
-#ifdef HAS_PARAM
+#ifdef HAS_STORE_FS
             uint8_t boot_cnt = 0;
-            res = param_set(PAR_ID_BOOT_CNT, (uint8_t*)&boot_cnt);
-#endif /*HAS_PARAM*/
+            res = store_fs_set_lazy(1, PAR_ID_BOOT_CNT, (void*)&boot_cnt);
+#endif
             if(res) {
                 LOG_INFO(GENERIC, "AppLoadedFineSave!");
                 fine_start_event = true;

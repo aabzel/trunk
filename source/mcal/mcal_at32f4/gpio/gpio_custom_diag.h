@@ -11,7 +11,7 @@ const char* GpioStm32AltFun2Str(uint8_t code);
 const char* GpioStmPull2Str(uint8_t code);
 const char* GpioStmSpeed2Str(uint8_t code);
 const char* GpioStmOutType2Str(uint8_t code);
-const char* GpioPort2Str(uint8_t port_num);
+const char* GpioPortToStr(uint8_t port_num);
 //const char* GpioMode2Str(uint8_t code);
 //const char* GpioType2Str(uint8_t code);
 //const char* GpioDir2Str(uint8_t code);

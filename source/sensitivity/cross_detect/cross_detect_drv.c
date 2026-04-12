@@ -405,7 +405,7 @@ static bool cross_detect_state_set(CrossDetectPairInfo_t* const pair, CrossDetec
             pair->state = new_state;
             res = true;
         } else {
-            LOG_ERROR(CROSS_DETECT, "SetStateErr %u=%s", new_state, CrossDetectState2Str(new_state));
+            LOG_ERROR(CROSS_DETECT, "SetStateErr %u=%s", new_state, CrossDetectStateToStr(new_state));
             res = false;
         }
     }
@@ -916,20 +916,20 @@ static bool cross_detect_init_pin(const CrossDetectPinConfig_t* const PinConfig)
     bool res = false;
     if(PinConfig) {
         uint8_t ok = 0;
-        LOG_WARNING(CROSS_DETECT, "InitPad: %s In PullAir", GpioPad2Str(PinConfig->pad.byte));
+        LOG_WARNING(CROSS_DETECT, "InitPad: %s In PullAir", GpioPadToStr(PinConfig->pad.byte));
 
         res = gpio_set_dir(PinConfig->pad.byte, GPIO_DIR_IN);
         if(res) {
             ok++;
         } else {
-            LOG_ERROR(CROSS_DETECT, "Pad: %s SetDirIn Err", GpioPad2Str(PinConfig->pad.byte));
+            LOG_ERROR(CROSS_DETECT, "Pad: %s SetDirIn Err", GpioPadToStr(PinConfig->pad.byte));
         }
 
         res = gpio_set_pull(PinConfig->pad.byte, GPIO__PULL_AIR);
         if(res) {
             ok++;
         } else {
-            LOG_ERROR(CROSS_DETECT, "Pad: %s SetPullAir Err", GpioPad2Str(PinConfig->pad.byte));
+            LOG_ERROR(CROSS_DETECT, "Pad: %s SetPullAir Err", GpioPadToStr(PinConfig->pad.byte));
         }
 
 #ifdef HAS_NRF5340
@@ -937,7 +937,7 @@ static bool cross_detect_init_pin(const CrossDetectPinConfig_t* const PinConfig)
         if(res) {
             ok++;
         } else {
-            LOG_ERROR(CROSS_DETECT, "Pad: %s SetAppCore Err", GpioPad2Str(PinConfig->pad.byte));
+            LOG_ERROR(CROSS_DETECT, "Pad: %s SetAppCore Err", GpioPadToStr(PinConfig->pad.byte));
         }
 #endif
 
@@ -1090,7 +1090,7 @@ static bool cross_detect_calc_fault(CrossDetectPairInfo_t* const pair, CrossDete
 static bool cross_detect_measure(CrossDetectPairInfo_t* const pair) {
     bool res = false;
     if(pair) {
-        LOG_PARN(CROSS_DETECT, "MeasureGPIOin %s", CrossDetectState2Str(pair->state));
+        LOG_PARN(CROSS_DETECT, "MeasureGPIOin %s", CrossDetectStateToStr(pair->state));
 
         GpioLogicLevel_t logic_left = GPIO_LVL_UNDEF;
         GpioLogicLevel_t logic_right = GPIO_LVL_UNDEF;
@@ -1140,9 +1140,9 @@ bool cross_detect_proc_one(uint8_t num) {
 
             res = cross_detect_state_set(&Node->pair, new_state);
             if(res) {
-                LOG_PARN(CROSS_DETECT, "SetStateOk %u=%s", new_state, CrossDetectState2Str(new_state));
+                LOG_PARN(CROSS_DETECT, "SetStateOk %u=%s", new_state, CrossDetectStateToStr(new_state));
             } else {
-                LOG_ERROR(CROSS_DETECT, "SetStateErr %u=%s", new_state, CrossDetectState2Str(new_state));
+                LOG_ERROR(CROSS_DETECT, "SetStateErr %u=%s", new_state, CrossDetectStateToStr(new_state));
             }
         } else {
             LOG_DEBUG(CROSS_DETECT, "Off %u", num);

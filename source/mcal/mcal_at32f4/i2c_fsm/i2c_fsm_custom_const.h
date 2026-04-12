@@ -1,0 +1,5 @@
+#ifndef I2C_FSM_CUSTOM_CONST_H
+#define I2C_FSM_CUSTOM_CONST_H
+
+
+#endif /* I2C_FSM_CUSTOM_CONST_H */

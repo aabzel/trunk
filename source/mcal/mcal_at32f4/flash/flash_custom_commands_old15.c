@@ -62,7 +62,7 @@ bool flash_diag_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool flash_mcal_erasecommand(int32_t argc, char* argv[]) {
+bool flash_erase_command(int32_t argc, char* argv[]) {
     uint32_t sector_address = 0;
     bool res = false;
     if(1 == argc) {

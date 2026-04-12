@@ -1,13 +1,4 @@
 
-subgraph cluster_sensitivity{
-    label = "sensitivity";
-    //rank = same; 
-    style=filled;
-    color=oldlace;
-
-
-
-}
 
 #ifdef HAS_IR_RECEIVER
 #include "ir_receiver.gvi"
