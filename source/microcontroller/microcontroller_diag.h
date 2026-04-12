@@ -3,6 +3,10 @@
 
 //#include "microcontroller_const.h"
 
+#ifdef HAS_AT32F413RC
+#include "at32f413rc_diag.h"
+#endif
+
 #ifdef HAS_AT32F437ZM
 #include "at32f437zm_diag.h"
 #endif
@@ -11,8 +15,16 @@
 #include "at32f435zm_diag.h"
 #endif
 
-#ifdef HAS_AT32F413RC
-#include "at32f413rc_diag.h"
+#ifdef HAS_STM32F407VE
+#include "stm32f407ve_diag.h"
+#endif
+
+#ifdef HAS_STM32F407VG
+#include "stm32f407vg_diag.h"
+#endif
+
+#ifdef HAS_STM32F407ZG
+#include "stm32f407zg_diag.h"
 #endif
 
 #ifdef HAS_YTM32B1ME05G0MLQ

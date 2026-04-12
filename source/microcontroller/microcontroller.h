@@ -5,7 +5,16 @@
 #error  "+HAS_MICROCONTROLLER"
 #endif
 
-//#include "macro_utils.h"
+#include "std_includes.h"
+#include "microcontroller_types.h"
+
+#ifdef HAS_FC7300F8MDT
+#include "fc7300f8mdt.h"
+#endif
+
+#ifdef HAS_DUMMY_MCU
+#include "dummy_mcu.h"
+#endif
 
 #ifdef HAS_K1948BK018
 #include "k1948bk018.h"
@@ -13,6 +22,18 @@
 
 #ifdef HAS_NRF5340
 #include "nrf5340.h"
+#endif
+
+#ifdef HAS_STM32F401RE
+#include "stm32f401re.h"
+#endif
+
+#ifdef HAS_STM32F407VG
+#include "stm32f407vg.h"
+#endif
+
+#ifdef HAS_STM32F407VE
+#include "stm32f407ve.h"
 #endif
 
 #ifdef HAS_STM32F407ZG
@@ -24,15 +45,6 @@
 #endif
 
 
-#include "std_includes.h"
-#include "microcontroller_types.h"
-
-#ifdef HAS_PINS
-
-extern const PinData_t PinConfig[];
-
-uint16_t pin_get_cnt(void);
-#endif
-bool mcu_init(void);
+bool microcontroller_init(void);
 
 #endif /* MICROCONTROLLER_H */

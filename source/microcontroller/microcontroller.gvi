@@ -14,12 +14,6 @@
     #include "esp32.gvi"
 #endif
 
-
-#ifdef HAS_K1948BK018
-     #include "k1948bk018.gvi"
-#endif
-
-
 #ifdef HAS_K2921BK028
      #include "k2921bk028.gvi"
 #endif
@@ -60,5 +54,8 @@
     #include "stm32l073rz.gvi"
 #endif
 
+#ifdef HAS_FC7300F8MDT
+    #include "fc7300f8mdt.gvi"
+#endif
 
 

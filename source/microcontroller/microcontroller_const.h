@@ -1,8 +1,7 @@
 #ifndef MICROCONTROLLER_CONST_H
 #define MICROCONTROLLER_CONST_H
 
-
-typedef enum{
+typedef enum {
     MCU_PHY_ADDR_UNDEF = 0,
     MCU_PHY_ADDR_SRAM = 1,
     MCU_PHY_ADDR_EEPROM = 2,
@@ -41,8 +40,20 @@ typedef enum{
 #include <stm32f407xx.h>
 #endif
 
+#ifdef HAS_STM32F401XE
+#include <stm32f401xe.h>
+#endif
+
 #ifdef HAS_STM32F407ZG
 #include "stm32f407zg_const.h"
+#endif
+
+#ifdef HAS_STM32F407VE
+#include "stm32f407ve_const.h"
+#endif
+
+#ifdef HAS_STM32F401RE
+#include "stm32f401re_const.h"
 #endif
 
 #ifdef HAS_STM32F407VG
@@ -51,6 +62,25 @@ typedef enum{
 
 #ifdef HAS_YTM32B1ME05G0MLQ
 #include "ytm32b1me05g0mlq_const.h"
+#endif
+
+#ifdef HAS_FC7300F8MDT
+#include "fc7300f8mdt_const.h"
+
+#ifdef HAS_FC7300_SDK_V2_3_2
+#include "FC7300F8MDT_flash_common_feature.h"
+#include "FC7300F8MDT_core_common_feature.h"
+#include "FC7300F8MDT_dmamux_common_feature.h"
+#endif /**/
+
+#endif
+
+#ifdef HAS_DUMMY_MCU
+#include "dummy_mcu_const.h"
+#endif
+
+#ifdef HAS_PC
+#include "cpu_x86.h"
 #endif
 
 #endif /* MICROCONTROLLER_CONST_H */

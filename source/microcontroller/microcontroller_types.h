@@ -28,6 +28,14 @@
 #endif
 #endif
 
+#ifdef HAS_DUMMY_MCU
+#include "dummy_mcu_types.h"
+#endif
+
+#ifdef HAS_FC7300F8MDT
+#include "fc7300f8mdt_types.h"
+#endif
+
 #ifdef HAS_STM32F407ZG
 #include "stm32f407zg.h"
 #endif
@@ -39,8 +47,6 @@
 #ifdef HAS_YTM32B1ME05G0MLQ
 #include "ytm32b1me05g0mlq.h"
 #endif
-
-
 
 typedef struct {
     bool valid ;
