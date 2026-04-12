@@ -1,4 +1,5 @@
 GPIO->LED
+TIME->LED
 
 #ifdef HAS_GPIO_PWM
     GPIO_PWM->LED

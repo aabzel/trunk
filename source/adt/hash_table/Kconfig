@@ -1,0 +1,4 @@
+
+config HASH_TABLE
+    bool "Enable use of the HASH_TABLE drivers"
+

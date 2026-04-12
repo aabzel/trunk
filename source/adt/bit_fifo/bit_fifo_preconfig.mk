@@ -1,0 +1,5 @@
+ifneq ($(BIT_FIFO_PRECONFIG_INC),Y)
+    BIT_FIFO_PRECONFIG_INC=Y
+    
+    BIT_FIFO=Y
+endif

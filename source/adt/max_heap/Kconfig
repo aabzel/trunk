@@ -1,0 +1,4 @@
+
+config MAX_HEAP
+    bool "Enable use of the MAX_HEAP drivers"
+

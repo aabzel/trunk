@@ -4,28 +4,20 @@
 #include "gpio_diag.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
 #ifdef HAS_LED_MONO
 #include "led_mono_drv.h"
 #endif
 
-const char* LedMode2Str(LedMode_t mode) {
+const char* LedModeToStr(const LedMode_t mode) {
     const char* name = "?";
-    switch((uint8_t)mode) {
-    case LED_MODE_NONE:
-        name = "None";
-        break;
-    case LED_MODE_PWM:
-        name = "PWM";
-        break;
-    case LED_MODE_ON:
-        name = "On";
-        break;
-    case LED_MODE_OFF:
-        name = "Off";
-        break;
-    case LED_MODE_BLINK:
-        name = "Blink";
-        break;
+    switch(mode) {
+        case LED_MCAL_MODE_NONE:        name = "None";        break;
+        case LED_MCAL_MODE_PWM:        name = "PWM";        break;
+        case LED_MCAL_MODE_ON:        name = "On";        break;
+        case LED_MCAL_MODE_OFF:        name = "Off";        break;
+        case LED_MCAL_MODE_BLINK:        name = "Blink";        break;
+        default:  name = "?";      break;
     }
     return name;
 }
@@ -43,9 +35,9 @@ bool LedTableTailPrint(void) {
     return res;
 }
 
-const char* Color2Str(Color_t color) {
+const char* ColorToStr(Color_t color) {
     const char* name = "?";
-    switch((uint32_t)color) {
+    switch(color) {
     case COLOR_BLACK:
         name = "Black";
         break;
@@ -69,6 +61,8 @@ const char* Color2Str(Color_t color) {
         break;
     case COLOR_WHITE:
         name = "White";
+        break;
+    default:
         break;
     }
     return name;

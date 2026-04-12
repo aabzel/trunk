@@ -1,0 +1,5 @@
+ifneq ($(MIN_HEAP_PRECONFIG_INC),Y)
+    MIN_HEAP_PRECONFIG_INC=Y
+    
+    MIN_HEAP=Y
+endif

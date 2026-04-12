@@ -1,0 +1,4 @@
+
+config BIT_FIFO
+    bool "Enable use of the BIT_FIFO drivers"
+

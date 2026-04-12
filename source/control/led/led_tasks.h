@@ -6,7 +6,9 @@
 #define	LED_RGB_TASK {.name="LED_RGB", .period_us=LED_RGB_POLL_PERIOD_US, .limiter.function=proc_led_rgbs,},
 #else
 #define	LED_RGB_TASK
-#endif /**/
+#endif
+
+
 
 #ifdef HAS_LED_MONO_PROC
 #include "led_mono_drv.h"
@@ -17,11 +19,10 @@
 #define LED_MONO_TASK_NAME
 #endif
 
-#define	LED_MONO_TASK { .period_us = LED_MONO_POLL_PERIOD_US, .limiter.function = led_mono_proc, LED_MONO_TASK_NAME},
+#define LED_MONO_TASK {.period_us=LED_MONO_POLL_PERIOD_US, .limiter.function=led_mono_proc, LED_MONO_TASK_NAME},
 #else
-#define	LED_MONO_TASK
-#endif /*HAS_LED_MONO_PROC*/
-
+#define LED_MONO_TASK
+#endif
 
 #define LEDS_TASKS          \
     LED_MONO_TASK           \

@@ -1,0 +1,8 @@
+ifneq ($(ARRAY_PRECONFIG_INC),Y)
+    ARRAY_PRECONFIG_INC=Y
+
+    UTILS_EXT=Y
+    DATA_UTILS_EXT=Y
+    DATA_UTILS=Y
+    ARRAY=Y
+endif

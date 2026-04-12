@@ -3,7 +3,7 @@
 #include "led_general_const.h"
 
 #if 0
-const char* LedMode2Str(LedMode_t mode){
+const char* LedModeToStr(LedMode_t mode){
 	const char* name="?";
 	switch(mode){
         case LED_MODE_NONE: name="None"; break;

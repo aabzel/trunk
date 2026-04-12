@@ -4,10 +4,10 @@ ifneq ($(LED_GENERAL_MK_INC),Y)
     $(info + LED General)
 
     LED_GENERAL_DIR = $(CONTROL_DIR)/led
-    #@echo $(error LED_GENERAL_DIR=$(LED_GENERAL_DIR))
+    # $(error LED_GENERAL_DIR=$(LED_GENERAL_DIR))
 
-    OPT += -DHAS_LED
-    OPT += -DHAS_LED_PROC
+    MCAL_OPT += -DHAS_LED
+    MCAL_OPT += -DHAS_LED_PROC
     
     SOURCES_C += $(LED_GENERAL_DIR)/led_drv.c
     INCDIR += -I$(LED_GENERAL_DIR)
@@ -15,12 +15,12 @@ ifneq ($(LED_GENERAL_MK_INC),Y)
  
     ifeq ($(LED_MONO),Y)
         $(info + LED Mono)
-        #@echo $(error LED_MONO=$(LED_MONO))
+        # $(error LED_MONO=$(LED_MONO))
         include $(LED_GENERAL_DIR)/led_mono/led_mono.mk
     endif
 
     ifeq ($(LED_EXT),Y)
-        OPT += -DHAS_LED_EXT
+        MCAL_OPT += -DHAS_LED_EXT
     endif
 
     ifeq ($(LED_RGB),Y)
@@ -30,15 +30,16 @@ ifneq ($(LED_GENERAL_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(LED_DIAG),Y)
+            # $(error LED_DIAG=$(LED_DIAG))
             $(info + LED DIAG)
-            OPT += -DHAS_LED_DIAG
-            SOURCES_C += $(LED_GENERAL_DIR)/led_diag.c
+            MCAL_OPT += -DHAS_LED_DIAG
+            SOURCES_DIAG_C += $(LED_GENERAL_DIR)/led_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(LED_COMMANDS),Y)
-            OPT += -DHAS_LED_COMMANDS
+            MCAL_OPT += -DHAS_LED_COMMANDS
         endif
     endif
 endif

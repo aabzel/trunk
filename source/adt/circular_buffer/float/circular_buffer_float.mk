@@ -1,0 +1,34 @@
+$(info CIRCULAR_BUFFER_FLOAT_MK_INC=$(CIRCULAR_BUFFER_FLOAT_MK_INC) )
+
+ifneq ($(CIRCULAR_BUFFER_FLOAT_MK_INC),Y)
+    CIRCULAR_BUFFER_FLOAT_MK_INC=Y
+
+    MCAL_OPT += -DHAS_CIRCULAR_BUFFER_FLOAT
+    CIRCULAR_BUFFER_FLOAT_DIR = $(CIRCULAR_BUFFER_DIR)/float
+    #  $(error CIRCULAR_BUFFER_FLOAT_DIR=[$(CIRCULAR_BUFFER_FLOAT_DIR)])
+
+    INCDIR += -I$(CIRCULAR_BUFFER_FLOAT_DIR)
+
+    SOURCES_C += $(CIRCULAR_BUFFER_FLOAT_DIR)/circular_buffer_float.c
+
+    ifeq ($(DIAG),Y)
+        ifeq ($(CIRCULAR_BUFFER_FLOAT_DIAG),Y)
+            MCAL_OPT += -DHAS_CIRCULAR_BUFFER_FLOAT_DIAG
+            SOURCES_C += $(CIRCULAR_BUFFER_FLOAT_DIR)/circular_buffer_float_diag.c
+        endif
+    endif
+
+    ifeq ($(CLI),Y)
+        ifeq ($(CIRCULAR_BUFFER_FLOAT_COMMANDS),Y)
+            #  $(error CIRCULAR_BUFFER_FLOAT_COMMANDS=[$(CIRCULAR_BUFFER_FLOAT_COMMANDS)])
+            MCAL_OPT += -DHAS_CIRCULAR_BUFFER_FLOAT_COMMANDS
+            SOURCES_C += $(CIRCULAR_BUFFER_FLOAT_DIR)/circular_buffer_float_commands.c
+        endif
+    endif
+endif
+
+
+
+
+
+

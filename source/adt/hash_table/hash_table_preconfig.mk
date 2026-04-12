@@ -1,0 +1,5 @@
+ifneq ($(HASH_TABLE_PRECONFIG_INC),Y)
+    HASH_TABLE_PRECONFIG_INC=Y
+    
+    HASH_TABLE=Y
+endif

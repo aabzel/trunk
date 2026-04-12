@@ -31,12 +31,12 @@ bool led_rgb_get_command(int32_t argc, char* argv[]) {
             LedRgbHandle_t* LedRgbNode = LedRgbGetNode(i);
             if(LedRgbNode) {
                 cli_printf(TSEP " %2u " TSEP, i);
-                cli_printf(" %5s " TSEP, LedMode2Str(LedRgbNode->mode));
+                cli_printf(" %5s " TSEP, LedModeToStr(LedRgbNode->mode));
                 cli_printf(" %4u " TSEP, LedRgbNode->period_ms);
                 cli_printf(" %3u " TSEP, LedRgbNode->duty);
                 cli_printf(" %4u " TSEP, LedRgbNode->phase_ms);
                 Color_t color = led_rgb_get_color_ll(LedRgbNode);
-                cli_printf(" %5s " TSEP, Color2Str(color));
+                cli_printf(" %5s " TSEP, ColorToStr(color));
                 const LedRgbConfig_t* LedRgbConfNode = LedRgbGetConfig(i);
                 if(LedRgbConfNode) {
                     cli_printf(" %5s " TSEP, LedRgbConfNode->name);
@@ -152,12 +152,12 @@ bool led_rgb_color_command(int32_t argc, char* argv[]) {
     if(res && (1 == argc)) {
         Color_t color = led_rgb_get_color(led_rgb_num);
 #ifdef HAS_LED_DIAG
-        LOG_INFO(LED_RGB, "%u GetColor %u=[%5s] " TSEP, led_rgb_num, color, Color2Str(color));
+        LOG_INFO(LED_RGB, "%u GetColor %u=[%5s] " TSEP, led_rgb_num, color, ColorToStr(color));
 #endif
     } else {
         if(res && (2 == argc)) {
 #ifdef HAS_LED_DIAG
-            LOG_INFO(LED_RGB, "%u SetColor %u=[%5s] " TSEP, led_rgb_num, color, Color2Str(color));
+            LOG_INFO(LED_RGB, "%u SetColor %u=[%5s] " TSEP, led_rgb_num, color, ColorToStr(color));
 #endif
             res = led_rgb_set_color(led_rgb_num, color);
         } else {

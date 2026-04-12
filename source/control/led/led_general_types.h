@@ -8,15 +8,24 @@
 #include "gpio_types.h"
 #endif
 
-#define LED_GENERAL_VARIABLES   \
-    uint32_t phase_ms;          \
-    uint32_t on_time_ms;        \
-    uint32_t period_ms;         \
-    uint32_t duration_ms;       \
-    uint8_t num;                \
-    bool valid;                 \
-    LedMode_t mode;             \
-    float duty;                 \
+#define LED_SW_PWM_VARIABLES                  \
+    float duty;  /*for SW PWM*/               \
+    uint32_t period_ms;                       \
+    uint32_t phase_ms;
+
+#define LED_BLITZ_VARIABLES                   \
+    uint32_t on_time_ms;                      \
+    uint32_t duration_ms;
+
+#define LED_GENERAL_VARIABLES                 \
+    LED_SW_PWM_VARIABLES                      \
+    LED_BLITZ_VARIABLES                       \
+    char* name;                               \
+    uint32_t off_time_stamp;                  \
+    uint32_t group;                           \
+    LedMode_t mode;                           \
+    uint8_t num;                              \
+    bool valid;                               \
     GpioLogicLevel_t active;
 
 #endif /* LED_GENERAL_TYPES_H  */

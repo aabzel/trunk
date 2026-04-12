@@ -12,7 +12,7 @@
 #include "log.h"
 #include "log_utils.h"
 
-bool led_mono_get_command(int32_t argc, char* argv[]) {
+bool led_mono_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
         res = led_mono_diag();
@@ -83,6 +83,63 @@ bool led_mono_set_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+#ifdef HAS_PWM
+bool led_mono_set_off_duty_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    float off_duty = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(LED, res, "Num");
+    }
+
+    if(2 <= argc) {
+        res = try_str2float(argv[1], &off_duty);
+        log_info_res(LED, res, "Duty");
+    }
+
+    if(res) {
+        res = led_mono_set_off_duty(num, off_duty);
+        log_info_res(LED, res, "SetOffDuty");
+    } else {
+        LOG_ERROR(LED, "Usage: lmsfd num offDuty");
+    }
+
+    return res;
+}
+#endif
+
+#ifdef HAS_PWM
+/*
+  lmsod 2 20;lmsod 3 20; pwd
+  */
+bool led_mono_set_on_duty_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    float on_duty = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(LED, res, "Num");
+    }
+
+    if(2 <= argc) {
+        res = try_str2float(argv[1], &on_duty);
+        log_info_res(LED, res, "Duty");
+    }
+
+    if(res) {
+        res = led_mono_set_on_duty(num, on_duty);
+        log_info_res(LED, res, "SetOnDuty");
+    } else {
+        LOG_ERROR(LED, "Usage: lmsod num onDuty");
+    }
+
+    return res;
+}
+#endif
+
 bool led_mono_blink_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -138,7 +195,7 @@ bool led_mono_init_command(int32_t argc, char* argv[]) {
 bool led_mono_mode_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
-    uint8_t mode = LED_MODE_UNDEF;
+    uint8_t mode = LED_MCAL_MODE_UNDEF;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
         if(false == res) {

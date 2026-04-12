@@ -1,0 +1,34 @@
+$(info CIRCULAR_BUFFER_DWORD_MK_INC=$(CIRCULAR_BUFFER_DWORD_MK_INC) )
+
+ifneq ($(CIRCULAR_BUFFER_DWORD_MK_INC),Y)
+    CIRCULAR_BUFFER_DWORD_MK_INC=Y
+
+    MCAL_OPT += -DHAS_CIRCULAR_BUFFER_DWORD
+    CIRCULAR_BUFFER_DWORD_DIR = $(CIRCULAR_BUFFER_DIR)/dword
+    #  $(error CIRCULAR_BUFFER_DWORD_DIR=[$(CIRCULAR_BUFFER_DWORD_DIR)])
+
+    INCDIR += -I$(CIRCULAR_BUFFER_DWORD_DIR)
+
+    SOURCES_C += $(CIRCULAR_BUFFER_DWORD_DIR)/circular_buffer_dword.c
+
+    ifeq ($(DIAG),Y)
+        ifeq ($(CIRCULAR_BUFFER_DWORD_DIAG),Y)
+            MCAL_OPT += -DHAS_CIRCULAR_BUFFER_DWORD_DIAG
+            SOURCES_C += $(CIRCULAR_BUFFER_DWORD_DIR)/circular_buffer_dword_diag.c
+        endif
+    endif
+
+    ifeq ($(CLI),Y)
+        ifeq ($(CIRCULAR_BUFFER_DWORD_COMMANDS),Y)
+            #  $(error CIRCULAR_BUFFER_DWORD_COMMANDS=[$(CIRCULAR_BUFFER_DWORD_COMMANDS)])
+            MCAL_OPT += -DHAS_CIRCULAR_BUFFER_DWORD_COMMANDS
+            SOURCES_C += $(CIRCULAR_BUFFER_DWORD_DIR)/circular_buffer_dword_commands.c
+        endif
+    endif
+endif
+
+
+
+
+
+

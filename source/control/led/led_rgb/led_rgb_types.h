@@ -42,7 +42,6 @@ typedef struct  {
 	LED_GENERAL_VARIABLES
     LedRgbPads_t Pads;
     Color_t set_color;
-    char name[LED_RGB_NAME_SIZE];
 } LedRgbConfig_t;
 
 typedef struct  {

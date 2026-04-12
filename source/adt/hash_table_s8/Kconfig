@@ -1,0 +1,4 @@
+
+config HASH_TABLE_S8
+    bool "Enable use of the HASH_TABLE_S8 drivers"
+

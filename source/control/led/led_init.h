@@ -11,8 +11,6 @@
 #error "+HAS_LED"
 #endif
 
-
-
 #ifdef HAS_LED_RGB_TEST
 #include "led_rgb_drv.h"
 #define  LED_RGB_TEST_INIT {.init_function=led_rgb_test, "LedRgbTest",},
@@ -32,14 +30,14 @@
 #define LED_MONO_INIT  {.init_function = led_mono_mcal_init, LED_MONO_INIT_NAME},
 #else
 #define LED_MONO_INIT
-#endif /*HAS_LED_MONO*/
+#endif
 
 #ifdef HAS_LED_RGB
 #include "led_rgb_drv.h"
 #define LED_RGB_INIT  {.init_function=led_rgb_mcal_init,  .name= "LedRgb",},
 #else
 #define LED_RGB_INIT
-#endif /*HAS_LED_RGB*/
+#endif
 
 // order matter
 #define LED_INIT            \

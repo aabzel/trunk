@@ -25,9 +25,9 @@
 #endif
 
 
-const char* LedMode2Str(LedMode_t mode);
 bool LedTableHeaderPrint(void);
 bool LedTableTailPrint(void);
-const char* Color2Str(Color_t color);
+const char* LedModeToStr(const LedMode_t mode);
+const char* ColorToStr(Color_t color);
 
 #endif /* LED_DIAG_H  */

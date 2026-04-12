@@ -287,7 +287,7 @@ Color_t RgbGpio2Color(uint8_t byte){
 bool led_rgb_set_color(uint8_t num, Color_t color){
     bool res = false;
 #ifdef HAS_LED_RGB_DIAG
-    LOG_DEBUG(LED_RGB,"%u Set Color %u=%s",num, color, Color2Str(color));
+    LOG_DEBUG(LED_RGB,"%u Set Color %u=%s",num, color, ColorToStr(color));
 #endif /*HAS_LED_RGB_DIAG*/
 
     LedRgbHandle_t* LedNodePtr = LedRgbGetNode(num) ;

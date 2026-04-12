@@ -15,6 +15,8 @@
 #error "+ HAS_LED_MONO_DIAG"
 #endif
 
+const char* LedMonoNodeToStr(const  LedMonoHandle_t* const Node);
+const char* LedMonoConfigToStr(const LedMonoConfig_t* const Config) ;
 bool LedMonoDiag(LedMonoHandle_t* const  LedNode);
 bool LedMonoConfigDiag(const LedMonoConfig_t*const  Config);
 bool led_mono_diag(void) ;

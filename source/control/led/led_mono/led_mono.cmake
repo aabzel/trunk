@@ -1,39 +1,33 @@
 
-message(STATUS "LED_MONO_MK_INC=${LED_MONO_MK_INC}")
 if( NOT (LED_MONO_MK_INC STREQUAL Y))
     set(LED_MONO_MK_INC Y)
 
-    message(STATUS "+ Led driver")
+    set(LED_MONO_DIR "${LED_GENERAL_DIR}/led_mono")
 
-    set(LED_MONO_DIR  ${LED_GENERAL_DIR}/led_mono)
+    include_directories( ${LED_MONO_DIR})
+    
+    string(APPEND INCDIR " ${LED_MONO_DIR}")
 
-    if( NOT (LED STREQUAL Y))
-         message(ERROR "Add General LED driver")
+    string(APPEND SOURCES_C " ${LED_MONO_DIR}/led_mono_drv.c")
+
+    if(PWM STREQUAL Y)
+        string(APPEND SOURCES_C " ${LED_MONO_DIR}/led_mono_pwm.c")
     endif()
 
-    target_include_directories(app PUBLIC ${LED_MONO_DIR})
-    target_sources(app PRIVATE ${LED_MONO_DIR}/led_mono_drv.c)
-
-    target_compile_definitions(app PUBLIC HAS_LED_MONO)
-    #set(MATH Y)
-
-    if(LED_PROC STREQUAL Y)
-        target_compile_definitions(app PUBLIC HAS_LED_MONO_PROC)
-    endif()
+    string(APPEND MCAL_OPT " -DHAS_LED_MONO")
+    string(APPEND MCAL_OPT " -DHAS_LED_MONO_PROC")
 
     if(DIAG STREQUAL Y)
         if(LED_MONO_DIAG STREQUAL Y)
-		    message(STATUS "+ LedMonoDiag")
-            target_compile_definitions(app PUBLIC HAS_LED_MONO_DIAG)
-            target_sources(app PRIVATE ${LED_MONO_DIR}/led_mono_diag.c)
-        endif()    
+            string(APPEND MCAL_OPT " -DHAS_LED_MONO_DIAG")
+            string(APPEND SOURCES_C " ${LED_MONO_DIR}/led_mono_diag.c")
+        endif()
     endif()
 
     if(CLI STREQUAL Y)
         if(LED_MONO_COMMANDS STREQUAL Y)
-		    message(STATUS "+ LED_MONO_COMMANDS")
-            target_compile_definitions(app PUBLIC HAS_LED_MONO_COMMANDS)
-            target_sources(app PRIVATE ${LED_MONO_DIR}/led_mono_commands.c)
+            string(APPEND MCAL_OPT " -DHAS_LED_MONO_COMMANDS")
+            string(APPEND SOURCES_C " ${LED_MONO_DIR}/led_mono_commands.c")
         endif()
     endif()
 endif()

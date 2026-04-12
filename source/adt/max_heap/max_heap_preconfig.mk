@@ -1,0 +1,5 @@
+ifneq ($(MAX_HEAP_PRECONFIG_INC),Y)
+    MAX_HEAP_PRECONFIG_INC=Y
+    
+    MAX_HEAP=Y
+endif

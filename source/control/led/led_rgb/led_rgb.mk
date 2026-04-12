@@ -20,21 +20,21 @@ ifneq ($(LED_RGB_MK_INC),Y)
     endif
 
     LED_RGB=Y
-    OPT += -DHAS_LED_RGB
-    OPT += -DHAS_LED_RGB_PROC
+    MCAL_OPT += -DHAS_LED_RGB
+    MCAL_OPT += -DHAS_LED_RGB_PROC
     #MATH=Y
 
     ifeq ($(DIAG),Y)
         ifeq ($(LED_RGB_DIAG),Y)
-            OPT += -DHAS_LED_RGB_DIAG
-            OPT += -DHAS_LED_DIAG
+            MCAL_OPT += -DHAS_LED_RGB_DIAG
+            MCAL_OPT += -DHAS_LED_DIAG
             SOURCES_C += $(LED_RGB_DIR)/led_rgb_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(LED_RGB_COMMANDS),Y)
-            OPT += -DHAS_LED_RGB_COMMANDS
+            MCAL_OPT += -DHAS_LED_RGB_COMMANDS
             SOURCES_C += $(LED_RGB_DIR)/led_rgb_commands.c
         endif
     endif

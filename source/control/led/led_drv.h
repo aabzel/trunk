@@ -11,6 +11,7 @@
 #warning "+HAS_PINS"
 #endif
 
+#include "gpio_const.h"
 #include "led_config.h"
 #include "led_dep.h"
 
@@ -25,6 +26,8 @@
 #ifdef HAS_RTOS
 void led_thread(void *arg1, void *arg2, void *arg3);
 #endif
-bool led_pwm(uint8_t led_num, double freq_hz, uint8_t duty);
+
+bool led_pwm(uint8_t led_num, float freq_hz, uint8_t duty);
+GpioLogicLevel_t LedLogicLevel2Voltage(uint8_t val, GpioLogicLevel_t active);
 
 #endif /* LED_GENERAL_DRIVER_H  */

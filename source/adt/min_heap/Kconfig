@@ -1,0 +1,4 @@
+
+config MIN_HEAP
+    bool "Enable use of the MIN_HEAP drivers"
+

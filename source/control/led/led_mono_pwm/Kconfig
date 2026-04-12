@@ -1,0 +1,4 @@
+
+config LED_MONO_PWM
+    bool "Enable use of the LED_MONO_PWM drivers"
+

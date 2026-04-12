@@ -1,0 +1,9 @@
+ifneq ($(LED_MONO_PWM_PRECONFIG_INC),Y)
+    LED_MONO_PWM_PRECONFIG_INC=Y
+    
+    PWM=Y
+    TIMER=Y
+    FLOAT=Y
+    GPIO=Y
+    LED_MONO_PWM=Y
+endif

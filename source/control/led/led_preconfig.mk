@@ -7,7 +7,9 @@ ifneq ($(LED_GENERAL_PRECONFIG_INC),Y)
     LED=Y
     GPIO=Y
     PINS=Y
+    PIN=Y
     #TIME=Y
+
     ifeq ($(LED_MONO),Y)
         include $(LED_GENERAL_DIR)/led_mono/led_mono_preconfig.mk
     endif

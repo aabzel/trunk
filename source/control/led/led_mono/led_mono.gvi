@@ -1,12 +1,4 @@
-
-GPIO->LED
-LED->LED_MONO
-
-#ifdef HAS_MATH
-MATH->LED_MONO
-#endif
-
-
-#ifdef HAS_TIME
+GPIO->LED_MONO
 TIME->LED_MONO
-#endif
+MATH->LED_MONO
+LED->LED_MONO
