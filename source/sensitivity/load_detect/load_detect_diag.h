@@ -4,8 +4,8 @@
 
 #include "load_detect_types.h"
 
-const char* LoadDetectOut2Str(LoadDetectOut_t decision);
-const char* LoadDetectGpioClass2Str(GpioClass_t gpio_class);
+const char* LoadDetectOutToStr(LoadDetectOut_t decision);
+const char* LoadDetectGpioClassToStr(GpioClass_t gpio_class);
 
 bool load_detect_diag(void);
 bool load_detect_pin_diag(void);

@@ -101,7 +101,7 @@ static bool load_detect_init_pin(const LoadDetectPinConfig_t* const PinConfig, L
     if(PinConfig) {
         if(PinNode) {
             uint32_t ok = 0;
-            LOG_WARNING(LOAD_DETECT, "InitPad: %s In PullAir", GpioPad2Str(PinConfig->pad.byte));
+            LOG_WARNING(LOAD_DETECT, "InitPad: %s In PullAir", GpioPadToStr(PinConfig->pad.byte));
             PinNode->num = PinConfig->num;
             PinNode->valid = PinConfig->valid;
             PinNode->pad = PinConfig->pad;
@@ -118,14 +118,14 @@ static bool load_detect_init_pin(const LoadDetectPinConfig_t* const PinConfig, L
             if(res) {
                 ok++;
             } else {
-                LOG_ERROR(LOAD_DETECT, "Pad: %s SetDirIn Err", GpioPad2Str(PinConfig->pad.byte));
+                LOG_ERROR(LOAD_DETECT, "Pad: %s SetDirIn Err", GpioPadToStr(PinConfig->pad.byte));
             }
 
             res = gpio_set_pull(PinConfig->pad.byte, GPIO__PULL_AIR);
             if(res) {
                 ok++;
             } else {
-                LOG_ERROR(LOAD_DETECT, "Pad: %s SetPullAir Err", GpioPad2Str(PinConfig->pad.byte));
+                LOG_ERROR(LOAD_DETECT, "Pad: %s SetPullAir Err", GpioPadToStr(PinConfig->pad.byte));
             }
 
 #ifdef HAS_NRF5340
@@ -133,7 +133,7 @@ static bool load_detect_init_pin(const LoadDetectPinConfig_t* const PinConfig, L
             if(res) {
                 ok++;
             } else {
-                LOG_ERROR(LOAD_DETECT, "Pad: %s SetAppCore Err", GpioPad2Str(PinConfig->pad.byte));
+                LOG_ERROR(LOAD_DETECT, "Pad: %s SetAppCore Err", GpioPadToStr(PinConfig->pad.byte));
             }
 #endif
 
@@ -159,7 +159,7 @@ bool load_detect_init_pins(uint8_t num) {
             res = load_detect_init_pin(&LoadDetectPinConfig[i], &LoadDetectPinInstance[i]);
             if(res) {
                 ok++;
-                LOG_DEBUG(LOAD_DETECT, "InitPin %s Ok", GpioPad2Str(LoadDetectPinInstance[i].pad.byte));
+                LOG_DEBUG(LOAD_DETECT, "InitPin %s Ok", GpioPadToStr(LoadDetectPinInstance[i].pad.byte));
             } else {
                 LOG_ERROR(LOAD_DETECT, "InitPinErr %d", num);
             }
@@ -265,8 +265,8 @@ static bool load_detect_set_mcu_ll(LoadDetectHandle_t* Node, GpioPullMode_t pull
 static bool load_detect_pin_update(LoadDetectHandle_t* Node, LoadDetectPinInfo_t* PinNode,
                                    GpioLogicLevel_t logic_level) {
     bool res = false;
-    LOG_DEBUG(LOAD_DETECT, "Update: %u %s %s %s", Node->num, GpioPad2Str(PinNode->pad.byte), GpioPull2Str(Node->state),
-              GpioLevel2Str(logic_level));
+    LOG_DEBUG(LOAD_DETECT, "Update: %u %s %s %s", Node->num, GpioPadToStr(PinNode->pad.byte), GpioPullToStr(Node->state),
+              GpioLevelToStr(logic_level));
     switch(Node->state) {
     case GPIO__PULL_AIR: {
         PinNode->llevel_at_pullair = logic_level;
@@ -382,8 +382,8 @@ static bool load_detect_calc_pin_solution(LoadDetectHandle_t* Node, LoadDetectPi
                 }
 
                 if(PinNode->prev_state != PinNode->state) {
-                    LOG_WARNING(LOAD_DETECT, "Pad %s NewState %s->%s", GpioPad2Str(PinNode->pad.byte),
-                                LoadDetectOut2Str(PinNode->prev_state), LoadDetectOut2Str(PinNode->state));
+                    LOG_WARNING(LOAD_DETECT, "Pad %s NewState %s->%s", GpioPadToStr(PinNode->pad.byte),
+                                LoadDetectOutToStr(PinNode->prev_state), LoadDetectOutToStr(PinNode->state));
                 }
                 PinNode->prev_state = PinNode->state;
             }

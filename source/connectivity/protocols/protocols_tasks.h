@@ -9,8 +9,8 @@
 #endif
 
 #ifdef HAS_ISO_TP_PROC
-#include "iso_tp.h"
-#define ISO_TP_TASK {.name="ISO_TP", .period_us=ISO_TP_PERIOD_US, .limiter.function=iso_tp_proc,},
+#include "iso_tp_mcal.h"
+#define ISO_TP_TASK {.name = "IsoTp", .period_us = ISO_TP_PERIOD_US, .limiter.function = iso_tp_proc,},
 #else
 #define ISO_TP_TASK
 #endif
@@ -63,6 +63,30 @@
 #define DS_TWR_TASK
 #endif
 
+#ifdef HAS_NMEA_PROC
+#include "nmea_protocol.h"
+#define NMEA_TASKS                                                                  \
+    {.name="NMEA",     .period_us=NMEA_PERIOD_US, .limiter.function=nmea_proc,},    \
+    {.name="NmeaRtc",  .period_us=NMEA_SYNC_RTC_PERIOD_US, .limiter.function=nmea_sync_rtc_proc,}, \
+    {.name="NmeaLog",  .period_us=NMEA_LOG_RTC_PERIOD_US, .limiter.function=nmea_log_proc,},
+#else
+#define NMEA_TASKS
+#endif
+
+#ifdef HAS_IR_SAMSUNG_PROC
+#include "ir_samsung_mcal.h"
+#define IR_SAMSUNG_TASK {.name="IrSamsung", .period_us=IR_SAMSUNG_PERIOD_US, .limiter.function=ir_samsung_proc,},
+#else
+#define IR_SAMSUNG_TASK
+#endif
+
+#ifdef HAS_PCAN_PROC
+#include "pcan_mcal.h"
+#define PCAN_TASK {.name="pCan", .period_us=PCAN_PERIOD_US, .limiter.function = pcan_proc, },
+#else
+#define PCAN_TASK
+#endif
+
 #ifdef HAS_UDS_PROC
 #include "uds.h"
 #define UDS_TASK {.name="UDS",     .period_us=UDS_PERIOD_US, .limiter.function=uds_proc,}, \
@@ -71,32 +95,54 @@
 #define UDS_TASK
 #endif
 
-#ifdef HAS_NMEA_PROC
-#include "nmea_protocol.h"
-#define NMEA_TASKS                                                                  \
-    {.name="NMEA",     .period_us=NMEA_PERIOD_US, .limiter.function=nmea_proc,},    \
-    {.name="NmeaRtc",  .period_us=NMEA_SYNC_RTC_PERIOD_US, .limiter.function=nmea_sync_rtc_proc,},
+#ifdef HAS_SLCAN_PROC
+#include "slcan.h"
+#define SLCAN_TASK                   \
+    {.name = "SLCAN", .period_us = SLCAN_PERIOD_US, .limiter.function = slcan_proc,},
 #else
-#define NMEA_TASKS
+#define SLCAN_TASK
 #endif
-
 
 #ifdef HAS_STRING_READER_PROC
 #include "string_reader.h"
-#define STRING_READER_TASK \
-    {.name="StringReader", .period_us=STRING_READER_PERIOD_US, .limiter.function=string_reader_proc,},
+#define STRING_READER_TASK     {.name="StringReader",                   \
+                                .period_us=STRING_READER_PERIOD_US,     \
+                                .limiter.function=string_reader_proc,},
 #else
 #define STRING_READER_TASK
 #endif
 
+#ifdef HAS_UDS_CLIENT_PROC
+#include "uds_client_mcal.h"
+#define UDS_CLIENT_TP_TASK  {                                                 \
+                         .name = "UdsTesterPresent",                          \
+                         .period_us = UDS_CLIENT_TESTER_PRESENT_PERIOD_US,    \
+                         .limiter.function = uds_client_tester_present_proc,  \
+                        },
+
+#define UDS_CLIENT_TASK {                                                     \
+                         .name = "UdsClient",                                 \
+                         .period_us = UDS_CLIENT_PERIOD_US,                   \
+                         .limiter.function = uds_client_proc,                 \
+                        },                                                    \
+
+#else
+#define UDS_CLIENT_TASK
+#endif
+
+#define PROTOCOlS_WIRELESS_TASKS   \
+    RDS_TASK                       \
+    DS_TWR_TASK                    \
+    IR_SAMSUNG_TASK
 
 #define PROTOCOlS_TASKS            \
+    PROTOCOlS_WIRELESS_TASKS       \
     CLI_TASK                       \
-    DS_TWR_TASK                    \
     ISO_TP_TASK                    \
     TBFP_TASK                      \
-    NMEA_TASKS                      \
-    RDS_TASK                       \
+    PCAN_TASK                      \
+    NMEA_TASKS                     \
+    SLCAN_TASK                     \
     STRING_READER_TASK             \
     UBX_TASK                       \
     UDS_TASK

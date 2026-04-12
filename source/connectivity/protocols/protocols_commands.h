@@ -67,6 +67,12 @@
 #define RDS_COMMANDS
 #endif
 
+#ifdef HAS_PCAN_COMMANDS
+#include "pcan_commands.h"
+#else
+#define PCAN_COMMANDS
+#endif
+
 #ifdef HAS_TBFP_COMMANDS
 #include "tbfp_commands.h"
 #else
@@ -91,6 +97,18 @@
 #define NMEA_COMMANDS
 #endif
 
+#ifdef HAS_SLCAN_COMMANDS
+#include "slcan_commands.h"
+#else
+#define SLCAN_COMMANDS
+#endif
+
+#ifdef HAS_IR_SAMSUNG_COMMANDS
+#include "ir_samsung_commands.h"
+#else
+#define IR_SAMSUNG_COMMANDS
+#endif
+
 
 #define PROTOCOLS_COMMANDS               \
     CLI_NATIVE_COMMANDS                  \
@@ -99,8 +117,11 @@
     DECAWAVE_NATIVE_COMMANDS             \
     DS_TWR_COMMANDS                      \
     LOG_COMMANDS                         \
+    IR_SAMSUNG_COMMANDS                  \
     RDS_COMMANDS                         \
     RTCM3_COMMANDS                       \
+    SLCAN_COMMANDS                       \
+    PCAN_COMMANDS                        \
     TBFP_COMMANDS                        \
     ISO_TP_COMMANDS                      \
     UBX_COMMANDS                         \

@@ -9,7 +9,7 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-const char* LoadDetectOut2Str(LoadDetectOut_t decision) {
+const char* LoadDetectOutToStr(LoadDetectOut_t decision) {
     const char* name = "?";
     switch((uint8_t)decision) {
     case LOAD_DETECT_OUT_SHORT_VCC:
@@ -25,7 +25,7 @@ const char* LoadDetectOut2Str(LoadDetectOut_t decision) {
     return name;
 }
 
-const char* LoadDetectGpioClass2Str(GpioClass_t gpio_class) {
+const char* LoadDetectGpioClassToStr(GpioClass_t gpio_class) {
     const char* name = "?";
     switch((uint8_t)gpio_class) {
     case GPIO_CLASS_MCU:
@@ -55,12 +55,12 @@ bool load_detect_pin_diag(void) {
         if(Node) {
             cli_printf(TSEP);
             cli_printf(" %2u  " TSEP, i + 1);
-            cli_printf(" %5s " TSEP, GpioPad2Str(Node->pad.byte));
+            cli_printf(" %5s " TSEP, GpioPadToStr(Node->pad.byte));
             cli_printf(" %5s " TSEP, OnOffToStr(Node->on_off));
-            cli_printf(" %5s " TSEP, GpioLevel2Str(Node->llevel_at_pullair));
-            cli_printf(" %4s " TSEP, GpioLevel2Str(Node->llevel_at_pullup));
-            cli_printf(" %5s " TSEP, GpioLevel2Str(Node->llevel_at_pulldown));
-            cli_printf(" %8s " TSEP, LoadDetectOut2Str(Node->state));
+            cli_printf(" %5s " TSEP, GpioLevelToStr(Node->llevel_at_pullair));
+            cli_printf(" %4s " TSEP, GpioLevelToStr(Node->llevel_at_pullup));
+            cli_printf(" %5s " TSEP, GpioLevelToStr(Node->llevel_at_pulldown));
+            cli_printf(" %8s " TSEP, LoadDetectOutToStr(Node->state));
             const Wire_t* WireInfio = Pad2WireInfio(Node->pad);
             if(WireInfio) {
                 cli_printf(" %13s " TSEP, WireInfio->wire_name);
@@ -91,9 +91,9 @@ bool load_detect_diag(void) {
         if(Node) {
             cli_printf(TSEP);
             cli_printf(" %2u  " TSEP, i + 1);
-            cli_printf(" %5s " TSEP, LoadDetectGpioClass2Str(Node->gpio_class));
+            cli_printf(" %5s " TSEP, LoadDetectGpioClassToStr(Node->gpio_class));
             cli_printf(" %5s " TSEP, OnOffToStr(Node->on_off));
-            cli_printf(" %5s " TSEP, GpioPull2Str(Node->state));
+            cli_printf(" %5s " TSEP, GpioPullToStr(Node->state));
             cli_printf(" %4u " TSEP, Node->spin_cnt);
             cli_printf(" %4u " TSEP, Node->err_cnt);
             cli_printf(" %4u " TSEP, Node->pause_ms);

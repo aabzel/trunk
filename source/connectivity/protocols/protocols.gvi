@@ -1,44 +1,14 @@
-#define PROTOCOLS_NODE_ATTR [shape = note][fillcolor = aqua][style="filled"]
 
-    #ifdef HAS_CLI
-        CLI
-    #endif
-    
-    #ifdef HAS_DECAWAVE
-        DECAWAVE
-    #endif
 
-    #ifdef HAS_DS_TWR
-        DS_TWR
-    #endif
+#ifdef HAS_ISO_TP
+    #include "iso_tp.gvi"
+#endif
 
-    #ifdef HAS_NMEA
-        NMEA
-    #endif
 
-    #ifdef HAS_RDS
-        RDS
-    #endif
+#ifdef HAS_STRING_READER
+    #include "string_reader.gvi"
+#endif
 
-    #ifdef HAS_RTCM
-        RTCM
-    #endif
-
-    #ifdef HAS_TBFP
-        TBFP
-    #endif
-
-    #ifdef HAS_UBX
-        UBX
-    #endif
-
-    #ifdef HAS_ISO_TP
-        ISO_TP
-    #endif
-
-    #ifdef HAS_UDS
-        UDS
-    #endif
 
 #ifdef HAS_CLI
     #include "cli.gvi"
@@ -64,6 +34,10 @@
     #include "ds_twr.gvi"
 #endif
 
+#ifdef HAS_IR_SAMSUNG
+    #include "ir_samsung.gvi"
+#endif
+
 #ifdef HAS_NMEA
     #include "nmea.gvi"
 #endif
@@ -74,6 +48,10 @@
 
 #ifdef HAS_UBX
     #include "ubx.gvi"
+#endif
+
+#ifdef HAS_CSV
+    #include "csv.gvi"
 #endif
 
 #ifdef HAS_UDS

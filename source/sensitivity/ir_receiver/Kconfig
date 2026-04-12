@@ -1,0 +1,4 @@
+
+config IR_RECEIVER
+    bool "Enable use of the IR_RECEIVER drivers"
+
