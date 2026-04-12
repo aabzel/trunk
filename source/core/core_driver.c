@@ -1,11 +1,25 @@
 #include "core_driver.h"
 
+#include "clock_const.h"
+#include "code_generator.h"
+#include "common_functions.h"
+#include "compiler_const.h"
+#include "float_utils.h"
 #include "microcontroller_const.h"
 #include "microcontroller_drv.h"
+
+#ifdef HAS_RATIONAL_NUM
+#include "rational_num.h"
+#endif
+
+#ifdef HAS_FLASH
+#include "flash_mcal.h"
+#endif
 
 #ifdef HAS_LOG
 #include "log.h"
 #endif
+
 #ifdef HAS_TIME
 #include "none_blocking_pause.h"
 #endif
@@ -19,7 +33,7 @@
 
 #ifdef HAS_ARRAY
 #include "array.h"
-#endif /*HAS_ARRAY*/
+#endif /**/
 
 #endif
 
@@ -35,8 +49,16 @@
 #include "cortex_m33_driver.h"
 #endif
 
+#ifdef HAS_CORTEX_M0
+#include "cortex_m0_driver.h"
+#endif
+
 #ifdef HAS_CORTEX_M4
 #include "cortex_m4_driver.h"
+#endif
+
+#ifdef HAS_CORTEX_M7
+#include "cortex_m7_driver.h"
 #endif
 
 #ifdef HAS_RISC_V
@@ -50,6 +72,9 @@
 #ifndef RAM_SIZE
 #error "Define MCU RAM_SIZE configs"
 #endif
+
+COMPONENT_GET_NODE(Core, core)
+COMPONENT_GET_CONFIG(Core, core)
 
 uint8_t* low_stack = (uint8_t*)RAM_END;
 
@@ -76,10 +101,13 @@ void sampling_timer_interrupt_handler(void) {
 #endif
 
 #ifdef HAS_CORE_EXT
-bool is_ram_addr(register uint32_t address) {
+
+_WEAK_FUN_ bool is_ram_addr(register uint32_t address) {
     bool res = false;
-    if((RAM_START <= address) && (address <= (RAM_START + RAM_SIZE))) {
-        res = true;
+    if(RAM_START <= address) {
+        if(address <= (RAM_START + RAM_SIZE)) {
+            res = true;
+        }
     }
 
     return res;
@@ -87,13 +115,12 @@ bool is_ram_addr(register uint32_t address) {
 #endif
 
 #ifdef HAS_CORE_EXT
-static bool call_recursion(uint32_t cur_depth, uint32_t max_depth, uint32_t* stack_size) {
+static bool call_recursion(uint32_t stack_top_addr, uint32_t cur_depth, uint32_t max_depth, uint32_t* stack_size) {
     bool res = false;
     if(cur_depth < max_depth) {
-        res = call_recursion(cur_depth + 1, max_depth, stack_size);
+        res = call_recursion(stack_top_addr, cur_depth + 1, max_depth, stack_size);
     } else if(cur_depth == max_depth) {
-        uint32_t top_stack_val = *((uint32_t*)(APP_START_ADDRESS));
-        uint32_t cur_stack_use = top_stack_val - ((uint32_t)&res);
+        uint32_t cur_stack_use = stack_top_addr - ((uint32_t)&res);
         *stack_size = cur_stack_use;
         res = true;
     } else {
@@ -101,35 +128,14 @@ static bool call_recursion(uint32_t cur_depth, uint32_t max_depth, uint32_t* sta
     }
     return res;
 }
-#endif
 
-#ifdef HAS_CORE_EXT
-bool try_recursion(uint32_t max_depth, uint32_t* stack_size) {
+bool try_recursion(const uint32_t stack_top_addr, const uint32_t max_depth, uint32_t* const stack_size) {
     bool res = false;
-    res = call_recursion(0, max_depth, stack_size);
+    res = call_recursion(stack_top_addr, 0, max_depth, stack_size);
+#ifdef HAS_LOG
+    LOG_INFO(CORE, "Depth:%u,StackSize:%u,byte", max_depth, *stack_size);
+#endif
     return res;
-}
-#endif
-
-#ifdef HAS_CHECK_STACK
-float stack_used(void) {
-    float precent = 0.0f;
-    uint32_t busy = 0;
-#ifdef HAS_GENERIC
-    uint32_t top_stack_val = *((uint32_t*)(APP_START_ADDRESS));
-#endif
-#ifdef HAS_BOOTLOADER
-    uint32_t top_stack_val = *((uint32_t*)0);
-#endif
-
-    uint32_t max_cont_patt = 0;
-    bool res = array_max_cont((uint8_t*)top_stack_val - EXPECT_STACK_SIZE, EXPECT_STACK_SIZE, 0, &max_cont_patt);
-    busy = EXPECT_STACK_SIZE - max_cont_patt;
-    if(res) {
-        precent = ((float)100 * busy) / ((float)EXPECT_STACK_SIZE);
-    }
-
-    return precent;
 }
 #endif
 
@@ -151,8 +157,183 @@ bool core_reboot(void) {
     res = cortex_m4_reboot();
 #endif
 
+#ifdef HAS_CORTEX_M7
+    res = cortex_m7_reboot();
+#endif
+
 #ifdef HAS_RISC_V
     res = rv32imc_boot_addr(EXT_ROM_START);
+#endif
+
+    return res;
+}
+
+#ifdef HAS_CORE_EXT
+static bool arm_is_reserved_vector_zero(const ArmCortexVectorTable_t* const Node) {
+    bool res = true;
+    uint32_t i = 0;
+    uint64_t res_cnt = 0;
+    for(i = 0; i < 4; i++) {
+        res_cnt += Node->RES1[i];
+    }
+
+    res_cnt += Node->RES2;
+
+    if(0 == res_cnt) {
+        res = true;
+    } else {
+        res = false;
+    }
+    return res;
+}
+#endif
+
+#ifdef HAS_CORE_EXT
+bool arm_is_vector(const ArmCortexVectorTable_t* const Node) {
+    bool res = true;
+
+    res = arm_is_reserved_vector_zero(Node);
+    if(!res) {
+#ifdef HAS_LOG
+        LOG_DEBUG(CORE, "RevVectorError:Offset:%p", Node);
+#endif
+    }
+
+    if(res) {
+#ifdef HAS_CORE_EXT
+
+        res = is_ram_addr(Node->stack_top);
+        if(!res) {
+#ifdef HAS_LOG
+            LOG_DEBUG(CORE, "StackUpPrtUpError:Offset:%p", Node);
+#endif
+        }
+#endif
+    }
+
+#ifdef HAS_FLASH_EX
+    if(res) {
+        res = is_flash_addr(Node->reset_handler);
+        if(!res) {
+#ifdef HAS_LOG
+            LOG_DEBUG(CORE, "ResetHandlerError:0x%x", Node->reset_handler);
+#endif
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->HardFault_Handler);
+        if(!res) {
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->MemManage_Handler);
+        if(!res) {
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->BusFault_Handler);
+        if(!res) {
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->UsageFault_Handler);
+        if(!res) {
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->DebugMon_Handler);
+        if(!res) {
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->SVC_Handler);
+        if(!res) {
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->PendSV_Handler);
+        if(!res) {
+        }
+    }
+
+    if(res) {
+        res = is_flash_addr(Node->NMI_Handler);
+        if(!res) {
+        }
+    }
+#endif /*HAS_FLASH_EX*/
+    return res;
+}
+#endif
+
+#ifdef HAS_CORE_EXT
+FloatFixPoint_t core_stack_used(const uint32_t top_stack_val, const uint32_t stack_size) {
+    FloatFixPoint_t Precent = {0};
+#ifdef HAS_LOG
+    LOG_DEBUG(CORE, "StackTop:0x%08X,Size:%u Byte", top_stack_val, stack_size);
+#endif
+#ifdef HAS_ARRAY_EXT
+    uint32_t stack_size_dword = stack_size / 4;
+    if(stack_size_dword) {
+        uint32_t max_cont_patt_dw = 0;
+        uint32_t* start_p = (uint32_t*)(top_stack_val - stack_size);
+        bool res = array_u32_max_cont(start_p, stack_size_dword, STACK_PATTERN, &max_cont_patt_dw);
+        if(res) {
+            uint32_t busy_dw = 0;
+            busy_dw = stack_size_dword - max_cont_patt_dw;
+            res = fraction_to_fixed_point_float(100 * busy_dw, stack_size_dword, 5, &Precent);
+        }
+    }
+#endif
+    return Precent;
+}
+#endif
+
+bool arm_cortex_check_arm_vector_table(const uint32_t vector_table_addr) {
+    bool res = false;
+#ifdef HAS_CORE_EXT
+    ArmCortexVectorTable_t* VectorTable = (ArmCortexVectorTable_t*)vector_table_addr;
+    res = arm_is_vector(VectorTable);
+#endif
+
+#if 0
+
+    uint32_t stack_pointer_addr = read_addr_32bit(vector_table_addr);
+#ifdef HAS_LOG
+    LOG_DEBUG(CORE, "StackUpPtr:Addr:*(0x%08X)=0x%08X", vector_table_addr, stack_pointer_addr);
+#endif
+    res = is_ram_addr(stack_pointer_addr);
+    if(res) {
+#ifdef HAS_LOG
+        LOG_DEBUG(CORE, "VerifyAddress:0x%08X,StackUpPrt:0x%08X", vector_table_addr, stack_pointer_addr);
+#endif
+        uint32_t reset_handler_offset = vector_table_addr + 4;
+
+#ifdef HAS_DEBUGGER
+        uint32_t reset_handler_addr = read_addr_32bit(reset_handler_offset);
+        (void)reset_handler_addr;
+#ifdef HAS_LOG
+        LOG_DEBUG(CORE, "ResetHandler:Addr:*(0x%08X)=0x%08X", reset_handler_offset, reset_handler_addr);
+#endif
+
+#ifdef HAS_FLASH_EX
+        res = is_flash_addr(reset_handler_addr);
+        if(res) {
+            LOG_DEBUG(CORE, "ResetHandlerOk:0x%x", reset_handler_addr);
+        } else {
+        }
+#endif
+
+#endif
+    } else {
+    }
 #endif
 
     return res;
@@ -196,7 +377,7 @@ bool core_exeption(uint32_t in, uint32_t* out) {
   .word   15        60
  */
 
-#ifdef HAS_CORE_EXT
+#ifdef HAS_ARM
 // core_isr_handler_addr_get->core_isr_handler_addr_get
 uint32_t core_isr_handler_addr_get(int16_t irq_n) {
     uint32_t isr_handler_addr = 0;
@@ -207,11 +388,15 @@ uint32_t core_isr_handler_addr_get(int16_t irq_n) {
     offset = ((int32_t)60) + ((int32_t)irq_n * 4);
     vector_table_addr += ((uint32_t)SCB->VTOR + 4);
     vector_table_addr += ((uint32_t)offset);
+
+#ifdef HAS_DEBUGGER
     isr_handler_addr = read_addr_32bit(vector_table_addr);
-#ifdef HAS_LOG
-    LOG_INFO(SYS, "IRQ:%d,Offset:%d,Addr:0x%08p=0x%08x", irq_n, offset, vector_table_addr, isr_handler_addr);
 #endif
-#endif // HAS_CMSIS
+
+#ifdef HAS_LOG
+    LOG_DEBUG(CORE, "IRQ:%d,Offset:%d,Addr:0x%08p=0x%08x", irq_n, offset, vector_table_addr, isr_handler_addr);
+#endif
+#endif /* HAS_CMSIS */
 
     return isr_handler_addr;
 }
@@ -237,12 +422,210 @@ bool fpu_init(void) {
 }
 #endif
 
-uint32_t core_get_up_time_ms(void) {
-    static uint32_t up_time_ms = 0;
-#ifdef HAS_RV32IMC_EXT
-    up_time_ms = rv32imc_up_time_get_ms32();
-#else
-    up_time_ms++;
+bool core_check_address(volatile const char* address) {
+    bool is_valid = false;
+#ifdef HAS_VENDOR_SDK
+    is_valid = true;
+    /* Cortex-M3, Cortex-M4, Cortex-M4F, Cortex-M7 are supported */
+    static const uint32_t BFARVALID_MASK = (0x80 << SCB_CFSR_BUSFAULTSR_Pos);
+
+    /* Clear BFARVALID flag by writing 1 to it */
+    SCB->CFSR |= BFARVALID_MASK;
+
+    /* Ignore BusFault by enabling BFHFNMIGN and disabling interrupts */
+    uint32_t mask = __get_FAULTMASK();
+    __disable_fault_irq();
+    SCB->CCR |= SCB_CCR_BFHFNMIGN_Msk;
+
+    /* probe address in question */
+    *address;
+
+    /* Check BFARVALID flag */
+    if((SCB->CFSR & BFARVALID_MASK) != 0) {
+        /* Bus Fault occured reading the address */
+        is_valid = false;
+    }
+
+    /* Reenable BusFault by clearing  BFHFNMIGN */
+    SCB->CCR &= ~SCB_CCR_BFHFNMIGN_Msk;
+    __set_FAULTMASK(mask);
+
 #endif
-    return up_time_ms;
+    return is_valid;
 }
+
+uint32_t cortex_offset_size_get(uint32_t const start) {
+    uint32_t offset_size = 0;
+#ifdef HAS_LOG
+    LOG_INFO(CORE, "Addr:0x%x", start);
+#endif
+    char* run_addr = (char*)start;
+    bool res = true;
+    while(res) {
+        res = core_check_address(run_addr);
+        if(res) {
+            offset_size++;
+        } else {
+            break;
+        }
+        run_addr++;
+    }
+
+#ifdef HAS_LOG
+    LOG_INFO(CORE, "Start:0x%x,Size:%u", start, offset_size);
+#endif
+
+    return offset_size;
+}
+
+#ifdef HAS_CORE_EXT
+static FloatFixPoint_t core_stack_used_get(CoreHandle_t* const Node) {
+    FloatFixPoint_t stack_used = {0};
+    if(Node) {
+        if(Node->stack_limit < Node->stack_top) {
+            uint32_t stack_size = Node->stack_top - Node->stack_limit;
+            Node->stack_used = core_stack_used(Node->stack_top, stack_size);
+#ifdef HAS_LOG
+            LOG_DEBUG(CORE, "StackUsed:%s %%", FloatFixToStr(&Node->stack_used));
+#endif
+            stack_used = Node->stack_used;
+        }
+    }
+    return stack_used;
+}
+#endif
+
+#ifdef HAS_CORE_EXT
+static bool core_stack_monitor_proc_one(uint8_t num) {
+    bool res = false;
+#ifdef HAS_LOG
+    LOG_PARN(CORE, "CORE%u,Proc", num);
+#endif
+    CoreHandle_t* Node = CoreGetNode(num);
+    if(Node) {
+        Node->stack_used = core_stack_used_get(Node);
+#ifdef HAS_CORE_DIAG
+        res = core_diag_stack_usage(num, &Node->stack_used);
+#endif
+        Node->spin++;
+    }
+    return res;
+}
+#endif
+
+static bool core_init_custom(void) {
+    bool res = true;
+#ifdef HAS_LOG
+    // LOG_PARN(CORE, "CustomInit");
+#endif
+    return res;
+}
+
+#ifdef HAS_CORE_EXT
+bool core_stack_monitor_proc(void) {
+    bool res = false;
+    uint32_t ok = 0;
+    uint32_t cnt = core_get_cnt();
+    (void)cnt;
+    uint8_t num = 0;
+    for(num = 0; num <= cnt; num++) {
+        res = core_stack_monitor_proc_one(num);
+        ok = ok_cnt_update(ok, res);
+    }
+    if(ok) {
+        res = true;
+    } else {
+        res = false;
+    }
+    return res;
+}
+#endif
+
+static bool core_init_common(const CoreConfig_t* const Config, CoreHandle_t* const Node) {
+    bool res = false;
+    if(Config) {
+        if(Node) {
+            Node->name = Config->name;
+            Node->stack_top = Config->stack_top;
+            Node->stack_limit = Config->stack_limit;
+            res = true;
+        }
+    }
+    return res;
+}
+
+static bool CoreIsValidConfig(const CoreConfig_t* const Config) {
+    bool res = false;
+    if(Config) {
+        res = true;
+
+        ifn(is_ram_addr(Config->stack_top)) {
+#ifdef HAS_LOG
+            LOG_PARN(CORE, "CORE%u,StackTopNotRam:0x%x", Config->num, Config->stack_top);
+#endif
+            res = false;
+        }
+
+        ifn(is_ram_addr(Config->stack_limit)) {
+#ifdef HAS_LOG
+            LOG_PARN(CORE, "CORE%u,StackLinNotRam:0x%x", Config->num, Config->stack_limit);
+#endif
+            res = false;
+        }
+
+        ifn(Config->name) {
+#ifdef HAS_LOG
+            LOG_PARN(CORE, "CORE%u,Name,Error", Config->num);
+#endif
+            res = false;
+        }
+    }
+
+    return res;
+}
+
+static bool core_init_one(uint8_t num) {
+    bool res = false;
+#ifdef HAS_LOG
+    LOG_WARNING(CORE, "CORE%u", num);
+#endif
+    const CoreConfig_t* Config = CoreGetConfig(num);
+    if(Config) {
+        res = CoreIsValidConfig(Config);
+        if(res) {
+#ifdef HAS_CORE_DIAG
+#ifdef HAS_LOG
+            LOG_WARNING(CORE, "%s", CoreConfigToStr(Config));
+#endif
+#endif
+            CoreHandle_t* Node = CoreGetNode(num);
+            if(Node) {
+                res = core_init_common(Config, Node);
+#ifdef HAS_FPU
+                res = fpu_init();
+#endif
+                Node->valid = true;
+                Node->stack_used.fractional = 0;
+                Node->stack_used.integer = 0;
+                Node->spin = 0;
+                Node->init = true;
+                res = true;
+            } else {
+#ifdef HAS_LOG
+                LOG_ERROR(CORE, "NodeErr %u", num);
+#endif
+            }
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "ConfigErr %u", num);
+#endif
+        }
+    } else {
+#ifdef HAS_LOG
+        LOG_PARN(CORE, "ConfigErr %u", num);
+#endif
+    }
+    return res;
+}
+
+COMPONENT_INIT_PATTERT(CORE, CORE, core)

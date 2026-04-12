@@ -1,9 +1,29 @@
-#ifdef HAS_CORTEX_M0
-    #include "cortex_m0.gvi"
+
+
+#ifdef HAS_DEBUGGER
+DEBUGGER->CORE
 #endif
+
+#ifdef HAS_CLOCK
+CLOCK->CORE
+#endif
+
+#ifdef HAS_NVIC
+    #include "nvic.gvi"
+#endif
+
+#ifdef HAS_SYSTICK
+    #include "systick.gvi"
+#endif
+
+//-----------------------------------
 
 #ifdef HAS_RV32IMC
     #include "rv32imc.gvi"
+#endif
+
+#ifdef HAS_CORTEX_M0
+    #include "cortex_m0.gvi"
 #endif
 
 #ifdef HAS_CORTEX_M1
@@ -22,5 +42,8 @@
     #include "cortex_m33.gvi"
 #endif
 
+#ifdef HAS_CORTEX_M7
+    #include "cortex_m7.gvi"
+#endif
 
 
