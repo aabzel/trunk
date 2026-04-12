@@ -4,12 +4,24 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/*
+ #include "code_generator.h"
+
+ COMPONENT_GET_INFO(Xxx)
+ COMPONENT_GET_NODE(Xxx, xxx)
+ COMPONENT_GET_CONFIG(Xxx, xxx)
+ COMPONENT_INIT_PATTERT(FASIL, XXX, xxx)
+ COMPONENT_PROC_PATTERT(FASIL, XXX, xxx)
+ COMPONENT_GET_CNT(Xxx, xxx)
+ */
 
 #ifdef HAS_LOG
 #include "log.h"
 #endif
 
 #include <stddef.h> /*For NULL*/
+
+#include "common_functions.h"
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
@@ -45,17 +57,10 @@ extern "C" {
 
 
 
+/*If not()  */
+#define ifn(CONDITION)    if(!(CONDITION))
+#define nif(CONDITION)    if(!(CONDITION))
 
-/*
- * #include "code_generator.h"
- *
- * COMPONENT_GET_INFO(Xxx)
- * COMPONENT_GET_NODE(Xxx, xxx)
- * COMPONENT_GET_CONFIG(Xxx, xxx)
- * COMPONENT_INIT_PATTERT(FASIL, XXX, xxx)
- * COMPONENT_PROC_PATTERT(FASIL, XXX, xxx)
- *
- */
 #define COMPONENT_IS_VALID(XXX, xxx)                                                                                   \
     bool xxx##_is_valid(uint8_t num) {                                                                                 \
         bool res = false;                                                                                              \
@@ -87,22 +92,6 @@ extern "C" {
         return Node;                                                                                                   \
     }
 
-#define COMPONENT_GET_INFO(Xxx)                                                                                        \
-    const Xxx##Info_t* Xxx##GetInfo(uint8_t num) {                                                                     \
-        Xxx##Info_t* Info = NULL;                                                                                      \
-        uint32_t i = 0;                                                                                                \
-        uint32_t cnt = ARRAY_SIZE(Xxx##Info);                                                                          \
-        for(i = 0; i < cnt; i++) {                                                                                     \
-            if(num == Xxx##Info[i].num) {                                                                              \
-                if(Xxx##Info[i].valid) {                                                                               \
-                    Info = &Xxx##Info[i];                                                                              \
-                    break;                                                                                             \
-                }                                                                                                      \
-            }                                                                                                          \
-        }                                                                                                              \
-        return Info;                                                                                                   \
-    }
-
 #define COMPONENT_GET_CONFIG(Xxx, xxx)                                                                                 \
     const Xxx##Config_t* Xxx##GetConfig(uint8_t num) {                                                                 \
         const Xxx##Config_t* Config = NULL;                                                                            \
@@ -120,9 +109,58 @@ extern "C" {
         return Config;                                                                                                 \
     }
 
+#define COMPONENT_GET_INFO(Xxx)                                                                                        \
+    const Xxx##Info_t* Xxx##GetInfo(uint8_t num) {                                                                     \
+        Xxx##Info_t* Info = NULL;                                                                                      \
+        uint32_t i = 0;                                                                                                \
+        uint32_t cnt = ARRAY_SIZE(Xxx##Info);                                                                          \
+        for(i = 0; i < cnt; i++) {                                                                                     \
+            if(num == Xxx##Info[i].num) {                                                                              \
+                if(Xxx##Info[i].valid) {                                                                               \
+                    Info =( Xxx##Info_t*) &Xxx##Info[i];                                                                              \
+                    break;                                                                                             \
+                }                                                                                                      \
+            }                                                                                                          \
+        }                                                                                                              \
+        return Info;                                                                                                   \
+    }
+
 /*
   xxx_init() names are busy in AT32F435_437_Firmware_Library HAL/SPL (eg i2c_init)
  */
+
+/*
+ Some SWC must be mandatory initialized for all instances.
+ For example: CAN, SPI
+ */
+#define COMPONENT_INIT_ALL_PATTERT(FASIL, XXX, xxx)                                                                    \
+    bool xxx##_mcal_init(void) {                                                                                       \
+        bool res = true;                                                                                               \
+        res = xxx##_init_custom();                                                                                     \
+        uint32_t ok = 0;                                                                                               \
+        LOG_SET_FASIL_DEBUG                                                                                            \
+        uint32_t cnt = xxx##_get_cnt();                                                                                \
+        LOG_INIT_ALL                                                                                                   \
+        uint8_t num = 0;                                                                                               \
+        for(num = 0; num <= cnt; num++) {                                                                              \
+            res = xxx##_init_one(num);                                                                                 \
+            if(res) {                                                                                                  \
+                LOG_INIT_OK                                                                                            \
+                ok++;                                                                                                  \
+            } else {                                                                                                   \
+                LOG_INIT_ERROR                                                                                         \
+            }                                                                                                          \
+        }                                                                                                              \
+        if(cnt==ok) {                                                                                                       \
+            res = true;                                                                                                \
+            LOG_INIT_STATISTIC                                                                                         \
+        } else {                                                                                                       \
+            res = false;                                                                                               \
+        }                                                                                                              \
+        LOG_SET_FASIL_INFO                                                                                             \
+        return res;                                                                                                    \
+    }
+
 
 /*TODO Add driver version*/
 #define COMPONENT_INIT_PATTERT_CNT(FASIL, XXX, xxx, CUSTOM_CNT)                                                        \
@@ -134,17 +172,17 @@ extern "C" {
         uint32_t cnt = xxx##_get_cnt();                                                                                \
         (void) cnt ;                                                                                                   \
         LOG_INIT_ALL                                                                                                   \
-        uint32_t num = 0;                                                                                              \
+        uint8_t num = 0;                                                                                              \
         for(num = 0; num <= CUSTOM_CNT; num++) {                                                                       \
             res = xxx##_init_one(num);                                                                                 \
             if(res) {                                                                                                  \
-            	LOG_INIT_OK                                                                                            \
+                LOG_INIT_OK                                                                                            \
                 ok++;                                                                                                  \
             } else {                                                                                                   \
-            	LOG_INIT_ERROR                                                                                         \
+                LOG_INIT_ERROR                                                                                         \
             }                                                                                                          \
         }                                                                                                              \
-        if(ok) {                                                                                                       \
+        if(cnt==ok) {                                                                                                       \
             res = true;                                                                                                \
             LOG_INIT_STATISTIC                                                                                         \
         } else {                                                                                                       \
@@ -159,19 +197,20 @@ extern "C" {
 
 #define COMPONENT_PROC_PATTERT_CNT(FASIL, XXX, xxx, CUSTOM_CNT)                                                        \
     bool xxx##_proc(void) {                                                                                            \
-        bool res = true;                                                                                               \
+        bool res = false;                                                                                              \
         uint32_t ok = 0;                                                                                               \
+        /*res = xxx##_proc_custom();*/                                                                                 \
         uint32_t cnt = xxx##_get_cnt();                                                                                \
         (void) cnt ;                                                                                                   \
         LOG_PROC_ALL                                                                                                   \
         uint32_t num = 0;                                                                                              \
-        for(num = 0; num <= cnt; num++) {                                                                              \
+        for(num = 0; num <= CUSTOM_CNT; num++) {     /**/                                                              \
             res = xxx##_proc_one(num);                                                                                 \
+            ok= ok_cnt_update(ok, res);                                                                                \
             if(res) {                                                                                                  \
-            	LOG_PROC_OK                                                                                            \
-                ok++;                                                                                                  \
+                LOG_PROC_OK                                                                                            \
             } else {                                                                                                   \
-            	LOG_PROC_ERROR                                                                                         \
+                LOG_PROC_ERROR                                                                                         \
             }                                                                                                          \
         }                                                                                                              \
         if(ok) {                                                                                                       \
@@ -184,6 +223,20 @@ extern "C" {
     }
 
 #define COMPONENT_PROC_PATTERT(FASIL, XXX, xxx) COMPONENT_PROC_PATTERT_CNT(FASIL, XXX, xxx, cnt)
+
+
+#define COMPONENT_GET_CNT(Prefix, prefix)               \
+    uint32_t prefix##_get_cnt(void) {                   \
+        uint32_t cnt = 0;                               \
+        uint32_t cnt_node = 0;                          \
+        uint32_t cnt_cfg = 0;                           \
+        cnt_node = ARRAY_SIZE( Prefix##Instance);       \
+        cnt_cfg = ARRAY_SIZE( Prefix##Config);          \
+        if(cnt_cfg <= cnt_node) {                       \
+            cnt = cnt_cfg;                              \
+        }                                               \
+        return cnt;                                     \
+    }
 
 #ifdef __cplusplus
 }

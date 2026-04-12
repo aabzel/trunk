@@ -10,7 +10,7 @@ extern "C" {
  */
 
 #define SHARED_ARRAY_SIZE 250
-extern char text[SHARED_ARRAY_SIZE] ;
+extern char text[SHARED_ARRAY_SIZE];
 
 #ifdef __cplusplus
 }

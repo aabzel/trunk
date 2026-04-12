@@ -27,10 +27,7 @@
 #include "usb_to_i2s_drv.h"
 #endif /*HAS_USB_TO_I2S*/
 
-#ifdef HAS_SI4703
-#include "si4703_const.h"
-#include "si4703_drv.h"
-#endif /*HAS_SI4703*/
+
 
 #ifdef HAS_SI4737
 #include "si4737_drv.h"
@@ -89,49 +86,6 @@ void super_cycle_multimedia(uint64_t loop_start_time_us) {
 }
 #endif
 
-#if 0
-bool multimedia_init(void) {
-    bool res = true;
-    LOG_INFO(SYS, "InitMultimedia");
-#ifdef HAS_FDA801
-    res = try_init(fda801_init(), "Fda801") && res;
-#endif /*HAS_FDA801*/
-
-#ifdef HAS_BC127
-    res = try_init(bc127_init(), "BC127") && res;
-#endif /*HAS_BC127*/
-
-#ifdef HAS_BT1026
-    res = try_init(bt1026_init(), "BT1026") && res;
-#endif /*HAS_BT1026*/
-
-#ifdef HAS_WM8731
-    res = try_init(wm8731_init(), "WM8731") && res;
-#endif /*HAS_WM8731*/
-
-#ifdef HAS_MAX98357
-    res = try_init(max98357_init(), "max98357") && res;
-#endif /*HAS_MAX98357*/
-
-#ifdef HAS_SI4703
-    res = try_init(si4703_init(), "Si4703") && res;
-#endif /*HAS_SI4703*/
-
-#ifdef HAS_SI4737
-    res = try_init(si4737_init(), "Si4737") && res;
-#endif /*HAS_SI4737*/
-
-#ifdef HAS_LC3
-    res = try_init(lc3_init(), "LC3") && res;
-#endif
-
-#ifdef HAS_USB_TO_I2S
-    res = try_init(usb_to_i2s_init(), "Usb>I2s") && res;
-#endif /*HAS_USB_TO_I2S*/
-
-    return res;
-}
-#endif
 
 #ifdef HAS_SW_DAC
 FramePattern_t SampleMode2FramePattern(SampleMode_t sample_mode) {

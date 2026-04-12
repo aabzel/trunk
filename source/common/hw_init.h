@@ -7,14 +7,14 @@
 #define NRFX_CORE_INIT   {.init_function=nrf_cores_init, .name="NrfCores",},
 #else
 #define NRFX_CORE_INIT
-#endif /*HAS_NRFX_CORE*/
+#endif /**/
 
 #ifdef HAS_TEMPERATURE
 #include "temperature_drv.h"
 #define TEMPERATURE_INIT   {.init_function=temperature_init, .name="Temp",},
 #else
 #define TEMPERATURE_INIT
-#endif /*HAS_TEMPERATURE*/
+#endif /**/
 
 #ifdef HAS_AES_ECB
 #include "aes_drv.h"
@@ -35,7 +35,7 @@
 #define AXP192_INIT   {.init_function=axp192_init, .name="axp192",},
 #else
 #define AXP192_INIT
-#endif /*HAS_AXP192*/
+#endif /**/
 
 #ifdef HAS_BQ25171_Q1
 #include "bq25171_q1_drv.h"

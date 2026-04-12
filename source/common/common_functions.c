@@ -22,11 +22,7 @@
 
 #ifdef HAS_INTERFACES
 #include "interface_drv.h"
-#endif /*HAS_INTERFACES*/
-
-#ifdef HAS_MULTIMEDIA
-#include "proc_multimedia.h"
-#endif /*HAS_MULTIMEDIA*/
+#endif
 
 #ifdef HAS_SYSTICK
 #include "systick_mcal.h"
@@ -37,23 +33,23 @@
 #endif
 
 #ifdef HAS_CLOCK
-#include "clock.h"
+#include "clock_mcal.h"
 #endif
 
 #ifdef HAS_SOFTWARE_TIMER
 #include "software_timer.h"
-#endif /*HAS_SOFTWARE_TIMER*/
+#endif
 
 #ifdef HAS_SUPER_CYCLE
 #include "super_cycle.h"
-#endif /*HAS_SUPER_CYCLE*/
+#endif
 
 #if defined(HAS_RTOS_TASKS) && defined(HAS_SUPER_CYCLE)
 #error "BareMetal scheduler can not work simultaneously with RTOS scheduler"
-#endif /*HAS_RTOS_TASKS HAS_SUPER_CYCLE*/
+#endif /* */
 
-#ifdef HAS_LOG_UTILS
-#include "writer_generic.h"
+#ifdef HAS_WRITER
+#include "writer.h"
 #endif
 
 #ifdef HAS_FREE_RTOS
@@ -152,33 +148,17 @@
 //#include "sys_config.h"
 #endif
 
-#ifdef HAS_TASK
-#include "task_info.h"
+#ifdef HAS_SCHEDULER
+#include "scheduler_mcal.h"
 #endif
 
 #ifdef HAS_FLASH_FS
 #include "flash_fs.h"
 #endif /*HAS_FLASH_FS*/
 
-#ifdef HAS_USB
-
-#ifdef HAS_USB_DEVICE
-#include "usb_device.h"
-#endif /*HAS_USB_DEVICE*/
-
 #ifdef HAS_SYSTICK
 #include "systick_mcal.h"
 #endif
-
-#ifdef HAS_USB_HOST
-//#include "usb_host.h"
-#endif /*HAS_USB_HOST*/
-
-#endif /*HAS_USB*/
-
-#ifdef HAS_IWDG
-//#include "iwdg_drv.h"
-#endif /*HAS_WDT*/
 
 #ifdef HAS_WIN_UTILS
 #include "win_utils.h"
@@ -186,26 +166,30 @@
 
 #if defined(HAS_NORTOS) && defined(HAS_GENERIC) && !defined(HAS_STRING_READER_PROC)
 #warning "NoRTOS Generic Firmware should contain STRING_READER"
-#endif /**/
+#endif
 
 #if defined(HAS_NORTOS) && defined(HAS_BOOTLOADER) && !defined(HAS_STRING_READER_PROC)
 #warning "NoRTOS Generic Firmware should contain STRING_READER"
-#endif /**/
+#endif
 
 #ifdef HAS_SUPER_CYCLE
-void super_cycle_proc(uint64_t loop_start_time_us) {
-
-#ifdef HAS_TASK
-    tasks_proc(loop_start_time_us);
-#endif // HAS_TASK
+bool super_cycle_proc_ll(const SuperCycleHandle_t* const Node) {
+    bool res = false;
+#ifdef HAS_SCHEDULER
+    res = scheduler_proc_one_stamp(Node->scheduler_num, Node->start_time_us);
+#endif
+    return res;
 }
 #endif /*HAS_SUPER_CYCLE*/
 
-bool try_init(bool status, char* message) {
-    if(false == status) {
-#ifdef HAS_LOG
-        LOG_ERROR(HMON, "Init %s Error", message);
+bool try_init(bool status, uint32_t i, char* message) {
+
+#ifdef HAS_DIAG
+    log_write(ResToLogLevel(status), HMON, "-----------------------------%u,Init:[%s],%s", i, message, OkToStr(status));
 #endif
+
+    if(false == status) {
+        // LOG_ERROR(HMON, "-----------------------------%u,Init[%s],%s",i, message,OkToStr(status));
 
 #ifdef HAS_HEALTH_MONITOR
         HealthMon.init_error = true;
@@ -225,11 +209,57 @@ bool try_init(bool status, char* message) {
             // res= array_add_front(HealthMon.error_messege,strlen(HealthMon.error_messege)+1,message, strlen(message));
             // sprintf(HealthMon.error_messege, "%s_%s", message, HealthMon.error_messege ); /*DoesNotWork*/
         }
-#endif /*HAS_HEALTH_MONITOR*/
+#endif /**/
     } else {
 #ifdef HAS_LOG
-        LOG_INFO(HMON, "Init %s OK", message);
+        // LOG_INFO(HMON, "------------------------------%u,Init:[%s],%s",i, message,OkToStr(status));
 #endif
     }
     return status;
 }
+
+uint32_t ok_cnt_update(const uint32_t cur, const bool res) {
+    uint32_t ret = cur;
+    if(res) {
+        ret++;
+    }
+    return ret;
+}
+
+bool ok_cnt_to_res(const uint32_t ok_cnt) {
+    bool res = false;
+    if(ok_cnt) {
+        res = true;
+    }
+    return res;
+}
+
+#ifdef HAS_LD_SCRIPT
+// TODO Add as a table
+extern void _etext;
+extern void start_text;
+extern void _sdata;
+extern void _edata;
+extern void _ebss;
+extern void _sbss;
+extern void RamFuncEnd;
+extern void RamFuncStart;
+#endif
+
+#if 0
+
+bool common_diag(void) {
+    bool res = false;
+#ifdef HAS_LD_SCRIPT
+    uint32_t text_size = &_etext - &start_text;
+    uint32_t data_size = &_edata - &_sdata;
+    uint32_t bss_size = &_ebss - &_sbss;
+    uint32_t ram_func_size = &RamFuncEnd - &RamFuncStart;
+    LOG_INFO(HMON, "text_size:%u", text_size);
+    LOG_INFO(HMON, "data_size:%u", data_size);
+    LOG_INFO(HMON, "bss_size:%u", bss_size);
+    LOG_INFO(HMON, "ram_func_size:%u", ram_func_size);
+#endif
+    return res;
+}
+#endif

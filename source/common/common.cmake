@@ -1,54 +1,52 @@
-message(STATUS "COMMON_MK_INC=${COMMON_MK_INC}")
-if( NOT (COMMON_MK_INC STREQUAL Y))
+if(NOT (COMMON_MK_INC STREQUAL Y))
     set(COMMON_MK_INC Y)
 
-    set(COMMON_DIR ${WORKSPACE_LOC}/common)
-    message(STATUS "+ Common")
-    message(STATUS "COMMON_DIR=${COMMON_DIR}")
+    set(COMMON_DIR "${WORKSPACE_LOC}/common")
 
-    target_compile_definitions(app PUBLIC HAS_COMMON)
+    string(APPEND MCAL_OPT " -DHAS_COMMON")
 
-    target_include_directories(app PUBLIC ${COMMON_DIR})
+    #string(APPEND INCDIR " ${COMMON_DIR}")
+    include_directories( ${COMMON_DIR})
+
     if(DIAG STREQUAL Y)
-        message(STATUS "+DIAG")
-        target_sources(app PRIVATE ${COMMON_DIR}/common_diag.c)
+        string(APPEND MCAL_OPT " -DHAS_COMMON_DIAG")
+        string(APPEND SOURCES_C " ${COMMON_DIR}/shared_array.c")
+        string(APPEND SOURCES_C " ${COMMON_DIR}/common_diag.c")
     endif()
 
-    target_sources(app PRIVATE ${COMMON_DIR}/common_functions.c)
+    if(SUPER_LOOP STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_SUPER_LOOP")
+    endif()
 
     if(CORE_EXT STREQUAL Y)
-        message(STATUS "+CORE_EXT")
-        target_compile_definitions(app PUBLIC HAS_CORE_EXT)
-    endif()    
-    
-    if(SYS_INIT STREQUAL Y)
-        message(STATUS "+SYS_INIT")
-        target_compile_definitions(app PUBLIC HAS_SYS_INIT)
+        string(APPEND MCAL_OPT " -DHAS_CORE_EXT")
     endif()
 
-    target_sources(app PRIVATE ${COMMON_DIR}/sw_init.c)
-    
+    if(SYS_INIT STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_SYS_INIT")
+    endif()
+
+    string(APPEND SOURCES_C " ${COMMON_DIR}/common_functions.c")
+
+    if(CLI STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_COMMON_COMMANDS")
+        string(APPEND SOURCES_C " ${COMMON_DIR}/common_commands.c")
+    endif()
+
     include(${COMMON_DIR}/code_generator/code_generator.cmake)
 
+    if(SW_COMPONENT STREQUAL Y)
+        include(${COMMON_DIR}/sw_component/sw_component.cmake)
+    endif()
+
     if(MULTIMEDIA STREQUAL Y)
-        message(STATUS "+ multimedia")
-        target_compile_definitions(app PUBLIC HAS_MULTIMEDIA)
-        target_include_directories(app PUBLIC ${COMMON_DIR}/multimedia)
-        target_sources(app PRIVATE ${COMMON_DIR}/multimedia/proc_multimedia.c)
+        string(APPEND MCAL_OPT " -DHAS_MULTIMEDIA")
+        string(APPEND INCDIR " ${COMMON_DIR}/multimedia")
         if(MULTIMEDIA_COMMANDS STREQUAL Y)
-             message(STATUS "+ multimedia commands")
-             target_compile_definitions(app PUBLIC HAS_MULTIMEDIA_COMMANDS)
-             target_sources(app PRIVATE ${COMMON_DIR}/multimedia/multimedia_commands.c)
+            string(APPEND MCAL_OPT " -DHAS_MULTIMEDIA_COMMANDS")
+            string(APPEND SOURCES_C " ${COMMON_DIR}/multimedia/multimedia_commands.c")
         endif()
+        string(APPEND SOURCES_C " ${COMMON_DIR}/multimedia/proc_multimedia.c")
     endif()
 
-    #if(APPLICATIONS STREQUAL Y)
-        #message(STATUS "+ APPLICATIONS")
-        #include(${COMMON_DIR}/applications/applications.cmake)
-    #endif()
-
-    if (MCU STREQUAL Y)
-        message(STATUS "+ MCU")
-        target_sources(app PRIVATE ${COMMON_DIR}/hw_init.c)
-    endif()
 endif()

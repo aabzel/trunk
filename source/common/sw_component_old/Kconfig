@@ -1,0 +1,4 @@
+
+config SW_COMPONENT
+    bool "Enable use of the SW_COMPONENT drivers"
+

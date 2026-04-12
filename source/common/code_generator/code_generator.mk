@@ -5,7 +5,7 @@ ifneq ($(CODE_GENERATOR_MK_INC),Y)
     MCAL_CODE_GENERATOR_DIR=$(COMMON_DIR)/code_generator
     #@echo $(error COMMON_DIR=$(COMMON_DIR))
     #@echo $(error CFLAGS=$(CFLAGS))
-    OPT += -DHAS_CODE_GENERATOR
+    MCAL_OPT += -DHAS_CODE_GENERATOR
     INCDIR += -I$(MCAL_CODE_GENERATOR_DIR)
 
 

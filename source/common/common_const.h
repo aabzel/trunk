@@ -5,14 +5,21 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
 typedef enum {
     SW_OFF = 0,
     SW_ON = 1,
     SW_UNDEF = 2,
 }OnOff_t;
+
+
+typedef enum {
+    DIRECTION_LEFT = 1,
+    DIRECTION_RIGHT = 2,
+    Direction_UNDEF = 0,
+}Direction_t;
+
 
 typedef enum {
     ST_DISABLE=0,
