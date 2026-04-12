@@ -30,11 +30,6 @@ ifneq ($(STM32F407VE_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/boot_config.c
     endif
     
-    ifeq ($(PIN),Y)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/pin_config.c
-    endif
-
-
     ifeq ($(CLOCK),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/clock_config.c
     endif
@@ -42,7 +37,7 @@ ifneq ($(STM32F407VE_MK_INC),Y)
     ifeq ($(BOOTLOADER),Y)
         # link script
         FIRMWARE_TYPE_SELECTED=Y
-        MCAL_OPT += -DAPP_START_ADDRESS=0x08010000
+
         ifeq ($(BOOTLOADER_MONOLITHIC),Y)
             MCAL_OPT +=-DBOOT_START_ADDRESS=0x08000000
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_bootloader_monolithic.ld
@@ -61,12 +56,11 @@ ifneq ($(STM32F407VE_MK_INC),Y)
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_generic_monolithic.ld
         else
             MCAL_OPT += -DAPP_START_ADDRESS=0x08010000
-            MCAL_OPT +=-DBOOT_START_ADDRESS=0x08060000
+            MCAL_OPT +=-DBOOT_START_ADDRESS=0x08010000
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_generic.ld
         endif
     endif
 
-    MCAL_OPT += -DHAS_LINKER_INFO
     ifeq ($(MBR),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/mbr_config.c
         FIRMWARE_TYPE_SELECTED=Y
