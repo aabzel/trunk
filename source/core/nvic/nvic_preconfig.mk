@@ -1,0 +1,12 @@
+ifneq ($(NVIC_PRECONFIG_MK_INC),Y)
+    NVIC_PRECONFIG_MK_INC=Y
+
+    NVIC=Y
+    ARM=Y
+    MICROCONTROLLER=Y
+    INTERRUPT=Y
+    CMSIS=Y
+endif
+
+
+

@@ -1,0 +1,7 @@
+ifneq ($(CORTEX_MPU_PRECONFIG_MK_INC),Y)
+    CORTEX_MPU_PRECONFIG_MK_INC=Y
+
+    MPU =Y
+    
+    
+endif

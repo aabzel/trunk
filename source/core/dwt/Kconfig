@@ -1,0 +1,4 @@
+
+config DWT
+    bool "Enable use of the DWT drivers"
+

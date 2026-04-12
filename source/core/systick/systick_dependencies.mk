@@ -1,0 +1,8 @@
+ifneq ($(SYSTICK_DEPENDENCIES_MK_INC),Y)
+    SYSTICK_DEPENDENCIES_MK_INC=Y
+    #dependencies
+    SYSTICK=Y
+    SYSTICK_INTERRUPT=Y
+    NVIC=Y
+    BIT_UTILS=Y
+endif

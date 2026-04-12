@@ -1,0 +1,5 @@
+ifneq ($(CORTEX_MPU_DEPENDENCIES_MK_INC),Y)
+    CORTEX_MPU_DEPENDENCIES_MK_INC=Y
+    #dependencies
+    MPU=Y
+endif

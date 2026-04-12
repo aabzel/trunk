@@ -1,0 +1,11 @@
+ifneq ($(SYSTICK_PRECONFIG_MK_INC),Y)
+    SYSTICK_PRECONFIG_MK_INC=Y
+
+    SYSTICK =Y
+    
+    INTERRUPT=Y
+    NVIC=Y
+    SYSTICK_INTERRUPT=Y
+    CLOCK=Y
+    
+endif
