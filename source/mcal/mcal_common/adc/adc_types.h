@@ -11,6 +11,8 @@ extern "C" {
 
 #ifdef HAS_ADC_CUSTOM
 #include "adc_custom_types.h"
+#else
+#define ADC_CUSTOM_VARIABLES
 #endif
 
 #define ADC_CHANNEL_COMMON_VARIABLES                       \
@@ -40,11 +42,11 @@ typedef struct {
     bool init_done;
 } AdcChannelHandle_t;
 
-#define ADC_COMMON_VARIABLES                                                                                           \
-    uint8_t num;                                                                                                       \
-    bool valid;                                                                                                        \
-    AdcResolution_t resolution; /*12bit */                                                                             \
-    float v_ref_voltage;
+#define ADC_COMMON_VARIABLES                                              \
+    uint8_t num;                                                          \
+    bool valid;                                                           \
+    float v_ref_voltage;                                                  \
+    AdcResolution_t resolution; /*12bit */
 
 typedef struct {
     ADC_COMMON_VARIABLES

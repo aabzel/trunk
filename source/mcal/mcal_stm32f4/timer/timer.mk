@@ -5,6 +5,7 @@ ifneq ($(TIMER_CUSTOM_DRV_MK_INC),Y)
     # $(error TIMER_CUSTOM_DIR=$(TIMER_CUSTOM_DIR))
 
     INCDIR += -I$(TIMER_CUSTOM_DIR)
+    MCAL_OPT += -DHAS_TIMER
     MCAL_OPT += -DHAS_TIMER_CUSTOM
     HAL_DMA=Y
 
@@ -73,13 +74,14 @@ ifneq ($(TIMER_CUSTOM_DRV_MK_INC),Y)
     endif
 
     ifeq ($(DIAG),Y)
+        MCAL_OPT += -DHAS_TIMER_CUSTOM_DIAG
         SOURCES_DIAG_C += $(TIMER_CUSTOM_DIR)/timer_custom_diag.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(TIMER_COMMANDS),Y)
             # $(error TIMER_COMMANDS=$(TIMER_COMMANDS))
-            MCAL_OPT += -DHAS_TIMER_COMMANDS
+            MCAL_OPT += -DHAS_TIMER_CUSTOM_COMMANDS
             SOURCES_C += $(TIMER_CUSTOM_DIR)/timer_custom_commands.c
         endif
     endif

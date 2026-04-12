@@ -129,7 +129,7 @@ static bool MemCpyHalf(void) {
 static void MemCpyTransferCompleteNotify(void* arg) {}
 #endif
 
-bool dma_memcpy_ll(void* const destination, const void* const source, size_t size, uint8_t dma_num, uint8_t channel
+bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t size, uint8_t dma_num, uint8_t channel
 
 ) {
     bool res = false;

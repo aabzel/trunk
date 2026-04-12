@@ -143,13 +143,13 @@ bool mcu_get_left_pin(PinData_t cur_pin, PinData_t* const left_pin) {
     return res;
 }
 
-uint8_t get_mcu_pin(uint8_t pad) {
-    uint8_t mcu_pin = 0;
+uint16_t get_mcu_pin(uint8_t pad) {
+    uint16_t mcu_pin = 0;
 #ifdef HAS_PIN
-    uint8_t i = 0;
+    uint16_t i = 0;
     for(i = 0; i < pin_get_cnt(); i++) {
         if(((uint8_t)PinConfig[i].pad.byte) == pad) {
-            mcu_pin = PinConfig[i].mcu_pin;
+            mcu_pin = (uint16_t)PinConfig[i].mcu_pin;
             break;
         }
     }

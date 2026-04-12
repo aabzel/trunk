@@ -106,7 +106,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* pHandle) {
 
 #ifdef HAS_SOFTWARE_TIMER
             if(TIMER_TIME_STAMP_US == num) {
-                //HAL_IncTick();
+                // HAL_IncTick();
                 sw_timer_proc();
             }
 #endif

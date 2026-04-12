@@ -32,6 +32,11 @@ typedef enum {
 } SpiClkIdleLevel_t;
 
 typedef enum {
+    SPI_PHASE_0,
+    SPI_PHASE_1
+} SpiPhase_t;
+
+typedef enum {
     SPI_DIRECTION_1WIRE = 1,
     SPI_DIRECTION_2WIRES= 2,
     SPI_DIRECTION_1WIRE_RX_ONLY = 3,

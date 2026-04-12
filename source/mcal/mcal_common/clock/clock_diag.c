@@ -71,7 +71,7 @@ const char* ClockSettingToStr(const ClockSetting_t* const Node) {
     return text;
 }
 
-const char* ClockConfigToStr(const ClockConfig_t* const Config){
+const char* ClockConfigToStr(const ClockConfig_t* const Config) {
     strcpy(text, "");
     if(Config) {
         snprintf(text, sizeof(text), "%sConfig:%08p,", text, Config);
@@ -85,7 +85,6 @@ const char* ClockConfigToStr(const ClockConfig_t* const Config){
     }
     return text;
 }
-
 
 bool clock_diag(void) {
     bool res = false;

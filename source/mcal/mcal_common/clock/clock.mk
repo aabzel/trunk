@@ -15,6 +15,10 @@ ifneq ($(CLOCKS_GENERAL_MK_INC),Y)
         MCAL_OPT += -DHAS_CLOCK_EXT
     endif
 
+    ifeq ($(PLL),Y)
+        MCAL_OPT += -DHAS_PLL
+    endif
+
     ifeq ($(START_PAUSE),Y)
         MCAL_OPT += -DHAS_START_PAUSE
     endif

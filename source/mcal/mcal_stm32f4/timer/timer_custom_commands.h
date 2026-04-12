@@ -11,7 +11,10 @@ extern "C" {
 #error "only for CLI"
 #endif
 
-#define TIMER_CUSTOM_COMMANDS
+bool timer_diag_reg_fields_command(int32_t argc, char* argv[]);
+
+#define TIMER_CUSTOM_COMMANDS \
+           SHELL_CMD("timer_diag_reg_fields", "tdrf", timer_diag_reg_fields_command, "TimerDiagRegFields"),
 
 #ifdef __cplusplus
 }

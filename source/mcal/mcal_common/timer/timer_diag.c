@@ -223,7 +223,7 @@ const char* TimerConfigToStr(const TimerConfig_t* const Config) {
     if(Config) {
         strcpy(temp, "");
         snprintf(temp, sizeof(temp), "%sTIM%u,", temp, Config->num);
-        snprintf(temp, sizeof(temp), "%sPeriod:%f s,", temp, Config->period_s);
+        snprintf(temp, sizeof(temp), "%sPeriod:%s s,", temp, FloatToStr(Config->period_s,3));
         snprintf(temp, sizeof(temp), "%sCntTime:%u ns,", temp, Config->cnt_period_ns);
         snprintf(temp, sizeof(temp), "%sEn:%u,", temp, Config->on_off);
         snprintf(temp, sizeof(temp), "%sIntEn:%u,", temp, Config->interrupt_on);
@@ -235,7 +235,13 @@ const char* TimerConfigToStr(const TimerConfig_t* const Config) {
 bool timer_diag_compare_complimentary(void) {
     bool res = false;
     static const table_col_t cols[] = {
-        {5, "Num"}, {12, "Period"}, {12, "PSC"}, {12, "CCR1"}, {12, "CCR2"}, {12, "CCR3"}, {12, "CCR4"},
+        {5, "Num"},
+        {12, "Period"},
+        {12, "PSC"},
+        {12, "CCR1"},
+        {12, "CCR2"},
+        {12, "CCR3"},
+        {12, "CCR4"},
     };
 
     uint8_t num = 0;
@@ -274,7 +280,13 @@ bool timer_diag_compare_complimentary(void) {
 bool timer_diag_compare(void) {
     bool res = false;
     static const table_col_t cols[] = {
-        {5, "Num"}, {12, "Period"}, {12, "PSC"}, {12, "CCR1"}, {12, "CCR2"}, {12, "CCR3"}, {12, "CCR4"},
+        {5, "Num"},
+        {12, "Period"},
+        {12, "PSC"},
+        {12, "CCR1"}, {3, "E"},
+        {12, "CCR2"}, {3, "E"},
+        {12, "CCR3"}, {3, "E"},
+        {12, "CCR4"}, {3, "E"},
     };
 
     uint8_t num = 0;
@@ -298,9 +310,12 @@ bool timer_diag_compare(void) {
             int32_t channel = 0;
             uint32_t channel_value = 0;
             for(channel = 1; channel <= 4; channel++) {
-                strncpy(temp, "", sizeof(temp));
                 channel_value = timer_cc_val_get(num, (TimerCapComChannel_t)channel);
+                bool ch_out_en = timer_channel_is_work(num, (TimerCapComChannel_t) channel);
+
+                strncpy(temp, "", sizeof(temp));
                 cli_printf(" %10u " TSEP, channel_value);
+                cli_printf(" %1u " TSEP, ch_out_en);
             }
 
             cli_printf(CRLF);
@@ -313,29 +328,38 @@ bool timer_diag_compare(void) {
 bool timer_channel_diag(void) {
     bool res = false;
     static const table_col_t cols[] = {
-        {5, "Num"}, {5, "Tim"}, {5, "Cha"}, {8, "Freq"}, {10, "compare"}, {7, "Duty"}, {6, "Pad"},
+        {5, "Num"}, {5, "Tim"},
+        {5, "Cha"},
+        {3, "En"},
+        {8, "Freq"},
+        {10, "compare"},
+        {7, "Duty"},
+        {6, "Pad"},
     };
 
     uint8_t cnt = 0;
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
-    char temp[200] = "";
     uint8_t num = 0;
     for(num = 0; num <= TIMER_MAX_NUM; num++) {
         res = false;
         int32_t channel = 0;
         for(channel = 1; channel <= 4; channel++) {
-            strcpy(temp, TSEP);
-            uint32_t channel_value = 0;
-            float duty = 0.0;
             float frequency_hz = 0.0;
             res = timer_frequency_get(num, &frequency_hz);
             if(res) {
+                float duty = 0.0;
+                bool ch_out_en = timer_channel_is_work(num, (TimerCapComChannel_t) channel);
                 res = timer_duty_get(num, channel, &duty);
+                uint32_t channel_value = 0;
                 channel_value = timer_cc_val_get(num, (TimerCapComChannel_t)channel);
+
+                char temp[200] = "";
+                strcpy(temp, TSEP);
                 snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, cnt);
                 snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, num);
                 snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, channel);
+                snprintf(temp, sizeof(temp), "%s %1 " TSEP, temp, ch_out_en);
                 snprintf(temp, sizeof(temp), "%s %6s " TSEP, temp, DoubleToStr(frequency_hz));
                 snprintf(temp, sizeof(temp), "%s %8u " TSEP, temp, channel_value);
                 snprintf(temp, sizeof(temp), "%s %5.2f " TSEP, temp, duty);
@@ -359,10 +383,12 @@ bool timer_channel_diag(void) {
 
 bool timer_raw_reg_diag(uint8_t i) {
     bool res = false;
+#ifdef HAS_TIMER_CUSTOM
     TimerInfo_t* Info = TimerGetInfo(i);
     if(Info) {
         uint32_t cnt = time_register_cnt();
         res = debug_raw_reg_diag(TIMER, Info->TIMx, TimerRegs, cnt);
     }
+#endif
     return res;
 }

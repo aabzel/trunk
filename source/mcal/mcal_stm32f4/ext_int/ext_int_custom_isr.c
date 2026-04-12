@@ -5,6 +5,7 @@
 #include "ext_int_mcal.h"
 #include "gpio_mcal.h"
 #include "microcontroller_const.h"
+
 #ifdef HAS_IR_RECEIVER
 #include "ir_receiver_mcal.h"
 #endif

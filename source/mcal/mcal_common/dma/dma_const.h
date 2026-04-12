@@ -1,9 +1,6 @@
 #ifndef DMA_MCAL_CONST_H
 #define DMA_MCAL_CONST_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include "dma_dep.h"
 
@@ -42,8 +39,9 @@ typedef enum {
 typedef enum  {
     DMA_INC_OFF=0,
     DMA_INC_ON=1,
+    DMA_INC_DWORD_ON=2,
 
-    DMA_INC_UNDEF=2,
+    DMA_INC_UNDEF=3,
 } DmaInc_t;
 
 typedef enum {
@@ -55,18 +53,20 @@ typedef enum {
 } DmaMode_t;
 
 typedef enum {
-    DMA_ALIG_BYTE=1,
-    DMA_ALIG_HALF_WORD=2,
-    DMA_ALIG_WORD=4,
-
-    DMA_ALIG_UNDEF=0,
+    DMA_ALIGNMENT_BYTE = 1,
+    DMA_ALIGNMENT_HALF_WORD = 1,
+    DMA_ALIGNMENT_WORD = 2,
+    DMA_ALIGNMENT_DWORD = 4,
+    DMA_ALIGNMENT_QWORD = 8,
+    DMA_ALIGNMENT_HWORD = 16,
+    DMA_ALIGNMENT_UNDEF = 0,
 } DmaAligmant_t;
 
 typedef enum  {
-	DMA_BURST_SINGLE=0,
-	DMA_BURST_INC4=1,
-	DMA_BURST_INC8=2,
-	DMA_BURST_INC16=3,
+    DMA_BURST_SINGLE=0,
+    DMA_BURST_INC4=1,
+    DMA_BURST_INC8=2,
+    DMA_BURST_INC16=3,
 } DmaBurst_t;
 
 typedef enum  {
@@ -79,21 +79,19 @@ typedef enum  {
 } DmaPriority_t;
 
 typedef enum {
+    DMA_0=0,
     DMA_1=1,
     DMA_2=2,
 
-    DMA_UNDEF=0,
+    DMA_UNDEF=3,
 } Dma_t;
 
-typedef enum  {
-    DMA_FIFO_OFF=1,
-    DMA_FIFO_ON=2,
+typedef enum {
+    DMA_FIFO_OFF = 1,
+    DMA_FIFO_ON = 2,
 
-    DMA_FIFO_UNDEF=0,
+    DMA_FIFO_UNDEF = 0,
 } DmaFifo_t;
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* DMA_MCAL_CONST_H  */

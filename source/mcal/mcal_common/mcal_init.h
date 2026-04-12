@@ -189,21 +189,21 @@
 #define PWM_INIT {.init_function=pwm_mcal_init, .name="Pwm",},
 #else
 #define PWM_INIT
-#endif /*HAS_PWM*/
+#endif /**/
 
 #ifdef HAS_EXT_INT
 #include "ext_int_mcal.h"
 #define EXT_INT_INIT { .init_function=ext_int_mcal_init, .name="ExtInt",},
 #else
 #define EXT_INT_INIT
-#endif /*HAS_EXT_INT*/
+#endif /**/
 
 #ifdef HAS_TIMER
 #include "timer_mcal.h"
 #define TIMER_INIT  {.init_function=timer_mcal_init,  .name= "Timer",},
 #else
 #define TIMER_INIT
-#endif /*HAS_TIM*/
+#endif /**/
 
 #ifdef HAS_INTERRUPT
 #include "interrupt_mcal.h"
@@ -224,9 +224,9 @@
 #define MPU_INIT {.init_function=mpu_mcal_init, .name="MNU",},
 #else
 #define MPU_INIT
-#endif /*HAS_MPU*/
+#endif /**/
 
-#ifdef HAS_MCU
+#ifdef HAS_MICROCONTROLLER
 #include "microcontroller_init.h"
 #else
 #define MICROCONTROLLER_INIT

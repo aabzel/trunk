@@ -4,33 +4,42 @@
 #include "std_includes.h"
 #include "pwm_const.h"
 #include "gpio_types.h"
-#include "pwm_custom_types.h"
+#include "timer_types.h"
 
-typedef struct{
-     float duty;
-     float frequency_hz;
-     float phase_s;
-     //float amplitude;
-}PwmSignalBinary_t;
+#ifdef HAS_PWM_CUSTOM
+#include "pwm_custom_types.h"
+#else
+#define PWM_CUSTON_VARIABLES
+#endif
+
+#define PWM_SIGNAL_VARIABLES   \
+    float duty;                \
+    float frequency_hz;        \
+    float phase_s;
+
+typedef struct {
+    PWM_SIGNAL_VARIABLES
+    // float amplitude;
+} PwmSignalBinary_t;
 
 typedef bool (*PwmIsrHandler_t)(void);
 
+
 #define PWM_COMMON_VARIABLES  \
-    uint32_t phase_us;        \
-    float duty;               \
-    float frequency_hz;       \
+    PWM_SIGNAL_VARIABLES      \
     Pad_t Pad;                \
     uint8_t channel_cnt;      \
     float init_phase;  /*0Deg...360Deg*/ \
     uint8_t num;             \
+    uint8_t pin_mux;         \
     char* name;              \
     uint8_t timer_num;       \
-    PwmChannel_t timer_channel; /*TimerChannel*/\
-    PwmIsrHandler_t ComparatorHandler;    \
-    PwmIsrHandler_t PulseDoneHandler;     \
+    TimerOutChannel_t timer_channel; /*TimerChannel*/\
+    PwmPolarity_t Polarity; /*TimerChannel*/\
+    PwmIsrHandler_t ComparatorHandler;     \
+    PwmIsrHandler_t PeriodDoneHandler;     \
     bool valid;                           \
     bool on;
-
 
 typedef struct {
     PWM_COMMON_VARIABLES
@@ -48,13 +57,11 @@ typedef struct {
     uint32_t impulse_cnt;
 } PwmModulation_t;
 
-
 #define PWM_ISR_VARIABLES                           \
     volatile uint32_t int_cnt; /*Period counter*/   \
     volatile uint32_t pulse_fin_cnt;                \
     volatile uint32_t pulse_fin_half_cnt;           \
     volatile uint32_t period_elapse_cnt;
-
 
 typedef struct {
     PWM_COMMON_VARIABLES

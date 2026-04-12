@@ -89,9 +89,8 @@
 #define I2S_FULL_DUPLEX_COMMANDS
 #endif
 
-
 #ifdef HAS_WATCHDOG_COMMANDS
-#include "WATCHDOG_commands.h"
+#include "watchdog_commands.h"
 #else
 #define WATCHDOG_COMMANDS
 #endif
@@ -144,10 +143,6 @@
 #define MPU_COMMANDS
 #endif
 
-
-
-
-
 #ifdef HAS_SYSTICK_COMMANDS
 #include "systick_commands.h"
 #else
@@ -159,7 +154,6 @@
 #else
 #define CLOCK_OUT_COMMANDS
 #endif
-
 
 #ifdef HAS_CLOCK_COMMANDS
 #include "clock_commands.h"
@@ -239,7 +233,6 @@
 #define IOMUX_COMMANDS
 #endif
 
-
 #ifdef HAS_UART_COMMANDS
 #include "uart_commands.h"
 #else
@@ -315,7 +308,5 @@
     MCAL_SECURITY_COMMANDS       \
     MCAL_CONTROL_COMMANDS        \
     MCAL_CONNECTIVITY_COMMANDS
-
-
 
 #endif /* MCAL_COMMANDS_H */

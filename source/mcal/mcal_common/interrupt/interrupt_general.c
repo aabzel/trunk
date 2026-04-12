@@ -26,7 +26,7 @@ const InterruptConfig_t* InterruptGetConfig(int16_t int_n) {
 _WEAK_FUN_ uint32_t interrupt_get_isr_handler(int16_t irq_n) { return 0; }
 
 _WEAK_FUN_
-uint32_t interrupt_get_priority1(const int16_t irq_n){
+uint32_t interrupt_get_priority1(const int16_t irq_n) {
     uint32_t priority = 0XFFFFFFFF;
     return priority;
 }

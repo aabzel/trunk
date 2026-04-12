@@ -1,0 +1,51 @@
+
+-----------------------------------------
+Запустить тест отправки SPI1 в режиме DMA
+
+ll DmaChannel debug;tr spi1_write_dma
+
+ll DmaChannel debug;tr 45
+
+ll DmaChannel debug;tr 44
+
+ll DmaChannel debug;tr spi1_read_dma
+------------------------------------------
+
+
+tr spi1_write_polling
+
+spi1_write_polling.55
+
+tr spi1_read_polling
+
+.56
+spi1_write_read_polling.57
+spi1_write_interrupt.58
+spi1_read_interrupt.59
+spi1_write_read_interrupt.60
+spi1_write_dma.61
+spi1_read_dma.62
+spi1_write_read_dma.63
+spi1_write.64
+spi1_read.65
+spi1_loopback.66
+
+
+
+DmaChannelPad_t 
+
+
+    DmaChannelPad_t DmaPad = {.dma_num=dma_num,  .channel=channel,};
+
+
+
+DmaChannelPad_t DmaPad = {.dma_num=vvvvvv,  .channel=zzzz,};
+
+
+typedef union {
+    uint8_t byte;
+    struct{
+        uint8_t dma_num:2; // 0[1,2]..3
+        uint8_t channel:6; // 0,[1...7]...63
+    };
+}DmaChannelPad_t;

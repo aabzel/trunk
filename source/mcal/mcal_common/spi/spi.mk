@@ -20,11 +20,10 @@ ifneq ($(SPI_COMMON_MCAL_MK_INC),Y)
         SOURCES_C += $(SPI_COMMON_MCAL_DIR)/spi_isr.c
     endif
 
-
     ifeq ($(DIAG),Y)
         ifeq ($(SPI_DIAG),Y)
             MCAL_OPT += -DHAS_SPI_DIAG
-            SOURCES_C += $(SPI_COMMON_MCAL_DIR)/spi_diag.c
+            SOURCES_DIAG_C += $(SPI_COMMON_MCAL_DIR)/spi_diag.c
         endif
     endif
 

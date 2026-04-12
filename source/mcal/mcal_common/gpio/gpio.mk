@@ -21,7 +21,7 @@ ifneq ($(GPIO_GENERAL_DRV_MK_INC),Y)
     ifeq ($(DIAG),Y)
         ifeq ($(GPIO_DIAG),Y)
             MCAL_OPT += -DHAS_GPIO_DIAG
-            SOURCES_C += $(GPIO_MCAL_DIR)/gpio_diag.c
+            SOURCES_DIAG_C += $(GPIO_MCAL_DIR)/gpio_diag.c
         endif
     endif
 

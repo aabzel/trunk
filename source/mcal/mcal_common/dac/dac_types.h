@@ -5,12 +5,15 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "dac_const.h"
-#include "dac_custom_types.h"
 #include "sys_config.h"
+
+#ifdef HAS_DAC_CUSTOM
+#include "dac_custom_types.h"
+#else
+#define DAC_CUSTOM_VARIABLES
+#endif
 
 #define DAC_COMMON_VARIABLES                                                                                           \
     uint8_t num;                                                                                                       \

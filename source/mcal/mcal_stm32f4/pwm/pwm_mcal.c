@@ -7,6 +7,7 @@
 #include "common_diag.h"
 #include "data_utils.h"
 #include "float_utils.h"
+#include "gpio_mcal.h"
 #include "hal_diag.h"
 #include "hal_mcal.h"
 #include "pwm_diag.h"
@@ -218,7 +219,19 @@ bool pwm_duty_set(uint8_t num, float duty) {
     if(Node) {
         res = pwm_timer_duty(Node->timer_num, (TimerOutChannel_t)Node->timer_channel, duty);
     }
-    res = pwm_ctrl(num, true);
+    // res = pwm_ctrl(num, true);
+    return res;
+}
+
+bool pwm_freq_duty_set(uint8_t pwm_num, float frequency_hz, float duty_cycle) {
+    bool res = false;
+#ifdef HAS_PWM_DIAG
+    LOG_DEBUG(PWM, "N:%u,Freq:%f Hz,Duty:%f %%", pwm_num, frequency_hz, duty_cycle);
+#endif
+    res = pwm_frequency_set(pwm_num, frequency_hz);
+    if(res) {
+        res = pwm_duty_set(pwm_num, duty_cycle);
+    }
     return res;
 }
 
@@ -252,6 +265,15 @@ bool pwm_duty_get(const uint8_t num, float* const duty_out) {
             *duty_out = ((float)comparator) / ((float)period);
             res = true;
         }
+    }
+    return res;
+}
+
+bool pwm_is_work(uint8_t num) {
+    bool res = false;
+    PwmHandle_t* Node = PwmGetNode(num);
+    if(Node) {
+        res = timer_channel_is_work(Node->timer_num, (TimerCapComChannel_t)Node->timer_channel);
     }
     return res;
 }
@@ -361,6 +383,11 @@ bool pwm_ctrl_ll(PwmHandle_t* Node, bool on_off) {
     LOG_DEBUG(PWM, "PWM%u,%s", Node->num, OnOffToStr(on_off));
 #endif
     if(Node) {
+        if(on_off) {
+            gpio_pad_mux_set(Node->Pad, Node->pin_mux);
+        } else {
+            gpio_pad_mux_set(Node->Pad, 0);
+        }
         res = timer_channel_ctrl(Node->timer_num, (TimerCapComChannel_t)Node->timer_channel, on_off);
         if(res) {
             Node->mode = PwmOnOffToMode(on_off);
@@ -444,7 +471,7 @@ bool pwm_init_one(uint8_t num) {
                             }
                         }
                     }
-                    // res = pwm_timer_duty(Config->timer_num, (TimerOutChannel_t) Config->timer_channel, (float)
+                    // res = pwm_timer_duty(Config->timer_num, (TimerOutChannel_t) Config->channel, (float)
                     // Config->duty);
                 }
             }

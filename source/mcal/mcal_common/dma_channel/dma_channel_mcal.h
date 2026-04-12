@@ -41,8 +41,8 @@ bool dma_channel_proc(void);
 
 
 /*setters*/
-bool dma_memcpy_ll(void* const destination, const void* const source, size_t size, uint8_t dma_num, uint8_t channel);
-bool dma_memcpy_custom_ll(void* const destination, const void* const source, size_t size, uint8_t dma_num, uint8_t dma_channel);
+bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t size, uint8_t dma_num, uint8_t channel);
+bool dma_memcpy_custom_ll(void* const destination, const void* const source, uint32_t size, uint8_t dma_num, uint8_t dma_channel);
 bool dma_channel_control(DmaChannelHandle_t* const Channel, const void* const complete_data) ;
 bool dma_channel_mux_set(DmaChannelPad_t DmaPad, uint8_t dma_mux);
 bool dma_channel_priority_set(DmaChannelPad_t DmaPad, uint8_t priority);

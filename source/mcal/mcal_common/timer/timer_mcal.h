@@ -45,6 +45,7 @@ bool timer_ctrl(uint8_t num, bool on_off);
 bool timer_frequency_set(uint8_t num, float frequency_hz);
 
 /*Getters-------------------------------------*/
+
 ClockBus_t timer_clock_bus_name_get(const uint8_t num);
 TimerDir_t timer_dir_get(uint8_t num);
 uint32_t timer_counter_get_us(const uint8_t num);
@@ -52,6 +53,7 @@ uint8_t timer_bitness_get(uint8_t num);
 uint32_t TimerGetCntFreq(uint32_t cnt_period_us);
 const TimerChannelInfo_t* TimerChannelGetInfo(uint8_t num, TimerCapComChannel_t channel);
 bool timer_out_channel_pad_get(uint8_t num, TimerCapComChannel_t channel, Pad_t* const Pad) ;
+bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel);
 bool timer_get_status(uint8_t num);
 bool timer_is_valid(uint8_t num);
 bool timer_is_valid_channel( const uint8_t num, const uint8_t channel);

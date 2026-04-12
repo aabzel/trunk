@@ -1,20 +1,52 @@
 #include "adc_mcal.h"
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #include "adc_const.h"
 #include "code_generator.h"
+#include "compiler_const.h"
 #include "log.h"
 #include "microcontroller_const.h"
+#include "std_includes.h"
 
 COMPONENT_GET_NODE(Adc, adc)
 COMPONENT_GET_CONFIG(Adc, adc)
 COMPONENT_GET_CONFIG(AdcChannel, adc_channel)
 COMPONENT_GET_NODE(AdcChannel, adc_channel)
 
-double AdcChannelGetVoltageScale(uint8_t num) {
-    double voltage_real = 0.0;
+_WEAK_FUN_
+bool adc_proc(void) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_channel_read(uint8_t adc_num, uint16_t adc_channel, uint32_t* code) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_channel_mcal_init(void) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_channel_read_voltage(AdcNum_t adc_num, AdcChannel_t channel, float* const voltage) {
+    bool res = false;
+    LOG_DEBUG(LG_ADC, "Read,Adc:%u,Ch:%u", adc_num, channel);
+    uint32_t code = 0;
+    res = adc_channel_read(adc_num, channel, &code);
+    if(res) {
+        float val = 0.0;
+        val = AdcCode2Voltage(code);
+        LOG_PARN(LG_ADC, "ADC%u CH%u Code:%u=0x%x ->%f V", adc_num, channel, code, code, val);
+        (*voltage) = val;
+    }
+    return res;
+}
+
+float AdcChannelGetVoltageScale(uint8_t num) {
+    float voltage_real = 0.0;
     AdcChannelHandle_t* Node = AdcChannelGetNode(num);
     if(Node) {
         voltage_real = Node->voltage_real;
@@ -24,7 +56,7 @@ double AdcChannelGetVoltageScale(uint8_t num) {
     return voltage_real;
 }
 
-bool AdcChannelGetVoltage(uint8_t node_num, double* const voltage_scale) {
+bool AdcChannelGetVoltage(uint8_t node_num, float* const voltage_scale) {
     bool res = false;
     AdcChannelHandle_t* AdcNode = AdcChannelGetNode(node_num);
     if(AdcNode) {
@@ -89,12 +121,86 @@ bool adc_channel_init_node(const AdcChannelConfig_t* const Config, AdcChannelHan
             Node->channel = Config->channel;
             Node->num = Config->num;
             Node->valid = true;
+            Node->name = Config->name;
             Node->code = 0;
             Node->read_cnt = 0;
             Node->err_cnt = 0;
             Node->init_done = true;
             res = true;
         }
+    }
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_set_vref(uint8_t adc_num, float v_ref_voltage) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_channel_read_code(AdcNum_t adc_num, AdcChannel_t channel, int32_t* const code) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+float adc_channel_read_voltage_short(AdcNum_t adc_num, AdcChannel_t channel) {
+    float voltage = 0.0;
+    return voltage;
+}
+
+_WEAK_FUN_
+bool adc_proc_one(uint8_t num) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_init_custom(void) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_channel_init_custom(void) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_channel_init_one(uint8_t num) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_channel_proc(void) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool adc_init_one(uint8_t num) {
+    bool res = false;
+    return res;
+}
+
+// TODO add UTEST
+float AdcCode2Voltage(const int32_t code) {
+    float voltage_v = -100.0;
+#ifdef CROSS_CODE_VOLTAGE
+    voltage_v = (CROSS_CODE_VOLTAGE * ((float)code));
+#endif
+    return voltage_v;
+}
+
+bool adc_code_to_params(AdcChannelHandle_t* const Channel) {
+    bool res = false;
+    if(Channel) {
+        Channel->voltage = AdcCode2Voltage(Channel->code);
+        Channel->voltage_real = Channel->voltage * Channel->scale;
+        res = true;
     }
     return res;
 }
@@ -116,8 +222,8 @@ bool adc_wait_convert_done_ll(AdcHandle_t* Node, uint32_t time_out_ms) {
     return res;
 }
 
-COMPONENT_PROC_PATTERT(LG_ADC, ADC, adc)
+// COMPONENT_PROC_PATTERT(LG_ADC, ADC, adc)
 
 COMPONENT_INIT_PATTERT(LG_ADC, ADC, adc)
 
-COMPONENT_INIT_PATTERT_CNT(LG_ADC, ADC_CHAN, adc_channel, ADC_CHANNELS_COUNT)
+// COMPONENT_INIT_PATTERT(LG_ADC, ADC_CHAN, adc_channel)

@@ -2,11 +2,11 @@
 
 #include <string.h>
 
-#include "usb_serial_diag.h"
-#include "usb_serial.h"
-#include "log.h"
-#include "convert.h"
 #include "array_diag.h"
+#include "convert.h"
+#include "log.h"
+#include "usb_serial.h"
+#include "usb_serial_diag.h"
 
 bool usb_serial_diag_command(int32_t argc, char* argv[]) {
     bool res;

@@ -3,6 +3,7 @@
 
 #include "pwm_dep.h"
 
+#if 0
 typedef enum {
     PWM_CHANNEL_0 = 0,
     PWM_CHANNEL_1 = 1,
@@ -13,6 +14,7 @@ typedef enum {
 
     PWM_CHANNEL_UNDEF = 0x55,
 } PwmChannel_t;
+#endif
 
 typedef enum {
     PWM_MODE_OFF = 0,
@@ -21,5 +23,14 @@ typedef enum {
 
     PWM_MODE_UNDEF = 0x55,
 } PwmMode_t;
+
+typedef enum {
+    PWM_POLARITY_LOW = 1,
+    PWM_POLARITY_HIGH = 2,
+    PWM_POLARITY_UNDEF = 0,
+} PwmPolarity_t;
+
+
+
 
 #endif /* PWM_CONST_H */

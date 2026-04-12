@@ -10,7 +10,12 @@ extern "C" {
 #include "microcontroller_const.h"
 #include "mcal_const.h"
 #include "sdio_const.h"
+
+#ifdef HAS_SDIO_CUSTOM
 #include "sdio_custom_types.h"
+#else
+#define SDIO_CUSTOM_TYPES
+#endif
 
 #ifndef HAS_SDIO
 #error "+HAS_SDIO"

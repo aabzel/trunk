@@ -4,9 +4,9 @@
 #include "std_includes.h"
 #include "pwm_types.h"
 
-bool PwmPulseFinishedCallback_ll(PwmHandle_t *Node, PwmChannel_t channel);
+bool PwmPulseFinishedCallback_ll(PwmHandle_t *Node, TimerOutChannel_t channel);
 void PwmPulseFinishedHalfCpltCallback(PwmHandle_t* Node ) ;
-bool PwmPulseFinishedCallback(uint8_t timer_num, PwmChannel_t channel) ;
+bool PwmPulseFinishedCallback(uint8_t timer_num, TimerOutChannel_t channel) ;
 void PwmDelayElapsedCallback(PwmHandle_t* Node ) ;
 
 bool PwmPeriodElapsedCallback(uint8_t timer_num);

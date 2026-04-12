@@ -52,7 +52,7 @@ bool systick_disable(void) {
 
     SysTickCntl_t SysTickCntl;
     SysTickCntl.reg_val = 0xFF;
-    SysTickCntl.enable = 0;
+    SysTickCntl.enable = SYSTICK_EN_OFF;
     SysTickCntl.tickint = 0;
     SysTickCntl.clksource = STK_CLK_SRC_AHB;
     SysTick->CTRL = SysTickCntl.reg_val;

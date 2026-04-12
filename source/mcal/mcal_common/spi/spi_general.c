@@ -278,8 +278,8 @@ bool spi_wait_tx_ll(SpiHandle_t* Node) {
     if(Node) {
         uint32_t start_ms = time_get_ms32();
         while(false == Node->tx_done) {
-            //super_cycle_proc();
-            res = time_wait_timeout(  start_ms, SPI_RX_DONE_TIME_OUT_MS );
+            // super_cycle_proc();
+            res = time_wait_timeout(start_ms, SPI_RX_DONE_TIME_OUT_MS);
             if(!res) {
                 res = false;
                 LOG_ERROR(SPI, "SPI%u TxTimeOut", Node->num);
@@ -298,7 +298,7 @@ bool spi_wait_rxtx_ll(SpiHandle_t* Node) {
         uint32_t cur_ms = start_ms;
         uint32_t diff_ms = 0;
         while(false == Node->it_done) {
-            //super_cycle_proc();
+            // super_cycle_proc();
             cur_ms = time_get_ms32();
             diff_ms = cur_ms - start_ms;
             if(SPI_RX_DONE_TIME_OUT_MS < diff_ms) {
@@ -414,8 +414,8 @@ bool spi_wait_rx_ll(SpiHandle_t* Node) {
     if(Node) {
         uint32_t start_ms = time_get_ms32();
         while(false == Node->rx_done) {
-            //super_cycle_proc();
-            res = time_wait_timeout(  start_ms, SPI_RX_DONE_TIME_OUT_MS );
+            // super_cycle_proc();
+            res = time_wait_timeout(start_ms, SPI_RX_DONE_TIME_OUT_MS);
             if(!res) {
                 LOG_ERROR(SPI, "SPI%u,RxTimeOut", Node->num);
                 break;
@@ -432,7 +432,7 @@ bool spi_wait_txrx_ll(SpiHandle_t* Node) {
         uint32_t start_ms = time_get_ms32();
         while(false == Node->txrx_done) {
             // super_cycle_proc();
-            res = time_wait_timeout(  start_ms, SPI_RX_DONE_TIME_OUT_MS );
+            res = time_wait_timeout(start_ms, SPI_RX_DONE_TIME_OUT_MS);
             if(!res) {
                 res = false;
                 LOG_ERROR(SPI, "SPI%u xRxTimeOut", Node->num);
@@ -456,11 +456,11 @@ _WEAK_FUN_
 uint8_t spi_read_byte(uint8_t num) {
     LOG_PARN(SPI, "SPI%u,ReadByte", num);
     uint8_t rx_byte = 0x00;
-    SpiConfig_t *Config = SpiGetConfig(num);
-    if (Config) {
+    SpiConfig_t* Config = SpiGetConfig(num);
+    if(Config) {
         uint8_t tx_byte = 0xFF;
         bool res = spi_mcal_write_read(num, &tx_byte, &rx_byte, 1);
-        if (res) {
+        if(res) {
             LOG_PARN(SPI, "SPI%u,Read Byte 0x%02x", num, rx_byte);
         } else {
             LOG_ERROR(SPI, "SPI%u,ReadByte,Err", num);
@@ -469,19 +469,19 @@ uint8_t spi_read_byte(uint8_t num) {
     return rx_byte;
 }
 
-bool spi_read_until_pattern(const uint8_t num, const uint8_t  exp_rx, const uint32_t try) {
+bool spi_read_until_pattern(const uint8_t num, const uint8_t exp_rx, const uint32_t try) {
     LOG_PARN(SPI, "SPI%u,ReadUntil,Pattern:0x%02x,Try:%u", num, exp_rx, try);
     bool res = false;
     uint32_t i = 0;
-    for(i=0; i<try; i++) {
+    for(i = 0; i < try; i++) {
         uint8_t rx_byte = spi_read_byte(num);
         LOG_PARN(SPI, "%02x,", rx_byte);
-        if(exp_rx==rx_byte) {
+        if(exp_rx == rx_byte) {
             res = true;
             break;
         }
     }
-    LOG_DEBUG(SPI, "SPI%u,ReadUntil,Pattern:0x%02x,Try:%u/%u", num, exp_rx, i,try);
+    LOG_DEBUG(SPI, "SPI%u,ReadUntil,Pattern:0x%02x,Try:%u/%u", num, exp_rx, i, try);
     return res;
 }
 
@@ -505,7 +505,7 @@ uint16_t spi_read_word(uint8_t num) {
 _WEAK_FUN_
 bool spi_read_safe(uint8_t num, uint8_t* rx_array, uint32_t size) {
     bool res = false;
-    LOG_PARN(SPI, "SPI%u,ReadArray,To:0x%p,Size:%u Byte", num,rx_array, size);
+    LOG_PARN(SPI, "SPI%u,ReadArray,To:0x%p,Size:%u Byte", num, rx_array, size);
     if(rx_array) {
         if(size) {
             SpiHandle_t* Node = SpiGetNode(num);
@@ -561,7 +561,6 @@ bool spi_write_dword(uint8_t num, const uint32_t dword) {
     }
     return res;
 }
-
 
 _WEAK_FUN_
 uint32_t spi_get_rate_conf(uint8_t num) {

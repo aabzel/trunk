@@ -21,8 +21,8 @@ static uint8_t toggle_u8(uint8_t in_val) {
 static bool PwmPeriodFinishedCallback(PwmHandle_t* Node) {
     bool res = false;
     if(Node) {
-        if(Node->PulseDoneHandler) {
-            res = Node->PulseDoneHandler();
+        if(Node->PeriodDoneHandler) {
+            res = Node->PeriodDoneHandler();
         }
         Node->period_elapse_cnt++;
         Node->Modulation.impulse_cnt++;
@@ -32,7 +32,7 @@ static bool PwmPeriodFinishedCallback(PwmHandle_t* Node) {
                 Node->Modulation.impulse_cnt = 0;
                 Node->Modulation.cur_signal = toggle_u8(Node->Modulation.cur_signal);
                 res = pwm_period_set_ll(Node, Node->Modulation.Signal[Node->Modulation.cur_signal].period);
-                res = pwm_pulse_diration_set_ll(Node, Node->channel,
+                res = pwm_pulse_diration_set_ll(Node, Node->timer_channel,
                                                 Node->Modulation.Signal[Node->Modulation.cur_signal].pulse_diration);
             }
         } break;
@@ -42,9 +42,8 @@ static bool PwmPeriodFinishedCallback(PwmHandle_t* Node) {
         case PWM_MODE_OFF: {
             res = true;
         } break;
-        default: {
-            res = false;
-        } break;
+        default:
+            break;
         } // switch
     }
     return res;
@@ -56,7 +55,7 @@ void PwmPulseFinishedHalfCpltCallback(PwmHandle_t* Node) {
     }
 }
 
-bool PwmPulseFinishedCallback_ll(PwmHandle_t* Node, PwmChannel_t channel) {
+bool PwmPulseFinishedCallback_ll(PwmHandle_t* Node, TimerOutChannel_t channel) {
     bool res = false;
     if(Node) {
         res = true;
@@ -68,14 +67,14 @@ bool PwmPulseFinishedCallback_ll(PwmHandle_t* Node, PwmChannel_t channel) {
     return res;
 }
 
-bool PwmPulseFinishedCallback(uint8_t timer_num, PwmChannel_t channel) {
+bool PwmPulseFinishedCallback(uint8_t timer_num, TimerOutChannel_t channel) {
     bool res = false;
     uint8_t pwm_cnt = 0;
     pwm_cnt = pwm_get_cnt();
     uint8_t p = 0;
     for(p = 0; p < pwm_cnt; p++) {
         if(timer_num == PwmInstance[p].timer_num) {
-            if(channel == PwmInstance[p].channel) {
+            if(channel == PwmInstance[p].timer_channel) {
                 res = PwmPulseFinishedCallback_ll(&PwmInstance[p], channel);
             }
         }

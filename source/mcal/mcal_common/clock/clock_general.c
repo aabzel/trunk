@@ -1,8 +1,8 @@
 #include "clock_mcal.h"
 
 #include "compiler_const.h"
-#include "sys_config.h"
 #include "data_utils.h"
+#include "sys_config.h"
 
 #ifdef HAS_CORE
 #include "core_driver.h"

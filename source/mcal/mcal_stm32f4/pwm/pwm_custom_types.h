@@ -10,9 +10,9 @@
     TIM_HandleTypeDef h_tim;             \
     TIM_OC_InitTypeDef ConfigOC;
 
-typedef struct{
+typedef struct {
     TimerOutChannel_t channel;
     uint32_t stm32_ch_code;
-}Channal2Code_t ;
+} Channal2Code_t;
 
 #endif /* PWM_VENDOR_CUSTOM_TYPES_H  */

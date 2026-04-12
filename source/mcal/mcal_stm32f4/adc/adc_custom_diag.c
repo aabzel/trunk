@@ -1,4 +1,3 @@
-#include "adc_stm_diag.h"
+#include "adc_custom_diag.h"
 
 #include <stdio.h>
-

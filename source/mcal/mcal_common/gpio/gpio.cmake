@@ -1,35 +1,29 @@
 #add_library(gpio)
 message(STATUS "GPIO_GENERAL_MK_INC=${GPIO_GENERAL_MK_INC}")
-if( NOT (GPIO_GENERAL_MK_INC STREQUAL Y))
+if(NOT (GPIO_GENERAL_MK_INC STREQUAL Y))
     set(GPIO_GENERAL_MK_INC Y)
-    message(STATUS "+ GPIO General")
 
-    set(GPIO_GENERAL_DIR ${MCAL_COMMON_DIR}/gpio)
-    message(STATUS "GPIO_GENERAL_DIR=${GPIO_GENERAL_DIR}")
+    set(GPIO_GENERAL_DIR "${MCAL_COMMON_DIR}/gpio")
 
-    include_directories(${GPIO_GENERAL_DIR})
-    target_include_directories(app PUBLIC ${GPIO_GENERAL_DIR})
-    target_compile_definitions(app PUBLIC HAS_GPIO)
-
-    add_compile_definitions(HAS_GPIO)
-    #add_compile_options(-DHAS_GPIO)
-    target_sources(app PRIVATE ${GPIO_GENERAL_DIR}/gpio_general_drv.c)
+    include_directories( ${GPIO_GENERAL_DIR})
+    
+    string(APPEND MCAL_OPT " -DHAS_GPIO")
+    string(APPEND SOURCES_C " ${GPIO_GENERAL_DIR}/gpio_general.c")
 
     if(DIAG STREQUAL Y)
         if(GPIO_DIAG STREQUAL Y)
-            message(STATUS "+ GPIO Diag")
-            target_compile_definitions(app PUBLIC HAS_GPIO_DIAG)
-            target_sources(app PRIVATE ${GPIO_GENERAL_DIR}/gpio_diag.c)
+            string(APPEND MCAL_OPT " -DHAS_GPIO_DIAG")
+            string(APPEND SOURCES_C " ${GPIO_GENERAL_DIR}/gpio_diag.c")
         endif()
     endif()
 
     if(CLI STREQUAL Y)
         if(GPIO_COMMANDS STREQUAL Y)
-            message(STATUS "+ GPIO Commands")
-            target_compile_definitions(app PUBLIC HAS_GPIO_COMMANDS)
-            target_sources(app PRIVATE ${GPIO_GENERAL_DIR}/gpio_commands.c)
+            string(APPEND MCAL_OPT " -DHAS_GPIO_COMMANDS")
+            string(APPEND SOURCES_C " ${GPIO_GENERAL_DIR}/gpio_commands.c")
         endif()
     endif()
-
-    #target_include_directories(gpio PUBLIC ${GPIO_GENERAL_DIR})
 endif()
+
+
+

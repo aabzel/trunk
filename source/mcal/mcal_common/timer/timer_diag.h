@@ -8,7 +8,10 @@
 #include <stdint.h>
 
 #include "timer_types.h"
+
+#ifdef HAS_TIMER_CUSTOM
 #include "timer_custom_diag.h"
+#endif
 
 bool timer_diag_compare(void);
 bool timer_diag_compare_complimentary(void);

@@ -20,12 +20,17 @@
     PARAMS_CLOCK_CUSTOM                               \
     {                                                 \
     .len = 4,                                         \
+    .hide = false,                                    \
+    .Scale = STORAGE_SCALE_ONES,                      \
+    .access = ACCESS_READ_WRITE,                      \
+    .Units = STORAGE_UNITS_HERTZ,                     \
+    .physical_quantity = STORAGE_PHYSICAL_QUANTITY_FREQUENCY,                                \
     .facility = CLOCK,                                \
     .id = PAR_ID_SYS_CLOCK_HZ,                        \
     .type = TYPE_UINT32,                              \
-    .default_value = "150000000",                     \
+    .default_value = "120000000",                     \
     .name = "SysClockHz",                             \
-    PARAM_CLOCK_SYS_CLOCK_HZ_PARSER                   \
+     PARAM_CLOCK_SYS_CLOCK_HZ_PARSER                   \
     },
 
 #endif /* CLOCK_PARAMS_H */

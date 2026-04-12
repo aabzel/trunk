@@ -8,7 +8,7 @@
 bool super_cycle_init_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
-        res = super_cycle_init();
+        res = super_cycle_mcal_init();
     }
     return res;
 }
@@ -27,8 +27,11 @@ bool super_cycle_iteration_sleep_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        SuperCycle.iteration_sleep_ms = iteration_sleep_ms;
-        LOG_INFO(SUPER_CYCLE, "SetOk %d ms", iteration_sleep_ms);
+        SuperCycleHandle_t* Node = SuperCycleGetNode(1);
+        if(Node) {
+            Node->iteration_sleep_ms = iteration_sleep_ms;
+            LOG_INFO(SUPER_CYCLE, "SetOk %d ms", iteration_sleep_ms);
+        }
     }
 
     return res;

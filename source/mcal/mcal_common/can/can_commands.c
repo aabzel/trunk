@@ -17,65 +17,63 @@
 #include "test_can.h"
 #endif
 
-
 /*
  1 0xc2 2 0x556644
  */
-bool can_parse_mesg(int32_t argc, char* argv[], const int32_t start, CanMessage_t * const Message) {
+bool can_parse_mesg(int32_t argc, char* argv[], const int32_t start, CanMessage_t* const Message) {
     bool res = false;
-    LOG_INFO(CAN, "argc:%u,Start:%u", argc,start);
+    LOG_INFO(CAN, "argc:%u,Start:%u", argc, start);
 
     uint32_t array_len = 8;
     uint8_t id_type = 0;
 
-    if((start+1) <= argc) {
+    if((start + 1) <= argc) {
         /* The CAN bus number this package came from*/
-        res = try_str2int8(argv[start+0], &Message->can_bus_num);
+        res = try_str2int8(argv[start + 0], &Message->can_bus_num);
         log_res(CAN, res, "CANn");
     }
 
-    if((start+2) <= argc) {
-        res = try_str2uint32(argv[start+1], &Message->identifier.extended);
+    if((start + 2) <= argc) {
+        res = try_str2uint32(argv[start + 1], &Message->identifier.extended);
         log_res(CAN, res, "Id");
     }
 
-    if((start+3 )<= argc) {
-        res = try_str2uint8(argv[start+2], &id_type);
+    if((start + 3) <= argc) {
+        res = try_str2uint8(argv[start + 2], &id_type);
         log_res(CAN, res, "idType");
     }
 
-    if((start+4) <= argc) {
-        LOG_INFO(CAN, "Data [%s]", argv[start+3]);
+    if((start + 4) <= argc) {
+        LOG_INFO(CAN, "Data [%s]", argv[start + 3]);
         /* contains the transmit data. it ranges from 0 to 0xFF. */
         array_len = 0;
-        res = try_str2array(argv[start+3], Message->data, sizeof(Message->data), &array_len);
+        res = try_str2array(argv[start + 3], Message->data, sizeof(Message->data), &array_len);
         if(res) {
             LOG_WARNING(CAN, "SpotHexSize:%u Byte", array_len);
         } else {
-            LOG_WARNING(CAN, "ExtractHexArrayErr  [%s]", argv[start+3]);
-            snprintf((char*)Message->data, sizeof(Message->data), "%s", argv[start+3]);
-            array_len = strlen(argv[start+3]);
+            LOG_WARNING(CAN, "ExtractHexArrayErr  [%s]", argv[start + 3]);
+            snprintf((char*)Message->data, sizeof(Message->data), "%s", argv[start + 3]);
+            array_len = strlen(argv[start + 3]);
             res = true;
         }
     }
 
     if(res) {
-        LOG_INFO(CAN, "SpotSize:%u Byte,idType:%u", array_len,id_type);
-        Message->id_type = (CanIdentifier_t) id_type;
+        LOG_INFO(CAN, "SpotSize:%u Byte,idType:%u", array_len, id_type);
+        Message->id_type = (CanIdentifier_t)id_type;
         if(array_len <= 8) {
             Message->frame_type = CAN_TX_FRAME_DATA;
             Message->size = array_len;
-            LOG_INFO(CAN, "Mesg:[%s]",  CanMessageToStr(Message));
+            LOG_INFO(CAN, "Mesg:[%s]", CanMessageToStr(Message));
             res = true;
-        }else {
-            LOG_ERROR(CAN, "DataSize:%u",array_len);
+        } else {
+            LOG_ERROR(CAN, "DataSize:%u", array_len);
         }
     } else {
         LOG_ERROR(CAN, "ParseError");
     }
     return res;
 }
-
 
 bool can_rx_frame_manual_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -175,7 +173,6 @@ bool can_send_ext_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
-
 
 /*
   cs 1 1 0x5555555555555555
@@ -414,8 +411,8 @@ bool can_loopback_command(int32_t argc, char* argv[]) {
     bool res = false;
 #ifdef HAS_TEST_CAN
     uint32_t can_id = 4;
-    uint8_t num_tx = 2;
-    uint8_t num_rx = 3;
+    uint8_t num_tx = 1;
+    uint8_t num_rx = 2;
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num_tx);
@@ -620,7 +617,6 @@ bool can_send_hi_load_command(int32_t argc, char* argv[]) {
         log_res(CAN, res, "ID");
     }
 
-
     if(res) {
         res = can_std_send_hi_load(num, frame_cnt, pause_ms, id);
         log_res(CAN, res, "SendHiLoad");
@@ -664,36 +660,37 @@ bool can_filter_id_mask_diag_command(int32_t argc, char* argv[]) {
 
 /*
   cfims 2 13 0x005500 0x00FF00; cdf
- | CAN1 |  13 |  0 | FIFO0 |  16 | IdMask | 0xa8380fa6 | 0x3b014b3c | (StdID1:0x007d,MASK1:0x0541);(StdID2:0x0259,MASK2:0x01d8) |
+ | CAN1 |  13 |  0 | FIFO0 |  16 | IdMask | 0xa8380fa6 | 0x3b014b3c |
+ (StdID1:0x007d,MASK1:0x0541);(StdID2:0x0259,MASK2:0x01d8) |
   */
-bool can_filter_set_command(int32_t argc, char *argv[]) {
+bool can_filter_set_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
     uint8_t filt_num = 0;
     uint32_t filter_id = 0;
     uint32_t filter_mask = 0;
 
-    if (1 <= argc) {
+    if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
         log_res(CAN, res, "Num");
     }
 
-    if (2 <= argc) {
+    if(2 <= argc) {
         res = try_str2uint8(argv[1], &filt_num);
         log_res(CAN, res, "FiltNum");
     }
 
-    if (3 <= argc) {
+    if(3 <= argc) {
         res = try_str2uint32(argv[2], &filter_id);
         log_res(CAN, res, "FiltId");
     }
 
-    if (4 <= argc) {
+    if(4 <= argc) {
         res = try_str2uint32(argv[3], &filter_mask);
         log_res(CAN, res, "FiltMask");
     }
 
-    if (res) {
+    if(res) {
         res = can_mcal_filter_id_mask_set(num, filt_num, CAN_FRAME_ID_EXTENDED, filter_id, filter_mask);
         log_res(CAN, res, "filter_id_mask_set");
     } else {
@@ -703,15 +700,15 @@ bool can_filter_set_command(int32_t argc, char *argv[]) {
     return res;
 }
 
-bool can_rx_all_command(int32_t argc, char* argv[]){
+bool can_rx_all_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
-    if (1 <= argc) {
+    if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
         log_res(CAN, res, "Num");
     }
 
-    if (res) {
+    if(res) {
         res = can_rx_all(num);
         log_res(CAN, res, "RxAll");
     } else {

@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "dac_config.h"
 #include "dac_isr.h"
 #include "dac_types.h"
@@ -17,8 +15,8 @@ extern "C" {
 #endif
 
 /*API*/
-const DacConfig_t* DacGetConfig(uint8_t num);
 DacHandle_t* DacGetNode(uint8_t num);
+const DacConfig_t* DacGetConfig(uint8_t num);
 
 
 bool dac_is_init(uint8_t num);
@@ -33,8 +31,8 @@ bool dac_mcal_init(void);
 bool dac_code_u16_get(uint8_t num, uint16_t* const code) ;
 
 /*setters*/
-bool dac_code_u16_set(uint8_t num, uint16_t code) ;
-bool dac_voltage_set(uint8_t num, double voltage);
+bool dac_code_u16_set(const uint8_t num, const uint16_t code) ;
+bool dac_voltage_set(const uint8_t num, const float voltage) ;
 
 #ifdef __cplusplus
 }

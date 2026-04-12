@@ -1,0 +1,13 @@
+GPIO->SPI
+
+#ifdef HAS_INTERRUPT
+    INTERRUPT->SPI
+#endif
+
+#ifdef HAS_DMA
+    DMA->SPI
+#endif
+
+#ifdef HAS_SPI3
+    SPI3->SPI
+#endif

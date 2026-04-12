@@ -9,17 +9,16 @@
 COMPONENT_GET_NODE(Usb, usb)
 COMPONENT_GET_CONFIG(Usb, usb)
 
-
 /*ISO-26262 require verify configuration*/
 
 _WEAK_FUN_
 bool UsbIsValidConfig(const UsbConfig_t* const Config) {
-    bool res = false ;
+    bool res = false;
     if(Config) {
         res = true;
         ifn(Config->speed) {
-             res = false ;
-             LOG_ERROR(USB, "speed,error");
+            res = false;
+            LOG_ERROR(USB, "speed,error");
         }
         ifn(Config->device_speed) {
             LOG_ERROR(USB, "device_speed,error");
@@ -33,11 +32,11 @@ bool UsbIsValidConfig(const UsbConfig_t* const Config) {
 
         ifn(Config->role) {
             LOG_ERROR(USB, "role,error");
-             res = false ;
+            res = false;
         }
         ifn(Config->name) {
             LOG_ERROR(USB, "name,error");
-             res = false ;
+            res = false;
         }
     }
     return res;
@@ -64,7 +63,7 @@ void uds2_gpio_init(void){
 /* This operation needed to reload USB driver on the side of PC */
 bool usb_re_plug(const uint8_t num) {
     bool res = false;
-    UsbConfig_t *Config = UsbGetConfig(num);
+    UsbConfig_t* Config = UsbGetConfig(num);
     if(Config) {
         gpio_deinit_pad(Config->PadDP);
         gpio_deinit_pad(Config->PadDM);
@@ -91,8 +90,6 @@ bool usb_proc_custom(void) {
 
     return res;
 }
-
-
 
 _WEAK_FUN_
 bool usb_proc_one(uint8_t i) {

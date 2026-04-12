@@ -1,9 +1,11 @@
-#include "timer_diag.h"
+#include "timer_custom_diag.h"
 
 #include "clock_diag.h"
 #include "sys_config.h"
 #include "log.h"
 #include "timer_const.h"
+#include "num_to_str.h"
+#include "timer_mcal.h"
 
 char* TimDirToStr(const TimerDir_t code) {
     char* name = "?";
@@ -211,4 +213,46 @@ const char* TimerInfoToStr(const TimerInfo_t* const Info) {
         snprintf(text, sizeof(text), "%sBit:%u,", text, Info->bitness);
     }
     return text;
+}
+
+static bool timer_diag_reg_ccmr(const TimerRegCCMR_t * const pCcmr, uint8_t num) {
+    bool res = false ;
+    LOG_WARNING(TIMER,"CCMR%u:0x%02x=%s",num,pCcmr->byte,utoa_bin8(pCcmr->byte));
+    LOG_INFO(TIMER,"CC%uS:%u",num,pCcmr->CCxS);
+    LOG_INFO(TIMER,"OC%uFE:%u",num,pCcmr->OCxFE);
+    LOG_INFO(TIMER,"OC%uPE:%u",num,pCcmr->OCxPE);
+    LOG_INFO(TIMER,"OC%uM:%u",num,pCcmr->OCxM);
+    LOG_INFO(TIMER,"OC%uCE:%u",num,pCcmr->OCxCE);
+
+
+    return res;
+}
+
+
+bool timer_diag_reg_ccmr1(const uint32_t ccmr1) {
+    bool res = false ;
+    TimerRegCCMR1_t CCMR1;
+    CCMR1.dword=ccmr1;
+    timer_diag_reg_ccmr(&CCMR1.CH1, 1);
+    timer_diag_reg_ccmr(&CCMR1.CH2, 2);
+    return res;
+}
+
+bool timer_diag_reg_ccmr2(const uint32_t ccmr2) {
+    bool res = false ;
+    TimerRegCCMR2_t CCMR2;
+    CCMR2.dword=ccmr2;
+    timer_diag_reg_ccmr(&CCMR2.CH3, 3);
+    timer_diag_reg_ccmr(&CCMR2.CH4, 4);
+    return res;
+}
+
+bool timer_diag_reg_fields(uint8_t num){
+    bool res = false ;
+    TimerInfo_t* Info = TimerGetInfo(num) ;
+    if(Info) {
+        res = timer_diag_reg_ccmr1(Info->TIMx->CCMR1);
+        res = timer_diag_reg_ccmr2(Info->TIMx->CCMR2);
+    }
+    return res;
 }

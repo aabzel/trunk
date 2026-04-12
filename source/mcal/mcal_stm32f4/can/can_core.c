@@ -3,11 +3,11 @@
 #include <limits.h>
 #include <stdlib.h>
 
+#include "bit_utils.h"
 #include "clock_mcal.h"
 #include "code_generator.h"
 #include "common_diag.h"
 #include "float_utils.h"
-#include "bit_utils.h"
 #include "interrupt_mcal.h"
 
 bool CanIsValidInfo(const CanInfo_t* const Info) {
@@ -393,7 +393,6 @@ uint32_t CanLoopBackToOperatingMode(const bool on_off) {
     return op_mode;
 }
 
-
 uint32_t CanPhase2ToTimeSeg2(const uint32_t phase_2) {
     uint32_t time_seg_2 = CAN_BS2_1TQ;
     switch(phase_2) {
@@ -428,7 +427,6 @@ uint32_t CanPhase2ToTimeSeg2(const uint32_t phase_2) {
     return time_seg_2;
 }
 
-
 uint32_t CanCanTxFrameToRtr(const CanTxFrame_t frame_type) {
     uint32_t rtr = CAN_RTR_DATA;
     switch(frame_type) {
@@ -443,7 +441,6 @@ uint32_t CanCanTxFrameToRtr(const CanTxFrame_t frame_type) {
     }
     return rtr;
 }
-
 
 uint32_t CanSynchroToSyncJumpWidth(const uint32_t synchronization) {
     uint32_t sync_jump_width = CAN_SJW_1TQ;
@@ -466,21 +463,17 @@ uint32_t CanSynchroToSyncJumpWidth(const uint32_t synchronization) {
     return sync_jump_width;
 }
 
-uint32_t can_segment_info_to_bitrate(const uint32_t base_clock_hz,
-                                     const uint16_t brp,
-                                     const uint8_t sjw,
-                                     const uint8_t tseg1,
-                                     const uint8_t tseg2) {
+uint32_t can_segment_info_to_bitrate(const uint32_t base_clock_hz, const uint16_t brp, const uint8_t sjw,
+                                     const uint8_t tseg1, const uint8_t tseg2) {
     uint32_t bit_rate = 0;
-    CanReg_BTR_t CAN_BTR = { 0 };
-    CAN_BTR.BRP = brp-1;
-    CAN_BTR.TS1 = tseg1-1;
-    CAN_BTR.TS2 = tseg2-1;
-    CAN_BTR.SJW = sjw-1;
+    CanReg_BTR_t CAN_BTR = {0};
+    CAN_BTR.BRP = brp - 1;
+    CAN_BTR.TS1 = tseg1 - 1;
+    CAN_BTR.TS2 = tseg2 - 1;
+    CAN_BTR.SJW = sjw - 1;
     can_mcal_baudrate_calc(base_clock_hz, CAN_BTR, &bit_rate);
     return bit_rate;
 }
-
 
 uint32_t CanIdTypeToFrameIDE(const CanIdentifier_t id_type) {
     uint32_t ide = CAN_ID_EXT;
@@ -551,7 +544,6 @@ bool can_mode_set_normal(const uint8_t num) {
     return res;
 }
 
-
 /*see Figure 346. Bit timing*/
 bool can_mcal_baudrate_calc(const uint32_t base_clock_hz, const CanReg_BTR_t CAN_BTR, uint32_t* const bit_rate) {
     bool res = false;
@@ -581,12 +573,10 @@ bool can_segment_to_baudrate(uint32_t base_clock_hz, CanSegmentInfo_t* const Seg
     return res;
 }
 
-
 /* Figure 346. Bit timing
  cs 1 0x355 0x5555555555555555
  *  */
-bool can_stm32_segment_info_calc(uint32_t bus_freq_hz, const uint32_t bit_rate_hz,
-                                        CanSegmentInfo_t* const Segment) {
+bool can_stm32_segment_info_calc(uint32_t bus_freq_hz, const uint32_t bit_rate_hz, CanSegmentInfo_t* const Segment) {
     bool res = false;
     LOG_DEBUG(CAN, "busFreq:%u Hz,BitRate:%u Bit/s", bus_freq_hz, bit_rate_hz);
     if(Segment) {
@@ -643,7 +633,7 @@ bool can_stm32_segment_info_calc(uint32_t bus_freq_hz, const uint32_t bit_rate_h
                             res = true;
                             if(0 == abs_diff_hz) {
                                 LOG_DEBUG(CAN, "SpotSol");
-                                //CanDiagRegBTR(CAN_BTR.dword);
+                                // CanDiagRegBTR(CAN_BTR.dword);
                             }
                         }
                     }
@@ -662,25 +652,23 @@ bool can_stm32_segment_info_calc(uint32_t bus_freq_hz, const uint32_t bit_rate_h
     return res;
 }
 
-
-uint32_t CanIdTypeToFiltIDE(const CanIdentifier_t id_type){
+uint32_t CanIdTypeToFiltIDE(const CanIdentifier_t id_type) {
     uint32_t filt_ide = CAN_IDE_EXT;
-    switch (id_type) {
-        case CAN_FRAME_ID_STANDARD: {
-            filt_ide = CAN_IDE_STD;
-        } break;
+    switch(id_type) {
+    case CAN_FRAME_ID_STANDARD: {
+        filt_ide = CAN_IDE_STD;
+    } break;
 
-        case CAN_FRAME_ID_EXTENDED: {
-            filt_ide = CAN_IDE_EXT;
-        } break;
+    case CAN_FRAME_ID_EXTENDED: {
+        filt_ide = CAN_IDE_EXT;
+    } break;
 
-        default:
-            filt_ide = CAN_IDE_EXT;
+    default:
+        filt_ide = CAN_IDE_EXT;
         break;
     }
     return filt_ide;
 }
-
 
 uint32_t can_base_clock_get(const uint8_t num) {
     uint32_t bus_freq_hz = 0;
@@ -696,7 +684,7 @@ bool can_mode_set(const uint8_t num, const CanStmMode_t mode) {
     LOG_INFO(CAN, "CAN%u,Mode,Set:%s", num, CanStmModeToStr(mode));
     switch(mode) {
     case CAN_STM_MODE_INITIALIZATION: {
-        can_phy_connect_ctrl(num, false );
+        can_phy_connect_ctrl(num, false);
         res = can_mode_set_initialization(num);
     } break;
     case CAN_STM_MODE_NORMAL: {
@@ -711,12 +699,20 @@ bool can_mode_set(const uint8_t num, const CanStmMode_t mode) {
 }
 
 uint32_t CanMailBoxNumToCode(const uint32_t mailbox_mum) {
-    uint32_t  tx_mailbox_code = CAN_TX_MAILBOX0;
+    uint32_t tx_mailbox_code = CAN_TX_MAILBOX0;
     switch(mailbox_mum) {
-        case 0:  tx_mailbox_code = CAN_TX_MAILBOX0; break;
-        case 1:  tx_mailbox_code = CAN_TX_MAILBOX1; break;
-        case 2:  tx_mailbox_code = CAN_TX_MAILBOX2; break;
-        default: tx_mailbox_code = CAN_TX_MAILBOX0; break;
+    case 0:
+        tx_mailbox_code = CAN_TX_MAILBOX0;
+        break;
+    case 1:
+        tx_mailbox_code = CAN_TX_MAILBOX1;
+        break;
+    case 2:
+        tx_mailbox_code = CAN_TX_MAILBOX2;
+        break;
+    default:
+        tx_mailbox_code = CAN_TX_MAILBOX0;
+        break;
     }
     return tx_mailbox_code;
 }

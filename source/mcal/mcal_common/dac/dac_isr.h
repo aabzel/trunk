@@ -5,26 +5,19 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "dac_custom_isr.h"
+#include "std_includes.h"
 #include "dac_types.h"
+#ifdef HAS_DAC_CUSTOM
+#include "dac_custom_isr.h"
+#endif
 
 /*tx*/
-bool DacTxHalfCpltCallBack(DacHandle_t* const Node);
-bool DacTxCpltCallBack(DacHandle_t* const Node);
 
 /*Rx*/
-bool DacRxHalfCpltCallBack(DacHandle_t* const Node);
-bool DacRxCpltCallBack(DacHandle_t* const Node);
 
 /*Err*/
-bool DacErrorCallBack(DacHandle_t* const Node);
 
 /*RxTx*/
-bool DacTxRxHalfCpltCallBack(DacHandle_t* const Node);
-bool DacTxRxCpltCallBack(DacHandle_t* const Node);
 
 #ifdef __cplusplus
 }

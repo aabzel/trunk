@@ -5,33 +5,33 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "adc_custom_const.h"
 #include "adc_types.h"
 #include "stm32f4xx_hal.h"
+
+#define ADC_CUSTOM_VARIABLES  \
+       ADC_HandleTypeDef adc_h;
 
 typedef struct {
     AdcNum_t num;
     AdcChannel_t adc_channel;
     uint32_t code;
     Pad_t pad;
-	bool valid;
-}AdcChannelInfo_t;
+    bool valid;
+} AdcChannelInfo_t;
 
 typedef struct {
-	uint8_t resolution;
+    uint8_t resolution;
     uint32_t code;
-	bool valid;
-}AdcResolutionInfo_t;
+    bool valid;
+} AdcResolutionInfo_t;
 
 typedef struct {
-	uint8_t adc_num;
-	ADC_TypeDef* instance;
-	bool valid;
-}AdcInfo_t;
-
+    uint8_t adc_num;
+    ADC_TypeDef *instance;
+    bool valid;
+} AdcInfo_t;
 
 #ifdef __cplusplus
 }

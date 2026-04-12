@@ -1,8 +1,8 @@
 #include "spi_custom_isr.h"
 
 #include "spi_custom.h"
-#include "stm32f4xx_hal.h"
 #include "spi_mcal.h"
+#include "stm32f4xx_hal.h"
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef* hspi) {
     SpiName_t spi_num = spi_base_2_num(hspi->Instance);
@@ -47,9 +47,8 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef* hspi) {
     }
 }
 
-
 bool SPIx_IRQHandler(const uint8_t num) {
-    bool res = false ;
+    bool res = false;
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         Node->it_done = true;

@@ -5,13 +5,16 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "ext_int_const.h"
 #include "gpio_types.h"
-#include "ext_int_custom_types.h"
 #include "microcontroller_const.h"
+
+#ifdef HAS_EXT_INT_CUSTOM
+#include "ext_int_custom_types.h"
+#else
+#define EXT_INT_CUSTOM_VARIABLES
+#endif
 
 #define EXT_INT_COMMON_VARIABLES                             \
     uint8_t num;                                             \

@@ -6,7 +6,12 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
+
+#ifdef HAS_TIMER_CUSTOM
 #include "timer_custom_commands.h"
+#else
+#define TIMER_CUSTOM_COMMANDS
+#endif
 
 #ifndef HAS_CLI
 #error "only for CLI"

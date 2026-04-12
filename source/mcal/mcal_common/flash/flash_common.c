@@ -79,12 +79,9 @@ bool is_flash_address_range(uint32_t address, uint32_t size) {
 
     res = interval_is_a_in_b(&small, &big);
 
-
     return res;
 }
 #endif
-
-
 
 FlashHandle_t* FlashGetNode(uint8_t num) {
     FlashHandle_t* Node = &FlashInstance;
@@ -208,7 +205,6 @@ uint32_t flash_get_first_spare_size(const uint32_t size) {
 }
 #endif
 
-#ifdef HAS_FLASH_EX
 _WEAK_FUN_
 bool is_flash_addr(const uint32_t address) {
     bool res = false;
@@ -230,6 +226,7 @@ bool is_flash_addr(const uint32_t address) {
     return res;
 }
 
+#ifdef HAS_FLASH_EX
 #endif
 
 #if 0
@@ -522,7 +519,7 @@ _WEAK_FUN_ bool flash_mcal_read(uint32_t address, uint8_t* const rx_array, uint3
     LOG_DEBUG(LG_FLASH, "Read,Addr:0x%08X,Size:%u", address, size);
 #endif
     res = true;
-    //res = is_flash_address_range(address, size);
+    // res = is_flash_address_range(address, size);
     if(res) {
         // uint8_t* p_address = (uint8_t*)address;
         uint32_t i = 0;
@@ -613,7 +610,7 @@ _WEAK_FUN_ bool flash_mcal_write(uint32_t address, const uint8_t* const data, ui
             } else {
                 LOG_WARNING(LG_FLASH, "NotSpare,%u Byte", size);
                 res = flash_is_legal_change_array(address, data, size);
-                log_res(LG_FLASH,res,"IsLegalChangeArray");
+                log_res(LG_FLASH, res, "IsLegalChangeArray");
             }
 
             if(res) {
@@ -621,7 +618,7 @@ _WEAK_FUN_ bool flash_mcal_write(uint32_t address, const uint8_t* const data, ui
                 if(false == res) {
 #ifdef HAS_FLASH_CUSTOM
                     res = flash_mcal_write(address, data, size);
-                    log_res(LG_FLASH,res,"Write");
+                    log_res(LG_FLASH, res, "Write");
 #endif
                 } else {
                     LOG_WARNING(LG_FLASH, "AlreadyTheSame");

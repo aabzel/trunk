@@ -8,10 +8,22 @@ extern "C" {
 #include "std_includes.h"
 #include "sdio_types.h"
 #include "sdio_config.h"
-#include "sdio_custom.h"
-#include "sdio_dma.h"
-#include "sdio_int.h"
+
+#ifdef HAS_SDIO_POLLING
 #include "sdio_poll.h"
+#endif
+
+#ifdef HAS_SDIO_INTERRUPT
+#include "sdio_int.h"
+#endif
+
+#ifdef HAS_SDIO_DMA
+#include "sdio_dma.h"
+#endif
+
+#ifdef HAS_SDIO_CUSTOM
+#include "sdio_custom.h"
+#endif
 
 #ifdef HAS_SDIO_DIAG
 #include "sdio_diag.h"
@@ -20,7 +32,10 @@ extern "C" {
 /*API*/
 SdioHandle_t* SdioGetNode(uint8_t num);
 const SdioConfig_t* SdioGetConfig(uint8_t num);
+
+#ifdef HAS_SDIO_CUSTOM
 const SdioInfo_t* SdioGetInfo(uint8_t num);
+#endif
 
 bool sdio_init_common(const SdioConfig_t* const Config, SdioHandle_t* const Node) ;
 bool sdio_init_one(uint8_t num);

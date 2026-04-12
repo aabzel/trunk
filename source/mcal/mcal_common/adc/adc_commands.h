@@ -5,12 +5,13 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
-#include "ostream.h"
-
+#ifdef HAS_ADC_CUSTOM
 #include "adc_custom_commands.h"
+#else
+#define ADC_CUSTOM_COMMANDS
+#endif
 
 #ifndef HAS_ADC_COMMANDS
 #error "+HAS_ADC_COMMANDS"

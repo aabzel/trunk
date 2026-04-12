@@ -76,6 +76,8 @@ typedef struct {
     FifoChar_t RxFifo;
     uint32_t spin;
     uint32_t wait_cnt;
+    uint32_t tx_timestamp_ms;
+    uint32_t rx_timestamp_ms;
 } MailBoxHandle_t;
 
 typedef struct {

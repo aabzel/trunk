@@ -5,12 +5,31 @@
 
 #include "byte_utils.h"
 #include "code_generator.h"
+#include "compiler_const.h"
 #include "log.h"
 #include "microcontroller_const.h"
 #include "std_includes.h"
 
 COMPONENT_GET_NODE(ExtInt, ext_int)
 COMPONENT_GET_CONFIG(ExtInt, ext_int)
+
+_WEAK_FUN_
+bool ext_int_init_custom(void) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool ext_int_proc_one(uint8_t num) {
+    bool res = false;
+    return res;
+}
+
+_WEAK_FUN_
+bool ext_int_init_one(uint8_t num) {
+    bool res = false;
+    return res;
+}
 
 PinIntEdge_t gpio_logic_level_to_edge(const GpioLogicLevel_t logic_level) {
     PinIntEdge_t edge = PIN_INT_EDGE_UNDEF;

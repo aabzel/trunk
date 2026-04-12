@@ -6,21 +6,20 @@
 #include "array.h"
 #include "code_generator.h"
 #include "common_diag.h"
+#include "common_functions.h"
 #include "compiler_const.h"
 #include "float_diag.h"
-#include "common_functions.h"
 #include "std_includes.h"
 
 #ifdef HAS_LOG
 #include "log.h"
 #endif
 
-const uint32_t CanTypicalBitRates[]={
-        1000000, 800000, 500000, 250000, 125000, 100000, 95238, 83333, 50000, 47619, 33333, 20000, 10000, 5000
-};
+const uint32_t CanTypicalBitRates[] = {1000000, 800000, 500000, 250000, 125000, 100000, 95238,
+                                       83333,   50000,  47619,  33333,  20000,  10000,  5000};
 
-uint32_t can_get_typical_bitrate_cnt(void){
-    uint32_t  cnt = ARRAY_SIZE(CanTypicalBitRates);
+uint32_t can_get_typical_bitrate_cnt(void) {
+    uint32_t cnt = ARRAY_SIZE(CanTypicalBitRates);
     return cnt;
 }
 
@@ -630,7 +629,7 @@ bool can_phy_connect(uint8_t num) {
 bool can_phy_connect_ctrl(const uint8_t num, const bool on_off) {
     bool res = false;
     LOG_DEBUG(CAN, "CAN%u,En:%u", num, on_off);
-    if (on_off) {
+    if(on_off) {
         res = can_phy_connect(num);
     } else {
         res = can_phy_disconnect(num);
@@ -645,11 +644,8 @@ _WEAK_FUN_ bool can_init_one(uint8_t num) {
 }
 
 _WEAK_FUN_
-bool can_mcal_filter_id_mask_set(const uint8_t can_num,
-                                 const uint8_t filt_num,
-                                 const CanIdentifier_t format,
-                                 const uint32_t filt_id,
-                                 const uint32_t filt_mask) {
+bool can_mcal_filter_id_mask_set(const uint8_t can_num, const uint8_t filt_num, const CanIdentifier_t format,
+                                 const uint32_t filt_id, const uint32_t filt_mask) {
     bool res = false;
     LOG_ERROR(CAN, "%s(),NotImplemented", __FUNCTION__);
     return res;
@@ -698,9 +694,9 @@ _WEAK_FUN_ bool can_proc_one(uint8_t num) {
 #endif
 
 #ifdef HAS_ISO_TP
-            static IsoTpFrame_t RxFrame = {0};
-            memcpy(RxFrame.data, Node->RxMessage.data, 8);
-            res = iso_tp_proc_rx(num, Node->RxMessage.identifier.standard, &RxFrame);
+            // static IsoTpFrame_t RxFrame = {0};
+            // memcpy(RxFrame.data, Node->RxMessage.data, 8);
+            // res = iso_tp_proc_rx(num, Node->RxMessage.identifier.standard, &RxFrame);
 #endif
 
 #ifdef HAS_TBFP
@@ -791,13 +787,12 @@ bool can_health_monitor_proc(void) {
 float can_segment_to_fetch_present(const CanSegmentInfo_t* const Info) {
     float fetch_present = 0.0f;
     if(Info) {
-        uint32_t bit_fetch_uptime_tq =Info->synchronization + Info->propagation + Info->phase_1;
+        uint32_t bit_fetch_uptime_tq = Info->synchronization + Info->propagation + Info->phase_1;
         uint32_t bit_diration_tq = Info->synchronization + Info->propagation + Info->phase_1 + Info->phase_2;
-        fetch_present = (     100.0f*((float)bit_fetch_uptime_tq)     )/(     (float)bit_diration_tq    );
+        fetch_present = (100.0f * ((float)bit_fetch_uptime_tq)) / ((float)bit_diration_tq);
     }
     return fetch_present;
 }
-
 
 uint32_t can_segment_to_main_pre_scaler(const CanSegmentInfo_t* const Segment) {
     uint32_t bit_prescaler = 0;
@@ -908,7 +903,6 @@ bool can_rx_all(const uint8_t can_num) {
     return res;
 }
 
-
 uint32_t can_get_alien_rx_id(const uint8_t num) {
     uint32_t ret_id = 0;
     uint32_t id = 0;
@@ -980,7 +974,6 @@ bool can_std_send_hi_load(const uint8_t num, const uint32_t frame_cnt, uint32_t 
     }
     return res;
 }
-
 
 COMPONENT_PROC_PATTERT(CAN, CAN, can)
 COMPONENT_INIT_PATTERT(CAN, CAN, can)

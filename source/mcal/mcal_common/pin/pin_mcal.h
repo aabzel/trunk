@@ -33,7 +33,7 @@ bool pin_deinit_one(Pad_t Pad);
 
 
 /*Get*/
-uint8_t get_mcu_pin(uint8_t pad);
+uint16_t get_mcu_pin(uint8_t pad);
 bool mcu_get_prev_pin(PinData_t cur_pin, PinData_t* const prev_pin);
 bool mcu_get_next_pin(PinData_t cur_pin, PinData_t* const next_pin);
 bool mcu_get_up_pin(PinData_t cur_pin, PinData_t* const up_pin);

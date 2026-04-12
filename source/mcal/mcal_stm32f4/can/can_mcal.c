@@ -95,10 +95,8 @@ static bool can_proc_error_status_ll(CanHandle_t* const Node) {
         Node->error = true;
     }
 
-
     return res;
 }
-
 
 static bool can_proc_status_tx_mail_box0_ll(CanHandle_t* const Node, CanReg_TSR_t TSR, uint8_t mb_num) {
     bool res = false;
@@ -117,8 +115,8 @@ static bool can_proc_status_tx_mail_box0_ll(CanHandle_t* const Node, CanReg_TSR_
     }
 
     if(TSR.RQCP0) {
-        //can_tx_indication(Node);
-        TSR.RQCP0=1;
+        // can_tx_indication(Node);
+        TSR.RQCP0 = 1;
         LOG_PARN(CAN, "CAN%u,RequestDone,MB%u", Node->num, mb_num);
     }
 
@@ -130,7 +128,7 @@ static bool can_proc_status_tx_mail_box0_ll(CanHandle_t* const Node, CanReg_TSR_
     if(TSR.TME0) {
         LOG_PARN(CAN, "CAN%u,Tx,MB%u,Empty", Node->num, mb_num);
     }
-    Node->CANx->TSR=TSR.dword;
+    Node->CANx->TSR = TSR.dword;
     return res;
 }
 
@@ -152,8 +150,8 @@ static bool can_proc_status_tx_mail_box1_ll(CanHandle_t* const Node, CanReg_TSR_
     }
 
     if(TSR.RQCP1) {
-        TSR.RQCP1=1;
-        //can_tx_indication(Node);
+        TSR.RQCP1 = 1;
+        // can_tx_indication(Node);
         LOG_PARN(CAN, "CAN%u,RequestDone,MB%u", Node->num, mb_num);
     }
 
@@ -164,7 +162,7 @@ static bool can_proc_status_tx_mail_box1_ll(CanHandle_t* const Node, CanReg_TSR_
     if(TSR.TME1) {
         LOG_PARN(CAN, "CAN%u,Tx,MB%u,empty", Node->num, mb_num);
     }
-    Node->CANx->TSR=TSR.dword;
+    Node->CANx->TSR = TSR.dword;
     return res;
 }
 
@@ -185,8 +183,8 @@ static bool can_proc_status_tx_mail_box2_ll(CanHandle_t* const Node, CanReg_TSR_
     }
 
     if(TSR.RQCP2) {
-        TSR.RQCP2=1;
-        //can_tx_indication(Node);
+        TSR.RQCP2 = 1;
+        // can_tx_indication(Node);
         LOG_PARN(CAN, "CAN%u,RequestDone,MB%u", Node->num, mb_num);
     }
 
@@ -198,29 +196,29 @@ static bool can_proc_status_tx_mail_box2_ll(CanHandle_t* const Node, CanReg_TSR_
     if(TSR.TME2) {
         LOG_PARN(CAN, "CAN%u,Tx,empty,MB%u", Node->num, mb_num);
     }
-    Node->CANx->TSR=TSR.dword;
+    Node->CANx->TSR = TSR.dword;
     return res;
 }
 
-static bool can_proc_status_rx_fifo_one_ll(CanHandle_t* const Node, uint8_t fifo_num){
+static bool can_proc_status_rx_fifo_one_ll(CanHandle_t* const Node, uint8_t fifo_num) {
     bool res = false;
     CanReg_RFxR_t RFxR;
     RFxR.dword = 0;
 
-    switch(fifo_num){
-        case 0: {
-            RFxR.dword = Node->CANx->RF0R;
-        }break;
-        case 1: {
-            RFxR.dword = Node->CANx->RF1R;
-        }break;
-        default: {
+    switch(fifo_num) {
+    case 0: {
+        RFxR.dword = Node->CANx->RF0R;
+    } break;
+    case 1: {
+        RFxR.dword = Node->CANx->RF1R;
+    } break;
+    default: {
 
-        }break;
+    } break;
     }
 
     if(RFxR.FMP) {
-        LOG_DEBUG(CAN, "CAN%u,FIFO%u,Messages:%u", Node->num,RFxR.FMP, fifo_num);
+        LOG_DEBUG(CAN, "CAN%u,FIFO%u,Messages:%u", Node->num, RFxR.FMP, fifo_num);
     }
 
     if(RFxR.FULL) {
@@ -231,13 +229,12 @@ static bool can_proc_status_rx_fifo_one_ll(CanHandle_t* const Node, uint8_t fifo
         LOG_DEBUG(CAN, "CAN%u,FIFO%u,OverRun", Node->num, fifo_num);
     }
 
-
     return res;
 }
 #endif
 
 #ifdef HAS_CAN_PROC
-static bool can_proc_status_rx_fifo_ll(CanHandle_t* const Node){
+static bool can_proc_status_rx_fifo_ll(CanHandle_t* const Node) {
     bool res = false;
     res = can_proc_status_rx_fifo_one_ll(Node, 0);
     res = can_proc_status_rx_fifo_one_ll(Node, 1);
@@ -288,7 +285,7 @@ static bool can_proc_status_ll(CanHandle_t* const Node) {
         hardware was in Sleep mode. Setting this bit generates a status change interrupt if the
         WKUIE bit in the CAN_IER register is set.
         This bit is cleared by software.*/
-        CAN_MSR.WKUI=0;
+        CAN_MSR.WKUI = 0;
         LOG_DEBUG(CAN, "CAN%u,Wake-up,Int", Node->num);
     }
 
@@ -313,10 +310,10 @@ static bool can_proc_status_ll(CanHandle_t* const Node) {
 #ifdef HAS_CAN_STM32
 uint32_t can_get_spare_mail_box(const uint8_t num) {
     uint32_t busy_cnt = 0;
-    CanHandle_t *Node = CanGetNode(num);
-    if (Node) {
+    CanHandle_t* Node = CanGetNode(num);
+    if(Node) {
         uint32_t m = 0;
-        for (m = 0; m < 3; m++) {
+        for(m = 0; m < 3; m++) {
             uint32_t tx_mailbox_code = CanMailBoxNumToCode(m);
             uint32_t status = HAL_CAN_IsTxMessagePending(&Node->Handle, tx_mailbox_code);
             busy_cnt += status;
@@ -327,18 +324,18 @@ uint32_t can_get_spare_mail_box(const uint8_t num) {
 #endif
 
 #ifdef HAS_LED_MONO
-static bool can_traffic_indication_ctrl(CanHandle_t *const Node) {
+static bool can_traffic_indication_ctrl(CanHandle_t* const Node) {
     bool res = false;
     uint32_t up_time_stamp = time_get_ms32();
 
     uint32_t diff_ms = up_time_stamp - Node->rx_time_stamp;
-    if (CAN_LED_MOVE_TIME_OUT_MS < diff_ms) {
-        res=led_mono_ctrl(Node->led_num_rx, false);
+    if(CAN_LED_MOVE_TIME_OUT_MS < diff_ms) {
+        res = led_mono_ctrl(Node->led_num_rx, false);
     }
 
     diff_ms = up_time_stamp - Node->tx_time_stamp;
-    if (CAN_LED_MOVE_TIME_OUT_MS < diff_ms) {
-        res=led_mono_ctrl(Node->led_num_tx, false);
+    if(CAN_LED_MOVE_TIME_OUT_MS < diff_ms) {
+        res = led_mono_ctrl(Node->led_num_tx, false);
     }
 
     return res;
@@ -352,16 +349,16 @@ static bool can_traffic_indication_ctrl(CanHandle_t *const Node) {
  * */
 int8_t can_filter_num_calc(const uint8_t can_num, const uint8_t filt_num) {
     int8_t real_filter = -1;
-    if ( CAN2_FILTER_NUM_FIRST <= filt_num) {
-        LOG_ERROR(CAN,"IllegalFilterNum:%d",filt_num);
+    if(CAN2_FILTER_NUM_FIRST <= filt_num) {
+        LOG_ERROR(CAN, "IllegalFilterNum:%d", filt_num);
     } else {
-        real_filter = (int8_t) filt_num;
-        if(2==can_num) {
+        real_filter = (int8_t)filt_num;
+        if(2 == can_num) {
             real_filter = filt_num + CAN2_FILTER_NUM_FIRST;
         }
     }
 
-    LOG_INFO(CAN,"CAN%u,NeedFilter:%u,RealFilter:%d",can_num,filt_num,real_filter);
+    LOG_INFO(CAN, "CAN%u,NeedFilter:%u,RealFilter:%d", can_num, filt_num, real_filter);
 
     return real_filter;
 }
@@ -371,16 +368,12 @@ int8_t can_filter_num_calc(const uint8_t can_num, const uint8_t filt_num) {
  * bus [1 2]
  * format [CAN_FRAME_ID_STANDARD CAN_FRAME_ID_EXTENDED]
  * filt_num  [0...13]*/
-bool can_mcal_filter_id_mask_set(
-        const uint8_t can_num,
-        const uint8_t filt_num,
-        const CanIdentifier_t format,
-        const uint32_t filt_id,
-        const uint32_t filt_mask) {
+bool can_mcal_filter_id_mask_set(const uint8_t can_num, const uint8_t filt_num, const CanIdentifier_t format,
+                                 const uint32_t filt_id, const uint32_t filt_mask) {
     bool res = false;
-    CanHandle_t *Node = CanGetNode(can_num);
-    if (Node) {
-        CAN_FilterTypeDef FilterExtIdMask = { 0 };
+    CanHandle_t* Node = CanGetNode(can_num);
+    if(Node) {
+        CAN_FilterTypeDef FilterExtIdMask = {0};
         FilterExtIdMask.FilterMode = CAN_FILTERMODE_IDMASK;
         FilterExtIdMask.FilterScale = CAN_FILTERSCALE_32BIT;
         FilterExtIdMask.FilterFIFOAssignment = CAN_FILTER_FIFO0;
@@ -392,13 +385,13 @@ bool can_mcal_filter_id_mask_set(
 
         FilterID.ZERO = 0;
         FilterID.RTR = 0;
-        FilterID.IDE =  CanIdTypeToFiltIDE(format);
+        FilterID.IDE = CanIdTypeToFiltIDE(format);
 
         FilterMask.ZERO = 0;
         FilterMask.RTR = 0;
-        FilterMask.IDE =  CanIdTypeToFiltIDE(format);
+        FilterMask.IDE = CanIdTypeToFiltIDE(format);
 
-        switch (format) {
+        switch(format) {
         case CAN_FRAME_ID_STANDARD: {
             FilterID.STD_ID = CAN_STD_ID_MAX_VAL & filt_id;
             FilterMask.STD_ID = filt_mask;
@@ -414,18 +407,18 @@ bool can_mcal_filter_id_mask_set(
 
         Type32Union_t Un32ID;
         Un32ID.u32 = FilterID.dword;
-        FilterExtIdMask.FilterIdHigh = (uint16_t) Un32ID.u16[1];
-        FilterExtIdMask.FilterIdLow = (uint16_t) Un32ID.u16[0];
+        FilterExtIdMask.FilterIdHigh = (uint16_t)Un32ID.u16[1];
+        FilterExtIdMask.FilterIdLow = (uint16_t)Un32ID.u16[0];
 
         Type32Union_t Un32Mask;
         Un32Mask.u32 = FilterMask.dword;
-        FilterExtIdMask.FilterMaskIdHigh = (uint16_t) Un32Mask.u16[1];
-        FilterExtIdMask.FilterMaskIdLow = (uint16_t) Un32Mask.u16[0];
+        FilterExtIdMask.FilterMaskIdHigh = (uint16_t)Un32Mask.u16[1];
+        FilterExtIdMask.FilterMaskIdLow = (uint16_t)Un32Mask.u16[0];
 
-        int8_t filter_num = can_filter_num_calc(can_num,  filt_num) ;
-        if(0<=filter_num) {
+        int8_t filter_num = can_filter_num_calc(can_num, filt_num);
+        if(0 <= filter_num) {
             HAL_StatusTypeDef ret = HAL_ERROR;
-            FilterExtIdMask.FilterBank = (uint32_t) filter_num;
+            FilterExtIdMask.FilterBank = (uint32_t)filter_num;
             ret = HAL_CAN_ConfigFilter(&Node->Handle, &FilterExtIdMask);
             res = HAL_retToRes(ret);
         }
@@ -443,14 +436,14 @@ bool can_proc_one(uint8_t num) {
     if(Node) {
 #ifdef HAS_CAN_STM32
         if(false == Node->interrupt_on) {
-            HAL_CAN_IRQHandler( &Node->Handle);
+            HAL_CAN_IRQHandler(&Node->Handle);
         }
         uint32_t err = HAL_CAN_GetError(&Node->Handle);
-        if (HAL_CAN_ERROR_NONE != err) {
+        if(HAL_CAN_ERROR_NONE != err) {
             if(HAL_CAN_ERROR_PARAM != err) {
-                LOG_ERROR(CAN, "CAN%u,Err:0x%08X=[%s]", num,err,HalCanErrorToStr(err));
+                LOG_ERROR(CAN, "CAN%u,Err:0x%08X=[%s]", num, err, HalCanErrorToStr(err));
             }
-            if(HAL_CAN_ERROR_PARAM==(HAL_CAN_ERROR_PARAM&err)){
+            if(HAL_CAN_ERROR_PARAM == (HAL_CAN_ERROR_PARAM & err)) {
                 Node->Handle.ErrorCode &= ~(HAL_CAN_ERROR_PARAM);
             }
         }
@@ -463,13 +456,13 @@ bool can_proc_one(uint8_t num) {
         if(Node->unproc_rx_message) {
             Node->rx_time_stamp = time_get_ms32();
 #ifdef HAS_LED_MONO
-            led_mono_sw_pwm(Node->led_num_rx, 10,50);
+            led_mono_sw_pwm(Node->led_num_rx, 10, 50);
 #endif
 
             LOG_NOTICE(CAN, "CAN%u,Rx:%s", num, CanMessageToStr(&Node->RxMessage));
             Node->unproc_rx_message = false;
 #ifdef HAS_CAN_DIFF
-            res= can_diff_proc_frame(&Node->RxMessage);
+            res = can_diff_proc_frame(&Node->RxMessage);
 #endif
 
 #ifdef HAS_CAN_RX_HIST
@@ -478,9 +471,9 @@ bool can_proc_one(uint8_t num) {
 
             /*Is allowed RX*/
 #ifdef HAS_ISO_TP
-            static IsoTpFrame_t RxFrame = {0};
-            memcpy(RxFrame.data, Node->RxMessage.data, 8);
-            res = iso_tp_proc_rx(num, Node->RxMessage.identifier.standard, &RxFrame);
+            // static IsoTpFrame_t RxFrame = {0};
+            // memcpy(RxFrame.data, Node->RxMessage.data, 8);
+            // res = iso_tp_proc_rx(num, Node->RxMessage.identifier.standard, &RxFrame);
 #endif
 
 #ifdef HAS_TBFP
@@ -494,7 +487,7 @@ bool can_proc_one(uint8_t num) {
         can_traffic_indication_ctrl(Node);
 #endif
         if(Node->error) {
-           // res = can_init_one(Node->num);
+            // res = can_init_one(Node->num);
         }
     }
     return res;
@@ -538,8 +531,6 @@ bool CanSegmentToStmSegment(const CanSegmentInfo_t* const Segment, CAN_InitTypeD
     Init->TimeSeg2 = CanPhase2ToTimeSeg2(Segment->phase_2); // - 1);
     return res;
 }
-
-
 
 uint8_t CanHandleToCanNum(const CAN_HandleTypeDef* const hcan) {
     uint8_t num = 0xff;
@@ -626,23 +617,24 @@ bool CanMessageToTxHeader(const CanMessage_t* const Message, CAN_TxHeaderTypeDef
 }
 
 #ifdef HAS_CAN_STM32
-bool can_mcal_transmit_message(uint8_t num, const CanMessage_t *const Message) {
+bool can_mcal_transmit_message(uint8_t num, const CanMessage_t* const Message) {
     bool res = false;
-    CanHandle_t *Node = CanGetNode(num);
-    if (Node) {
-        uint32_t spare_mail_box = 1;
+    LOG_DEBUG(CAN, "TrySendFrame:%s", CanMessageToStr(Message));
+    CanHandle_t* Node = CanGetNode(num);
+    if(Node) {
+        uint32_t spare_mail_box = 0;
         spare_mail_box = can_get_spare_mail_box(num);
-        if (spare_mail_box) {
+        if(spare_mail_box) {
             res = CanMessageToTxHeader(Message, &Node->TxHeader);
-            if (res) {
+            if(res) {
                 uint32_t tx_mail_box = CAN_TX_MAILBOX0;
                 HAL_StatusTypeDef ret = HAL_ERROR;
                 ret = HAL_CAN_AddTxMessage(&Node->Handle, &Node->TxHeader, Message->data, &tx_mail_box);
                 res = HAL_retToRes(ret);
-                if (res) {
-                    //Message->time_stamp = time_get_ms32();
+                if(res) {
+                    // Message->time_stamp = time_get_ms32();
 #ifdef HAS_CAN_DIAG
-                    LOG_DEBUG(CAN, "Tx:%s", CanMessageToStr(Message));
+                    LOG_DEBUG(CAN, "AddToTx:%s,Ok,Mb:%u", CanMessageToStr(Message), spare_mail_box);
 #endif
                 }
             }
@@ -672,8 +664,8 @@ bool can_init_filters(const CanConfig_t* const Config, CanHandle_t* const Node) 
 
     uint32_t i = 0;
     LOG_INFO(CAN, "FilterAllowRx,Cnt:%u,IDs", Config->rx_id_cnt);
-    if (Config->rx_id_cnt < 27) {
-        for (i = 0; i < Config->rx_id_cnt; i++) {
+    if(Config->rx_id_cnt < 27) {
+        for(i = 0; i < Config->rx_id_cnt; i++) {
             LOG_INFO(CAN, "FilterAllowRx,ID:0x%x", Config->rx_id[i]);
             CanRegFilter32Bit_t Filt2ExtId1;
             Filt2ExtId1.IDE = CanIdTypeToFiltIDE(CAN_FRAME_ID_EXTENDED);
@@ -691,27 +683,25 @@ bool can_init_filters(const CanConfig_t* const Config, CanHandle_t* const Node) 
 
             Type32Union_t Un32;
             Un32.u32 = Filt2ExtId1.dword;
-            canFilterConfig.FilterIdHigh = (uint16_t) Un32.u16[1];
-            canFilterConfig.FilterIdLow = (uint16_t) Un32.u16[0];
+            canFilterConfig.FilterIdHigh = (uint16_t)Un32.u16[1];
+            canFilterConfig.FilterIdLow = (uint16_t)Un32.u16[0];
 
             Un32.u32 = Filt2ExtId2.dword;
-            canFilterConfig.FilterMaskIdHigh = (uint16_t) Un32.u16[1];
-            canFilterConfig.FilterMaskIdLow = (uint16_t) Un32.u16[0];
-
+            canFilterConfig.FilterMaskIdHigh = (uint16_t)Un32.u16[1];
+            canFilterConfig.FilterMaskIdLow = (uint16_t)Un32.u16[0];
 
             int8_t filter_num = can_filter_num_calc(Config->num, i);
-            if(0<filter_num) {
+            if(0 < filter_num) {
                 HAL_StatusTypeDef ret;
                 canFilterConfig.FilterActivation = ENABLE;
                 canFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
-                canFilterConfig.FilterBank = (uint32_t) filter_num;
+                canFilterConfig.FilterBank = (uint32_t)filter_num;
                 canFilterConfig.SlaveStartFilterBank = CAN2_FILTER_NUM_FIRST;
                 canFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
                 canFilterConfig.FilterMode = CAN_FILTERMODE_IDLIST;
                 ret = HAL_CAN_ConfigFilter(&Node->Handle, &canFilterConfig);
                 res = HAL_retToRes(ret);
             }
-
         }
     }
 
@@ -756,7 +746,6 @@ bool can_init_filters(const CanConfig_t* const Config, CanHandle_t* const Node) 
     res = HAL_retToRes(ret);
 #endif
 
-
     return res;
 }
 #endif
@@ -770,7 +759,7 @@ bool can_init_filters(const CanConfig_t* const Config, CanHandle_t* const Node) 
  */
 bool can_mcal_baudrate_set(const uint8_t num, const uint32_t baudrate) {
     bool res = false;
-    can_phy_connect_ctrl( num, false);
+    can_phy_connect_ctrl(num, false);
 
     LOG_INFO(CAN, "CAN%u,Set,BaudRate:%u", num, baudrate);
     res = can_mode_set(num, CAN_STM_MODE_INITIALIZATION);
@@ -792,7 +781,7 @@ bool can_mcal_baudrate_set(const uint8_t num, const uint32_t baudrate) {
         can_mode_set(num, CAN_STM_MODE_NORMAL);
     }
 
-    can_phy_connect_ctrl( num, true);
+    can_phy_connect_ctrl(num, true);
     return res;
 }
 #ifdef HAS_CAN_STM32
@@ -819,8 +808,8 @@ bool can_init_notification(CanHandle_t* const Node) {
 bool can_rx_all(const uint8_t can_num) {
     bool res = false;
     LOG_WARNING(CAN, "CAN%u,RxAllId", can_num);
-    res = can_mcal_filter_id_mask_set( can_num, 0, CAN_FRAME_ID_STANDARD, 0, 0);
-    res = can_mcal_filter_id_mask_set( can_num, 1, CAN_FRAME_ID_EXTENDED, 0, 0) && res;
+    res = can_mcal_filter_id_mask_set(can_num, 0, CAN_FRAME_ID_STANDARD, 0, 0);
+    res = can_mcal_filter_id_mask_set(can_num, 1, CAN_FRAME_ID_EXTENDED, 0, 0) && res;
     return res;
 }
 
@@ -831,7 +820,7 @@ bool can_init_one(uint8_t num) {
     if(Config) {
         res = CanIsValidConfig(Config);
         if(res) {
-            res = can_interrupt_ctrl(num, false );
+            res = can_interrupt_ctrl(num, false);
 #ifdef HAS_CAN_DIAG
             LOG_WARNING(CAN, "%s", CanConfigToStr(Config));
 #endif
@@ -850,8 +839,8 @@ bool can_init_one(uint8_t num) {
                     res = can_config_to_init(Config, &Node->Handle.Init);
                     if(res) {
 #ifdef HAS_LED_MONO
-                        led_mono_ctrl(Node->led_num_rx, false );
-                        led_mono_ctrl(Node->led_num_tx, false );
+                        led_mono_ctrl(Node->led_num_rx, false);
+                        led_mono_ctrl(Node->led_num_tx, false);
 #endif
 
                         HAL_StatusTypeDef ret = HAL_ERROR;
@@ -861,7 +850,7 @@ bool can_init_one(uint8_t num) {
                         res = HAL_retToRes(ret);
                         if(res) {
                             res = can_init_filters(Config, Node);
-                            if(Config->rx_all){
+                            if(Config->rx_all) {
                                 can_rx_all(num);
                             }
                             ret = HAL_CAN_Start(&Node->Handle);

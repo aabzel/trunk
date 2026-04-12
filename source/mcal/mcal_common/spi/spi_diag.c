@@ -7,10 +7,14 @@
 #include "interfaces_diag.h"
 #include "log.h"
 #include "mcal_diag.h"
-#include "spi_custom_diag.h"
 #include "spi_mcal.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
+#ifdef HAS_SPI_CUSTOM
+#include "spi_custom_diag.h"
+#endif
+
 #ifdef HAS_DMA_CHANNEL
 #include "dma_channel_diag.h"
 #endif
@@ -33,9 +37,15 @@ const char* ChipSelectSignalToStr(ChipSelectSignal_t state) {
 const char* SpiPolarityToStr(SpiPolarity_t polarity) {
     const char* name = "?";
     switch(polarity) {
-    case SPI_POLARITY_LATCH_RISING:        name = "RISING";        break;
-    case SPI_POLARITY_LATCH_FALING:        name = "FALING";        break;
-    default:          name = "?";          break;
+    case SPI_POLARITY_LATCH_RISING:
+        name = "RISING";
+        break;
+    case SPI_POLARITY_LATCH_FALING:
+        name = "FALING";
+        break;
+    default:
+        name = "?";
+        break;
     }
     return name;
 }
@@ -43,9 +53,15 @@ const char* SpiPolarityToStr(SpiPolarity_t polarity) {
 const char* SpiBitOrderToStr(IfBitOrder_t bit_order) {
     const char* name = "?";
     switch(bit_order) {
-    case BIT_ORDER_MSB:        name = "Msb1st";        break;
-    case BIT_ORDER_LSB:        name = "Lsb1st";        break;
-    default:          name = "?";          break;
+    case BIT_ORDER_MSB:
+        name = "Msb1st";
+        break;
+    case BIT_ORDER_LSB:
+        name = "Lsb1st";
+        break;
+    default:
+        name = "?";
+        break;
     }
     return name;
 }
@@ -53,9 +69,15 @@ const char* SpiBitOrderToStr(IfBitOrder_t bit_order) {
 const char* SpiPhaseToStr(const SpiClkIdleLevel_t spi_phase) {
     const char* name = "?";
     switch(spi_phase) {
-        case SPI_CLK_IDLE_LEVEL_0:        name = "0";        break;
-        case SPI_CLK_IDLE_LEVEL_1:        name = "1";        break;
-        default:          name = "?";          break;
+    case SPI_CLK_IDLE_LEVEL_0:
+        name = "0";
+        break;
+    case SPI_CLK_IDLE_LEVEL_1:
+        name = "1";
+        break;
+    default:
+        name = "?";
+        break;
     }
     return name;
 }
@@ -77,7 +99,7 @@ const char* SpiChipSelModeToStr(ChipSelect_t chip_select) {
     switch(chip_select) {
     case SPI_CHIP_SEL_HW:        name = "HW";        break;
     case SPI_CHIP_SEL_SW:        name = "SW";        break;
-    default:          name = "?";          break;
+    default:        name = "?";        break;
     }
     return name;
 }
@@ -204,12 +226,14 @@ bool spi_diag_int(void) {
 
 bool spi_raw_reg_diag(uint8_t num) {
     bool res = false;
+#ifdef HAS_SPI_CUSTOM
     const SpiInfo_t* Info = SpiGetInfo(num);
     if(Info) {
         LOG_INFO(SPI, "SPI%u,Base:0x%p", num, Info->SPIx);
         uint32_t reg_cnt = spi_reg_cnt();
         res = debug_raw_reg_diag(SPI, (uint32_t)Info->SPIx, SpiRegs, reg_cnt);
     }
+#endif
 
     return res;
 }

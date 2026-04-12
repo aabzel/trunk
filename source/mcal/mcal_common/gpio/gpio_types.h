@@ -4,6 +4,7 @@
 #include "std_includes.h"
 #include "microcontroller_types.h"
 #include "gpio_const.h"
+
 #ifdef HAS_EXT_INT
 #include "ext_int_const.h"
 #endif
@@ -37,8 +38,10 @@ typedef struct {
 typedef struct {
     uint32_t mux; /*STM32-4byte, AT32-1byte*/
     Pad_t Pad;
-    uint8_t mcu_pin;
+    uint16_t mcu_pin;
+#ifdef HAS_TI
     uint8_t config_number;
+#endif
 #ifdef HAS_LOG
     char* name;
     char* function;

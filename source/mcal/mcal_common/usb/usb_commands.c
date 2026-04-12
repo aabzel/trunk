@@ -1,8 +1,8 @@
 #include "usb_commands.h"
 
-#include "usb_mcal.h"
 #include "convert.h"
 #include "log.h"
+#include "usb_mcal.h"
 
 bool usb_re_plug_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -15,7 +15,7 @@ bool usb_re_plug_command(int32_t argc, char* argv[]) {
     if(res) {
         res = usb_re_plug(num);
         log_info_res(USB, res, "RePlug");
-    }else {
+    } else {
         LOG_ERROR(UART, "Usage: urp Num");
     }
     return res;

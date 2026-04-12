@@ -304,14 +304,49 @@ bool gpio_mux_command(int32_t argc, char* argv[]) {
             }
         } break;
         case 3: {
-            LOG_INFO(GPIO, "Set,%s,Mux:%u", GpioPadToStr(pad), mux);
-            res = gpio_pin_mux_set(pad.port, pad.pin, mux);
+            LOG_INFO(GPIO, "TrySet,%s,Mux:%u", GpioPadToStr(pad), mux);
+            res = gpio_pad_mux_set(pad, mux);
         } break;
         default:
             break;
         }
     } else {
         LOG_ERROR(GPIO, "Usage: gm gpio_port gpio_pin mux");
+    }
+    return res;
+}
+
+bool gpio_mode_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    Pad_t Pad = {.byte = 0};
+    uint8_t mode = 0;
+
+    if(2 <= argc) {
+        res = parse_pad(argv, &Pad);
+        log_info_res(GPIO, res, "Pad");
+    }
+
+    if(3 <= argc) {
+        res = try_str2uint8(argv[2], &mode);
+        log_info_res(GPIO, res, "GetMux");
+    }
+
+    if(res) {
+        switch(argc) {
+        case 2: {
+            GpioApiMode_t mode = gpio_mode_get(Pad);
+            LOG_INFO(GPIO, "Get,%s,Mode:%s", GpioPadToStr(Pad), GpioModeToStr(mode));
+        } break;
+        case 3: {
+            LOG_INFO(GPIO, "Set,%s,Mode:%s", GpioPadToStr(Pad), GpioModeToStr(mode));
+            res = gpio_mode_set(Pad, (GpioApiMode_t)mode);
+            log_info_res(GPIO, res, "ModeSet");
+        } break;
+        default:
+            break;
+        }
+    } else {
+        LOG_ERROR(GPIO, "Usage: gmd port pin mode");
     }
     return res;
 }

@@ -9,7 +9,7 @@ ifneq ($(EXT_INT_CUSTOM_MK_INC),Y)
     INCDIR += -I$(EXT_INT_CUSTOM_DIR)
 
     SOURCES_C += $(EXT_INT_CUSTOM_DIR)/ext_int_mcal.c
-    MCAL_OPT += -DHAS_EXT_INT
+    MCAL_OPT += -DHAS_EXT_INT_CUSTOM
 
     EXT_INT_ISR=Y
 

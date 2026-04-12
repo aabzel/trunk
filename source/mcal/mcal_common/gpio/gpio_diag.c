@@ -462,3 +462,18 @@ bool GpioConfigDiag(const GpioConfig_t* const Config) {
     LOG_WARNING(GPIO, "%s", GpioConfigToStr(Config));
     return res;
 }
+
+const char* GpioPadsToStr(const Pad_t* const pPad, const uint32_t cnt) {
+    static char lText[250] = "";
+    strcpy(lText, "");
+    if(pPad) {
+        if(cnt) {
+            uint32_t b = 0;
+            for (b = 0; b < cnt; b++) {
+                snprintf(lText, sizeof(lText), "%s%s,", lText, GpioPadToStr(pPad[b]));
+            }
+        }
+    }
+    return lText;
+}
+

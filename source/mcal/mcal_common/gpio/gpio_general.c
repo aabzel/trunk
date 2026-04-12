@@ -160,6 +160,12 @@ _WEAK_FUN_ bool gpio_pin_mux_set(GpioPort_t port, uint8_t pin, uint8_t mux) {
     return res;
 }
 
+_WEAK_FUN_
+bool gpio_pad_mux_set(const Pad_t Pad, const uint8_t mux) {
+    bool res = false;
+    return res;
+}
+
 _WEAK_FUN_ bool gpio_pin_fun_get(Pad_t Pad, GpioPinFunction_t* const function) {
     bool res = false;
     return res;
@@ -253,7 +259,6 @@ bool gpio_mcal_init(void) {
     return res;
 }
 
-#ifdef HAS_GPIO_EXT
 const GpioConfig_t* gpio_get_config(Pad_t pad) {
     const GpioConfig_t* ConfNode = NULL;
     uint32_t cnt = gpio_get_cnt();
@@ -266,6 +271,7 @@ const GpioConfig_t* gpio_get_config(Pad_t pad) {
     }
     return ConfNode;
 }
+#ifdef HAS_GPIO_EXT
 #endif
 
 #ifdef HAS_GPIO_EXT
@@ -284,11 +290,11 @@ _WEAK_FUN_ GpioPullMode_t gpio_pull_get(Pad_t Pad) {
 }
 #endif
 
-#ifdef HAS_GPIO_EXT
 _WEAK_FUN_ bool gpio_dir_set(Pad_t Pad, GpioDir_t dir) {
     /*This function must be implemented in in platform specific code*/
     return false;
 }
+#ifdef HAS_GPIO_EXT
 #endif
 
 #ifdef HAS_GPIO_EXT
@@ -349,6 +355,46 @@ bool GpioProcReadHi(GpioLogicLevel_t active) {
 }
 #endif
 
+bool gpio_init_pad(const Pad_t Pad) {
+    bool res = false;
+    const GpioConfig_t* Config = gpio_get_config(Pad);
+    if(Config) {
+        res = gpio_init_one(Config);
+    }
+    return res;
+}
+
+
+
+bool gpio_init_out(const Pad_t Pad) {
+    bool res = false;
+    GpioConfig_t Config = {0};
+
+    Config.mux = 0;
+    Config.Pad = Pad;
+    Config.mcu_pin = 0xFFFF;
+    Config.dir = GPIO_DIR_OUT_PUSH_PULL;
+    Config.speed = GPIO_SPEED_MEDIUM_SPEED;
+    Config.pull = GPIO__PULL_AIR;
+    Config.mode = GPIO_API_MODE_GPIO;
+    Config.drive_select = GPIO_DRIVE_SELECT_2MA;
+    Config.logic_level = GPIO_LVL_LOW;
+#ifdef HAS_EXT_INT
+    Config.edge = PIN_INT_EDGE_NONE;
+#endif
+
+#ifdef HAS_LOG
+    Config.name = "?";
+    Config.function = "?";
+    Config.connector1 = "?";
+    Config.connector2 = "?";
+    Config.testable = "?";
+#endif
+
+    res = gpio_init_one(&Config);
+    return res;
+}
+
 #ifdef HAS_GPIO_EXT
 /*can be called from ISR*/
 _WEAK_FUN_
@@ -392,7 +438,6 @@ bool gpio_is_valid_pull(GpioPullMode_t pull) {
 }
 #endif
 
-#ifdef HAS_GPIO_EXT
 bool gpio_is_valid_mode(GpioApiMode_t mode) {
     bool res = false;
     switch(mode) {
@@ -413,9 +458,9 @@ bool gpio_is_valid_mode(GpioApiMode_t mode) {
     }
     return res;
 }
+#ifdef HAS_GPIO_EXT
 #endif
 
-#ifdef HAS_GPIO_EXT
 bool gpio_is_pin_single(const Pad_t Pad) {
     bool res = false;
     uint32_t i = 0, pin_cnt = 0;
@@ -433,12 +478,13 @@ bool gpio_is_pin_single(const Pad_t Pad) {
     }
     return res;
 }
+#ifdef HAS_GPIO_EXT
 #endif
 
 bool GpioIsValidConfig(const GpioConfig_t* const Config) {
     bool res = false;
     bool out_res = true;
-    (void) res;
+    (void)res;
     if(Config) {
         res = true;
 #ifdef HAS_GPIO_EXT

@@ -3,15 +3,15 @@
 #include <ctype.h>
 #include <stdio.h>
 
+#include "code_generator.h"
 #include "data_utils.h"
 #include "log.h"
 #include "none_blocking_pause.h"
+#include "string_reader_const.h"
 #include "usb_device_types.h"
 #include "usb_mcal.h"
-#include "string_reader_const.h"
 #include "usbd_cdc.h"
 #include "usbd_core.h"
-#include "code_generator.h"
 
 #ifdef HAS_USB_FS
 #include "usbd_fs_cdc_if.h"
@@ -31,8 +31,8 @@
 #endif
 
 #ifdef HAS_PCAN_PRO
-#include "usb_device_pcan_desc.h"
 #include "pcanpro_usbd.h"
+#include "usb_device_pcan_desc.h"
 #endif
 
 #ifdef HAS_HID
@@ -46,45 +46,45 @@
 
 uint8_t usb_device_speed_to_id(const UsbSpeed_t speed) {
     uint8_t id = DEVICE_FS;
-    switch (speed) {
-        case USB_MCAL_SPEED_FS:
-            id = DEVICE_FS;
-            break;
-        case USB_MCAL_SPEED_HS:
-            id = DEVICE_HS;
-            break;
-        default:
-            id = DEVICE_FS;
-            break;
+    switch(speed) {
+    case USB_MCAL_SPEED_FS:
+        id = DEVICE_FS;
+        break;
+    case USB_MCAL_SPEED_HS:
+        id = DEVICE_HS;
+        break;
+    default:
+        id = DEVICE_FS;
+        break;
     }
     return id;
 }
 
 bool usb_device_status_to_res(const USBD_StatusTypeDef status) {
     bool res = false;
-    switch (status) {
-        case USBD_OK:
-            res = true;
-            break;
-        case USBD_BUSY:
-            res = false;
-            break;
-        case USBD_EMEM:
-            res = false;
-            break;
-        case USBD_FAIL:
-            res = false;
-            break;
-        default:
-            res = false;
-            break;
+    switch(status) {
+    case USBD_OK:
+        res = true;
+        break;
+    case USBD_BUSY:
+        res = false;
+        break;
+    case USBD_EMEM:
+        res = false;
+        break;
+    case USBD_FAIL:
+        res = false;
+        break;
+    default:
+        res = false;
+        break;
     }
     return res;
 }
 
 USBD_StatusTypeDef usb_device_res_to_ret(const bool res) {
     USBD_StatusTypeDef status = USBD_FAIL;
-    if(res){
+    if(res) {
         status = USBD_OK;
     }
     return status;
@@ -95,34 +95,34 @@ USBD_StatusTypeDef usb_device_res_to_ret(const bool res) {
 uint32_t key_insert_timeout_ms = BUTTON_INSERT_TIMEOUT_MS;
 
 USBD_HandleTypeDef* UsbDeviceGetHandle(const uint8_t num) {
-    USBD_HandleTypeDef *pHandle = NULL;
-    UsbHandle_t *Node = UsbGetNode(num);
-    if (Node) {
+    USBD_HandleTypeDef* pHandle = NULL;
+    UsbHandle_t* Node = UsbGetNode(num);
+    if(Node) {
         pHandle = &Node->hUsbDevice;
     }
     return pHandle;
 }
 
 PCD_HandleTypeDef* UsbDeviceGetPcdHandle(const uint8_t num) {
-    PCD_HandleTypeDef *pPcdHandle = NULL;
-    UsbHandle_t *Node = UsbGetNode(num);
-    if (Node) {
+    PCD_HandleTypeDef* pPcdHandle = NULL;
+    UsbHandle_t* Node = UsbGetNode(num);
+    if(Node) {
         pPcdHandle = &Node->PcdHandle;
     }
     return pPcdHandle;
 }
 
 #ifdef HAS_MSC
-static bool usb_device_init_msd(UsbHandle_t *const Node) {
+static bool usb_device_init_msd(UsbHandle_t* const Node) {
     bool res = false;
     USBD_StatusTypeDef status = USBD_FAIL;
     status = USBD_RegisterClass(&Node->hUsbDevice, &USBD_MSC);
-    res = usb_device_status_to_res( status);
-    if (res) {
+    res = usb_device_status_to_res(status);
+    if(res) {
         LOG_INFO(USB_DEVICE, "RegMSCOk");
         status = USBD_MSC_RegisterStorage(&Node->hUsbDevice, &USBD_Storage_Interface_fops_HS);
-        res = usb_device_status_to_res( status);
-        if (res) {
+        res = usb_device_status_to_res(status);
+        if(res) {
             LOG_INFO(USB_DEVICE, "MSCRegStoreOk");
         }
     }
@@ -135,11 +135,11 @@ static bool usb_devise_register_class(UsbHandle_t* const Node) {
     USBD_StatusTypeDef status = USBD_FAIL;
 
 #ifdef HAS_USB_SERIAL
-    status = USBD_RegisterClass((USBD_HandleTypeDef*) &Node->hUsbDevice, &USBD_CDC);
+    status = USBD_RegisterClass((USBD_HandleTypeDef*)&Node->hUsbDevice, &USBD_CDC);
 #endif
 
 #ifdef HAS_PCAN_PRO
-    status = USBD_RegisterClass( &Node->hUsbDevice, &usbd_pcanpro ) ;
+    status = USBD_RegisterClass(&Node->hUsbDevice, &usbd_pcanpro);
 #endif
     res = usb_device_status_to_res(status);
     return res;
@@ -165,7 +165,7 @@ static bool usb_devise_register_interface(UsbHandle_t* const Node) {
     return res;
 }
 
-bool usb_device_proc_one(uint8_t num){
+bool usb_device_proc_one(uint8_t num) {
     bool res = false;
     LOG_PARN(USB_DEVICE, "Proc:%u", num);
 #ifdef HAS_USB_SERIAL
@@ -178,32 +178,32 @@ bool usb_device_init(uint8_t num) {
     bool res = false;
     LOG_WARNING(USB_DEVICE, "Init:%u", num);
     USBD_StatusTypeDef status = USBD_FAIL;
-    UsbHandle_t *Node = UsbGetNode(num);
-    if (Node) {
+    UsbHandle_t* Node = UsbGetNode(num);
+    if(Node) {
         key_insert_timeout_ms = BUTTON_INSERT_TIMEOUT_MS;
-        const UsbConfig_t *Config = UsbGetConfig(num);
-        if (Config) {
+        const UsbConfig_t* Config = UsbGetConfig(num);
+        if(Config) {
             res = UsbIsValidConfig(Config);
         }
 
-        if (res) {
+        if(res) {
             res = false;
             uint8_t id = usb_device_speed_to_id(Config->speed);
-            if (Node->Descriptors) {
-                status = USBD_Init((USBD_HandleTypeDef*) &Node->hUsbDevice,
-                        (USBD_DescriptorsTypeDef*) Node->Descriptors, id);
+            if(Node->Descriptors) {
+                status =
+                    USBD_Init((USBD_HandleTypeDef*)&Node->hUsbDevice, (USBD_DescriptorsTypeDef*)Node->Descriptors, id);
                 res = usb_device_status_to_res(status);
-                if (res) {
+                if(res) {
                     LOG_INFO(USB_DEVICE, "DevInitOk");
                     res = true;
                 }
             }
         }
 
-        if (res) {
+        if(res) {
             res = usb_devise_register_class(Node);
         }
-        if (res) {
+        if(res) {
             res = usb_devise_register_interface(Node);
         }
 
@@ -227,7 +227,7 @@ bool usb_device_init(uint8_t num) {
         HAL_Delay( 1000 );
 #endif
 
-        if (res) {
+        if(res) {
             status = USBD_Start(&Node->hUsbDevice);
             res = usb_device_status_to_res(status);
             log_info_res(USB_DEVICE, res, "DevStart");
@@ -236,7 +236,6 @@ bool usb_device_init(uint8_t num) {
 #ifdef HAS_USB_SERIAL
         res = usb_serial_init_one(num);
 #endif
-
     }
     return res;
 }
@@ -250,4 +249,3 @@ bool HID_IsIdle(USBD_HandleTypeDef* pdev) {
     return res;
 }
 #endif
-

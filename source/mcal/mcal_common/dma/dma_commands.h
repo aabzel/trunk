@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
 #ifndef HAS_DMA_COMMANDS
 #include "dma_custom_commands.h"

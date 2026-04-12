@@ -8,8 +8,7 @@ extern "C" {
 #include "std_includes.h"
 #include "pwm_mcal.h"
 
-
-#ifndef HAS_PWM_CUSTOM_COMMANDS
+#ifdef HAS_PWM_CUSTOM_COMMANDS
 #include "pwm_custom_commands.h"
 #else
 #define PWM_CUSTOM_COMMANDS

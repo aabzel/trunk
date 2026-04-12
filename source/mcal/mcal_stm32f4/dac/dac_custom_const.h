@@ -1,0 +1,8 @@
+#ifndef DAC_CUSTOM_CONST_H
+#define DAC_CUSTOM_CONST_H
+
+#define DAC_CUSTOM_DRV_VER 1
+#define DAC_MAX_CODE 4095
+#define DAC_V_REF 3.3f
+
+#endif /* DAC_CUSTOM_CONST_H  */

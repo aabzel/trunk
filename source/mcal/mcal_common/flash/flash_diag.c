@@ -238,7 +238,7 @@ bool flash_scan_diag(uint32_t mem_start, uint32_t mem_size) {
     uint32_t spare = 0;
     uint32_t busy = 0;
     LOG_INFO(LG_FLASH, "Start:0x%08x,Size:%u Byte", mem_start, mem_size);
-   // res = mem_scan((uint8_t*)mem_start, mem_size, &usage_pec, &spare, &busy);
+    // res = mem_scan((uint8_t*)mem_start, mem_size, &usage_pec, &spare, &busy);
     log_res(LG_FLASH, res, "Scan");
     if(res) {
         LOG_INFO(LG_FLASH, "usage:[%s] %%", FloatToStr(usage_pec, 3));

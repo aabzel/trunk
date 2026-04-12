@@ -3,11 +3,11 @@
 
 #ifndef HAS_SUPER_CYCLE
 #error "+HAS_SUPER_CYCLE"
-#endif /*HAS_SUPER_CYCLE*/
+#endif
 
 #ifndef HAS_SUPER_CYCLE_DIAG
 #error "+HAS_SUPER_CYCLE_DIAG"
-#endif /*HAS_SUPER_CYCLE*/
+#endif
 
 #include <stdbool.h>
 

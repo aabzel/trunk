@@ -11,7 +11,6 @@ bool spi_read_interrupt(uint8_t num, uint8_t* const data, uint32_t size) {
         Node->rx_done = false;
         Node->operation = INTERFACE_OPERATION_RECEPTION;
         if(data) {
-
             HAL_StatusTypeDef ret = HAL_ERROR;
             ret = HAL_SPI_Receive_IT(&Node->handle, data, size);
             if(HAL_OK == ret) {

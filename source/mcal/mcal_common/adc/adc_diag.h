@@ -5,23 +5,20 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
+#include "adc_types.h"
 
 #ifdef HAS_ADC_CUSTOM
 #include "adc_custom_diag.h"
 #endif
 
-#include "adc_types.h"
-
 const char* AdcConfigToStr(const AdcConfig_t* const Config);
-const char* AdcNodeToStr(const AdcHandle_t* const Node);
 const char* AdcChannelConfigToStr(const AdcChannelConfig_t* const Config);
+const char* AdcChannelToStr(uint8_t channel);
+const char* AdcNodeToStr(const AdcHandle_t* const Node);
+const char* AdcNumToStr(uint8_t adc_num);
+
 bool AdcDiagConfigChannel(AdcChannelConfig_t* const Config);
-
-const char* AdcNum2Str(uint8_t adr_num);
-const char* AdcChannel2Str(uint8_t channel);
-
 bool adc_channel_diag(const char* const key_word1, const char* const key_word2);
 bool adc_diag_isr(const char* const key_word1, const char* const key_word2);
 bool adc_diag(const char* const key1, const char* const key2);

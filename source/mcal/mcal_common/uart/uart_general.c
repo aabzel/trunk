@@ -7,11 +7,11 @@
 #include "compiler_const.h"
 #include "data_utils.h"
 #include "interrupt_mcal.h"
-#include "time_mcal.h"
 #include "log_config.h"
-#include "utils_math.h"
 #include "std_includes.h"
+#include "time_mcal.h"
 #include "uart_config.h"
+#include "utils_math.h"
 
 #ifdef HAS_LOG
 #include "log.h"
@@ -806,29 +806,21 @@ bool UartIsValidConfig(const UartConfig_t* const Config) {
     if(Config) {
         res = true;
 
-        ifn(Config->baud_rate) {
-            res = false; }
+        ifn(Config->baud_rate) { res = false; }
 
-        ifn(Config->momve_method) {
-            res = false; }
+        ifn(Config->momve_method) { res = false; }
 
-        ifn(Config->rx_buff_size) {
-            res = false; }
+        ifn(Config->rx_buff_size) { res = false; }
 
-        ifn(Config->tx_buff_size) {
-            res = false; }
+        ifn(Config->tx_buff_size) { res = false; }
 
-        ifn(Config->RxFifoArray) {
-            res = false; }
+        ifn(Config->RxFifoArray) { res = false; }
 
-        ifn(Config->TxFifoArray) {
-            res = false; }
+        ifn(Config->TxFifoArray) { res = false; }
 
-        ifn(Config->stop_bit_cnt) {
-            res = false; }
+        ifn(Config->stop_bit_cnt) { res = false; }
 
-        ifn(Config->word_len_bit) {
-            res = false; }
+        ifn(Config->word_len_bit) { res = false; }
     }
     return res;
 }

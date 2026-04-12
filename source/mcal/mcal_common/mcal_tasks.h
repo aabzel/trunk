@@ -232,11 +232,13 @@
 #ifdef HAS_SPI_PROC
 #include "spi_mcal.h"
 
-#define SPI_TASKS {.name = "SPI",                    \
-                   .period_us = SPI_POLL_PERIOD_US,                    \
-				   .limiter.function = spi_proc,},
+#define SPI_TASK {                                          \
+        .period_us = SPI_POLL_PERIOD_US,                    \
+        .limiter.function = spi_proc,                       \
+        .name = "SPI",                                      \
+          },
 #else
-#define SPI_TASKS
+#define SPI_TASK
 #endif
 
 #ifdef HAS_SPIFI_PROC
@@ -290,7 +292,7 @@
     I2S_FULL_DUPLEX_TASKS               \
     MAILBOX1_TASK                       \
     SDIO_TASK                           \
-    SPI_TASKS                           \
+    SPI_TASK                           \
     SPIFI_TASKS                         \
     UART_TASKS                          \
     USB_MCAL_TASKS

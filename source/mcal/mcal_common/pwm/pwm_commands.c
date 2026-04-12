@@ -106,7 +106,7 @@ bool pwm_duty_command(int32_t argc, char* argv[]) {
         } break;
         default: {
             res = false;
-        }break;
+        } break;
         }
     } else {
         LOG_ERROR(PWM, "Usage: pdu Num Duty");
@@ -204,7 +204,7 @@ bool pwm_frequency_command(int32_t argc, char* argv[]) {
         } break;
         default: {
             res = false;
-        }break;
+        } break;
         }
     } else {
         LOG_ERROR(PWM, "Usage: pf PwmNum FrequencyHz");

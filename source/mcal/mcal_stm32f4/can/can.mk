@@ -30,9 +30,10 @@ ifneq ($(CAN_CUSTOM_MK_INC),Y)
         # $(error CAN_STM32=$(CAN_STM32))
         MCAL_OPT += -DHAS_CAN_STM32
     endif
+    
     SOURCES_C += $(CAN_CUSTOM_DIR)/can_mcal.c
 
-    ifeq ($(CLI),Y)
+    ifeq ($(DIAG),Y)
         ifeq ($(CAN_DIAG),Y)
             MCAL_OPT += -DHAS_CAN_CUSTOM_DIAG
             SOURCES_DIAG_C += $(CAN_CUSTOM_DIR)/can_custom_diag.c

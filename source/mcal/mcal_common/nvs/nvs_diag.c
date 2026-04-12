@@ -7,7 +7,10 @@
 #include "log.h"
 #include "nvs_mcal.h"
 #include "macro_utils.h"
+
+#ifdef HAS_NVS_CUSTOM
 #include "nvs_custom_diag.h"
+#endif
 
 #ifdef HAS_CRC16
 #include "crc16_ccitt.h"
@@ -38,7 +41,10 @@ const char* NvsNodeToStr(const NvsHandle_t* const Node) {
 
 bool nvs_diag_one(uint8_t num) {
     bool res = false;
+#ifdef HAS_NVS_CUSTOM
     res = nvs_custom_diag_one(num);
+#endif
+
 #ifdef HAS_CRC16
     uint16_t crc16_data = nvs_calc_crc16(num);
     LOG_INFO(NVS, "NSV%u,CRC16:0x%04X", num, crc16_data);

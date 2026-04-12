@@ -2,6 +2,7 @@
 #define CLOCK_DIAG_H
 
 #include "clock_types.h"
+
 #ifdef HAS_CLOCK_CUSTOM_DIAG
 #include "clock_custom_diag.h"
 #endif

@@ -130,6 +130,7 @@ typedef struct {
     IfOperation_t operation;
     uint32_t busy_time_out;
     bool init;
+    bool processed;
 } SpiHandle_t;
 
 typedef struct {

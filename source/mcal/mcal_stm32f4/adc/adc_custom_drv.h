@@ -6,10 +6,8 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "adc_drv.h"
+#include "std_includes.h"
+#include "adc_mcal.h"
 #include "adc_custom_const.h"
 #include "adc_custom_types.h"
 #include "adc_types.h"

@@ -1,7 +1,7 @@
 #include "usb_mcal.h"
 
-#include "usb_config.h"
 #include "code_generator.h"
+#include "usb_config.h"
 
 #ifdef HAS_USB_SERIAL
 #include "usb_serial.h"
@@ -30,13 +30,12 @@ static const UsbInfo_t UsbInfo[] = {
 
 COMPONENT_GET_INFO(Usb)
 
-
 bool usb_device_mcal_init(void) {
     LOG_INFO(USB, "DevInit");
     bool res = false;
 
 #ifdef HAS_USB_SERIAL
-    //res = usb_serial_init(1);
+    // res = usb_serial_init(1);
 #endif
 
 #ifdef HAS_USB_DEVICE
@@ -46,22 +45,23 @@ bool usb_device_mcal_init(void) {
     return res;
 }
 
-bool usb_init_clock(const UsbHandle_t* const Node ){
+bool usb_init_clock(const UsbHandle_t* const Node) {
     bool res = false;
-    switch(Node->device_speed){
-    case USB_DEVICE_SPEED_FS:{
+    switch(Node->device_speed) {
+    case USB_DEVICE_SPEED_FS: {
         __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
     } break;
-    case USB_DEVICE_SPEED_HS:{
+    case USB_DEVICE_SPEED_HS: {
         __HAL_RCC_USB_OTG_HS_CLK_ENABLE();
     } break;
-    default : res = false; break;
+    default:
+        res = false;
+        break;
     }
     return res;
 }
 
-bool usb_init_common(const UsbConfig_t* const Config,
-                     UsbHandle_t* const Node) {
+bool usb_init_common(const UsbConfig_t* const Config, UsbHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
@@ -81,7 +81,6 @@ bool usb_init_common(const UsbConfig_t* const Config,
     return res;
 }
 
-
 bool usb_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(USB, "USB%u", num);
@@ -94,22 +93,23 @@ bool usb_init_one(uint8_t num) {
 #endif
             UsbHandle_t* Node = UsbGetNode(num);
             if(Node) {
-                res = usb_init_common(Config,Node);
+                res = usb_init_common(Config, Node);
 
                 switch(Node->role) {
-                    case USB_MCAL_ROLE_HOST: {
+                case USB_MCAL_ROLE_HOST: {
 #ifdef HAS_USB_HOST
-                        res = usb_host_init();
+                    res = usb_host_init();
 #endif
 
-                    }break;
-                    case USB_MCAL_ROLE_DEVICE: {
+                } break;
+                case USB_MCAL_ROLE_DEVICE: {
 #ifdef HAS_USB_DEVICE
-                       res = usb_device_init(num);
+                    res = usb_device_init(num);
 #endif
 
-                    }break;
-                    default: break;
+                } break;
+                default:
+                    break;
                 }
                 Node->valid = true;
                 Node->init = true;

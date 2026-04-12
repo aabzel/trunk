@@ -1,15 +1,15 @@
 #ifndef ADC_DRIVER_GENERAL_API_H
 #define ADC_DRIVER_GENERAL_API_H
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "adc_types.h"
 #include "adc_config.h"
 #include "gpio_types.h"
+
 #ifdef HAS_ADC_DIAG
 #include "adc_diag.h"
 #endif
@@ -25,7 +25,9 @@ bool adc_proc_one(uint8_t num);
 bool adc_channel_proc(void);
 void AdcConvCpltCallback(AdcHandle_t* Node) ;
 
+#ifdef HAS_ADC_CUSTOM
 const AdcChannelInfo_t* AdcChannelToInfo(uint8_t adc_num, AdcChannel_t channel) ;
+#endif
 
 /*ADC*/
 const AdcConfig_t* AdcGetConfig(AdcNum_t adc_num);
@@ -33,7 +35,8 @@ AdcHandle_t* AdcGetNode(AdcNum_t adc_num);
 /*Channel*/
 const AdcChannelConfig_t* AdcChannelGetConfig(uint8_t num);
 const AdcChannelConfig_t* AdcChannelGetConfigV2(AdcNum_t adc_num, AdcChannel_t channel);
-bool AdcChannelGetVoltage(uint8_t node_num, double* const voltage_scale);
+bool AdcChannelGetVoltage(uint8_t node_num, float* const voltage_scale);
+
 AdcChannelHandle_t* AdcChannelGetNodeV2(AdcNum_t adc_num, AdcChannel_t channel);
 AdcChannelHandle_t* AdcChannelGetNode(uint8_t num);
 
@@ -54,20 +57,22 @@ uint32_t AdcCode2mV(AdcNum_t adc_num, AdcChannel_t channel, int32_t code);
 
 
 /*Get*/
+float AdcCode2Voltage(const int32_t code);
+bool adc_code_to_params(AdcChannelHandle_t* const Channel) ;
 bool adc_is_valid_num(AdcNum_t adc_num);
 AdcChannel_t AdcPad2Channel(Pad_t pad);
 bool adc_is_valid_channel(AdcChannel_t channel);
 bool adc_channel_read_code(AdcNum_t adc_num, AdcChannel_t channel, int32_t* const code);
-bool adc_channel_read_voltage(AdcNum_t adc_num, AdcChannel_t channel, double* const voltage);
+bool adc_channel_read_voltage(AdcNum_t adc_num, AdcChannel_t channel, float* const voltage);
 bool adc_pad_read_code(Pad_t pad, int32_t* code);
-bool adc_pad_read_voltage(Pad_t pad, double* const voltage);
-double adc_channel_read_voltage_short(AdcNum_t adc_num, AdcChannel_t channel);
-double adc_pad_read_voltage_short(Pad_t pad);
-double AdcChannelGetVoltageScale(uint8_t num);
+bool adc_pad_read_voltage(Pad_t pad, float* const voltage);
+float adc_channel_read_voltage_short(AdcNum_t adc_num, AdcChannel_t channel);
+float adc_pad_read_voltage_short(Pad_t pad);
+float AdcChannelGetVoltageScale(uint8_t num);
 
 /*setters*/
 bool adc_start(uint8_t num );
-bool adc_set_vref(uint8_t adc_num, double v_ref_voltage);
+bool adc_set_vref(uint8_t adc_num, float v_ref_voltage);
 
 
 

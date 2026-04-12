@@ -6,16 +6,18 @@
 #include "compiler_const.h"
 #include "data_utils.h"
 #include "float_utils.h"
-#ifdef HAS_LOG
-#include "log.h"
-#endif
 #include "microcontroller_const.h"
 #include "std_includes.h"
 #include "time_mcal.h"
 #include "timer_config.h"
 #include "timer_utils.h"
+
 #ifdef HAS_DEBUGGER
 #include "debugger.h"
+#endif
+
+#ifdef HAS_LOG
+#include "log.h"
 #endif
 
 COMPONENT_GET_NODE(Timer, timer)
@@ -89,43 +91,46 @@ uint32_t timer_get_ms(uint8_t num) {
 
 _WEAK_FUN_ uint32_t timer_get_auto_reload(uint8_t num) {
 #ifdef HAS_LOG
-    LOG_DEBUG(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_DEBUG(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return 0;
 }
 
 _WEAK_FUN_ bool timer_init_one(uint8_t num) {
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
     return false;
+}
+
+_WEAK_FUN_
+uint32_t timer_period_get(uint8_t num) {
+    uint32_t period = 0;
+    return period;
 }
 
 _WEAK_FUN_ TimerDir_t timer_dir_get(uint8_t num) {
 #ifdef HAS_LOG
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return TIMER_CNT_DIR_UNDEF;
 }
 
 _WEAK_FUN_ uint8_t timer_bitness_get(uint8_t num) {
 #ifdef HAS_LOG
-
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return 0;
 }
 
 _WEAK_FUN_ bool timer_compare_set(uint8_t num, TimerCapComChannel_t channel, uint32_t compare_value) {
 #ifdef HAS_LOG
-
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return false;
 }
 
 _WEAK_FUN_ bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bool on_off) {
 #ifdef HAS_LOG
-
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return false;
 }
@@ -133,36 +138,94 @@ _WEAK_FUN_ bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bo
 _WEAK_FUN_ bool timer_out_channel_pad_get(uint8_t num, TimerCapComChannel_t channel, Pad_t* const Pad) {
 #ifdef HAS_LOG
 
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return false;
+}
+
+_WEAK_FUN_
+int32_t timer_bus_clock_get(uint8_t num) {
+    int32_t clock_hz = -1;
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
+    return clock_hz;
+}
+
+_WEAK_FUN_
+bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel) {
+    int32_t clock_hz = -1;
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
+    return clock_hz;
 }
 
 /*comparator values*/
 _WEAK_FUN_ uint32_t timer_get_cc_val(uint8_t num, TimerCapComChannel_t chaneel) {
 #ifdef HAS_LOG
-
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return 0;
+}
+
+_WEAK_FUN_
+uint32_t timer_prescaler_get(uint8_t num) {
+    uint32_t prescaler = 0xFF;
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
+    return prescaler;
+}
+
+_WEAK_FUN_
+bool timer_ctrl(uint8_t num, bool on_off) {
+    bool res = false;
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
+    return res;
+}
+
+_WEAK_FUN_
+bool timer_get_status(uint8_t num) {
+    uint8_t status = 0xFF;
+    return status;
 }
 
 _WEAK_FUN_ uint32_t timer_ccc_val_get(uint8_t num, TimerCapComChannel_t chaneel) {
 #ifdef HAS_LOG
-
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return 0;
+}
+
+_WEAK_FUN_
+ClockBus_t timer_clock_bus_name_get(const uint8_t num) {
+    ClockBus_t clock_bus = CLOCK_BUS_UNDEF;
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
+    return clock_bus;
 }
 
 _WEAK_FUN_ uint32_t timer_counter_get(uint8_t num) {
 #ifdef HAS_LOG
-
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return 0;
 }
 
+_WEAK_FUN_
+bool timer_period_set_ll(TimerHandle_t* const Node, uint32_t period) {
+    bool res = false;
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
+    return res;
+}
+
+_WEAK_FUN_
 bool timer_period_set_s(uint8_t num, float period_s) {
     bool res = false;
     TimerHandle_t* Node = TimerGetNode(num);
@@ -173,23 +236,29 @@ bool timer_period_set_s(uint8_t num, float period_s) {
         res = timer_period_set_ll(Node, period);
         if(res) {
 #ifdef HAS_LOG
-
             LOG_DEBUG(TIMER, "TIMER%u Period %f SetOk", num, period_s);
 #endif
         } else {
+#ifdef HAS_LOG
             LOG_ERROR(TIMER, "TIMER%u,PeriodSetErr,Per:%u", num, period);
+#endif
         }
     } else {
+#ifdef HAS_LOG
         LOG_ERROR(TIMER, "TIMER%u,NodeErr", num);
+#endif
     }
     return res;
 }
 
 _WEAK_FUN_ uint32_t timer_cc_val_get(uint8_t num, TimerCapComChannel_t channel) {
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
     return 0;
 }
 
+_WEAK_FUN_
 float timer_calc_real_period_s(uint32_t bus_clock, uint32_t prescaler, uint32_t laod) {
     float calc_period_s = 0.0;
     float cpu_period = 1.0 / ((float)bus_clock);
@@ -199,7 +268,9 @@ float timer_calc_real_period_s(uint32_t bus_clock, uint32_t prescaler, uint32_t 
 
 _WEAK_FUN_ bool timer_init_custom(void) {
     bool res = true;
-    LOG_ERROR(TIMER, "[%s] NotImplemented", __FUNCTION__);
+#ifdef HAS_LOG
+    LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
+#endif
     return res;
 }
 
@@ -212,31 +283,53 @@ bool TimerIsValidConfig(const TimerConfig_t* const Config) {
     bool res = false;
     if(Config) {
         res = true;
+
+        res = timer_is_valid(Config->num);
+        ifn(res) {
+            res = false;
+#ifdef HAS_LOG
+            LOG_ERROR(TIMER, "%u,TimerNum,Err", Config->num);
+#endif
+        }
+
         ifn(0.0f < Config->period_s) {
             res = false;
+#ifdef HAS_LOG
             LOG_ERROR(TIMER, "%u,Cfg,Err,Period", Config->num);
+#endif
         }
+
         ifn(0.0f < Config->cnt_period_ns) {
             res = false;
+#ifdef HAS_LOG
             LOG_ERROR(TIMER, "%u,Cfg,Err,CntPeriod", Config->num);
+#endif
         }
+
         ifn(Config->name) {
             res = false;
+#ifdef HAS_LOG
             LOG_ERROR(TIMER, "%u,Cfg,Err,Name", Config->num);
+#endif
         }
         ifn(Config->dir) {
             res = false;
+#ifdef HAS_LOG
             LOG_ERROR(TIMER, "%u,Cfg,Err,Dir", Config->num);
+#endif
         }
     }
     return res;
 }
 
+_WEAK_FUN_
 bool timer_calc_registers(float des_period_s, uint32_t bus_clock, uint32_t prescaler, uint32_t* out_load,
                           uint32_t max_val) {
     bool res = true;
     if(max_val) {
+#ifdef HAS_LOG
         LOG_DEBUG(TIMER, "Per:%f s BusFreq:%u Hz Psc %u", des_period_s, bus_clock, prescaler);
+#endif
 
         uint64_t load = 0;
         float bus_period_s = 1.0f / ((float)bus_clock);
@@ -267,6 +360,7 @@ bool timer_calc_registers(float des_period_s, uint32_t bus_clock, uint32_t presc
     return res;
 }
 
+_WEAK_FUN_
 uint32_t timer_calc_prescaler(uint32_t bus_clock_hz, uint32_t des_tick_per_ns, uint32_t max_prescaler) {
     uint32_t prescaler = 0;
     // ASSERT_CRITICAL(bus_clock_hz);
@@ -275,10 +369,14 @@ uint32_t timer_calc_prescaler(uint32_t bus_clock_hz, uint32_t des_tick_per_ns, u
         float tick_s = 1.0 / ((float)bus_clock_hz);
         prescaler = des_tick_per_s / tick_s;
         if(max_prescaler < prescaler) {
+#ifdef HAS_LOG
             LOG_ERROR(TIMER, "PCS OverFlow Calc:%u Max:%u", prescaler, max_prescaler);
+#endif
             prescaler = max_prescaler;
         } else {
+#ifdef HAS_LOG
             LOG_DEBUG(TIMER, "PCS:%u", prescaler);
+#endif
         }
 
         if(!prescaler) {
@@ -300,6 +398,7 @@ uint32_t timer_get_tick_period_us(uint8_t num) {
     return cnt_period_us;
 }
 
+_WEAK_FUN_
 bool timer_is_valid(uint8_t num) {
     bool res = false;
     TimerHandle_t* Node = TimerGetNode(num);
@@ -309,9 +408,11 @@ bool timer_is_valid(uint8_t num) {
             res = true;
         }
     }
+
     return res;
 }
 
+_WEAK_FUN_
 bool timer_overflow_set(uint8_t num, uint32_t overflow) {
     bool res = false;
     TimerHandle_t* Node = TimerGetNode(num);
@@ -335,6 +436,7 @@ bool timer_duty_get(uint8_t num, TimerCapComChannel_t channel, float* const duty
     return res;
 }
 
+_WEAK_FUN_
 float timer_tick_get_s(uint8_t num) {
     float tick_s = -10;
     float bus_clock = (float)timer_bus_clock_get(num);
@@ -362,12 +464,18 @@ bool timer_frequency_get(uint8_t num, float* const frequency_hz) {
 bool timer_frequency_set(uint8_t num, float frequence_hz) {
     bool res = false;
     float period_s = 1.0 / frequence_hz;
+#ifdef HAS_LOG
     LOG_DEBUG(TIMER, "TIMER%u,SetFreq:%f Hz,Period:%fs", num, frequence_hz, period_s);
+#endif
     res = timer_period_set_s(num, period_s);
     if(res) {
+#ifdef HAS_LOG
         LOG_DEBUG(TIMER, "TIMER%u,FreqSetOk", num);
+#endif
     } else {
+#ifdef HAS_LOG
         LOG_ERROR(TIMER, "TIMER%u,FreqSetErr,Per:%fs", num, period_s);
+#endif
     }
     return res;
 }

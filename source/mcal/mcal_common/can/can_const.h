@@ -97,7 +97,7 @@ typedef enum{
 
 typedef enum{
     CAN_MAC_MODE_LEGACY_FIFO = 1,/**/
-    CAN_MAC_MODE_ENHANCED_FIFO= 2,/**/
+    CAN_MAC_MODE_ENHANCED_FIFO = 2,/**/
     CAN_MAC_MODE_MESSAGE_BUFFER = 3, /*  MAILBOXES */
     CAN_MAC_PC_EMULATED = 4, /*  */
     CAN_MAC_MODE_UNDEF = 0,

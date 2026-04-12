@@ -509,6 +509,88 @@ bool timer_get_status(uint8_t num) {
     return status;
 }
 
+static bool timer_channel_out_pwm_is_work_ll(const TimerRegCCMR_t* const pRegChan) {
+    bool res = false;
+    if(TIM_CC1S_OUTPUT_COMPARE == pRegChan->CCxS) {
+        switch(pRegChan->OCxM) {
+        case TIM_OC1_MODE_PWM1:
+            res = true;
+            break;
+        case TIM_OC1_MODE_PWM2:
+            res = true;
+            break;
+        case TIM_OC1_MODE_FROZEN:
+            res = false;
+            break;
+        case TIM_OC1_MODE_ACTIVE_ON_MATCH:
+            res = false;
+            break;
+        case TIM_OC1_MODE_INACTIVE_ON_MATCH:
+            res = false;
+            break;
+        case TIM_OC1_MODE_TOGGLE_ON_MATCH:
+            res = false;
+            break;
+        case TIM_OC1_MODE_FORCE_INACTIVE:
+            res = false;
+            break;
+        case TIM_OC1_MODE_FORCE_ACTIVE:
+            res = false;
+            break;
+        default:
+            res = false;
+            break;
+        }
+    }
+    return res;
+}
+
+bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel) {
+    bool res = false;
+    TimerInfo_t* Info = TimerGetInfo(num);
+    if(Info) {
+        TimerRegCR1_t CR1;
+        CR1.dword = Info->TIMx->CR1;
+
+        TimerRegCCMR1_t CCMR1;
+        CCMR1.dword = Info->TIMx->CCMR1;
+
+        TimerRegCCMR2_t CCMR2;
+        CCMR2.dword = Info->TIMx->CCMR2;
+
+        TimerRegCCER_t CCER;
+        CCER.dword = Info->TIMx->CCER;
+
+        if(TIMER_CEN_COUNTER_ENABLED == CR1.CEN) {
+            switch(channel) {
+            case TIMER_CC_CHAN_1: {
+                res = timer_channel_out_pwm_is_work_ll(&CCMR1.CH1);
+                res = CCER.CC1E && res;
+            } break;
+
+            case TIMER_CC_CHAN_2: {
+                res = timer_channel_out_pwm_is_work_ll(&CCMR1.CH2);
+                res = CCER.CC2E && res;
+            } break;
+
+            case TIMER_CC_CHAN_3: {
+                res = timer_channel_out_pwm_is_work_ll(&CCMR2.CH3);
+                res = CCER.CC3E && res;
+            } break;
+
+            case TIMER_CC_CHAN_4: {
+                res = timer_channel_out_pwm_is_work_ll(&CCMR2.CH4);
+                res = CCER.CC4E && res;
+            } break;
+            default: {
+                res = false;
+            } break;
+            }
+        }
+    }
+    return res;
+}
+
 uint32_t timer_prescaler_get(uint8_t num) {
     bool res = true;
     uint32_t timer_prescaler = 0xFF;
@@ -578,27 +660,31 @@ bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bool on_off) 
         res = timer_is_valid_channel(num, channel);
         if(res) {
             res = false;
+
 #ifdef HAS_HAL_TIM_PWM
             uint32_t hal_channel = TimerChannelToHalChannel(channel);
-
-            res = HAL_TIM_CHANNEL_STATE_READY == TIM_CHANNEL_STATE_GET(&Node->Handle, hal_channel);
-            if(res) {
-                HAL_StatusTypeDef ret = HAL_ERROR;
-                if(on_off) {
+            HAL_StatusTypeDef ret = HAL_ERROR;
+            if(on_off) {
+                res = HAL_TIM_CHANNEL_STATE_READY == TIM_CHANNEL_STATE_GET(&Node->Handle, hal_channel);
+                if(res) {
                     ret = HAL_TIM_PWM_Start_IT(&Node->Handle, hal_channel);
                 } else {
-                    ret = HAL_TIM_PWM_Stop_IT(&Node->Handle, hal_channel);
-                }
-                res = HAL_retToRes(ret);
-                if(!res) {
 #ifdef HAS_HAL_DIAG
-                    LOG_ERROR(TIMER, "%u=%s", ret, HalStatusToStr(ret));
+                    LOG_ERROR(TIMER, "TIM%u,NotReady", num);
 #endif
+                    res = true;
                 }
             } else {
-                res = true;
+                ret = HAL_TIM_PWM_Stop_IT(&Node->Handle, hal_channel);
             }
+            res = HAL_retToRes(ret);
+
+            if(!res) {
+#ifdef HAS_HAL_DIAG
+                LOG_ERROR(TIMER, "%u=%s", ret, HalStatusToStr(ret));
 #endif
+            }
+#endif /*HAS_HAL_TIM_PWM*/
         }
     }
     return res;
@@ -849,6 +935,30 @@ static bool timer_errata_fix(TimerHandle_t* const Node) {
     return res;
 }
 
+bool timer_init_custom(void) {
+    bool res = false;
+    LOG_INFO(TIMER, "MaxTIMnum:%u", TIMER_MAX_NUM);
+    return res;
+}
+
+bool timer_is_valid(uint8_t num) {
+    bool res = false;
+    TimerHandle_t* Node = TimerGetNode(num);
+    if(Node) {
+        const TimerConfig_t* Config = TimerGetConfig(num);
+        if(Config) {
+            res = true;
+        }
+    }
+
+    TimerInfo_t* Info = TimerGetInfo(num);
+    if(Info) {
+        res = IS_TIM_MASTER_INSTANCE(Info->TIMx);
+    }
+
+    return res;
+}
+
 bool timer_init_one(uint8_t num) {
     bool res = false;
 #ifdef HAS_LOG
@@ -883,7 +993,7 @@ bool timer_init_one(uint8_t num) {
 
         uint32_t bus_clock_hz = 0;
         bus_clock_hz = timer_bus_clock_get(num);
-        prescaler = timer_calc_prescaler((uint32_t)bus_clock_hz, Config->cnt_period_ns, TIMER_PRESCALER_MAX)-1;
+        prescaler = timer_calc_prescaler((uint32_t)bus_clock_hz, Config->cnt_period_ns, TIMER_PRESCALER_MAX) - 1;
         res = timer_calc_registers(Config->period_s, bus_clock_hz, prescaler, &out_load, 0xFFFFFFFF);
         if(res) {
             // HAL_TIM_IRQHandler(&Node->Handle);
@@ -904,7 +1014,7 @@ bool timer_init_one(uint8_t num) {
                 if(HAL_OK == HAL_TIM_Base_Init(&Node->Handle)) {
                     res = true;
 #ifdef HAS_LOG
-                    LOG_INFO(TIMER, "%u InitOk", num);
+                    LOG_DEBUG(TIMER, "%uInitOk", num);
 #endif
                 }
 

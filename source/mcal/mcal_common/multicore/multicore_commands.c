@@ -40,6 +40,21 @@ bool multicore_control_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+bool multicore_all_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    if(0 <= argc) {
+        res = true;
+    }
+
+    if(res) {
+        res = multicore_turn_on_all();
+        log_res(MULTICORE, res, "TurnAllCtrl");
+    } else {
+        LOG_ERROR(MULTICORE, "Usage: mca");
+    }
+    return res;
+}
+
 bool multicore_init_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t snum = 0;

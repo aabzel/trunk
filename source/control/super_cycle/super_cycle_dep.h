@@ -3,14 +3,14 @@
 
 #ifndef HAS_TIME
 #warning "+HAS_TIME"
-#endif /*HAS_TIME*/
+#endif
 
 #ifndef HAS_SUPER_CYCLE
 #error "+HAS_SUPER_CYCLE"
-#endif /*HAS_SUPER_CYCLE*/
+#endif
 
 #ifndef HAS_CONTROL
 #error "+HAS_CONTROL"
-#endif /*HAS_CONTROL*/
+#endif
 
 #endif /* SUPER_CYCLE_DEP_H */

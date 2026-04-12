@@ -3,7 +3,7 @@ ifneq ($(ADC_GENERAL_MK_INC),Y)
 
 
     ADC_MCAL_DIR = $(MCAL_COMMON_DIR)/adc
-    #@echo $(error ADC_MCAL_DIR=$(ADC_MCAL_DIR))
+    # $(error ADC_MCAL_DIR=$(ADC_MCAL_DIR))
 
     INCDIR += -I$(ADC_MCAL_DIR)
     MCAL_OPT += -DHAS_ADC
@@ -20,7 +20,7 @@ ifneq ($(ADC_GENERAL_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(ADC_COMMANDS),Y)
-            #@echo $(error ADC_COMMANDS=$(ADC_COMMANDS))
+            # $(error ADC_COMMANDS=$(ADC_COMMANDS))
             $(info Add ADC commands)
             MCAL_OPT += -DHAS_ADC_COMMANDS
             SOURCES_C += $(ADC_MCAL_DIR)/adc_commands.c

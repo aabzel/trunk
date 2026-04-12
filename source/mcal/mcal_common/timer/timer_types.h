@@ -44,8 +44,8 @@ typedef struct {
     volatile bool int_done;            \
 
 typedef struct {
-    TIMER_CUSTOM_VARIABLES
     TIMER_COMMON_VARIABLES
+    TIMER_CUSTOM_VARIABLES
     TIMER_ISR_VARIABLES
     uint32_t error_cnt;
     uint32_t ic_cap_cnt;

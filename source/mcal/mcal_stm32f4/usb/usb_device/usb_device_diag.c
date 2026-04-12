@@ -3,21 +3,27 @@
 #include "usb_mcal.h"
 //#include "usbd_def.h"
 
-
 const char* UsbDeviceErrToStr(const USBD_StatusTypeDef status) {
     const char* name = "?";
     switch(status) {
-        case USBD_OK:        name = "OK";        break;
-        case USBD_BUSY:      name = "BUSY";        break;
-        case USBD_EMEM:      name = "EMEM";        break;
-        case USBD_FAIL:      name = "FAIL";        break;
-        default:      name = "?";        break;
+    case USBD_OK:
+        name = "OK";
+        break;
+    case USBD_BUSY:
+        name = "BUSY";
+        break;
+    case USBD_EMEM:
+        name = "EMEM";
+        break;
+    case USBD_FAIL:
+        name = "FAIL";
+        break;
+    default:
+        name = "?";
+        break;
     }
     return name;
 }
-
-
-
 
 bool UsbDeviveDiag(const USBD_HandleTypeDef* const Node) {
     bool res = false;
@@ -35,9 +41,9 @@ bool UsbDeviveDiag(const USBD_HandleTypeDef* const Node) {
         LOG_INFO(USB_DEVICE, "Devconnection_status:%u", Node->dev_connection_status);
         LOG_INFO(USB_DEVICE, "Devtest_mode:%u", Node->dev_test_mode);
         LOG_INFO(USB_DEVICE, "Devremote_wakeup:%u", Node->dev_remote_wakeup);
-        //LOG_INFO(USB_DEVICE, "classId:%u", Node->classId);
+        // LOG_INFO(USB_DEVICE, "classId:%u", Node->classId);
         LOG_INFO(USB_DEVICE, "ConfIdx:%u", Node->ConfIdx);
-    //    LOG_INFO(USB_DEVICE, "NumClasses:%u", Node->NumClasses);
+        //    LOG_INFO(USB_DEVICE, "NumClasses:%u", Node->NumClasses);
         //  USBD_SetupReqTypedef    request;
         // USBD_DescriptorsTypeDef *pDesc;
         // USBD_ClassTypeDef       *pClass[USBD_MAX_SUPPORTED_CLASS];

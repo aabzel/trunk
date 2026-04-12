@@ -42,6 +42,7 @@ const char* GpioPad2WireName(Pad_t Pad);
 const char* GpioPullToStr(GpioPullMode_t code);
 const char* GpioSpeedToStr(const GpioSpeed_t speed) ;
 const char* GpioTypeToStr(Pad_t Pad);
+const char* GpioPadsToStr(const Pad_t* const pPad, const uint32_t cnt);
 
 bool diag_gpio(char* key_word1, char* key_word2) ;
 bool gpio_diag(char* key_word1, char* key_word2);
