@@ -1,27 +1,33 @@
 message(STATUS "SYSTEM_CMK_INC=[${SYSTEM_CMK_INC}]")
-if( NOT (Y STREQUAL SYSTEM_CMK_INC))
-    set(SYSTEM_CMK_INC Y)
-    message(STATUS "SYSTEM_CMK_INC=[${SYSTEM_CMK_INC}]")
-    message(STATUS "Link System")
 
-    set(SYSTEM_DIR ${CONTROL_DIR}/system)
+if(NOT (SYSTEM_MK_INC STREQUAL Y))
+    set(SYSTEM_MK_INC Y)
 
-    target_compile_definitions(app PUBLIC HAS_SYSTEM)
-    target_include_directories(app PUBLIC ${SYSTEM_DIR})
+    set(SYSTEM_DIR "${CONTROL_DIR}/system")
 
+    include_directories( ${SYSTEM_DIR})
+    string(APPEND MCAL_OPT " -DHAS_SYSTEM")
 
-    target_sources(app PRIVATE ${SYSTEM_DIR}/system.c)
+    if(SYSTEM_EXT STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_SYSTEM_EXT")
+    endif()
+
+    string(APPEND SOURCES_C " ${SYSTEM_DIR}/system.c")
+    set(SYSTEM_FACILITY_TOKENS "${SYSTEM_DIR}/system_facility_tokens.h")
 
     if(DIAG STREQUAL Y)
         if(SYSTEM_DIAG STREQUAL Y)
-            target_compile_definitions(app PUBLIC HAS_SYSTEM_DIAG)
-            target_sources(app PRIVATE ${SYSTEM_DIR}/system_diag.c)
+            string(APPEND MCAL_OPT " -DHAS_SYSTEM_DIAG")
+            string(APPEND SOURCES_DIAG_C " ${SYSTEM_DIR}/system_diag.c")
         endif()
     endif()
 
     if(CLI STREQUAL Y)
         if(SYSTEM_COMMANDS STREQUAL Y)
-            target_sources(app PRIVATE ${SYSTEM_DIR}/system_commands.c)
+            string(APPEND MCAL_OPT " -DHAS_SYSTEM_COMMANDS")
+            string(APPEND SOURCES_C " ${SYSTEM_DIR}/system_commands.c")
         endif()
     endif()
+
 endif()
+

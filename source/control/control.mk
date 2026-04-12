@@ -3,42 +3,77 @@ ifneq ($(CONTROL_MK_INC),Y)
     CONTROL_MK_INC=Y
 
     CONTROL_DIR = $(WORKSPACE_LOC)/control
-    #@echo $(error CONTROL_DIR=$(CONTROL_DIR))
+    # $(error CONTROL_DIR=$(CONTROL_DIR))
 
     INCDIR += -I$(CONTROL_DIR)
-    OPT += -DHAS_CONTROL
+    MCAL_OPT += -DHAS_CONTROL
 
     ifeq ($(CONTROL_COMMANDS),Y)
-        OPT += -DHAS_CONTROL_COMMANDS
+        MCAL_OPT += -DHAS_CONTROL_COMMANDS
+    endif
+    
+    ifeq ($(CLI),Y)
+        ifeq ($(CONTROL_COMMANDS),Y)
+            # $(error CONTROL_COMMANDS=$(CONTROL_COMMANDS))
+            MCAL_OPT += -DHAS_CONTROL_COMMANDS
+            SOURCES_C += $(CONTROL_DIR)/control_commands.c
+        endif
     endif
 
+    ifeq ($(DIAG),Y)
+        ifeq ($(CONTROL_DIAG),Y)
+            MCAL_OPT += -DHAS_CONTROL_DIAG
+            # $(error CONTROL_DIAG=$(CONTROL_DIAG))
+            SOURCES_C += $(CONTROL_DIR)/control_diag.c
+        endif
+    endif
+
+    ifeq ($(AUTO_EXIT),Y)
+        include $(CONTROL_DIR)/auto_exit/auto_exit.mk    
+    endif
+    
     ifeq ($(GENERIC),Y)
-        #@echo $(error GENERIC=$(GENERIC))
+        # $(error GENERIC=$(GENERIC))
         include $(CONTROL_DIR)/generic/generic.mk
     endif
     
     ifeq ($(MBR),Y)
-        #@echo $(error MBR=$(MBR))
+        # $(error MBR=$(MBR))
         include $(CONTROL_DIR)/mbr/mbr.mk
     endif
 
     ifeq ($(BOOTLOADER),Y)
-        #@echo $(error BOOTLOADER= $(BOOTLOADER))
+        # $(error BOOTLOADER= $(BOOTLOADER))
         include $(CONTROL_DIR)/bootloader/bootloader.mk
     endif
 
+    ifeq ($(BUZZER),Y)
+        # $(error BUZZER= $(BUZZER))
+        include $(CONTROL_DIR)/buzzer/buzzer.mk
+    endif
+    
     ifeq ($(BOOT),Y)
-        #@echo $(error BOOT= $(BOOT))
+        # $(error BOOT= $(BOOT))
         include $(CONTROL_DIR)/boot_drv/boot_drv.mk
     endif
 
+    ifeq ($(GPIO_DAC),Y)
+        # $(error GPIO_DAC=$(GPIO_DAC))
+        include $(CONTROL_DIR)/gpio_dac/gpio_dac.mk
+    endif
+
+    ifeq ($(GPIO_PWM),Y)
+        # $(error GPIO_PWM=$(GPIO_PWM))
+        include $(CONTROL_DIR)/gpio_pwm/gpio_pwm.mk
+    endif
+    
     ifeq ($(DEBUGGER),Y)
-        #@echo $(error DEBUGGER=$(DEBUGGER))
+        # $(error DEBUGGER=$(DEBUGGER))
         include $(CONTROL_DIR)/debugger/debugger.mk
     endif
 
     ifeq ($(FREE_RTOS),Y)
-        #@echo $(error FREE_RTOS=$(FREE_RTOS))
+        # $(error FREE_RTOS=$(FREE_RTOS))
         include $(CONTROL_DIR)/free_rtos/free_rtos.mk
     endif
 
@@ -48,12 +83,12 @@ ifneq ($(CONTROL_MK_INC),Y)
     endif
 
     ifeq ($(PWM_DAC),Y)
-        #@echo $(error PWM_DAC=$(PWM_DAC))
+        # $(error PWM_DAC=$(PWM_DAC))
         include $(CONTROL_DIR)/pwm_dac/pwm_dac.mk
     endif
 
     ifeq ($(DISPLAY),Y)
-        #@echo $(error DISPLAY=$(DISPLAY))
+        # $(error DISPLAY=$(DISPLAY))
         include $(CONTROL_DIR)/display/display.mk
     endif
 
@@ -75,15 +110,20 @@ ifneq ($(CONTROL_MK_INC),Y)
     endif
     
     ifeq ($(RTOS),Y)
-        #@echo $(error RTOS=$(RTOS))
+        # $(error RTOS=$(RTOS))
         include $(CONTROL_DIR)/rtos/rtos.mk
     endif
 
     ifeq ($(SCRIPT),Y)
-        #@echo $(error SCRIPT=$(SCRIPT))
+        # $(error SCRIPT=$(SCRIPT))
         include $(CONTROL_DIR)/script/script.mk
     endif
 
+    ifeq ($(POSTPONE_FUN),Y)
+        # $(error SCRIPT=$(SCRIPT))
+        include $(CONTROL_DIR)/postpone_fun/postpone_fun.mk
+    endif
+    
     ifeq ($(SUPER_CYCLE),Y)
         include $(CONTROL_DIR)/super_cycle/super_cycle.mk    
     endif
@@ -91,13 +131,13 @@ ifneq ($(CONTROL_MK_INC),Y)
     ifeq ($(SYSTEM),Y)
         include $(CONTROL_DIR)/system/system.mk    
     endif
-    
-    ifeq ($(TASK),Y)
-        include $(CONTROL_DIR)/task/task.mk
+
+    ifeq ($(SCHEDULER),Y)
+        include $(CONTROL_DIR)/scheduler/scheduler.mk
     endif
 
     ifeq ($(WIN),Y)
-        #@echo $(error WIN=$(WIN))
+        # $(error WIN=$(WIN))
         include $(CONTROL_DIR)/win/win_utils.mk
     endif
 endif

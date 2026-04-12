@@ -7,6 +7,28 @@
 #error "+HAS_CONTROL"
 #endif
 
+#ifdef HAS_AUTO_EXIT
+#include "auto_exit.h"
+#define AUTO_EXIT_INIT { .init_function=auto_exit_mcal_init, .name="AutoExit",},
+#else
+#define AUTO_EXIT_INIT
+#endif
+
+#ifdef HAS_GPIO_DAC
+#include "gpio_dac_mcal.h"
+#define GPIO_DAC_INIT {.init_function=gpio_dac_mcal_init, .name="GpioDac",},
+#else
+#define GPIO_DAC_INIT
+#endif
+
+
+#ifdef HAS_BUZZER
+#include "buzzer.h"
+#define BUZZER_INIT {.init_function=buzzer_mcal_init, .name="Buzzer",},
+#else
+#define BUZZER_INIT
+#endif
+
 #ifdef HAS_RTOS
 #include "rtos_drv.h"
 #define RTOS_INIT { .init_function=rtos_task_mcal_init, .name="RTOS",},
@@ -46,7 +68,7 @@
 #include "led_init.h"
 #else
 #define LED_INIT
-#endif /* */
+#endif
 
 #ifdef HAS_RELAY
 #include "relay.h"
@@ -54,6 +76,22 @@
 #else
 #define RELAY_INIT
 #endif
+
+
+#ifdef HAS_BOOT
+#include "boot_driver.h"
+
+#ifdef HAS_LOG
+#define BOOT_INIT_NAME .name = "Boot",
+#else
+#define BOOT_INIT_NAME
+#endif
+
+#define BOOT_INIT {.init_function=boot_mcal_init, BOOT_INIT_NAME},
+#else
+#define BOOT_INIT
+#endif
+
 
 #ifdef HAS_USB_TO_I2S
 #include "usb_to_i2s_drv.h"
@@ -74,20 +112,45 @@
 #define PWM_DAC_INIT {.init_function=pwm_dac_mcal_init, .name="PwmDac",},
 #else
 #define PWM_DAC_INIT
-#endif /*HAS_PWM_DAC*/
+#endif
+
 
 #ifdef HAS_SCRIPT
 #include "script.h"
 #define SCRIPT_INIT {.init_function = script_mcal_init, .name = "script",},
 #else
 #define SCRIPT_INIT
-#endif /*HAS_SCRIPT*/
-
-//    LED_INIT      in MCAL INIT
+#endif
 
 
-// order matter
+
+#ifdef HAS_POSTPONE_FUN
+#include "postpone_fun.h"
+#define POSTPONE_FUN_INIT {.init_function = postpone_fun_mcal_init, .name = "postponeFun",},
+#else
+#define POSTPONE_FUN_INIT
+#endif
+
+
+#ifdef HAS_SCHEDULER
+#include "scheduler_mcal.h"
+
+#ifdef HAS_LOG
+#define SCHEDULER_INIT_NAME .name = "Scheduler",
+#else
+#define SCHEDULER_INIT_NAME
+#endif
+
+#define SCHEDULER_INIT {.init_function = scheduler_mcal_init, SCHEDULER_INIT_NAME},
+#else
+#define SCHEDULER_INIT
+#endif
+
+
+/* order matter */
 #define CONTROL_INIT    \
+    BOOT_INIT           \
+    SCHEDULER_INIT      \
     LED_INIT            \
     USB_TO_I2S_INIT     \
     RELAY_INIT          \
@@ -96,10 +159,12 @@
     ZEPHYR_RTOS_INIT    \
     PWM_DAC_INIT        \
     PID_INIT            \
+    BUZZER_INIT         \
+    GPIO_DAC_INIT       \
+    GPIO_PWM_INIT       \
     MBR_INIT            \
+    POSTPONE_FUN_INIT   \
+    AUTO_EXIT_INIT      \
     SCRIPT_INIT
-
-
-//bool control_init(void);
 
 #endif /* CONTROL_INIT_H */

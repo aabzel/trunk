@@ -4,6 +4,10 @@
 #include "std_includes.h"
 #include "sys_constants.h"
 
+#ifdef HAS_GPIO
+#include "gpio_types.h"
+#endif
+
 typedef struct{
     facility_t facility;
     char* name;
@@ -27,6 +31,9 @@ typedef struct{
 typedef struct{
     bool init;
     bool init_finish;
+#ifdef HAS_GPIO
+    Pad_t DebugPad;
+#endif
 }System_t;
 
 

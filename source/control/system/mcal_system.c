@@ -7,10 +7,6 @@
 #include "std_includes.h"
 #include "system_init.h"
 
-#ifdef HAS_GPIO
-#include "gpio_mcal.h"
-#endif
-
 #ifdef HAS_INTERFACES
 #include "if_config.h"
 #endif
@@ -19,8 +15,20 @@
 #include "watchdog_mcal.h"
 #endif
 
+#ifdef HAS_RADIO
+#include "radio_mcal.h"
+#endif
+
 #ifdef HAS_CAN
 #include "can_if_drv.h"
+#endif
+
+#ifdef HAS_RS232
+#include "rs232_mcal.h"
+#endif
+
+#ifdef HAS_SPI
+#include "spi_mcal.h"
 #endif
 
 #ifdef HAS_ADT
@@ -53,6 +61,14 @@
 
 #ifdef HAS_MICROCONTROLLER
 //#include "sys_config.h"
+#endif
+
+#ifdef HAS_UART
+#include "uart_mcal.h"
+#endif
+
+#ifdef HAS_TBFP
+#include "tbfp.h"
 #endif
 
 #ifdef HAS_SYSTEM_DIAG
@@ -179,13 +195,6 @@ const SystemInitInstance_t SystemInitInstance[] = {INIT_FUNCTIONS};
 System_t System = {
     .init = false,
     .init_finish = false,
-#ifdef HAS_GPIO
-    .DebugPad =
-        {
-            .port = SYSTEM_DEBUG_PORT,
-            .pin = SYSTEM_DEBUG_PIN,
-        },
-#endif
 };
 
 uint32_t system_init_get_cnt(void) {
@@ -194,6 +203,7 @@ uint32_t system_init_get_cnt(void) {
     return cnt;
 }
 
+#ifdef HAS_SYSTEM_EXT
 static bool sys_init_is_uniq_node(const SystemInitInstance_t* const Node) {
     bool res = false;
     uint32_t init_cnt = system_init_get_cnt();
@@ -213,7 +223,9 @@ static bool sys_init_is_uniq_node(const SystemInitInstance_t* const Node) {
     }
     return res;
 }
+#endif
 
+#ifdef HAS_SYSTEM_EXT
 bool system_init_array_uniq(void) {
     bool res = false;
     uint32_t i = 0;
@@ -238,6 +250,7 @@ bool system_init_array_uniq(void) {
 
     return res;
 }
+#endif
 
 uint32_t send_err_cnt = 0;
 
@@ -253,8 +266,8 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
     if(init_cnt) {
         /*init from array */
 #ifdef HAS_LOG
-        char InitOrder[1600] = {0};
-        memset(InitOrder, 0, sizeof(InitOrder));
+        char InitOrder[400] = {0};
+        memset(InitOrder,0,sizeof(InitOrder));
         strcpy(InitOrder, "");
 #endif
 
@@ -270,18 +283,13 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
                 /*TODO Add GPIO  negative front*/
                 ok++;
             }
-
-#ifdef HAS_GPIO
-            /*To debug by oscilloscope in case of hang on in init*/
-            gpio_toggle(System.DebugPad);
-#endif
-
+            // led_mono_ctrl(2, true);
 #ifdef HAS_LOG
             res = try_init(res, i + 1, Node[i].name);
 #endif
 
 #ifdef HAS_LOG
-            // LOG_INFO(SYS,"%u:----^[%s],%s", i + 1,Node[i].name, OkToStr(res));
+            //LOG_INFO(SYS,"%u:----^[%s],%s", i + 1,Node[i].name, OkToStr(res));
 #endif
 
 #ifdef HAS_LOG_COLOR
@@ -321,6 +329,11 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
     }
 
     System.init_finish = true;
+#ifdef HAS_TI
+    Board_init();
+    /* Start NoRTOS */
+    NoRTOS_start();
+#endif
 
 #ifdef HAS_LOG
     LOG_INFO(SYS, "InitCnt:%u", init_cnt);

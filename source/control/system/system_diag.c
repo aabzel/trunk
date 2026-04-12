@@ -1,10 +1,10 @@
 #include "system_diag.h"
 
-#include <stdbool.h>
 #include <string.h>
 
 #include "data_utils.h"
 #include "log.h"
+#include "std_includes.h"
 #include "system.h"
 
 #ifdef HAS_MATH
@@ -41,6 +41,16 @@
 #define CALCULATOR_FACILITY_DIAG
 #endif
 
+#ifdef HAS_SMOOTH_LAMP
+#define SMOOTH_LAMP_FACILITY_DIAG                                                                                      \
+    {                                                                                                                  \
+        .facility = SMOOTH_LAMP,                                                                                       \
+        .name = "SmoothLamp",                                                                                          \
+    },
+#else
+#define SMOOTH_LAMP_FACILITY_DIAG
+#endif
+
 #ifdef HAS_CALIBRATION_DATA
 #define CALIBRATION_DATA_FACILITY_DIAG                                                                                 \
     {                                                                                                                  \
@@ -61,6 +71,16 @@
 #define STATISTICS_FACILITY_DIAG
 #endif
 
+#ifdef HAS_SEGGER_RTT
+#define SEGGER_RTT_FACILITY_DIAG                                                                                        \
+    {                                                                                                                  \
+        .facility = SEGGER_RTT,                                                                                         \
+        .name = "SeggerRtt",                                                                                            \
+    },
+#else
+#define SEGGER_RTT_FACILITY_DIAG
+#endif
+
 #ifdef HAS_BLACK_BOX
 #define BLACK_BOX_FACILITY_DIAG                                                                                        \
     {                                                                                                                  \
@@ -69,6 +89,16 @@
     },
 #else
 #define BLACK_BOX_FACILITY_DIAG
+#endif
+
+#ifdef HAS_USB_DEVICE
+#define USB_DEVICE_FACILITY_DIAG                                                                                       \
+    {                                                                                                                  \
+        .facility = USB_DEVICE,                                                                                        \
+        .name = "UsbDevice",                                                                                           \
+    },
+#else
+#define USB_DEVICE_FACILITY_DIAG
 #endif
 
 #ifdef HAS_MICROCONTROLLER
@@ -89,6 +119,26 @@
     },
 #else
 #define DECAWAVE_FACILITY_DIAG
+#endif
+
+#ifdef HAS_DMA
+#define DMA_FACILITY_DIAG                                                                                              \
+    {                                                                                                                  \
+        .facility = LG_DMA,                                                                                            \
+        .name = "Dma",                                                                                                 \
+    },
+#else
+#define DMA_FACILITY_DIAG
+#endif
+
+#ifdef HAS_DMA_CHANNEL
+#define DMA_CHANNEL_FACILITY_DIAG                                                                                      \
+    {                                                                                                                  \
+        .facility = DMA_CHANNEL,                                                                                       \
+        .name = "DmaChannel",                                                                                          \
+    },
+#else
+#define DMA_CHANNEL_FACILITY_DIAG
 #endif
 
 #ifdef HAS_SERIAL_PORT
@@ -117,6 +167,16 @@
         },
 #else
 #define SOCKET_FACILITY_DIAG
+#endif
+
+#ifdef HAS_HASH_TABLE
+#define HASH_TABLE_FACILITY_DIAG                                                                                       \
+    {                                                                                                                  \
+        .facility = HASH_TABLE,                                                                                        \
+        .name = "HashTable",                                                                                           \
+    },
+#else
+#define HASH_TABLE_FACILITY_DIAG
 #endif
 
 #ifdef HAS_DECAWAVE_NATIVE
@@ -159,10 +219,30 @@
 #define ARRAY_FACILITY_DIAG
 #endif
 
+#ifdef HAS_GARLAND
+#define GARLAND_FACILITY_DIAG                                                                                          \
+    {                                                                                                                  \
+        .facility = GARLAND,                                                                                           \
+        .name = "GarLand",                                                                                             \
+    },
+#else
+#define GARLAND_FACILITY_DIAG
+#endif
+
+#ifdef HAS_AUTO_EXIT
+#define AUTO_EXIT_FACILITY_DIAG                                                                                        \
+    {                                                                                                                  \
+        .facility = AUTO_EXIT,                                                                                         \
+        .name = "AutoExit",                                                                                            \
+    },
+#else
+#define AUTO_EXIT_FACILITY_DIAG
+#endif
+
 #ifdef HAS_STRING
 #define STRING_FACILITY_DIAG                                                                                           \
     {                                                                                                                  \
-        .facility = LINE,                                                                                              \
+        .facility = STR_LG,                                                                                              \
         .name = "String",                                                                                              \
     },
 #else
@@ -197,6 +277,16 @@
     },
 #else
 #define ISO_TP_FACILITY_DIAG
+#endif
+
+#ifdef HAS_STORE_FS
+#define STORE_FS_FACILITY_DIAG                                                                                         \
+    {                                                                                                                  \
+        .facility = STORE_FS,                                                                                          \
+        .name = "StoreFs",                                                                                             \
+    },
+#else
+#define STORE_FS_FACILITY_DIAG
 #endif
 
 #ifdef HAS_COMPLEX
@@ -249,6 +339,16 @@
 #define FILE_API_FACILITY_DIAG
 #endif
 
+#ifdef HAS_SW_UART
+#define SW_UART_FACILITY_DIAG                                                                                          \
+    {                                                                                                                  \
+        .facility = SW_UART,                                                                                           \
+        .name = "SwUart",                                                                                              \
+    },
+#else
+#define SW_UART_FACILITY_DIAG
+#endif
+
 #ifdef HAS_AUTO_VERSION
 #define AUTO_VERSION_FACILITY_DIAG                                                                                     \
     {                                                                                                                  \
@@ -279,6 +379,16 @@
 #define BOARD_FACILITY_DIAG
 #endif
 
+#ifdef HAS_GAME_PAD_PS2
+#define GAME_PAD_PS2_FACILITY_DIAG                                                                                     \
+    {                                                                                                                  \
+        .facility = GAME_PAD_PS2,                                                                                      \
+        .name = "GamePadPs2",                                                                                          \
+    },
+#else
+#define GAME_PAD_PS2_FACILITY_DIAG
+#endif
+
 #ifdef HAS_GPS
 #define GPS_FACILITY_DIAG                                                                                              \
     {                                                                                                                  \
@@ -287,6 +397,26 @@
     },
 #else
 #define GPS_FACILITY_DIAG
+#endif
+
+#ifdef HAS_ESP_01
+#define ESP_01_FACILITY_DIAG                                                                                           \
+    {                                                                                                                  \
+        .facility = ESP_01,                                                                                            \
+        .name = "Esp01",                                                                                               \
+    },
+#else
+#define ESP_01_FACILITY_DIAG
+#endif
+
+#ifdef HAS_DRV8870
+#define DRV8870_FACILITY_DIAG                                                                                          \
+    {                                                                                                                  \
+        .facility = DRV8870,                                                                                           \
+        .name = "DRV8870",                                                                                             \
+    },
+#else
+#define DRV8870_FACILITY_DIAG
 #endif
 
 #ifdef HAS_DECIMATOR
@@ -309,6 +439,16 @@
 #define QUADRATURE_MIXER_FACILITY_DIAG
 #endif
 
+#ifdef HAS_SED
+#define SED_FACILITY_DIAG                                                                                              \
+    {                                                                                                                  \
+        .facility = SED,                                                                                               \
+        .name = "Sed",                                                                                                 \
+    },
+#else
+#define SED_FACILITY_DIAG
+#endif
+
 #ifdef HAS_NAU8814
 #define NAU8814_FACILITY_DIAG                                                                                          \
     {                                                                                                                  \
@@ -328,9 +468,33 @@
         {                                                                                                              \
             .facility = DID,                                                                                           \
             .name = "DID",                                                                                             \
+        },                                                                                                             \
+        {                                                                                                              \
+            .facility = UDS_SERVER,                                                                                    \
+            .name = "UdsServer",                                                                                       \
+        },                                                                                                             \
+        {                                                                                                              \
+            .facility = UDS_SERVER_TRANSFER,                                                                           \
+            .name = "UdsServerTranf",                                                                                  \
+        },                                                                                                             \
+        {                                                                                                              \
+            .facility = UDS_SERVER_LL,                                                                                 \
+            .name = "UdsServerLL",                                                                                     \
         },
+
+
 #else
 #define UDS_FACILITY_DIAG
+#endif
+
+#ifdef HAS_UDS_CLIENT
+#define UDS_CLIENT_FACILITY_DIAG                                                                                       \
+    {                                                                                                                  \
+        .facility = UDS_CLIENT,                                                                                        \
+        .name = "UdsClient",                                                                                           \
+    },
+#else
+#define UDS_CLIENT_FACILITY_DIAG
 #endif
 
 #ifdef HAS_PLL_CALC
@@ -363,6 +527,38 @@
 #define LOG_FACILITY_DIAG
 #endif
 
+#ifdef HAS_WIFI
+#define WIFI_FACILITY_DIAG                                                                                             \
+    {                                                                                                                  \
+        .facility = WIFI,                                                                                              \
+        .name = "WiFi",                                                                                                \
+    },
+#else
+#define WIFI_FACILITY_DIAG
+#endif
+
+
+#ifdef HAS_CAN_DIFF
+#define CAN_DIFF_FACILITY_DIAG                                                                                        \
+    {                                                                                                                  \
+        .facility = CAN_DIFF,                                                                                         \
+        .name = "CanDiff",                                                                                            \
+    },
+#else
+#define CAN_DIFF_FACILITY_DIAG
+#endif
+
+
+#ifdef HAS_LITTLE_FS
+#define LITTLE_FS_FACILITY_DIAG                                                                                        \
+    {                                                                                                                  \
+        .facility = LITTLE_FS,                                                                                         \
+        .name = "LittleFs",                                                                                            \
+    },
+#else
+#define LITTLE_FS_FACILITY_DIAG
+#endif
+
 #ifdef HAS_RUNNING_LINE
 #define RUNNING_LINE_FACILITY_DIAG                                                                                     \
     {                                                                                                                  \
@@ -393,6 +589,36 @@
 #define RS232_FACILITY_DIAG
 #endif
 
+#ifdef HAS_IR_RECEIVER
+#define IR_RECEIVER_FACILITY_DIAG                                                                                      \
+    {                                                                                                                  \
+        .facility = IR_RECEIVER,                                                                                       \
+        .name = "IrRec",                                                                                               \
+    },
+#else
+#define IR_RECEIVER_FACILITY_DIAG
+#endif
+
+#ifdef HAS_DISK_IO
+#define DISK_IO_FACILITY_DIAG                                                                                          \
+    {                                                                                                                  \
+        .facility = DISK_IO,                                                                                           \
+        .name = "DiskIo",                                                                                              \
+    },
+#else
+#define DISK_IO_FACILITY_DIAG
+#endif
+
+#ifdef HAS_DWT
+#define DWT_FACILITY_DIAG                                                                                       \
+    {                                                                                                                  \
+        .facility = LG_DWT,                                                                                        \
+        .name = "DWT",                                                                                           \
+    },
+#else
+#define DWT_FACILITY_DIAG
+#endif
+
 #ifdef HAS_TIMER_CALC
 #define TIMER_CALC_FACILITY_DIAG                                                                                       \
     {                                                                                                                  \
@@ -403,6 +629,16 @@
 #define TIMER_CALC_FACILITY_DIAG
 #endif
 
+#ifdef HAS_POSTPONE_FUN
+#define POSTPONE_FUN_FACILITY_DIAG                                                                                     \
+    {                                                                                                                  \
+        .facility = POSTPONE_FUN,                                                                                      \
+        .name = "PostponeFun",                                                                                         \
+    },
+#else
+#define POSTPONE_FUN_FACILITY_DIAG
+#endif
+
 #ifdef HAS_ECHO_EFFECT
 #define ECHO_EFFECT_FACILITY_DIAG                                                                                      \
     {                                                                                                                  \
@@ -411,6 +647,36 @@
     },
 #else
 #define ECHO_EFFECT_FACILITY_DIAG
+#endif
+
+#ifdef HAS_IQUEUE
+#define IQUEUE_FACILITY_DIAG                                                                                           \
+    {                                                                                                                  \
+        .facility = IQUEUE,                                                                                            \
+        .name = "iQUEUE",                                                                                              \
+    },
+#else
+#define IQUEUE_FACILITY_DIAG
+#endif
+
+#ifdef HAS_MAX_HEAP
+#define MAX_HEAP_FACILITY_DIAG                                                                                         \
+    {                                                                                                                  \
+        .facility = MAX_HEAP,                                                                                          \
+        .name = "MaxHeap",                                                                                             \
+    },
+#else
+#define MAX_HEAP_FACILITY_DIAG
+#endif
+
+#ifdef HAS_MIN_HEAP
+#define MIN_HEAP_FACILITY_DIAG                                                                                         \
+    {                                                                                                                  \
+        .facility = MIN_HEAP,                                                                                          \
+        .name = "MinHeap",                                                                                             \
+    },
+#else
+#define MIN_HEAP_FACILITY_DIAG
 #endif
 
 #ifdef HAS_SA51034
@@ -433,6 +699,16 @@
 #define IIR_FACILITY_DIAG
 #endif
 
+#ifdef HAS_FCSMU
+#define FCSMU_FACILITY_DIAG                                                                                            \
+    {                                                                                                                  \
+        .facility = LG_FCSMU,                                                                                          \
+        .name = "FCSMU",                                                                                               \
+    },
+#else
+#define FCSMU_FACILITY_DIAG
+#endif
+
 #ifdef HAS_FFT
 #define FFT_FACILITY_DIAG                                                                                              \
     {                                                                                                                  \
@@ -451,6 +727,36 @@
     },
 #else
 #define SONAR_FACILITY_DIAG
+#endif
+
+#ifdef HAS_MEDIAN_FILTER
+#define MEDIAN_FILTER_FACILITY_DIAG                                                                                    \
+    {                                                                                                                  \
+        .facility = MEDIAN_FILTER,                                                                                     \
+        .name = "MedianFilter",                                                                                        \
+    },
+#else
+#define MEDIAN_FILTER_FACILITY_DIAG
+#endif
+
+#ifdef HAS_MEDIAN_FILTER_FAST
+#define MEDIAN_FILTER_FAST_FACILITY_DIAG                                                                               \
+    {                                                                                                                  \
+        .facility = MEDIAN_FILTER_FAST,                                                                                \
+        .name = "MedianFilterFast",                                                                                    \
+    },
+#else
+#define MEDIAN_FILTER_FAST_FACILITY_DIAG
+#endif
+
+#ifdef HAS_SW_COMPONENT
+#define SW_COMPONENT_FACILITY_DIAG                                                                                     \
+    {                                                                                                                  \
+        .facility = SW_COMPONENT,                                                                                      \
+        .name = "SwComponent",                                                                                         \
+    },
+#else
+#define SW_COMPONENT_FACILITY_DIAG
 #endif
 
 #ifdef HAS_STRING_READER
@@ -481,6 +787,36 @@
 #define LTR390_FACILITY_DIAG
 #endif
 
+#ifdef HAS_LOCKSTEP
+#define LOCKSTEP_FACILITY_DIAG                                                                                         \
+    {                                                                                                                  \
+        .facility = LOCKSTEP,                                                                                          \
+        .name = "LockStep",                                                                                            \
+    },
+#else
+#define LOCKSTEP_FACILITY_DIAG
+#endif
+
+#ifdef HAS_RC_CAR
+#define RC_CAR_FACILITY_DIAG                                                                                           \
+    {                                                                                                                  \
+        .facility = RC_CAR,                                                                                            \
+        .name = "RcCar",                                                                                               \
+    },
+#else
+#define RC_CAR_FACILITY_DIAG
+#endif
+
+#ifdef HAS_LED_MONO_PWM
+#define LED_MONO_PWM_FACILITY_DIAG                                                                                     \
+    {                                                                                                                  \
+        .facility = LED_MONO_PWM,                                                                                      \
+        .name = "LED_MONO_PWM",                                                                                        \
+    },
+#else
+#define LED_MONO_PWM_FACILITY_DIAG
+#endif
+
 #ifdef HAS_WATCHDOG
 #define WATCHDOG_FACILITY_DIAG                                                                                         \
     {                                                                                                                  \
@@ -499,6 +835,16 @@
     },
 #else
 #define W25Q32JV_FACILITY_DIAG
+#endif
+
+#ifdef HAS_DEMAGNETIZER
+#define DEMAGNETIZER_FACILITY_DIAG                                                                                     \
+    {                                                                                                                  \
+        .facility = DEMAGNETIZER,                                                                                      \
+        .name = "DEMAGNETIZER",                                                                                        \
+    },
+#else
+#define DEMAGNETIZER_FACILITY_DIAG
 #endif
 
 #ifdef HAS_HW_VERSION
@@ -541,6 +887,16 @@
 #define WAV_FACILITY_DIAG
 #endif
 
+#ifdef HAS_CAN_TX_PLANNER
+#define CAN_TX_PLANNER_FACILITY_DIAG                                                                                              \
+    {                                                                                                                      \
+        .facility = CAN_TX_PLANNER,                                                                                               \
+        .name = "CanTxPlanner",                                                                                                 \
+    },
+#else
+#define CAN_TX_PLANNER_FACILITY_DIAG
+#endif
+
 #ifdef HAS_DDS
 #define DDS_FACILITY_DIAG                                                                                              \
     {                                                                                                                  \
@@ -551,6 +907,36 @@
 #define DDS_FACILITY_DIAG
 #endif
 
+#ifdef HAS_MAILBOX
+#define MAILBOX_FACILITY_DIAG                                                                                          \
+    {                                                                                                                  \
+        .facility = MAILBOX,                                                                                           \
+        .name = "MAILBOX",                                                                                             \
+    },
+#else
+#define MAILBOX_FACILITY_DIAG
+#endif
+
+#ifdef HAS_MULTICORE
+#define MULTICORE_FACILITY_DIAG                                                                                        \
+    {                                                                                                                  \
+        .facility = MULTICORE,                                                                                         \
+        .name = "MultiCore",                                                                                           \
+    },
+#else
+#define MULTICORE_FACILITY_DIAG
+#endif
+
+#ifdef HAS_MPU
+#define MPU_FACILITY_DIAG                                                                                              \
+    {                                                                                                                  \
+        .facility = LG_MPU,                                                                                            \
+        .name = "Mpu",                                                                                                 \
+    },
+#else
+#define MPU_FACILITY_DIAG
+#endif
+
 #ifdef HAS_EEPROM
 #define EEPROM_FACILITY_DIAG                                                                                           \
     {                                                                                                                  \
@@ -559,6 +945,26 @@
     },
 #else
 #define EEPROM_FACILITY_DIAG
+#endif
+
+#ifdef HAS_HIST_FILTER
+#define HIST_FILTER_FACILITY_DIAG                                                                                           \
+    {                                                                                                                  \
+        .facility = HIST_FILTER,                                                                                            \
+        .name = "HistFilter",                                                                                              \
+    },
+#else
+#define HIST_FILTER_FACILITY_DIAG
+#endif
+
+#ifdef HAS_CLOCK
+#define CLOCK_FACILITY_DIAG                                                                                    \
+    {                                                                                                          \
+        .facility = CLOCK,                                                                                     \
+        .name = "Clock",                                                                                       \
+    },
+#else
+#define CLOCK_FACILITY_DIAG
 #endif
 
 #ifdef HAS_CLOCK_DIVIDER
@@ -611,6 +1017,17 @@
 #define GM67_FACILITY_DIAG
 #endif
 
+#ifdef HAS_CAN_RX_HIST
+#define CAN_RX_HIST_FACILITY_DIAG                                                                                      \
+    {                                                                                                                  \
+        .facility = CAN_RX_HIST,                                                                                       \
+        .name = "CanRxHist",                                                                                           \
+    },
+#else
+#define CAN_RX_HIST_FACILITY_DIAG
+#endif
+
+
 #ifdef HAS_KALAH
 #define KALAH_FACILITY_DIAG                                                                                            \
     {                                                                                                                  \
@@ -619,6 +1036,16 @@
     },
 #else
 #define KALAH_FACILITY_DIAG
+#endif
+
+#ifdef HAS_BUZZER
+#define BUZZER_FACILITY_DIAG                                                                                           \
+    {                                                                                                                  \
+        .facility = BUZZER,                                                                                            \
+        .name = "Buzzer",                                                                                              \
+    },
+#else
+#define BUZZER_FACILITY_DIAG
 #endif
 
 #ifdef HAS_UBLOX_NEO_6M
@@ -671,6 +1098,47 @@
 #define SCAN_FACILITY_DIAG
 #endif
 
+
+#ifdef HAS_CORE
+#define CORE_FACILITY_DIAG                                                                                             \
+    {                                                                                                                  \
+        .facility = CORE,                                                                                              \
+        .name = "Core",                                                                                                \
+    },
+#else
+#define CORE_FACILITY_DIAG
+#endif
+
+#ifdef HAS_MAM
+#define MAM_FACILITY_DIAG                                                                                              \
+    {                                                                                                                  \
+        .facility = MAM,                                                                                               \
+        .name = "Mam",                                                                                                 \
+    },
+#else
+#define MAM_FACILITY_DIAG
+#endif
+
+#ifdef HAS_SLCAN
+#define SLCAN_FACILITY_DIAG                                                                                            \
+    {                                                                                                                  \
+        .facility = SLCAN,                                                                                             \
+        .name = "SlCan",                                                                                               \
+    },
+#else
+#define SLCAN_FACILITY_DIAG
+#endif
+
+#ifdef HAS_TICKET_SET_OPT
+#define TICKET_SET_OPT_FACILITY_DIAG                                                                                   \
+    {                                                                                                                  \
+        .facility = TICKET_SET_OPT,                                                                                    \
+        .name = "TicketSetOpt",                                                                                        \
+    },
+#else
+#define TICKET_SET_OPT_FACILITY_DIAG
+#endif
+
 #ifdef HAS_SET_GAME
 #define SET_GAME_FACILITY_DIAG                                                                                         \
     {                                                                                                                  \
@@ -711,6 +1179,16 @@
 #define CORRELATOR_FACILITY_DIAG
 #endif
 
+#ifdef HAS_IR_SAMSUNG
+#define IR_SAMSUNG_FACILITY_DIAG                                                                                       \
+    {                                                                                                                  \
+        .facility = IR_SAMSUNG,                                                                                        \
+        .name = "IR_SAMSUNG",                                                                                          \
+    },
+#else
+#define IR_SAMSUNG_FACILITY_DIAG
+#endif
+
 #ifdef HAS_SOUND_LOCALIZATION
 #define SOUND_LOCALIZATION_FACILITY_DIAG                                                                               \
     {                                                                                                                  \
@@ -731,6 +1209,36 @@
 #define SPIFI_FACILITY_DIAG
 #endif
 
+#ifdef HAS_TRNG
+#define TRNG_FACILITY_DIAG                                                                                            \
+    {                                                                                                                 \
+        .facility = TRNG,                                                                                             \
+        .name = "tRng",                                                                                               \
+    },
+#else
+#define TRNG_FACILITY_DIAG
+#endif
+
+#ifdef HAS_SW_NOR_FLASH
+#define SW_NOR_FLASH_FACILITY_DIAG                                                                                     \
+    {                                                                                                                  \
+        .facility = SW_NOR_FLASH,                                                                                      \
+        .name = "SwNorFlash",                                                                                          \
+    },
+#else
+#define SW_NOR_FLASH_FACILITY_DIAG
+#endif
+
+#ifdef HAS_SCRIPT
+#define SCRIPT_FACILITY_DIAG                                                                                           \
+    {                                                                                                                  \
+        .facility = SCRIPT,                                                                                            \
+        .name = "Script",                                                                                              \
+    },
+#else
+#define SCRIPT_FACILITY_DIAG
+#endif
+
 #ifdef HAS_STORAGE
 #define STORAGE_FACILITY_DIAG                                                                                          \
     {                                                                                                                  \
@@ -739,6 +1247,48 @@
     },
 #else
 #define STORAGE_FACILITY_DIAG
+#endif
+
+
+#ifdef HAS_USB_SERIAL
+#define USB_SERIAL_FACILITY_DIAG                                                                                            \
+    {                                                                                                                  \
+        .facility = USB_SERIAL,                                                                                             \
+        .name = "UsbSerial",                                                                                               \
+    },
+#else
+#define USB_SERIAL_FACILITY_DIAG
+#endif
+
+
+#ifdef HAS_SLCAN
+#define SLCAN_FACILITY_DIAG                                                                                            \
+    {                                                                                                                  \
+        .facility = SLCAN,                                                                                             \
+        .name = "SlCan",                                                                                               \
+    },
+#else
+#define SLCAN_FACILITY_DIAG
+#endif
+
+#ifdef HAS_ERM
+#define ERM_FACILITY_DIAG                                                                                              \
+    {                                                                                                                  \
+        .facility = LG_ERM,                                                                                            \
+        .name = "Erm",                                                                                                 \
+    },
+#else
+#define ERM_FACILITY_DIAG
+#endif
+
+#ifdef HAS_EIM
+#define EIM_FACILITY_DIAG                                                                                              \
+    {                                                                                                                  \
+        .facility = LG_EIM,                                                                                            \
+        .name = "Eim",                                                                                                 \
+    },
+#else
+#define EIM_FACILITY_DIAG
 #endif
 
 #ifdef HAS_GRAPHVIZ_TO_TSORT
@@ -751,76 +1301,8 @@
 #define GRAPHVIZ_TO_TSORT_FACILITY_DIAG
 #endif
 
-#define ALL_FACILITY_INFO                                                                                              \
-    ANALOG_FILTER_FACILITY_DIAG                                                                                        \
-    ARRAY_FACILITY_DIAG                                                                                                \
-    AUTO_BRIGHTNESS_FACILITY_DIAG                                                                                      \
-    DSP_FACILITY_DIAG                                                                                                  \
-    AUTO_VERSION_FACILITY_DIAG                                                                                         \
-    BLACK_BOX_FACILITY_DIAG                                                                                            \
-    BPSK_FACILITY_DIAG                                                                                                 \
-    BLE_AUDIO_FACILITY_DIAG                                                                                            \
-    BOARD_FACILITY_DIAG                                                                                                \
-    STORAGE_FACILITY_DIAG                                                                                              \
-    BOOTLOADER_FACILITY_DIAG                                                                                           \
-    C_GENERATOR_FACILITY_DIAG                                                                                          \
-    CALCULATOR_FACILITY_DIAG                                                                                           \
-    CALIBRATION_DATA_FACILITY_DIAG                                                                                     \
-    CLOCK_DIVIDER_FACILITY_DIAG                                                                                        \
-    CODE_STYLE_CHECKER_FACILITY_DIAG                                                                                   \
-    COMPLEX_FACILITY_DIAG                                                                                              \
-    CORRELATOR_FACILITY_DIAG                                                                                           \
-    END_OF_BLOCK_FACILITY_DIAG                                                                                         \
-    DECAWAVE_FACILITY_DIAG                                                                                             \
-    DECAWAVE_NATIVE_FACILITY_DIAG                                                                                      \
-    DECIMATOR_FACILITY_DIAG                                                                                            \
-    DELTA_SIGMA_FACILITY_DIAG                                                                                          \
-    DDS_FACILITY_DIAG                                                                                                  \
-    EEPROM_FACILITY_DIAG                                                                                               \
-    FILE_API_FACILITY_DIAG                                                                                             \
-    FILE_PC_FACILITY_DIAG                                                                                              \
-    GM67_FACILITY_DIAG                                                                                                 \
-    GPS_FACILITY_DIAG                                                                                                  \
-    GRAPHVIZ_TO_TSORT_FACILITY_DIAG                                                                                    \
-    HEX_BIN_FACILITY_DIAG                                                                                              \
-    FW_LOADER_FACILITY_DIAG                                                                                            \
-    HW_CRYP_FACILITY_DIAG                                                                                              \
-    HW_VERSION_FACILITY_DIAG                                                                                           \
-    ISO_TP_FACILITY_DIAG                                                                                               \
-    IIR_FACILITY_DIAG                                                                                                  \
-    KALAH_FACILITY_DIAG                                                                                                \
-    LTR390_FACILITY_DIAG                                                                                               \
-    MICROCONTROLLER_FACILITY_DIAG                                                                                      \
-    NAU8814_FACILITY_DIAG                                                                                              \
-    LOG_FACILITY_DIAG                                                                                                  \
-    PLL_CALC_FACILITY_DIAG                                                                                             \
-    PWM_DAC_FACILITY_DIAG                                                                                              \
-    RS232_FACILITY_DIAG                                                                                                \
-    RS485_FACILITY_DIAG                                                                                                \
-    RUNNING_LINE_FACILITY_DIAG                                                                                         \
-    PHASE_DETECTOR_FACILITY_DIAG                                                                                       \
-    PID_FACILITY_DIAG                                                                                                  \
-    SA51034_FACILITY_DIAG                                                                                              \
-    SOCKET_FACILITY_DIAG                                                                                               \
-    SERIAL_PORT_FACILITY_DIAG                                                                                          \
-    SOUND_LOCALIZATION_FACILITY_DIAG                                                                                   \
-    FFT_FACILITY_DIAG                                                                                                  \
-    STRING_READER_FACILITY_DIAG                                                                                        \
-    STRING_FACILITY_DIAG                                                                                               \
-    SCAN_FACILITY_DIAG                                                                                                 \
-    SET_GAME_FACILITY_DIAG                                                                                             \
-    STATISTICS_FACILITY_DIAG                                                                                           \
-    SONAR_FACILITY_DIAG                                                                                                \
-    SPIFI_FACILITY_DIAG                                                                                                \
-    QUADRATURE_MIXER_FACILITY_DIAG                                                                                     \
-    TIMER_CALC_FACILITY_DIAG                                                                                           \
-    TOPO_SORT_FACILITY_DIAG                                                                                            \
-    UBLOX_NEO_6M_FACILITY_DIAG                                                                                         \
-    UDS_FACILITY_DIAG                                                                                                  \
-    PLL_SIM_FACILITY_DIAG                                                                                              \
-    WAV_FACILITY_DIAG                                                                                                  \
-    W25Q32JV_FACILITY_DIAG                                                                                             \
-    WATCHDOG_FACILITY_DIAG
+/*Do Not move that include system_facility_tokens up*/
+#include "system_facility_tokens.h"
 
 static const FacilityInfo_t FacilityInfo[] = {
     ALL_FACILITY_INFO
@@ -1035,13 +1517,6 @@ static const FacilityInfo_t FacilityInfo[] = {
         .name = "Set",
     },
 #endif /*HAS_SET*/
-
-#ifdef HAS_SW_NOR_FLASH
-    {
-        .facility = SW_NOR_FLASH,
-        .name = "SwNOR-Flash",
-    },
-#endif /*HAS_SW_NOR_FLASH*/
 
 #ifdef HAS_HEALTH_MONITOR
     {
@@ -1404,7 +1879,7 @@ const char* facility2str_lut(facility_t facility) {
 }
 
 #ifdef HAS_LOG_DIAG
-const char* Facility2Str(facility_t facility) {
+const char* FacilityToStr(facility_t facility) {
     const char* facility_str = NULL;
 
     facility_str = facility2str_lut(facility);
@@ -1567,7 +2042,7 @@ const char* Facility2Str(facility_t facility) {
 #endif
 
 #ifdef HAS_DMA
-        case DMA:
+        case LG_DMA:
             facility_str = "DMA";
             break;
 #endif /**/
@@ -1902,8 +2377,8 @@ uint16_t facility_max_name(void) {
     uint16_t cur_name_len = 0;
     facility_t facil = UNKNOWN_FACILITY;
     for(facil = UNKNOWN_FACILITY; facil < ALL_FACILITY; facil++) {
-        cur_name_len = strlen(Facility2Str(facil));
-        max_name = MAX(max_name, cur_name_len);
+        cur_name_len = strlen(FacilityToStr(facil));
+        max_name = MATH_MAX(max_name, cur_name_len);
     }
     return max_name;
 }

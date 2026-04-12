@@ -3,25 +3,29 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
     CONTROL_PRECONFIG_INC=Y
 
     CONTROL_DIR = $(WORKSPACE_LOC)/control
-    #@echo $(error CONTROL_DIR=$(CONTROL_DIR))
+    # $(error CONTROL_DIR=$(CONTROL_DIR))
 
     ifeq ($(MBR),Y)
-        #@echo $(error MBR=$(MBR))
+        # $(error MBR=$(MBR))
         include $(CONTROL_DIR)/mbr/mbr_preconfig.mk
     endif
 
     ifeq ($(BOOT),Y)
-        #@echo $(error BOOT= $(BOOT))
+        # $(error BOOT= $(BOOT))
         include $(CONTROL_DIR)/boot_drv/boot_preconfig.mk
     endif
 
     ifeq ($(BOOTLOADER),Y)
-        #@echo $(error BOOTLOADER= $(BOOTLOADER))
+        # $(error BOOTLOADER= $(BOOTLOADER))
         include $(CONTROL_DIR)/bootloader/bootloader_preconfig.mk
+    endif
+
+    ifeq ($(BUZZER),Y)
+        include $(CONTROL_DIR)/buzzer/buzzer_preconfig.mk
     endif
  
     ifeq ($(PWM_DAC),Y)
-        #@echo $(error PWM_DAC= $(PWM_DAC))
+        # $(error PWM_DAC= $(PWM_DAC))
         include $(CONTROL_DIR)/pwm_dac/pwm_dac_preconfig.mk
     endif
     
@@ -31,12 +35,12 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
     endif
 
     ifeq ($(DEBUGGER),Y)
-        #@echo $(error DEBUGGER=$(DEBUGGER))
+        # $(error DEBUGGER=$(DEBUGGER))
         include $(CONTROL_DIR)/debugger/debugger_preconfig.mk
     endif
 
     ifeq ($(FREE_RTOS),Y)
-        #@echo $(error FREE_RTOS=$(FREE_RTOS))
+        # $(error FREE_RTOS=$(FREE_RTOS))
         include $(CONTROL_DIR)/free_rtos/free_rtos_preconfig.mk
     endif
 
@@ -54,7 +58,7 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
     endif
 
     ifeq ($(DISPLAY),Y)
-        #@echo $(error DISPLAY=$(DISPLAY))
+        # $(error DISPLAY=$(DISPLAY))
         include $(CONTROL_DIR)/display/display_preconfig.mk
     endif
     
@@ -62,16 +66,20 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
         include $(CONTROL_DIR)/super_cycle/super_cycle_preconfig.mk    
     endif
 
+    ifeq ($(POSTPONE_FUN),Y)
+        include $(CONTROL_DIR)/postpone_fun/postpone_fun_preconfig.mk    
+    endif
+
     ifeq ($(SYSTEM),Y)
         include $(CONTROL_DIR)/system/system_preconfig.mk    
     endif
-    
-    ifeq ($(TASK),Y)
-        include $(CONTROL_DIR)/task/task_preconfig.mk
+
+    ifeq ($(SCHEDULER),Y)
+        include $(CONTROL_DIR)/scheduler/scheduler_preconfig.mk
     endif
 
     ifeq ($(WIN),Y)
-        #@echo $(error WIN=$(WIN))
+        # $(error WIN=$(WIN))
         include $(CONTROL_DIR)/win/win_utils_preconfig.mk
     endif
 endif

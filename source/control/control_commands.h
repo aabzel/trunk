@@ -17,6 +17,18 @@
 #error "+HAS_CONTROL_COMMANDS"
 #endif
 
+#ifdef HAS_GPIO_DAC_COMMANDS
+#include "gpio_dac_commands.h"
+#else
+#define GPIO_DAC_COMMANDS
+#endif
+
+#ifdef HAS_AUTO_EXIT_COMMANDS
+#include "auto_exit_commands.h"
+#else
+#define AUTO_EXIT_COMMANDS
+#endif
+
 #ifdef HAS_LED_MONO_COMMANDS
 #include "led_mono_commands.h"
 #else
@@ -59,18 +71,6 @@
 #define FREE_RTOS_COMMANDS
 #endif
 
-#ifdef HAS_IWDG_COMMANDS
-#include "iwdg_commands.h"
-#else
-#define IWDG_COMMANDS
-#endif
-
-#ifdef HAS_WDT_COMMANDS
-#include "watchdog_commands.h"
-#else
-#define WDT_COMMANDS
-#endif
-
 #ifdef HAS_CORE_COMMANDS
 #include "core_commands.h"
 #else
@@ -111,6 +111,12 @@
 #include "rds_commands.h"
 #else
 #define RDS_COMMANDS
+#endif
+
+#ifdef HAS_POSTPONE_FUN_COMMANDS
+#include "postpone_fun_commands.h"
+#else
+#define POSTPONE_FUN_COMMANDS
 #endif
 
 #ifdef HAS_ANT_MUX_COMMANDS
@@ -165,22 +171,10 @@ bool cmd_action_bt1024_wm8731_fwd(int32_t argc, char* argv[]);
 #define UNIT_TEST_COMMANDS
 #endif
 
-#ifdef HAS_NVIC_COMMANDS
-#include "nvic_commands.h"
-#else
-#define NVIC_COMMANDS
-#endif
-
 #ifdef HAS_SUPER_CYCLE_COMMANDS
 #include "super_cycle_commands.h"
 #else
 #define SUPER_CYCLE_COMMANDS
-#endif /*HAS_SUPER_CYCLE_COMMANDS*/
-
-#ifdef HAS_MPU_COMMANDS
-#include "mpu_commands.h"
-#else
-#define MPU_COMMANDS
 #endif
 
 #ifdef HAS_GPIO_PWM_COMMANDS
@@ -199,6 +193,12 @@ bool cmd_action_bt1024_wm8731_fwd(int32_t argc, char* argv[]);
 #include "boot_commands.h"
 #else
 #define BOOT_COMMANDS
+#endif
+
+#ifdef HAS_BUZZER_COMMANDS
+#include "buzzer_commands.h"
+#else
+#define BUZZER_COMMANDS
 #endif
 
 #ifdef HAS_BOARD_COMMANDS
@@ -223,54 +223,56 @@ bool cmd_action_bt1024_wm8731_fwd(int32_t argc, char* argv[]);
 #include "pc_commands.h"
 #else
 #define PC_COMMANDS
-#endif /*HAS_PC_COMMANDS*/
+#endif
 
 #ifdef HAS_PWM_DAC_COMMANDS
 #include "pwm_dac_commands.h"
 #else
 #define PWM_DAC_COMMANDS
-#endif /*HAS_PWM_DAC_COMMANDS*/
+#endif
 
-#ifdef HAS_TASK_COMMANDS
-#include "task_commands.h"
+#ifdef HAS_SCHEDULER_COMMANDS
+#include "scheduler_commands.h"
 #else
-#define TASK_COMMANDS
-#endif /*HAS_TASK_COMMANDS*/
+#define SCHEDULER_COMMANDS
+#endif
 
 #define CONTROL_DIGITAL_COMMANDS
 
 #define CONTROL_SOWTWARE_COMMANDS           \
-    FREE_RTOS_COMMANDS                      \
-    PID_COMMANDS                            \
-    SUPER_CYCLE_COMMANDS                    \
-    SCRIPT_COMMANDS                         \
-    TASK_COMMANDS                           \
-    PC_COMMANDS                             \
-    CONTROL_FWD_COMMANDS                    \
-    BOOT_COMMANDS                           \
-    UNIT_TEST_COMMANDS                      \
-    BOOTLOADER_COMMANDS                     \
-    SYSTEM_COMMANDS                         \
-    DEBUGGER_COMMANDS
+        AUTO_EXIT_COMMANDS                  \
+        BOOTLOADER_COMMANDS                 \
+        BOOT_COMMANDS                       \
+        CONTROL_FWD_COMMANDS                \
+        DEBUGGER_COMMANDS                   \
+        FREE_RTOS_COMMANDS                  \
+        PC_COMMANDS                         \
+        PID_COMMANDS                        \
+        POSTPONE_FUN_COMMANDS               \
+        SCHEDULER_COMMANDS                  \
+        SCRIPT_COMMANDS                     \
+        SUPER_CYCLE_COMMANDS                \
+        SYSTEM_COMMANDS                     \
+        UNIT_TEST_COMMANDS
+
 
 #define CONTROL_HARDWARE_COMMANDS           \
-    DAC_COMMANDS                            \
-    PWR_MUX_COMMANDS                        \
-    PWM_DAC_COMMANDS                        \
-    DISPLAY_COMMANDS                        \
-    LED_MONO_COMMANDS                       \
-    LED_RGB_COMMANDS                        \
-    GPIO_PWM_COMMANDS                       \
-    RELAY_COMMANDS                          \
-    INTERRUPT_COMMANDS                      \
-    BOARD_COMMANDS                          \
-    BOARD_CUSTOM_COMMANDS                   \
-    CORE_COMMANDS                           \
-    AUDIO_USB_COMMANDS                      \
-    ANT_MUX_COMMANDS                        \
-    NVIC_COMMANDS                           \
-    MPU_COMMANDS                            \
-    WDT_COMMANDS
+        ANT_MUX_COMMANDS                    \
+        AUDIO_USB_COMMANDS                  \
+        BOARD_COMMANDS                      \
+        BOARD_CUSTOM_COMMANDS               \
+        BUZZER_COMMANDS                     \
+        CORE_COMMANDS                       \
+        DAC_COMMANDS                        \
+        DISPLAY_COMMANDS                    \
+        GPIO_DAC_COMMANDS                   \
+        GPIO_PWM_COMMANDS                   \
+        INTERRUPT_COMMANDS                  \
+        LED_MONO_COMMANDS                   \
+        LED_RGB_COMMANDS                    \
+        PWM_DAC_COMMANDS                    \
+        PWR_MUX_COMMANDS                    \
+        RELAY_COMMANDS
 
 #define CONTROL_COMMANDS                    \
     GENERIC_COMMANDS                        \

@@ -24,6 +24,15 @@ typedef enum {
 
 typedef enum {
     UNKNOWN_FACILITY = 0, /*must be first in enum*/
+    SYS ,
+#ifdef HAS_ACC
+    LG_ACC,
+#endif
+
+#ifdef HAS_GAME_PAD_PS2
+    GAME_PAD_PS2,
+#endif
+
 #ifdef HAS_ASM
     ASM,
 #endif
@@ -90,12 +99,21 @@ typedef enum {
     NVRAM,
 #endif
 
+#ifdef HAS_DEMAGNETIZER
+    DEMAGNETIZER,
+#endif
+
+
 #ifdef HAS_APP
     APP,
 #endif
 
 #ifdef HAS_DMA
-    DMA,
+    LG_DMA,
+#endif
+
+#ifdef HAS_DMA_CHANNEL
+    DMA_CHANNEL,
 #endif
 
 #ifdef HAS_FDA801
@@ -122,9 +140,17 @@ typedef enum {
     CAN_IF,
 #endif
 
+#ifdef HAS_CAN_FD
+    CAN_FD,
+#endif
+
 #ifdef HAS_CLOCK
     CLK,
-	CLOCK,
+    CLOCK,
+#endif
+
+#ifdef HAS_ERM
+    LG_ERM,
 #endif
 
 #ifdef HAS_CORE
@@ -147,6 +173,10 @@ typedef enum {
     LG_CRC,
 #endif
 
+#ifdef HAS_EIM
+    LG_EIM,
+#endif
+
 #ifdef HAS_ARRAY
     ARRAY,
 #endif
@@ -158,11 +188,6 @@ typedef enum {
 #ifdef HAS_FW_LOADER
 	FW_LOADER,
 #endif
-
-#ifdef HAS_STATISTICS
-    STATISTICS,
-#endif
-
 #ifdef HAS_BLE
     BLE,
 #endif
@@ -170,6 +195,11 @@ typedef enum {
 #ifdef HAS_BOOTLOADER
     BOOTLOADER,
 #endif
+
+#ifdef HAS_MAX_HEAP
+    MAX_HEAP,
+#endif
+
 
 #ifdef HAS_COM
     COM,
@@ -191,6 +221,11 @@ typedef enum {
 #ifdef HAS_DFT
     DFT,
     IDFT,
+#endif
+
+
+#ifdef HAS_AUTO_EXIT
+    AUTO_EXIT,
 #endif
 
 #ifdef HAS_VOLTAGE_DIVIDER
@@ -226,6 +261,10 @@ typedef enum {
 #ifdef HAS_DECADRIVER
     DECA,
 #endif /*HAS_DECADRIVER*/
+
+#ifdef HAS_STATISTICS
+    STATISTICS,
+#endif
 
 #ifdef HAS_DWM3000
     DWM3000,
@@ -275,6 +314,7 @@ typedef enum {
 #ifdef HAS_FAT_FS
     FAT_FS,
     DISK,
+    DISK_IO,
 #endif
 
 #ifdef HAS_FREE_RTOS
@@ -302,6 +342,15 @@ typedef enum {
 
 #ifdef HAS_GPIO
     GPIO,
+#endif
+
+#ifdef HAS_MEDIAN_FILTER
+    MEDIAN_FILTER,
+#endif
+
+
+#ifdef HAS_MEDIAN_FILTER_FAST
+    MEDIAN_FILTER_FAST,
 #endif
 
 #ifdef HAS_LTR390
@@ -351,6 +400,14 @@ typedef enum {
     CLOCK_DIVIDER,
 #endif
 
+#ifdef HAS_SCRIPT
+    SCRIPT,
+#endif
+
+#ifdef HAS_SED
+    SED,
+#endif
+
 #ifdef HAS_GLONASS
     GLONASS,
 #endif
@@ -378,16 +435,20 @@ typedef enum {
     BLACK_BOX,
 #endif
 
+#ifdef HAS_BUZZER
+    BUZZER,
+#endif
+
 #ifdef HAS_MIC2026
     MIC2026,
 #endif
 
 #ifdef HAS_PHASE_DETECTOR
-	PHASE_DETECTOR,
+    PHASE_DETECTOR,
 #endif
 
 #ifdef HAS_UBLOX_NEO_6M
-	UBLOX_NEO_6M,
+    UBLOX_NEO_6M,
 #endif
 
 
@@ -396,12 +457,21 @@ typedef enum {
     LIMITER,
 #endif
 
+#ifdef HAS_MPU
+    LG_MPU,
+#endif
+
+
 #ifdef HAS_DECAWAVE_NATIVE
     DECAWAVE_NATIVE,
 #endif
 
 #ifdef HAS_DECAWAVE
     DECAWAVE,
+#endif
+
+#ifdef HAS_MULTICORE
+    MULTICORE,
 #endif
 
 #ifdef HAS_MODULATOR
@@ -441,7 +511,7 @@ typedef enum {
 #endif
 
 #ifdef HAS_WAV
-	WAV,
+    WAV,
 #endif
 
 
@@ -455,6 +525,10 @@ typedef enum {
 
 #ifdef HAS_CIRCULAR_BUFFER
     CIRCULAR_BUFFER,
+#endif
+
+#ifdef HAS_ESP_01
+	ESP_01,
 #endif
 
 #ifdef HAS_SDR
@@ -481,6 +555,10 @@ typedef enum {
     LED,
 #endif
 
+#ifdef HAS_SW_SD_CARD
+    SW_SD_CARD,
+#endif
+
 #ifdef HAS_LED_MONO
     LED_MONO,
 #endif
@@ -496,6 +574,10 @@ typedef enum {
 
 #ifdef HAS_CALIBRATION_DATA
     CALIBRATION_DATA,
+#endif
+
+#ifdef HAS_TICKET_SET_OPT
+    TICKET_SET_OPT,
 #endif
 
 #ifdef HAS_LED_RGB
@@ -558,6 +640,9 @@ typedef enum {
     FOURIER_SERIES,
 #endif
 
+#ifdef HAS_POSTPONE_FUN
+    POSTPONE_FUN,
+#endif
 
 #ifdef HAS_W25Q32JV
     W25Q32JV,
@@ -599,6 +684,14 @@ typedef enum {
     CROSS_DETECT,
 #endif
 
+#ifdef HAS_RATIONAL_NUM
+    RATIONAL_NUM,
+#endif
+
+#ifdef HAS_MAM
+    MAM,
+#endif
+
 #ifdef HAS_ASICS
     ASICS,
 #endif
@@ -615,8 +708,8 @@ typedef enum {
     RS485,
 #endif
 
-#ifdef HAS_SONAR
-	SONAR,
+#ifdef HAS_DASHBOARD
+    DASHBOARD,
 #endif
 
 
@@ -626,6 +719,11 @@ typedef enum {
 
 #ifdef HAS_FILE_PC
     FILE_PC,
+#endif
+
+
+#ifdef HAS_LOCKSTEP
+    LOCKSTEP,
 #endif
 
 #ifdef HAS_FLASH
@@ -644,6 +742,10 @@ typedef enum {
     LG_PWR,
 #endif
 
+#ifdef HAS_TRNG
+    TRNG,
+#endif
+
 #ifdef HAS_RNG
     LG_RNG,
 #endif
@@ -651,8 +753,13 @@ typedef enum {
 #ifdef HAS_LOAD
     LOAD,
 #endif
+
 #ifdef HAS_LORA
     LORA,
+#endif
+
+#ifdef HAS_LITTLE_FS
+    LITTLE_FS,
 #endif
 
 #ifdef HAS_DTMF
@@ -665,6 +772,10 @@ typedef enum {
 
 #ifdef HAS_SET_GAME
     SET_GAME,
+#endif
+
+#ifdef HAS_SONAR
+    SONAR,
 #endif
 
 #ifdef HAS_SUPER_CYCLE
@@ -680,7 +791,7 @@ typedef enum {
 #endif
 
 #ifdef HAS_TIMER_CALC
-	TIMER_CALC,
+    TIMER_CALC,
 #endif /*HAS_TIMER_CALC*/
 
 #ifdef HAS_MAX9860
@@ -688,7 +799,7 @@ typedef enum {
 #endif /*HAS_MAX9860*/
 
 #ifdef HAS_CORRELATOR
-	CORRELATOR,
+    CORRELATOR,
 #endif
 
 
@@ -713,10 +824,6 @@ typedef enum {
     PLANETARIUM,
 #endif
 
-#ifdef HAS_DASHBOARD
-    DASHBOARD,
-#endif
-
 #ifdef HAS_PARAM
     PARAM,
 #endif
@@ -729,8 +836,15 @@ typedef enum {
     ISO_TP,
 #endif
 
+#ifdef HAS_UDS_CLIENT
+    UDS_CLIENT,
+#endif
+
 #ifdef HAS_UDS
     UDS,
+    UDS_SERVER,
+    UDS_SERVER_LL,
+    UDS_SERVER_TRANSFER,
     DID,
 #endif
 
@@ -743,11 +857,23 @@ typedef enum {
 #endif
 
 #ifdef HAS_RS232
-	RS232,
+    RS232,
+#endif
+
+#ifdef HAS_SMOOTH_LAMP
+    SMOOTH_LAMP,
 #endif
 
 #ifdef HAS_PWM
     PWM,
+#endif
+
+#ifdef HAS_MAILBOX
+    MAILBOX,
+#endif
+
+#ifdef HAS_DRV8870
+    DRV8870,
 #endif
 
 #ifdef HAS_RETX
@@ -807,9 +933,19 @@ typedef enum {
 #ifdef HAS_SERIAL
     SERIAL,
 #endif
-    SYS,
+
+
 #ifdef HAS_RADIO
     RADIO,
+#endif
+
+#ifdef HAS_PCAN_PRO_X
+    PCAN,
+    PCAN_PRO_X,
+#endif
+
+#ifdef HAS_FCSMU
+    LG_FCSMU,
 #endif
 
 #ifdef HAS_NAU8814
@@ -841,7 +977,7 @@ typedef enum {
 #endif
 
 #ifdef HAS_HW_VERSION
-	HW_VERSION,
+    HW_VERSION,
 #endif
 
 #ifdef HAS_DS_TWR
@@ -880,7 +1016,10 @@ typedef enum {
     NOR_FLASH,
 #endif
 
+#ifdef HAS_UNIT_TEST
     TEST,
+    UNIT_TEST,
+#endif
 
 #ifdef HAS_TIME
     TIME,
@@ -908,29 +1047,29 @@ typedef enum {
 
 #ifdef HAS_WATCHDOG
     WATCHDOG,
-#endif /**/
+#endif
 
 #ifdef HAS_CRYP
     LG_CRYP,
-#endif /**/
+#endif
 
 #ifdef HAS_HW_CRYP
     HW_CRYP,
-#endif /**/
+#endif
 
 #ifdef HAS_HISTOGRAM
     HISTOGRAM,
-#endif /**/
+#endif
 #ifdef HAS_SCHMITT_TRIGGER
     SCHMITT_TRIGGER,
-#endif /**/
+#endif
 
 #ifdef HAS_INTERVAL
     INTERVAL,
 #endif
 
 #ifdef HAS_STRING
-    LINE,
+    STR_LG,
 #endif
 
 #ifdef HAS_EXT_INT
@@ -943,7 +1082,7 @@ typedef enum {
 
 #ifdef HAS_RUNNING_LINE
     RUNNING_LINE,
-#endif /*HAS_RUNNING_LINE*/
+#endif
 
 #ifdef HAS_USB
     USB,
@@ -952,24 +1091,134 @@ typedef enum {
 
 #ifdef HAS_USB_HOST
     USB_HOST,
-#endif /*HAS_USB_HOST*/
-
-
-
+#endif
 
 #ifdef HAS_USB_DEVICE
     USB_DEVICE,
-#endif /*HAS_USB_DEVICE*/
+#endif
 
 #endif /*HAS_USB*/
 
 #ifdef HAS_RLE
     RLE,
-#endif /*HAS_RLE*/
+#endif
+
+#ifdef HAS_LED_MONO_PWM
+    LED_MONO_PWM,
+#endif
+
+#ifdef HAS_SW_COMPONENT
+    SW_COMPONENT,
+#endif
 
 #ifdef HAS_MAX98357
     MAX98357,
-#endif /*HAS_MAX98357*/
+#endif
+
+#ifdef HAS_PHYSICS
+    PHYSICS,
+#endif
+
+#ifdef HAS_STORE_FS
+    STORE_FS,
+#endif
+
+#ifdef HAS_BIN_HEAP
+    BIN_HEAP,
+#endif
+
+#ifdef HAS_GEARBOX
+    GEARBOX,
+#endif
+
+#ifdef HAS_HASH_TABLE
+    HASH_TABLE,
+#endif
+
+#ifdef HAS_HASH_TABLE_S8
+    HASH_TABLE_S8,
+#endif
+
+#ifdef HAS_SLCAN
+    SLCAN,
+#endif
+
+#ifdef HAS_IR_SAMSUNG
+    IR_SAMSUNG,
+#endif
+
+#ifdef HAS_IR_RECEIVER
+    IR_RECEIVER,
+#endif
+
+#ifdef HAS_CAN_CAT
+    CAN_CAT,
+#endif
+
+#ifdef HAS_GARLAND
+    GARLAND,
+#endif
+
+#ifdef HAS_RC_CAR
+    RC_CAR,
+#endif
+
+#ifdef HAS_CAN_RX_HIST
+    CAN_RX_HIST,
+#endif
+
+#ifdef HAS_SW_UART
+    SW_UART,
+#endif
+
+#ifdef HAS_IR_FM_RADIO
+    IR_FM_RADIO,
+#endif
+
+#ifdef HAS_CAN_TX_PLANNER
+    CAN_TX_PLANNER,
+#endif
+
+#ifdef HAS_CAN_DIFF
+    CAN_DIFF,
+#endif
+
+#ifdef HAS_USB_SERIAL
+    USB_SERIAL,
+#endif
+
+#ifdef HAS_CAN_SHELL
+    CAN_SHELL,
+#endif
+
+#ifdef HAS_GPIO_DAC
+    GPIO_DAC,
+#endif
+
+#ifdef HAS_MIN_HEAP
+    MIN_HEAP,
+#endif
+
+#ifdef HAS_IQUEUE
+    IQUEUE,
+#endif
+
+#ifdef HAS_HIST_FILTER
+    HIST_FILTER,
+#endif
+
+#ifdef HAS_SEGGER_RTT
+    SEGGER_RTT,
+#endif
+
+
+#ifdef HAS_DWT
+    LG_DWT,
+#endif
+
+#ifdef HAS_WIFI
+    WIFI,
+#endif
 
 #ifdef HAS_ZED_F9P
     ZED_F9P,
