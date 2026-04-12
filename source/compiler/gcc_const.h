@@ -15,10 +15,14 @@ extern "C" {
 #define _PACKED_  __attribute__((__packed__))
 //#define _PACKED_  __attribute__ ((packed))
 
-#define _INTERRUPT_           __attribute__ ((interrupt))
+#define _INTERRUPT_  __attribute__ ((interrupt))
 
-
-#define _INLINE_FUN_          inline __attribute__((always_inline))
+/*
+This built-in function represents all anonymous arguments of
+an inline function. It can be used only in inline functions
+that are always inlined, never compiled as a separate function,
+such as those using */
+#define _INLINE_FUN_ inline __attribute__((__always_inline__))
 
 // Compiler keyword for placing an object at an absolute address (global variable address modifier)
 // Usage example: unsigned char My_Array[3] AT_ADDR(0x0810C000) = {0x12, 0x15, 0x78};

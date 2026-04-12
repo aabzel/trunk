@@ -18,75 +18,64 @@ COMPONENT_GET_NODE(SchmittTrigger, schmitt_trigger)
 
 COMPONENT_GET_CONFIG(SchmittTrigger, schmitt_trigger)
 
+static bool schmitt_trigger_run_callback_up(SchmittTriggerHandle_t* const Node) {
+    bool res = false;
+    LOG_DEBUG(SCHMITT_TRIGGER, "TG%u,CallBackUp:%p", Node->num, Node->up_call_back);
+    if (Node->up_call_back) {
+        res = Node->up_call_back();
+        if (res) {
+        } else {
+            LOG_ERROR(SCHMITT_TRIGGER, "TG%u,UpCallBackErr", Node->num);
+        }
+    }
+    return res;
+}
+
+static bool schmitt_trigger_run_callback_down(SchmittTriggerHandle_t* const Node) {
+    bool res = false;
+    LOG_DEBUG(SCHMITT_TRIGGER, "TG%u,CallBackDown:%p", Node->num, Node->down_call_back);
+    if (Node->down_call_back) {
+        res = Node->down_call_back();
+        if (res) {
+        } else {
+            LOG_ERROR(SCHMITT_TRIGGER, "TG%u DownCallBackErr", Node->num);
+        }
+    }
+    return res;
+}
+
 static bool schmitt_trigger_run_callback(SchmittTriggerHandle_t* const Node) {
     bool res = false;
-    if(Node) {
+    if (Node) {
         /* LOG_DEBUG(SCHMITT_TRIGGER, "TG%u,  CallBacks (Down:%p,Up: %p)", Node->num, Node->down_call_back,
-                  Node->up_call_back);*/
+         Node->up_call_back);*/
 #ifdef HAS_FLASH
-        res = is_flash_addr((uint32_t)Node->up_call_back);
-        res = is_flash_addr((uint32_t)Node->down_call_back) && res;
+               res = is_flash_addr((uint32_t)Node->up_call_back);
+               res = is_flash_addr((uint32_t)Node->down_call_back) && res;
 #else
         res = true;
 #endif
-        if(res) {
-            switch(Node->state) {
-            case SCHMITT_TRIGGER_STATE_UP: {
-                LOG_DEBUG(SCHMITT_TRIGGER, "TG%u,CallBackUp:%p", Node->num, Node->up_call_back);
-                res = Node->up_call_back();
-                if(res) {
+        if (res) {
+            switch (Node->state) {
+                case SCHMITT_TRIGGER_STATE_UP: {
                     Node->up_handler_cnt++;
-                } else {
-                    LOG_ERROR(SCHMITT_TRIGGER, "TG%u,UpCallBackErr", Node->num);
+                    res = schmitt_trigger_run_callback_up(Node);
                 }
-            } break;
-            case SCHMITT_TRIGGER_STATE_DOWN: {
-                LOG_DEBUG(SCHMITT_TRIGGER, "TG%u,CallBackDown:%p", Node->num, Node->down_call_back);
-                res = Node->down_call_back();
-                if(res) {
+                    break;
+                case SCHMITT_TRIGGER_STATE_DOWN: {
                     Node->down_handler_cnt++;
-                } else {
-                    LOG_ERROR(SCHMITT_TRIGGER, "TG%u DownCallBackErr", Node->num);
+                    res = schmitt_trigger_run_callback_down(Node);
                 }
-            } break;
-            default:
-                break;
+                    break;
+                default:
+                    break;
             }
         }
     }
     return res;
 }
 
-bool schmitt_trigger_init_one(uint8_t num) {
-    bool res = false;
-    const SchmittTriggerConfig_t* Config = SchmittTriggerGetConfig(num);
-    if(Config) {
-        SchmittTriggerHandle_t* Node = SchmittTriggerGetNode(num);
-        if(Node) {
-            LOG_WARNING(SCHMITT_TRIGGER, "%u,Init:%s", num, Config->name);
-            Node->hysteresis = Config->hysteresis;
-            Node->name = Config->name;
-            Node->up_call_back = Config->up_call_back;
-            Node->down_call_back = Config->down_call_back;
-            Node->switching_value = Config->switching_value;
-            Node->units = Config->units;
-
-            Node->init = true;
-            Node->state = SCHMITT_TRIGGER_STATE_UNDEF;
-            Node->prev_state = SCHMITT_TRIGGER_STATE_UNDEF;
-            Node->valid = true;
-            Node->value = 0.0;
-            Node->up_handler_cnt = 0;
-            Node->down_handler_cnt = 0;
-            res = true;
-            log_level_get_set(SCHMITT_TRIGGER, LOG_LEVEL_INFO);
-        }
-    }
-
-    return res;
-}
-
-bool schmitt_trigger_set_val(uint8_t num, double val) {
+bool schmitt_trigger_set_val(uint8_t num, float val) {
     bool res = false;
     SchmittTriggerHandle_t* Node = SchmittTriggerGetNode(num);
     if(Node) {
@@ -106,7 +95,7 @@ SchmittTriggerState_t schmitt_trigger_get_state(uint8_t num) {
     return out_state;
 }
 
-bool schmitt_trigger_proc_val_ll(SchmittTriggerHandle_t* const Node, double val) {
+bool schmitt_trigger_proc_val_ll(SchmittTriggerHandle_t* const Node, float val) {
     bool res = false;
     if(Node) {
         res = true;
@@ -121,13 +110,13 @@ bool schmitt_trigger_proc_val_ll(SchmittTriggerHandle_t* const Node, double val)
         }
 
         if(Node->state != Node->prev_state) {
-            LOG_DEBUG(SCHMITT_TRIGGER, "TG%u,border: %f, Cross, NewState:%s, Val:%f", Node->num, Node->switching_value,
+            LOG_DEBUG(SCHMITT_TRIGGER, "TG%u,border:%f,Cross,NewState:%s, Val:%f", Node->num, Node->switching_value,
                       SchmittTriggerState2Str(Node->state), val);
             res = schmitt_trigger_run_callback(Node);
             if(res) {
-                LOG_PARN(SCHMITT_TRIGGER, "TG%u CallBackOk", Node->num);
+                LOG_PARN(SCHMITT_TRIGGER, "TG%u,CallBackOk", Node->num);
             } else {
-                LOG_ERROR(SCHMITT_TRIGGER, "TG%u CallBackErr", Node->num);
+                //LOG_ERROR(SCHMITT_TRIGGER, "TG%u,CallBackErr", Node->num);
                 res = false;
             }
         }
@@ -141,13 +130,59 @@ bool schmitt_trigger_proc_val_ll(SchmittTriggerHandle_t* const Node, double val)
 
 bool schmitt_trigger_init_custom(void) { return true; }
 
-bool schmitt_trigger_proc_val(uint8_t num, double val) {
+bool schmitt_trigger_proc_val(uint8_t num, float val) {
     bool res = false;
     SchmittTriggerHandle_t* Node = SchmittTriggerGetNode(num);
     if(Node) {
         res = schmitt_trigger_proc_val_ll(Node, val);
     } else {
         LOG_ERROR(SCHMITT_TRIGGER, "NodeErr %u", num);
+    }
+
+    return res;
+}
+
+bool schmitt_trigger_init_node(SchmittTriggerHandle_t* const Node) {
+    bool res = false;
+    Node->init = true;
+    Node->state = SCHMITT_TRIGGER_STATE_UNDEF;
+    Node->prev_state = SCHMITT_TRIGGER_STATE_UNDEF;
+    Node->valid = true;
+    Node->value = 0.0;
+    Node->up_handler_cnt = 0;
+    Node->down_handler_cnt = 0;
+    Node-> up_val=0;
+    Node-> down_val=0;
+    Node-> hysteresis=0;
+    Node-> switching_value=0;
+    Node->num=0;
+    Node->up_call_back=NULL;
+    Node->down_call_back=NULL;
+    Node->name="?";
+    Node->units=UNITS_UNDEF;
+    Node->valid=true;
+
+    return res;
+}
+
+
+bool schmitt_trigger_init_one(uint8_t num) {
+    bool res = false;
+    const SchmittTriggerConfig_t* Config = SchmittTriggerGetConfig(num);
+    if(Config) {
+        SchmittTriggerHandle_t* Node = SchmittTriggerGetNode(num);
+        if(Node) {
+            LOG_WARNING(SCHMITT_TRIGGER, "%u,Init:%s", num, Config->name);
+            res = schmitt_trigger_init_node(Node);
+            Node->hysteresis = Config->hysteresis;
+            Node->name = Config->name;
+            Node->up_call_back = Config->up_call_back;
+            Node->down_call_back = Config->down_call_back;
+            Node->switching_value = Config->switching_value;
+            Node->units = Config->units;
+            res = true;
+            log_level_get_set(SCHMITT_TRIGGER, LOG_LEVEL_INFO);
+        }
     }
 
     return res;

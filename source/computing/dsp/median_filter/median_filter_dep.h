@@ -1,0 +1,9 @@
+#ifndef MEDIAN_FILTER_DEP_H
+#define MEDIAN_FILTER_DEP_H
+
+
+#ifndef HAS_MEDIAN_FILTER
+#error "+HAS_MEDIAN_FILTER"
+#endif /*HAS_MEDIAN_FILTER*/
+
+#endif /* MEDIAN_FILTER_DEP_H */

@@ -19,6 +19,16 @@ COMPONENT_GET_NODE(Decimator, decimator)
 COMPONENT_GET_CONFIG(Decimator, decimator)
 
 
+static DecimatorInput_t DecimatorValToInpit(int8_t val) {
+    DecimatorInput_t input=DECIMATOR_INPUT_UNDEF;
+    switch(val) {
+        case 0: input=DECIMATOR_INPUT_ZERO; break;
+        case 1: input=DECIMATOR_INPUT_ONE; break;
+        default: input=DECIMATOR_INPUT_UNDEF; break;
+    }
+    return input;
+}
+
 static bool DecimatorIsValidConfig(const DecimatorConfig_t* const Config) {
     bool res = false;
     if(Config) {
@@ -28,9 +38,6 @@ static bool DecimatorIsValidConfig(const DecimatorConfig_t* const Config) {
     }
     return res;
 }
-
-
-
 
 DecimatorState_t decimator_get_state(uint8_t num) {
     DecimatorState_t out_state = DECIMATOR_STATE_UNDEF;
@@ -151,18 +158,8 @@ static bool decimator_proc_val_ll(DecimatorHandle_t* const Node) {
     return res;
 }
 
-bool decimator_init_custom(void) { return true; }
+static bool decimator_init_custom(void) { return true; }
 
-
-static DecimatorInput_t DecimatorValToInpit(int8_t val) {
-    DecimatorInput_t input=DECIMATOR_INPUT_UNDEF;
-    switch(val) {
-        case 0: input=DECIMATOR_INPUT_ZERO; break;
-        case 1: input=DECIMATOR_INPUT_ONE; break;
-        default: input=DECIMATOR_INPUT_UNDEF; break;
-    }
-    return input;
-}
 
 bool decimator_proc_val(uint8_t num, int8_t sample_in, int8_t* const sample_out) {
     bool res = false;

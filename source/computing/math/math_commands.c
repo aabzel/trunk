@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "convert.h"
 #include "log.h"
+#include "utils_math.h"
 #include "vector_diag.h"
 
 bool math_vector_angle_command(int32_t argc, char* argv[]) {
@@ -36,6 +38,48 @@ bool math_vector_angle_command(int32_t argc, char* argv[]) {
 #ifdef HAS_MATH_VECTOR
         res = math_vector_angle_diag(keyWord1, keyWord2);
 #endif
+    }
+    return res;
+}
+
+bool math_sum4_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t sum = 0;
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &sum);
+        log_res(MATH, res, "sum");
+    }
+
+    if(res) {
+        res = math_sum4(sum);
+    }
+    return res;
+}
+
+bool math_sum3_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t sum = 0;
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &sum);
+        log_res(MATH, res, "sum");
+    }
+
+    if(res) {
+        res = math_sum3(sum);
+    }
+    return res;
+}
+
+bool math_sum4_d_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t sum = 0;
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &sum);
+        log_res(MATH, res, "sum");
+    }
+
+    if(res) {
+        res = math_sum4_dynamic(sum);
     }
     return res;
 }

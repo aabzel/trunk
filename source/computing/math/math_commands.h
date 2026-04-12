@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
 #ifndef HAS_MATH
 #error "+ HAS_MATH"
@@ -16,9 +15,15 @@ extern "C" {
 #error "+ HAS_MATH_COMMANDS"
 #endif /*HAS_MATH_COMMANDS*/
 
+bool math_sum4_d_command(int32_t argc, char* argv[]);
+bool math_sum4_command(int32_t argc, char* argv[]);
+bool math_sum3_command(int32_t argc, char* argv[]);
 bool math_vector_angle_command(int32_t argc, char* argv[]);
 
 #define MATH_COMMANDS                                                                   \
+    SHELL_CMD("math_sum4_dyn", "ms4d", math_sum4_d_command, "MathSum4Dynamic"),                 \
+    SHELL_CMD("math_sum3", "ms3", math_sum3_command, "MathSum3"),                 \
+    SHELL_CMD("math_sum4", "ms4", math_sum4_command, "MathSum4"),                 \
     SHELL_CMD("math_vector_angle", "mva", math_vector_angle_command, "MathVectorAngle"),
 
 #ifdef __cplusplus

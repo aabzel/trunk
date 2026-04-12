@@ -10,6 +10,9 @@
 #include "vector_math.h"
 #include "writer_config.h"
 
+#define VEC_LIM 1.0
+#define VEC_STEP 0.5
+
 void print_line(Line_t line, char* in_text) {
     print_dot(line.start, in_text);
     print_vector(line.vector, in_text);
@@ -37,10 +40,8 @@ const char* VectorFtoStr(const VectorF_t* const Node) {
     return text;
 }
 
-void print_vector(Vector_t v, char* in_text) { LOG_INFO(MATH, "%s%s", in_in_text, VectorToStr(&v)); }
+void print_vector(Vector_t v, char* in_text) { LOG_INFO(MATH, "%s%s", in_text, VectorToStr(&v)); }
 
-#define VEC_LIM 1.0
-#define VEC_STEP 0.5
 
 static const char* FalseToDiff(bool equal) {
     const char* name = "?";

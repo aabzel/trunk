@@ -12,16 +12,16 @@ ifneq ($(SCHMITT_TRIGGER_MK_INC),Y)
     #SOURCES_H += $(SCHMITT_TRIGGER_DIR)/schmitt_trigger.h
 
     SCHMITT_TRIGGER=Y
-    OPT += -DHAS_SCHMITT_TRIGGER
+    MCAL_OPT += -DHAS_SCHMITT_TRIGGER
 
     ifeq ($(DIAG),Y)
-        OPT += -DHAS_SCHMITT_TRIGGER_DIAG
+        MCAL_OPT += -DHAS_SCHMITT_TRIGGER_DIAG
         SOURCES_C += $(SCHMITT_TRIGGER_DIR)/schmitt_trigger_diag.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(SCHMITT_TRIGGER_COMMANDS),Y)
-            OPT += -DHAS_SCHMITT_TRIGGER_COMMANDS
+            MCAL_OPT += -DHAS_SCHMITT_TRIGGER_COMMANDS
             SOURCES_C += $(SCHMITT_TRIGGER_DIR)/schmitt_trigger_commands.c
         endif
     endif

@@ -1,21 +1,30 @@
-message(STATUS "MATH_MK_INC=${MATH_MK_INC}")
 
-if( NOT (MATH_MK_INC STREQUAL Y))
-    set(MATH_MK_INC Y)
-    message(STATUS "Link Math")
+if(NOT (MATH_MK_INC STREQUAL Y))
+    set(MATH_MK_INC Y )
 
-    set(MATH_DIR ${COMPUTING_DIR}/math)
-    target_include_directories(app PUBLIC ${MATH_DIR})
-
-    target_compile_definitions(app PUBLIC HAS_MATH)
-    #add_link_options(-lm)
-
-    #target_compile_options(app PUBLIC -lm)
-    target_sources(app PRIVATE ${MATH_DIR}/utils_math.c)
-    target_sources(app PRIVATE ${MATH_DIR}/vector_math.c)
-    #target_link_libraries(app PUBLIC m)
+    set(MATH_DIR "${COMPUTING_DIR}/math")
+    include_directories(${MATH_DIR})
+    
+    string(APPEND MCAL_OPT " -DHAS_MATH")
+    string(APPEND SOURCES_C " ${MATH_DIR}/utils_math.c")
 
     if(DIAG STREQUAL Y)
-        target_sources(app PRIVATE ${MATH_DIR}/vector_diag.c)
+        string(APPEND SOURCES_C " ${MATH_DIR}/math_diag.c")
+    endif()
+
+    if(MATH_VECTOR STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_MATH_VECTOR")
+        string(APPEND MCAL_OPT " -DHAS_VECTOR_MATH")
+        string(APPEND SOURCES_C " ${MATH_DIR}/vector_math.c")
+    endif()
+
+    if(MATH_VECTOR_DIAG STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_MATH_VECTOR_DIAG")
+        string(APPEND SOURCES_C " ${MATH_DIR}/vector_diag.c")
+    endif()
+
+    if(MATH_COMMANDS STREQUAL Y)
+        string(APPEND MCAL_OPT " -DHAS_MATH_COMMANDS")
+        string(APPEND SOURCES_C " ${MATH_DIR}/math_commands.c")
     endif()
 endif()

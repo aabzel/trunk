@@ -12,9 +12,11 @@
 // API
 FirHandle_t* FirGetNode(uint8_t num);
 const FirConfig_t* FirGetConfig(uint8_t num);
+
 bool fir_init_one(uint8_t num);
-bool fir_reset_one(uint8_t num);
 bool fir_mcal_init(void);
+
+bool fir_reset_one(uint8_t num);
 int32_t fir_order_get(uint8_t num);
 /*
  https://en.wikipedia.org/wiki/Finite_impulse_response
@@ -24,6 +26,7 @@ bool fir_impulse_response(uint8_t num);
 
 //bool fir_proc_in_out(uint8_t num, FirSample_t in, FirSample_t* const out);
 //bool fir_push(uint8_t num, FirSample_t in);
+bool fir_save_csv_line(char* file_name_out, double value_x, double value_y);
 bool fir_proc_file(uint8_t num, char* file_name, uint16_t column_x, uint16_t column_y);
 bool fir_set_b(uint8_t num, uint32_t k, FirSample_t b);
 bool fir_set_mode(uint8_t num, FirMode_t mode);

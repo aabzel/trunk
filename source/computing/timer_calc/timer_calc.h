@@ -7,9 +7,6 @@
 #include "timer_types.h"
 
 
-bool timer_calc_artery(double freq_apb_hz,
-		double freq_sinal_hz,
-		uint8_t resolution_bit,
-		TimerArtety_t* const Node);
+bool timer_calc_artery(float freq_apb_hz, float freq_sinal_hz, uint8_t resolution_bit, TimerArtety_t* const Node);
 
 #endif /* TIMER_CALC_H */

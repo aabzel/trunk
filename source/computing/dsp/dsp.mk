@@ -2,15 +2,19 @@ ifneq ($(DSP_MK_INC),Y)
     DSP_MK_INC=Y
 
     DSP_DIR = $(COMPUTING_DIR)/dsp
-    #@echo $(error DSP_DIR= $(DSP_DIR))
+    #  $(error DSP_DIR= $(DSP_DIR))
 
-    OPT += -DHAS_DSP
+    MCAL_OPT += -DHAS_DSP
     SOURCES_C += $(DSP_DIR)/dsp.c
 
     INCDIR += -I$(DSP_DIR)
 
     ifeq ($(DECIMATOR),Y)
         include $(DSP_DIR)/decimator/decimator.mk
+    endif
+
+    ifeq ($(HIST_FILTER),Y)
+        include $(DSP_DIR)/hist_filter/hist_filter.mk
     endif
 
     ifeq ($(DFT),Y)
@@ -44,39 +48,49 @@ ifneq ($(DSP_MK_INC),Y)
     endif
     
     ifeq ($(FIR),Y)
-        #@echo $(error FIR=$(FIR))
+        #  $(error FIR=$(FIR))
         include $(DSP_DIR)/fir/fir.mk
     endif
 
+    ifeq ($(MEDIAN_FILTER),Y)
+        #  $(error MEDIAN_FILTER=$(MEDIAN_FILTER))
+        include $(DSP_DIR)/median_filter/median_filter.mk
+    endif
+    
+    ifeq ($(MEDIAN_FILTER_FAST),Y)
+        #  $(error MEDIAN_FILTER_FAST=$(MEDIAN_FILTER_FAST))
+        include $(DSP_DIR)/median_filter_fast/median_filter_fast.mk
+    endif
+    
     ifeq ($(PHASE_DETECTOR),Y)
-        #@echo $(error phase_detector=$(phase_detector))
+        #  $(error phase_detector=$(phase_detector))
         include $(DSP_DIR)/phase_detector/phase_detector.mk
     endif
 
     ifeq ($(FIR_INT),Y)
-        #@echo $(error FIR_INT=$(FIR_INT))
+        #  $(error FIR_INT=$(FIR_INT))
         include $(DSP_DIR)/fir_int/fir_int.mk
     endif
 
     ifeq ($(IIR),Y)
-        #@echo $(error IIR=$(IIR))
+        #  $(error IIR=$(IIR))
         include $(DSP_DIR)/iir/iir.mk
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(DSP_COMMANDS),Y)
-            OPT += -DHAS_DSP_COMMANDS
+            MCAL_OPT += -DHAS_DSP_COMMANDS
         endif
     endif
 
     ifeq ($(SCHMITT_TRIGGER),Y)
-        #@echo $(error SCHMITT_TRIGGER=$(SCHMITT_TRIGGER))
+        #  $(error SCHMITT_TRIGGER=$(SCHMITT_TRIGGER))
         include $(DSP_DIR)/schmitt_trigger/schmitt_trigger.mk
     endif
 
     ifeq ($(DIAG),Y)
         ifeq ($(DSP_DIAG),Y)
-            OPT += -DHAS_DSP_DIAG
+            MCAL_OPT += -DHAS_DSP_DIAG
             SOURCES_C += $(DSP_DIR)/dsp_diag.c
         endif
     endif

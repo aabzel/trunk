@@ -34,7 +34,7 @@ double norm_d(const Vector_t* const Node) {
     return norm;
 }
 
-double dot_product_d(const Vector_t* const v1, const Vector_t* const v2) {
+static double dot_product_d(const Vector_t* const v1, const Vector_t* const v2) {
     double dot = 0.0;
     dot = (v1->dx) * (v2->dx) + (v1->dy) * (v2->dy) + (v1->dz) * (v2->dz);
     return dot;
@@ -56,7 +56,7 @@ Dot_t init_dot(double x, double y, double z) {
     return dot_out;
 }
 
-Vector_t cross(const Vector_t* const a, const Vector_t* const b) {
+static Vector_t cross(const Vector_t* const a, const Vector_t* const b) {
     Vector_t v;
     v.dx = a->dy * b->dz - a->dz * b->dy;
     v.dy = -(a->dx * b->dz - a->dz * b->dx);
@@ -64,7 +64,7 @@ Vector_t cross(const Vector_t* const a, const Vector_t* const b) {
     return v;
 }
 
-double mySign(double val) {
+static double mySign(double val) {
     if(0.0 < val) {
         return 1.0;
     }
@@ -229,7 +229,7 @@ Dot_t get_line_end(Line_t in_line) {
     return end_point;
 }
 
-Vector_t compose_vector_from_2dot(Dot_t da, Dot_t db) {
+static Vector_t compose_vector_from_2dot(Dot_t da, Dot_t db) {
     Vector_t out_vec;
     out_vec.dx = db.x - da.x;
     out_vec.dy = db.y - da.y;
@@ -237,7 +237,7 @@ Vector_t compose_vector_from_2dot(Dot_t da, Dot_t db) {
     return out_vec;
 }
 
-bool is_signe_different(double a, double b) {
+static bool is_signe_different(double a, double b) {
     if((a < 0) && (0 < b)) {
         return true;
     }
@@ -394,7 +394,7 @@ char* compose_2d_line_equation(Dot_t p1, Dot_t p2, double* out_equation) {
     return out_str;
 }
 
-double calc_determinant_2x2(double* arr) {
+static double calc_determinant_2x2(double* arr) {
     double det = 0;
     double a = arr[0];
     double b = arr[1];
@@ -404,7 +404,7 @@ double calc_determinant_2x2(double* arr) {
     return det;
 }
 
-void print_2d_system(double* a, double* b) {
+static void print_2d_system(double* a, double* b) {
 #ifdef HAS_LOG
     LOG_DEBUG(MATH, "%fx + %fy =%f", a[0], a[1], b[0]);
     LOG_DEBUG(MATH, "%fx + %fy =%f\n", a[2], a[3], b[1]);

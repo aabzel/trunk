@@ -8,7 +8,9 @@ extern "C" {
 #include "compiler_const.h"
 
 #ifdef HAS_CMSIS
+#ifdef HAS_GCC
 #include "cmsis_gcc.h"
+#endif
 #endif
 
 

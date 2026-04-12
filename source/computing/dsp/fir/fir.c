@@ -378,7 +378,7 @@ bool fir_impulse_response(uint8_t num) {
     FirHandle_t* Node = FirGetNode(num);
     if(Node) {
 
-        char text[150] = {0};
+        char lText[150] = {0};
         LOG_INFO(FIR, "%s", FirNodeToStr(Node));
 
         static const table_col_t cols[] = {
@@ -402,13 +402,13 @@ bool fir_impulse_response(uint8_t num) {
             }
             res = fir_proc_in_out(num, sample_in, &sample_out);
 
-            strcpy(text, TSEP);
-            snprintf(text, sizeof(text), "%s %6u " TSEP, text, s);
-            snprintf(text, sizeof(text), "%s %6.4f " TSEP, text, t_s);
-            snprintf(text, sizeof(text), "%s %6.3f " TSEP, text, sample_in);
-            snprintf(text, sizeof(text), "%s %6.3f " TSEP, text, sample_out);
+            strcpy(lText, TSEP);
+            snprintf(lText, sizeof(lText), "%s %6u " TSEP, lText, s);
+            snprintf(lText, sizeof(lText), "%s %6.4f " TSEP, lText, t_s);
+            snprintf(lText, sizeof(lText), "%s %6.3f " TSEP, lText, sample_in);
+            snprintf(lText, sizeof(lText), "%s %6.3f " TSEP, lText, sample_out);
 
-            cli_printf("%s" CRLF, text);
+            cli_printf("%s" CRLF, lText);
             res = true;
         }
         table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
@@ -434,7 +434,7 @@ bool fir_calc_frequency_response(uint8_t num, double f_step) {
 
     FirHandle_t* Node = FirGetNode(num);
     if(Node) {
-        char text[150] = {0};
+        char lText[150] = {0};
         LOG_INFO(FIR, "%s", FirNodeToStr(Node));
 
         static const table_col_t cols[] = {
@@ -447,11 +447,11 @@ bool fir_calc_frequency_response(uint8_t num, double f_step) {
             double complex TransferFunction = 0 + 0 * I;
             TransferFunction = calc_frequency_response_one_ll(Node, f_cur);
 
-            strcpy(text, TSEP);
-            snprintf(text, sizeof(text), "%s %7.1f " TSEP, text, f_cur);
-            snprintf(text, sizeof(text), "%s %3.2f " TSEP, text, cabs(TransferFunction));
+            strcpy(lText, TSEP);
+            snprintf(lText, sizeof(lText), "%s %7.1f " TSEP, lText, f_cur);
+            snprintf(lText, sizeof(lText), "%s %3.2f " TSEP, lText, cabs(TransferFunction));
 
-            cli_printf("%s" CRLF, text);
+            cli_printf("%s" CRLF, lText);
             res = true;
         }
         table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
@@ -473,9 +473,9 @@ int32_t fir_order_get(uint8_t num) {
 bool fir_save_csv_line(char* file_name_out, double value_x, double value_y) {
     bool res = false;
     if(file_name_out) {
-        char text[500]={0};
-        snprintf(text,sizeof(text),"%f,%f",value_x,value_y);
-        res=file_pc_print_line(file_name_out, text, strlen(text));
+        char lText[500]={0};
+        snprintf(lText,sizeof(lText),"%f,%f",value_x,value_y);
+        res=file_pc_print_line(file_name_out, lText, strlen(lText));
     }
     return res;
 }

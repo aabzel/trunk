@@ -19,10 +19,10 @@ extern SolverSlae_t SolverSlae;
 
 const char* SlaeToStr(const  SolverSlae_t* const  Solver);
 
-bool solver_slae_init(SolverSlae_t* const Solver , double x1, double y1, double x2, double y2);
+bool solver_slae_init(SolverSlae_t* const Solver , float x1, float y1, float x2, float y2);
 bool solver_slae_calc_ab(SolverSlae_t* const Solver);
-double solver_slae_calc_y(SolverSlae_t* const Solver, double x);
-double solver_slae_calc_x(SolverSlae_t* const Solver, double y);
+float solver_slae_calc_y(SolverSlae_t* const Solver, float x);
+float solver_slae_calc_x(SolverSlae_t* const Solver, float y);
 
 #ifdef __cplusplus
 }

@@ -25,6 +25,9 @@ typedef union {
 typedef float FilterSample_t;
 typedef int8_t Gain_t;
 
+typedef FilterSample_t DspSample_t;
+
+
 //#ifdef HAS_PC
 //typedef double SampleType_t;
 //#else

@@ -12,17 +12,17 @@ ifneq ($(SCAN_MK_INC),Y)
     #SOURCES_H += $(SCAN_DIR)/scan.h
 
     SCAN=Y
-    OPT += -DHAS_SCAN
+    MCAL_OPT += -DHAS_SCAN
 
     ifeq ($(DIAG),Y)
         #@echo $(error SCAN_DIAG=$(SCAN_DIAG))
-        OPT += -DHAS_SCAN_DIAG
+        MCAL_OPT += -DHAS_SCAN_DIAG
         SOURCES_C += $(SCAN_DIR)/scan_diag.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(SCAN_COMMANDS),Y)
-            OPT += -DHAS_SCAN_COMMANDS
+            MCAL_OPT += -DHAS_SCAN_COMMANDS
             SOURCES_C += $(SCAN_DIR)/scan_commands.c
         endif
     endif

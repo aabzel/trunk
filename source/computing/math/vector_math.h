@@ -14,8 +14,8 @@ extern "C" {
 #include "vector_types.h"
 #include "vector_diag.h"
 
-
 float norm_f(const VectorF_t* const Node);
+double deg2radians(double degrees) ;
 double norm_d(const Vector_t* const Node);
 
 float calc_angle_between_3d_f_vectors_rad(const VectorF_t* const v1, const  VectorF_t*  const v2);

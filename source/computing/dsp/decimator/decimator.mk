@@ -12,17 +12,17 @@ ifneq ($(DECIMATOR_MK_INC),Y)
     #SOURCES_H += $(DECIMATOR_DIR)/decimator.h
 
     DECIMATOR=Y
-    OPT += -DHAS_DECIMATOR
+    MCAL_OPT += -DHAS_DECIMATOR
 
     ifeq ($(DIAG),Y)
         #@echo $(error DECIMATOR_DIAG=$(DECIMATOR_DIAG))
-        OPT += -DHAS_DECIMATOR_DIAG
+        MCAL_OPT += -DHAS_DECIMATOR_DIAG
         SOURCES_C += $(DECIMATOR_DIR)/decimator_diag.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(DECIMATOR_COMMANDS),Y)
-            OPT += -DHAS_DECIMATOR_COMMANDS
+            MCAL_OPT += -DHAS_DECIMATOR_COMMANDS
             SOURCES_C += $(DECIMATOR_DIR)/decimator_commands.c
         endif
     endif

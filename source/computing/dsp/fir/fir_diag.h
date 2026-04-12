@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-
 #include <stddef.h>
+#include <stdio.h>
 
 #include "std_includes.h"
 #include "fir_types.h"
@@ -21,6 +21,7 @@ bool fir_generate_graphviz(uint8_t num);
 bool fir_diag(uint8_t num);
 bool fir_expract_mem(uint8_t num, uint32_t index, double* const value);
 bool fir_diag_mem(uint8_t num);
+bool fir_node_generate_graphviz(FirHandle_t* Node, FILE* FilePtr, int x, int y, char* lText, double val) ;
 bool fir_diag_raw_mem(uint8_t num);
 
 #ifdef __cplusplus

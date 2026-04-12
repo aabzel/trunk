@@ -7,13 +7,13 @@ ifneq ($(QUADRATURE_MIXER_MK_INC),Y)
     #@echo $(error QUADRATURE_MIXER_DIR=[$(QUADRATURE_MIXER_DIR)])
     INCDIR += -I$(QUADRATURE_MIXER_DIR)
 
-    OPT += -DHAS_QUADRATURE_MIXER
+    MCAL_OPT += -DHAS_QUADRATURE_MIXER
 
     SOURCES_C += $(QUADRATURE_MIXER_DIR)/quadrature_mixer.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(QUADRATURE_MIXER_DIAG),Y)
-            OPT += -DHAS_QUADRATURE_MIXER_DIAG
+            MCAL_OPT += -DHAS_QUADRATURE_MIXER_DIAG
             SOURCES_C += $(QUADRATURE_MIXER_DIR)/quadrature_mixer_diag.c
         endif
     endif
@@ -21,7 +21,7 @@ ifneq ($(QUADRATURE_MIXER_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(QUADRATURE_MIXER_COMMANDS),Y)
             #@echo $(error QUADRATURE_MIXER_COMMANDS=[$(QUADRATURE_MIXER_COMMANDS)])
-            OPT += -DHAS_QUADRATURE_MIXER_COMMANDS
+            MCAL_OPT += -DHAS_QUADRATURE_MIXER_COMMANDS
             SOURCES_C += $(QUADRATURE_MIXER_DIR)/quadrature_mixer_commands.c
         endif
     endif

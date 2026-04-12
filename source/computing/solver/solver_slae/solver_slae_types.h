@@ -15,13 +15,13 @@ extern "C" {
 #endif
 
 typedef struct {
-    double x;
-    double y;
+    float x;
+    float y;
 }Mapping_t;
 
 typedef struct{
-    double a;
-    double b;
+    float a;
+    float b;
     Mapping_t M[2];
 }SolverSlae_t;
 

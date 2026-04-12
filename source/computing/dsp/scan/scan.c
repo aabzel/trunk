@@ -50,15 +50,7 @@ static bool ScanIsValidConfig(const ScanConfig_t* const Config) {
     return res;
 }
 
-
-
-
-
-
-
-
-
-bool scan_init_custom(void) { return true; }
+static bool scan_init_custom(void) { return true; }
 
 
 static ScanInput_t ScanToInpit(ScanHandle_t* Node) {

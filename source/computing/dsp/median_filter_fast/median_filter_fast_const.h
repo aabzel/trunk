@@ -1,0 +1,15 @@
+#ifndef MEDIAN_FILTER_FAST_CONST_H
+#define MEDIAN_FILTER_FAST_CONST_H
+
+#include "median_filter_fast_dep.h"
+
+#define MEDIAN_FILTER_FAST_VICINITY_OF_ZERO (0.0001)
+
+typedef enum{
+    MED_FILT_BALANCE_DIR_DOWN=1,
+    MED_FILT_BALANCE_DIR_UP=2,
+    MED_FILT_BALANCE_DIR_NONE=3,
+    MED_FILT_BALANCE_DIR_UNDEF=0,
+}MedianFilterBalanceDir_t;
+
+#endif /* MEDIAN_FILTER_FAST_CONST_H */

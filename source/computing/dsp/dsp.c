@@ -51,7 +51,7 @@ bool filter_proc_in_out(uint8_t num, DspFilterType_t filter_type, FilterSample_t
     } break;
     case DSP_FILTER_TYPE_IIR: {
 #ifdef HAS_IIR
-        res = iir_proc_in_out(num, (IirSample_t)x,(IirSample_t*) y);
+        res = iir_proc_in_out(num, (IirSample_t)x, (IirSample_t*)y);
 #endif
     } break;
     default:
@@ -60,8 +60,8 @@ bool filter_proc_in_out(uint8_t num, DspFilterType_t filter_type, FilterSample_t
     return res;
 }
 
-bool filter_synthesize(uint8_t num, DspFilterType_t filter_type, uint32_t filter_order,
-                       double cutoff_frequency_hz, double sampling_frequency_hz) {
+bool filter_synthesize(uint8_t num, DspFilterType_t filter_type, uint32_t filter_order, double cutoff_frequency_hz,
+                       double sampling_frequency_hz) {
     bool res = false;
     switch(filter_type) {
     case DSP_FILTER_TYPE_FIR: {

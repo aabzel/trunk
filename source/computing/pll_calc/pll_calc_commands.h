@@ -15,14 +15,18 @@ extern "C" {
 #define "+HAS_DIAG"
 #endif
 
+bool pll_calc_fc7300_command(int32_t argc, char* argv[]);
 bool pll_calc_artery_f413_command(int32_t argc, char* argv[]);
 bool pll_calc_artery_f43x_command(int32_t argc, char* argv[]);
 bool pll_calc_stm_command(int32_t argc, char* argv[]);
+bool pll_calc_stm_all_command(int32_t argc, char* argv[]);
 
-#define PLL_CALC_COMMANDS                                                            \
+#define PLL_CALC_COMMANDS                                                                           \
     SHELL_CMD("pll_calc_at32f413", "plaf413", pll_calc_artery_f413_command, "PllCalcArteryF413"),   \
     SHELL_CMD("pll_calc_at32f43x", "plaf43x", pll_calc_artery_f43x_command, "PllCalcArteryF43x"),   \
-    SHELL_CMD("pll_calc_st", "pls", pll_calc_stm_command, "PllCalcStm"),
+    SHELL_CMD("pll_calc_fc7300", "plfc", pll_calc_fc7300_command, "PllCalcFlagChip"),               \
+    SHELL_CMD("pll_calc_stm32", "plst", pll_calc_stm_command, "PllCalcStm32"),                      \
+    SHELL_CMD("pll_calc_stm32_all", "plsta", pll_calc_stm_all_command, "PllCalcStm32All"),
 
 #ifdef __cplusplus
 }

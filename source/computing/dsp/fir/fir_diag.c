@@ -5,13 +5,13 @@
 
 #include "fir.h"
 #include "log.h"
-#ifdef HAS_PC
-#include "win_utils.h"
-#endif
 #include "circular_buffer_index.h"
 #include "num_to_str.h"
 #include "table_utils.h"
 #include "writer_config.h"
+#ifdef HAS_PC
+#include "win_utils.h"
+#endif
 
 bool fir_expract_mem(uint8_t num, uint32_t need, double* const value) {
     bool res = false;
@@ -47,9 +47,9 @@ bool FirDiagConfig(const FirConfig_t* const Config) {
 #endif
 
 #ifdef HAS_PC
-bool fir_node_generate_graphviz(FirHandle_t* Node, FILE* FilePtr, int x, int y, char* text, double val) {
+bool fir_node_generate_graphviz(FirHandle_t* Node, FILE* FilePtr, int x, int y, char* lText, double val) {
     bool res = false;
-    fprintf(FilePtr, "%s [label=%f][pos=\"%d,%d!\"]\n", text, val, x, y);
+    fprintf(FilePtr, "%s [label=%f][pos=\"%d,%d!\"]\n", lText, val, x, y);
     return res;
 }
 #endif
@@ -107,8 +107,8 @@ bool fir_generate_graphviz(uint8_t num) {
 
             for(i = 0; i < Node->size - 1; i++) {
                 fprintf(GvFilePtr, "X%u->B%u [label=%f] [color = red]\n", i, i + 1, Node->b[i + 1]);
-                double mult = Node->x[i] * Node->b[i + 1];
-                fprintf(GvFilePtr, "B%u->Sum[label=%f][color = red]\n", i + 1, mult);
+                double mult_xb = Node->x[i] * Node->b[i + 1];
+                fprintf(GvFilePtr, "B%u->Sum[label=%f][color = red]\n", i + 1, mult_xb);
             }
 
             fprintf(GvFilePtr, "X->X0 [color =blue]\n");
@@ -263,31 +263,31 @@ const char* FirModeToStr(FirMode_t mode){
 }
 
 const char* FirNodeToStr(const FirHandle_t* const Node) {
-    static char text[300] = "?";
+    static char lText[300] = "?";
     if(Node) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sN:%u,", text, Node->num);
-        snprintf(text, sizeof(text), "%sMode:%s,", text, FirModeToStr(Node->mode));
-        snprintf(text, sizeof(text), "%sInit:%u,", text, Node->init);
-        snprintf(text, sizeof(text), "%sM:%u", text, Node->size);
-        snprintf(text, sizeof(text), "%s/%u,", text, Node->max_size);
-        snprintf(text, sizeof(text), "%sFsam:%s Hz,", text, DoubleToStr(Node->sample_rate_hz));
-        snprintf(text, sizeof(text), "%sFcut:%s Hz,", text, DoubleToStr(Node->cut_off_freq_hz));
-        snprintf(text, sizeof(text), "%sInCnt:%u", text, Node->proc_cnt);
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%sN:%u,", lText, Node->num);
+        snprintf(lText, sizeof(lText), "%sMode:%s,", lText, FirModeToStr(Node->mode));
+        snprintf(lText, sizeof(lText), "%sInit:%u,", lText, Node->init);
+        snprintf(lText, sizeof(lText), "%sM:%u", lText, Node->size);
+        snprintf(lText, sizeof(lText), "%s/%u,", lText, Node->max_size);
+        snprintf(lText, sizeof(lText), "%sFsam:%s Hz,", lText, DoubleToStr(Node->sample_rate_hz));
+        snprintf(lText, sizeof(lText), "%sFcut:%s Hz,", lText, DoubleToStr(Node->cut_off_freq_hz));
+        snprintf(lText, sizeof(lText), "%sInCnt:%u", lText, Node->proc_cnt);
     }
-    return text;
+    return lText;
 }
 
 const char* FirConfigToStr(const FirConfig_t* const Config) {
-    static char text[300] = "?";
+    static char lText[300] = "?";
     if(Config) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
-        snprintf(text, sizeof(text), "%sMode:%s,", text, FirModeToStr(Config->mode));
-        snprintf(text, sizeof(text), "%sM:%u", text, Config->size);
-        snprintf(text, sizeof(text), "%s/%u,", text, Config->max_size);
-        snprintf(text, sizeof(text), "%sFsam:%s Hz,", text, DoubleToStr(Config->sample_rate_hz));
-        snprintf(text, sizeof(text), "%sFcut:%s Hz,", text, DoubleToStr(Config->cut_off_freq_hz));
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%sN:%u,", lText, Config->num);
+        snprintf(lText, sizeof(lText), "%sMode:%s,", lText, FirModeToStr(Config->mode));
+        snprintf(lText, sizeof(lText), "%sM:%u", lText, Config->size);
+        snprintf(lText, sizeof(lText), "%s/%u,", lText, Config->max_size);
+        snprintf(lText, sizeof(lText), "%sFsam:%s Hz,", lText, DoubleToStr(Config->sample_rate_hz));
+        snprintf(lText, sizeof(lText), "%sFcut:%s Hz,", lText, DoubleToStr(Config->cut_off_freq_hz));
     }
-    return text;
+    return lText;
 }

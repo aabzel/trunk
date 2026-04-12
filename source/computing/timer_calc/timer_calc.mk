@@ -13,11 +13,11 @@ ifneq ($(TIMER_CALC_MK_INC),Y)
 
     SOURCES_C += $(TIMER_CALC_DIR)/timer_calc.c
 
-    OPT += -DHAS_TIMER_CALC
+    MCAL_OPT += -DHAS_TIMER_CALC
 
     ifeq ($(DIAG),Y)
         ifeq ($(TIMER_CALC_DIAG),Y)
-            OPT += -DHAS_TIMER_CALC_DIAG
+            MCAL_OPT += -DHAS_TIMER_CALC_DIAG
             SOURCES_C += $(TIMER_CALC_DIR)/timer_calc_diag.c
         endif
     endif
@@ -25,7 +25,7 @@ ifneq ($(TIMER_CALC_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(TIMER_CALC_COMMANDS),Y)
             #@echo $(error TIMER_CALC_COMMANDS=$(TIMER_CALC_COMMANDS))
-            OPT += -DHAS_TIMER_CALC_COMMANDS
+            MCAL_OPT += -DHAS_TIMER_CALC_COMMANDS
             SOURCES_C += $(TIMER_CALC_DIR)/timer_calc_commands.c
         endif
     endif

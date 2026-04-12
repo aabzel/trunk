@@ -1,0 +1,4 @@
+
+config HIST_FILTER
+    bool "Enable use of the HIST_FILTER drivers"
+

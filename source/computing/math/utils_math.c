@@ -1,8 +1,9 @@
 #include "utils_math.h"
 
 #include <math.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include <stdlib.h>
+
+#include "std_includes.h"
 
 #ifdef HAS_FLOAT_UTILS
 #include "float_utils.h"
@@ -35,26 +36,53 @@ bool is_power_of_two(uint32_t const val) {
 }
 #endif
 
-float math_sign_f(const float val) {
-    float out_val = 0.0;
-    if(0.0 < val) {
-        out_val = 1.0;
+float math_period_ms_to_freq_hz(const uint32_t period_ms) {
+    float freq_hz = 0.0f;
+    if(period_ms) {
+        freq_hz = 1000.0f / ((float)period_ms);
     }
-    if(val < 0.0) {
-        out_val = -1.0;
+    return freq_hz;
+}
+
+float math_sign_f(const float val) {
+    float out_val = 0.0f;
+    if(0.0f < val) {
+        out_val = 1.0f;
+    }
+    if(val < 0.0f) {
+        out_val = -1.0f;
     }
     return out_val;
 }
 
 float math_sign(const float val) {
-    float out_val = 0.0;
-    if(0.0 < val) {
-        out_val = 1.0;
+    float out_val = 0.0f;
+    if(0.0f < val) {
+        out_val = 1.0f;
     }
-    if(val < 0.0) {
-        out_val = -1.0;
+    if(val < 0.0f) {
+        out_val = -1.0f;
     }
     return out_val;
+}
+
+int32_t math_sign_s32(const int32_t val) {
+    int32_t out_val = 0;
+    if(0 < val) {
+        out_val = 1;
+    }
+    if(val < 0) {
+        out_val = -1;
+    }
+    return out_val;
+}
+
+int32_t math_abs_s32(const int32_t value) {
+    int32_t abs_s32 = value;
+    if(value < 0) {
+        abs_s32 = -value;
+    }
+    return abs_s32;
 }
 
 int8_t two_complement_to_decimal(uint8_t in_code, int significant_bits) {
@@ -98,7 +126,7 @@ float lo_calc_cos_sample(float time_s, float frequency, float phase_rad, float d
 #ifdef HAS_LOG
     LOG_DEBUG(MATH, "Cos,Freq:%f,Phase:%f rad,Amp:%f,OffSet:%f", frequency, phase_rad, des_amplitude, in_offset);
 #endif
-    float argument = 2.0 * M_PI * time_s * frequency + phase_rad;
+    float argument = 2.0f * M_PI * time_s * frequency + phase_rad;
     float amplitude = (float)cos((float)argument);
     float amplitude_scaled = (des_amplitude * amplitude) + in_offset;
 #ifdef HAS_LOG
@@ -111,7 +139,7 @@ float lo_calc_sin_sample(float time_s, float frequency, float phase_rad, float d
 #ifdef HAS_LOG
     LOG_DEBUG(MATH, "Sin,Freq:%f,Phase:%f rad,Amp:%f,OffSet:%f", frequency, phase_rad, des_amplitude, in_offset);
 #endif
-    float argument = 2.0 * M_PI * time_s * frequency + phase_rad;
+    float argument = 2.0f * M_PI * time_s * frequency + phase_rad;
     float amplitude = (float)sin((float)argument);
     float amplitude_scaled = (des_amplitude * amplitude) + in_offset;
 #ifdef HAS_LOG
@@ -126,18 +154,18 @@ float math_calc_sin_sample(float time_s, float frequency, float phase_ms, float 
     LOG_DEBUG(MATH, "Sin,Time:%f,Freq:%f,Phase:%f,Amp:%f,OffSet:%f", time_s, frequency, phase_ms, des_amplitude,
               in_offset);
 #endif
-    float argument = 0.0;
-    float amplitude = 0.0;
-    float amplitude_scaled = 0.0;
-    float cur_time_ms = time_s * 1000.0;
+    float argument = 0.0f;
+    float amplitude = 0.0f;
+    float amplitude_scaled = 0.0f;
+    float cur_time_ms = time_s * 1000.0f;
 #ifdef HAS_LOG
     LOG_PARN(MATH, "T:%u ms", cur_time_ms);
 #endif
-    lineVal = ((cur_time_ms + phase_ms) / 1000.0) * frequency; /*tune frequency*/
+    lineVal = ((cur_time_ms + phase_ms) / 1000.0f) * frequency; /*tune frequency*/
 #ifdef HAS_LOG
     LOG_PARN(MATH, "lineVal:%f", lineVal);
 #endif
-    argument = 2.0 * M_PI * lineVal;
+    argument = 2.0f * M_PI * lineVal;
 #ifdef HAS_LOG
     LOG_PARN(MATH, "arg:%f", argument);
 #endif
@@ -157,22 +185,22 @@ float math_calc_sin_sample(float time_s, float frequency, float phase_ms, float 
 }
 
 float calc_sin_sample(uint64_t time_us, float frequency, float phase_ms, float des_amplitude, float in_offset) {
-    float lineVal = 0.0;
+    float lineVal = 0.0f;
 #ifdef HAS_LOG
     LOG_DEBUG(MATH, "Sin T:%u F:%f P:%f A:%f O:%f", time_us, frequency, phase_ms, des_amplitude, in_offset);
 #endif
-    float argument = 0.0;
-    float amplitude = 0.0;
-    float amplitude_scaled = 0.0;
-    float cur_time_ms = ((float)time_us) / 1000.0;
+    float argument = 0.0f;
+    float amplitude = 0.0f;
+    float amplitude_scaled = 0.0f;
+    float cur_time_ms = ((float)time_us) / 1000.0f;
 #ifdef HAS_LOG
     LOG_PARN(MATH, "T:%u ms", cur_time_ms);
 #endif
-    lineVal = ((cur_time_ms + phase_ms) / 1000.0) * frequency; /*tune frequency*/
+    lineVal = ((cur_time_ms + phase_ms) / 1000.0f) * frequency; /*tune frequency*/
 #ifdef HAS_LOG
     LOG_PARN(MATH, "lineVal:%f", lineVal);
 #endif
-    argument = 2.0 * M_PI * lineVal;
+    argument = 2.0f * M_PI * lineVal;
 #ifdef HAS_LOG
     LOG_PARN(MATH, "arg:%f", argument);
 #endif
@@ -198,7 +226,7 @@ float calc_dtmf_sample(uint64_t time_us, float frequency1, float frequency2, flo
     LOG_DEBUG(MATH, "DualTone T:%u,F1:%f, F2:%f, P:%f, A:%f, O:%f", time_us, frequency1, frequency2, phase_ms,
               des_amplitude, in_offset);
 #endif
-    float amplitude_scaled = 0.0;
+    float amplitude_scaled = 0.0f;
     float tone1 = calc_sin_sample(time_us, frequency1, phase_ms, des_amplitude, in_offset);
     float tone2 = calc_sin_sample(time_us, frequency2, phase_ms, des_amplitude, in_offset);
     amplitude_scaled = tone1 + tone2;
@@ -216,45 +244,45 @@ float calc_dtmf_sample(uint64_t time_us, float frequency1, float frequency2, flo
  */
 float calc_chirp_sample(uint64_t time_us, float f_2_hz, float f_1_hz, float phase_rad, float amplitude,
                         float signal_diration_s) {
-    float amplitude_scaled = 0.0;
-    float b = 0;
-    if(0.0 < signal_diration_s) {
+    float amplitude_scaled = 0.0f;
+    float b = 0.0f;
+    if(0.0f < signal_diration_s) {
         float bandwith_hz = f_2_hz - f_1_hz;
         b = bandwith_hz / signal_diration_s;
     }
 
-    float cur_time_s = ((float)time_us) / 1000000.0;
+    float cur_time_s = ((float)time_us) / 1000000.0f;
 
     float argument_rad = phase_rad;
-    argument_rad += M_2PI * (f_1_hz * cur_time_s + (b * cur_time_s * cur_time_s) / 2.0);
+    argument_rad += M_2PI * (f_1_hz * cur_time_s + (b * cur_time_s * cur_time_s) / 2.0f);
 
     if(signal_diration_s < cur_time_s) {
-        amplitude = 0.0;
+        amplitude = 0.0f;
     }
 
     float cos_arg = (M_2PI * cur_time_s) / signal_diration_s;
-    float hamming_window = 0.46 - 0.46 * cos(cos_arg);
+    float hamming_window = 0.46f - 0.46f * cos(cos_arg);
     amplitude_scaled = amplitude * sin(argument_rad) * hamming_window;
     return amplitude_scaled;
 }
 
 float calc_pwm_sample(uint64_t time_us, float freq, float cur_phase_ms, float des_amplitude, float duty_cycle_percent,
                       float offset) {
-    float line_val = 0.0;
-    float saw_val = 0.0;
+    float line_val = 0.0f;
+    float saw_val = 0.0f;
 
-    if(100.0 < duty_cycle_percent) {
-        duty_cycle_percent = 100.0;
+    if(100.0f < duty_cycle_percent) {
+        duty_cycle_percent = 100.0f;
     }
-    if(duty_cycle_percent < 0.0) {
-        duty_cycle_percent = 0.0;
+    if(duty_cycle_percent < 0.0f) {
+        duty_cycle_percent = 0.0f;
     }
-    float cur_time_ms = ((float)time_us) / 1000.0;
-    line_val = ((((float)cur_time_ms) + ((float)cur_phase_ms)) / 1000.0) * freq; /*tune frequency*/
-    saw_val = fmodf(line_val, 1.0);                                              /*tune DutyCycle*/
+    float cur_time_ms = ((float)time_us) / 1000.0f;
+    line_val = ((((float)cur_time_ms) + ((float)cur_phase_ms)) / 1000.0f) * freq; /*tune frequency*/
+    saw_val = fmodf(line_val, 1.0f);                                              /*tune DutyCycle*/
 
     float magnitude = offset;
-    float val = (((1.0 - ((100.0 - duty_cycle_percent)) / 100.0)) - saw_val); /*tune DutyCycle*/
+    float val = (((1.0f - ((100.0f - duty_cycle_percent)) / 100.0f)) - saw_val); /*tune DutyCycle*/
     if(0.0 < val) {
         magnitude += des_amplitude;
     }
@@ -262,14 +290,14 @@ float calc_pwm_sample(uint64_t time_us, float freq, float cur_phase_ms, float de
     return magnitude;
 }
 
-uint8_t calc_pwm_sample_num(uint64_t time_us, uint32_t period_ms, uint8_t duty, int32_t phase_ms) {
+uint8_t calc_pwm_sample_num(uint64_t time_us, uint32_t period_ms, float duty, int32_t phase_ms) {
     uint8_t val = 0;
-    if(100 < duty) {
-        duty = 100;
+    if(100.0f < duty) {
+        duty = 100.0f;
     }
-    float cur_time_ms = ((float)time_us) / 1000.0;
+    float cur_time_ms = ((float)time_us) / 1000.0f;
     int32_t time_saw = (phase_ms + ((int32_t)cur_time_ms)) % period_ms;
-    int32_t treshold = (period_ms * ((uint32_t)duty)) / 100;
+    int32_t treshold = (int32_t)(((float)(period_ms)*duty) / 100.0f);
     if(treshold < time_saw) {
         val = 0;
     } else {
@@ -289,7 +317,7 @@ bool spot_change(uint8_t val) {
     return res;
 }
 
-uint32_t int_pow(uint32_t base, uint32_t exp) {
+uint32_t int_pow_slow(uint32_t base, uint32_t exp) {
     uint32_t result = base;
     uint32_t i = 0;
     if(0 == exp) {
@@ -302,11 +330,42 @@ uint32_t int_pow(uint32_t base, uint32_t exp) {
     return result;
 }
 
+/*
+ see https://habr.com/ru/articles/851920/
+  result = base^exponenta
+ */
+uint32_t int_pow_fast(const uint32_t base, const uint32_t exponenta) {
+    uint32_t result = 0;
+    uint32_t n = exponenta;
+    if(0 == n) {
+        result = 1;
+    } else {
+        result = 1;
+        uint32_t current_product = base;
+        /*run through all the exponenta bits*/
+        while(0 < n) {
+            if(1 & n) {
+                /* found a factor of 2 different from 1 in our exponenta decomposition*/
+                result *= current_product;
+            }
+            current_product *= current_product;
+            n = n >> 1;
+        }
+    }
+
+    return result;
+}
+
+uint32_t int_pow(const uint32_t base, const uint32_t exponenta) {
+    uint32_t result = int_pow_fast(base, exponenta);
+    return result;
+}
+
 #define PI_VAL 3.14159
 #ifdef HAS_AOA
 float aoa_calc_deg(float phase, float wavelength, float dist) {
-    float angle_of_arrival_deg = 0.0;
-    float arg = (wavelength * phase) / (2 * M_PI * dist);
+    float angle_of_arrival_deg = 0.0f;
+    float arg = (wavelength * phase) / (2.0f * M_PI * dist);
     angle_of_arrival_deg = RAD_2_DEG(asin(arg));
     return angle_of_arrival_deg;
 }
@@ -370,13 +429,15 @@ uint32_t freq2period_ms(float freq_hz) {
     uint32_t period_ms = 0;
     bool res = true;
 #ifdef HAS_FLOAT_UTILS
-    res = is_float_equal_absolute(0.0, freq_hz, 0.0001);
+    res = is_float_equal_absolute(0.0f, freq_hz, 0.0001f);
 #endif
     if(res) {
+#ifdef HAS_LOG
         LOG_ERROR(MATH, "DivZero");
-        period_ms = 100.0;
+#endif
+        period_ms = 100.0f;
     } else {
-        period_ms = 1000.0 / freq_hz;
+        period_ms = 1000.0f / freq_hz;
     }
     return period_ms;
 }
@@ -402,7 +463,9 @@ float calc_percent_s(size_t numerator, size_t denominator) {
     if(denominator) {
         percent = (100.0 * ((float)numerator)) / ((float)denominator);
     } else {
+#ifdef HAS_LOG
         LOG_ERROR(MATH, "DivZero");
+#endif
     }
     return percent;
 }
@@ -412,7 +475,9 @@ uint32_t calc_percent_uu(uint32_t numerator, uint32_t denominator) {
     if(denominator) {
         percent_u = 100 * numerator / denominator;
     } else {
+#ifdef HAS_LOG
         LOG_ERROR(MATH, "DivZero");
+#endif
     }
     return percent_u;
 }
@@ -420,19 +485,116 @@ uint32_t calc_percent_uu(uint32_t numerator, uint32_t denominator) {
 float rad_2_deg(float rad) {
     float deg = 0.0;
     deg = ((rad * 180.0) / M_PI);
+#ifdef HAS_LOG
     LOG_DEBUG(MATH, "%f_Rad=%f_Deg", rad, deg);
+#endif
     return deg;
 }
 
 float rad_to_deg_f(float rad) {
-    float deg = 0.0;
-    deg = ((rad * 180.0) / M_PI);
+    float deg = 0.0f;
+    deg = ((rad * 180.0f) / M_PI);
+#ifdef HAS_LOG
     LOG_DEBUG(MATH, "%f_Rad=%f_Deg", rad, deg);
+#endif
     return deg;
 }
 
 float deg_to_rad(float deg) {
-    float rad = 0.0;
-    rad = (deg * M_PI / 180.0);
+    float rad = 0.0f;
+    rad = (deg * M_PI / 180.0f);
     return rad;
+}
+
+uint32_t math_calc_abs(const uint32_t a, const uint32_t b) {
+    uint32_t abs_u32 = 0;
+    int32_t diff_signed = ((int32_t)a) - ((int32_t)b);
+    abs_u32 = (uint32_t)abs((int)diff_signed);
+    return abs_u32;
+}
+
+bool math_sum4(const uint32_t sum) {
+    bool res = false;
+    uint32_t cnt = 0;
+    uint32_t a = 0;
+    for(a = 1; a <= sum; a++) {
+        uint32_t b = 0;
+        for(b = 1; b <= sum; b++) {
+            uint32_t c = 0;
+            for(c = 1; c <= sum; c++) {
+                uint32_t d = 0;
+                for(d = 1; d <= sum; d++) {
+                    uint32_t cur_sum = a + b + c + d;
+                    if(cur_sum == sum) {
+                        cnt++;
+#ifdef HAS_LOG
+                        LOG_INFO(MATH, "%4u: %u=%u+%u+%u+%u", cnt, sum, a, b, c, d);
+#endif
+                        res = true;
+                    }
+                }
+            }
+        }
+    }
+    return res;
+}
+
+bool math_sum3(const uint32_t sum) {
+    bool res = false;
+    uint32_t cnt = 0;
+    uint32_t a = 0;
+    for(a = 1; a <= sum; a++) {
+        uint32_t b = 0;
+        for(b = 1; b <= sum; b++) {
+            uint32_t c = 0;
+            for(c = 1; c <= sum; c++) {
+                uint32_t cur_sum = a + b + c;
+                if(cur_sum == sum) {
+                    cnt++;
+#ifdef HAS_LOG
+                    LOG_INFO(MATH, "%4u: %u=%u+%u+%u", cnt, sum, a, b, c);
+#endif
+                    res = true;
+                }
+            }
+        }
+    }
+    return res;
+}
+
+static bool math_sum4_dynamic_ll(uint32_t target, uint32_t count, uint32_t start, uint32_t* result) {
+    bool res = false;
+    if(4 == count) {
+        if(0 == target) {
+#ifdef HAS_LOG
+            LOG_INFO(SYS, "%u+%u+%u+%u=", result[0], result[1], result[2], result[3]);
+#endif
+            res = true;
+        }
+    } else {
+        for(uint32_t i = start; i <= target; i++) {
+            result[count] = i;
+            math_sum4_dynamic_ll(target - i, count + 1, i, result);
+        }
+    }
+    return res;
+}
+
+bool math_sum4_dynamic(uint32_t target) {
+    bool res = false;
+    uint32_t result[4] = {0};
+    res = math_sum4_dynamic_ll(target, 0, 1, result);
+    return res;
+}
+
+MathParity_t math_calc_parity(const uint32_t natural) {
+    MathParity_t parity = MATH_PARITY_UNDEF;
+    if(natural) {
+        if(1 & natural) {
+            parity = MATH_PARITY_ODD;
+        } else {
+            parity = MATH_PARITY_EVEN;
+        }
+    }
+    return parity;
 }

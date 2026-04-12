@@ -6,7 +6,7 @@
 #include "schmitt_trigger_const.h"
 #include "sensitivity_diag.h"
 
-const char* SchmittTriggerState2Str(SchmittTriggerState_t code) {
+const char* SchmittTriggerStateToStr(SchmittTriggerState_t code) {
     const char* name = "?";
     switch(code) {
     case SCHMITT_TRIGGER_STATE_UP:
@@ -16,30 +16,46 @@ const char* SchmittTriggerState2Str(SchmittTriggerState_t code) {
         name = "Down";
         break;
     default:
-        name = "Middle";
+        name = "Undef";
         break;
     }
     return name;
 }
 
-
-
-const char* SchmittTriggerNode2Str(const SchmittTriggerHandle_t* const Node) {
-    static char text[300] = "?";
+const char* SchmittTriggerNodeToStr(const SchmittTriggerHandle_t* const Node) {
+    static char lText[300] = "?";
     if(Node) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sN:%u,", text, Node->num);
-        snprintf(text, sizeof(text), "%sUnits:%s,", text, UnitsToStr(Node->units));
-        snprintf(text, sizeof(text), "%sTrsld:%7.3f,", text, Node->switching_value);
-        snprintf(text, sizeof(text), "%s+/-%7.3f,", text, Node->hysteresis);
-        snprintf(text, sizeof(text), "%sVal:%7.3f,", text, Node->value);
-        snprintf(text, sizeof(text), "%sSt:%s,", text, SchmittTriggerState2Str(Node->state));
-        snprintf(text, sizeof(text), "%sInit:%u,", text, Node->init);
-        snprintf(text, sizeof(text), "%s%s,", text, Node->name);
-        snprintf(text, sizeof(text), "%sUp:%u,", text, Node->up_handler_cnt);
-        snprintf(text, sizeof(text), "%sDown:%u,", text, Node->down_handler_cnt);
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%sN:%u,", lText, Node->num);
+        snprintf(lText, sizeof(lText), "%sSwiVal:%7.3f,", lText, Node->switching_value);
+        snprintf(lText, sizeof(lText), "%s+/-%7.3f,", lText, Node->hysteresis);
+        snprintf(lText, sizeof(lText), "%sVal:%7.3f,", lText, Node->value);
+        snprintf(lText, sizeof(lText), "%sDownVal:%7.3f,", lText, Node->down_val);
+        snprintf(lText, sizeof(lText), "%sUpVal:%7.3f,", lText, Node->up_val);
+        snprintf(lText, sizeof(lText), "%sSt:%s,", lText, SchmittTriggerStateToStr(Node->state));
+        snprintf(lText, sizeof(lText), "%sUpCnt:%u,", lText, Node->up_handler_cnt);
+        snprintf(lText, sizeof(lText), "%sDownCnt:%u,", lText, Node->down_handler_cnt);
+        snprintf(lText, sizeof(lText), "%sUnits:%s,", lText, UnitsToStr(Node->units));
+        snprintf(lText, sizeof(lText), "%sInit:%u,", lText, Node->init);
+        snprintf(lText, sizeof(lText), "%s%s,", lText, Node->name);
     }
-    return text;
+    return lText;
 }
+
+
+const char* SchmittTriggerShortConfigToStr(const SchmittTriggerShortConfig_t* const Config){
+    static char lText[300] = "?";
+    if(Config) {
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%sN:%u,", lText, Config->num);
+        snprintf(lText, sizeof(lText), "%sTrsld:%7.3f,", lText, Config->switching_value);
+        snprintf(lText, sizeof(lText), "%s+/-%7.3f,", lText, Config->hysteresis);
+        snprintf(lText, sizeof(lText), "%sUp:%f,", lText, Config->up_val);
+        snprintf(lText, sizeof(lText), "%sDown:%f,", lText, Config->down_val);
+    }
+    return lText;
+}
+
+
 
 

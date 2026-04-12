@@ -47,6 +47,19 @@
 #define FIR_INT_COMMANDS
 #endif
 
+#ifdef HAS_MEDIAN_FILTER_COMMANDS
+#include "median_filter_commands.h"
+#else
+#define MEDIAN_FILTER_COMMANDS
+#endif
+
+#ifdef HAS_MEDIAN_FILTER_FAST_COMMANDS
+#include "median_filter_fast_commands.h"
+#else
+#define MEDIAN_FILTER_FAST_COMMANDS
+#endif
+
+
 #ifdef HAS_FOURIER_SERIES_COMMANDS
 #include "fourier_series_commands.h"
 #else
@@ -77,11 +90,22 @@
 #define PHASE_DETECTOR_COMMANDS
 #endif
 
+#ifdef HAS_HIST_FILTER_COMMANDS
+#include "hist_filter_commands.h"
+#else
+#define HIST_FILTER_COMMANDS
+#endif
 
-#define DSP_COMMANDS            \
-    DECIMATOR_COMMANDS          \
+
+
+
+#define DSP_COMMANDS                 \
+    DECIMATOR_COMMANDS               \
+    MEDIAN_FILTER_COMMANDS           \
+    MEDIAN_FILTER_FAST_COMMANDS      \
     DELTA_SIGMA_COMMANDS        \
     ECHO_EFFECT_COMMANDS        \
+    HIST_FILTER_COMMANDS        \
     FOURIER_SERIES_COMMANDS     \
     FIR_COMMANDS                \
     PHASE_DETECTOR_COMMANDS     \
