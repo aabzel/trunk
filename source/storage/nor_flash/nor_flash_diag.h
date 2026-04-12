@@ -22,7 +22,7 @@
 #error "+HAS_DIAG"
 #endif /*HAS_DIAG*/
 
-const char* NorFlashOption2Str(NorFlashOption_t option);
+const char* NorFlashOptionToStr(NorFlashOption_t option);
 const char* NorFlashNum2Option(uint8_t flash_num);
 bool nor_flash_diag(uint8_t flash_num);
 bool nor_flash_usage(uint8_t flash_num, uint32_t piece_size);

@@ -1,9 +1,7 @@
 #ifndef BUTTON_DRIVER_H
 #define BUTTON_DRIVER_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "button_config.h"
 #include "button_types.h"
 //#include "sys_config.h"

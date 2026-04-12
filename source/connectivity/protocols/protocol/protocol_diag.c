@@ -3,17 +3,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef HAS_ARRAY
-#include "array.h"
-#endif
 #include "byte_utils.h"
 #include "interfaces_diag.h"
 #include "log.h"
 #include "protocol_types.h"
 #include "sys_constants.h"
 #include "system_diag.h"
+#ifdef HAS_ARRAY
+#include "array.h"
+#endif
 
-char* ProtocolRxState2Str(ProtocolRxState_t rx_state) {
+char* ProtocolRxStateToStr(RxState_t rx_state) {
     char* name = "?";
     switch((uint8_t)rx_state) {
     case WAIT_PREAMBLE:
@@ -50,23 +50,18 @@ char* ProtocolRxState2Str(ProtocolRxState_t rx_state) {
     return name;
 }
 
-bool flow_ctrl_print_lost(facility_t facility, FlowCrtl_t* Node, uint16_t s_num, Interfaces_t interface) {
+bool flow_ctrl_print_lost(facility_t facility, FlowCrtl_t* Node, uint16_t s_num, InterfaceType_t inter_face) {
     bool res = true;
     if(Node) {
         if(Node->prev_s_num < (s_num - 1)) {
-            if(0 < Node->lost_rx_frames) {
-                if(Node->prev_s_num) {
-                    Node->total_lost_rx_frames += Node->lost_rx_frames;
-                }
-            }
             if((Node->prev_s_num + 1) == (s_num - 1)) {
 #ifdef HAS_INTERFACES_DIAG
-                LOG_DEBUG(facility, "%s Lost_%u %u: Flow:%u", InterfaceToStr(interface), Node->lost_rx_frames,
+                LOG_DEBUG(facility, "%s,Lost_%u,%u:Flow:%u", InterfaceTypeToStr(inter_face), Node->lost_rx_frames,
                           s_num - 1, Node->cur);
 #endif
             } else {
 #ifdef HAS_INTERFACES_DIAG
-                LOG_DEBUG(facility, "%s Lost_%u %u-%u Flow:%u", InterfaceToStr(interface), Node->lost_rx_frames,
+                LOG_DEBUG(facility, "%s,Lost_%u,%u-%u,Flow:%u", InterfaceTypeToStr(inter_face), Node->lost_rx_frames,
                           Node->prev_s_num + 1, s_num - 1, Node->cur);
 #endif
             }
@@ -78,11 +73,11 @@ bool flow_ctrl_print_lost(facility_t facility, FlowCrtl_t* Node, uint16_t s_num,
     return res;
 }
 
-bool flow_ctrl_diag(facility_t facility, FlowCrtl_t* Node, Interfaces_t interface) {
+bool flow_ctrl_diag(facility_t facility, FlowCrtl_t* Node, InterfaceType_t inter_face) {
     bool res = false;
     if(Node) {
 #ifdef HAS_INTERFACES_DIAG
-        log_write(LOG_LEVEL_INFO, facility, "DiagFlow: %s", InterfaceToStr(interface));
+        log_write(LOG_LEVEL_INFO, facility, "DiagFlow: %s", InterfaceTypeToStr(inter_face));
 #endif
         log_write(LOG_LEVEL_INFO, facility, "PrevSN %u", Node->prev_s_num);
         log_write(LOG_LEVEL_INFO, facility, "Cur %u", Node->cur);
@@ -99,7 +94,7 @@ bool flow_ctrl_diag(facility_t facility, FlowCrtl_t* Node, Interfaces_t interfac
     return res;
 }
 
-char* Mask322Str(const Addr32Mask_t* const Mask) {
+char* Mask32ToStr(const Addr32Mask_t* const Mask) {
     if(Mask) {
         if(Mask->size <= 32) {
             char lText[300] = "0";
@@ -124,12 +119,12 @@ char* Mask322Str(const Addr32Mask_t* const Mask) {
     return text;
 }
 
-const char* ProtocolFrame2Str(const uint8_t* const data, size_t size, Protocol_t protocol) {
+const char* ProtocolFrameToStr(const uint8_t* const data, size_t size, Protocol_t protocol) {
     const char* name = "?";
     switch((uint32_t)protocol) {
 #ifdef HAS_STACK_FRAME
     case PROTO_STACK_FRAME:
-        name = StackFrame2Str(data, size);
+        name = StackFrameToStr(data, size);
         break;
 #endif
     default:
@@ -138,7 +133,7 @@ const char* ProtocolFrame2Str(const uint8_t* const data, size_t size, Protocol_t
     return name;
 }
 
-const char* FlowCtrl2Str(const FlowCrtl_t* const Node) {
+const char* FlowCtrlToStr(const FlowCrtl_t* const Node) {
     static char lText[80] = {0};
     if(Node) {
         strcpy(lText, "");

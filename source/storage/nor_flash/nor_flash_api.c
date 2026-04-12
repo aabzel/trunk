@@ -6,7 +6,7 @@
 #include "nor_flash_drv.h"
 
 #ifdef HAS_NOR_FLASH_SW
-#include "sw_nor_flash_drv.h"
+#include "sw_nor_flash.h"
 #endif
 
 #ifdef HAS_FLASH_OFF_CHIP
@@ -141,19 +141,22 @@ bool nor_flash_erase_block(uint8_t flash_num, uint32_t phy_address, uint32_t blo
         switch(Node->option) {
 #ifdef HAS_NOR_FLASH_SW
         case NOR_FLASH_OPTION_SW:
-            res = sw_nor_flash_erase_block(flash_num, phy_address, block_size);
+            res = sw_nor_flash_erase_block(flash_num, phy_address);
             break;
 #endif
+
 #ifdef HAS_FLASH_ON_CHIP
         case NOR_FLASH_OPTION_ON_CHIP:
             res = flash_erase_block(phy_address, block_size);
             break;
 #endif
+
 #ifdef HAS_FLASH_OFF_CHIP
         case NOR_FLASH_OPTION_OFF_CHIP:
             res = nor_flash_off_chip_erase_block(phy_address, block_size);
             break;
 #endif
+
         default:
             LOG_ERROR(NOR_FLASH, "UndefNORFlashOption %u", Node->option);
             break;

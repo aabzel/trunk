@@ -57,7 +57,7 @@ bool nor_flash_usage(uint8_t flash_num, uint32_t piece_size) {
     return res;
 }
 
-const char* NorFlashOption2Str(NorFlashOption_t code) {
+const char* NorFlashOptionToStr(NorFlashOption_t code) {
     const char* name = "UndefNorFlash";
     switch((uint8_t)code) {
     case NOR_FLASH_OPTION_SW:
@@ -80,7 +80,7 @@ const char* NorFlashNum2Option(uint8_t flash_num) {
     LOG_INFO(NOR_FLASH, "FindNode %u", flash_num);
     NorFlashItem_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
-        name = NorFlashOption2Str(Node->option);
+        name = NorFlashOptionToStr(Node->option);
     } else {
         LOG_ERROR(NOR_FLASH, "LackOfNode %u", flash_num);
     }

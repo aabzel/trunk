@@ -6,7 +6,7 @@
 #include "gpio_diag.h"
 #include "log.h"
 
-const char* ButtonState2Str(ButtonState_t state) {
+const char* ButtonStateToStr(ButtonState_t state) {
     const char* name = "?";
     switch((uint8_t)state) {
     case BUTTON_STATE_UNPRESSED:
@@ -25,7 +25,7 @@ const char* ButtonState2Str(ButtonState_t state) {
     return name;
 }
 
-const char* ButtonPressType2Str(ButtonPressType_t press_type) {
+const char* ButtonPressTypeToStr(ButtonPressType_t press_type) {
     const char* name = "?";
     switch((uint8_t)press_type) {
     case BUTTON_PRESS_SHORT:
@@ -41,9 +41,9 @@ const char* ButtonPressType2Str(ButtonPressType_t press_type) {
     return name;
 }
 
-const char* ButtonInput2Str(ButtonInput_t input) {
+const char* ButtonInputToStr(ButtonInput_t input) {
     const char* name = "?";
-    switch((uint8_t)input) {
+    switch(input) {
     case BUTTON_IN_PASSIVE:
         name = "Passive";
         break;
@@ -64,8 +64,8 @@ bool ButtonConfigDiag(const ButtonConfig_t* const Config) {
     bool res = false;
     if(Config) {
         char lText[120] = {0};
-        sprintf(lText, "%s,LED%u,Active:%s", GpioPad2Str(Config->pad.byte), Config->debug_led_num,
-                GpioLevel2Str(Config->active));
+        sprintf(lText, "%s,LED%u,Active:%s", GpioPadToStr(Config->pad), Config->debug_led_num,
+                GpioLevelToStr(Config->active));
         LOG_WARNING(BUTTON, "%s", lText);
         res = true;
     }

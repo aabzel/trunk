@@ -20,6 +20,6 @@
 
 uint64_t limiter_get_time_us(void);
 bool limiter_init(Limiter_t* const node, uint64_t period_us);
-bool limiter(Limiter_t* const node, uint32_t period_us, uint64_t cur_us);
+bool limiter(Limiter_t* const node, uint64_t period_us, uint64_t cur_us);
 
 #endif /* SRC_LIMITER_H */

@@ -10,10 +10,10 @@ typedef bool (*CustomInit_t)(uint8_t num);
 
 #define COMMON_VARIABLES                                                                                               \
     uint32_t start;                                                                                                    \
-    uint32_t size;                                                                                                     \
     NorFlashOption_t option;                                                                                           \
     bool valid;                                                                                                        \
     uint8_t num;                                                                                                       \
+    uint32_t size;                                                                                                     \
     uint8_t* memory;
 
 typedef struct {

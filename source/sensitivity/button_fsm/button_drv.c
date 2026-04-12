@@ -32,20 +32,22 @@ static bool button_run_callback(ButtonHandle_t* Node, ButtonPressType_t press_ty
     bool res = false;
     if(Node) {
         ButtonIsrHandler_t press_handler = NULL;
-        switch((uint8_t)press_type) {
+        switch(press_type) {
         case BUTTON_PRESS_SHORT: {
 #ifdef HAS_GPIO_DIAG
-            LOG_DEBUG(BUTTON, "%u ShortPressedProc %s, %u ms", Node->num, GpioPad2Str(Node->pad.byte), Node->time_ms);
+            LOG_DEBUG(BUTTON, "%u ShortPressedProc %s, %u ms", Node->num, GpioPadToStr(Node->pad), Node->time_ms);
 #endif
             press_handler = Node->press_short_handler;
         } break;
 
         case BUTTON_PRESS_LONG: {
 #ifdef HAS_GPIO_DIAG
-            LOG_DEBUG(BUTTON, "%u LongPressedProc %s, %u ms", Node->num, GpioPad2Str(Node->pad.byte), Node->time_ms);
+            LOG_DEBUG(BUTTON, "%u LongPressedProc %s, %u ms", Node->num, GpioPadToStr(Node->pad), Node->time_ms);
 #endif
             press_handler = Node->press_long_handler;
         } break;
+        default:
+            break;
         }
 
         if(press_handler) {
@@ -60,7 +62,7 @@ static bool button_run_callback(ButtonHandle_t* Node, ButtonPressType_t press_ty
             }
         } else {
 #ifdef HAS_BUTTON_DIAG
-            LOG_ERROR(BUTTON, "NoHandler4 %s", ButtonPressType2Str(press_type));
+            LOG_ERROR(BUTTON, "NoHandler4 %s", ButtonPressTypeToStr(press_type));
 #endif
         }
     }
@@ -88,7 +90,7 @@ static bool button_action_stop_timer(ButtonHandle_t* Node) {
     bool res = false;
     if(Node) {
 #ifdef HAS_GPIO_DIAG
-        LOG_DEBUG(BUTTON, "LongPressEnd %s, %u ms", GpioPad2Str(Node->pad.byte), Node->time_ms);
+        LOG_DEBUG(BUTTON, "LongPressEnd %s, %u ms", GpioPadToStr(Node->pad), Node->time_ms);
 #endif
         Node->time_ms = 0;
         res = true;
@@ -113,7 +115,7 @@ static bool button_short_press_timer(ButtonHandle_t* Node) {
 #endif
         Node->short_pres_cnt++;
 #ifdef HAS_GPIO_DIAG
-        LOG_DEBUG(BUTTON, "ShortPress %s, %u ms", GpioPad2Str(Node->pad.byte), Node->time_ms);
+        LOG_DEBUG(BUTTON, "ShortPress %s, %u ms", GpioPadToStr(Node->pad), Node->time_ms);
 #endif
         // res=Node->press_short_handler();
         res = button_run_callback(Node, BUTTON_PRESS_SHORT);
@@ -130,7 +132,7 @@ static bool button_long_press_timer(ButtonHandle_t* Node) {
 #endif
         Node->long_pres_cnt++;
 #ifdef HAS_GPIO_DIAG
-        LOG_DEBUG(BUTTON, "LongPress %s, %u ms", GpioPad2Str(Node->pad.byte), Node->time_ms);
+        LOG_DEBUG(BUTTON, "LongPress %s, %u ms", GpioPadToStr(Node->pad), Node->time_ms);
 #endif
         res = button_run_callback(Node, BUTTON_PRESS_LONG);
         // res=Node->press_long_handler();
@@ -154,7 +156,7 @@ static const ButtonActionHandler_t ActionLookUpTable[3][3] = {
 
 bool ButtonStateToOnOff(ButtonState_t state) {
     bool res = false;
-    switch((uint8_t)state) {
+    switch(state) {
     case BUTTON_STATE_UNPRESSED:
         res = false;
         break;
@@ -163,6 +165,8 @@ bool ButtonStateToOnOff(ButtonState_t state) {
         break;
     case BUTTON_STATE_PRESSED_PROCESSED:
         res = true;
+        break;
+    default:
         break;
     }
     return res;
@@ -174,7 +178,7 @@ ButtonState_t button_get(uint8_t num) {
     if(Node) {
         GpioLogicLevel_t logic_level = GPIO_LVL_UNDEF;
         bool res = false;
-        res = gpio_get_state(Node->pad.byte, &logic_level);
+        res = gpio_get_state(Node->pad, &logic_level);
         if(res) {
             if(Node->active == logic_level) {
                 state = BUTTON_STATE_PRESSED;
@@ -189,15 +193,15 @@ ButtonState_t button_get(uint8_t num) {
 static bool button_get_input_ll(ButtonHandle_t* const Node) {
     bool res = false;
     GpioLogicLevel_t logic_level = GPIO_LVL_UNDEF;
-    res = gpio_get_state(Node->pad.byte, &logic_level);
+    res = gpio_get_state(Node->pad, &logic_level);
     if(res) {
 #ifdef HAS_GPIO_DIAG
-        LOG_DEBUG(BUTTON, "Read %s %s", GpioPad2Str(Node->pad.byte), GpioLevel2Str(logic_level));
+        LOG_DEBUG(BUTTON, "Read %s %s", GpioPadToStr(Node->pad), GpioLevelToStr(logic_level));
 #endif
         res = false;
         if(logic_level == Node->active) {
 #ifdef HAS_GPIO_DIAG
-            LOG_DEBUG(BUTTON, "Pressed %s %s", GpioPad2Str(Node->pad.byte), GpioLevel2Str(logic_level));
+            LOG_DEBUG(BUTTON, "Pressed %s %s", GpioPadToStr(Node->pad), GpioLevelToStr(logic_level));
 #endif
             Node->input = BUTTON_IN_ACTIVE;
             res = true;
@@ -212,11 +216,11 @@ static bool button_get_input_ll(ButtonHandle_t* const Node) {
         }
     } else {
 #ifdef HAS_BUTTON_DIAG
-        LOG_ERROR(BUTTON, "GpioGetErr %s %s", GpioPad2Str(Node->pad.byte), ButtonInput2Str(Node->input));
+        LOG_ERROR(BUTTON, "GpioGetErr %s %s", GpioPadToStr(Node->pad), ButtonInputToStr(Node->input));
 #endif
     }
 #ifdef HAS_BUTTON_DIAG
-    LOG_DEBUG(BUTTON, "Pad:%s Input %s", GpioPad2Str(Node->pad.byte), ButtonInput2Str(Node->input));
+    LOG_DEBUG(BUTTON, "Pad:%s Input %s", GpioPadToStr(Node->pad), ButtonInputToStr(Node->input));
 #endif
     return res;
 }
@@ -231,8 +235,8 @@ static bool button_proc_one(uint8_t num) {
             new_state = TransferLookUpTable[Node->state][Node->input];
             if(new_state != Node->state) {
 #ifdef HAS_BUTTON_DIAG
-                LOG_DEBUG(BUTTON, "BTN%u %s %s->%s", Node->num, GpioPad2Str(Node->pad.byte),
-                          ButtonState2Str(Node->state), ButtonState2Str(new_state));
+                LOG_DEBUG(BUTTON, "BTN%u %s %s->%s", Node->num, GpioPadToStr(Node->pad), ButtonStateToStr(Node->state),
+                          ButtonStateToStr(new_state));
 #endif
             }
 
@@ -275,7 +279,7 @@ static bool button_init_custom(void) {
 }
 
 static bool button_init_one(uint32_t num) {
-    bool res = true;
+    bool res = false;
 
     const ButtonConfig_t* Config = ButtonGetConfig(num);
     if(Config) {
@@ -290,14 +294,14 @@ static bool button_init_one(uint32_t num) {
             Node->press_long_handler = Config->press_long_handler;
             Node->proc_handler = Config->proc_handler;
             Node->active = Config->active;
-            Node->pad.byte = Config->pad.byte;
+            Node->pad = Config->pad;
 
             Node->short_pres_cnt = 0;
             Node->long_pres_cnt = 0;
             Node->err_cnt = 0;
             Node->state = BUTTON_STATE_UNPRESSED;
             Node->input = BUTTON_IN_UNDEF;
-            res = gpio_dir_set(Node->pad.byte, GPIO_DIR_IN);
+            res = gpio_dir_set(Node->pad, GPIO_DIR_IN);
 
             GpioPullMode_t button_pull = ButtonActiveToPull(Config->active);
             res = gpio_pull_set(Node->pad, button_pull);
@@ -305,11 +309,11 @@ static bool button_init_one(uint32_t num) {
 #if 0
                 switch(Config->active){
                     case GPIO_LVL_LOW: {
-                        res = gpio_pull_set(Node->pad.byte, GPIO__PULL_UP);
+                        res = gpio_pull_set(Node->pad, GPIO__PULL_UP);
                     }break;
 
                     case GPIO_LVL_HI: {
-                        res = gpio_pull_set(Node->pad.byte, GPIO__PULL_DOWN);
+                        res = gpio_pull_set(Node->pad, GPIO__PULL_DOWN);
                     }break;
                 default: break;
                 }
@@ -341,4 +345,30 @@ void button_thread(void* arg) {
 #endif /*HAS_FREE_RTOS*/
 
 COMPONENT_INIT_PATTERT(BUTTON, BUTTON, button)
+
+#if 0
+//COMPONENT_INIT_PATTERT_CNT(FASIL, XXX, xxx, cnt)
+bool button_mcal_init(void) {
+    bool res = true;
+    res = button_init_custom();
+    uint32_t ok = 0;
+    uint32_t cnt = button_get_cnt();
+    (void) cnt ;
+    uint8_t num = 0;
+    for(num = 0; num <= cnt; num++) {
+        res = button_init_one(num);
+        if(res) {
+            ok++;
+        } else {
+        }
+    }
+    if(cnt==ok) {
+        res = true;
+    } else {
+        res = false;
+    }
+    return res;
+}
+#endif
+
 COMPONENT_PROC_PATTERT(BUTTON, BUTTON, button)

@@ -58,7 +58,7 @@ bool button_get_command(int32_t argc, char* argv[]) {
 
     if(res) {
         ButtonState_t state = button_get(num);
-        LOG_INFO(BUTTON, "%u %s", num, ButtonState2Str(state));
+        LOG_INFO(BUTTON, "%u %s", num, ButtonStateToStr(state));
     } else {
         LOG_ERROR(BUTTON, "Usage: bs num on_off");
     }
@@ -85,11 +85,11 @@ bool button_diag_command(int32_t argc, char* argv[]) {
         if(Node && ConfNode) {
             cli_printf(TSEP);
             cli_printf(" %02u  " TSEP, num);
-            cli_printf(" %5s " TSEP, GpioPad2Str(Node->pad.byte));
+            cli_printf(" %5s " TSEP, GpioPadToStr(Node->pad));
             cli_printf(" %8u " TSEP, Node->short_pres_cnt);
             cli_printf(" %8u " TSEP, Node->long_pres_cnt);
-            cli_printf(" %04s " TSEP, GpioLevel2Str(Node->active));
-            cli_printf(" %9s " TSEP, ButtonState2Str(Node->state));
+            cli_printf(" %04s " TSEP, GpioLevelToStr(Node->active));
+            cli_printf(" %9s " TSEP, ButtonStateToStr(Node->state));
             cli_printf(" 0x%08x " TSEP, (uint32_t)Node->press_long_handler);
             cli_printf(" 0x%08x " TSEP, (uint32_t)Node->press_short_handler);
             cli_printf(" %6s " TSEP, ConfNode->name);

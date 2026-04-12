@@ -291,7 +291,7 @@ bool nor_flash_init_one(uint8_t num) {
     if(Config) {
         NorFlashItem_t* Node = NorFlashGetNode(num);
         if(Node) {
-            LOG_INFO(NOR_FLASH, "%u->%s", num, NorFlashOption2Str(Config->option));
+            LOG_INFO(NOR_FLASH, "%u->%s", num, NorFlashOptionToStr(Config->option));
             LOG_INFO(NOR_FLASH, "%u 0x%08x....0x%08x Size:%u byte", num, Config->start, Config->start + Config->size,
                      Config->size);
             Node->valid = true;

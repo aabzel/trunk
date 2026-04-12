@@ -5,8 +5,8 @@
 
 bool CsvNodeDiag(CsvFsm_t *const Node);
 bool csv_print(char *const text,char separator, Order_t order);
-const char* CsvNode2Str(CsvFsm_t *const Node);
-const char* CsvInput2Str(CsvInput_t input);
-const char* CsvState2Str(CsvState_t state);
+const char* CsvNodeToStr(const CsvFsm_t* const Node);
+const char* CsvInputToStr(const CsvInput_t input);
+const char* CsvStateToStr(const CsvState_t state);
 
 #endif

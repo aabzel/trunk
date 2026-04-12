@@ -5,10 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "ostream.h"
+#include "std_includes.h"
 
 #ifndef HAS_BUTTON
 #error "+HAS_BUTTON"
@@ -24,10 +21,10 @@ bool button_diag_command(int32_t argc, char* argv[]);
 bool button_press_command(int32_t argc, char* argv[]);
 
 #define BUTTON_COMMANDS                                                                        \
-    SHELL_CMD("button_get", "bg", button_get_command, "ButtonGet"),                            \
-    SHELL_CMD("button_diag", "bd", button_diag_command, "ButtonDiag"),                         \
-    SHELL_CMD("button_set", "bs", button_set_command, "ButtonSet"),                            \
-    SHELL_CMD("button_press", "bp", button_press_command, "ButtonPress"),
+    SHELL_CMD("button_get", "btg", button_get_command, "ButtonGet"),                            \
+    SHELL_CMD("button_diag", "btd", button_diag_command, "ButtonDiag"),                         \
+    SHELL_CMD("button_set", "bts", button_set_command, "ButtonSet"),                            \
+    SHELL_CMD("button_press", "btp", button_press_command, "ButtonPress"),
 
 #ifdef __cplusplus
 }

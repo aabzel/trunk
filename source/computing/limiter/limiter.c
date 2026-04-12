@@ -4,7 +4,9 @@
 #include <stdlib.h> // for rand
 #endif
 
+#ifdef HAS_DATA_MISC
 #include "data_utils.h"
+#endif
 
 #ifdef HAS_LOG
 #include "log.h"
@@ -44,6 +46,7 @@ uint64_t limiter_get_time_us(void) {
  */
 static bool limiter_task_frame(Limiter_t* const Node) {
     bool res = false;
+
     if(Node) {
 #ifdef HAS_TIME
         uint64_t start_us = 0;
@@ -62,19 +65,24 @@ static bool limiter_task_frame(Limiter_t* const Node) {
             res = false;
         }
         if(res) {
+#ifdef HAS_DATA_MISC
             DATA_UPDATE(Node->start_period_us, period_us);
+#endif
             // data_u64_update(&Node->start_period_us, period_us);
         }
 
         // Node->start_time_prev_us = start_us;
 
         res = true;
-#ifdef HAS_FLASH
+#ifdef HAS_FLASH_EX
         res = is_flash_addr((uint32_t)Node->function);
 #endif
         if(res) {
-            Node->call_cnt++;
-            res = Node->function();
+            if(Node->function) {
+                res = Node->function();
+                Node->call_cnt++;
+            } else {
+            }
         } else {
             res = false;
         }
@@ -94,18 +102,21 @@ static bool limiter_task_frame(Limiter_t* const Node) {
             res = false;
         }
 #else
-        res = Node->function();
+        if(Node->function) {
+            res = Node->function();
+        }
 #endif
     }
     return res;
 }
 
-bool limiter(Limiter_t* const Node, uint32_t period_us, uint64_t up_time_us) {
+bool limiter(Limiter_t* const Node, uint64_t period_us, uint64_t up_time_us) {
     bool res = false;
     if(Node->on_off) {
 #ifdef HAS_TIME
-        if(Node->start_time_next_us < up_time_us) {
-            Node->start_time_next_us = up_time_us + period_us;
+
+        if(Node->start_time_next_us <= up_time_us) {
+            Node->start_time_next_us = up_time_us + ((uint64_t)period_us);
             res = limiter_task_frame(Node);
             Node->start_time_prev_us = up_time_us;
         } else {
@@ -114,7 +125,7 @@ bool limiter(Limiter_t* const Node, uint32_t period_us, uint64_t up_time_us) {
 
         if(up_time_us < Node->start_time_prev_us) {
             // LOG_DEBUG(LIMITER, "UpTimeOverflow %llu", up_time_us);
-            Node->start_time_next_us = up_time_us + period_us;
+            Node->start_time_next_us = up_time_us + ((uint64_t)period_us);
         }
 #else
         res = limiter_task_frame(Node);
@@ -128,7 +139,7 @@ bool limiter(Limiter_t* const Node, uint32_t period_us, uint64_t up_time_us) {
 bool limiter_init(Limiter_t* const Node, uint64_t period_us) {
     bool res = false;
 #ifdef HAS_TIME_DIAG
-    LOG_DEBUG(LIMITER, "Init:Period:%s", UsecToStr(period_us));
+    // LOG_INFO(LIMITER, "Init:Period:%s", UsecToStr(period_us));
 #endif
     if(Node) {
         if(false == Node->init) {
@@ -143,7 +154,8 @@ bool limiter_init(Limiter_t* const Node, uint64_t period_us) {
             Node->on_off = true;
             Node->init = true;
 #ifdef HAS_LIMITER_EXT
-            Node->phase_us = rand() % period_us;
+            // Node->phase_us = rand() % period_us;
+            Node->phase_us = period_us / 2;
 #endif
             res = true;
             // Node->function = foo;
