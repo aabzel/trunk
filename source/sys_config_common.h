@@ -2,6 +2,9 @@
 #define SYS_CONFIG_COMMON_H
 
 #define DFLT_TIME_ZONE 3
+
+#ifndef WDT_TIMEOUT_MS
 #define WDT_TIMEOUT_MS 10000U
+#endif
 
 #endif /* SYS_CONFIG_COMMON_H  */

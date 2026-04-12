@@ -2,6 +2,10 @@ strict digraph graphname {
     rankdir=LR;
     splines=ortho
     node [shape="box"];
+ 
+#ifdef HAS_APPLICATION
+    #include "applications.gvi"
+#endif
 
 #ifdef HAS_CORE
     #include "core.gvi"
@@ -20,7 +24,7 @@ strict digraph graphname {
 #endif
 
 #ifdef HAS_CONNECTIVITY
-    #include "connectivity.gvi"
+    #include "connectivity/connectivity.gvi"
 #endif
 
 #ifdef HAS_CONTROL
@@ -52,6 +56,10 @@ strict digraph graphname {
 #ifdef HAS_THIRD_PARTY
     #include "third_party.gvi"
 #endif    
+
+#ifdef HAS_SENSITIVITY
+    #include "sensitivity.gvi"
+#endif
 
 
 }

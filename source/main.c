@@ -6,6 +6,7 @@
 #include <string.h>
 #endif
 
+#include "common_diag.h"
 #include "std_includes.h"
 
 #ifdef HAS_CLI
@@ -23,7 +24,7 @@
 #ifdef HAS_FREE_RTOS
 #include "FreeRTOS.h"
 #include "task.h"
-#endif /*HAS_FREERTOS*/
+#endif
 
 #ifdef HAS_FLASH
 #include "flash_config.h"
@@ -36,11 +37,11 @@
 #ifdef HAS_NORTOS
 /*mandatory space NoRTOS.h needs stdint.h*/
 #include "sys_config.h"
-#endif /*HAS_NORTOS*/
+#endif
 
 #ifdef HAS_CLOCK
 #include "clock.h" //TODO DEL
-#endif             /*HAS_CLOCK*/
+#endif
 
 #include "common_functions.h"
 
@@ -54,7 +55,7 @@
 
 #ifdef HAS_HEALTH_MONITOR
 #include "health_monitor.h"
-#endif /*HAS_HEALTH_MONITOR*/
+#endif
 
 #ifdef HAS_GPIO
 #include "gpio_mcal.h"
@@ -70,24 +71,24 @@
 
 #ifdef HAS_LOG
 #include "log.h"
-#endif /*HAS_LOG*/
+#endif
 
 #ifdef HAS_BOOTLOADER
 #include "bootloader.h"
-#endif /*HAS_BOOTLOADER */
+#endif
 
 #ifdef HAS_MBR
 #include "mbr_drv.h"
-#endif /* HAS_MBR*/
+#endif
 
 #if defined(HAS_BOOTLOADER) && defined(HAS_GENERIC)
 #error "Firmware is unable to be bootloader and application simultaneously"
-#endif /*HAS_BOOT and HAS_GENERIC*/
+#endif
 
 #ifdef HAS_PC
 /*For DeskTop*/
 int main(int argc, char* argv[])
-#else /*HAS_PC*/
+#else
 /*For MCU*/
 
 int main(void)
@@ -97,31 +98,31 @@ int main(void)
     (void)res;
 
 #ifdef HAS_SYS_INIT
-    res = system_init();
-    res = try_init(res, "SYS");
+    res = system_mcal_init();
+    res = try_init(res, 0, "SYS");
 #endif
 
-#ifdef HAS_LOG
-    LOG_INFO(SYS, "init:%s" CRLF, (res) ? "OK!" : "Error!\a");
+#ifdef HAS_COMMON_DIAG
+    LOG_INFO(HMON, "init:%s", ResToStr(res));
 #endif
 
 #ifdef HAS_HEALTH_MONITOR
     HealthMon.init_error = !res;
-#endif /*HAS_HEALTH_MONITOR*/
+#endif
 
 #ifdef HAS_STREAM
-    LOG_INFO(SYS, "ProgramLaunched!");
-    print_version();
-    print_sys_info();
-#endif /*HAS_STREAM*/
+    LOG_DEBUG(SYS, "ProgramLaunched!");
+    // print_version();
+    // print_sys_info();
+#endif
 
 #ifdef HAS_BOOTLOADER
     res = bootloader_proc();
-#endif /*HAS_BOOTLOADER*/
+#endif
 
 #ifdef HAS_MBR
     res = mbr_proc();
-#endif /*HAS_MBR*/
+#endif
 
 #ifdef HAS_PC
     LOG_DEBUG(SYS, "argc %u", argc);
@@ -141,10 +142,10 @@ int main(void)
             snprintf(cmd_line, sizeof(cmd_line), "%s %s", cmd_line, argv[i]);
         }
 
-        LOG_NOTICE(SYS, "TryCmd [%s]...", cmd_line);
+        LOG_DEBUG(SYS, "TryCmd [%s]...", cmd_line);
         res = cli_process_cmd(1, cmd_line);
         if(res) {
-            LOG_INFO(SYS, "Cmd [%s] Ok", cmd_line);
+            LOG_DEBUG(SYS, "Cmd:[%s],Ok", cmd_line);
         } else {
             LOG_ERROR(SYS, "Cmd [%s] Err", cmd_line);
         }
@@ -154,13 +155,13 @@ int main(void)
 
 #ifdef HAS_FREE_RTOS
     vTaskStartScheduler();
-#endif /*HAS_FREE_RTOS*/
+#endif
 
 #ifdef HAS_NORTOS
 #ifdef HAS_SUPER_CYCLE
-    super_cycle_start();
-#endif /*HAS_SUPER_CYCLE*/
-#endif /*HAS_NORTOS*/
+    super_cycle_start_one(1);
+#endif
+#endif
 
 #ifdef HAS_LOG
     LOG_ERROR(SYS, "Unreachable line!");
