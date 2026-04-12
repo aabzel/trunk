@@ -1,0 +1,4 @@
+SCHEDULER [label="Scheduler"]
+LIMITER->SCHEDULER[color="green"]
+TIME->SCHEDULER[color="red"]
+FLASH->SCHEDULER[color="blue"]
