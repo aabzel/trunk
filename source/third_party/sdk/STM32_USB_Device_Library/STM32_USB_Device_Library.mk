@@ -1,0 +1,18 @@
+$(info USB_DEVICE_LIB_DRV_MK_INC=$(USB_DEVICE_LIB_DRV_MK_INC))
+
+ifneq ($(USB_DEVICE_LIB_DRV_MK_INC),Y)
+    USB_DEVICE_LIB_DRV_MK_INC=Y
+
+    USB_DEVICE_LIB_DIR = $(VENDOR_SDK_DIR)/STM32_USB_Device_Library
+    INCDIR += -I$(USB_DEVICE_LIB_DIR)
+    # $(error USB_DEVICE_LIB_DIR=$(USB_DEVICE_LIB_DIR))
+    MCAL_OPT += -DHAS_USB_DEVICE_LIB
+
+    include $(USB_DEVICE_LIB_DIR)/Class/Class.mk
+
+    INCDIR += -I$(USB_DEVICE_LIB_DIR)/Core/inc
+
+    SOURCES_THIRD_PARTY_C += $(USB_DEVICE_LIB_DIR)/Core/Src/usbd_core.c
+    SOURCES_THIRD_PARTY_C += $(USB_DEVICE_LIB_DIR)/Core/Src/usbd_ctlreq.c
+    SOURCES_THIRD_PARTY_C += $(USB_DEVICE_LIB_DIR)/Core/Src/usbd_ioreq.c
+endif

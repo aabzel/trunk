@@ -1,0 +1,8 @@
+
+ifneq ($(AT32F435_437_FIRMWARE_LIBRARY_PRECONFIG_MK_LOC),Y) 
+    AT32F435_437_FIRMWARE_LIBRARY_PRECONFIG_MK_LOC=Y
+
+    HAL_AT32_DIR = $(THIRD_PARTY_DIR)/AT32F435_437_Firmware_Library_EN_V2.1.5
+
+    include $(HAL_AT32_DIR)/middlewares/middlewares_preconfig.mk
+endif
