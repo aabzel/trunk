@@ -1,0 +1,4 @@
+
+config LITTLE_FS
+    bool "Enable use of the LITTLE_FS drivers"
+

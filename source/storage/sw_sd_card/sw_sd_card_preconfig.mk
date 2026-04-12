@@ -1,0 +1,5 @@
+ifneq ($(SW_SD_CARD_PRECONFIG_INC),Y)
+    SW_SD_CARD_PRECONFIG_INC=Y
+    
+    SW_SD_CARD=Y
+endif

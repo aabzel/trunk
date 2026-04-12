@@ -1,0 +1,4 @@
+
+config DISK
+    bool "Enable use of the DISK drivers"
+

@@ -1,0 +1,7 @@
+ifneq ($(LITTLE_FS_PRECONFIG_INC),Y)
+    LITTLE_FS_PRECONFIG_INC=Y
+    
+    ARRAY=Y
+    LITTLE_FS=Y
+    STORAGE=Y
+endif

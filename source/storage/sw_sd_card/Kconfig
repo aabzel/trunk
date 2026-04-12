@@ -1,0 +1,4 @@
+
+config SW_SD_CARD
+    bool "Enable use of the SW_SD_CARD drivers"
+
