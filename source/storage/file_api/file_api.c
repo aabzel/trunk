@@ -1,14 +1,20 @@
 #include "file_api.h"
 
-#include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "log.h"
 #include "macro_utils.h"
+#include "std_includes.h"
+#ifdef HAS_CSV
+#include "csv.h"
+#endif
+
+#ifdef HAS_LOG
+#include "log.h"
+#endif
+
 #ifdef HAS_STRING
 //#include "str_utils_ex.h"
 #endif
@@ -34,9 +40,10 @@ int32_t file_line_cnt(const char* const file_name) {
 #ifdef HAS_FILE_PC
     line_cnt = file_pc_line_cnt(file_name);
 #endif
-    LOG_DEBUG(FILE_API, "line:%u,File:[%s]",line_cnt,file_name);
     if(line_cnt < 0) {
+#ifdef HAS_LOG
         LOG_ERROR(FILE_API, "LineCntErr");
+#endif
     }
     return line_cnt;
 }
@@ -114,7 +121,9 @@ bool file_api_open_re(FileApiHandle_t* const Node, const char* const file_name) 
         }
 #endif
         if(false == res) {
+#ifdef HAS_LOG
             LOG_ERROR(FILE_API, "Open[%s]Err", file_name);
+#endif
         }
     }
     return res;
@@ -174,4 +183,19 @@ bool file_api_gets(FileApiHandle_t* const Node, char* const line, size_t size, s
 #endif
     }
     return res;
+}
+
+/*
+
+ */
+char* file_path_to_file_name(const char* const file_path) {
+    bool res = false;
+    static char file_name[100] = {0};
+#ifdef HAS_CSV
+    res = csv_parse_last_text(file_path, '/', file_name, sizeof(file_name));
+#endif
+    if(!res) {
+        strcpy(file_name, "?");
+    }
+    return file_name;
 }

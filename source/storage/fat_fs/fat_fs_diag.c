@@ -1,17 +1,14 @@
 #include "fat_fs_diag.h"
 
-#include <stdio.h>
-#include <string.h>
-
-#include "diskio.h"
-#include "fat_fs_diag.h"
+#include "common_diag.h"
+#include "diag_inc.h"
+#include "disk.h"
 #include "ff.h"
 #include "log.h"
-#include "macro_utils.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
-const char* FatFsFileAttr2Str(BYTE fattrib) {
+const char* FatFsFileAttrToStr(BYTE fattrib) {
     static char line_str[11] = {0};
     memset(line_str, 0, sizeof(line_str));
     strcpy(line_str, "...._....");
@@ -34,7 +31,7 @@ const char* FatFsFileAttr2Str(BYTE fattrib) {
 }
 
 /* Format options (2nd argument of f_mkfs) */
-const char* FatFormatOptions2Str(BYTE format_opt) {
+const char* FatFormatOptionsToStr(BYTE format_opt) {
     const char* name = "?";
     switch(format_opt) {
     case FM_FAT:
@@ -59,20 +56,23 @@ const char* FatFormatOptions2Str(BYTE format_opt) {
     return name;
 }
 
-const char* FatFsRes2Str(FRESULT code) {
+const char* FatFsResToStr(FRESULT code) {
     const char* name = "?";
     switch(code) {
+    case FR_NO_FILESYSTEM:
+        name = "NoFileSys";
+        break;
     case FR_OK:
         name = "Ok";
+        break;
+    case FR_NOT_READY:
+        name = "NotReady";
         break;
     case FR_DISK_ERR:
         name = "DiskErr";
         break;
     case FR_INT_ERR:
         name = "IntErr";
-        break;
-    case FR_NOT_READY:
-        name = "NotReady";
         break;
     case FR_NO_FILE:
         name = "NoFile";
@@ -101,9 +101,6 @@ const char* FatFsRes2Str(FRESULT code) {
     case FR_NOT_ENABLED:
         name = "NotEnable";
         break;
-    case FR_NO_FILESYSTEM:
-        name = "NoFileSys";
-        break;
     case FR_MKFS_ABORTED:
         name = "MkFsAbort";
         break;
@@ -122,64 +119,7 @@ const char* FatFsRes2Str(FRESULT code) {
     case FR_INVALID_PARAMETER:
         name = "InvalidPar";
         break;
-    }
-    return name;
-}
-
-const char* DiskCmd2Str(uint8_t cmd) {
-    const char* name = "?";
-    switch(cmd) {
-    case CTRL_SYNC:
-        name = "CtrlSync";
-        break;
-    case GET_SECTOR_COUNT:
-        name = "GetSectorCount";
-        break;
-    case GET_SECTOR_SIZE:
-        name = "GET_SECTOR_SIZE";
-        break;
-    case GET_BLOCK_SIZE:
-        name = "GET_BLOCK_SIZE";
-        break;
-    case CTRL_TRIM:
-        name = "CTRL_TRIM";
-        break;
-    case CTRL_POWER:
-        name = "CTRL_POWER";
-        break;
-    case ATA_GET_SN:
-        name = "ATA_GET_SN";
-        break;
-    case ATA_GET_MODEL:
-        name = "ATA_GET_MODEL";
-        break;
-    case ATA_GET_REV:
-        name = "ATA_GET_REV";
-        break;
-    case MMC_GET_SDSTAT:
-        name = "MMC_GET_SDSTAT";
-        break;
-    case MMC_GET_OCR:
-        name = "MMC_GET_OCR";
-        break;
-    case MMC_GET_CID:
-        name = "MMC_GET_CID";
-        break;
-    case MMC_GET_CSD:
-        name = "MMC_GET_CSD";
-        break;
-    case MMC_GET_TYPE:
-        name = "MMC_GET_TYPE";
-        break;
-    case CTRL_FORMAT:
-        name = "CTRL_FORMAT";
-        break;
-    case CTRL_EJECT:
-        name = "CTRL_EJECT";
-        break;
-    case CTRL_LOCK:
-        name = "CTRL_LOCK";
-        break;
+    default: break;
     }
     return name;
 }
@@ -196,68 +136,6 @@ bool FatFsParseFileInfo(FILINFO* FileInfo) {
         res = true;
     }
     return res;
-}
-
-const char* DiskIoCtlCmd2Str(uint8_t const ioctl_code) {
-    const char* name = "?";
-    switch(ioctl_code) {
-        /* Generic command (Used by FatFs) */
-    case CTRL_SYNC:
-        name = "SYNC";
-        break; /* Complete pending write process (needed at _FS_READONLY == 0) */
-    case GET_SECTOR_COUNT:
-        name = "GetMediaSize";
-        break; /* Get media size (needed at _USE_MKFS == 1) */
-    case GET_SECTOR_SIZE:
-        name = "GetSectorSize";
-        break; /* Get sector size (needed at _MAX_SS != _MIN_SS) */
-    case GET_BLOCK_SIZE:
-        name = "GetEraseBlockSize";
-        break; /* Get erase block size (needed at _USE_MKFS == 1) */
-    case CTRL_TRIM:
-        name = "TRIM";
-        break; /* Inform device that the data on the block of sectors is no longer used (needed at _USE_TRIM == 1) */
-    case CTRL_POWER:
-        name = "Get/SetPowerStatus";
-        break; /* Get/Set power status */
-    case CTRL_LOCK:
-        name = "Lock/UnlockMediaRemoval";
-        break; /* Lock/Unlock media removal */
-    case CTRL_EJECT:
-        name = "EjectMedia";
-        break; /* Eject media */
-    case CTRL_FORMAT:
-        name = "CreatePhysicalFormatOnTheMedia";
-        break; //    8    /* Create physical format on the media */
-    case MMC_GET_TYPE:
-        name = "GetCardType";
-        break; /* Get card type */
-    case MMC_GET_CSD:
-        name = "GetCSD";
-        break; /* Get CSD */
-    case MMC_GET_CID:
-        name = "GetCID";
-        break; /* Get CID */
-    case MMC_GET_OCR:
-        name = "GetOCR";
-        break; /* Get OCR */
-    case MMC_GET_SDSTAT:
-        name = "GetSdStatus";
-        break; /* Get SD status */
-    case ATA_GET_REV:
-        name = "GetF/Wrevision";
-        break; /* Get F/W revision */
-    case ATA_GET_MODEL:
-        name = "GetModelMame";
-        break; /* Get model name */
-    case ATA_GET_SN:
-        name = "GetSerialMumber";
-        break; /* Get serial number */
-    default:
-        name = "UndefIoCtl";
-        break; /* */
-    }
-    return name;
 }
 
 bool fat_fs_scan(const char* const path) {
@@ -290,7 +168,8 @@ bool fat_fs_scan(const char* const path) {
                     snprintf(line_str, sizeof(line_str), "%s 0x%04x " TSEP, line_str, FileInfo.fdate);
                     snprintf(line_str, sizeof(line_str), "%s 0x%04x " TSEP, line_str, FileInfo.ftime);
                     snprintf(line_str, sizeof(line_str), "%s 0x%02x " TSEP, line_str, FileInfo.fattrib);
-                    snprintf(line_str, sizeof(line_str), "%s %9s " TSEP, line_str, FatFsFileAttr2Str(FileInfo.fattrib));
+                    snprintf(line_str, sizeof(line_str), "%s %9s " TSEP, line_str,
+                             FatFsFileAttrToStr(FileInfo.fattrib));
                     snprintf(line_str, sizeof(line_str), "%s %12s " TSEP, line_str, FileInfo.altname);
                     snprintf(line_str, sizeof(line_str), "%s %20s " TSEP, line_str, FileInfo.fname);
 
@@ -307,10 +186,45 @@ bool fat_fs_scan(const char* const path) {
             }
         }
     } else {
-        LOG_ERROR(FAT_FS, "OpenDirErr:%d=%s", ret, FatFsRes2Str(ret));
+        LOG_ERROR(FAT_FS, "OpenDirErr:%d=%s", ret, FatFsResToStr(ret));
         res = false;
     }
 
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     return res;
+}
+
+const char* FatFsConfigToStr(const FatFsConfig_t* const Config) {
+    if(Config) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
+        snprintf(text, sizeof(text), "%s%s,", text, Config->name);
+    }
+    return text;
+}
+
+const char* FatFsNodeToStr(const FatFsHandle_t* const Node) {
+    if(Node) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%sSpin:%u,", text, Node->spin);
+        snprintf(text, sizeof(text), "%sInit:%s,", text, OnOffToStr(Node->init));
+    }
+    return text;
+}
+
+bool fat_fs_diag(void) {
+    bool res = false;
+    return res;
+}
+
+const char* FatFsFileToStr(const FIL* const file) {
+    if(file) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%sflag:0x%x,", text, file->flag);
+        snprintf(text, sizeof(text), "%serr:0x%x,", text, file->err);
+        snprintf(text, sizeof(text), "%sfptr:%u,", text, file->fptr);
+        snprintf(text, sizeof(text), "%ssect:%u,", text, file->sect);
+        snprintf(text, sizeof(text), "%sclust:%u,", text, file->clust);
+    }
+    return text;
 }

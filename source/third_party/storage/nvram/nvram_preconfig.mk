@@ -1,0 +1,9 @@
+ifneq ($(NVRAM_EHAL_PRECONFIG_INC),Y)
+    NVRAM_EHAL_PRECONFIG_INC=Y
+
+    #@echo $(error NVRAM_DIR= $(NVRAM_DIR))
+    NVRAM=Y
+    FLASH_EHAL=Y
+    STORAGE=Y
+    INTERVAL=Y
+endif

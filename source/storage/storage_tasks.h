@@ -1,6 +1,23 @@
 #ifndef STORAGE_TASKS_H
 #define STORAGE_TASKS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef HAS_BLACK_BOX_PROC
+#include "black_box.h"
+#define BLACK_BOX_TASKS {.name="BlackBox", .period_us=BLACK_BOX_POLL_PERIOD_US, .limiter.function=black_box_proc,},
+#else
+#define BLACK_BOX_TASKS
+#endif
+
+#ifdef HAS_DISK_PROC
+#include "disk.h"
+#define DISK_TASK  {.name="Disk", .period_us=DISK_POLL_PERIOD_US, .limiter.function=disk_proc,},
+#else
+#define DISK_TASK
+#endif
 
 #ifdef HAS_EXT_RAM_EMUL_PROC
 #include "ext_ram_sim.h"
@@ -18,16 +35,19 @@
 
 #ifdef HAS_FLASH_FS_PROC
 #include "flash_fs.h"
-#define FLASH_FS_TASKS  {.name="FLASH_FS", .period_us=FLASH_FS_POLL_PERIOD_US, .limiter.function=flash_fs_proc,},
+#define FLASH_FS_TASKS  {.name="FlashFs",                         \
+                         .period_us=FLASH_FS_POLL_PERIOD_US,      \
+                         .limiter.function=flash_fs_proc,         \
+                        },
 #else
 #define FLASH_FS_TASKS
 #endif
 
-#ifdef HAS_BLACK_BOX_PROC
-#include "black_box.h"
-#define BLACK_BOX_TASKS {.name="BLACK_BOX", .period_us=BLACK_BOX_POLL_PERIOD_US, .limiter.function=black_box_proc,},
+#ifdef HAS_LITTLE_FS_PROC
+#include "little_fs.h"
+#define LITTLE_FS_TASKS  {.name="LittleFs", .period_us=LITTLE_FS_POLL_PERIOD_US, .limiter.function=little_fs_proc,},
 #else
-#define BLACK_BOX_TASKS
+#define LITTLE_FS_TASKS
 #endif
 
 #ifdef HAS_FAT_FS_PROC
@@ -95,11 +115,10 @@
 
 #ifdef HAS_SW_NVRAM_PROC
 #include "sw_nvram.h"
-#define SW_NVRAM_TASKS   {.name="SW_NVRAM", .period_us=SW_NVRAM_POLL_PERIOD_US, .limiter.function=sw_nvram_proc,},
+#define SW_NVRAM_TASKS   {.name="SwNvRam", .period_us=SW_NVRAM_POLL_PERIOD_US, .limiter.function=sw_nvram_proc,},
 #else
 #define SW_NVRAM_TASKS
 #endif
-
 
 #ifdef HAS_RUNNING_LINE_PROC
 #include "running_line.h"
@@ -108,13 +127,14 @@
 #define RUNNING_LINE_TASKS
 #endif
 
-
 #define STORAGE_TASKS     \
     BLACK_BOX_TASKS       \
+    DISK_TASK             \
     EXT_RAM_EMUL_TASKS    \
     FAT_FS_TASKS          \
     FLASH_TASKS           \
     FLASH_FS_TASKS        \
+    LITTLE_FS_TASKS       \
     HEAP_TASKS            \
     KEEPASS_TASKS         \
     MX25L6433_TASKS       \
@@ -125,5 +145,9 @@
     SD_CARD_TASKS         \
     NOR_FLASH_TASKS       \
     SW_NVRAM_TASKS
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* STORAGE_TASKS_H */

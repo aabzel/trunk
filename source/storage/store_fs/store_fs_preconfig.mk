@@ -1,0 +1,6 @@
+ifneq ($(STORE_FS_PRECONFIG_INC),Y)
+    STORE_FS_PRECONFIG_INC=Y
+    
+    STORE_FS=Y
+    STORAGE=Y
+endif

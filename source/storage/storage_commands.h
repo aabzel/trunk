@@ -1,6 +1,12 @@
 #ifndef STORAGE_COMMANDS_H
 #define STORAGE_COMMANDS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "std_includes.h"
+
 #ifndef HAS_CLI
 #error "+HAS_CLI"
 #endif
@@ -19,6 +25,12 @@
 #include "sw_nvram_commands.h"
 #else
 #define SW_NVRAM_COMMANDS
+#endif
+
+#ifdef HAS_STORE_FS_COMMANDS
+#include "store_fs_commands.h"
+#else
+#define STORE_FS_COMMANDS
 #endif
 
 #ifdef HAS_FLASH_COMMANDS
@@ -45,6 +57,12 @@
 #define FAT_FS_COMMANDS
 #endif
 
+#ifdef HAS_LITTLE_FS_COMMANDS
+#include "little_fs_commands.h"
+#else
+#define LITTLE_FS_COMMANDS
+#endif
+
 #ifdef HAS_HEAP_COMMANDS
 #include "allocator_commands.h"
 #else
@@ -57,10 +75,10 @@
 #define KEEPASS_COMMANDS
 #endif
 
-#ifdef HAS_AT24CXX_COMMANDS
+#ifdef HAS_AT24CX_COMMANDS
 #include "at24cxx_commands.h"
 #else
-#define AT24CXX_COMMANDS
+#define AT24CX_COMMANDS
 #endif
 
 #ifdef HAS_MX25L6433_COMMANDS
@@ -117,6 +135,18 @@
 #define WAV_COMMANDS
 #endif
 
+#ifdef HAS_SW_SD_CARD_COMMANDS
+#include "sw_sd_card_commands.h"
+#else
+#define SW_SD_CARD_COMMANDS
+#endif
+
+#ifdef HAS_DISK_COMMANDS
+#include "disk_commands.h"
+#else
+#define DISK_COMMANDS
+#endif
+
 #ifdef HAS_RUNNING_LINE_COMMANDS
 #include "running_line_commands.h"
 #else
@@ -127,24 +157,38 @@
 #error "+HAS_STORAGE_COMMANDS"
 #endif
 
+bool malloc_try_command(int32_t argc, char* argv[]);
+
+#define STORAGE_ASICS_COMMANDS        \
+    AT24CX_COMMANDS             \
+    MX25L6433_COMMANDS          \
+    MX25R6435F_COMMANDS         \
+    SD_CARD_COMMANDS
+
 #define STORAGE_COMMANDS        \
-    AT24CXX_COMMANDS            \
+    STORAGE_ASICS_COMMANDS      \
     CALIBRATION_DATA_COMMANDS   \
+    DISK_COMMANDS               \
     EXT_RAM_EMUL_COMMANDS       \
     FAT_FS_COMMANDS             \
+    LITTLE_FS_COMMANDS          \
+    STORE_FS_COMMANDS           \
     FILE_PC_COMMANDS            \
     FLASH_FS_COMMANDS           \
     HEAP_COMMANDS               \
     HEX_BIN_COMMANDS            \
     KEEPASS_COMMANDS            \
-    MX25L6433_COMMANDS          \
-    MX25R6435F_COMMANDS         \
+    NOR_FLASH_COMMANDS          \
     WAV_COMMANDS                \
     NVS_COMMANDS                \
     PARAM_COMMANDS              \
     RUNNING_LINE_COMMANDS       \
-    SD_CARD_COMMANDS            \
-    NOR_FLASH_COMMANDS          \
+    SHELL_CMD("malloc", "mall", malloc_try_command, "MallocTry"),    \
     SW_NVRAM_COMMANDS
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* STORAGE_COMMANDS_H */

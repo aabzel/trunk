@@ -1,6 +1,7 @@
 #include "storage.h"
 
 #include <string.h>
+#include <time.h>
 
 #ifdef HAS_LED
 #include "led_drv.h"
@@ -8,10 +9,6 @@
 
 #ifdef HAS_LOG
 #include "log.h"
-#endif
-
-#ifdef HAS_ARRAY_DIAG
-#include "array_diag.h"
 #endif
 
 #ifdef HAS_TBFP
@@ -22,35 +19,156 @@
 #include "w25q32jv_drv.h"
 #endif
 
-static uint8_t storage_io_data[STORAGE_DATA_SIZE] = {0};
-uint8_t storage_rx_data[STORAGE_DATA_SIZE] = {0};
+static const StorageIdInfo_t StorageIdInfo[] = {
+    {
+        .id = PAR_ID_BOOT_CNT,
+        .type = TYPE_UINT8,
+    },
+    {
+        .id = PAR_ID_REBOOT_CNT,
+        .type = TYPE_UINT16,
+    },
+    {
+        .id = PAR_ID_BOOT_CMD,
+        .type = TYPE_UINT8,
+    },
+//  {  .id = PAR_ID_BOOTLOADER_START, .type=TYPE_UINT32_HEX,},
+#ifdef HAS_BOOTLOADER
+    {
+        .id = PAR_ID_APP_CRC32,
+        .type = TYPE_UINT32_HEX,
+    },
+    {
+        .id = PAR_ID_APP_LEN,
+        .type = TYPE_UINT32,
+    },
+    {
+        .id = PAR_ID_APP_START,
+        .type = TYPE_UINT32_HEX,
+    },
+    {
+        .id = PAR_ID_APP_STATUS,
+        .type = TYPE_UINT8,
+    },
+#endif
+};
+
+StorageType_t storage_get_id_type(StorageId_t id) {
+    StorageType_t type = 0;
+    bool res = false;
+    uint32_t i = 0;
+    for(i = 0; i < ARRAY_SIZE(StorageIdInfo); i++) {
+        if(id == StorageIdInfo[i].id) {
+            res = true;
+            type = StorageIdInfo[i].type;
+            break;
+        }
+    }
+    if(false == res) {
+#ifdef HAS_LOG
+        LOG_ERROR(STORAGE, "UndefLenForTypeID:%u=%s", type, StorageTypeToStr(type));
+#endif
+    }
+    return type;
+}
+
+static const StorageTypeInfo_t StorageSizeInfo[] = {
+    {
+        .type = TYPE_TIME_DATE,
+        .len = sizeof(struct tm),
+    },
+    {
+        .type = TYPE_UINT8,
+        .len = 1,
+    },
+    {
+        .type = TYPE_BOOL,
+        .len = 1,
+    },
+    {
+        .type = TYPE_INT8,
+        .len = 1,
+    },
+    {
+        .type = TYPE_UINT16,
+        .len = 2,
+    },
+    {
+        .type = TYPE_INT16,
+        .len = 2,
+    },
+    {
+        .type = TYPE_UINT32,
+        .len = 4,
+    },
+    {
+        .type = TYPE_UINT32_HEX,
+        .len = 4,
+    },
+    {
+        .type = TYPE_INT32,
+        .len = 4,
+    },
+    {
+        .type = TYPE_UINT64,
+        .len = 8,
+    },
+    {
+        .type = TYPE_UINT64,
+        .len = 8,
+    },
+    {
+        .type = TYPE_INT64,
+        .len = 8,
+    },
+    {
+        .type = TYPE_DOUBLE,
+        .len = 8,
+    },
+    {
+        .type = TYPE_FLOAT,
+        .len = 4,
+    },
+    {
+        .type = TYPE_STRUCT,
+        .len = STORAGE_TYPE_UNDEF_LEN,
+    }, /*Any*/
+    {
+        .type = TYPE_ARRAY,
+        .len = STORAGE_TYPE_UNDEF_LEN,
+    }, /*Any*/
+    {
+        .type = TYPE_STRING,
+        .len = STORAGE_TYPE_UNDEF_LEN,
+    }, /*Any*/
+    {
+        .type = TYPE_OPERATION,
+        .len = STORAGE_TYPE_UNDEF_LEN,
+    }, /*Any*/
+};
+
+uint32_t storage_get_type_len(StorageType_t type) {
+    uint32_t len = 0;
+    bool res = false;
+    uint32_t i = 0;
+    for(i = 0; i < ARRAY_SIZE(StorageSizeInfo); i++) {
+        if(type == StorageSizeInfo[i].type) {
+            res = true;
+            len = StorageSizeInfo[i].len;
+            break;
+        }
+    }
+    if(false == res) {
+#ifdef HAS_LOG
+        LOG_ERROR(STORAGE, "UndefLenForTypeID:%u=%s", type, StorageTypeToStr(type));
+#endif
+    }
+    return len;
+}
+
+static uint8_t storage_data[STORAGE_DATA_SIZE] = {0};
 
 #define STORAGE_DATA_OFFSET sizeof(StorageFrameHeader_t)
-
-uint8_t read_addr_8bit(const uint32_t address) {
-    uint8_t value = 0u;
-
-    volatile uint8_t* p_addr = NULL;
-    /*MISRA 2012 Rule 11.4: integer should not be converted to pointer */
-    p_addr = (volatile uint8_t*)address;
-    if(p_addr) {
-        value = *p_addr;
-    }
-
-    return value;
-}
-
-bool write_addr_8bit(const uint32_t address, const uint8_t value) {
-#ifdef HAS_LOG
-    LOG_DEBUG(DBG, "WrireAddr[0x%08x]=0x%02x", address, value);
-#endif
-    bool res = true;
-    volatile uint8_t* addr = NULL;
-    addr = (volatile uint8_t*)address;
-    (*addr) = value; /*May cause HardFault_Handler*/
-    return res;
-}
-
 /*
  * tbfp_num - TBFP instance NUM
  * payload- tbfp frame payload
@@ -59,99 +177,58 @@ bool write_addr_8bit(const uint32_t address, const uint8_t value) {
 bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint32_t size) {
     bool res = false;
     if(payload) {
-    	//LOG_DEBUG(STORAGE, "ProcPayload,TBFP:%u,Size:%u",tbfp_num, size);
-        if(sizeof(StorageFrameHeader_t) <= size) {
+        if(size) {
             // runs
-            StorageFrameHeader_t HeaderStorage = {0};
-            memcpy(&HeaderStorage, payload, sizeof(StorageFrameHeader_t));
+            StorageFrameHeader_t Header = {0};
+            memcpy(&Header, payload, sizeof(StorageFrameHeader_t));
 
-            memset(storage_io_data, 0x00, STORAGE_DATA_SIZE);
-            memcpy(storage_io_data, payload, size);
+            memset(storage_data, 0x00, STORAGE_DATA_SIZE);
+            memcpy(storage_data, payload, sizeof(StorageFrameHeader_t));
 
 #ifdef HAS_LOG
-            LOG_PARN(STORAGE, "%s", StorageFrameHeaderToStr(&HeaderStorage));
+            LOG_DEBUG(STORAGE, "%s", StorageFrameHeaderToStr(&Header));
 #endif
-
-#ifdef HAS_TBFP
-            TbfpHandle_t* Tbfp = TbfpGetNode(tbfp_num);
-            if(Tbfp) {
-                memcpy(&Tbfp->Storage, &HeaderStorage, sizeof(StorageFrameHeader_t));
-                //Tbfp->Storage.size = HeaderStorage.size;
-                //Tbfp->Storage.asic_num = HeaderStorage.asic_num;
-                //Tbfp->Storage.asic_num = HeaderStorage.asic_num;
-                //Tbfp->Storage.operation = HeaderStorage.operation;
-                //Tbfp->Storage.operation = HeaderStorage.operation;
-            }
-#endif
-
-            switch(HeaderStorage.operation) {
-
-            case ACCESS_READ_ONLY: {
-                if(HeaderStorage.size < STORAGE_DATA_SIZE) {
-                    res = true;
-#ifdef HAS_PC
-                	//LOG_DEBUG(STORAGE, "DataSize:%u",HeaderStorage.size);
-                    uint32_t data_start = sizeof(StorageFrameHeader_t);
-                   // print_bin(&payload[data_start],   HeaderStorage.size, 0);
-                    LOG_DEBUG(STORAGE,"[%s]", ArrayToStr( &payload[data_start], (uint32_t)HeaderStorage.size)       );
-                    memcpy(storage_rx_data,&payload[data_start], HeaderStorage.size);
-#endif
-
-#ifdef HAS_W25Q32JV
-                    res = w25q32jv_read_data(HeaderStorage.asic_num, HeaderStorage.address,
-                                             &storage_io_data[sizeof(StorageFrameHeader_t)], HeaderStorage.size);
-
-#endif
-
-
-#ifdef HAS_W25Q32JV
-#ifdef HAS_TBFP
-                    res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data,
-                                          sizeof(StorageFrameHeader_t) + HeaderStorage.size);
-#endif
-#endif
-
-                } else {
-#ifdef HAS_LOG
-                    LOG_ERROR(STORAGE, "TooBigSize:%u,Max:%u", HeaderStorage.size, STORAGE_DATA_SIZE);
-#endif
-                }
-            } break;
-
+            switch(Header.operation) {
             case ACCESS_WRITE_ONLY: {
                 res = true;
 #ifdef HAS_W25Q32JV
-                res = w25q32jv_prog_page(HeaderStorage.asic_num, HeaderStorage.address, &payload[STORAGE_DATA_OFFSET], HeaderStorage.size);
+                res = w25q32jv_prog_page(Header.asic_num, Header.address, &payload[STORAGE_DATA_OFFSET], Header.size);
 #endif
-
-#ifdef HAS_W25Q32JV
 #ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data, sizeof(StorageFrameHeader_t));
+                res = tbfp_send_frame(tbfp_num, TBFP_FRAME_ID_STORAGE, storage_data, sizeof(StorageFrameHeader_t));
 #endif
-#endif
-
             } break;
-
             case ACCESS_ERASE: {
                 res = true;
 #ifdef HAS_W25Q32JV
-                res = w25q32jv_chip_erase(HeaderStorage.asic_num);
+                res = w25q32jv_chip_erase(Header.asic_num);
 #endif
 
 #ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data, sizeof(StorageFrameHeader_t));
+                res = tbfp_send_frame(tbfp_num, TBFP_FRAME_ID_STORAGE, storage_data, sizeof(StorageFrameHeader_t));
 #endif
             } break;
 
-            case ACCESS_ERASE_SECTOR: {
+            case ACCESS_READ_ONLY: {
+                if(Header.size < STORAGE_DATA_SIZE) {
+                    res = true;
 #ifdef HAS_W25Q32JV
-                res = w25q32jv_erase_sector(HeaderStorage.asic_num, HeaderStorage.address);
-#endif
-#ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_STORAGE, storage_io_data, sizeof(StorageFrameHeader_t));
-#endif
-            } break;
+                    res = w25q32jv_read_data(Header.asic_num, Header.address,
+                                             &storage_data[sizeof(StorageFrameHeader_t)], Header.size);
 
+#endif
+
+#ifdef HAS_TBFP
+                    res = tbfp_send_frame(tbfp_num, TBFP_FRAME_ID_STORAGE, storage_data,
+                                          sizeof(StorageFrameHeader_t) + Header.size);
+#endif
+
+                } else {
+#ifdef HAS_LOG
+                    LOG_ERROR(STORAGE, "TooBigSize:%u,Max:%u", Header.size, STORAGE_DATA_SIZE);
+#endif
+                }
+            } break;
             default:
                 break;
             }
@@ -160,71 +237,112 @@ bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint
     return res;
 }
 
-bool memory_write(const uint32_t phy_address, const uint8_t* const data, const uint32_t size) {
+bool StorageIsValidParam(const StorageItem_t* const Config) {
     bool res = false;
-    uint32_t i = 0;
-    for(i = 0; i < size; i++) {
-        res = write_addr_8bit(phy_address + i, data[i]);
-    }
-    return res;
-}
-
-bool memory_read(const uint32_t phy_address, uint8_t* const data, const uint32_t size) {
-    bool res = false;
-    uint32_t i = 0;
-    for(i = 0; i < size; i++) {
-        data[i] = read_addr_8bit(phy_address + i);
-    }
-    return res;
-}
-
-/*
-  read physical memory for external control
-
-  tbfp_num - TBFP instance NUM
-  payload- tbfp frame payload
-  size - tbfp frame payload size
- */
-bool storage_tbfp_memory(uint8_t tbfp_num, const uint8_t* const payload, const uint32_t size) {
-    bool res = false;
-    if(payload) {
-        if(sizeof(StorageMemoryFrameHeader_t) < size) {
-            StorageMemoryFrameHeader_t MemHeader = {0};
-            memcpy(&MemHeader, payload, sizeof(StorageMemoryFrameHeader_t));
-            memset(storage_io_data, 0x00, STORAGE_DATA_SIZE);
-            memcpy(storage_io_data, payload, sizeof(StorageMemoryFrameHeader_t));
-
+    if(Config) {
+        res = true;
+        if(Config->parser) {
+        } else {
 #ifdef HAS_LOG
-            LOG_DEBUG(STORAGE, "%s", StorageMemoryFrameHeaderToStr(&MemHeader));
+            LOG_ERROR(STORAGE, "No,Parser,ID:%u", Config->id);
 #endif
-            switch(MemHeader.operation) {
+            res = false;
+        }
 
-            case ACCESS_WRITE_ONLY: {
-                res = memory_write(MemHeader.address, &payload[sizeof(StorageMemoryFrameHeader_t)], MemHeader.size);
-#ifdef HAS_TBFP
-                res = tbfp_send_frame(tbfp_num, FRAME_ID_MEM, storage_io_data, sizeof(StorageMemoryFrameHeader_t));
-#endif
-            } break;
-
-            case ACCESS_READ_ONLY: {
-                if(MemHeader.size < STORAGE_DATA_SIZE) {
-                    res = memory_read(MemHeader.address, &storage_io_data[sizeof(StorageMemoryFrameHeader_t)],
-                                      MemHeader.size);
-#ifdef HAS_TBFP
-                    res = tbfp_send_frame(tbfp_num, FRAME_ID_MEM, storage_io_data,
-                                          sizeof(StorageMemoryFrameHeader_t) + MemHeader.size);
-#endif
-
-                } else {
+        uint32_t type_len = storage_get_type_len(Config->type);
+        if(type_len < Config->len) {
 #ifdef HAS_LOG
-                    LOG_ERROR(STORAGE, "TooBigSize:%u,Max:%u", MemHeader.size, STORAGE_DATA_SIZE);
+            LOG_ERROR(STORAGE, "No,LenTooBit,ID:%u,TypeLen:%u", Config->id, type_len);
 #endif
-                }
-            } break;
-            default:
-                break;
-            } //    switch(MemHeader.operation) {
+            res = false;
+        }
+
+        if(Config->len) {
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(STORAGE, "No,Len,ID:%u", Config->id);
+#endif
+            res = false;
+        }
+
+        if(Config->default_value) {
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(STORAGE, "No,DefVal,ID:%u", Config->id);
+#endif
+            res = false;
+        }
+
+        if(Config->name) {
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(STORAGE, "No,Name,ID:%u", Config->id);
+#endif
+            res = false;
+        }
+
+        if(Config->type) {
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(STORAGE, "No,type,ID:%u", Config->id);
+#endif
+            res = false;
+        }
+
+        if(Config->id) {
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(STORAGE, "No,id");
+#endif
+            res = false;
+        }
+
+        if(Config->facility) {
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(STORAGE, "No,facility,ID:%u", Config->id);
+#endif
+            res = false;
         }
     }
     return res;
+}
+
+/*TODO: implement bin search */
+StorageType_t storage_get_type(const StorageId_t id) {
+    StorageType_t ret_type = TYPE_UNDEF;
+    uint16_t i = 0;
+    uint32_t cnt = storage_get_cnt();
+    for(i = 0; i < cnt; i++) {
+        if(id == StorageArray[i].id) {
+            ret_type = StorageArray[i].type;
+            break;
+        }
+    }
+    return ret_type;
+}
+
+uint32_t storage_get_len(const StorageId_t id) {
+    uint32_t size = 0;
+    StorageItem_t* Node = StorageGetNode(id);
+    if(Node) {
+        size = Node->len;
+    } else {
+        StorageType_t type = storage_get_id_type(id);
+        size = storage_get_type_len(type);
+    }
+    return size;
+}
+
+StorageItem_t* StorageGetNode(const StorageId_t id) {
+    StorageItem_t* Node = NULL;
+    uint16_t i = 0;
+    uint32_t cnt = storage_get_cnt();
+    for(i = 0; i < cnt; i++) {
+        if(id == StorageArray[i].id) {
+            Node = &StorageArray[i];
+            break;
+        }
+    }
+    return Node;
 }

@@ -1,0 +1,349 @@
+//**************************************************************************************************
+// @Module        Memory Manager
+// @Filename      memory_manager_cfg.h
+//--------------------------------------------------------------------------------------------------
+// @Description   Configuration of the required functionality of the Memory Manager module.
+//--------------------------------------------------------------------------------------------------
+// @Version       1.2.0
+//--------------------------------------------------------------------------------------------------
+// @Date          16.09.2019
+//--------------------------------------------------------------------------------------------------
+// @History       Version  Author      Comment
+// 14.07.2016     1.0.0    SRM         First release.
+// 24.04.2019     1.1.0    SRM         Configuration has been expanded.
+// 16.09.2019     1.2.0    SIV         Added permissions configuration.
+//**************************************************************************************************
+
+#ifndef MEMORY_MANAGER_CFG_H
+#define MEMORY_MANAGER_CFG_H
+
+
+
+//**************************************************************************************************
+// Project Includes
+//**************************************************************************************************
+
+// Get some memory interface
+#include "some_drv.h"
+
+// Get some memory interface 2
+#include "some_memory_2.h"
+
+
+
+//**************************************************************************************************
+// Definitions of global (public) constants
+//**************************************************************************************************
+
+// Enable/disable the development error detection feature of the program module.
+// Used only for debug purposes and should be disabled in the final release.
+// Valid values: ON / OFF
+#define MEMMAN_DEVELOPMENT_ERROR_DETECTION  (OFF)
+
+// Enable/disable the internal diagnostic of the program module.
+// Used only for debug purposes and should be disabled in the final release.
+// Valid values: OFF
+#define MEMMAN_INTERNAL_DIAGNOSTICS         (OFF)
+
+
+
+// Note for a configuration manager:
+// you can put some configuration comments in //-- XXX --// tag
+
+
+// Specify logical memory banks quantity
+// Valid values: [1 ; 32]
+#define MEMMAN_MEMORY_BANKS_QTY             (0U)
+
+// Memory banks parameters with examples:
+
+// Specify location of the logical memory bank number X (specify HW or SW device number)
+// Valid values: [0 ; 7]
+// #define MEMMAN_BANK_X_DEVICE_NUMBER         (0UL)
+
+// Specify base address of the logical memory bank number X
+// in the specified HW device
+// Valid values: [0x00000000 ; 0xFFFFFFFF]
+// #define MEMMAN_BANK_X_BASE_ADDRESS          (0UL)
+
+// Specify size of the logical memory bank number X in bytes
+// Valid values: [0x00000001 ; 0xFFFFFFFF]
+// #define MEMMAN_BANK_X_SIZE                  (0UL)
+//
+// Specify permissions for the logical memory bank number X
+// Valid values: MEMMAN_BANK_PERM_R   - read only
+//               MEMMAN_BANK_PERM_RW  - read/write
+//               MEMMAN_BANK_PERM_RWE - read/write/erase
+// #define MEMMAN_BANK_X_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_0_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_0_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_0_SIZE                  (0UL)
+#define MEMMAN_BANK_0_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_1_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_1_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_1_SIZE                  (0UL)
+#define MEMMAN_BANK_1_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_2_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_2_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_2_SIZE                  (0UL)
+#define MEMMAN_BANK_2_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_3_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_3_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_3_SIZE                  (0UL)
+#define MEMMAN_BANK_3_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_4_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_4_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_4_SIZE                  (0UL)
+#define MEMMAN_BANK_4_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_5_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_5_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_5_SIZE                  (0UL)
+#define MEMMAN_BANK_5_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_6_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_6_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_6_SIZE                  (0UL)
+#define MEMMAN_BANK_6_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_7_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_7_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_7_SIZE                  (0UL)
+#define MEMMAN_BANK_7_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_8_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_8_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_8_SIZE                  (0UL)
+#define MEMMAN_BANK_8_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_9_DEVICE_NUMBER         (0UL)   //-- Not used --//
+#define MEMMAN_BANK_9_BASE_ADDRESS          (0UL)
+#define MEMMAN_BANK_9_SIZE                  (0UL)
+#define MEMMAN_BANK_9_PERMISSIONS           (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_10_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_10_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_10_SIZE                 (0UL)
+#define MEMMAN_BANK_10_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_11_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_11_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_11_SIZE                 (0UL)
+#define MEMMAN_BANK_11_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_12_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_12_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_12_SIZE                 (0UL)
+#define MEMMAN_BANK_12_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_13_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_13_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_13_SIZE                 (0UL)
+#define MEMMAN_BANK_13_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_14_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_14_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_14_SIZE                 (0UL)
+#define MEMMAN_BANK_14_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_15_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_15_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_15_SIZE                 (0UL)
+#define MEMMAN_BANK_15_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_16_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_16_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_16_SIZE                 (0UL)
+#define MEMMAN_BANK_16_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_17_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_17_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_17_SIZE                 (0UL)
+#define MEMMAN_BANK_17_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_18_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_18_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_18_SIZE                 (0UL)
+#define MEMMAN_BANK_18_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_19_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_19_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_19_SIZE                 (0UL)
+#define MEMMAN_BANK_19_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_20_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_20_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_20_SIZE                 (0UL)
+#define MEMMAN_BANK_20_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_21_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_21_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_21_SIZE                 (0UL)
+#define MEMMAN_BANK_21_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_22_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_22_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_22_SIZE                 (0UL)
+#define MEMMAN_BANK_22_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_23_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_23_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_23_SIZE                 (0UL)
+#define MEMMAN_BANK_23_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_24_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_24_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_24_SIZE                 (0UL)
+#define MEMMAN_BANK_24_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_25_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_25_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_25_SIZE                 (0UL)
+#define MEMMAN_BANK_25_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_26_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_26_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_26_SIZE                 (0UL)
+#define MEMMAN_BANK_26_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_27_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_27_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_27_SIZE                 (0UL)
+#define MEMMAN_BANK_27_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_28_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_28_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_28_SIZE                 (0UL)
+#define MEMMAN_BANK_28_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_29_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_29_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_29_SIZE                 (0UL)
+#define MEMMAN_BANK_29_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_30_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_30_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_30_SIZE                 (0UL)
+#define MEMMAN_BANK_30_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+#define MEMMAN_BANK_31_DEVICE_NUMBER        (0UL)   //-- Not used --//
+#define MEMMAN_BANK_31_BASE_ADDRESS         (0UL)
+#define MEMMAN_BANK_31_SIZE                 (0UL)
+#define MEMMAN_BANK_31_PERMISSIONS          (MEMMAN_BANK_PERM_RWE)
+
+
+
+// Specify HW and/or SW memory devices quantity
+// Valid values: [1 ; 8]
+#define MEMMAN_MEMORY_DEVICES_QTY           (0U)
+
+// Memory devices function pointers with examples:
+// Memory device number X "Init" function pointer
+// #define MEMMAN_DEVICE_X_INIT_FUNC           (&FLASH_Init)
+// Memory device number X "DeInit" function pointer
+// #define MEMMAN_DEVICE_X_DEINIT_FUNC         (&FLASH_DeInit)
+// Memory device number X "SetJobCallback" function pointer
+// #define MEMMAN_DEVICE_X_SETJOBCB_FUNC       (&FLASH_SetJobCallback)
+// Memory device number X "Read" function pointer
+// #define MEMMAN_DEVICE_X_READ_FUNC           (&FLASH_Read)
+// Memory device number X "Write" function pointer
+// #define MEMMAN_DEVICE_X_WRITE_FUNC          (&FLASH_Write)
+// Memory device number X "GetMemoryStatus" function pointer
+// #define MEMMAN_DEVICE_X_GETMEMSTAT_FUNC     (&FLASH_GetMemoryStatus)
+// Memory device number X "SetMemoryStatus" function pointer
+// #define MEMMAN_DEVICE_X_SETMEMSTAT_FUNC     (&FLASH_SetMemoryStatus)
+// Memory device number X "GetSectorSize" function pointer (for erase-write architecture only)
+// #define MEMMAN_DEVICE_X_GETSECTORSIZE_FUNC  (&FLASH_GetSectorSize)
+// Memory device number X "Erase" function pointer (for erase-write architecture only)
+// #define MEMMAN_DEVICE_X_ERASE_FUNC          (&FLASH_Erase)
+
+#define MEMMAN_DEVICE_0_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_0_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_0_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_0_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_0_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_0_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_0_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_0_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_0_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+#define MEMMAN_DEVICE_1_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_1_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_1_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_1_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_1_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_1_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_1_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_1_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_1_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+#define MEMMAN_DEVICE_2_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_2_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_2_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_2_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_2_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_2_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_2_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_2_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_2_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+#define MEMMAN_DEVICE_3_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_3_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_3_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_3_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_3_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_3_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_3_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_3_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_3_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+#define MEMMAN_DEVICE_4_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_4_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_4_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_4_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_4_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_4_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_4_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_4_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_4_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+#define MEMMAN_DEVICE_5_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_5_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_5_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_5_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_5_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_5_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_5_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_5_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_5_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+#define MEMMAN_DEVICE_6_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_6_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_6_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_6_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_6_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_6_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_6_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_6_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_6_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+#define MEMMAN_DEVICE_7_INIT_FUNC           (MEMMAN_FUNC_NOT_USED)   //-- Not used --//
+#define MEMMAN_DEVICE_7_DEINIT_FUNC         (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_7_SETJOBCB_FUNC       (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_7_READ_FUNC           (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_7_WRITE_FUNC          (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_7_GETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_7_SETMEMSTAT_FUNC     (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_7_GETSECTORSIZE_FUNC  (MEMMAN_FUNC_NOT_USED)
+#define MEMMAN_DEVICE_7_ERASE_FUNC          (MEMMAN_FUNC_NOT_USED)
+
+
+
+#endif // #ifndef MEMORY_MANAGER_CFG_H
+
+//****************************************** end of file *******************************************

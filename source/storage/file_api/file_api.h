@@ -1,13 +1,12 @@
 #ifndef FILE_API_H
 #define FILE_API_H
 
-#include <stdbool.h>
-#include <stdint.h>
 #include <stddef.h>
 
+#include "std_includes.h"
 #include "file_api_types.h"
 
-
+char* file_path_to_file_name(const char* const file_path);
 int32_t file_line_cnt(const char* const filename);
 int32_t file_get_size(const char* const file_name);
 bool file_array_to_binary_file(const char* const file_name, const uint8_t* const  data, size_t  size);

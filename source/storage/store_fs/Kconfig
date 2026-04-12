@@ -1,0 +1,4 @@
+
+config STORE_FS
+    bool "Enable use of the STORE_FS drivers"
+

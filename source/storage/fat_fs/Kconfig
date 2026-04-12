@@ -1,0 +1,4 @@
+
+config FAT_FS
+    bool "Enable use of the FAT_FS drivers"
+

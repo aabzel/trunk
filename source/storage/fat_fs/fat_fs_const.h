@@ -1,21 +1,16 @@
 #ifndef FAT_FS_CONST_H
 #define FAT_FS_CONST_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "time_mcal.h"
+#include "fat_fs_dep.h"
 
-#ifndef HAS_FAT_FS
-#error "+HAS_FAT_FS"
-#endif
+#define FAT_FS_VERSION "2"
+#define FAT_FS_PERIOD_US MSEC_2_USEC(500)
+
 
 typedef enum{
 	MOUNT_DELAYED=0,
 	MOUNT_IMMEDIATELY=1,
 }MountOpt_t;
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
-
-#endif /*FAT_FS_CONST_H*/
+#endif /* FAT_FS_CONST_H */

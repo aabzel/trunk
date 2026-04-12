@@ -5,19 +5,14 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
-#ifndef HAS_CLI
-#error "+HAS_CLI"
-#endif
+#include "std_includes.h"
 
 #ifndef HAS_FAT_FS
-#error "+HAS_FAT_FS"
+#error "+ HAS_FAT_FS"
 #endif
 
 #ifndef HAS_FAT_FS_COMMANDS
-#error "+HAS_FAT_FS_COMMANDS"
+#error "+ HAS_FAT_FS_COMMANDS"
 #endif
 
 bool fat_fs_cat_command(int32_t argc, char* argv[]);
@@ -55,8 +50,9 @@ bool fat_fs_init_command(int32_t argc, char* argv[]);
     SHELL_CMD("fat_fs_init", "ftfsi", fat_fs_init_command, "FatFsInit"),                     \
     SHELL_CMD("fat_fs_mount", "ftfsm", fat_fs_mount_command, "FatFsMount"),
 
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif
 
-#endif /*FAT_FS_COMMANDS_H*/
+#endif /* FAT_FS_COMMANDS_H */

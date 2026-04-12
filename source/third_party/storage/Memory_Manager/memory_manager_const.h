@@ -1,0 +1,38 @@
+#ifndef MEMORY_MANAGER_CONSTANTS_H
+#define MEMORY_MANAGER_CONSTANTS_H
+
+
+
+#ifndef MEMMAN_PERM_BIT_READ
+#define MEMMAN_PERM_BIT_READ        ((U8)0x01U)
+#endif
+
+#ifndef MEMMAN_PERM_BIT_WRITE
+#define MEMMAN_PERM_BIT_WRITE       ((U8)0x02U)
+#endif
+
+#ifndef MEMMAN_PERM_BIT_ERASE
+#define MEMMAN_PERM_BIT_ERASE       ((U8)0x04U)
+#endif
+
+
+
+#ifndef MEMMAN_BANK_PERM_R
+#define MEMMAN_BANK_PERM_R          (MEMMAN_PERM_BIT_READ)
+#endif
+
+#ifndef MEMMAN_BANK_PERM_RW
+#define MEMMAN_BANK_PERM_RW         (MEMMAN_PERM_BIT_READ | MEMMAN_PERM_BIT_WRITE)
+#endif
+
+
+#ifndef MEMMAN_BANK_PERM_RWE
+#define MEMMAN_BANK_PERM_RWE        (MEMMAN_PERM_BIT_READ | MEMMAN_PERM_BIT_WRITE | \
+                                     MEMMAN_PERM_BIT_ERASE)
+#endif
+
+
+#endif /* MEMORY_MANAGER_CONSTANTS_H */
+
+
+
