@@ -15,25 +15,26 @@ extern "C" {
 bool print_time_date(const char* const prefix, const struct tm* const time_date, bool is_one_line);
 bool print_time(const struct tm* const time_date);
 bool TimeDate2CsvStr(const struct tm* const time_date, char* text, uint32_t size);
-bool TimeDate2Str(const struct tm* const time_date, char* text, uint32_t size);
-bool Time2Str(const struct tm* const time_date, char* const text, uint32_t size);
-bool Date2Str(const struct tm* const time_date, char* text, uint32_t size);
-bool UpTimeMs2Str(uint32_t up_time_ms, char* out_str, size_t size);
+bool TimeDateToStrExt(const struct tm* const time_date, char* const in_text, uint32_t size);
+bool TimeToStr(const struct tm* const time_date, char* const text, uint32_t size);
+bool DateToStr(const struct tm* const time_date, char* text, uint32_t size);
+bool UpTimeMsToStr(uint32_t up_time_ms, char* out_str, size_t size);
 bool time_diag(void);
 
-const char* TimeDurationMsToStr(const uint32_t duration_ms);
+const char* TimeDataToStr(const void * const data);
 const char* TimeSrcToStr(const TimeSource_t time_source);
-const char* UpTimeSec2Str(float up_time_s);
-const char* Ms2Str(uint32_t time_ms);
-const char* TimeMonth2Str(Month_t month);
-const char* TimeDate2StrShort(const struct tm* const time_date);
-const char* Time2StrShort(const struct tm* const time_date);
-const char* Date2StrShort(const struct tm* const time_date);
-const char* UsecToStr(uint64_t uc_sec);
+const char* UpTimeSecToStr(float up_time_s);
+const char* MsToStr(uint32_t time_ms);
+const char* TimeMonthToStr(Month_t month);
+const char* TimeDateToStrShort(const struct tm* const time_date);
+const char* TimeToStrShort(const struct tm* const time_date);
+const char* DateToStrShort(const struct tm* const time_date);
+const char* UsecToStr(const uint64_t uc_sec);
+const char* TimeMsToStr(const void* const data);
 const char* SecToStr(float sec);
 
 #ifdef HAS_STR2_MONTH
-const char* Month2Str(int32_t mon_value);
+const char* MonthToStr(int32_t mon_value);
 #endif
 
 #ifdef __cplusplus

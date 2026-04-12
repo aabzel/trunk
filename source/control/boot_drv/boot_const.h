@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+
+#include "boot_dep.h"
+
 #define APP_LAYNCH_TRY 7U
 #define FINE_START_TIME_OUT_MS 3000U
 //#define BOOT_PERIOD_US 2000000

@@ -104,3 +104,4 @@ uint32_t reverse_half_word_order_uint32(const uint32_t word) {
     un32_out.u16[1] = un32_in.u16[0];
     return un32_out.u32;
 }
+

@@ -2,7 +2,7 @@
 
 #include "time_mcal.h"
 #ifdef HAS_CLOCK
-#include "clock.h"
+#include "clock_mcal.h"
 #endif
 
 bool time_delay_us(uint32_t delay_us) {

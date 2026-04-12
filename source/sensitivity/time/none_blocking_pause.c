@@ -1,12 +1,13 @@
 #include "none_blocking_pause.h"
 
+#include "time_mcal.h"
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
 
-#include "time_mcal.h"
 #ifdef HAS_CLOCK
-#include "clock.h"
+#include "clock_mcal.h"
 #endif
 
 #ifdef HAS_SUPER_CYCLE
@@ -51,7 +52,7 @@ bool wait_in_loop_ms(uint32_t wait_pause_ms) {
 
         while(loop) {
 #ifdef HAS_SUPER_CYCLE
-            super_cycle_iteration();
+            super_cycle_proc();
 #endif
             curr_ms = time_get_ms32();
             if(wait_pause_ms < (curr_ms - start_ms)) {
@@ -70,15 +71,15 @@ bool wait_ms(uint32_t wait_pause_ms) {
     bool res = false;
     if(0 < wait_pause_ms) {
 
-        uint32_t start_ms = 0U;
-        uint32_t curr_ms = 0U;
         uint32_t cnt = 0;
+        uint32_t start_ms = 0U;
         start_ms = time_get_ms32();
-        bool loop = true;
-        int32_t diff_ms = 0;
 
+        bool loop = true;
         while(loop) {
+            uint32_t curr_ms = 0U;
             curr_ms = time_get_ms32();
+            uint32_t diff_ms = 0;
             diff_ms = curr_ms - start_ms;
             if(wait_pause_ms < diff_ms) {
                 res = true;

@@ -301,12 +301,15 @@ bool is_around_int_val(int32_t center, int32_t value, uint32_t delta) {
 #ifdef HAS_DATA_UTILS_EXT
 bool toggle_bool(bool on_off_in) {
     bool on_off_out = false;
-    switch((uint8_t)on_off_in) {
+    switch(on_off_in) {
     case true:
         on_off_out = false;
         break;
     case false:
         on_off_out = true;
+        break;
+    default:
+        on_off_out = false;
         break;
     }
     return on_off_out;
@@ -358,7 +361,7 @@ bool data_u64_init(U64Value_t* const Node) {
     if(Node) {
         Node->cur = 0;
         Node->max = 0;
-        Node->min = 0xFFFFFFFFFFFFffff;
+        Node->min = 0xFFFFffffFFFFffff;
         res = true;
     }
     return res;
@@ -390,3 +393,22 @@ bool swap_u32_xor(uint32_t* const a, uint32_t* const b) {
     return res;
 }
 #endif
+
+/*
+    copy array of dwords from pSrc to pHead
+    pSrc->pHead
+ */
+void data_copy(uint32_t* pHead, uint32_t* pTail, uint32_t* pSrc) {
+    while(pHead < pTail) {
+        *pHead = *pSrc;
+        pHead++;
+        pSrc++;
+    }
+}
+
+void data_clear(uint32_t* pHead, uint32_t* pTail) {
+    while(pHead < pTail) {
+        *pHead = 0U;
+        pHead++;
+    }
+}

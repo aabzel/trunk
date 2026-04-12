@@ -24,10 +24,14 @@ bool time_diag_command(int32_t argc, char* argv[]);
 bool time_time_command(int32_t argc, char* argv[]);
 bool time_synchronize_command(int32_t argc, char* argv[]);
 bool time_wait_command(int32_t argc, char* argv[]);
+bool time_wait_loop_command(int32_t argc, char* argv[]);
+bool time_init_command(int32_t argc, char* argv[]);
 
 #define TIME_COMMANDS                                                                      \
+    SHELL_CMD("time_init",  "tii", time_init_command, "TimeInit"),                          \
     SHELL_CMD("time_diag",  "td", time_diag_command, "TimeDiag"),                          \
     SHELL_CMD("time_wait",  "tw", time_wait_command, "TimeWait"),                          \
+    SHELL_CMD("time_wait_loop",  "twl", time_wait_loop_command, "TimeWaitLoop"),                          \
     SHELL_CMD("time_synchronize",  "ts", time_synchronize_command, "TimeSynchronize"),     \
     SHELL_CMD("time_time", "time", time_time_command, "Time"),
 

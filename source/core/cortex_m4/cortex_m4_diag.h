@@ -7,13 +7,6 @@ extern "C" {
 
 #include "std_includes.h"
 #include "microcontroller_drv.h"
-#ifdef HAS_EHAL
-#include "miscellaneous_ehal.h"
-#endif
-
-#ifdef HAS_CMSIS
-//#include "core_cm4.h"
-#endif
 #include "cortex_m4_const.h"
 
 const char* CortecM4CoProcAccessToStr(CoProcAccess_t access);

@@ -1,68 +1,52 @@
 #include "time_diag.h"
 
 #include <inttypes.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
-#include "float_diag.h"
-#include "float_utils.h"
 #include "log.h"
+#include "std_includes.h"
 #include "table_utils.h"
 #include "time_mcal.h"
 #include "timer_utils.h"
 #include "writer_config.h"
+#include "shared_array.h"
+
+#ifdef HAS_FLOAT_UTILS
+#include "float_diag.h"
+#include "float_utils.h"
+#endif
 
 #ifdef HAS_CALENDAR
 #include "calendar.h"
 #endif
 
-#include "shared_array.h"
 
 const char* TimeSrcToStr(const TimeSource_t time_source) {
     const char* name = "?";
     switch(time_source) {
-    case TIME_SRC_SYSTICK:
-        name = "SYSTICK";
-        break;
-    case TIME_SRC_RISC_V:
-        name = "RISC_V";
-        break;
-    case TIME_SCR1_TIMER:
-        name = "SCR1_TIMER";
-        break;
-    case TIME_SRC_ZEPHYR_CLOCK:
-        name = "ZEPHYR_CLOCK";
-        break;
-    case TIME_SRC_WIN_CLOCK:
-        name = "WIN_CLOCK";
-        break;
-    case TIME_SRC_SW_INCR:
-        name = "SW_INCR";
-        break;
-    case TIME_SRC_RTC:
-        name = "RTC";
-        break;
-    case TIME_SRC_TIMER5:
-        name = "TIMER5";
-        break;
-    case TIME_SRC_TIMER4:
-        name = "TIMER4";
-        break;
-    case TIME_SRC_TIMER3:
-        name = "TIMER3";
-        break;
-    case TIME_SRC_TIMER2:
-        name = "TIMER2";
-        break;
-    default: {
-    } break;
+        case TIME_SRC_ZEPHYR_CLOCK:  name = "ZEPHYR_CLOCK";        break;
+        case TIME_SRC_PCAN_TIMESTAMP:  name = "PCanTimeStamp";        break;
+        case TIME_SRC_SYSTICK:    name = "SYSTICK";        break;
+        case TIME_SCR1_TIMER:     name = "SCR1_TIMER";        break;
+        case TIME_SRC_RISC_V:     name = "RISC_V";        break;
+        case TIME_SRC_WIN_CLOCK:  name = "WIN_CLOCK";        break;
+        case TIME_SRC_SW_INCR:    name = "SW_INCR";        break;
+        case TIME_SRC_RTC:        name = "RTC";        break;
+        case TIME_SRC_DWT:        name = "DWT";        break;
+        case TIME_SRC_TIMER5:     name = "TIMER5";        break;
+        case TIME_SRC_TIMER4:     name = "TIMER4";        break;
+        case TIME_SRC_TIMER3:     name = "TIMER3";        break;
+        case TIME_SRC_HAL_TICK:   name = "HAL_TICK";        break;
+        case TIME_SRC_TIMER2:     name = "TIMER2";        break;
+        default: {
+        } break;
     }
     return name;
 }
 
-const char* TimeMonth2Str(Month_t month) {
+const char* TimeMonthToStr(Month_t month) {
     const char* name = "?";
     switch((uint8_t)month) {
     case MON_JAN:
@@ -110,12 +94,12 @@ const char* TimeMonth2Str(Month_t month) {
     return name;
 }
 
-bool Date2Str(const struct tm* const time_date, char* in_text, uint32_t size) {
+bool DateToStr(const struct tm* const time_date, char* in_text, uint32_t size) {
     bool res = false;
     if(time_date) {
         if(in_text) {
             if(10 < size) {
-                sprintf(in_text, "%d %s %d", time_date->tm_mday, TimeMonth2Str(time_date->tm_mon), time_date->tm_year);
+                sprintf(in_text, "%d %s %d", time_date->tm_mday, TimeMonthToStr(time_date->tm_mon), time_date->tm_year);
                 res = true;
             }
         }
@@ -123,33 +107,35 @@ bool Date2Str(const struct tm* const time_date, char* in_text, uint32_t size) {
     return res;
 }
 
-bool TimeDate2Str(const struct tm* const time_date, char* in_text, uint32_t size) {
+bool TimeDateToStrExt(const struct tm* const time_date, char* const in_text, uint32_t size) {
     bool res = false;
     if(time_date) {
-        res = is_valid_time(time_date);
+        res = is_valid_time_date(time_date);
         if(res) {
             if(in_text) {
                 if(20 < size) {
                     strcpy(in_text, "");
-                    sprintf(in_text, "%s%02d:", text, time_date->tm_hour);
-                    sprintf(in_text, "%s%02d:", text, time_date->tm_min);
-                    sprintf(in_text, "%s%02d,", text, time_date->tm_sec);
-                    sprintf(in_text, "%s%d,", text, time_date->tm_mday);
-                    sprintf(in_text, "%s%s,", text, TimeMonth2Str(time_date->tm_mon));
-                    sprintf(in_text, "%s%d,", text, time_date->tm_year);
+                    sprintf(in_text, "%s%d:", in_text, time_date->tm_hour);
+                    sprintf(in_text, "%s%02d:", in_text, time_date->tm_min);
+                    sprintf(in_text, "%s%02d,", in_text, time_date->tm_sec);
+                    sprintf(in_text, "%s%d", in_text, time_date->tm_mday);
+                    sprintf(in_text, "%s%s", in_text, TimeMonthToStr(time_date->tm_mon));
+                    if(time_date->tm_year) {
+                        sprintf(in_text, "%s%04d", in_text, time_date->tm_year);
+                    }
                     res = true;
                 } else {
                     LOG_ERROR(TIME, "OutMemTooLow,%u byte", size);
                 }
             }
         } else {
-            strcpy(in_text, "incorrect");
+            strcpy(in_text, "InCorrectTimeDate");
         }
     }
     return res;
 }
 
-bool Time2Str(const struct tm* const time_date, char* const in_text, uint32_t size) {
+bool TimeToStr(const struct tm* const time_date, char* const in_text, uint32_t size) {
     bool res = false;
     if(time_date) {
         if(in_text) {
@@ -164,26 +150,32 @@ bool Time2Str(const struct tm* const time_date, char* const in_text, uint32_t si
     return res;
 }
 
-const char* TimeDate2StrShort(const struct tm* const time_date) {
-    strcpy(text, "");
+const char* TimeDateToStrShort(const struct tm* const time_date) {
+    static char lText[100] = {0};
+    strcpy(lText, "");
     bool res = false;
-    res = TimeDate2Str(time_date, text, sizeof(text));
+    res = TimeDateToStrExt(time_date, lText, sizeof(lText));
+    if(false == res) {
+        strcpy(lText, "Err");
+    }
+    return lText;
+}
+
+const char* TimeDataToStr(const void* const data) {
+    char* name = TimeDateToStrShort((struct tm*)data);
+    return name;
+}
+
+const char* TimeToStrShort(const struct tm* const time_date) {
+    bool res = TimeToStr(time_date, text, sizeof(text));
     if(false == res) {
         strcpy(text, "Err");
     }
     return text;
 }
 
-const char* Time2StrShort(const struct tm* const time_date) {
-    bool res = Time2Str(time_date, text, sizeof(text));
-    if(false == res) {
-        strcpy(text, "Err");
-    }
-    return text;
-}
-
-const char* Date2StrShort(const struct tm* const time_date) {
-    bool res = Date2Str(time_date, text, sizeof(text));
+const char* DateToStrShort(const struct tm* const time_date) {
+    bool res = DateToStr(time_date, text, sizeof(text));
     if(false == res) {
         strcpy(text, "Err");
     }
@@ -197,7 +189,7 @@ bool TimeDate2CsvStr(const struct tm* const time_date, char* in_text, uint32_t s
             if(size) {
                 time_t time_stamp = mktime((struct tm*)time_date);
                 sprintf(in_text, "%02d:%02d:%02d, %d,%s,%d, %10d", time_date->tm_hour, time_date->tm_min,
-                        time_date->tm_sec, time_date->tm_mday, TimeMonth2Str(time_date->tm_mon), time_date->tm_year,
+                        time_date->tm_sec, time_date->tm_mday, TimeMonthToStr(time_date->tm_mon), time_date->tm_year,
                         (int32_t)time_stamp);
                 res = true;
             }
@@ -211,13 +203,13 @@ bool print_time_date(const char* const prefix, const struct tm* const time_date,
     if(time_date) {
         if(false == is_one_line) {
             cli_printf("%7s" CRLF, prefix);
-            cli_printf("time: %s" CRLF, Time2StrShort(time_date));
-            cli_printf("date: %s" CRLF, Date2StrShort(time_date));
+            cli_printf("time: %s" CRLF, TimeToStrShort(time_date));
+            cli_printf("date: %s" CRLF, DateToStrShort(time_date));
         } else {
-            cli_printf("%7s %s %s" CRLF, prefix, Time2StrShort(time_date), Date2StrShort(time_date));
+            cli_printf("%7s %s %s" CRLF, prefix, TimeToStrShort(time_date), DateToStrShort(time_date));
 #if 0
             char text[80]="";
-            res= TimeDate2Str( time_date, text, sizeof(text));
+            res= TimeDateToStr( time_date, text, sizeof(text));
             if(res){
                 cli_printf("%s %s" CRLF, prefix,text);
             }
@@ -237,7 +229,7 @@ bool print_time(const struct tm* const time_date) {
     return res;
 }
 
-bool UpTimeMs2Str(uint32_t up_time_ms, char* out_str, size_t size) {
+bool UpTimeMsToStr(uint32_t up_time_ms, char* out_str, size_t size) {
     bool res = false;
     if(out_str) {
         strcpy(out_str, "");
@@ -251,30 +243,35 @@ bool UpTimeMs2Str(uint32_t up_time_ms, char* out_str, size_t size) {
                          (unsigned int)((uint32_t)MSEC_2_SEC(up_time_ms)) % 60);
                 res = true;
             } else if(24.0 < MIN_2_HOUR(up_time_min)) {
+#ifdef HAS_FLOAT_DIAG
                 float up_time_d = MIN_2_DAYS(up_time_min);
                 // snprintf(out_str, size, "%7.3fd", up_time_d); /* inf in R32IMC */
                 snprintf(out_str, size, "%sd", FloatToStr(up_time_d, 2));
                 res = true;
+#endif
             } else {
+#ifdef HAS_FLOAT_DIAG
                 float up_time_h = MSEC_2_HOUR(up_time_ms);
                 snprintf(out_str, size, "%sh", FloatToStr(up_time_h, 2));
                 res = true;
+#endif
             }
         }
     }
     return res;
 }
 
-const char* UpTimeSec2Str(float up_time_s) {
-    bool res = UpTimeMs2Str(up_time_s * 1000.0, text, sizeof(text));
+const char* UpTimeSecToStr(float up_time_s) {
+    bool res = UpTimeMsToStr(up_time_s * 1000.0f, text, sizeof(text));
     if(false == res) {
-        LOG_ERROR(TIME, "UpTimeMs2StrErr %u", up_time_s);
+        LOG_ERROR(TIME, "UpTimeMsToStrErr %u", up_time_s);
     }
     return text;
 }
 
 const char* SecToStr(float sec) {
-    if(sec < 60.0) {
+    memset(text, 0, sizeof(text));
+    if(sec < 60.0f) {
         snprintf(text, sizeof(text), "%5.1f s", sec);
     } else if(sec < HOUR_2_SEC(1.0)) {
         snprintf(text, sizeof(text), "%5.1f m", SEC_2_MIN(sec));
@@ -288,42 +285,35 @@ const char* SecToStr(float sec) {
     return text;
 }
 
-const char* UsecToStr(uint64_t uc_sec) {
-#ifndef HAS_MIK32
+const char* UsecToStr(const uint64_t uc_sec) {
+    uint32_t size_tex = sizeof(text);
+    memset(text, 0, size_tex);
     if(uc_sec < MSEC_2_USEC(1)) {
-        snprintf(text, sizeof(text), "%llu us", uc_sec);
+        snprintf(text, size_tex, "%llu us", uc_sec);
     } else if((MSEC_2_USEC(1) <= uc_sec) && (uc_sec < SEC_2_USEC(1))) {
-        snprintf(text, sizeof(text), "%5.1f ms", USEC_2_MSEC(uc_sec));
+        float millsec = USEC_2_MSEC(uc_sec);
+        snprintf(text, size_tex, "%5.1f ms", millsec); // exeption (increase HEAP size)
     } else if(USEC_2_SEC(uc_sec) < 60.0) {
-        snprintf(text, sizeof(text), "%5.1f s", USEC_2_SEC(uc_sec));
+        snprintf(text, size_tex, "%5.1f s", USEC_2_SEC(uc_sec));
     } else {
-        snprintf(text, sizeof(text), "%5.1f m", USEC_2_MIN(uc_sec));
+        snprintf(text, size_tex, "%5.1f m", USEC_2_MIN(uc_sec));
     }
-#endif
     return text;
 }
 
-const char* TimeDurationMsToStr(const uint32_t duration_ms){
-    if(duration_ms < 1000) {
-        snprintf(text, sizeof(text), "%u ms", duration_ms);
-    } else if(MSEC_2_SEC(duration_ms) < 60.0) {
-        snprintf(text, sizeof(text), "%5.1f s", MSEC_2_SEC(duration_ms));
-    } else {
-        snprintf(text, sizeof(text), "%5.1f min", MSEC_2_MIN(duration_ms));
-    }
-
-    return text;
-}
-
-const char* Ms2Str(uint32_t time_ms) {
-    const char* name = UpTimeSec2Str(MSEC_2_SEC(time_ms));
+const char* MsToStr(uint32_t time_ms) {
+    const char* name = UpTimeSecToStr(MSEC_2_SEC(time_ms));
     return name;
 }
 
 bool time_diag(void) {
     bool res = false;
     static const table_col_t cols[] = {
-        {5, "No"}, {15, "Src"}, {9, "UpTimes"}, {8, "UpTimeMs"}, {7, "UpTimeUs"},
+        {5, "No"},
+        {18, "Src"},
+        {9, "UpTimes"},
+        {10, "UpTimeMs"},
+        {10, "UpTimeUs"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t i = 0;
@@ -331,16 +321,20 @@ bool time_diag(void) {
     for(i = 0; i <= time_cnt; i++) {
         TimeHandle_t* Node = TimeGetNode(i);
         if(Node) {
+#ifdef HAS_FLOAT_DIAG
             float up_time_s = time_get_s(i);
+#endif
             uint32_t up_time_ms = time_get_ms(i);
             uint64_t up_time_us = time_one_get_us(i);
             char logLine[150] = {0};
             strcpy(logLine, TSEP);
             snprintf(logLine, sizeof(logLine), "%s %3u " TSEP, logLine, i);
-            snprintf(logLine, sizeof(logLine), "%s %13s " TSEP, logLine, TimeSrcToStr(Node->time_source));
+            snprintf(logLine, sizeof(logLine), "%s %16s " TSEP, logLine, TimeSrcToStr(Node->time_source));
+#ifdef HAS_FLOAT_DIAG
             snprintf(logLine, sizeof(logLine), "%s %7s " TSEP, logLine, FloatToStr(up_time_s, 3));
-            snprintf(logLine, sizeof(logLine), "%s %6u " TSEP, logLine, up_time_ms);
-            snprintf(logLine, sizeof(logLine), "%s %" PRIu64 TSEP, logLine, up_time_us);
+#endif
+            snprintf(logLine, sizeof(logLine), "%s %8u " TSEP, logLine, up_time_ms);
+            snprintf(logLine, sizeof(logLine), "%s %llu "  TSEP, logLine, up_time_us);
 
             cli_printf("%s" CRLF, logLine);
             res = true;
@@ -350,4 +344,14 @@ bool time_diag(void) {
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
     return res;
+}
+
+const char* TimeMsToStr(const void* const data) {
+    char* name = "?";
+    if(data) {
+        uint32_t time_ms = 0;
+        memcpy(&time_ms, data, 4);
+        name = (char*)MsToStr(time_ms);
+    }
+    return name;
 }

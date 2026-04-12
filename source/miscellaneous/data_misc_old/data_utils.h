@@ -9,7 +9,7 @@ extern "C" {
 
 #include "data_types.h"
 
-#ifdef HAS_UTILS_EXT
+#ifdef HAS_BIT_UTILS
 #include "bit_utils.h"
 #endif
 
@@ -27,13 +27,8 @@ extern "C" {
 
 #define BYTE_PS_2_BPS(BYTE_PS) ((BYTE_PS)*8)
 
-#ifndef MIN
-#define MIN(n, m) (((n) < (m)) ? (n) : (m))
-#endif
-
-#ifndef MAX
-#define MAX(n, m) (((n) < (m)) ? (m) : (n))
-#endif
+#define DATA_MIN(n, m) (((n) < (m)) ? (n) : (m))
+#define DATA_MAX(n, m) (((n) < (m)) ? (m) : (n))
 
 
 /*TODO: check that DENOMINATOR is not 0.0*/
@@ -111,6 +106,11 @@ uint8_t min8u(uint8_t min8u_x1, uint8_t min8u_x2);
 uint8_t uint16_to_uint8_limiter(uint16_t in_val);
 uint8_t uint8_limiter(uint8_t in_val, uint8_t up_val);
 uint32_t uint32_limiter(uint32_t in_val, uint32_t max);
+
+void data_clear(uint32_t *pHead, uint32_t *pTail);
+void data_copy(uint32_t *pHead,
+               uint32_t *pTail,
+               uint32_t *pSrc);
 
 #ifdef __cplusplus
 }

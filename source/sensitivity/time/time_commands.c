@@ -25,7 +25,7 @@ bool time_diag_command(int32_t argc, char* argv[]) {
 
 bool time_synchronize_command(int32_t argc, char* argv[]) {
     bool res = false;
-#ifdef HAS_PC
+#ifdef HAS_TIME_SYNCHRONIZE
     res = time_synchronize();
 #endif
     return res;
@@ -62,7 +62,39 @@ bool time_wait_command(int32_t argc, char* argv[]) {
 
     if(res) {
         LOG_INFO(TIME, "Delay %u Ms", delay_in_ms);
-        res = time_delay_ms(delay_in_ms);
+        res = wait_in_loop_ms(delay_in_ms);
     }
+    return res;
+}
+
+bool time_wait_loop_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t delay_in_ms = 1000;
+    if(0 <= argc) {
+        delay_in_ms = 0;
+        res = true;
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &delay_in_ms);
+        if(false == res) {
+            LOG_ERROR(TIME, "ParseErr DelayMs");
+        }
+    }
+
+    if(res) {
+        LOG_DEBUG(TIME, "DelayInLoop %u Ms", delay_in_ms);
+        res = wait_in_loop_ms(delay_in_ms);
+        log_debug_res(TIME, res, "WaitLoop");
+    } else {
+        LOG_ERROR(TIME, "Usage: twl ms");
+    }
+    return res;
+}
+
+bool time_init_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    res = time_mcal_init();
+    log_info_res(TIME, res, "Init");
     return res;
 }

@@ -11,7 +11,7 @@
 #include "debug_info.h"
 #include "flash_config.h"
 #ifdef HAS_CMSIS
-#include "cmsis_gcc.h"
+//#include "cmsis_gcc.h"
 #endif
 #include "log.h"
 #include "microcontroller_const.h"
@@ -39,11 +39,11 @@ bool cortex_m4_diag_command(int32_t argc, char* argv[]) {
         uint32_t reg = __get_CONTROL();
         parse_control_reg(reg);
 
-      //  reg = __get_FAULTMASK();
-      //  parse_faultmask_reg(reg);
+        //  reg = __get_FAULTMASK();
+        //  parse_faultmask_reg(reg);
 
-      //  reg = __get_BASEPRI();
-       // parse_basepri_reg(reg);
+        //  reg = __get_BASEPRI();
+        // parse_basepri_reg(reg);
         res = true;
 #endif
     } else {

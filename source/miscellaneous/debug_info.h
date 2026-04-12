@@ -6,20 +6,16 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
-
-#ifdef HAS_LOG_UTILS
-#include "ostream.h"
-#endif
+#include "data_types.h"
 
 #ifndef HAS_LOG
 #error "+HAS_LOG"
 #endif
 
 #ifndef HAS_STREAM
-#error "+HAS_STREAM"
+#warning "+HAS_STREAM"
 #endif
 
-#include "data_types.h"
 
 
 
@@ -44,7 +40,6 @@ bool print_bit_hint(uint16_t offset, uint32_t bitness);
 bool print_bit_representation(uint32_t val);
 //bool print_mem(const uint8_t* const addr, int32_t len, bool is_bin, bool is_ascii, bool new_line, bool is_packed);
 //bool print_bin(uint8_t const* const buff, uint32_t size, uint16_t indent);
-bool print_vector_table(uint32_t vectors_table_base);
 bool print_version(void);
 bool print_sys_info(void);
 bool print_indent(uint16_t indent);

@@ -1,18 +1,12 @@
 #ifdef HAS_PARAM
-PARAM->BOOT
+    PARAM->BOOT
+#endif
+
+#ifdef HAS_CORE
+    CORE->BOOT
 #endif
 
 
-#ifdef HAS_TBFP
-TBFP->BOOT
-#endif
-
-
-#ifdef HAS_W25Q32JV
-W25Q32JV->BOOT
-#endif
-
-
-#ifdef HAS_FLASH
-PARAM->BOOT
+#ifdef HAS_STORE_FS
+    STORE_FS->BOOT
 #endif

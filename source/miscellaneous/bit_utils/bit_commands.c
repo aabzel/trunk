@@ -10,20 +10,16 @@ bool bit_diff_command(int32_t argc, char* argv[]) {
     uint32_t val_b = 0;
     if(2 <= argc) {
         res = try_str2uint32(argv[0], &val_a);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr adc %s", argv[0]);
-        }
+        log_res(SYS, res, "A");
         res = try_str2uint32(argv[1], &val_b);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr adc %s", argv[0]);
-        }
+        log_res(SYS, res, "B");
     }
 
     if(res) {
         res = bit_diff(val_a, val_b);
         log_res(SYS, res, "BitDiff");
     } else {
-        LOG_ERROR(SYS, "Usage: bd regA regB");
+        LOG_ERROR(SYS, "Usage: bid regA regB");
     }
 
     return res;

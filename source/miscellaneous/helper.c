@@ -16,7 +16,7 @@
 
 #include <stdio.h>
 
-#include "log.h"
+//#include "log.h"
 
 // bin to hexascii nibble
 static const unsigned char _tab[] = "0123456789ABCDEF";

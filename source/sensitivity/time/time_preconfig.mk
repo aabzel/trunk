@@ -1,0 +1,8 @@
+
+ifneq ($(TIME_PRECONFIG_MK_INC),Y)
+    TIME_PRECONFIG_MK_INC=Y
+
+    TIME=Y
+    SENSITIVITY=Y
+    #CALENDAR=Y
+endif

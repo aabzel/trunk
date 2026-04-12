@@ -7,28 +7,26 @@ ifneq ($(TIME_GENERAL_MK_INC),Y)
 
     INCDIR += -I$(TIME_GENERAL_DIR)
 
-    OPT += -DHAS_TIME
+    MCAL_OPT += -DHAS_TIME
 
     ifeq ($(TIME_PROC),Y)
-        OPT += -DHAS_TIME_PROC
+        MCAL_OPT += -DHAS_TIME_PROC
     endif
 
     ifeq ($(TIME_EXT),Y)
-        OPT += -DHAS_TIME_EXT
-        SOURCES_C += $(TIME_GENERAL_DIR)/none_blocking_pause.c
+        MCAL_OPT += -DHAS_TIME_EXT
     endif
 
-
     ifeq ($(DATE),Y)
-        OPT += -DHAS_DATE
+        MCAL_OPT += -DHAS_DATE
     endif
 
     SOURCES_C += $(TIME_GENERAL_DIR)/time_mcal.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(TIME_DIAG),Y)
-            OPT += -DHAS_TIME_DIAG
-            SOURCES_C += $(TIME_GENERAL_DIR)/time_diag.c
+            MCAL_OPT += -DHAS_TIME_DIAG
+            SOURCES_DIAG_C += $(TIME_GENERAL_DIR)/time_diag.c
         endif
     endif
 
@@ -36,10 +34,11 @@ ifneq ($(TIME_GENERAL_MK_INC),Y)
         SOURCES_C += $(TIME_GENERAL_DIR)/timer_utils.c
     endif
 
+    SOURCES_C += $(TIME_GENERAL_DIR)/none_blocking_pause.c
 
     ifeq ($(CLI),Y)
         ifeq ($(TIME_COMMANDS),Y)
-            OPT += -DHAS_TIME_COMMANDS
+            MCAL_OPT += -DHAS_TIME_COMMANDS
             SOURCES_C += $(TIME_GENERAL_DIR)/time_commands.c
         endif
     endif

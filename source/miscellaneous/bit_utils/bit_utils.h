@@ -1,12 +1,11 @@
 #ifndef BIT_UTILS_H
 #define BIT_UTILS_H
 
-#include "std_includes.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "std_includes.h"
 #include "bit_types.h"
 
 #define SET_BIT_NUM(VAL, BIT) ((VAL) |= (1U << (BIT)))
@@ -18,10 +17,12 @@ extern "C" {
 
 
 bool bit_get_u8(uint8_t byte, uint8_t bit_num);
+uint8_t bit_not(const uint8_t byte);
 //(1 & ((VAL) >> (BIT)))
-
+uint32_t calc_bitness(const uint32_t value) ;
 int32_t parse_n_bit_signed(uint32_t value, uint8_t bittness);
-
+uint32_t bit_ctrl(const uint32_t in_val, const uint8_t bit_num, const uint8_t bit_val);
+uint32_t calc_bitness_u64(const uint64_t value);
 uint64_t generate_64bit_mask(uint8_t bit_len);
 uint8_t generate_8bit_mask(uint8_t bit_len);
 uint8_t generate_8bit_left_mask(uint8_t bit_len);

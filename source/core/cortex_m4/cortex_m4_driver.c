@@ -1,14 +1,23 @@
 #include "cortex_m4_driver.h"
 
-#include "microcontroller.h"
 #include "flash_config.h"
-#include "log.h"
+#include "microcontroller.h"
+
+#ifdef HAS_INTERRUPT
 #include "interrupt_mcal.h"
+#endif
+
+#ifdef HAS_LOG
+#include "log.h"
+#endif
+
+#ifdef HAS_GCC
+//#include "cmsis_gcc.h"
+#endif
 
 #ifdef HAS_CMSIS
-#include "cmsis_gcc.h"
 #include "core_cm4.h"
-#endif /*HAS_CMSIS*/
+#endif /**/
 
 #ifdef HAS_EHAL
 #include "core_ehal.h"
@@ -17,7 +26,6 @@
 #ifdef HAS_WATCHDOG
 #include "watchdog_mcal.h"
 #endif
-
 
 /*
   CPACR(Coprocessor Access Control Register) 0xE000ED88
@@ -35,7 +43,9 @@ bool cortex_m4_coproc_access_set(uint8_t cp_num, CoProcAccess_t access) {
 #ifndef HAS_EHAL
     if(access <= 3) {
 #ifdef HAS_CORTEX_M4_DIAG
+#ifdef HAS_LOG
         LOG_INFO(SYS, "Set,CP:%u,Access:%u=%s", cp_num, access, CortecM4CoProcAccessToStr(access));
+#endif
 #endif
         CoProcessorAccessCtrlReg_t Reg = {0};
         Reg.qword = SCB->CPACR;
@@ -175,9 +185,9 @@ bool cortex_m4_exceptions_nmi(bool status) {
     bool res = false;
 #ifdef HAS_CMSIS
     if(status) {
-       // __set_FAULTMASK(0);
+        // __set_FAULTMASK(0);
     } else {
-       // __set_FAULTMASK(1);
+        // __set_FAULTMASK(1);
     }
 #endif /*HAS_CMSIS*/
     return res;
@@ -197,9 +207,13 @@ bool cortex_m4_set_sp(StackPointerSel_t sp) {
 
 bool cortex_m4_reboot(void) {
     bool res = true;
+#ifdef HAS_LOG
     LOG_WARNING(SYS, "CM4-Reboot..");
+#endif
     // HAL_SuspendTick();
+#ifdef HAS_INTERRUPT
     interrupt_disable();
+#endif
 
 #ifdef HAS_CMSIS
     __disable_irq();
@@ -253,7 +267,9 @@ bool cortex_m4_init_isr_vector(void) {
 
 bool cortex_m4_breakpoint_set(uint8_t num, uint32_t address) {
     bool res = false;
+#ifdef HAS_LOG
     LOG_INFO(SYS, "BreakPiont,Set,N:%u,Addr:0x%x", num, address);
+#endif
     if(num < BREAKPOINTS_MAX_CNT) {
         FLASH_PATCH->FLASH_PATCH_COMPARATOR[num] = 0;
         res = true;
@@ -263,7 +279,9 @@ bool cortex_m4_breakpoint_set(uint8_t num, uint32_t address) {
 
 bool cortex_m4_breakpoints_reset(void) {
     bool res = true;
+#ifdef HAS_LOG
     LOG_WARNING(SYS, "ResetBreakPionts");
+#endif
     uint32_t i = 0;
     for(i = 0; i < BREAKPOINTS_MAX_CNT; i++) {
         FLASH_PATCH->FLASH_PATCH_COMPARATOR[i] = 0;

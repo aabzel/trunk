@@ -2,18 +2,25 @@
 
 #include <math.h>
 
-#include "bit_utils.h"
-#include "data_types.h"
 #include "utils_math.h"
+
+#ifdef HAS_DATA_MISC
+#include "data_types.h"
+#endif
+
+#ifdef HAS_BIT_UTILS
+#include "bit_utils.h"
+#endif
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
 
-#ifdef HAS_MATH_EXT
+#ifdef HAS_FLOAT_EXT
 bool is_floats_equal(float valA, float valB) { return is_float_equal_relative(valA, valB, (float)F_EPSILON); }
 #endif
 
-#ifdef HAS_MATH_EXT
+#ifdef HAS_FLOAT_EXT
 bool is_float_equal_relative(float a__fife, float b__fife, float relative_epsilon__fife) {
     bool retval__fife;
     if(fabsf(a__fife - b__fife) <=
@@ -26,7 +33,7 @@ bool is_float_equal_relative(float a__fife, float b__fife, float relative_epsilo
 }
 #endif
 
-#ifdef HAS_MATH_EXT
+#ifdef HAS_FLOAT_EXT
 bool is_double_equal_relative(double value, double b__fide, double relative_epsilon__fide) {
     bool retval__fide;
     if(fabs(value - b__fide) <= fmax(fabs(relative_epsilon__fide * b__fide), fabs(relative_epsilon__fide * value))) {
@@ -116,7 +123,7 @@ float float_limiter(float in_value, float up_limit) {
     return out_value;
 }
 
-float float_limiter_down_up(float in_value, float down_limit, float up_limit) {
+float float_limiter_down_up(const float in_value, const float down_limit, const float up_limit) {
     float out_value = in_value;
     if(up_limit < in_value) {
         out_value = up_limit;
@@ -158,26 +165,26 @@ where the exponent field is interpreted as an unsigned 4-bit integer.
 To decode the High-SNR format when the exponent is zero
 simply interpret the mantissa as a 12-bit signed integer and multiply by 2**-24.
 */
-#ifdef HAS_MATH_EXT
+#ifdef HAS_FLOAT_EXT
 double high_snr_decode(int snr) {
     TypeHighSnr_t HighSnr;
     double out_val = 0.0;
     HighSnr.u16 = (uint16_t)snr;
 #ifdef HAS_LOG
-    LOG_DEBUG(TEST, "%d |%d |%d", HighSnr.exponent, HighSnr.sign, HighSnr.mantissa);
+    LOG_DEBUG(SYS, "%d |%d |%d", HighSnr.exponent, HighSnr.sign, HighSnr.mantissa);
 #endif
     if(0 == HighSnr.exponent) {
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "ExpZero");
+        LOG_DEBUG(SYS, "ExpZero");
 #endif
         int32_t smantissa32b = parse_n_bit_signed(HighSnr.u16, 12);
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "smantissa32 %d", smantissa32b);
+        LOG_DEBUG(SYS, "smantissa32 %d", smantissa32b);
 #endif
         out_val = smantissa32b * pow(2.0, -24.0);
     } else {
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "ExpVal");
+        LOG_DEBUG(SYS, "ExpVal");
 #endif
         int16_t sman13 = 0;
         sman13 = HighSnr.mantissa;
@@ -191,7 +198,7 @@ double high_snr_decode(int snr) {
         }
         int32_t smantissa32b = parse_n_bit_signed(sman13, 13);
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "smantissa32 %d", smantissa32b);
+        LOG_DEBUG(SYS, "smantissa32 %d", smantissa32b);
 #endif
         out_val = ((double)smantissa32b) * pow(2.0, (double)(HighSnr.exponent - 25));
     }
@@ -222,11 +229,11 @@ int32_t float_sign(const float value) {
     return sign;
 }
 
+#if 0
 /*
- * value 1.25
- * digit -  number of decimal places
- *
- * TODO test float_to_integer_and_fractional
+  value 1.25
+  digit -  number of decimal places
+  TODO test float_to_integer_and_fractional
  */
 bool float_to_integer_and_fractional(const float real_value, const uint32_t digit, FloatFixPoint_t* const Node) {
     bool res = false;
@@ -243,3 +250,29 @@ bool float_to_integer_and_fractional(const float real_value, const uint32_t digi
 
     return res;
 }
+
+/*
+ Example:xxxx(238500,16384,5,...) ->  14.55688
+*/
+bool fraction_to_fixed_point_float(int32_t numerator, int32_t denominator, uint32_t after_dot_digit,
+                                   FloatFixPoint_t* const Node) {
+    bool res = false;
+    if(Node) {
+        if(denominator) {
+            int32_t sign = math_sign_s32(numerator / denominator);
+            int32_t numerator_abs = math_abs_s32(numerator);
+            int32_t denominator_abs = math_abs_s32(denominator);
+            uint64_t scale = ipow(10, after_dot_digit);
+
+            int32_t integer_abs = numerator_abs / denominator_abs;
+            uint64_t val1 = (scale * numerator_abs) / denominator_abs;
+            uint64_t val2 = integer_abs * scale;
+            uint64_t fractional_u64 = val1 - val2;
+            Node->fractional = (uint32_t)fractional_u64;
+            Node->integer = sign * integer_abs;
+            res = true;
+        }
+    }
+    return res;
+}
+#endif

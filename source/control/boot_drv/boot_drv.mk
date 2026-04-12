@@ -6,20 +6,20 @@ ifneq ($(BOOT_DRV_MK_INC),Y)
 
     INCDIR += -I$(BOOT_DRV_DIR)
 
-    OPT += -DHAS_BOOT
+    MCAL_OPT += -DHAS_BOOT
     SOURCES_C += $(BOOT_DRV_DIR)/boot_driver.c
 
     ifeq ($(DIAG),Y)
         #$(error DIAG=$(DIAG))
         ifeq ($(BOOT_DIAG),Y)
-            OPT += -DHAS_BOOT_DIAG
+            MCAL_OPT += -DHAS_BOOT_DIAG
             SOURCES_C += $(BOOT_DRV_DIR)/boot_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(BOOT_COMMANDS),Y)
-            OPT += -DHAS_BOOT_COMMANDS
+            MCAL_OPT += -DHAS_BOOT_COMMANDS
             SOURCES_C += $(BOOT_DRV_DIR)/boot_commands.c
         endif
     endif

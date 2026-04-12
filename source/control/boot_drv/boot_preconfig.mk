@@ -1,7 +1,7 @@
-
 ifneq ($(BOOT_DRV_PRECONFIG_INC),Y)
     BOOT_DRV_PRECONFIG_INC=Y
     BOOT=Y
+    CORE=Y
     #FLASH=Y
     #INTERRUPT=Y
 endif

@@ -1,5 +1,5 @@
-#ifndef BYTE_UTILS_H
-#define BYTE_UTILS_H
+#ifndef BYTE_MISC_H
+#define BYTE_MISC_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,8 +28,13 @@ uint64_t copy_and_rev64(const uint8_t* const array);
 
 uint32_t reverse_half_word_order_uint32(const uint32_t word);
 
+
+#if 0
+const char* ByteNameToStr(const  uint8_t code, const  char* token);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* BYTE_UTILS_H */
+#endif /* BYTE_MISC_H */

@@ -36,3 +36,13 @@ bool bit_diff(uint32_t val_a, uint32_t val_b) {
     log_level_time_stamp(true);
     return res;
 }
+
+const char* BitToStr(const uint8_t val, const char* const name_one, const char* const name_zero) {
+    char* name = "?";
+    if(val) {
+        name = name_one;
+    } else {
+        name = name_zero;
+    }
+    return name;
+}

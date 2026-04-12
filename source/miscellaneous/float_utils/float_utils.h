@@ -22,11 +22,7 @@ extern "C" {
 #define IS_FLOAT_EQUAL_ABSOLUTE(f1, f2, precision) ((((f1 - precision) < f2) && (f2 < (f1 + precision))) ? true : false)
 
 
-
 int32_t float_sign(const float value);
-bool float_to_integer_and_fractional(const float value,
-                                     const uint32_t precision,
-                                     FloatFixPoint_t* const Node );
 
 bool double_is_zero(double a__fide);
 bool is_double_equal_absolute(double a__fide, double b__fide, double absolute_epsilon__fide);
@@ -37,7 +33,7 @@ bool is_floats_equal(float valA, float valB);
 bool float_is_zero(float value);
 float float_limiter(float in_value, float up_limit);
 float  float_limiter2( float down_limit, float in_value, float up_limit);
-float float_limiter_down_up(float in_value, float down_limit, float up_limit);
+float float_limiter_down_up(const float in_value, const float down_limit, const float up_limit);
 
 float float_max(float x1, float x2);
 float float_min(float x1, float x2);

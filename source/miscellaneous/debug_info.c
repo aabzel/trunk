@@ -1,13 +1,15 @@
 #include "debug_info.h"
 
 #include <inttypes.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "byte_utils.h"
 #include "data_utils.h"
 #include "log.h"
+#include "microcontroller_const.h"
+#include "shared_array.h"
+#include "std_includes.h"
 #include "system.h"
 #include "version.h"
 
@@ -25,22 +27,20 @@
 
 #ifdef HAS_STRING
 #include "convert.h"
-#endif /*HAS_STRING*/
+#endif
 
 #ifdef HAS_CRC32
 #include "crc32.h"
 #endif
 
+#ifdef HAS_WRITER
+#include "writer.h"
+#endif
+
 #ifdef HAS_LOG_UTILS
 #include "log_utils.h"
 #include "oprintf.h"
-#include "writer_config.h"
-#include "writer_generic.h"
 #endif
-
-#ifdef STM32F413xx
-#include "stm32f4xx_hal.h"
-#endif /*STM32F413xx*/
 
 #ifdef HAS_FLASH
 #include "flash_mcal.h"
@@ -54,7 +54,7 @@
 #include "device_id.h"
 #endif
 
-#ifdef HAS_LOG
+#ifdef HAS_TABLE_UTILS
 #include "table_utils.h"
 #endif
 
@@ -72,9 +72,9 @@
 
 #ifdef HAS_BOOT
 //#include "boot_cfg.h"
-#endif /*HAS_BOOT*/
+#endif /**/
 
-#endif /*HAS_MICROCONTROLLER*/
+#endif
 
 #ifdef HAS_X86_64
 #include <stdio.h>
@@ -158,6 +158,7 @@ void print_sysinfo(void) {
     LOG_NOTICE(SYS, "addr of main() 0x%p", main);
 #ifdef HAS_NORTOS
 #endif
+
 #ifdef HAS_MICROCONTROLLER
     LOG_NOTICE(SYS, "RAM: %u Byte", RAM_SIZE);
     LOG_NOTICE(SYS, "Flash: %u Byte", ROM_SIZE);
@@ -218,7 +219,7 @@ static bool pring_gcc_info(void) {
 
 #ifdef HAS_MICROCONTROLLER
 bool check_main(void) {
-    bool res = true;
+    bool res = false;
 
 #ifdef HAS_GENERIC
     res = flash_is_generic((uint32_t*)main);
@@ -307,25 +308,26 @@ static bool print_author(void) {
     return res;
 }
 
-static bool print_build_version(void) {
+static bool print_sw_version(void) {
     bool res = true;
     char lText[300] = "";
     strcpy(lText, "");
+    snprintf(lText, sizeof(lText), "%sFwName:%s,", lText, FW_NAME);
 
 #ifdef GIT_SHA
     snprintf(lText, sizeof(lText), "%sGitSha:0x%x,", lText, GIT_SHA);
-#endif /*GIT_SHA*/
+#endif
 
 #ifdef SUCCESSFUL_BUILD_COUNTER
     snprintf(lText, sizeof(lText), "%sOkBuildCnt:%u,", lText, SUCCESSFUL_BUILD_COUNTER);
-#endif /*SUCCESSFUL_BUILD_COUNTER*/
+#endif
 
 #ifdef GIT_LAST_COMMIT_HASH
-    snprintf(lText, sizeof(lText), "%sGit,Last,Commit:%s,", lText, GIT_LAST_COMMIT_HASH);
-#endif /*GIT_LAST_COMMIT_HASH*/
+    //  snprintf(lText, sizeof(lText), "%sGit,Last,Commit:%s,", lText, GIT_LAST_COMMIT_HASH);
+#endif
 
 #ifdef GIT_BRANCH
-    snprintf(lText, sizeof(lText), "%sGit,Branch:%s,", lText, GIT_BRANCH);
+    // snprintf(lText, sizeof(lText), "%sGit,Branch:%s,", lText, GIT_BRANCH);
 #endif
     snprintf(lText, sizeof(lText), "%smain() Addr:0x%08p,", lText, main);
 
@@ -351,20 +353,19 @@ bool print_version(void) {
 
     res = print_hw_version();
     res = print_compiler_version();
-    res = print_build_version();
+    res = print_sw_version();
     res = print_build_time();
     res = print_author();
 
     print_prog_type();
 
-#ifndef HAS_MIK32
+    LOG_INFO(SYS, "main() Addr:0x%08p", main);
+#if 0
     res = check_main();
     if(res) {
-        LOG_INFO(SYS, "main() Addr:0x%08p", main);
     } else {
-        LOG_ERROR(SYS, "main() Addr:0x%08p Error", main);
     }
-#endif /*HAS_MICROCONTROLLER*/
+#endif /* */
 
 #if defined(HAS_CRC32) && defined(HAS_FLASH)
     // uint32_t all_flash_crc = 0;
@@ -403,9 +404,18 @@ static bool print_app_info(void) {
 }
 #endif // HAS_MICROCONTROLLER
 
+#ifdef HAS_ARM_CORTEX
+extern uint8_t __isr_vector_start__;
+extern uint8_t __isr_vector_end__;
+#endif
+
 bool print_sys_info(void) {
     bool res = false;
     char lText[300] = {0};
+#ifdef HAS_ARM_CORTEX
+    uint32_t isr_vector_size = &__isr_vector_end__ - &__isr_vector_start__;
+    snprintf(lText, sizeof(lText), "%s__isr_vector_size__:%u,", lText, (uint32_t)isr_vector_size);
+#endif
     snprintf(lText, sizeof(lText), "%sAddrOfMain:0x%8p,", lText, main);
     snprintf(lText, sizeof(lText), "%ssizeof(size_t):%u Byte,", lText, sizeof(size_t));
     res = is_little_endian();
@@ -420,11 +430,11 @@ bool print_sys_info(void) {
 
 #ifdef HAS_CMSIS
     snprintf(lText, sizeof(lText), "%sSCB->VTOR:0x%08x,", lText, SCB->VTOR);
-#endif /*HAS_CMSIS*/
+#endif /**/
 
 #ifdef HAS_MICROCONTROLLER
     print_app_info();
-#endif /*HAS_MICROCONTROLLER*/
+#endif /**/
     // explore_stack_dir();
     LOG_INFO(SYS, "%s", lText);
     // LOG_DEBUG(SYS, "InfoEnd");
@@ -515,19 +525,6 @@ bool print_64bit_types(void* val) {
 
     union64bit.u64 = reverse_byte_order_uint64(union64bit.u64);
     print_u64_un(union64bit);
-    return true;
-}
-#endif
-
-#if defined(HAS_LOG) && !defined(ESP32)
-bool print_vector_table(uint32_t vectors_table_base) {
-    uint32_t* addres = 0;
-    uint32_t offset = 0, num = 0;
-    cli_printf(CRLF "Vector table" CRLF);
-    for(offset = 0, num = 0; offset <= 4 * 53; offset += 4, num++) {
-        addres = (uint32_t*)(vectors_table_base + offset);
-        cli_printf("number %2u Addr: 0x%08p Handler: 0x%08x" CRLF, num, addres, *(addres));
-    }
     return true;
 }
 #endif
@@ -628,7 +625,7 @@ bool print_bit_hint(uint16_t offset, uint32_t bitness) {
     return res;
 }
 
-#ifdef HAS_LOG
+#ifdef HAS_TABLE_UTILS
 bool print_bit_representation(uint32_t val) {
     bool res = true;
     int32_t bit_index = 0;
@@ -792,6 +789,7 @@ bool parse_stack(void) {
 }
 #endif
 
+#ifdef HAS_TABLE_UTILS
 bool min_max_diag(U32Value_t* val, char* name) {
     bool res = false;
     if(val && name) {
@@ -814,54 +812,4 @@ bool min_max_diag(U32Value_t* val, char* name) {
 
     return res;
 }
-
-const char* ProgressRealToStr(float cur, float total) {
-    if(cur <= total) {
-        uint32_t progress_x100 = (uint32_t)((10000.0 * cur) / total);
-        uint32_t units = progress_x100 / 100;
-        uint32_t fraq = progress_x100 % 100;
-        // snprintf(text,sizeof(text),"\r %u/%u,%6.2f %%", cur, total, progress);
-        snprintf(text, sizeof(text), "%u.%u %%", units, fraq);
-    }
-    return text;
-}
-
-const char* ProgressFloatToStr(float cur, float total) {
-    if(cur <= total) {
-        uint32_t progress_x100 = (uint32_t)((10000.0 * cur) / total);
-        uint32_t units = progress_x100 / 100;
-        uint32_t fraq = progress_x100 % 100;
-        snprintf(text, sizeof(text), "%u.%u %%", units, fraq);
-    }
-    return text;
-}
-
-const char* ProgressToStr(uint32_t cur, uint32_t total) {
-    char* out_text = "?";
-    if(cur <= total) {
-        out_text = ProgressRealToStr((float)cur, (float)total);
-    }
-    return out_text;
-}
-
-bool print_progress(uint32_t cur, uint32_t total) {
-    bool res = false;
-    if(cur <= total) {
-        cli_printf("\r%s", ProgressToStr(cur, total));
-        res = true;
-    }
-    return res;
-}
-
-float diag_progress_log(uint32_t cur, uint32_t total, uint32_t parts) {
-    float progress_pp = 0.0;
-    if(cur <= total) {
-        progress_pp = ((float)(100U * cur)) / ((float)total);
-        if(parts < (total / 3)) {
-            if(0 == (cur % (total / parts))) {
-                cli_printf("\rProgress:%s", ProgressToStr(cur, total));
-            }
-        }
-    }
-    return progress_pp;
-}
+#endif

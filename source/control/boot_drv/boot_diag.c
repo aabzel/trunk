@@ -1,8 +1,10 @@
 #include "boot_diag.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "boot_driver.h"
+#include "common_diag.h"
 #include "core_driver.h"
 #include "flash_mcal.h"
 #include "log.h"
@@ -35,6 +37,15 @@ const char* BootCmdToStr(const BootCmd_t boot_cmd) {
     return name;
 }
 
+const char* StorageBootCmdToStr(const void* const data) {
+    char* name = "?";
+    if(data) {
+        uint8_t* boot_cmd = data;
+        name = BootCmdToStr((BootCmd_t)*boot_cmd);
+    }
+    return name;
+}
+
 char* AppSize2str(uint32_t size) {
     snprintf(text, sizeof(text), "%6.2f kByte", ((double)(size)) / 1024.0);
     return text;
@@ -61,4 +72,30 @@ bool boot_diag(void) {
     }
 #endif
     return res;
+}
+
+const char* BootConfigToStr(const BootConfig_t* const Config) {
+    strcpy(text, "");
+    if(Config) {
+        uint32_t stack_top_addr = boot_stack_top_addr_get(Config->num);
+        snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
+        snprintf(text, sizeof(text), "%sBootAddr:0x%08X,", text, Config->fw_start_address);
+        snprintf(text, sizeof(text), "%sStackLimAddress:0x%08X,", text, Config->stack_lim_address);
+        snprintf(text, sizeof(text), "%sStackTopAddress:0x%08X,", text, Config->stack_top_address);
+        snprintf(text, sizeof(text), "%sTopStackAddr:0x%08X,", text, stack_top_addr);
+        if(Config->name) {
+            snprintf(text, sizeof(text), "%s%s,", text, Config->name);
+        }
+    }
+    return text;
+}
+
+
+const char* BootNodeToStr(const BootHandle_t* const Node) {
+    if(Node) {
+        strcpy(text, "");
+        snprintf(text, sizeof(text), "%sSpin:%u,", text, Node->spin);
+        snprintf(text, sizeof(text), "%sInit:%s,", text, OnOffToStr(Node->init));
+    }
+    return text;
 }

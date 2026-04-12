@@ -41,6 +41,8 @@ typedef struct {
 typedef struct {
     TIME_COMMON_VARIABLES
     bool init_done;
+    bool new_val;
+    uint64_t prev_time_us;
 }TimeHandle_t;
 
 

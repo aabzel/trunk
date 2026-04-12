@@ -14,7 +14,7 @@ extern "C" {
 bool bit_diff_command(int32_t argc, char* argv[]);
 
 #define BIT_COMMANDS                                                                          \
-        SHELL_CMD("bit_diff", "bd", bit_diff_command, "BitDiff"),
+        SHELL_CMD("bit_diff", "bid", bit_diff_command, "BitDiff"),
 
 #ifdef __cplusplus
 }

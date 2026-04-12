@@ -1,10 +1,14 @@
 #include "bit_utils.h"
 
-#include <stdbool.h>
-#include <stdint.h>
+#include <math.h>
 #include <string.h>
 
+#include "std_includes.h"
+
+#ifdef HAS_DATA_MISC
 #include "data_types.h"
+#endif
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
@@ -18,12 +22,14 @@ bool bit_get_u8(uint8_t byte, uint8_t bit_num) {
     return res;
 }
 
-uint32_t generate_32bit_custom_mask(uint8_t max_bit, uint8_t min_bit) {
+uint32_t generate_32bit_custom_mask(const uint8_t max_bit, const uint8_t min_bit) {
     uint32_t mask = 0x00000000U;
     if(min_bit <= max_bit) {
-        uint32_t i = 0U;
-        for(i = min_bit; i <= max_bit; i++) {
-            mask |= (1 << i);
+        if(max_bit < 32) {
+            uint32_t i = 0U;
+            for(i = min_bit; i <= max_bit; i++) {
+                mask |= (1 << i);
+            }
         }
     }
     return mask;
@@ -112,28 +118,28 @@ uint64_t extract_subval_from_64bit(uint64_t in_val, uint8_t max_bit, uint8_t min
 int32_t parse_n_bit_signed(uint32_t value, uint8_t bittness) {
     int32_t sval = value;
 #ifdef HAS_LOG
-    LOG_DEBUG(TEST, "%s(): %d %d", __FUNCTION__, value, bittness);
+    LOG_DEBUG(SYS, "%s(): %d %d", __FUNCTION__, value, bittness);
 #endif
     if(GET_BIT_NUM(value, bittness - 1)) {
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "Negative %d", value);
+        LOG_DEBUG(SYS, "Negative %d", value);
 #endif
         uint32_t neg_abs = extract_subval_from_32bit(value, bittness - 2, 0);
         uint32_t mask = generate_32bit_mask(bittness - 1);
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "mask: 0x%08x Bit:%d", mask, bittness - 1);
+        LOG_DEBUG(SYS, "mask: 0x%08x Bit:%d", mask, bittness - 1);
 #endif
         neg_abs = (neg_abs ^ mask) + 1;
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "neg_abs %d", neg_abs);
+        LOG_DEBUG(SYS, "neg_abs %d", neg_abs);
 #endif
         sval = -1 * ((int32_t)neg_abs);
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "out %d", sval);
+        LOG_DEBUG(SYS, "out %d", sval);
 #endif
     } else {
 #ifdef HAS_LOG
-        LOG_DEBUG(TEST, "Positive %d", value);
+        LOG_DEBUG(SYS, "Positive %d", value);
 #endif
         sval = value;
     }
@@ -260,6 +266,7 @@ uint8_t swap_bits_u8(uint8_t in_val) {
     return out_val;
 }
 
+#ifdef HAS_DATA_MISC
 uint16_t swap_bits_u16(uint16_t in_val) {
     Type16Union_t un16in;
     Type16Union_t un16out;
@@ -268,6 +275,7 @@ uint16_t swap_bits_u16(uint16_t in_val) {
     un16out.u8[1] = swap_bits_u8(un16in.u8[0]);
     return un16out.u16;
 }
+#endif
 
 // O(n) 4*(1+1+2(1+1)) = 4*(6) = 24
 uint8_t swap_bits_u8_2(uint8_t in_val) {
@@ -346,6 +354,7 @@ uint64_t swap_bits_u64(uint64_t in_val) {
     return out_val;
 }
 
+#ifdef HAS_DATA_MISC
 uint64_t swap_bits_u64_v2(uint64_t in_val) {
     Type64Union_t un64in;
     Type64Union_t un64out;
@@ -360,6 +369,7 @@ uint64_t swap_bits_u64_v2(uint64_t in_val) {
     un64out.u8[7] = swap_bits_u8(un64in.u8[0]);
     return un64out.u64;
 }
+#endif
 
 #endif
 
@@ -455,4 +465,47 @@ uint8_t adjust_bits_u8(uint8_t orig, char* in_mask) {
         }
     }
     return new_val;
+}
+
+/*
+  returns the minimum number of bits required to encode the given number
+ */
+uint32_t calc_bitness(const uint32_t value) {
+    uint32_t bitness = 0;
+    bitness = (uint32_t)ceil(log((double)value) / log(2.0));
+    return bitness;
+}
+
+/*TODO test it*/
+uint8_t bit_not(const uint8_t byte) {
+    uint8_t result = byte;
+    result = ~result;
+    return result;
+}
+
+/*
+  returns the minimum number of bits required to encode the given number
+ */
+uint32_t calc_bitness_u64(const uint64_t value) {
+    uint32_t bitness = 0;
+    double d_value = (double)value;
+    bitness = (uint32_t)ceil(log(d_value) / log(2.0));
+    return bitness;
+}
+
+uint32_t bit_ctrl(const uint32_t in_val, const uint8_t bit_num, const uint8_t bit_val) {
+    uint32_t out_val = in_val;
+    if(bit_num <= 31) {
+        switch(bit_val) {
+        case 0:
+            RESET_BIT_NUM(out_val, bit_num);
+            break;
+        case 1:
+            SET_BIT_NUM(out_val, bit_num);
+            break;
+        default:
+            break;
+        }
+    }
+    return out_val;
 }

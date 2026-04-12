@@ -1,7 +1,9 @@
 #include "cortex_m4_diag.h"
 
 #include "cortex_m4_types.h"
+#ifdef HAS_LOG
 #include "log.h"
+#endif
 
 const char* CortecM4CoProcAccessToStr(CoProcAccess_t access) {
     char* name = "?";
@@ -24,7 +26,7 @@ const char* CortecM4CoProcAccessToStr(CoProcAccess_t access) {
     return name;
 }
 
-static char* FloatingPoint2Str(uint8_t code) {
+static char* FloatingPointToStr(uint8_t code) {
     char* name = "?";
     switch(code) {
     case FPU_MODE_OFF:
@@ -40,7 +42,7 @@ static char* FloatingPoint2Str(uint8_t code) {
     return name;
 }
 
-static char* Faulmask2Str(uint8_t code) {
+static char* FaulmaskToStr(uint8_t code) {
     char* name = "?";
     switch(code) {
     case PREVENT_EXEPTRION_OFF:
@@ -56,7 +58,7 @@ static char* Faulmask2Str(uint8_t code) {
     return name;
 }
 
-static char* TreadMode2Str(uint8_t code) {
+static char* TreadModeToStr(uint8_t code) {
     char* name = "?";
     switch(code) {
     case TM_PRIV:
@@ -72,7 +74,7 @@ static char* TreadMode2Str(uint8_t code) {
     return name;
 }
 
-static char* StackPointerSel2Str(uint8_t code) {
+static char* StackPointerSelToStr(uint8_t code) {
     char* name = "?";
     switch(code) {
     case CUR_MSP:
@@ -120,9 +122,9 @@ bool parse_control_reg(uint32_t reg_val) {
     bool res = true;
     RegCtrl_t RegCtrl;
     RegCtrl.val = reg_val;
-    cli_printf("0 TrMode %u %s" CRLF, RegCtrl.npriv, TreadMode2Str(RegCtrl.npriv));
-    cli_printf("1 SP %u %s" CRLF, RegCtrl.spsel, StackPointerSel2Str(RegCtrl.spsel));
-    cli_printf("2 FPU %u %s" CRLF, RegCtrl.fpca, FloatingPoint2Str(RegCtrl.fpca));
+    cli_printf("0 TrMode %u %s" CRLF, RegCtrl.npriv, TreadModeToStr(RegCtrl.npriv));
+    cli_printf("1 SP %u %s" CRLF, RegCtrl.spsel, StackPointerSelToStr(RegCtrl.spsel));
+    cli_printf("2 FPU %u %s" CRLF, RegCtrl.fpca, FloatingPointToStr(RegCtrl.fpca));
 
     return res;
 }
@@ -131,7 +133,7 @@ bool parse_faultmask_reg(uint32_t reg_val) {
     bool res = true;
     RegFaultmask_t RegCtrl;
     RegCtrl.val = reg_val;
-    cli_printf("0  %u %s" CRLF, RegCtrl.faultmask, Faulmask2Str(RegCtrl.faultmask));
+    cli_printf("0  %u %s" CRLF, RegCtrl.faultmask, FaulmaskToStr(RegCtrl.faultmask));
 
     return res;
 }

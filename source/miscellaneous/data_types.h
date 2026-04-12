@@ -68,7 +68,7 @@ typedef union {
     int16_t s16[4];
     uint8_t u8[8];
     int8_t s8[8];
-#ifdef HAS_UTILS_EXT
+#ifdef HAS_BIT_UTILS
     BitField64_t bits64;
 #endif
 } Type64Union_t;
@@ -81,7 +81,7 @@ typedef union {
     int16_t s16[2];
     uint8_t u8[4];
     int8_t s8[4];
-#ifdef HAS_UTILS_EXT
+#ifdef HAS_BIT_UTILS
     BitField32_t bits32;
 #endif
 } Type32Union_t;
@@ -89,7 +89,7 @@ typedef union {
 typedef union {
     uint8_t u8[3];
     int8_t s8[3];
-#ifdef HAS_UTILS_EXT
+#ifdef HAS_BIT_UTILS
     BitField24_t bits24;
 #endif
 } Type24Union_t;
@@ -111,7 +111,7 @@ typedef union {
     int16_t s16;
     uint8_t u8[2];
     int8_t s8[2];
-#ifdef HAS_UTILS_EXT
+#ifdef HAS_BIT_UTILS
     BitField16_t bits16;
 #endif
 } Type16Union_t;
@@ -143,7 +143,7 @@ typedef struct {
     uint16_t mantissa : 11;
     uint16_t sign : 1;
     uint16_t exponent : 4;
-} __attribute__((packed)) TypeHighSnrFmt_t;
+}  TypeHighSnrFmt_t;
 
 typedef union {
     uint16_t u16;
@@ -151,13 +151,13 @@ typedef union {
         uint16_t mantissa : 11;
         uint16_t sign : 1;
         uint16_t exponent : 4;
-    } __attribute__((packed));
-} __attribute__((packed)) TypeHighSnr_t;
+    } ;
+}  TypeHighSnr_t;
 
 typedef union {
     uint8_t u8;
     int8_t s8;
-#ifdef HAS_UTILS_EXT
+#ifdef HAS_BIT_UTILS
     BitField8_t bits8;
 #endif
     struct {
