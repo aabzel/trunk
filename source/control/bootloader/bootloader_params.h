@@ -1,7 +1,7 @@
 #ifndef BOOTLOADER_PARAMS_H
 #define BOOTLOADER_PARAMS_H
 
-#include "param_types.h"
+#include "storage_types.h"
 
 #define PARAMS_BOOTLOADER                                                                                                 \
     {.facility=BOOTLOADER, .id=PAR_ID_BOOT_CNT,   .len=2, .type=TYPE_UINT16,     .default_value="0", .name="BootCnt"},    \

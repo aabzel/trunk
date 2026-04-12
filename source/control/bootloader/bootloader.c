@@ -1,7 +1,10 @@
 #include "bootloader.h"
 
-#include "std_includes.h"
+#include "boot_diag.h"
+#include "boot_driver.h"
 #include "flash_config.h"
+#include "std_includes.h"
+#include "sys_config_common.h"
 
 #ifdef HAS_RISC_V
 #include "rv32imc_driver.h"
@@ -20,12 +23,8 @@
 #endif
 
 #ifdef HAS_CLOCK
-#include "clock.h"
+#include "clock_mcal.h"
 #endif
-
-#include "boot_diag.h"
-#include "boot_driver.h"
-#include "sys_config_common.h"
 
 #ifdef HAS_SYSTICK
 #include "systick_mcal.h"
@@ -40,7 +39,7 @@
 #endif
 
 #ifdef HAS_CLOCK
-#include "clock.h"
+#include "clock_mcal.h"
 #endif
 
 #ifdef HAS_CORE
@@ -59,7 +58,7 @@
 #include "log.h"
 #endif
 
-#ifdef HAS_PARAM
+#ifdef HAS_STORE_FS
 #include "param_drv.h"
 #endif
 
@@ -92,8 +91,8 @@ static bool bootloader_try_app_plane(void) {
     bool out_res = true;
     (void)out_res;
     BootLoaderInstance.app_start_address = APP_START_ADDRESS;
-#ifdef HAS_PARAM
-    LOAD_PARAM(BOOTLOADER, PAR_ID_APP_START, BootLoaderInstance.app_start_address, APP_START_ADDRESS);
+#ifdef HAS_STORE_FS
+    LOAD_STORE_FS(BOOTLOADER, PAR_ID_APP_START, BootLoaderInstance.app_start_address, APP_START_ADDRESS);
 #endif
 
 #ifdef HAS_LOG
@@ -121,11 +120,11 @@ static bool bootloader_try_app_crc(void) {
     BootLoaderInstance.app_crc32.read = 0;
     BootLoaderInstance.app_crc32.calc = 0;
 
-#ifdef HAS_PARAM
-    LOAD_PARAM(BOOTLOADER, PAR_ID_APP_START, BootLoaderInstance.app_start_address, APP_START_ADDRESS);
-    LOAD_PARAM(BOOTLOADER, PAR_ID_APP_LEN, BootLoaderInstance.app_len, 0);
-    LOAD_PARAM(BOOTLOADER, PAR_ID_APP_CRC32, BootLoaderInstance.app_crc32.read, 0);
-#endif /*HAS_PARAM*/
+#ifdef HAS_STORE_FS
+    LOAD_STORE_FS(BOOTLOADER, PAR_ID_APP_START, BootLoaderInstance.app_start_address, APP_START_ADDRESS);
+    LOAD_STORE_FS(BOOTLOADER, PAR_ID_APP_LEN, BootLoaderInstance.app_len, 0);
+    LOAD_STORE_FS(BOOTLOADER, PAR_ID_APP_CRC32, BootLoaderInstance.app_crc32.read, 0);
+#endif /*HAS_STORE_FS*/
 
     if(BootLoaderInstance.app_len) {
         if(is_flash_addr(BootLoaderInstance.app_start_address)) {
@@ -167,13 +166,13 @@ bool bootloader_proc(void) {
 #endif
 
     res = false;
-#ifdef HAS_PARAM
+#ifdef HAS_STORE_FS
     res = param_get(PAR_ID_BOOT_CMD, (uint8_t*)&command);
     if(false == res) {
         command = BOOT_CMD_LAUNCH_APP;
         LOG_ERROR(BOOTLOADER, "LackOfBootCmd ParamId: %u", PAR_ID_BOOT_CMD);
     }
-#endif /*HAS_PARAM*/
+#endif /*HAS_STORE_FS*/
 #ifdef HAS_BOOTLOADER_DIAG
     LOG_DEBUG(BOOTLOADER, "BootCmd:%u=%s", command, BootCmdToStr(command));
 #endif
@@ -254,10 +253,10 @@ bool bootloader_reboot(void) {
     return res;
 }
 
-/*Application Hang on protection*/
 bool bootloader_init(void) {
-    bool res = false;
+    bool res = true;
 #ifdef HAS_FLASH_FS
+    res = false;
     uint16_t real_len = 0;
     uint8_t bootloader_cnt = 0;
 #ifdef HAS_GENERIC
@@ -295,8 +294,8 @@ bool bootloader_init(void) {
         }
     }
     // res=bootloader_set_indicate() && res;
-    // LOAD_PARAM(BOOTLOADER, PAR_ID_APP_START, , APP_START_ADDRESS) ;
-#endif
+    // LOAD_STORE_FS(BOOTLOADER, PAR_ID_APP_START, , APP_START_ADDRESS) ;
+#endif // HAS_FLASH_FS
     return res;
 }
 

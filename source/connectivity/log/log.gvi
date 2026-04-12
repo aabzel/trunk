@@ -1,6 +1,38 @@
+
+#ifdef HAS_TIME
 TIME->LOG
+#endif
+
+#ifdef HAS_STREAM
 STREAM->LOG
+#endif
+
+#ifdef HAS_FIFO
 FIFO->LOG
+#endif
+
+
+#ifdef HAS_UART
 UART->LOG
+#endif
+
+#ifdef HAS_WRITER
+WRITER->LOG
+#endif
+
+#ifdef HAS_STREAM
+
+#ifdef HAS_WRITER
+WRITER->STREAM
+#endif
 
 
+#endif
+
+#ifdef HAS_LOG_UTILS
+#include "log_utils.gvi"
+#endif
+
+#ifdef HAS_WRITER
+#include "writer.gvi"
+#endif

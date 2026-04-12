@@ -8,9 +8,10 @@
 #define CLI_MANAGER_NAME "CLI"
 #define CLI_CURSOR "-->"
 #define CLI_UART CONFIG_UART_0
-#define CLI_LEN_MAX_SIZE 40
+#define CLI_LEN_MAX_SIZE 80
 #define SHELL_MAX_ARG_COUNT 12
-#define CLI_PERIOD_US MSEC_2_USEC(3000)
+#define CLI_PERIOD_US MSEC_2_USEC(500)
+#define CLI_WATCHDOT_EXIT_MS SEC_2_MSEC_U(300)
 
 typedef enum {
     KEY_TAB = 0x09,

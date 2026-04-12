@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "ostream.h"
+
 
 #ifdef __cplusplus
 }

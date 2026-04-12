@@ -1,8 +1,9 @@
 #ifndef PRINT_FORMAT_H_
 #define PRINT_FORMAT_H_
 
-#include "ostream.h"
 #include <math.h>
+
+#include "writer_types.h"
 
 #ifdef __cplusplus
 extern "C" {

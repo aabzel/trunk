@@ -11,14 +11,24 @@ extern "C" {
 #define APPLICATIONS_COMMANDS
 #endif
 
+#ifdef HAS_PHYSICS_COMMANDS
+#include "physics_commands.h"
+#else
+#define PHYSICS_COMMANDS
+#endif
 
+
+#ifdef HAS_ADT_COMMANDS
+#include "adt_commands.h"
+#else
+#define ADT_COMMANDS
+#endif
 
 #ifdef HAS_MICROCONTROLLER
 #include "microcontroller_commands.h"
 #else
 #define MICROCONTROLLER_COMMANDS
 #endif
-
 
 #ifdef HAS_BIT_COMMANDS
 #include "bit_commands.h"
@@ -110,11 +120,16 @@ extern "C" {
 #define SOFTWARE_TIMER_COMMANDS
 #endif
 
-
 #ifdef HAS_STORAGE_COMMANDS
 #include "storage_commands.h"
 #else
 #define STORAGE_COMMANDS
+#endif
+
+#ifdef HAS_COMMON_COMMANDS
+#include "common_commands.h"
+#else
+#define COMMON_COMMANDS
 #endif
 
 #ifdef HAS_FONT_COMMANDS
@@ -129,17 +144,24 @@ extern "C" {
 #define THIRD_PARTY_COMMANDS
 #endif
 
+
+
+
 #define CLI_SECURITY_COMMANDS                                              \
     CRYP_COMMANDS                                                          \
     AES_COMMANDS                                                           \
     TRNG_COMMANDS
 
+
 #define CLI_COMMANDS                                                       \
+    ADT_COMMANDS                                                           \
     CLI_SECURITY_COMMANDS                                                  \
     ASICS_COMMANDS                                                         \
     BIT_COMMANDS                                                           \
     APPLICATIONS_COMMANDS                                                  \
     CONTROL_COMMANDS                                                       \
+    PHYSICS_COMMANDS                                                       \
+    COMMON_COMMANDS                                                        \
     CONNECTIVITY_COMMANDS                                                  \
     COMPUTING_COMMANDS                                                     \
     MICROCONTROLLER_COMMANDS                                               \

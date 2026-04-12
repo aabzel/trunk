@@ -7,6 +7,7 @@ ifneq ($(READER_PRECONFIG_MK_LOG),Y)
 
     READER=Y
     STRING=Y
+    ARRAY=Y
     #READER_CMD_HISTORY=Y
     #CSV=Y
 endif

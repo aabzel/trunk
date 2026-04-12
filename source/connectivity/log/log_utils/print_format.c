@@ -1,9 +1,10 @@
 #include "print_format.h"
 
-#include <stdbool.h>
 #include <string.h>
 
 #include "convert.h"
+#include "std_includes.h"
+#include "writer.h"
 
 #ifdef HAS_NUM_DIAG
 #include "num_to_str.h"

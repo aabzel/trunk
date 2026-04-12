@@ -18,8 +18,19 @@ extern "C" {
 #define LF "\n"
 #define LFCR "\n\r"
 #define BEEP "\a"
-#define CARRIAGE_RETURN 0x0D // or '\r'
-#define LINE_FEED 0x0A       // or '\n'
+
+// or '\r'
+#define CARRIAGE_RETURN (0x0d)
+// or '\n'
+#define LINE_FEED 0x0A
+
+typedef enum {
+    LOG_EOF_UNDEF = 0,
+    LOG_EOF_CRLF  = 1,
+    LOG_EOF_CR    = 2,
+    LOG_EOF_LF    = 3,
+    LOG_EOF_LFCR  = 4,
+} LogEndOfLine_t;
 
 typedef enum {
     LOG_LEVEL_UNKNOWN = -5,
@@ -31,7 +42,9 @@ typedef enum {
     LOG_LEVEL_WARNING = 1,
     LOG_LEVEL_ERROR = 2,
     LOG_LEVEL_CRITICAL = 3,
-    LOG_LEVEL_LAST = LOG_LEVEL_CRITICAL
+    LOG_LEVEL_COVERAGE = 4,
+    LOG_LEVEL_DISABLE = 5,
+    LOG_LEVEL_LAST = LOG_LEVEL_DISABLE
 } log_level_t;
 
 #ifdef __cplusplus

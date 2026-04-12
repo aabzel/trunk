@@ -2,16 +2,26 @@
 
 #include <stdio.h>
 #include <string.h>
+
+#ifndef HAS_CLANG
 #include <strings.h>
+#endif
 
 #include "log.h"
+#include "terminal_codes.h"
+#include "writer_config.h"
+
+#ifdef HAS_STRING
 #include "str_utils.h"
+#endif
+
 #ifdef HAS_SYSTEM_DIAG
 #include "system_diag.h"
 #endif
+
+#ifdef HAS_TABLE_UTILS
 #include "table_utils.h"
-#include "terminal_codes.h"
-#include "writer_config.h"
+#endif
 
 const char* log_level_name_long(log_level_t level) {
     const char* result;
@@ -47,7 +57,7 @@ const char* log_level_name_long(log_level_t level) {
     return result;
 }
 
-char log_level_name(log_level_t level) {
+char log_level_name(const log_level_t level) {
     char result = 'U';
     switch(level) {
     case LOG_LEVEL_INFO:
@@ -106,6 +116,10 @@ log_level_t str2level(const char* str) {
     if(0 == strcasecmp(str, "C") || 0 == strcasecmp(str, "CRIT") || 0 == strcasecmp(str, "CRITICAL")) {
         return LOG_LEVEL_CRITICAL;
     }
+    if(0 == strcasecmp(str, "S") || 0 == strcasecmp(str, "DIS") || 0 == strcasecmp(str, "DISABLE")) {
+        return LOG_LEVEL_DISABLE;
+    }
+
     return LOG_LEVEL_UNKNOWN;
 }
 
@@ -115,7 +129,7 @@ facility_t str2facility(const char* const str) {
     for(facility = UNKNOWN_FACILITY; facility <= ALL_FACILITY; facility++) {
         const char* name = NULL;
 #ifdef HAS_SYSTEM_DIAG
-        name = Facility2Str(facility);
+        name = FacilityToStr(facility);
 #endif
         if(0 == strcasecmp(name, str)) {
             result = facility;
@@ -125,10 +139,26 @@ facility_t str2facility(const char* const str) {
     return result;
 }
 
+const char* log_res_to_color(const bool res) {
+    const char* name = VT_SETCOLOR_NORMAL;
+    if(res) {
+        name = VT_SETCOLOR_GREEN;
+    } else {
+        name = VT_SETCOLOR_RED;
+    }
+    return name;
+}
+
 #ifdef HAS_LOG_COLOR
 const char* log_level_color(log_level_t level) {
     const char* result = VT_SETCOLOR_NORMAL;
     switch(level) {
+    case LOG_LEVEL_DEBUG:
+        result = VT_SETCOLOR_DEBUG;
+        break;
+    case LOG_LEVEL_NOTICE:
+        result = VT_SETCOLOR_NOTICE;
+        break;
     case LOG_LEVEL_UNKNOWN:
         result = VT_SETCOLOR_NORMAL;
         break;
@@ -137,12 +167,6 @@ const char* log_level_color(log_level_t level) {
         break;
     case LOG_LEVEL_PROTECTED:
         result = VT_SETCOLOR_PINK;
-        break;
-    case LOG_LEVEL_DEBUG:
-        result = VT_SETCOLOR_BLUE;
-        break;
-    case LOG_LEVEL_NOTICE:
-        result = VT_SETCOLOR_NOTICE;
         break;
     case LOG_LEVEL_INFO:
         result = VT_SETCOLOR_GREEN;
@@ -165,6 +189,7 @@ const char* log_level_color(log_level_t level) {
 }
 #endif
 
+#ifdef HAS_TABLE_UTILS
 bool log_level_diag(const char* const key_word1) {
     bool res = false;
     LOG_INFO(SYS, "KeyWord[%s]", key_word1);
@@ -180,7 +205,7 @@ bool log_level_diag(const char* const key_word1) {
     for(facil = UNKNOWN_FACILITY; facil < ALL_FACILITY; facil++) {
         const char* FacilityName = NULL;
 #ifdef HAS_SYSTEM_DIAG
-        FacilityName = Facility2Str(facil);
+        FacilityName = FacilityToStr(facil);
 #endif
         if(FacilityName) {
             strcpy(log_line, TSEP);
@@ -208,4 +233,27 @@ bool log_level_diag(const char* const key_word1) {
         res = false;
     }
     return res;
+}
+#endif
+
+const char* LogEndOfLineToStr(LogEndOfLine_t eof) {
+    const char* end_of_line = "";
+    switch(eof) {
+    case LOG_EOF_CR:
+        end_of_line = "\r";
+        break;
+    case LOG_EOF_LF:
+        end_of_line = "\n";
+        break;
+    case LOG_EOF_CRLF:
+        end_of_line = "\r\n";
+        break;
+    case LOG_EOF_LFCR:
+        end_of_line = "\n\r";
+        break;
+    default:
+        end_of_line = "";
+        break;
+    }
+    return end_of_line;
 }

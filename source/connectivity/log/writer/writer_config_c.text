@@ -1,0 +1,85 @@
+#include "writer_config.h"
+
+#include "data_utils.h"
+#include "writer_types.h"
+#include "writer_uart.h"
+
+#ifdef HAS_UART
+// generic_writer_t* curWriterPtr = &dbg_o;
+WriterHandle_t* curWriterPtr = &dbg_o;
+#else /*HAS_UART*/
+
+#ifdef HAS_SWD
+generic_writer_t* curWriterPtr = &swd_o;
+#else  /*HAS_SWD*/
+generic_writer_t* curWriterPtr = NULL;
+#endif /*HAS_SWD*/
+
+#endif /*HAS_UART*/
+
+static char Writer1Array[400] = {0};
+static char Writer2Array[400] = {0};
+static char Writer3Array[400] = {0};
+
+void writer_putc(void* _s, char ch);
+void writer_puts(void* _s, const char* s, int32_t len);
+
+const WriterConfig_t WriterConfig[] = {
+    {
+        .num = 1,
+        .valid = true,
+        .inter_face = IF_UART1,
+        .TxArray = Writer1Array,
+        .tx_array_size = ARRAY_SIZE(Writer1Array),
+        .f_putch = uart1_putc,
+        .f_putstr = uart1_puts,
+        .f_transmit = uart_writer_transmit,
+    },
+    {
+        .num = 2,
+        .valid = true,
+        .inter_face = IF_UART2,
+        .TxArray = Writer2Array,
+        .tx_array_size = ARRAY_SIZE(Writer2Array),
+        .f_putch =uart2_putc,
+        .f_putstr = uart2_puts,
+        .f_transmit = uart_writer_transmit,
+    },
+    {
+        .num = 3,
+        .valid = true,
+        .inter_face = IF_UART3,
+        .TxArray = Writer3Array,
+        .tx_array_size = ARRAY_SIZE(Writer3Array),
+        .f_putch = uart3_putc,
+        .f_putstr = uart3_puts,
+        .f_transmit = uart_writer_transmit,
+    },
+};
+
+WriterHandle_t WriterInstance[] = {
+    {
+        .num = 1,
+        .valid = true,
+    },
+    {
+        .num = 2,
+        .valid = true,
+    },
+    {
+        .num = 3,
+        .valid = true,
+    },
+};
+
+uint32_t writer_get_cnt(void) {
+    uint32_t cnt = 0;
+    uint32_t cnt1 = 0;
+    uint32_t cnt2 = 0;
+    cnt1 = ARRAY_SIZE(WriterInstance);
+    cnt2 = ARRAY_SIZE(WriterConfig);
+    if(cnt1 == cnt2) {
+        cnt = cnt1;
+    }
+    return cnt;
+}

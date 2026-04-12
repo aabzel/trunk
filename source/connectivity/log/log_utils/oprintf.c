@@ -1,10 +1,9 @@
 #include "oprintf.h"
 
-#include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <string.h>
 
+#include "std_includes.h"
 #ifndef HAS_STRING
 #error "HAS_STRING"
 #endif
@@ -16,6 +15,18 @@ typedef int32_t ssize_t;
 #ifdef HAS_STRING
 #include "convert.h"
 #endif
+
+bool ovprint_is_valid(ostream_t* stream) {
+    bool res = false;
+    if(stream) {
+        if(stream->f_putstr) {
+            if(stream->f_putch) {
+                res = true;
+            }
+        }
+    }
+    return res;
+}
 
 static char* uli2a(uint64_t num, uint8_t base, bool uc, char* bf) {
     uint8_t n = 0;
@@ -97,212 +108,215 @@ static char a2i(char ch, const char** src, int32_t* nump) {
 }
 
 static void putsw(ostream_t* s, int n, bool z, const char* bf) {
-    char fc = z ? '0' : ' ';
-    const char* p = bf;
-    while(*p && (0 < n)) {
-        n--;
-        p++;
+    if(s) {
+        if(s->f_putch) {
+            if(s->f_putstr) {
+                char fc = z ? '0' : ' ';
+                const char* p = bf;
+                while(*p && (0 < n)) {
+                    n--;
+                    p++;
+                }
+                while(0 < n) {
+                    s->f_putch(s, fc);
+                    n--;
+                }
+                int32_t len = strlen(bf);
+                s->f_putstr(s, bf, len); /*Error*/
+            }
+        }
     }
-    while(0 < n) {
-        s->f_putch(s, fc);
-        n--;
-    }
-    int32_t len = strlen(bf);
-    s->f_putstr(s, bf, len); /*Error*/
 }
-
-typedef enum {
-    SIZE_SIGNED_CHAR,
-    SIZE_SHORT,
-    SIZE_NORMAL,
-    size_long,
-    SIZE_LONG_LONG,
-    size_long_long_long = 8,
-    SIZE_SIZE_T
-} format_size_t;
 
 bool ovprintf(ostream_t* stream, const char* fmt, va_list va) {
     bool res = false;
-    static bool works = false;
-    if(false == works) {
-        works = true;
-        if(NULL != stream) {
-            res = true;
-            char bf[MAX_INT64_STR_LEN_10 + MAX_PRECISION + 1 + 1];
-            const char* start = NULL;
-            int len = 0;
-            while(*fmt) {
-                char ch = *fmt;
-                fmt++;
-                if(ch != '%') {
-                    if(0 == len) {
-                        len = 1;
-                        start = fmt - 1;
-                    } else {
-                        len++;
-                    }
-                } else {
-                    bool leading_zero = false;
-                    format_size_t size = SIZE_NORMAL;
-                    int32_t width = 0;
-                    int32_t precision = -1;
-                    if(len) {
-                        stream->f_putstr(stream, start, len);
-                        len = 0;
-                    }
-                    ch = *fmt;
+    res = ovprint_is_valid(stream);
+    if(res) {
+#ifdef HAS_RECURSION_PROTECTION
+        static bool works = false;
+        if(false == works) {
+            works = true;
+#endif
+            if(stream) {
+                res = true;
+                char bf[MAX_INT64_STR_LEN_10 + MAX_PRECISION + 1 + 1];
+                const char* start = NULL;
+                int len = 0;
+                while(*fmt) {
+                    char ch = *fmt;
                     fmt++;
-                    if(ch == '0') {
+                    if(ch != '%') {
+                        if(0 == len) {
+                            len = 1;
+                            start = fmt - 1;
+                        } else {
+                            len++;
+                        }
+                    } else {
+                        bool leading_zero = false;
+                        format_size_t size = SIZE_NORMAL;
+                        int32_t width = 0;
+                        int32_t precision = -1;
+                        if(len) {
+                            stream->f_putstr(stream, start, len);
+                            len = 0;
+                        }
                         ch = *fmt;
                         fmt++;
-                        leading_zero = true;
-                    }
-                    if(('0' <= ch) && (ch <= '9')) {
-                        ch = a2i(ch, &fmt, &width);
-                        if(ch == '.') {
+                        if(ch == '0') {
                             ch = *fmt;
                             fmt++;
-                            if(ch >= '0' && ch <= '9') {
-                                ch = a2i(ch, &fmt, &precision);
-                                if(precision > (int32_t)MAX_PRECISION) {
-                                    precision = MAX_PRECISION;
+                            leading_zero = true;
+                        }
+                        if(('0' <= ch) && (ch <= '9')) {
+                            ch = a2i(ch, &fmt, &width);
+                            if(ch == '.') {
+                                ch = *fmt;
+                                fmt++;
+                                if(ch >= '0' && ch <= '9') {
+                                    ch = a2i(ch, &fmt, &precision);
+                                    if(precision > (int32_t)MAX_PRECISION) {
+                                        precision = MAX_PRECISION;
+                                    }
                                 }
                             }
                         }
-                    }
-                    if('h' == ch) {
-                        ch = *fmt;
-                        fmt++;
-                        size = SIZE_SHORT;
-                    }
-                    if('h' == ch) {
-                        ch = *fmt;
-                        fmt++;
-                        size = SIZE_SIGNED_CHAR;
-                    }
-                    if(ch == 'l' || ch == 'L') {
-                        ch = *fmt;
-                        fmt++;
-                        size = size_long;
-                    }
-                    if(ch == 'z') {
-                        ch = *fmt;
-                        fmt++;
-                        size = SIZE_SIZE_T;
-                    }
-                    if(ch == 'l' || ch == 'L') {
-                        ch = *fmt;
-                        fmt++;
-                        size = SIZE_LONG_LONG;
-                    }
-                    if(ch == 'l' || ch == 'L') {
-                        ch = *fmt;
-                        fmt++;
-                        size = size_long_long_long;
-                    }
+                        if('h' == ch) {
+                            ch = *fmt;
+                            fmt++;
+                            size = SIZE_SHORT;
+                        }
+                        if('h' == ch) {
+                            ch = *fmt;
+                            fmt++;
+                            size = SIZE_SIGNED_CHAR;
+                        }
+                        if(ch == 'l' || ch == 'L') {
+                            ch = *fmt;
+                            fmt++;
+                            size = size_long;
+                        }
+                        if(ch == 'z') {
+                            ch = *fmt;
+                            fmt++;
+                            size = SIZE_SIZE_T;
+                        }
+                        if(ch == 'l' || ch == 'L') {
+                            ch = *fmt;
+                            fmt++;
+                            size = SIZE_LONG_LONG;
+                        }
+                        if(ch == 'l' || ch == 'L') {
+                            ch = *fmt;
+                            fmt++;
+                            size = size_long_long_long;
+                        }
 
-                    if(0 == ch) {
-                        return res;
-                    }
-                    switch(ch) {
-                    case 'u':
-                        switch(size) {
-                        case size_long:
-                            ui2a(va_arg(va, unsigned long), 10, false, bf);
-                            break;
-                        case SIZE_LONG_LONG:
-                            uli2a(va_arg(va, uint64_t), 10, false, bf);
-                            break;
-                        case size_long_long_long:
-                            uli2a(va_arg(va, uint64_t), 10, false, bf);
-                            break;
-                        case SIZE_SIZE_T:
-                            ui2a(va_arg(va, size_t), 10, false, bf);
-                            break;
-                        case SIZE_SIGNED_CHAR:
-                        case SIZE_SHORT:
-                        case SIZE_NORMAL:
-                        default:
-                            ui2a(va_arg(va, unsigned int), 10, false, bf);
-                            break;
+                        if(0 == ch) {
+                            return res;
                         }
-                        putsw(stream, width, leading_zero, bf);
-                        break;
-                    case 'd':
-                        switch(size) {
-                        case size_long:
-                            i2a(va_arg(va, long), bf);
+                        switch(ch) {
+                        case 'u':
+                            switch(size) {
+                            case size_long:
+                                ui2a(va_arg(va, unsigned long), 10, false, bf);
+                                break;
+                            case SIZE_LONG_LONG:
+                                uli2a(va_arg(va, uint64_t), 10, false, bf);
+                                break;
+                            case size_long_long_long:
+                                uli2a(va_arg(va, uint64_t), 10, false, bf);
+                                break;
+                            case SIZE_SIZE_T:
+                                ui2a(va_arg(va, size_t), 10, false, bf);
+                                break;
+                            case SIZE_SIGNED_CHAR:
+                            case SIZE_SHORT:
+                            case SIZE_NORMAL:
+                            default:
+                                ui2a(va_arg(va, unsigned int), 10, false, bf);
+                                break;
+                            }
+                            putsw(stream, width, leading_zero, bf);
                             break;
-                        case SIZE_SIZE_T:
-                            i2a(va_arg(va, ssize_t), bf);
+                        case 'd':
+                            switch(size) {
+                            case size_long:
+                                i2a(va_arg(va, long), bf);
+                                break;
+                            case SIZE_SIZE_T:
+                                i2a(va_arg(va, ssize_t), bf);
+                                break;
+                            case SIZE_LONG_LONG:
+                                li2a(va_arg(va, long long), bf);
+                                break;
+                            case SIZE_SIGNED_CHAR:
+                            case SIZE_SHORT:
+                            case SIZE_NORMAL:
+                            default:
+                                i2a(va_arg(va, int), bf);
+                                break;
+                            }
+                            putsw(stream, width, leading_zero, bf);
                             break;
-                        case SIZE_LONG_LONG:
-                            li2a(va_arg(va, long long), bf);
+                        case 'x':
+                        case 'X':
+                        case 'p':
+                            switch(size) {
+                            case size_long:
+                                ui2a(va_arg(va, unsigned long), 16, (ch == 'X'), bf);
+                                break;
+                            case SIZE_SIZE_T:
+                                ui2a(va_arg(va, size_t), 16, (ch == 'X'), bf);
+                                break;
+                            case SIZE_LONG_LONG:
+                                uli2a(va_arg(va, uint64_t), 16, (ch == 'X'), bf);
+                                break;
+                            case SIZE_SHORT:
+                            case SIZE_SIGNED_CHAR:
+                            case SIZE_NORMAL:
+                            default:
+                                ui2a(va_arg(va, unsigned int), 16, (ch == 'X'), bf);
+                                break;
+                            }
+                            putsw(stream, width, leading_zero, bf);
                             break;
-                        case SIZE_SIGNED_CHAR:
-                        case SIZE_SHORT:
-                        case SIZE_NORMAL:
-                        default:
-                            i2a(va_arg(va, int), bf);
+                        case 'c':
+                            stream->f_putch(stream, (char)(va_arg(va, int)));
                             break;
-                        }
-                        putsw(stream, width, leading_zero, bf);
-                        break;
-                    case 'x':
-                    case 'X':
-                    case 'p':
-                        switch(size) {
-                        case size_long:
-                            ui2a(va_arg(va, unsigned long), 16, (ch == 'X'), bf);
+                        case 's':
+                            putsw(stream, width, false, va_arg(va, const char*)); /*Error*/
                             break;
-                        case SIZE_SIZE_T:
-                            ui2a(va_arg(va, size_t), 16, (ch == 'X'), bf);
-                            break;
-                        case SIZE_LONG_LONG:
-                            uli2a(va_arg(va, uint64_t), 16, (ch == 'X'), bf);
-                            break;
-                        case SIZE_SHORT:
-                        case SIZE_SIGNED_CHAR:
-                        case SIZE_NORMAL:
-                        default:
-                            ui2a(va_arg(va, unsigned int), 16, (ch == 'X'), bf);
-                            break;
-                        }
-                        putsw(stream, width, leading_zero, bf);
-                        break;
-                    case 'c':
-                        stream->f_putch(stream, (char)(va_arg(va, int)));
-                        break;
-                    case 's':
-                        putsw(stream, width, false, va_arg(va, const char*)); /*Error*/
-                        break;
-                    case 'f':
-                    case 'g':
+                        case 'f':
+                        case 'g':
 #ifdef HAS_STR2_DOUBLE
 #ifdef HAS_STRING_PARSER
-                        dtoa_(va_arg(va, double), precision, bf);
+                            dtoa_(va_arg(va, double), precision, bf);
 #endif
-                        putsw(stream, width, false, bf);
+                            putsw(stream, width, false, bf);
 #endif
-                        break;
-                    case '%':
-                        stream->f_putch(stream, ch);
-                        break;
-                    default:
-                        stream->f_putstr(stream, "???", 3);
-                        stream->f_putch(stream, ch);
-                        break;
+                            break;
+                        case '%':
+                            stream->f_putch(stream, ch);
+                            break;
+                        default:
+                            stream->f_putstr(stream, "???", 3);
+                            stream->f_putch(stream, ch);
+                            break;
+                        }
                     }
+                } // while
+                if(len) {
+                    stream->f_putstr(stream, start, len);
+                    len = 0;
                 }
-            } // while
-            if(len) {
-                stream->f_putstr(stream, start, len);
-                len = 0;
             }
+#ifdef HAS_RECURSION_PROTECTION
+            works = false;
+        } else {
+            // Recursion
         }
-        works = false;
-    } else {
-        // Recursion
+#endif
     }
     return res;
 }

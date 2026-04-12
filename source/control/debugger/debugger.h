@@ -10,10 +10,15 @@ extern "C" {
 
 #include "std_includes.h"
 #include "debugger_types.h"
+
 #ifdef HAS_MCAL
 #include "mcal_types.h"
 #endif
+
+#ifdef HAS_LOG
 #include "log.h"
+#endif
+
 #ifdef HAS_ALLOCATOR
 #include "allocator_types.h"
 #endif
@@ -43,8 +48,10 @@ extern "C" {
     } while(0);
 
 #ifdef HAS_MCAL
+#ifdef HAS_LOG
 bool debug_raw_reg_diag(facility_t facility, uint32_t base_address, const Reg32_t* const RegArray,
                         uint32_t reg_cnt );
+#endif
 #endif
 
 uint32_t read_register(uint32_t address);
@@ -53,13 +60,14 @@ bool find_addr_by_val(uint16_t byte_num, uint32_t val, uint32_t start_addr, uint
 #ifdef HAS_ALLOCATOR
 bool h_count_link(void* addr, LinkCounter_t* LinkCounter);
 #endif
-
+uint8_t read_addr_8bit(uint32_t addr_val);
 uint16_t read_addr_16bit(uint32_t addr_val);
-uint32_t read_addr_32bit(register uint32_t addr_val);
+uint32_t read_addr_32bit(uint32_t addr_val);
 uint64_t read_addr_64bit(uint32_t addr_val);
 
 #ifdef HAS_WRITE_ADDR
-
+bool memmory_test(const uint32_t address, const uint32_t size) ;
+bool write_addr_8bit(uint32_t in_addr, uint8_t addr_val);
 bool write_addr_16bit(uint32_t in_addr, uint16_t addr_val);
 bool write_addr_32bit(uint32_t in_addr, uint32_t addr_val);
 #endif

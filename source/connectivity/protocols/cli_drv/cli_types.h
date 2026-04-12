@@ -36,12 +36,13 @@ typedef struct {
     bool echo;
     bool init_done;
     bool log_commands;
-    bool run_cmd;
-    uint32_t cmd_len_max;
     bool output;
+    bool run_cmd;
+    uint32_t rx_time_ms;
+    uint32_t cmd_len_max;
 #ifdef HAS_CLI_CMD_HISTORY
     char prev_cmd[CLI_LEN_MAX_SIZE];
-#endif /*HAS_CLI_CLI_HISTORY*/
+#endif
     char in_cmd_line[CLI_LEN_MAX_SIZE];
     uint32_t proc_cnt;
 

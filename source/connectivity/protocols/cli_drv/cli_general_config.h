@@ -1,4 +1,3 @@
-
 #ifndef CLI_GENERAL_CONFIG_H
 #define CLI_GENERAL_CONFIG_H
 

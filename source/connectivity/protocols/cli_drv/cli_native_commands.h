@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "ostream.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +39,7 @@ bool cmd_low_level_control(int32_t argc, char* argv[]);
 #define TEST_FIRMWARE_COMMANDS
 #endif
 
+bool cli_print_ascii_command(int32_t argc, char* argv[]);
 bool cmd_echo(int32_t argc, char *argv []);
 bool cli_diag_command(int32_t argc, char *argv []);
 bool cmd_version(int32_t argc, char* argv[]);
@@ -48,6 +48,7 @@ bool cmd_sysinfo(int32_t argc, char* argv[]);
 bool cmd_beep(int32_t argc, char* argv[]);
 
 #define CLI_NATIVE_BASE_COMMANDS                                                                           \
+    SHELL_CMD("ascii", "ascii", cli_print_ascii_command, "PrintASCII"),                                  \
     SHELL_CMD("cli_diag","clid",cli_diag_command, "CliDiag"),                                                             \
     SHELL_CMD("beep","b",cmd_beep, "CliBeep"),                                                             \
     SHELL_CMD("echo","e",cmd_echo, "SetEcho"),                                                             \

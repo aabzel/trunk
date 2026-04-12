@@ -4,25 +4,28 @@
 #include <inttypes.h>
 #include <string.h>
 
-#ifdef HAS_ARRAY
-#include "array.h"
-#endif
-#include "bit_utils.h"
-#ifdef HAS_BOOT
-//#include "boot_cfg.h"
-#endif
 #include "cli_drv.h"
-
-#ifdef HAS_CLOCK
-#include "clock.h"
-#endif
-
 #include "convert.h"
 #include "data_utils.h"
 #include "debug_info.h"
-#include "log_utils.h"
+#include "log.h"
+#include "str_utils.h"
+#include "string_reader.h"
+//#include "sys_config.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
+#ifdef HAS_ARRAY
+#include "array.h"
+#endif
+
+#ifdef HAS_BIT_UTILS
+#include "bit_utils.h"
+#endif
+
+#ifdef HAS_CLOCK
+#include "clock_mcal.h"
+#endif
 #ifdef HAS_FLASH
 #include "flash_mcal.h"
 #endif
@@ -30,12 +33,6 @@
 #ifdef HAS_TIME
 #include "time_mcal.h"
 #endif
-
-#include "log.h"
-#include "oprintf.h"
-#include "str_utils.h"
-#include "string_reader.h"
-#include "sys_config.h"
 
 #ifdef HAS_WATCHDOG
 //#include "watchdog_mcal.h"
@@ -55,15 +52,15 @@ bool cli_help_command(int32_t argc, char* argv[]) {
         res = false;
     } else {
         if(0 == argc) {
-            help_dump_key(1, NULL, NULL);
+            cli_cmd_list_print(1, NULL, NULL);
             res = true;
         }
         if(1 == argc) {
-            help_dump_key(1, argv[0], NULL);
+            cli_cmd_list_print(1, argv[0], NULL);
             res = true;
         }
         if(2 == argc) {
-            help_dump_key(1, argv[0], argv[1]);
+            cli_cmd_list_print(1, argv[0], argv[1]);
             res = true;
         }
     }
@@ -86,10 +83,9 @@ bool cmd_low_level_control(int32_t argc, char* argv[]) {
             cli_printf("address: 0x%08x" CRLF, (unsigned int)address);
         }
 
-        if(res) {
-            cmd = argv[1][0];
-            cli_printf("cmd: %c" CRLF, cmd);
-        }
+        cmd = argv[1][0];
+        cli_printf("cmd: %c" CRLF, cmd);
+
         if(res) {
             res = try_str2uint8(argv[2], &bit_num);
             if(false == res) {
@@ -98,6 +94,7 @@ bool cmd_low_level_control(int32_t argc, char* argv[]) {
                 cli_printf("bit: %u" CRLF, bit_num);
             }
         }
+#ifdef HAS_BIT_UTILS
         if(res) {
             res = bit32_control_proc((uint32_t*)address, cmd, bit_num);
             if(false == res) {
@@ -106,6 +103,7 @@ bool cmd_low_level_control(int32_t argc, char* argv[]) {
                 cli_printf("bit_control_proc OK" CRLF);
             }
         }
+#endif
 
     } else {
         LOG_ERROR(SYS, "Usage: bc: address cmd bit");
@@ -125,9 +123,9 @@ bool cmd_sysinfo(int32_t argc, char* argv[]) {
 
     if(res) {
         if(is_little_endian()) {
-            LOG_ERROR(SYS, "LittleEndian");
+            LOG_INFO(SYS, "LittleEndian");
         } else {
-            LOG_ERROR(SYS, "BigEndian");
+            LOG_INFO(SYS, "BigEndian");
         }
         explore_stack_dir();
         print_sysinfo();
@@ -257,31 +255,38 @@ bool cmd_calc(int32_t argc, char* argv[]) {
 }
 #endif
 
-#ifdef HAS_TEST_FIRMWARE_COMMANDS
-bool cmd_ascii(int32_t argc, char* argv[]) {
+bool cli_print_ascii_command(int32_t argc, char* argv[]) {
     bool res = false;
+    uint8_t byte = 0;
+
     if(0 == argc) {
         res = true;
-        uint16_t byte = 0;
-        for(byte = 0; byte <= 0xFF; byte++) {
-            cli_printf("0x%02x %d [%c]" CRLF, byte, byte, byte);
-        }
-    } else if(1 == argc) {
-        res = true;
-        uint8_t byte = 0;
+    }
+
+    if(1 <= argc) {
         res = try_str2uint8(argv[0], &byte);
-        if(false == res) {
-            LOG_ERROR(SYS, "unable to read value %s", argv[0]);
-        }
-        if(res) {
+    }
+
+    if(res) {
+        switch(argc) {
+        case 0: {
+            res = cli_print_ascii(0);
+        } break;
+
+        case 1: {
             cli_printf("0x%02x %d [%c]" CRLF, byte, byte, byte);
+            res = cli_print_ascii(byte);
+        } break;
+
+        default: {
+        } break;
         }
     } else {
         LOG_ERROR(SYS, "Usage: ascii [byte]");
     }
+
     return res;
 }
-#endif
 
 bool cmd_echo(int32_t argc, char* argv[]) {
     bool echo = false;

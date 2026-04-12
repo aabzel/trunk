@@ -6,6 +6,12 @@
 
 #include <string.h>
 
+#include "log_constants.h"
+
+#ifdef HAS_WRITER
+#include "writer.h"
+#endif
+
 static int16_t get_col_count(const table_col_t cols[]) {
     int16_t count = 0;
     while(0U < cols[count].width) {

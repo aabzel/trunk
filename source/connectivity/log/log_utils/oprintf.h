@@ -5,11 +5,11 @@
 extern "C" {
 #endif
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 
+#include "std_includes.h"
 #include "ostream.h"
+#include "writer_types.h"
 
 #ifndef HAS_STREAM
 #error "+HAS_STREAM"
@@ -29,8 +29,19 @@ extern "C" {
 #endif
 #endif
 
-void oprintf(ostream_t* s, const char* fmt, ...);
+typedef enum {
+    SIZE_SIGNED_CHAR,
+    SIZE_SHORT,
+    SIZE_NORMAL,
+    size_long,
+    SIZE_LONG_LONG,
+    size_long_long_long = 8,
+    SIZE_SIZE_T
+} format_size_t;
 
+
+void oprintf(ostream_t* s, const char* fmt, ...);
+bool ovprint_is_valid(ostream_t* stream);
 bool ovprintf(ostream_t* s, const char* fmt, va_list va);
 
 #ifdef __cplusplus

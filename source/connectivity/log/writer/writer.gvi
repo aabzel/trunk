@@ -1,0 +1,8 @@
+#ifdef HAS_FIFO
+FIFO->WRITER
+#endif
+
+#ifdef HAS_UART
+UART->WRITER
+#endif
+

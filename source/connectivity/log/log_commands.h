@@ -1,12 +1,13 @@
 #ifndef LOG_COMMANDS_H
 #define LOG_COMMANDS_H
 
-#include <stdbool.h>
-#include <stdint.h>
+
+#include "std_includes.h"
 
 bool cmd_log_init(int32_t argc, char* argv[]);
 bool cmd_log_level(int32_t argc, char* argv[]);
 bool cmd_log_diag(int32_t argc, char* argv[]);
+bool log_time_stamp_command(int32_t argc, char* argv[]);
 
 #ifdef HAS_LOG_EXT_CMD
 
@@ -23,6 +24,7 @@ bool cmd_log_try_color(int32_t argc, char* argv[]);
 #endif /*HAS_LOG_EXT_CMD*/
 
 #define LOG_COMMANDS                                                       \
+    SHELL_CMD("log_time_stamp", "lts", log_time_stamp_command, "LogTimeStamp"),    \
     SHELL_CMD("log_init", "li", cmd_log_init, "LogInit"),    \
     SHELL_CMD("log_level", "ll", cmd_log_level, "SetOrPrintLogLevels"),    \
     SHELL_CMD("log_diag", "ld", cmd_log_diag, "LogDiag"),                  \

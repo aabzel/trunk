@@ -2,11 +2,10 @@
 
 #include <inttypes.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 
-#ifdef HAS_X86_64
-#include <stdio.h>
-#endif
+#include "compiler_const.h"
 
 #ifdef HAS_ARRAY_DIAG
 #include "array_diag.h"
@@ -14,8 +13,7 @@
 
 #ifdef HAS_LOG_UTILS
 #include "log_utils.h"
-#include "writer_config.h"
-#include "writer_generic.h"
+#include "writer.h"
 #endif
 
 #ifdef HAS_STREAM
@@ -70,6 +68,9 @@ static bool log_init_one(uint8_t num) {
     return res;
 }
 
+/*
+ Current logging settings
+ */
 Log_t Log = {
 #ifdef HAS_LOG_DIAG
     .facility_name = true,
@@ -113,7 +114,7 @@ bool log_initialize(void) {
 #endif
 
 #ifdef HAS_LOG_UTILS
-    res = writer_init();
+    res = writer_mcal_init();
 #endif
 
     return res;
@@ -199,46 +200,62 @@ static bool is_log_enabled(log_level_t level, facility_t facility) {
 
 bool log_write_prefix(log_level_t level, facility_t facility) {
     bool res = false;
+    char temp[40] = {0};
+    memset(temp, 0, sizeof(temp));
+
     res = is_log_enabled(level, facility);
 
     if(res) {
+        if(Log.new_line) {
+#ifdef HAS_STREAM
+            // cli_putstr(CRLF);
+#endif
+        }
+
 #ifdef HAS_LOG_TIME_STAMP
-        uint32_t up_time_ms = 0;
-        up_time_ms = time_get_ms32();
+        uint32_t up_time_ms = time_get_ms32();
+        (void)up_time_ms;
 #endif /**/
 
 #ifdef HAS_LOG_COLOR
         if(Log.colored) {
 #ifdef HAS_LOG_DIAG
             const char* color = log_level_color(level);
-            cli_putstr(color);
+            // cli_putstr(color);
+            snprintf(temp, sizeof(temp), "%s%s", temp, color);
 #endif /*HAS_LOG_DIAG*/
         }
 #endif /*HAS_LOG_COLOR*/
-
-#ifdef HAS_X86_64
-        // cli_printf("\n");
-#endif
 
 #ifdef HAS_LOG_TIME_STAMP
         if(Log.time_stamp) {
             uint32_t up_time_s = up_time_ms / 1000;
             uint32_t up_time_ms_frac = up_time_ms % 1000;
             Log.serial_nun++;
-            cli_printf("%u.%03u,%u ", up_time_s, up_time_ms_frac, Log.serial_nun);
+            uint32_t time_diff_ms = up_time_ms - Log.up_time_prev_ms;
+            snprintf(temp, sizeof(temp), "%s%u.", temp, up_time_s);
+            snprintf(temp, sizeof(temp), "%s%03u,", temp, up_time_ms_frac);
+            snprintf(temp, sizeof(temp), "%s+%u,", temp, time_diff_ms);
+            snprintf(temp, sizeof(temp), "%s%u,", temp, Log.serial_nun);
+
+            Log.up_time_prev_ms = up_time_ms;
         }
 #endif /*HAS_LOG_TIME_STAMP*/
 
 #ifdef HAS_LOG_DIAG
         if(Log.facility_name) {
-            cli_printf("%c,", log_level_name(level));
+            snprintf(temp, sizeof(temp), "%s%c,", temp, log_level_name(level));
+
 #ifdef HAS_SYSTEM_DIAG
-            cli_printf("[%s] ", Facility2Str(facility));
+            // cli_printf("[%s] ", FacilityToStr(facility));
+            snprintf(temp, sizeof(temp), "%s[%s],", temp, FacilityToStr(facility));
 #endif /*HAS_SYSTEM_DIAG*/
         }
 #endif /*HAS_LOG_DIAG*/
         res = true;
     }
+    cli_printf("%s", temp);
+
     return res;
 }
 
@@ -248,11 +265,13 @@ void log_write_end(void) {
         cli_putstr(VT_SETCOLOR_NORMAL);
     }
 #endif
+
     if(Log.new_line) {
 #ifdef HAS_STREAM
         cli_putstr(CRLF);
 #endif
     }
+
 #ifndef NO_EMBEDED
     if(Log.flush) {
 #ifdef HAS_PRINTF
@@ -260,6 +279,16 @@ void log_write_end(void) {
 #endif
     }
 #endif
+}
+
+log_level_t ResToLogLevel(const bool res) {
+    log_level_t log_level = LOG_LEVEL_DEBUG;
+    if(res) {
+        log_level = LOG_LEVEL_INFO;
+    } else {
+        log_level = LOG_LEVEL_ERROR;
+    }
+    return log_level;
 }
 
 void log_write(log_level_t level, facility_t facility, const char* format, ...) {
@@ -323,7 +352,7 @@ void LOG_PROTECTED(facility_t facility, const char* format, ...) {
 #endif
 }
 
-void LOG_INFO(facility_t facility, const char* format, ...) {
+void LOG_INFO(facility_t facility, const char* const format, ...) {
 #ifdef HAS_STREAM
     if(log_write_prefix(LOG_LEVEL_INFO, facility)) {
         va_list va;
@@ -348,6 +377,7 @@ void LOG_WARNING(facility_t facility, const char* format, ...) {
 }
 
 void LOG_ERROR(facility_t facility, const char* format, ...) {
+    /* log_write(LOG_LEVEL_ERROR, facility, format); does not work */
 #ifdef HAS_STREAM
     if(log_write_prefix(LOG_LEVEL_ERROR, facility)) {
         va_list va;
@@ -360,8 +390,21 @@ void LOG_ERROR(facility_t facility, const char* format, ...) {
 }
 
 void LOG_CRITICAL(facility_t facility, const char* format, ...) {
+    /* log_write(LOG_LEVEL_CRITICAL, facility, format); does not work */
 #ifdef HAS_STREAM
     if(log_write_prefix(LOG_LEVEL_CRITICAL, facility)) {
+        va_list va;
+        va_start(va, format);
+        cli_vprintf(format, va);
+        va_end(va);
+        log_write_end();
+    }
+#endif
+}
+
+void LOG_COVERAGE(facility_t facility, const char* format, ...) {
+#ifdef HAS_STREAM
+    if(log_write_prefix(LOG_LEVEL_COVERAGE, facility)) {
         va_list va;
         va_start(va, format);
         cli_vprintf(format, va);
@@ -389,6 +432,17 @@ log_level_t log_level_get_set(facility_t facility, log_level_t log_level) {
     return origin;
 }
 
+bool log_res_u32(const facility_t facility, const bool res, const char* const in_text, const uint32_t value) {
+#ifdef HAS_STREAM
+    if(res) {
+        LOG_DEBUG(facility, "%s:%u,Ok", in_text, value);
+    } else {
+        LOG_ERROR(facility, "%s:%u,Err", in_text, value);
+    }
+#endif
+    return res;
+}
+
 bool log_res(const facility_t facility, const bool res, const char* const in_text) {
 #ifdef HAS_STREAM
     if(res) {
@@ -411,6 +465,16 @@ bool log_parn_res(const facility_t facility, const bool res, const char* const i
     return res;
 }
 
+bool log_debug_res(const facility_t facility, const bool res, const char* const in_text) {
+#ifdef HAS_STREAM
+    if(res) {
+        LOG_DEBUG(facility, "%s,Ok", in_text);
+    } else {
+        LOG_ERROR(facility, "%s,Err", in_text);
+    }
+#endif
+    return res;
+}
 
 bool log_info_res(const facility_t facility, const bool res, const char* const in_text) {
 #ifdef HAS_STREAM
@@ -423,15 +487,45 @@ bool log_info_res(const facility_t facility, const bool res, const char* const i
     return res;
 }
 
-#ifdef HAS_PC
-bool stdio_send(const uint8_t* const array, const uint32_t size) {
-    bool res = false;
-#ifdef HAS_ARRAY_DIAG
-    cli_printf("%s", ArrayToStr(array, size));
-    res = true;
+bool log_info_res_u32(const facility_t facility, const bool res, const char* const in_text, const uint32_t value) {
+#ifdef HAS_STREAM
+    if(res) {
+        LOG_INFO(facility, "%s:%u,Ok", in_text, value);
+    } else {
+        LOG_ERROR(facility, "%s:%u,Err", in_text, value);
+    }
 #endif
     return res;
 }
-#endif
+
+_WEAK_FUN_
+void cli_printf(const char* format, ...) {}
+
+_WEAK_FUN_
+void cli_putstr(const char* str) {}
+
+_WEAK_FUN_
+void cli_putchar(char ch) {}
+
+_WEAK_FUN_
+void cli_vprintf(const char* format, va_list vlist) {}
+
+bool log_mcal_init_disable(void) {
+    bool res = true;
+    uint32_t f = UNKNOWN_FACILITY;
+    for(f = 0; f <= ALL_FACILITY; f++) {
+        res = set_log_level((facility_t)f, LOG_LEVEL_DISABLE);
+    }
+    return res;
+}
+
+bool log_enable(void) {
+    bool res = true;
+    uint32_t f = UNKNOWN_FACILITY;
+    for(f = 0; f <= ALL_FACILITY; f++) {
+        res = set_log_level((facility_t)f, LOG_LEVEL_INFO);
+    }
+    return res;
+}
 
 COMPONENT_INIT_PATTERT(LOG, LOG, log)

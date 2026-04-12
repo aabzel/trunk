@@ -11,27 +11,19 @@ ifneq ($(STRING_READER_DRV_MK_LOG),Y)
     INCDIR += -I$(STRING_READER_DRV_DIR)
 
     READER=Y
-    OPT += -DHAS_READER_CMD_HISTORY
-    OPT += -DHAS_STRING_READER
-    OPT += -DHAS_STRING_READER_PROC
+    MCAL_OPT += -DHAS_READER_CMD_HISTORY
+    MCAL_OPT += -DHAS_STRING_READER
+    MCAL_OPT += -DHAS_STRING_READER_PROC
 
     SOURCES_C += $(STRING_READER_DRV_DIR)/string_reader.c
 
-    ifeq ($(STRING_READER1),Y)
-        OPT += -DHAS_STRING_READER1
-    endif
-    
-    ifeq ($(STRING_READER2),Y)
-        OPT += -DHAS_STRING_READER2
-    endif
-    
     ifeq ($(STRING_READER_DIAG),Y)
-        OPT += -DHAS_STRING_READER_DIAG
+        MCAL_OPT += -DHAS_STRING_READER_DIAG
         SOURCES_C +=  $(STRING_READER_DRV_DIR)/string_reader_diag.c
     endif
 
     ifeq ($(STRING_READER_COMMANDS),Y)
-        OPT += -DHAS_STRING_READER_COMMANDS
+        MCAL_OPT += -DHAS_STRING_READER_COMMANDS
         #@echo $(error STRING_READER_COMMANDS= $(STRING_READER_COMMANDS))
         SOURCES_C +=  $(STRING_READER_DRV_DIR)/string_reader_commands.c
     endif

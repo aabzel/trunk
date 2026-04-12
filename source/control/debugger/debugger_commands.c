@@ -6,6 +6,26 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "cli_drv.h"
+#include "convert.h"
+#include "data_utils.h"
+#include "debugger.h"
+#include "log.h"
+#include "log_utils.h"
+#include "none_blocking_pause.h"
+#include "str_utils.h"
+#include "sys_config.h"
+#include "table_utils.h"
+#include "writer_config.h"
+
+#ifdef HAS_FLASH
+#include "flash_mcal.h"
+#endif
+
+#ifdef HAS_MICROCONTROLLER
+#include "microcontroller.h"
+#endif
+
 #ifdef HAS_ALLOCATOR
 #include "allocator_types.h"
 #endif
@@ -15,58 +35,30 @@
 #include "task.h"
 #endif
 
-#include "convert.h"
-#include "data_utils.h"
-#include "debugger.h"
-#include "log.h"
-#include "log_utils.h"
-#include "storage.h"
-#include "sys_config.h"
-#ifdef HAS_FLASH
-#include "flash_mcal.h"
-#endif
-#include "cli_drv.h"
-#ifdef HAS_MICROCONTROLLER
-#include "microcontroller.h"
-#endif
-#include "none_blocking_pause.h"
-#include "str_utils.h"
-#include "table_utils.h"
-#include "writer_config.h"
-
 bool cmd_write_memory(int32_t argc, char* argv[]) {
     bool res = false;
     if(2 == argc) {
         res = true;
         uint32_t address = 0u;
-        uint32_t value = 0u;
         res = try_str2uint32(argv[0], &address);
-        if(false == res) {
-            LOG_ERROR(DBG, "Invalid address hex value %s", argv[0]);
-        } else {
+        log_res(DBG, res, "Addr");
+        if(res) {
             cli_printf("address: 0x%08x" CRLF, (unsigned int)address);
         }
 
+        uint32_t value = 0u;
         res = try_str2uint32(argv[1], &value);
-        if(false == res) {
-            LOG_ERROR(DBG, "Invalid value %s", argv[1]);
-        } else {
+        log_res(DBG, res, "Value");
+        if(res) {
             cli_printf("val: 0x%08x" CRLF, (unsigned int)value);
         }
 
         if(res) {
-#ifdef HAS_FLASH
-            res = is_flash_addr(address);
-#endif
-            if(res) {
-                LOG_ERROR(DBG, "FlashWriteHasSpesialApi 0x%x", address);
-            } else {
-                LOG_INFO(DBG, "NotFlashAdr 0x%x", address);
+            cli_printf(CRLF);
+            LOG_INFO(DBG, "Try Addr[0x%08x]=0x%x", address, value);
 #ifdef HAS_WRITE_ADDR
-                LOG_INFO(DBG, "Try Addr[0x%x]=0x%x", address, value);
-                res = write_addr_32bit(address, value);
+            res = write_addr_32bit(address, value);
 #endif
-            }
         }
     } else {
         LOG_ERROR(DBG, "Usage: wm: address value");
@@ -80,13 +72,12 @@ bool cmd_write_memory(int32_t argc, char* argv[]) {
 bool cmd_read_memory(int32_t argc, char* argv[]) {
     bool res = false;
     char dir = 'f';
-    uint32_t num_of_byte = 4u;
+    uint32_t size = 4u;
     uint32_t address = 0u;
     if(1 <= argc) {
         res = try_str2uint32(argv[0], &address);
-        if(false == res) {
-            LOG_ERROR(DBG, "InvalidAddrHexVal %s", argv[0]);
-        } else {
+        log_res(DBG, res, "Addr");
+        if(res) {
             cli_printf("address: 0x%08x" CRLF, (unsigned int)address);
         }
     }
@@ -105,11 +96,11 @@ bool cmd_read_memory(int32_t argc, char* argv[]) {
 #endif
 
     if(2 <= argc) {
-        res = try_str2uint32(argv[1], &num_of_byte);
+        res = try_str2uint32(argv[1], &size);
         if(false == res) {
             LOG_ERROR(DBG, "InvalidNumByte %s", argv[1]);
         } else {
-            cli_printf("numOfByte: %d " CRLF, (unsigned int)num_of_byte);
+            cli_printf("numOfByte: %d " CRLF, (unsigned int)size);
         }
     }
 
@@ -118,9 +109,11 @@ bool cmd_read_memory(int32_t argc, char* argv[]) {
     }
 
     if(res) {
+        cli_printf(CRLF);
+        LOG_DEBUG(DBG, "TryRead,Addr:0x%08X,Size:%u", address, size);
         uint32_t offset = 0, cnt = 0;
         uint8_t value_byte = 0u;
-        for(cnt = 0; cnt < num_of_byte; cnt++) {
+        for(cnt = 0; cnt < size; cnt++) {
             value_byte = read_addr_8bit(address + offset);
             cli_printf("%02x", (unsigned int)value_byte);
             if('f' == dir) {
@@ -133,9 +126,9 @@ bool cmd_read_memory(int32_t argc, char* argv[]) {
     }
 
     if((0 == argc) || (3 < argc)) {
-        LOG_ERROR(DBG, "Usage: read_mem: address num_of_byte dir");
+        LOG_ERROR(DBG, "Usage: read_mem: address size dir");
         LOG_INFO(DBG, "Usage: address 0xXXXXXXXX");
-        LOG_INFO(DBG, "Usage: num_of_byte [0...]");
+        LOG_INFO(DBG, "Usage: size [0...]");
         LOG_INFO(DBG, "Usage: dir [f r]");
     }
     return res;
@@ -153,15 +146,11 @@ bool cmd_repeat(int32_t argc, char* argv[]) {
         strncpy(read_command, argv[0], sizeof(read_command));
         if(res) {
             res = try_str2uint32(argv[1], &period_ms);
-            if(false == res) {
-                LOG_ERROR(DBG, "Unable to parse period_ms", argv[1]);
-            }
+            log_res(DBG, res, "PeriodMs");
         }
         if(res) {
             res = try_str2uint32(argv[2], &num_of_try);
-            if(false == res) {
-                LOG_ERROR(DBG, "Unable to parse num_of_try", argv[2]);
-            }
+            log_res(DBG, res, "TryN");
         }
         uint32_t iter = 0U;
         replace_char(read_command, '_', ' ');
@@ -199,30 +188,22 @@ bool cmd_find_addr(int32_t argc, char* argv[]) {
         uint32_t value = 0;
         if(res) {
             res = try_str2uint16(argv[0], &byte_num);
-            if(false == res) {
-                LOG_ERROR(DBG, "Unable to byte_num %s", argv[0]);
-            }
+            log_res(DBG, res, "ByteNum");
         }
 
         if(res) {
             res = try_str2uint32(argv[1], &value);
-            if(false == res) {
-                LOG_ERROR(DBG, "Unable to parse value %s", argv[1]);
-            }
+            log_res(DBG, res, "Value");
         }
 
         if(res) {
             res = try_str2uint32(argv[2], &phy_start);
-            if(false == res) {
-                LOG_ERROR(DBG, "Unable to parse mem %s", argv[2]);
-            }
+            log_res(DBG, res, "PhyStart");
         }
 
         if(res) {
             res = try_str2uint32(argv[3], &phy_end);
-            if(false == res) {
-                LOG_ERROR(DBG, "Unable to parse mem %s", argv[3]);
-            }
+            log_res(DBG, res, "PhyEnd");
         }
 
         if(res) {
@@ -247,9 +228,7 @@ bool cmd_launch_function(int32_t argc, char* argv[]) {
         void (*function_ptr)(void);
         if(res) {
             res = try_str2uint32(argv[0], &function_address);
-            if(false == res) {
-                LOG_ERROR(DBG, "Unable to parse address %s", argv[0]);
-            }
+            log_res(DBG, res, "FuncAddr");
         }
         if(res) {
             function_ptr = (void (*)(void))function_address;
@@ -305,9 +284,7 @@ bool count_link_command(int32_t argc, char* argv[]) {
 
     if(1 == argc) {
         res = try_str2uint32(argv[0], &addr);
-        if(false == res) {
-            LOG_ERROR(DBG, "ParseErr Addr [%s]", argv[0]);
-        }
+        log_res(DBG, res, "Addr");
     }
     if(res) {
         LinkCounter_t LinkCounter = {0, 0};
@@ -354,9 +331,7 @@ bool read_register_command(int32_t argc, char* argv[]) {
     uint32_t address = 0x20000000;
     if(1 <= argc) {
         res = try_str2uint32(argv[0], &address);
-        if(false == res) {
-            LOG_ERROR(DBG, "ParseErr Addr [%s]", argv[0]);
-        }
+        log_res(DBG, res, "Addr");
     }
 
     if(res) {
@@ -368,6 +343,32 @@ bool read_register_command(int32_t argc, char* argv[]) {
 #endif
     } else {
         LOG_ERROR(DBG, "Usage: rr address");
+    }
+    return res;
+}
+
+bool memmory_test_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t size = 0;
+    uint32_t address = 0x20000000;
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &address);
+        log_res(DBG, res, "Addr");
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &size);
+        log_res(DBG, res, "Size");
+    }
+
+    if(res) {
+        res = false;
+#ifdef HAS_WRITE_ADDR
+        res = memmory_test(address, size);
+#endif
+        log_res(DBG, res, "MemTest");
+    } else {
+        LOG_ERROR(DBG, "Usage: mt address size");
     }
     return res;
 }

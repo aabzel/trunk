@@ -7,25 +7,25 @@
 #include "sys_constants.h"
 #include "fifo_char.h"
 #ifdef HAS_INTERFACES
-#include "interfaces_const.h"
+#include "interfaces_types.h"
 #endif
 
 typedef bool (*handle_string_f)(uint8_t num, char* s);
 
 #define STRING_READER_COMMON_VARIABLES      \
-    Interfaces_t interface_if;              \
+    uint32_t fifo_heap_size;                \
+    int32_t string_size;                    \
+    InterfaceType_t interface_if;           \
     handle_string_f callback;               \
     uint8_t num;                            \
+    uint8_t core;                           \
     uint8_t cli_num;                        \
     bool secure_echo;                       \
     bool valid;                             \
-    uint8_t if_num;                         \
     bool echo;                              \
     char * name;                            \
-    char * fifo_heap;                       \
-    char * string;      /*command itself*/  \
-    int32_t string_size;                    \
-    uint32_t fifo_heap_size;                \
+    uint8_t * fifo_heap;                    \
+    uint8_t * string;   /*command itself*/  \
     uint8_t feedback_led;
 
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
     bool init_done;
 #ifdef HAS_READER_CMD_HISTORY
     char prev_cmd[PREV_CMD_MAX_LEN];
-#endif /*HAS_READER_CMD_HISTORY*/
+#endif /* */
     uint32_t enter_cnt;
 
 #ifdef HAS_FIFO_CHAR

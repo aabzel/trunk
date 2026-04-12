@@ -2,63 +2,76 @@
 
 #include <stdio.h>
 
-#ifdef HAS_BOARD
-#include "log_config.h"
-#endif /*HAS_BOARD*/
-
 #ifdef HAS_LOG
 #include "log.h"
-#include "terminal_codes.h"
-#include "writer_config.h"
-#include "writer_generic.h"
 #endif
 
-#ifdef HAS_UART
-//#include "uart_drv.h"
+#include "oprintf.h"
+
+#include "microcontroller_drv.h"
+
+#ifdef HAS_WRITER
+#include "writer.h"
 #endif
 
 #ifdef HAS_CUSTOM_PRINTF
 // print_callback_t print_callback_f;
 
 void cli_putstr(const char* str) {
+    WriterHandle_t* Writer = writer_get();
+    if(Writer) {
 #ifdef HAS_LOG
-    oputs(&curWriterPtr->stream, str);
+        oputs(&Writer->stream, str);
 #endif
+    }
 }
 #endif /*HAS_CUSTOM_PRINTF*/
 
 #ifdef HAS_CUSTOM_PRINTF
 void cli_putchar(char ch) {
+    WriterHandle_t* Writer = writer_get();
+    if(Writer) {
+
 #ifdef HAS_LOG
-    (&curWriterPtr->stream)->f_putch(&curWriterPtr->stream, ch);
+        (&Writer->stream)->f_putch(&Writer->stream, ch);
 #endif
+    }
 }
 #endif /*HAS_CUSTOM_PRINTF*/
 
 #ifdef HAS_CUSTOM_PRINTF
 /*TODO: cli_printf -> log_printf */
 void cli_printf(const char* format, ...) {
-    va_list vlist;
-    va_start(vlist, format);
+    WriterHandle_t* Writer = writer_get();
+    if(Writer) {
+        va_list vlist;
+        va_start(vlist, format);
 #ifdef HAS_LOG
-    ovprintf(&curWriterPtr->stream, format, vlist);
+        ovprintf(&Writer->stream, format, vlist);
 #endif /*HAS_LOG*/
-    va_end(vlist);
+        va_end(vlist);
+    }
 }
 #endif /*HAS_CUSTOM_PRINTF*/
 
 #ifdef HAS_CUSTOM_PRINTF
 void cli_vprintf(const char* format, va_list vlist) {
+    WriterHandle_t* Writer = writer_get();
+    if(Writer) {
 #ifdef HAS_LOG
-    ovprintf(&curWriterPtr->stream, format, vlist);
+        ovprintf(&Writer->stream, format, vlist);
 #endif
+    }
 }
 
 bool is_printf_clean(void) {
     bool res = false;
+    WriterHandle_t* Writer = writer_get();
+    if(Writer) {
 #ifdef HAS_LOG
-    res = writer_clean(curWriterPtr);
+        res = writer_clean(Writer);
 #endif
+    }
     return res;
 }
 #endif /*HAS_CUSTOM_PRINTF*/
@@ -72,10 +85,14 @@ void cli_putstrln(const char* str) {
 }
 
 void wait_for_printf(void) {
+    WriterHandle_t* Writer = writer_get();
+    if(Writer) {
+
 #ifdef HAS_LOG
-    while(!writer_half_clean(curWriterPtr)) {
-    }
+        while(!writer_half_clean(Writer)) {
+        }
 #endif
+    }
 }
 
 #endif /*HAS_CUSTOM_PRINTF*/

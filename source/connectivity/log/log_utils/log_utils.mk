@@ -1,40 +1,25 @@
 ifneq ($(LOG_UTILS_MK_INC),Y)
     LOG_UTILS_MK_INC=Y
 
-
     LOG_UTILS_DIR = $(LOG_DIR)/log_utils
 
     # $(error LOG_UTILS_DIR=$(LOG_UTILS_DIR))
     INCDIR += -I$(LOG_UTILS_DIR)
-    #OPT += -Dcli_printf=printf
-    OPT += -DHAS_LOG_UTILS
-    
+    #MCAL_OPT += -Dcli_printf=printf
+    MCAL_OPT += -DHAS_LOG_UTILS
+
     ifeq ($(STR2_DOUBLE),Y)
-        OPT += -DHAS_STR2_DOUBLE
-    endif
-    
-    ifeq ($(STREAM),Y)
-        #@echo $(error STREAM=$(STREAM))
-        SOURCES_C += $(LOG_UTILS_DIR)/log_utils.c
-        SOURCES_C += $(LOG_UTILS_DIR)/oprintf.c
-        SOURCES_C += $(LOG_UTILS_DIR)/ostream.c
-        SOURCES_C += $(LOG_UTILS_DIR)/print_format.c
-        SOURCES_C += $(LOG_UTILS_DIR)/string_writer.c
-        SOURCES_C += $(LOG_UTILS_DIR)/writer_generic.c
-        SOURCES_C += $(LOG_UTILS_DIR)/writer_config.c
+        MCAL_OPT += -DHAS_STR2_DOUBLE
     endif
 
-    ifeq ($(UART),Y)
-        #@echo $(error UART= $(UART))
-        SOURCES_C += $(LOG_UTILS_DIR)/writer_uart.c
+    ifeq ($(STREAM),Y)
+        # $(error STREAM=$(STREAM))
+        SOURCES_C += $(LOG_UTILS_DIR)/log_utils.c
+        SOURCES_C += $(LOG_UTILS_DIR)/oprintf.c
+        SOURCES_C += $(LOG_UTILS_DIR)/print_format.c
     endif
 
     ifeq ($(CUSTOM_PRINTF),Y)
-        OPT += -DHAS_CUSTOM_PRINTF
+        MCAL_OPT += -DHAS_CUSTOM_PRINTF
     endif
-
-    ifeq ($(X86),Y)
-        SOURCES_C += $(LOG_UTILS_DIR)/writer_stdout.c
-    endif
-    
 endif

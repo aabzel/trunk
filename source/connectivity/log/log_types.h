@@ -11,19 +11,20 @@ extern "C" {
 #error "+HAS_SYSTEM"
 #endif
 
+#include "log_constants.h"
+
 #ifdef HAS_INTERFACES
-#include "interfaces_const.h"
+#include "interfaces_types.h"
 #endif
 
-#include "log_constants.h"
 #ifdef HAS_SYSTEM
 #include "sys_constants.h"
 #endif
 
 #ifdef HAS_INTERFACES
-#include "interfaces_const.h"
+#include "interfaces_types.h"
 // keyword "interface" is reserved in Win PC builds
-#define LOG_IF_COMMON_VARIABLES Interfaces_t interface_;
+#define LOG_IF_COMMON_VARIABLES InterfaceType_t inter_face;
 #else
 #define LOG_IF_COMMON_VARIABLES
 #endif
@@ -60,7 +61,7 @@ typedef struct {
 #ifdef HAS_LOG_COLOR
     bool colored;
 #endif/*HAS_LOG_COLOR*/
-    uint64_t up_time_ms;
+    uint32_t up_time_prev_ms;
 }Log_t;
 
 

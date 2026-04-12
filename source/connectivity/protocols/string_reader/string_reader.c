@@ -6,14 +6,22 @@
 #include <conio.h> /*for kbhit getch function. Clang/cygwin64 build error*/
 #endif
 
+#include "array.h"
 #include "code_generator.h"
+#include "compiler_const.h"
 #include "convert.h"
 #include "log.h"
 #include "terminal_codes.h"
-#include "writer_config.h"
+#include "writer.h"
+
+#ifdef HAS_AUTO_EXIT
+#include "auto_exit.h"
+#endif
+
 #ifdef HAS_LED_MONO
 #include "led_mono_drv.h"
 #endif
+
 #ifdef HAS_CLI
 #include "cli_drv.h"
 #endif
@@ -29,13 +37,18 @@ static bool string_reader_init_custom(void) {
     return res;
 }
 
-StringReaderHandle_t* StringReaderInterfaceToNode(Interfaces_t interface_if) {
+_WEAK_FUN_ bool string_reader_proc_custom(void) {
+    bool res = true;
+    return res;
+}
+
+StringReaderHandle_t* StringReaderInterfaceToNode(const InterfaceType_t interface_if) {
     StringReaderHandle_t* Node = NULL;
     uint32_t cnt = string_reader_get_cnt();
     uint32_t i = 0;
     for(i = 0; i < cnt; i++) {
         if(StringReaderInstance[i].valid) {
-            if(interface_if == StringReaderInstance[i].interface_if) {
+            if(interface_if.word == StringReaderInstance[i].interface_if.word) {
                 Node = &StringReaderInstance[i];
             }
         }
@@ -56,8 +69,9 @@ bool string_reader_rx_character(StringReaderHandle_t* Node, char character) {
 }
 
 /*called from ISR*/
-bool string_reader_rx_byte(Interfaces_t interface_if, uint8_t rx_byte) {
+bool string_reader_rx_byte(const InterfaceType_t interface_if, uint8_t rx_byte) {
     bool res = false;
+    writer_interface_set(interface_if);
     StringReaderHandle_t* Node = StringReaderInterfaceToNode(interface_if);
     if(Node) {
         res = string_reader_rx_character(Node, (char)rx_byte);
@@ -75,6 +89,46 @@ bool string_reader_proc_rx_byte(uint8_t num, uint8_t rx_byte) {
     return res;
 }
 
+static const char StringReaderSpecialCharacters[] = {
+    ' ',
+    '{',
+    '}',
+    '[',
+    ']',
+    '>',
+    '<',
+    '(',
+    ')',
+    '.',
+    '@',
+    '#',
+    '^',
+    '%',
+    '$',
+    ',',
+    '"',
+    ':',
+    ';',
+    '_',
+    '-',
+    '|',
+    '\\',
+    '/',
+    '~',
+    '&',
+    '!',
+    '?',
+    ASCII_ESC,
+    ASCII_TAB,
+    ASCII_BACKSPACE,
+    ASCII_ENTER,
+    ASCII_LINE_FEED,
+    0,
+    '+',
+    '=',
+    '*',
+};
+
 /*TODO test it*/
 static bool string_reader_is_valid_char(char character) {
     bool res = false;
@@ -89,47 +143,10 @@ static bool string_reader_is_valid_char(char character) {
             res = true;
         }
     }
-    switch(character) {
-    case ' ':
-    case '{':
-    case '}':
-    case '[':
-    case ']':
-    case '>':
-    case '<':
-    case '(':
-    case ')':
-    case '.':
-    case '@':
-    case '#':
-    case '^':
-    case '%':
-    case '$':
-    case ',':
-    case '"':
-    case ':':
-    case ';':
-    case '_':
-    case '-':
-    case '|':
-    case '\\':
-    case '/':
-    case '~':
-    case '&':
-    case '!':
-    case '?':
-    case ASCII_ESC:
-    case ASCII_TAB:
-    case ASCII_BACKSPACE:
-    case ASCII_ENTER:
-    case ASCII_LINE_FEED:
-    case 0:
-    case '+':
-    case '=':
-    case '*':
-        res = true;
-        break;
-        // default:{res = false;}break;
+
+    if(false == res) {
+        uint32_t size = ARRAY_SIZE(StringReaderSpecialCharacters);
+        res = array_is_exist(character, StringReaderSpecialCharacters, size);
     }
     return res;
 }
@@ -137,28 +154,9 @@ static bool string_reader_is_valid_char(char character) {
 static bool string_reader_writer_ctrl(StringReaderHandle_t* Node, bool on_off) {
     bool res = true;
     if(on_off) {
-        switch(Node->interface_if) {
-#ifdef HAS_UART3
-        case IF_UART3: {
-            curWriterPtr = &dbg_o;
-        } break;
-#endif
-
-#ifdef HAS_USB
-        case IF_USB_HID: {
-            curWriterPtr = &usb_hid_o;
-        } break;
-#endif
-        default: {
-#ifdef HAS_UART
-            curWriterPtr = &dbg_o;
-#endif
-        } break;
-        } // switch (Node->interface_if)
+        res = writer_interface_set(Node->interface_if);
     } else {
-#ifdef HAS_UART
-        curWriterPtr = &dbg_o;
-#endif
+        curWriterPtr = writer_set_default();
     }
     return res;
 }
@@ -168,36 +166,22 @@ static bool string_reader_echo_putchar(StringReaderHandle_t* Node, char ch) {
     res = string_reader_is_valid_char(ch);
     if(res) {
     } else {
-        LOG_DEBUG(STRING_READER, "UndefChar:0x%x=(%c)", ch, ch);
+        LOG_ERROR(STRING_READER, "UndefChar:0x%x=(%c)", ch, ch);
         // ch = '?';
     }
-    switch(Node->interface_if) {
-#ifdef HAS_UART3
-    case IF_UART3: {
-        curWriterPtr = &dbg_o;
-#ifdef HAS_LOG_COLOR
-        cli_putstr(VT_SETCOLOR_YELLOW);
-#endif
-    } break;
-#endif
 
-#ifdef HAS_USB
-    case IF_USB_HID: {
-        curWriterPtr = &usb_hid_o;
-    }
-#endif
-    break;
-    default: {
-#ifdef HAS_UART
-        curWriterPtr = &dbg_o;
-#endif
-    } break;
-    }
+    res = writer_interface_set(Node->interface_if);
 
     if(Node->secure_echo) {
         ch = '*';
     }
-    (&curWriterPtr->stream)->f_putch(&curWriterPtr->stream, ch);
+
+    if(curWriterPtr) {
+        if(curWriterPtr->stream.f_putch) {
+            curWriterPtr->stream.f_putch(&curWriterPtr->stream, ch);
+        }
+    }
+#if 0
 
 #ifdef HAS_USB
     if(IF_USB_HID != Node->interface_if) {
@@ -207,7 +191,6 @@ static bool string_reader_echo_putchar(StringReaderHandle_t* Node, char ch) {
     cli_putstr(VT_SETCOLOR_NORMAL);
 #endif
 
-#ifdef HAS_UART
     curWriterPtr = &dbg_o;
 #endif
     return res;
@@ -229,6 +212,31 @@ static Arrow_t sr_arrows_parse(StringReaderHandle_t* Node, char cur_char) {
 }
 #endif
 
+static bool string_reader_proc_enter(StringReaderHandle_t* const Node) {
+    bool res = false;
+    LOG_DEBUG(STRING_READER, "Enter");
+    if(Node->echo) {
+        cli_putstr(CRLF);
+    }
+    Node->string[Node->string_len] = 0;
+    Node->total_string_count++;
+
+    string_reader_writer_ctrl(Node, true);
+    char tonen[300] = {0};
+    strcpy(tonen, (char*)Node->string);
+    strcpy((char*)Node->string, "");
+    /* can be non return */
+    res = cli_process_cmd(Node->cli_num, tonen);
+    string_reader_writer_ctrl(Node, false);
+    if(res) {
+        memset(Node->string, 0, Node->string_size);
+        strncpy(Node->prev_cmd, (char*)Node->string, sizeof(Node->prev_cmd));
+    }
+    Node->string_len = 0;
+    Node->string[0] = 0;
+    return res;
+}
+
 bool string_reader_proc_one(uint8_t num) {
     bool res = false;
 
@@ -246,16 +254,20 @@ bool string_reader_proc_one(uint8_t num) {
 #endif /*HAS_PC*/
 
         while(1) {
-            FifoIndex_t size = 0, i = 0;
-            char data[100] = "";
+            uint32_t size = 0, i = 0;
+            uint8_t data[100] = "";
             fifo_pull_array(&Node->fifo, data, sizeof(data), &size);
             if(size) {
+#ifdef HAS_AUTO_EXIT
+                auto_exit_postone();
+#endif
                 LOG_DEBUG(STRING_READER, "Rx:%u bytes", size);
 #ifdef HAS_LED_MONO
                 if(Node) {
                     res = led_mono_blink(Node->feedback_led, 50);
                 }
 #endif
+                res = writer_interface_set(Node->interface_if);
             } else {
                 break;
             }
@@ -263,6 +275,9 @@ bool string_reader_proc_one(uint8_t num) {
             Arrow_t arr = ARROW_UNDEF;
 
             for(i = 0; i < size; i++) {
+#ifdef HAS_AUTO_EXIT
+                auto_exit_postone();
+#endif
                 char character = data[i];
                 if(character) {
 
@@ -272,7 +287,7 @@ bool string_reader_proc_one(uint8_t num) {
                     arr = sr_arrows_parse(Node, character);
                     if(ARROW_UP == arr) {
                         cli_printf("%s", Node->prev_cmd);
-                        strncpy(Node->string, Node->prev_cmd, Node->string_size);
+                        strncpy((char*)Node->string, (char*)Node->prev_cmd, Node->string_size);
                         Node->string_len = 0;
                         character = 0x00;
                     }
@@ -299,7 +314,7 @@ bool string_reader_proc_one(uint8_t num) {
                     case KEY_TAB:
                         Node->string_len = 0;
                         LOG_DEBUG(STRING_READER, "TAB");
-                        res = help_dump_key(1, "", "");
+                        res = cli_cmd_list_print(1, "", "");
                         /*TAB*/
                         break;
                     case KEY_ESC:
@@ -308,31 +323,11 @@ bool string_reader_proc_one(uint8_t num) {
 #ifdef HAS_PC
                         LOG_WARNING(STRING_READER, "TerminateProccess");
                         exit(-1);
-#endif /*HAS_PC*/
+#endif
                         break;
                     case KEY_LINE_FEED: //'\n'://
                     case KEY_ENTER:     //'\r'://
-                        // LOG_DEBUG(STRING_READER, "Enter");
-                        if(Node->echo) {
-                            cli_putstr(CRLF);
-                        }
-                        Node->string[Node->string_len] = 0;
-                        Node->total_string_count++;
-#if 0
-                    if(Node->callback) {
-                        Node->callback(1, Node->string);
-                    }
-#endif
-
-                        string_reader_writer_ctrl(Node, true);
-                        res = cli_process_cmd(Node->cli_num, Node->string);
-                        string_reader_writer_ctrl(Node, false);
-                        if(res) {
-                            strncpy(Node->prev_cmd, Node->string, sizeof(Node->prev_cmd));
-                            memset(Node->string, 0, Node->string_size);
-                        }
-                        Node->string_len = 0;
-                        Node->string[0] = 0;
+                        res = string_reader_proc_enter(Node);
                         break;
                     default:
                         if(Node->string_len < Node->string_size) {
@@ -356,24 +351,23 @@ bool string_reader_proc_one(uint8_t num) {
     return res;
 }
 
-static bool string_reader_init_chache(const StringReaderConfig_t* Config, StringReaderHandle_t* Node) {
+static bool string_reader_init_chache(const StringReaderConfig_t* const Config, StringReaderHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
-            Node->interface_if = Config->interface_if;
-            Node->num = Config->num;
-            Node->if_num = Config->if_num;
-            Node->name = Config->name;
+            Node->callback = Config->callback;
+            Node->cli_num = Config->cli_num;
+            Node->core = Config->core;
+            Node->echo = Config->echo;
             Node->fifo_heap = Config->fifo_heap;
+            Node->fifo_heap_size = Config->fifo_heap_size;
+            Node->feedback_led = Config->feedback_led;
+            Node->interface_if = Config->interface_if;
+            Node->name = Config->name;
+            Node->num = Config->num;
             Node->string = Config->string;
             Node->string_size = Config->string_size;
-            Node->fifo_heap_size = Config->fifo_heap_size;
             Node->secure_echo = Config->secure_echo;
-            Node->fifo_heap_size = Config->fifo_heap_size;
-            Node->cli_num = Config->cli_num;
-            Node->feedback_led = Config->feedback_led;
-            Node->echo = Config->echo;
-            Node->callback = Config->callback;
             res = true;
         }
     }
@@ -424,6 +418,24 @@ bool string_reader_init_one(uint8_t num) {
             res = string_reader_reset_one(num);
         }
     }
+    return res;
+}
+
+bool string_reader1_proc(void) {
+    bool res = true;
+    res = string_reader_proc_one(1);
+    return res;
+}
+
+bool string_reader2_proc(void) {
+    bool res = true;
+    res = string_reader_proc_one(2);
+    return res;
+}
+
+bool string_reader3_proc(void) {
+    bool res = true;
+    res = string_reader_proc_one(3);
     return res;
 }
 

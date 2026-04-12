@@ -5,6 +5,7 @@
  */
 
 #include <ctype.h>
+#include <stdio.h>
 #include <string.h>
 
 #ifdef HAS_MINGW
@@ -12,7 +13,6 @@
 #endif
 
 #ifdef HAS_PC
-#include <stdio.h>
 
 #ifndef HAS_CLANG
 #endif
@@ -28,7 +28,7 @@
 #include "terminal_codes.h"
 
 #ifdef HAS_FAT_FS
-#include "fat_fs_drv.h"
+#include "fat_fs.h"
 #endif
 
 #ifdef HAS_RTC
@@ -43,18 +43,17 @@
 #include "data_utils.h"
 #include "log.h"
 #include "string_reader.h"
-#include "writer_config.h"
 //#include "cli_commands.h"
 #include "convert.h"
-#include "sys_config.h"
+//#include "sys_config.h"
 
-#ifdef HAS_LOG
-#include "writer_generic.h"
-#endif /*HAS_LOG*/
+#ifdef HAS_WRITER
+#include "writer.h"
+#endif /* */
 
 #ifdef HAS_UART
 #include "uart_mcal.h"
-#endif /*HAS_UART*/
+#endif /**/
 
 #ifdef HAS_TIME
 #include "none_blocking_pause.h"
@@ -70,6 +69,7 @@ COMPONENT_GET_NODE(Cli, cli)
 
 const CliCmdInfo_t* CliCmdInfoGet(uint8_t num, const char* const name) {
     const CliCmdInfo_t* DesiredCmd = NULL;
+    LOG_DEBUG(CLI, "name:[%s]", name);
     CliHandle_t* Node = CliGetNode(num);
     if(Node) {
         CliCmdInfo_t* CmdInfo = Node->CommandArray;
@@ -88,7 +88,7 @@ const CliCmdInfo_t* CliCmdInfoGet(uint8_t num, const char* const name) {
 }
 
 /*logic AND for keyWords */
-static bool is_print_cmd(const CliCmdInfo_t* const cmd, const char* const sub_name1, const char* const sub_name2) {
+bool is_print_cmd(const CliCmdInfo_t* const cmd, const char* const sub_name1, const char* const sub_name2) {
     bool res = false;
     if(NULL != cmd) {
         if((NULL == sub_name1) && (NULL == sub_name2)) {
@@ -142,7 +142,7 @@ static bool is_print_cmd(const CliCmdInfo_t* const cmd, const char* const sub_na
 }
 
 /*TODO test it*/
-static bool cli_is_cli_char(char character) {
+static bool cli_is_cli_char(const char character) {
     bool res = false;
     res = is_hex_digit(character);
     if('a' <= character && character <= 'z') {
@@ -188,6 +188,9 @@ static bool cli_is_cli_char(char character) {
     case '=':
     case '*':
         res = true;
+        break;
+    default:
+        res = false;
         break;
     }
     return res;
@@ -253,7 +256,7 @@ bool cli_parse_args(char* cmd_line, int* const argc, char** argv) {
     bool res = false;
     if(argc) {
         LOG_DEBUG(CLI, "ParseArgs[%s]", cmd_line);
-        size_t size = strlen(cmd_line);
+        uint32_t size = strlen(cmd_line);
         uint32_t ok = 0;
         uint32_t cnt = csv_cnt(cmd_line, ' ');
         *argc = cnt;
@@ -284,18 +287,21 @@ static void cli_prompt_ll(CliHandle_t* Node) {
     LOG_DEBUG(CLI, "prompt");
     if(Node) {
         if(Node->echo) {
-            char time_stamp[50] = {0};
+            char time_stamp[40] = "";
+            memset(time_stamp, 0, sizeof(time_stamp));
 #ifdef HAS_TIME
             time_get_time_str(time_stamp, sizeof(time_stamp));
 #endif
+
 #ifdef HAS_RTC
             struct tm time_date = {0};
             bool res = rtc_get(1, &time_date);
             if(res) {
-                res = TimeDate2Str(&time_date, time_stamp, sizeof(time_stamp));
+                res = TimeDateToStr(&time_date, time_stamp, sizeof(time_stamp));
             }
 #endif
-            cli_printf("%s%s", time_stamp, CLI_CURSOR);
+            snprintf(time_stamp, sizeof(time_stamp), "%s%s", time_stamp, CLI_CURSOR);
+            cli_printf("%s", time_stamp);
         } else {
             LOG_DEBUG(CLI, "EchOff");
         }
@@ -310,7 +316,7 @@ bool cli_prepare_cmd(char* original_cmd) {
     if(original_cmd) {
         // if(size) {
         uint32_t del = 0;
-        size_t size = 0;
+        uint32_t size = 0;
         size = strlen(original_cmd);
         LOG_DEBUG(CLI, "OrigCommand:[%s],%u byte", original_cmd, size);
 
@@ -332,15 +338,15 @@ bool cli_prepare_cmd(char* original_cmd) {
     return res;
 }
 
-static bool cli_process_one_cmd(CliHandle_t* Node, char* original_cmd) {
+static bool cli_process_one_cmd_data(CliHandle_t* Node, char* original_cmd, const uint32_t cmd_len) {
     bool res = false;
-    size_t cmd_len = strlen(original_cmd);
+   // size_t cmd_len = strlen(original_cmd);
     memset(Node->in_cmd_line, 0, sizeof(Node->in_cmd_line));
     strncpy(Node->in_cmd_line, original_cmd, cmd_len);
 
     res = cli_prepare_cmd(Node->in_cmd_line);
 
-    cmd_len = strlen(Node->in_cmd_line);
+    // cmd_len = strlen(Node->in_cmd_line);
     LOG_DEBUG(CLI, "ProcCommand:[%s],%u byte", Node->in_cmd_line, cmd_len);
     static char* shell_argv[SHELL_MAX_ARG_COUNT];
     memset(shell_argv, 0, sizeof(shell_argv));
@@ -376,6 +382,7 @@ static bool cli_process_one_cmd(CliHandle_t* Node, char* original_cmd) {
             if(res) {
                 const CliCmdInfo_t* CmdInfo = CliCmdInfoGet(Node->num, shell_argv[0]); // 3s
                 if(CmdInfo) {
+                    cli_printf(CRLF); /* in order to not to overlap the cursor (-->)   */
                     res = CmdInfo->handler(cli_argc - 1, shell_argv + 1);
                     if(false == res) {
                         LOG_ERROR(CLI, "CmdError:[%s] ", shell_argv[0]);
@@ -384,7 +391,7 @@ static bool cli_process_one_cmd(CliHandle_t* Node, char* original_cmd) {
                     }
                     // cli_prompt_ll(Node);
                 } else {
-                    LOG_ERROR(CLI, "UnknownCommand [%s]", shell_argv[0]);
+                    LOG_ERROR(CLI, "UnknownCommand:[%s]", shell_argv[0]);
                 }
             }
         }
@@ -408,14 +415,30 @@ static bool cli_process_one_cmd(CliHandle_t* Node, char* original_cmd) {
     } // len
 
     cli_prompt_ll(Node);
-
+    Node->proc_cnt++;
     return res;
 }
 
-bool cli_process_cmd_ll(CliHandle_t* const Node, char* const cmd_line) {
+static bool cli_process_one_cmd(CliHandle_t* Node, char* original_cmd, uint32_t size) {
+    bool res = false;
+    uint32_t cmd_len = size;
+    if(0 == size) {
+        cmd_len = strlen(original_cmd);
+    }
+    res = cli_process_one_cmd_data(Node, original_cmd, cmd_len);
+    return res;
+}
+
+bool cli_process_cmd_ll(CliHandle_t* const Node, char* const cmd_line, uint32_t size) {
     bool res = false;
     LOG_DEBUG(CLI, "Commands:[%s]", cmd_line);
-
+    /*Delete 0d,0a*/
+    uint32_t cmd_len = strlen(cmd_line);
+    if(2 <= cmd_len) {
+        str_del_char_inplace(cmd_line, (char)0x0d);
+        str_del_char_inplace(cmd_line, (char)0x0a);
+    }
+    Node->rx_time_ms = time_get_ms32();
 #ifdef HAS_CLI_SUB_COMMAND
     uint32_t cnt = csv_cnt(cmd_line, ';');
     LOG_DEBUG(CLI, "SubCmdCnt:%u", cnt);
@@ -428,7 +451,7 @@ bool cli_process_cmd_ll(CliHandle_t* const Node, char* const cmd_line) {
         if(res) {
             uint32_t len = strlen(SubCmd);
             LOG_DEBUG(CLI, "i:%u,SubCmdLen:%u", i, len);
-            res = cli_process_one_cmd(Node, SubCmd);
+            res = cli_process_one_cmd(Node, SubCmd, size);
         } else {
             LOG_ERROR(CLI, "Parse:%u SubCmdErr", i);
         }
@@ -437,7 +460,7 @@ bool cli_process_cmd_ll(CliHandle_t* const Node, char* const cmd_line) {
         cli_prompt_ll(Node);
     }
 #else
-    res = cli_process_one_cmd(Node, cmd_line);
+    res = cli_process_one_cmd(Node, cmd_line, size);
 #endif
 
     return res;
@@ -450,11 +473,34 @@ bool cli_init_custom(void) {
 
 bool cli_process_cmd(uint8_t num, char* const cmd_line) {
     bool res = false;
+    uint32_t cmd_len = strlen(cmd_line);
+    if(2 <= cmd_len) {
+        str_del_char_inplace(cmd_line, (char)0x0d);
+        str_del_char_inplace(cmd_line, (char)0x0a);
+    }
     CliHandle_t* Node = CliGetNode(num);
     if(Node) {
         if(false == Node->run_cmd) {
             Node->run_cmd = true;
-            res = cli_process_cmd_ll(Node, cmd_line);
+            res = cli_process_cmd_ll(Node, cmd_line, 0);
+            Node->run_cmd = false;
+        }
+    }
+    return res;
+}
+
+bool cli_process_data(uint8_t num, uint8_t* const cmd_line, uint32_t size) {
+    bool res = false;
+    uint32_t cmd_len = strlen((char*)cmd_line);
+    if(2 <= cmd_len) {
+        str_del_char_inplace((char*)cmd_line, (char)0x0d);
+        str_del_char_inplace((char*)cmd_line, (char)0x0a);
+    }
+    CliHandle_t* Node = CliGetNode(num);
+    if(Node) {
+        if(false == Node->run_cmd) {
+            Node->run_cmd = true;
+            res = cli_process_cmd_ll(Node, (char*)cmd_line, size);
             Node->run_cmd = false;
         }
     }
@@ -519,43 +565,6 @@ static bool cli_check_unique_commands(uint8_t num) {
     }
     LOG_INFO(CLI, "%s Done", __FUNCTION__);
     return out_res;
-}
-
-bool help_dump_key(uint8_t num, const char* sub_name1, const char* sub_name2) {
-    bool res = false;
-    CliHandle_t* Node = CliGetNode(num);
-    if(Node) {
-        const CliCmdInfo_t* CmdInfo = Node->CommandArray;
-        cli_printf("AvailableCommands:");
-        if(sub_name1) {
-            cli_printf("Key1:%s" CRLF, sub_name1);
-        }
-        if(sub_name2) {
-            cli_printf("Key2:%s" CRLF, sub_name2);
-        }
-        cli_putstr(CRLF);
-        static const table_col_t cols[] = {{5, "Num"}, {10, "Acronym"}, {22, "CommandName"}, {13, "Description"}};
-        table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-        while(CmdInfo->handler) {
-            if(is_print_cmd(CmdInfo, sub_name1, sub_name2)) {
-                cli_printf(TSEP);
-                cli_printf(" %3u " TSEP, num);
-                cli_printf(" %8s " TSEP, CmdInfo->short_name ? CmdInfo->short_name : "");
-                cli_printf(" %20s " TSEP, CmdInfo->long_name ? CmdInfo->long_name : "");
-                cli_printf(" %s ", CmdInfo->description ? CmdInfo->description : "");
-                cli_printf(CRLF);
-                res = true;
-#ifdef HAS_NORTOS
-                // wait_in_loop_ms(1);
-#endif /*HAS_NORTOS*/
-                num++;
-            }
-            CmdInfo++;
-        }
-        table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    }
-
-    return res;
 }
 
 bool cli_set_echo(uint8_t num, bool echo_val) {
@@ -626,7 +635,7 @@ static bool CliIsValidConfig(const CliConfig_t* const Config) {
         res = true;
     }
 
-    if(0 == Config->CommandArray) {
+    ifn(Config->CommandArray) {
         LOG_ERROR(CLI, "NoCmds");
         res = false;
     }
@@ -636,9 +645,52 @@ static bool CliIsValidConfig(const CliConfig_t* const Config) {
         res = false;
     }
 
-    if(!Config->valid) {
+    ifn(Config->valid) {
         LOG_ERROR(CLI, "NoValid");
         res = false;
+    }
+    return res;
+}
+
+bool cli_proc_one(uint8_t num) {
+    bool res = false;
+    LOG_PARN(CLI, "CLI%s", num);
+    CliHandle_t* Node = CliGetNode(num);
+    if(Node) {
+        LOG_DEBUG(CLI, "%s", CliNodeToStr(Node));
+        uint32_t up_time_ms = time_get_ms32();
+        uint32_t diff_ms = up_time_ms - Node->rx_time_ms;
+        if(CLI_WATCHDOT_EXIT_MS < diff_ms) {
+            LOG_WARNING(CLI, "NoCliInputs:%f s", MSEC_2_SEC(CLI_WATCHDOT_EXIT_MS));
+            Node->rx_time_ms = time_get_ms32();
+        }
+    }
+    return res;
+}
+
+static bool cli_init_common(const CliConfig_t* const Config, CliHandle_t* const Node) {
+    bool res = false;
+    if(Config) {
+        if(Node) {
+            Node->num = Config->num;
+            Node->feedback_led = Config->feedback_led;
+            Node->CommandArray = Config->CommandArray;
+            Node->cmd_cnt = Config->cmd_cnt;
+
+            Node->valid = true;
+            Node->run_cmd = false;
+            Node->echo = true;
+            Node->cmd_len_max = 0;
+            // Node->output = true;
+            Node->log_commands = false;
+            Node->proc_cnt = 0;
+
+            memset(&Node->in_cmd_line[0], 0x00, sizeof(Node->in_cmd_line));
+#ifdef HAS_CLI_CMD_HISTORY
+            memset(&Node->prev_cmd[0], 0x00, sizeof(Node->prev_cmd));
+#endif
+            res = true;
+        }
     }
     return res;
 }
@@ -655,23 +707,12 @@ bool cli_init_one(uint8_t num) {
             CliHandle_t* Node = CliGetNode(num);
             if(Node) {
                 LOG_WARNING(CLI, "Init: %u", num);
-                Node->num = Config->num;
-                Node->feedback_led = Config->feedback_led;
-                Node->CommandArray = Config->CommandArray;
-                Node->cmd_cnt = Config->cmd_cnt;
-                Node->valid = true;
+                res = cli_init_common(Config, Node);
+
                 LOG_INFO(CLI, "%u Commands", Node->cmd_cnt);
 
-                set_log_level(CLI, LOG_LEVEL_PROTECTED);
-#ifdef HAS_CLI_CMD_HISTORY
-                memset(&Node->prev_cmd[0], 0x00, sizeof(Node->prev_cmd));
-#endif
-                res = writer_init();
-                Node->echo = true;
-                Node->cmd_len_max = 0;
-                Node->output = true;
+                res = writer_mcal_init();
                 // Node->cmd_cnt = cli_commands_get_cnt();
-                set_log_level(CLI, LOG_LEVEL_NOTICE);
                 res = cli_check_unique_commands(num);
                 if(res) {
                     LOG_INFO(CLI, "All %u CommandsUnique!", Node->cmd_cnt);
@@ -681,13 +722,12 @@ bool cli_init_one(uint8_t num) {
                     res = false;
                 }
                 Node->init_done = true;
-                set_log_level(CLI, LOG_LEVEL_INFO);
             } // CliGetNode
         }     // CliIsValidConfig
     }
     return res;
 }
 
-// COMPONENT_PROC_PATTERT(CLI, CLI, cli)
+COMPONENT_PROC_PATTERT(CLI, CLI, cli)
 
 COMPONENT_INIT_PATTERT(CLI, CLI, cli)
