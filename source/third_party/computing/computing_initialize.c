@@ -1,6 +1,5 @@
 #include "computing_initialize.h"
 
-#include "mcal_to_ehal.h"
 
 #ifdef HAS_DDS
 bool DDS_init(void)

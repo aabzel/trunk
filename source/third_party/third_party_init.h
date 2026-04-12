@@ -2,39 +2,44 @@
 #define THIRD_PARTY_INIT_H
 
 
+#ifdef HAS_THIRD_PARTY_ADT
+#include "adt_initialize.h"
+#else
+#define ADT_INITIALIZE
+#endif
+
 #ifdef HAS_SERVICES
-#include "services_init.h"
+#include "services_initialize.h"
 #else
 #define SERVICES_INIT
-#endif /*HAS_SERVICES*/
+#endif
 
 #ifdef HAS_THIRD_PARTY_ASICS
 #include "asics_initialize.h"
 #else
 #define ASICS_INITIALIZE
-#endif /*HAS_THIRD_PARTY_ASICS*/
+#endif
 
 #ifdef HAS_THIRD_PARTY_COMPUTING
 #include "computing_initialize.h"
 #else
 #define COMPUTING_INITIALIZE
-#endif /*HAS_THIRD_PARTY_COMPUTING*/
+#endif
 
 #ifdef HAS_THIRD_PARTY_SENSITIVITY
 #include "sensitivity_initialize.h"
 #else
 #define SENSITIVITY_INITIALIZE
-#endif /*HAS_THIRD_PARTY_COMPUTING*/
-
+#endif
 
 #ifdef HAS_THIRD_PARTY_STORAGE
 #include "storage_initialize.h"
 #else
 #define STORAGE_INITIALIZE
-#endif /*HAS_THIRD_PARTY_STORAGE*/
-
+#endif
 
 #define THIRD_PARTY_INIT     \
+    ADT_INITIALIZE           \
     COMPUTING_INITIALIZE     \
     ASICS_INITIALIZE         \
     STORAGE_INITIALIZE       \

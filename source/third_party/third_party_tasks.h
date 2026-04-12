@@ -2,6 +2,11 @@
 #define THIRD_PARTY_TASKS_H
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #ifdef HAS_THIRD_PARTY_ASICS
 #include "asics_routines.h"
 #else
@@ -25,5 +30,9 @@
     ASICS_ROUTINE             \
     COMPUTING_ROUTINE         \
     SENSITIVITY_ROUTINE
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* THIRD_PARTY_TASKS_H */
