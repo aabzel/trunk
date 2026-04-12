@@ -26,8 +26,8 @@ extern "C" {
 // https://docs.google.com/spreadsheets/d/1VAT3Ak7AzcufgvuRHrRVoVfC3nxugFGJR5pyzxL4W7Q/edit#gid=0
 #define TBFP_SIZE_ID 1
 #define TBFP_SIZE_CRC 1
-#define TBFP_RX_TIME_OUT_MS   500
-#define TBFP_RX_TIME_OUT_ITER 4000
+#define TBFP_RX_TIME_OUT_MS   10000
+#define TBFP_RX_TIME_OUT_ITER 40000
 
 #define TBFP_HEARTBEAT_PERIOD_US 10000000
 
@@ -48,13 +48,12 @@ typedef enum {
 typedef enum {
     FRAME_ID_UNDEF = 0x00,  /*Unfed payload*/
 
-    FRAME_ID_JUMP = 0x01,   /**/
-    FRAME_ID_MEM = 0x02,   /**/
     FRAME_ID_ACK = 0x41,    /*A*/
     FRAME_ID_CHAT = 0x43,   /*C*/
     FRAME_ID_CMD = 0x44,    /*D*/
     FRAME_ID_PING = 0x51,   /*P*/
     FRAME_ID_STORAGE = 0xFC,   /**/
+    FRAME_ID_MEM_READ = 0x01,   /**/
     FRAME_ID_TUNNEL = 0x54, /*T matryoshka*/
     FRAME_ID_PONG = 0x90,   /**/
     FRAME_ID_KEYBOARD = 0x91,   /**/

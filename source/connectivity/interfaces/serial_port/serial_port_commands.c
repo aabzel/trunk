@@ -8,6 +8,11 @@
 #include "serial_port.h"
 #include "serial_port_diag.h"
 
+bool serial_port_config_command(int32_t argc, char* argv[]){
+    bool res = false;
+    return res;
+}
+
 bool serial_port_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -76,6 +81,30 @@ bool serial_port_send_command(int32_t argc, char* argv[]) {
         log_info_res(SERIAL_PORT, res, "Send");
     } else {
         LOG_ERROR(SERIAL_PORT, "Usage: sps Num HexStr");
+    }
+    return res;
+}
+
+bool serial_port_scan_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    if(1 == argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(SERIAL_PORT, res, "Num");
+        if(res) {
+            res = serial_port_check(num);
+            LOG_ERROR(SERIAL_PORT, "COM%u,Exist:%u", num, res);
+        }
+    }
+
+    if(0 == argc) {
+
+        res = serial_port_scan_ports();
+        log_info_res(SERIAL_PORT, res, "Scan");
+    }
+
+    if(!res) {
+        LOG_ERROR(SERIAL_PORT, "Usage: spc Num");
     }
     return res;
 }

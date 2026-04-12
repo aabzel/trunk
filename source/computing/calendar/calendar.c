@@ -152,6 +152,8 @@ uint32_t calendar_settime(const struct tm* const date_time) {
 #ifdef HAS_RTC
     // print_time_date(date_time);
 #endif
+
+#ifdef HAS_DATE
     res = is_valid_time_date(date_time);
     if(res) {
         LOG_DEBUG(LG_CAL, "ValidDdateTime");
@@ -161,6 +163,7 @@ uint32_t calendar_settime(const struct tm* const date_time) {
         LOG_ERROR(LG_CAL, "DateTimeErr");
     }
 
+#endif
     return g_sec;
 }
 

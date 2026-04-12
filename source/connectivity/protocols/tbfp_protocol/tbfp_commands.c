@@ -12,100 +12,62 @@
 #include "system_diag.h"
 #include "tbfp.h"
 #include "tbfp_retx_diag.h"
-#include "writer_generic.h"
+//#include "writer_generic.h"
 
-bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]) {
+bool tbfp_storage_erase_generate_command(int32_t argc, char* argv[]){
     bool res = false;
-    res = tbfp_storage_erase_generate(1);
+    res = tbfp_storage_erase_generate();
     log_info_res(TBFP, res, "GenErase");
-    log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
-    res = tbfp_terminal_print(1);
     return res;
 }
 
-/*
-   tgj 0x80000000
- */
-bool tbfp_generate_jump_command(int32_t argc, char* argv[]) {
+bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]){
     bool res = false;
 
-    uint32_t base_address = 0x80000000;
-
-    if(0 <= argc) {
-        res = true;
-    }
-
-    if(1 <= argc) {
-        res = try_str2uint32(argv[0], &base_address);
-        log_info_res(TBFP, res, "Addr");
-    }
-
-    if(res) {
-        res = tbfp_generate_jump(1, base_address);
-        log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
-        log_info_res(TBFP, res, "GenJump");
-        res = tbfp_terminal_print(1);
-    } else {
-        LOG_ERROR(TBFP, "Usage: tgj addr");
-    }
-    return res;
-}
-
-bool tbfp_storage_write_generate_command(int32_t argc, char* argv[]) {
-    bool res = false;
-
+    uint32_t address = 0;
     uint16_t size = 0;
     uint8_t pattern = 0;
-    uint32_t address = 0;
-    if(1 <= argc) {
+    if(0 <= argc) {
         res = try_str2uint32(argv[0], &address);
         log_info_res(TBFP, res, "Addr");
     }
 
-    if(2 <= argc) {
+    if(1 <= argc) {
         res = try_str2uint16(argv[1], &size);
         log_info_res(TBFP, res, "Size");
     }
 
-    if(3 <= argc) {
+    if(2 <= argc) {
         res = try_str2uint8(argv[2], &pattern);
         log_info_res(TBFP, res, "Pattern");
     }
 
     if(res) {
-    	uint8_t data[512] ={0};
-    	if(size<512){
-        	memset(data,pattern,size);
-            res = tbfp_storage_write_generate(1, address, data, size);
-            log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
-            res = tbfp_terminal_print(1);
-    	}
-    } else {
+        res = tbfp_storage_write_generate(address, size,pattern);
+    }else {
         LOG_ERROR(TBFP, "Usage: tswg addr size pattern");
     }
     return res;
 }
 
-bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]) {
+bool tbfp_storage_read_generate_command(int32_t argc, char* argv[]){
     bool res = false;
 
     uint32_t address = 0;
     uint16_t size = 0;
-    if(1 <= argc) {
+    if(0 <= argc) {
         res = try_str2uint32(argv[0], &address);
         log_info_res(TBFP, res, "Addr");
     }
 
-    if(2 <= argc) {
+    if(1 <= argc) {
         res = try_str2uint16(argv[1], &size);
         log_info_res(TBFP, res, "Size");
     }
 
     if(res) {
-        res = tbfp_storage_read_generate(1, address, size);
-        log_level_get_set(TBFP, LOG_LEVEL_DEBUG);
-        res = tbfp_terminal_print(1);
-    } else {
+        res = tbfp_storage_read_generate(address, size);
+    }else {
         LOG_ERROR(TBFP, "Usage: tsrg addr size");
     }
     return res;

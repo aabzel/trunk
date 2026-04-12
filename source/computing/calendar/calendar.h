@@ -1,9 +1,9 @@
 #ifndef CALENDAR_H
 #define CALENDAR_H
 
-#include <stdbool.h>
-#include <stdint.h>
 #include <time.h>
+
+#include "std_includes.h"
 
 bool calendar_init(void);
 bool calendar_gettime(struct tm* const date_time);

@@ -21,9 +21,13 @@ extern "C" {
 
 bool serial_port_diag_command(int32_t argc, char* argv[]);
 bool serial_port_init_command(int32_t argc, char* argv[]);
+bool serial_port_config_command(int32_t argc, char* argv[]);
 bool serial_port_send_command(int32_t argc, char* argv[]);
+bool serial_port_scan_command(int32_t argc, char* argv[]);
 
-#define SERIAL_PORT_COMMANDS                                                                                    \
+#define SERIAL_PORT_COMMANDS                                                                                             \
+    SHELL_CMD("serial_port_config", "spc", serial_port_config_command, "SerialPortConfig"),                              \
+    SHELL_CMD("serial_port_scan", "spa", serial_port_scan_command, "SerialPortScan"),                                    \
     SHELL_CMD("serial_port_init", "spi", serial_port_init_command, "SerialPortInit"),                                    \
     SHELL_CMD("serial_port_diag", "spd", serial_port_diag_command, "SerialPortDiag"),                                    \
     SHELL_CMD("serial_port_send", "sps", serial_port_send_command, "SerialPortSend"),

@@ -202,7 +202,7 @@ bool uart_send_ll(uint8_t uart_num, uint8_t* array, uint16_t array_len, bool is_
 }
 
 #if 0
-bool uart_mcal_send(uint8_t uart_num, uint8_t* array, uint16_t array_len) {
+bool uart_send_api(uint8_t uart_num, uint8_t* array, uint16_t array_len) {
     bool res = false;
     res = uart_send_wait_ll(uart_num, array, array_len);
     if(res) {

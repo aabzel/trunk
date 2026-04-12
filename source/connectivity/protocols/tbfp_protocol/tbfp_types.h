@@ -9,7 +9,6 @@ extern "C" {
 
 #include <time.h>
 
-#include "storage_types.h"
 #include "std_includes.h"
 #include "data_utils.h"
 #include "fifo_char.h"
@@ -17,11 +16,9 @@ extern "C" {
 #include "tbfp_re_tx_ack_fsm_types.h"
 #include "tbfp_const.h"
 #include "system.h"
-
 #ifdef HAS_GNSS
 #include "gnss_types.h"
 #endif
-
 #ifdef HAS_PROTOCOL
 #include "protocol_types.h"
 #endif
@@ -29,14 +26,15 @@ extern "C" {
 
 typedef union {
     uint8_t byte;
-    struct {
+     struct {
         uint8_t lifetime :4; /*bit 0-3*/
-        uint8_t response:1;  /*bit 4 this bit says that this is a response packet*/
-        uint8_t reserved:1;  /*bit 5*/
+        uint8_t reserved:2;  /*bit 4-5*/
         uint8_t crc_check_need:1;  /*bit 6*/
         uint8_t ack_need:1;  /*bit 7*/
     };
 }TbfpFrameFlags_t;
+
+
 
 #ifdef HAS_TBFP_DIAG
 
@@ -53,12 +51,12 @@ typedef union {
    https://docs.google.com/spreadsheets/d/1VAT3Ak7AzcufgvuRHrRVoVfC3nxugFGJR5pyzxL4W7Q/edit#gid=0
   ) */
 typedef union {
-    uint8_t buff[7];
-    struct {
+	uint8_t buff[7];
+	struct {
         uint8_t preamble;
-        TbfpFrameFlags_t flags; /* For ack, mesh feature (lifetime)*/
+        TbfpFrameFlags_t flags; /*For ack, mesh feature (lifetime)*/
         uint16_t snum; /* serial number of the frame. For flow controll.*/
-        uint16_t len; /* Payload Len */
+        uint16_t len; /*Payload Len*/
         TbfpPayloadId_t payload_id;
         uint8_t payload[0]; /* just for pointer*/
 	}__attribute__((packed));
@@ -75,23 +73,18 @@ typedef struct  {
 } __attribute__((packed)) TbfPingFrame_t;
 
 
-#define TBFP_STORAGE_VARIABLES         \
-    StorageFrameHeader_t Storage;
-
-
-/*Add RxData array pointer*/
 #define TBFP_RX_VARIABLES   \
     U32Value_t rx_rate;     \
     uint32_t rx_byte;       \
     uint32_t rx_cnt;        \
     uint32_t rx_byte_prev;  \
     uint32_t rx_pkt_cnt;    \
-    volatile bool rx_done;  \
     bool rx_pong;           \
     bool rx_ping;
 
 #define TBFP_TX_VARIABLES                  \
-    uint32_t tx_size;  \
+    /*uint8_t tx_frame[TBFP_MAX_FRAME];*/  \
+    uint32_t tx_frame_len;  \
     uint32_t tx_byte;  \
     uint32_t tx_byte_prev;  \
     uint32_t tx_pkt_cnt;  \
@@ -99,24 +92,16 @@ typedef struct  {
     uint32_t err_tx_cnt;  \
     uint32_t err_tx_cnt_prev;
 
-#define TBFP_COMMON_RX_VARIABLES         \
-    uint8_t* fix_frame;                  \
-    uint8_t* rx_frame;                   \
-    uint8_t* RxArray;                    \
-    uint32_t rx_array_size;
-
-#define TBFP_COMMON_TX_VARIABLES         \
-    uint32_t tx_array_size;              \
-    uint8_t* TxFrame;
-
-
 #define TBFP_COMMON_VARIABLES            \
-    TBFP_COMMON_RX_VARIABLES             \
-    TBFP_COMMON_TX_VARIABLES             \
+    uint8_t* rx_frame;                   \
+    uint8_t* fix_frame;                  \
+    uint32_t tx_array_size;              \
+    uint8_t* TxFrame;                    \
+    uint8_t* RxArray;                    \
+    uint32_t rx_array_size;              \
     bool valid;                          \
-    bool crc_check_need;                 \
     bool heartbeat;                      \
-    Interfaces_t inter_face;             \
+    Interfaces_t interface;              \
     uint8_t preamble_val;                \
     uint8_t uart_num;                    \
 	uint32_t num;
@@ -128,6 +113,7 @@ typedef struct  {
     uint32_t read_crc8;               \
     uint32_t len_err_cnt;             \
     uint32_t crc_err_cnt;             \
+    uint32_t crc_check_need;          \
     uint32_t crc_err_cnt_prev;
 
 typedef struct  {
@@ -143,13 +129,11 @@ typedef struct  {
     TBFP_DIAG_VARIABLES
     TBFP_PARSER_VARIABLES
     TBFP_RE_TX_FSM_VARIABLES
-    TBFP_STORAGE_VARIABLES
     //uint32_t err_cnt; // in FSM too
     uint32_t err_send_cnt;
     uint32_t lack_frame_in_data;
 //  TbfpParser_t parser;
     uint16_t tx_sn;
-    uint16_t payload_size;
     uint32_t rx_time_stamp_ms;
     uint32_t rx_time_stamp_iteration;
     uint32_t iteration;

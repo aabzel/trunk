@@ -30,20 +30,20 @@
 #include "gnss_drv.h"
 #endif
 
-const char* TbfpRxState2Str(ProtocolRxState_t rx_state) {
+const char* TbfpRxStateToStr(RxState_t rx_state) {
     char* name = "?";
     switch(rx_state) {
-    case WAIT_INIT: name = "Init"; break;
-    case WAIT_PREAMBLE: name = "WaitPre"; break;
-    case WAIT_FLAGS: name = "WaitFlags"; break;
-    case WAIT_SERIAL_NUM: name = "WaitSn"; break;
-    case WAIT_LEN: name = "WaitLen"; break;
-    case WAIT_FRAME_ID: name = "WaitFrameId"; break;
-    case WAIT_PAYLOAD: name = "WaitPayload"; break;
-    case WAIT_CRC: name = "WaitCrc8"; break;
-    case WAIT_RETX_CNT: name = "WaitFlag"; break;
-    case WAIT_UNDEF: name = "?"; break;
-    case RX_DONE: name = "RxDone"; break;
+    case WAIT_INIT: name = "Init";        break;
+    case WAIT_PREAMBLE: name = "WaitPre";        break;
+    case WAIT_FLAGS: name = "WaitFlags";        break;
+    case WAIT_SERIAL_NUM: name = "WaitSn";        break;
+    case WAIT_LEN: name = "WaitLen";        break;
+    case WAIT_FRAME_ID: name = "WaitFrameId";        break;
+    case WAIT_PAYLOAD: name = "WaitPayload";        break;
+    case WAIT_CRC: name = "WaitCrc8";        break;
+    case WAIT_RETX_CNT: name = "WaitFlag";        break;
+    case WAIT_UNDEF: name = "?";        break;
+    case RX_DONE: name = "RxDone";        break;
     }
     return name;
 }
@@ -52,21 +52,21 @@ const char* TbfpRxState2Str(ProtocolRxState_t rx_state) {
 const char* TbfpPayloadIdToStr(const TbfpPayloadId_t id) {
     const char* name = "?";
     switch( (uint8_t) id) {
-    case FRAME_ID_STORAGE: name = "Stor"; break;
-    case FRAME_ID_MEM: name = "Mem"; break;
-    case FRAME_ID_KEYBOARD: name = "Kye"; break;
-    case FRAME_ID_ACK: name = "Ack"; break;
-    case FRAME_ID_CHAT: name = "Chat"; break;
-    case FRAME_ID_CMD: name = "Cmd"; break;
-    case FRAME_ID_PING: name = "Ping"; break;
-    case FRAME_ID_TUNNEL: name = "Tunnel"; break;
-    case FRAME_ID_PONG: name = "Pong"; break;
+    case FRAME_ID_STORAGE: name = "Stor";        break;
+    case FRAME_ID_MEM_READ: name = "MR";        break;
+    case FRAME_ID_KEYBOARD: name = "Kye";        break;
+    case FRAME_ID_ACK: name = "Ack";        break;
+    case FRAME_ID_CHAT: name = "Chat";        break;
+    case FRAME_ID_CMD: name = "Cmd";        break;
+    case FRAME_ID_PING: name = "Ping";        break;
+    case FRAME_ID_TUNNEL: name = "Tunnel";        break;
+    case FRAME_ID_PONG: name = "Pong";        break;
 #ifdef HAS_DECAWAVE
-    case FRAME_ID_DECAWAVE: name = "DecaWave"; break;
+    case FRAME_ID_DECAWAVE: name = "DecaWave";        break;
 #endif
 
 #ifdef HAS_RTCM3
-    case FRAME_ID_RTCM3: name = "RTCM3"; break;
+    case FRAME_ID_RTCM3: name = "RTCM3";        break;
 #endif
 
 #if 0
@@ -77,7 +77,9 @@ const char* TbfpPayloadIdToStr(const TbfpPayloadId_t id) {
         case  FRAME_ID_T_LOOP: name="tLoop"; break;
         case  FRAME_ID_TIMINGS: name="Timings"; break;
 #endif
-    default: name = "?"; break;
+    default:
+ name = "?";
+        break;
     }
     return name;
 }
@@ -156,7 +158,7 @@ bool tbfp_error(void) {
             cli_printf(TSEP);
 
 #ifdef HAS_INTERFACES_DIAG
-            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->inter_face));
+            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->interface));
 #endif
             cli_printf(" %7u " TSEP, TbfpNode->lack_frame_in_data);
             cli_printf(" %7u " TSEP, TbfpNode->len_err_cnt);
@@ -165,7 +167,7 @@ bool tbfp_error(void) {
             cli_printf(" %7u " TSEP, TbfpNode->err_tx_cnt);
             cli_printf(" %7u " TSEP, TbfpNode->err_cnt);
 #ifdef HAS_PROTOCOL_DIAG
-            res = flow_ctrl_diag(TBFP, &TbfpNode->Flow, TbfpNode->inter_face);
+            res = flow_ctrl_diag(TBFP, &TbfpNode->Flow, TbfpNode->interface);
 #endif /*HAS_PROTOCOL_DIAG*/
 #endif /*HAS_TBFP_DIAG*/
             cli_printf(CRLF);
@@ -194,7 +196,7 @@ bool tbfp_rate_diago(void) {
         if(TbfpNode) {
             cli_printf(TSEP);
 #ifdef HAS_INTERFACES_DIAG
-            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->inter_face));
+            cli_printf(" %6s " TSEP, InterfaceToStr(TbfpNode->interface));
 #endif
             cli_printf(" %7u " TSEP, TbfpNode->rx_rate.min);
             cli_printf(" %7u " TSEP, TbfpNode->rx_rate.cur);
@@ -215,12 +217,11 @@ bool tbfp_diag(void) {
     bool res = false;
     uint32_t i;
     static const table_col_t cols[] = {
-        {5, "N"},
 #ifdef HAS_INTERFACES_DIAG
         {10, "interf"},
 #endif
-        {9, "rxCnt"},
 
+        {9, "rxCnt"},
         {9, "txCnt"},
 
 #ifdef HAS_TBFP_DIAG
@@ -236,9 +237,8 @@ bool tbfp_diag(void) {
         TbfpHandle_t* TbfpNode = TbfpGetNode(i);
         if(TbfpNode) {
             cli_printf(TSEP);
-            cli_printf(" %3u " TSEP, TbfpNode->num);
 #ifdef HAS_INTERFACES_DIAG
-            cli_printf(" %8s " TSEP, InterfaceToStr(TbfpNode->inter_face));
+            cli_printf(" %8s " TSEP, InterfaceToStr(TbfpNode->interface));
 #endif
             cli_printf(" %7u " TSEP, TbfpNode->rx_pkt_cnt);
             cli_printf(" %7u " TSEP, TbfpNode->tx_pkt_cnt);
@@ -262,24 +262,6 @@ bool tbfp_diag(void) {
 }
 
 
-const char* TbfpConfigToStr(const TbfpConfig_t* const Config){
-    if(Config) {
-        strcpy(text,"");
-        snprintf(text,sizeof(text),"%sN:%u,",text,  Config->num);
-        snprintf(text,sizeof(text),"%sPRE:0x%x,",text,  Config->preamble_val);
-        snprintf(text,sizeof(text),"%sIF:%u,",text,  Config->inter_face);
-        snprintf(text,sizeof(text),"%sIF:%s,",text,  InterfaceToStr(Config->inter_face));
-        snprintf(text,sizeof(text),"%sUART:%u,",text,  Config->uart_num);
-        snprintf(text,sizeof(text),"%sHB:%u,",text,  Config->heartbeat);
-        snprintf(text,sizeof(text),"%sCRC:%u,",text,  Config->crc_check_need);
-        if(Config->rx_array_size) {
-            snprintf(text, sizeof(text), "%sRxMem:%p,", text,  Config->RxArray);
-            snprintf(text, sizeof(text), "%sRxSz:%u,", text,  Config->rx_array_size);
-        }
-    }
-    return text;
-}
-
 
 
 const char* TbfpNodeToStr(const TbfpHandle_t* const Node) {
@@ -287,31 +269,15 @@ const char* TbfpNodeToStr(const TbfpHandle_t* const Node) {
         strcpy(text,"");
         snprintf(text,sizeof(text),"%sN:%u,",text,  Node->num);
         snprintf(text,sizeof(text),"%sPRE:0x%x,",text,  Node->preamble_val);
-        snprintf(text,sizeof(text),"%sIF:%u,",text,  Node->inter_face);
-        snprintf(text,sizeof(text),"%sIF:%s,",text,  InterfaceToStr(Node->inter_face));
-        snprintf(text,sizeof(text),"%sUART:%u,",text,  Node->uart_num);
+        snprintf(text,sizeof(text),"%sIF:%s,",text,  InterfaceToStr(Node->interface));
         if(Node->rx_array_size) {
             snprintf(text, sizeof(text), "%sRxMem:%p,", text,  Node->RxArray);
             snprintf(text, sizeof(text), "%sRxSz:%u,", text,  Node->rx_array_size);
         }
+        snprintf(text,sizeof(text),"%sUART:%u,",text,  Node->uart_num);
 #ifdef HAS_PROTOCOL_DIAG
-        snprintf(text,sizeof(text),"%s%s,",text, FlowCtrl2Str(&Node->Flow));
+        snprintf(text,sizeof(text),"%s%s,",text, FlowCtrlToStr(&Node->Flow));
 #endif
-    }
-    return text;
-}
-
-const char* TbfpSrorageWriteToStr(const TbfpHandle_t*const  Node,uint32_t address, uint32_t size){
-    if(Node) {
-        uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t) + size;
-        strcpy(text,"");
-        snprintf(text,sizeof(text),"%sN:%u,",text,  Node->num);
-        snprintf(text,sizeof(text),"%sIF:%s,",text,  InterfaceToStr(Node->inter_face));
-        snprintf(text, sizeof(text), "%sAddress:0x%08x,",text, address );
-        snprintf(text, sizeof(text), "%sSize:%u,",text, size );
-        snprintf(text, sizeof(text), "%sPayLoadLen:%u,",text, payload_len );
-        snprintf(text, sizeof(text), "%sFrame:[%s],",text, ArrayToStr(Node->TxFrame, Node->tx_size) );
-
     }
     return text;
 }
@@ -369,115 +335,95 @@ bool tbfp_parse_frame(const uint8_t* const data, const uint32_t size) {
     return res;
 }
 
-/*0x80000000 */
-bool tbfp_generate_jump(const uint8_t num, const uint32_t base_address) {
+bool tbfp_storage_erase_generate(void) {
     bool res = false;
-    TbfpHandle_t* Node = TbfpGetNode(num);
+    TbfpHandle_t* Node = TbfpGetNode(1);
     if(Node) {
-        LOG_WARNING(TBFP, "GenerateJumpToAddr:0x%08X Packet", base_address);
+        LOG_INFO(TBFP, "GenerateErasePacket");
         LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
-        uint16_t payload_len = 4 ;
+        uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t) ;
         LOG_INFO(TBFP, "PayLoadSize:%u byte", payload_len);
         TbfpHeader_t Header = {0};
         Header.preamble = Node->preamble_val;
         Header.flags.ack_need = 1;
         Header.flags.crc_check_need = 1;
         Header.flags.lifetime = 1;
-        Header.payload_id = FRAME_ID_JUMP;
+        Header.payload_id = FRAME_ID_STORAGE;
         Header.snum = 1;
         Header.len = payload_len;
         memcpy(Node->TxFrame, &Header, sizeof(TbfpHeader_t));
-        memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &base_address, 4);
+        StorageFrameHeader_t StorageData;
+        StorageData.address = 0;
+        StorageData.asic_num = 1;
+        StorageData.operation = ACCESS_ERASE;
+        StorageData.size = 0; /* Bytes to read */
+
+        memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &StorageData, sizeof(StorageFrameHeader_t));
+
         uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
-        Node->tx_size = frame_len + 1;
+        uint16_t total_frame_len = frame_len + 1;
         Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
-        LOG_INFO(TBFP, "JumpFrame:%s", ArrayToStr(Node->TxFrame, Node->tx_size));
-#if 0
+        LOG_INFO(TBFP, "StoreEraseFrame:%s", ArrayToStr(Node->TxFrame, total_frame_len));
         uint32_t i = 0;
-        for(i=0; i < Node->tx_size; i++) {
+        for(i=0; i < total_frame_len; i++) {
             cli_printf("$%02X", Node->TxFrame[i]);
         }
-
         cli_printf(CRLF);
-#endif
         res = true;
     }
     return res;
 }
 
-bool tbfp_storage_erase_generate(uint8_t num) {
+bool tbfp_storage_write_generate(uint32_t address, uint16_t size, uint8_t pattern) {
     bool res = false;
-    TbfpHandle_t* Node = TbfpGetNode(num);
+    TbfpHandle_t* Node = TbfpGetNode(1);
     if(Node) {
-        if(Node->TxFrame){
-            if(Node->tx_array_size){
+        LOG_INFO(TBFP, "Address:0x%08x,Size:%u,Pattern:0x%02x", address, size, pattern);
+        LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
+        uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t) + size;
+        LOG_INFO(TBFP, "PayLoadLen:%u byte", payload_len);
+        TbfpHeader_t Header = {0};
+        Header.preamble = Node->preamble_val;
+        Header.flags.ack_need = 1;
+        Header.flags.crc_check_need = 1;
+        Header.flags.lifetime = 1;
+        Header.payload_id = FRAME_ID_STORAGE;
+        Header.snum = 1;
+        Header.len = payload_len;
+        memcpy(Node->TxFrame, &Header, sizeof(TbfpHeader_t));
+        StorageFrameHeader_t StorageData;
+        StorageData.address = address;
+        StorageData.asic_num = 1;
+        StorageData.operation = ACCESS_WRITE_ONLY;
+        StorageData.size = size; /* Bytes to read */
 
-                LOG_INFO(TBFP, "GenerateErasePacket");
-                LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
-                uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t) ;
-                LOG_INFO(TBFP, "PayLoadSize:%u byte", payload_len);
-                TbfpHeader_t Header = {0};
-                Header.preamble = Node->preamble_val;
-                Header.flags.ack_need = 1;
-                Header.flags.crc_check_need = 1;
-                Header.flags.lifetime = 1;
-                Header.payload_id = FRAME_ID_STORAGE;
-                Header.snum = 1;
-                Header.len = payload_len;
-                memcpy(Node->TxFrame, &Header, sizeof(TbfpHeader_t));
-                StorageFrameHeader_t StorageData;
-                StorageData.address = 0;
-                StorageData.asic_num = 1;
-                StorageData.operation = ACCESS_ERASE;
-                StorageData.size = 0; /* Bytes to read */
+        memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &StorageData, sizeof(StorageFrameHeader_t));
+        uint32_t data_index = sizeof(TbfpHeader_t) + sizeof(StorageFrameHeader_t);
 
-                memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &StorageData, sizeof(StorageFrameHeader_t));
+        memset(&Node->TxFrame[data_index], pattern, size);
 
-                uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
-
-                Node->tx_size =  frame_len + 1;
-                Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
-                LOG_DEBUG(TBFP, "StoreEraseFrame:%s", ArrayToStr(Node->TxFrame,   Node->tx_size));
-                res = true;
-            }
+        uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
+        uint16_t total_frame_len = frame_len + 1;
+        Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
+        LOG_INFO(TBFP, "StoreWriteFrame:%s", ArrayToStr(Node->TxFrame, total_frame_len));
+        uint32_t i = 0;
+        for(i=0; i < total_frame_len; i++) {
+            cli_printf("$%02X", Node->TxFrame[i]);
         }
+        cli_printf(CRLF);
+        res = true;
     }
     return res;
 }
 
-
-bool tbfp_terminal_print(const uint8_t num) {
+bool tbfp_storage_read_generate(uint32_t address, uint16_t size) {
     bool res = false;
-    TbfpHandle_t* Node = TbfpGetNode(num);
+    TbfpHandle_t* Node = TbfpGetNode(1);
     if(Node) {
-        if(Node->TxFrame) {
-            if( Node->tx_size) {
-                LOG_PARN(TBFP, "%s", TbfpNodeToStr(Node));
-                LOG_PARN(TBFP, "Frame:%s", ArrayToStr(Node->TxFrame, Node->tx_size));
-                log_level_t ll=log_level_get(  TBFP);
-                if(LOG_LEVEL_DEBUG==ll) {
-                    uint32_t i = 0;
-                    for(i=0; i < Node->tx_size; i++) {
-                        cli_printf("$%02X", Node->TxFrame[i]);
-                    }
-                    cli_printf(CRLF);
-                }
-                res = true;
-            }
-        }
-    }
-    return res;
-}
-
-
-bool tbfp_storage_read_generate(uint8_t num, uint32_t address, uint16_t size) {
-    bool res = false;
-    TbfpHandle_t* Node = TbfpGetNode(num);
-    if(Node) {
-        if(Node->TxFrame) {
-            LOG_PARN(TBFP, "%s", TbfpNodeToStr(Node));
+    	if(Node->TxFrame) {
+            LOG_INFO(TBFP, "%s", TbfpNodeToStr(Node));
             uint16_t payload_len = (uint16_t)sizeof(StorageFrameHeader_t);
-            LOG_PARN(TBFP, "PayLoadLen:%u byte", payload_len);
+            LOG_INFO(TBFP, "PayLoadLen:%u byte", payload_len);
             TbfpHeader_t Header = {0};
             Header.preamble = Node->preamble_val;
             Header.flags.ack_need = 1;
@@ -496,11 +442,16 @@ bool tbfp_storage_read_generate(uint8_t num, uint32_t address, uint16_t size) {
             memcpy(&Node->TxFrame[sizeof(TbfpHeader_t)], &StorageData, sizeof(StorageFrameHeader_t));
 
             uint16_t frame_len = payload_len + sizeof(TbfpHeader_t);
-            Node->tx_size = frame_len+1;
+            uint16_t total_frame_len = frame_len+1;
             Node->TxFrame[frame_len] = crc8_sae_j1850_calc(Node->TxFrame, frame_len);
-            LOG_DEBUG(TBFP, "StoreReadFrame:%s", ArrayToStr(Node->TxFrame, Node->tx_size));
+            LOG_INFO(TBFP, "StoreReadFrame:%s", ArrayToStr(Node->TxFrame, total_frame_len));
+            uint32_t i = 0;
+            for(i=0; i<total_frame_len; i++) {
+                cli_printf("$%02X", Node->TxFrame[i]);
+            }
+            cli_printf(CRLF);
             res = true;
-        }
+    	}
     }
     return res;
 }

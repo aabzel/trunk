@@ -4,10 +4,10 @@
 #include <string.h>
 
 #include "data_utils.h"
-#include "protocol.h"
 #include "std_includes.h"
 #include "tbfp_diag.h"
-#include "array_diag.h"
+#include "protocol.h"
+
 
 #ifdef HAS_TIME
 #include "time_mcal.h"
@@ -40,7 +40,7 @@
 static bool tbfp_parser_proc_wait_preamble(TbfpHandle_t* Node, uint8_t rx_byte) {
     bool res = false;
 #ifdef HAS_INTERFACES_DIAG
-    LOG_PARN(TBFP, "ParsePre:%s,RxByte:0x%02x", InterfaceToStr(Node->inter_face), rx_byte);
+    LOG_PARN(TBFP, "ParsePre:%s,RxByte:0x%02x", InterfaceToStr(Node->interface), rx_byte);
 #endif
     if(Node->preamble_val == rx_byte) {
         if(0 == Node->load_len) {
@@ -53,7 +53,7 @@ static bool tbfp_parser_proc_wait_preamble(TbfpHandle_t* Node, uint8_t rx_byte) 
 
 #ifdef HAS_INTERFACES_DIAG
 #ifdef HAS_TBFP_FLOW_CONTROL
-            LOG_PARN(TBFP, "IF:%s,Preamble:0x%x,Flow:%u", InterfaceToStr(Node->inter_face), rx_byte, Node->Flow.cur);
+            LOG_DEBUG(TBFP, "IF:%s,Preamble:0x%x,Flow:%u", InterfaceToStr(Node->interface), rx_byte, Node->Flow.cur);
 #endif /* HAS_TBFP_FLOW_CONTROL*/
 #endif /*HAS_TBFP_DIAG*/
             res = true;
@@ -92,7 +92,7 @@ static bool tbfp_parser_proc_retransmit_cnt(TbfpHandle_t* Node, uint8_t rx_byte)
 
         Node->load_len = TBFP_INDEX_RETX + 1;
 #ifdef HAS_INTERFACES_DIAG
-        LOG_PARN(TBFP, "%s ReTxCnt:0x%x", InterfaceToStr(Node->inter_face), rx_byte);
+        LOG_DEBUG(TBFP, "%s ReTxCnt:0x%x", InterfaceToStr(Node->interface), rx_byte);
 #endif
         Node->rx_state = WAIT_SERIAL_NUM;
         res = true;
@@ -127,13 +127,13 @@ static bool tbfp_parser_proc_wait_serial_num(TbfpHandle_t* Node, uint8_t rx_byte
         memcpy(&Node->s_num, &Node->rx_frame[TBFP_INDEX_SER_NUM], TBFP_SIZE_SN);
         Node->load_len = TBFP_INDEX_SER_NUM + 2;
 #ifdef HAS_INTERFACES_DIAG
-        LOG_PARN(TBFP, "%s SN:%u=0x%04x", InterfaceToStr(Node->inter_face), Node->s_num, Node->s_num);
+        LOG_DEBUG(TBFP, "%s SN:%u=0x%04x", InterfaceToStr(Node->interface), Node->s_num, Node->s_num);
 #endif
         Node->rx_state = WAIT_LEN;
         res = true;
     } else {
 #ifdef HAS_LOG
-        LOG_PARN(TBFP, "ParseSnErr");
+        LOG_DEBUG(TBFP, "ParseSnErr");
 #endif
         res = tbfp_parser_reset_rx(Node, WAIT_SERIAL_NUM);
     }
@@ -166,7 +166,7 @@ static bool tbfp_parser_proc_wait_len(TbfpHandle_t* Node, uint8_t rx_byte) {
         Node->load_len = TBFP_INDEX_LEN + TBFP_SIZE_LEN;
         memcpy(&(Node->exp_payload_len), &(Node->rx_frame[TBFP_INDEX_LEN]), TBFP_SIZE_LEN);
 #ifdef HAS_INTERFACES_DIAG
-        LOG_PARN(TBFP, "%s Len:%u=0x%04x", InterfaceToStr(Node->inter_face), Node->exp_payload_len,
+        LOG_DEBUG(TBFP, "%s Len:%u=0x%04x", InterfaceToStr(Node->interface), Node->exp_payload_len,
                   Node->exp_payload_len);
 #endif
         if(0 < Node->exp_payload_len) {
@@ -176,7 +176,7 @@ static bool tbfp_parser_proc_wait_len(TbfpHandle_t* Node, uint8_t rx_byte) {
             } else {
                 Node->len_err_cnt++;
 #ifdef HAS_INTERFACES_DIAG
-                LOG_PARN(TBFP, "%s TooBigData %u Byte", InterfaceToStr(Node->inter_face), Node->exp_payload_len);
+                LOG_DEBUG(TBFP, "%s TooBigData %u Byte", InterfaceToStr(Node->interface), Node->exp_payload_len);
 #endif
                 res = tbfp_parser_reset_rx(Node, WAIT_LEN);
             }
@@ -188,7 +188,7 @@ static bool tbfp_parser_proc_wait_len(TbfpHandle_t* Node, uint8_t rx_byte) {
         }
     } else {
 #ifdef HAS_LOG
-        LOG_PARN(TBFP, "ParseLenErr");
+        LOG_DEBUG(TBFP, "ParseLenErr");
 #endif
         res = tbfp_parser_reset_rx(Node, WAIT_LEN);
     }
@@ -220,7 +220,7 @@ static bool tbfp_parser_proc_wait_frame_id(TbfpHandle_t* Node, uint8_t rx_byte) 
 static bool tbfp_parser_proc_wait_payload(TbfpHandle_t* Node, uint8_t rx_byte) {
     bool res = false;
 #ifdef HAS_INTERFACES_DIAG
-    LOG_PARN(TBFP, "%s ParsePayLoad Data[%u]=%u=0x%02x", InterfaceToStr(Node->inter_face),
+    LOG_PARN(TBFP, "%s ParsePayLoad Data[%u]=%u=0x%02x", InterfaceToStr(Node->interface),
              Node->load_len - TBFP_SIZE_HEADER, rx_byte, rx_byte);
 #endif
     if((TBFP_SIZE_HEADER + Node->exp_payload_len) <= Node->load_len) {
@@ -250,64 +250,63 @@ static bool tbfp_parser_proc_wait_payload(TbfpHandle_t* Node, uint8_t rx_byte) {
     return res;
 }
 
+
 /*
- Node - TBFP RAM node
- size- frame size
- */
+ * data - frame data
+ * size- frame size
+ *
+ * */
 static inline bool tbfp_proc_full_ll(TbfpHandle_t* const Node, uint16_t size) {
     bool res = true;
-    Node->rx_done = true;
 
 #ifdef HAS_TBFP_EXT
-    res = is_tbfp_protocol(Node->fix_frame, size, Node->inter_face);
+    res = is_tbfp_protocol(Node->fix_frame, size, Node->interface);
 #endif
 
     if(res) {
         if(Node) {
 #ifdef HAS_LOG
-        	LOG_DEBUG(TBFP,"RxFrame:%s",ArrayToStr(Node->fix_frame,Node->rx_frame_len));
-            LOG_PARN(TBFP, "IF:%s,ProcFull,Len:%u", InterfaceToStr(Node->inter_face), size);
+            LOG_DEBUG(TBFP, "IF:%s,ProcFull,Len:%u", InterfaceToStr(Node->interface), size);
 #endif
             Node->proc_done = false; /**/
             Node->rx_byte += size;
             TbfpHeader_t inHeader = {0};
             memset(inHeader.buff, 0, sizeof(TbfpHeader_t));
-            memcpy(&inHeader, Node->fix_frame, sizeof(TbfpHeader_t));
+            memcpy(&inHeader, Node->fix_frame , sizeof(TbfpHeader_t));
 #ifdef HAS_TBFP_FLOW_CONTROL
             bool flow_ctrl_ok = false;
-            flow_ctrl_ok = protocol_check_flow_control(TBFP, &Node->Flow, inHeader.snum, Node->inter_face);
+            flow_ctrl_ok = protocol_check_flow_control(TBFP, &Node->Flow, inHeader.snum, Node->interface);
             if(flow_ctrl_ok) {
-                LOG_PARN(TBFP, "InFlowOk %s", InterfaceToStr(Node->inter_face));
+                LOG_DEBUG(TBFP, "InFlowOk %s", InterfaceToStr(Node->interface));
             } else {
                 Node->err_cnt++;
-                LOG_NOTICE(TBFP, "InFlowErr %s", InterfaceToStr(Node->inter_face));
+                LOG_NOTICE(TBFP, "InFlowErr %s", InterfaceToStr(Node->interface));
             }
 #endif /*HAS_TBFP_FLOW_CONTROL*/
 
 #ifdef HAS_TBFP_RETRANSMIT
             if((0 < inHeader.flags.lifetime) && (inHeader.flags.lifetime < 4)) {
-                res = tbfp_send(&arr[TBFP_INDEX_PAYLOAD], inHeader.len, Node->inter_face, inHeader.flags.lifetime - 1,
+                res = tbfp_send(&arr[TBFP_INDEX_PAYLOAD], inHeader.len, Node->interface, inHeader.flags.lifetime - 1,
                                 (TbfpAck_t)inHeader.flags.ack_need, inHeader.payload_id);
             }
 #endif /*HAS_TBFP_RETRANSMIT*/
 
-            // res = tbfp_proc_payload(&Node->fix_frame[TBFP_INDEX_PAYLOAD], inHeader.len, Node->inter_face,
-            // inHeader.payload_id);
+            //res = tbfp_proc_payload(&Node->fix_frame[TBFP_INDEX_PAYLOAD], inHeader.len, Node->interface, inHeader.payload_id);
             res = tbfp_proc_payload(Node, inHeader.len, inHeader.payload_id);
 #ifdef HAS_LOG
-            log_parn_res(TBFP, res, "ProcPayLoad");
+            log_res(TBFP,res,"ProcPayLoad");
 #endif
 
 #ifdef HAS_TBFP_ACK
             /*Ack After Proc to pass PC unit tests*/
             if(inHeader.flags.ack_need) {
-                res = tbfp_send_ack(inHeader.snum, Node->inter_face);
+                res = tbfp_send_ack(inHeader.snum, Node->interface);
             }
 #endif
 
         } else {
 #ifdef HAS_LOG
-            LOG_ERROR(TBFP, "UndefIf:%u", Node->inter_face);
+            LOG_ERROR(TBFP, "UndefIf:%u", Node->interface);
 #endif
         }
 
@@ -347,7 +346,7 @@ static bool tbfp_parser_proc_wait_crc8(TbfpHandle_t* const Node, const uint8_t r
         if(res) {
 #ifdef HAS_CRC8
 #ifdef INTERFACE_DIAG
-            LOG_PARN(TBFP, "%s,SN:%u=0x%04x,Crc8=0x02x,Ok!,Flow:%u", InterfaceToStr(Node->inter_face), Node->s_num,
+            LOG_DEBUG(TBFP, "%s,SN:%u=0x%04x,Crc8=0x02x,Ok!,Flow:%u", InterfaceToStr(Node->interface), Node->s_num,
                       Node->s_num, Node->read_crc8, Node->Flow.cur);
 #endif
 #endif
@@ -356,22 +355,22 @@ static bool tbfp_parser_proc_wait_crc8(TbfpHandle_t* const Node, const uint8_t r
 #ifdef HAS_TBFP_DIAG
             tbfp_update_len_stat(Node, Node->exp_payload_len);
 #endif
-            Node->rx_frame_len =  frame_len + TBFP_SIZE_CRC;
-            memcpy(Node->fix_frame, Node->rx_frame,  Node->rx_frame_len );
+
+            memcpy(Node->fix_frame, Node->rx_frame, frame_len + TBFP_SIZE_CRC);
             Node->rx_state = RX_DONE;
             Node->rx_pkt_cnt++;
             res = tbfp_parser_reset_rx(Node, WAIT_CRC);
-            // res = tbfp_proc_full(Node->fix_frame, frame_len + TBFP_SIZE_CRC, Node->inter_face);
+            //res = tbfp_proc_full(Node->fix_frame, frame_len + TBFP_SIZE_CRC, Node->interface);
             res = tbfp_proc_full_ll(Node, frame_len + TBFP_SIZE_CRC);
 #ifdef HAS_LOG
-            log_parn_res(TBFP, res, "ProcFull");
+            log_res(TBFP, res, "ProcFull");
 #endif
         } else {
             Node->crc_err_cnt++;
 #ifdef HAS_INTERFACES_DIAG
 #ifdef HAS_CRC8
-            LOG_PARN(TBFP, "IF:%s,SN:%u=0x%04x,Crc8Err,read:0x%02x,computed:0x%02x,RxPayLen:%u",
-                      InterfaceToStr(Node->inter_face), Node->s_num, Node->s_num, Node->read_crc8, calc_crc8,
+            LOG_DEBUG(TBFP, "IF:%s,SN:%u=0x%04x,Crc8Err,read:0x%02x,computed:0x%02x,RxPayLen:%u",
+                      InterfaceToStr(Node->interface), Node->s_num, Node->s_num, Node->read_crc8, calc_crc8,
                       Node->exp_payload_len);
 #endif
 #endif
@@ -399,7 +398,7 @@ bool tbfp_proc_byte(TbfpHandle_t* const Node, uint8_t rx_byte) {
 #endif
 
 #ifdef HAS_TBFP_DIAG
-    LOG_PARN(TBFP, "ProcByte:[%u]=0x%02x,State:%s", Node->load_len, rx_byte, TbfpRxState2Str(Node->rx_state));
+    LOG_PARN(TBFP, "ProcByte:[%u]=0x%02x,State:%s", Node->load_len, rx_byte, TbfpRxStateToStr(Node->rx_state));
 #endif
     switch(Node->rx_state) {
     case WAIT_PREAMBLE:
@@ -444,16 +443,18 @@ bool tbfp_proc_byte(TbfpHandle_t* const Node, uint8_t rx_byte) {
 bool tbfp_parser_init(TbfpHandle_t* const Node, const TbfpConfig_t* const Config) {
     bool res = false;
     if(Config) {
-        if(Node) {
 #ifdef HAS_INTERFACES_DIAG
-        LOG_WARNING(TBFP, "%s,InitParser", InterfaceToStr(Config->inter_face));
+        LOG_INFO(TBFP, "%s,InitParser", InterfaceToStr(Config->interface));
 #endif
+        if(Node) {
             Node->preamble_val = Config->preamble_val;
+            Node->rx_state = WAIT_PREAMBLE;
             Node->read_crc8 = 0;
             Node->exp_payload_len = 0;
             Node->load_len = 0;
             Node->s_num = 0;
-            Node->rx_state = WAIT_PREAMBLE;
+           // memset(Node->rx_frame, 0, TBFP_MAX_FRAME);
+           // memset(Node->fix_frame, 0, TBFP_MAX_FRAME);
             res = true;
         } else {
 #ifdef HAS_LOG

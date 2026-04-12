@@ -36,3 +36,8 @@ const char* SerialPortConfigToStr(const SerialPortConfig_t* const Config) {
     }
     return text;
 }
+
+const char* SerialPortErrorToStr(const DWORD last_error) {
+    char *name = "?";
+    return name;
+}

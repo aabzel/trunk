@@ -1,12 +1,12 @@
 #ifndef INTERVAL_TYPES_H
 #define INTERVAL_TYPES_H
 
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "interval_const.h"
 
 typedef struct {
     uint32_t val;
+    uint32_t num;     /* interval number */
     IntervalPoint_t type;
 } IntervalPoints_t;
 

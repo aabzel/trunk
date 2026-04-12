@@ -6,5 +6,6 @@
 bool serial_port_diag(uint8_t num);
 const char* SerialPortNodeToStr(const SerialPortHandle_t* const Node);
 const char* SerialPortConfigToStr(const SerialPortConfig_t* const Config);
+const char* SerialPortErrorToStr(const DWORD last_error);
 
 #endif /* SERIAL_PORT_DIAG_H  */
