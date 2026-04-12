@@ -1,12 +1,13 @@
 #ifndef CALIBRATION_DATA_COMMANDS_H
 #define CALIBRATION_DATA_COMMANDS_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdbool.h>
+#include <stdint.h>
+
 
 bool cmd_calibration_data_init(int32_t argc, char* argv[]);
 bool cmd_calibration_data_get(int32_t argc, char* argv[]);

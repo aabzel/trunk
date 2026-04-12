@@ -1,0 +1,5 @@
+#ifndef RATIONAL_NUM_CONST_H
+#define RATIONAL_NUM_CONST_H
+
+
+#endif /* RATIONAL_NUM_CONST_H */
