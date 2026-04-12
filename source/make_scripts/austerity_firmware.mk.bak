@@ -17,6 +17,6 @@ ifneq ($(AUSTERITY_FIRMWARE_MK),Y)
     MICROCONTROLLER=Y
     GPIO=Y
     CLI=Y
-    #LED=Y
+    LED=Y
     UART=Y
 endif

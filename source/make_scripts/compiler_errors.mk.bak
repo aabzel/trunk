@@ -130,6 +130,7 @@ COMPILE_GCC_OPT += -Werror=unused-function
 COMPILE_GCC_OPT += -Werror=unused-value
 COMPILE_GCC_OPT += -Werror=pointer-arith
 COMPILE_GCC_OPT += -Werror=unused-but-set-variable
+COMPILE_GCC_OPT += -Werror=int-conversion # StrDup
 #COMPILE_GCC_OPT += -Werror=redundant-decls # freeRTOSErr
 COMPILE_GCC_OPT += -Werror=implicit-function-declaration
 
@@ -147,6 +148,7 @@ ifneq ($(MINGW),Y)
     # (not supported in MINGW)
     # COMPILE_GCC_OPT += -Werror=uninitialised
     # COMPILE_GCC_OPT += -Werror=enum-int-mismatch
+    COMPILE_GCC_OPT += -Werror=strict-prototypes
     COMPILE_GCC_OPT += -Werror=duplicate-decl-specifier
     COMPILE_GCC_OPT += -Werror=address-of-packed-member
     COMPILE_GCC_OPT += -Werror=sizeof-pointer-div 
@@ -216,9 +218,6 @@ ifeq ($(EXTRA_VERIFICATION3),Y)
     # reduce the padding and so make the structure smaller.
     COMPILE_GCC_OPT += -Werror=padded
 
-    COMPILE_GCC_OPT += -Werror=int-conversion 
-    # StrDup
-    COMPILE_GCC_OPT += -Werror=strict-prototypes
 endif
 
 

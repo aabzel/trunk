@@ -2,7 +2,7 @@ $(info auto_init_script)
 
 GRAPHVIZ_PLAIN = $(BUILD_DIR)/$(TARGET).plain
 $(info GRAPHVIZ_PLAIN=$(GRAPHVIZ_PLAIN))
-$(info DOT_TOOL=$(DOT_TOOL))
+$(info CC_DOT=$(CC_DOT))
 
 ADJACENCY_LIST = $(BUILD_DIR)/$(TARGET).adjlist
 $(info ADJACENCY_LIST=$(ADJACENCY_LIST))
@@ -12,11 +12,11 @@ $(info INIT_ORDER_FILE=$(INIT_ORDER_FILE))
 
 $(GRAPHVIZ_PLAIN): preproc_graphviz
 	$(info ComposeGraphVizPlainComment...)
-	$(DOT_TOOL) -Tplain $(SOURCES_DOT_RES) > $@
+	$(CC_DOT) -Tplain $(SOURCES_DOT_RES) > $@
 
 $(ADJACENCY_LIST):$(GRAPHVIZ_PLAIN)
 	$(info AdjacencyList...)
-	awk '/^edge / { print $$3 " " $$2 }' $< > $@
+	gawk '/^edge / { print $$3 " " $$2 }' $< > $@
 	$(info SortAdjacencyList...)
 	sort -u $(ADJACENCY_LIST) -o $(ADJACENCY_LIST)
 	

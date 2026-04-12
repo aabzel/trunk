@@ -5,12 +5,6 @@ ifeq ($(GCC),Y)
     include $(WORKSPACE_LOC)/make_scripts/compiler_gcc_options.mk
 endif
 
-ifeq ($(ARM_GCC),Y)
-    #$(error ARM_GCC=$(ARM_GCC))
-    COMPILE_GCC_OPT += -DHAS_ARM_GCC
-endif
-
-
 
 ifeq ($(IAR),Y)
     include $(WORKSPACE_LOC)/make_scripts/compiler_iar_options.mk

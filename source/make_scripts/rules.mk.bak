@@ -86,7 +86,7 @@ MCAL_OPT += $(OPT_C)
 CFLAGS += $(MCAL_OPT)
 
 ifeq ($(GCC), Y)
-    #@echo $(error GCC=$(GCC))
+    @echo $(error GCC=$(GCC))
     CFLAGS += $(COMPILE_GCC_OPT)
 endif
 
@@ -151,26 +151,26 @@ generate_definitions:
 
 # build the application
 # list of objects
-OBJECTS_C = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_TOTAL_C:.c=.o)))
+OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_TOTAL_C:.c=.o)))
 
 vpath %.c $(sort $(dir $(SOURCES_TOTAL_C)))
 
-OBJECTS_TOTAL  += $(OBJECTS_C)
 # list of ASM program objects
 ifeq ($(GCC),Y)
-    ASM_OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_ASM:.S=.o)))
+    OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_ASM:.S=.o)))
     #@echo $(error OBJECTS=$(OBJECTS))
 endif
 
-ifeq ($(IAR),Y)
+
 #@echo $(error SOURCES_ASM=$(SOURCES_ASM))
-    ASM_OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_ASM:.s=.o)))
+ASM_OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(SOURCES_ASM:.s=.o)))
 #@echo $(error ASM_OBJECTS=$(ASM_OBJECTS))
-endif
+ELF_OBJECTS  += $(OBJECTS)
+
 
 #@echo $(error ASM_OBJECTS=$(ASM_OBJECTS))
-OBJECTS_TOTAL  += $(ASM_OBJECTS)
-#@echo $(error OBJECTS_TOTAL=$(OBJECTS_TOTAL))
+ELF_OBJECTS  += $(ASM_OBJECTS)
+#@echo $(error ELF_OBJECTS=$(ELF_OBJECTS))
 ifeq ($(GCC),Y)
     vpath %.S $(sort $(dir $(SOURCES_ASM)))
 endif
@@ -179,7 +179,7 @@ ifeq ($(IAR),Y)
     vpath %.s $(sort $(dir $(SOURCES_ASM)))
 endif
 
-TOTAL_FILES := $(words $(OBJECTS_C))
+TOTAL_FILES := $(words $(OBJECTS))
 $(info TOTAL_FILES:$(TOTAL_FILES) )
 
 #@echo $(error CFLAGS=$(CFLAGS))
@@ -204,9 +204,9 @@ $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
 
 #@echo $(error MAIN_TARGET_FILE=$(MAIN_TARGET_FILE))
 #@echo $(error LDFLAGS=$(LDFLAGS))
-$(BUILD_DIR)/$(MAIN_TARGET_FILE): $(OBJECTS_TOTAL) Makefile $(BUILD_DIR)
+$(BUILD_DIR)/$(MAIN_TARGET_FILE): $(ELF_OBJECTS) Makefile $(BUILD_DIR)
 	@echo GenerateMainArtifact $@
-	$(LD) $(OBJECTS_TOTAL) $(LDFLAGS) -o $@
+	$(LD) $(ELF_OBJECTS) $(LDFLAGS) -o $@
 	$(SZ) $@
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/$(MAIN_TARGET_FILE) | $(BUILD_DIR)

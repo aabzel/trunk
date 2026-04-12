@@ -1,7 +1,7 @@
 $(info FlashTargetScript)
 
 MAKE_SCRIPTS=$(WORKSPACE_LOC)/make_scripts
-#$(error MK_PATH=$(MK_PATH))
+
 FLASH_TARGET=
 
 ifeq ($(ARTERY), Y)
@@ -32,24 +32,11 @@ ifeq ($(STM), Y)
     FLASH_TARGET += flash_stm32
 endif
 
-ifeq ($(FLAG_CHIP), Y)
-    FLASH_TARGET += flash_flag_chip
-endif
-
-
 # make flash
 .PHONY: flash
 flash: $(FLASH_TARGET)
 	$(info FlashTargetDone)
 
-
-ifeq ($(FLAG_CHIP), Y)
-    include $(MAKE_SCRIPTS)/flash_flag_chip.mk
-endif
-
-ifeq ($(YUNTU), Y)
-    include $(MAKE_SCRIPTS)/flash_yuntu.mk
-endif
 
 ifeq ($(ARTERY), Y)
     include $(MAKE_SCRIPTS)/flash_artery.mk
