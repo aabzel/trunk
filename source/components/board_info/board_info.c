@@ -2,10 +2,9 @@
 
 #include <string.h>
 
-#include "board_api.h"
+#include "board_config.h"
 
-bool connectors_is_equal(const ConnectorPin_t* const conn1,
-                         const ConnectorPin_t* const conn2) {
+bool connectors_is_equal(const ConnectorPin_t* const conn1, const ConnectorPin_t* const conn2) {
     bool res = false;
     if(conn1->pin == conn2->pin) {
         if(conn1->num == conn2->num) {

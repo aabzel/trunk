@@ -1,0 +1,9 @@
+#ifndef DUMMY_BOARD_CONST_H
+#define DUMMY_BOARD_CONST_H
+
+#define XTALL_FREQ_HZ 24000000U
+#define BOARD_NAME "DUMMY_BOARD"
+#define BUTTON_COUNT 0
+#define LED_COUNT 4
+
+#endif /* DUMMY_BOARD_CONST_H  */

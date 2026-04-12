@@ -1,0 +1,7 @@
+#ifndef BOARD_CUSTOM_CONST_H
+#define BOARD_CUSTOM_CONST_H
+
+#define DUT_CAN_ID 0x001C
+
+
+#endif /* BOARD_CUSTOM_CONST_H */

@@ -7,30 +7,30 @@
 
 #ifdef HAS_ERA_3_14_1
 #include "era_3_14_1_params.h"
-#else/*HAS_ERA_3_14_1*/
+#else/**/
 #define PAR_IDS_ERA_3_14_1
-#endif/*HAS_ERA_3_14_1*/
+#endif/**/
 
 #ifdef HAS_TERA_TEST
 #include "tera_test_params.h"
-#else/*HAS_TERA_TEST*/
+#else/**/
 #define PAR_IDS_TERA_TEST
-#endif/*HAS_TERA_TEST*/
+#endif/**/
 
 #ifdef HAS_AT_START
 #include "at_start_params.h"
-#else /*HAS_AT_START*/
+#else /**/
 #define PAR_IDS_AT_START
-#endif/*HAS_AT_START*/
+#endif/**/
 
 #define PAR_IDS_BOARD      \
     PAR_IDS_AT_START       \
     PAR_IDS_ERA_3_14_1     \
     PAR_IDS_TERA_TEST
 
-#else /*HAS_BOARD_CUSTOM*/
+#else /**/
 #define PAR_IDS_BOARD
-#endif /*HAS_BOARD_CUSTOM*/
+#endif /**/
 
 #define BOARD_PARAMS
 

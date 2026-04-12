@@ -1,4 +1,3 @@
-
 #ifndef BOARD_INFO_DRV_H
 #define BOARD_INFO_DRV_H
 
@@ -6,15 +5,9 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "board_types.h"
 #include "gpio_types.h"
-
-#ifndef HAS_MCU
-#error "+HAS_MCU"
-#endif /*HAS_MCU*/
 
 #ifndef HAS_BOARD_INFO
 #error "+HAS_BOARD_INFO"

@@ -1,13 +1,18 @@
-
 #ifndef BOARD_INFO_TYPES_H
 #define BOARD_INFO_TYPES_H
 
-#include <stdint.h>
 
+#include "std_includes.h"
 #include "gpio_types.h"
 #include "board_const.h"
 #include "sys_constants.h"
+
+#ifdef HAS_BOARD_CUSTOM
 #include "board_custom_types.h"
+#else
+#define BOARD_CUSTOM_CONFIG
+#endif
+
 
 typedef struct {
     char* designator;
@@ -25,6 +30,7 @@ typedef struct {
     ConnectorPin_t conn;
     char* wire_name;
     char* silk;
+    /*SW component may not be connected to build project*/
     facility_t facility;
 }Wire_t;
 

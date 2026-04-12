@@ -1,0 +1,22 @@
+$(info BOARD_CUSTOM_MK_INC=$(BOARD_CUSTOM_MK_INC) )
+
+ifneq ($(BOARD_CUSTOM_MK_INC),Y)
+    BOARD_CUSTOM_MK_INC=Y
+
+    BOARD_CUSTOM_DRIVER_DIR = $(BOARD_CUSTOM_DIR)/board_custom
+    #@echo $(error BOARD_CUSTOM_DRIVER_DIR=$(BOARD_CUSTOM_DRIVER_DIR))
+    INCDIR += -I$(BOARD_CUSTOM_DRIVER_DIR)
+
+    MCAL_OPT += -DHAS_BOARD_CUSTOM
+
+    SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DRIVER_DIR)/board_custom.c
+
+    ifeq ($(CLI),Y)
+        ifeq ($(BOARD_CUSTOM_COMMANDS),Y)
+            #@echo $(error BOARD_CUSTOM_COMMANDS=$(BOARD_CUSTOM_COMMANDS))
+            MCAL_OPT += -DHAS_BOARD_CUSTOM_COMMANDS
+            SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DRIVER_DIR)/board_custom_commands.c
+        endif
+    endif
+
+endif
