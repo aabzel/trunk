@@ -24,7 +24,7 @@ const char* PinCoreSel2Str(GpioPinMcuSel_t core_sel){
     return name;
 }
 
-const char* GpioPort2Str(uint8_t port){
+const char* GpioPortToStr(uint8_t port){
 	const char* name="";
 	return name;
 }

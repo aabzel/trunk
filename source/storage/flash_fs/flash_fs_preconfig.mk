@@ -4,6 +4,7 @@ ifneq ($(FLASH_FS_PRECONFIG_INC),Y)
     FLASH_FS=Y
     FLASH=Y
     NVS=Y
+    CRC8_AUTOSAR=Y
     FLASH_FS_PROC=Y
     CRC=Y
     CRC8=Y

@@ -7,10 +7,10 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
 
     GPIO_NRF_DIR = $(MCAL_NRF5340_DIR)/gpio
     #@echo $(error GPIO_NRF_DIR=$(GPIO_NRF_DIR))
-    OPT += -DHAS_GPIO
-    OPT += -DHAS_GPIO_NRFX
-    OPT += -DHAS_GPIO_CUSTOM
-    OPT += -DCONFIG_NFCT_PINS_AS_GPIOS
+    MCAL_OPT += -DHAS_GPIO
+    MCAL_OPT += -DHAS_GPIO_NRFX
+    MCAL_OPT += -DHAS_GPIO_CUSTOM
+    MCAL_OPT += -DCONFIG_NFCT_PINS_AS_GPIOS
 
     INCDIR += -I$(GPIO_NRF_DIR)
 
@@ -18,7 +18,7 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(GPIO_COMMANDS),Y)
-            OPT += -DHAS_GPIO_CUSTOM_COMMANDS
+            MCAL_OPT += -DHAS_GPIO_CUSTOM_COMMANDS
             SOURCES_C += $(GPIO_NRF_DIR)/gpio_custom_commands.c
         endif
     endif

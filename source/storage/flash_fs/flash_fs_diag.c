@@ -41,7 +41,7 @@ bool flash_fs_diag(void) {
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, page_num);
         snprintf(log_line, sizeof(log_line), "%s 0x%08x " TSEP, log_line, page_base_addr);
-        snprintf(log_line, sizeof(log_line), "%s %5s " TSEP, log_line, OnOff2Str(flash_fs_is_active(page_num)));
+        snprintf(log_line, sizeof(log_line), "%s %5s " TSEP, log_line, OnOffToStr(flash_fs_is_active(page_num)));
         snprintf(log_line, sizeof(log_line), "%s %u " TSEP, log_line, page_len);
         snprintf(log_line, sizeof(log_line), "%s %4u " TSEP, log_line, files);
         snprintf(log_line, sizeof(log_line), "%s %5u " TSEP, log_line, spare_cnt);

@@ -1,4 +1,4 @@
 
-config HW_SW_NOR_FLASH
-    bool "Enable use of the HW_SW_NOR_FLASH drivers"
+config SW_NOR_FLASH
+    bool "Enable use of the SW_NOR_FLASH drivers"
 

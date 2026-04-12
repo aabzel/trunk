@@ -9,18 +9,18 @@ ifneq ($(BLE_DRV_MK_INC),Y)
     #@echo $(error BLE_DIR=$(BLE_DIR))
 
     INCDIR += -I$(BLE_DIR)
-    OPT += -DHAS_BLE
+    MCAL_OPT += -DHAS_BLE
 
     ifeq ($(BLE_INTERRUPT),Y)
         #@echo $(error BLE_INTERRUPT=$(BLE_INTERRUPT))
-        OPT += -DHAS_BLE_INTERRUPT
+        MCAL_OPT += -DHAS_BLE_INTERRUPT
     endif
 
     SOURCES_C += $(BLE_DIR)/ble_drv.c
 
     ifeq ($(CLI),Y)
         ifeq ($(BLE_COMMANDS),Y)
-            OPT += -DHAS_BLE_COMMANDS
+            MCAL_OPT += -DHAS_BLE_COMMANDS
             SOURCES_C += $(BLE_DIR)/ble_commands.c
         endif
     endif

@@ -9,11 +9,11 @@ ifneq ($(IPC_DRV_MK_INC),Y)
     #@echo $(error IPC_DIR=$(IPC_DIR))
 
     INCDIR += -I$(IPC_DIR)
-    OPT += -DHAS_IPC
+    MCAL_OPT += -DHAS_IPC
 
     ifeq ($(IPC_INTERRUPT),Y)
         #@echo $(error IPC_INTERRUPT=$(IPC_INTERRUPT))
-        OPT += -DHAS_IPC_INTERRUPT
+        MCAL_OPT += -DHAS_IPC_INTERRUPT
     endif
 
     SOURCES_C += $(IPC_DIR)/ipc_drv.c
@@ -21,7 +21,7 @@ ifneq ($(IPC_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(IPC_COMMANDS),Y)
-            OPT += -DHAS_IPC_COMMANDS
+            MCAL_OPT += -DHAS_IPC_COMMANDS
             SOURCES_C += $(IPC_DIR)/ipc_commands.c
         endif
     endif

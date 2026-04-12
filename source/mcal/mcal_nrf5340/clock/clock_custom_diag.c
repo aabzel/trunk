@@ -6,10 +6,11 @@
 #include "clock_custom.h"
 #include "clock_diag.h"
 #include "common_diag.h"
-#include "log.h"
 #include "nrfx_clock.h"
+#include "log.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
 
 static const char* ClcDivider2Str(nrf_clock_hfclk_div_t divider) {
     const char* name = "?";
@@ -81,6 +82,10 @@ bool clock_diag_low_level(void) {
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     NrfxClkSrc_t NrfxClkSrc;
     for(i = 0; i < cnt; i++) {
+
+    	CSC_RetStatusType CSC0_GetCSC0ClockFreq(const CSC0_ClkSrcType eClkkName, uint32_t *const pFreq)
+
+
         NrfxClkSrc.byte = 0;
         uint32_t freq_hz = clock_freq_get(ClockInfo[i].domain_nrf);
         ClockSource_t src = clock_nrf_src_get(ClockInfo[i].domain_nrf);

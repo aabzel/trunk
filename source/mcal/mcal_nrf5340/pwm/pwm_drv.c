@@ -189,7 +189,7 @@ bool pwm_init_one(uint8_t num) {
                     }
                 } else {
                     res = false;
-                    LOG_ERROR(PWM, "Init %u %u=%s Err", num, ret, HalStatus2Str(ret));
+                    LOG_ERROR(PWM, "Init %u %u=%s Err", num, ret, HalStatusToStr(ret));
                 }
 
             } else {
@@ -278,7 +278,7 @@ bool pwm_frequency_set(uint8_t num, PwmChannel_t channel, double frequency_hz) {
                 }
             } else {
                 res = false;
-                LOG_ERROR(PWM, "Init %u %u=%s Err", num, ret, HalStatus2Str(ret));
+                LOG_ERROR(PWM, "Init %u %u=%s Err", num, ret, HalStatusToStr(ret));
             }
         } else {
             LOG_ERROR(PWM, "NoStaticNode %u", num);

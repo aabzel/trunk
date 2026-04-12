@@ -10,11 +10,11 @@ ifneq ($(NRF_TIMER_DRV_MK_INC),Y)
     #@echo $(error NRF_TIMER_DIR=$(NRF_TIMER_DIR))
 
     INCDIR += -I$(NRF_TIMER_DIR)
-    OPT += -DHAS_TIMER
+    MCAL_OPT += -DHAS_TIMER
 
     ifeq ($(NRF_TIMER_INTERRUPT),Y)
         #@echo $(error NRF_TIMER_INTERRUPT=$(NRF_TIMER_INTERRUPT))
-        OPT += -DHAS_NRF_TIMER_INTERRUPT
+        MCAL_OPT += -DHAS_NRF_TIMER_INTERRUPT
     endif
 
     SOURCES_C += $(NRF_TIMER_DIR)/timer_mcal.c
@@ -27,7 +27,7 @@ ifneq ($(NRF_TIMER_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(TIMER_COMMANDS),Y)
-            OPT += -DHAS_TIMER_COMMANDS
+            MCAL_OPT += -DHAS_TIMER_COMMANDS
             SOURCES_C += $(NRF_TIMER_DIR)/timer_custom_commands.c
         endif
     endif

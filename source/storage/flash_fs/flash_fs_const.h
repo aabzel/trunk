@@ -4,14 +4,15 @@
 #ifdef HAS_TIME
 #include "timer_utils.h"
 #endif
-#include "flash_fs_file_ids.h"
+
+#include "storage_file_ids.h"
 #include "flash_fs_dep.h"
 
 typedef enum{
-    FLASH_FS_PAGE_1=1,
-    FLASH_FS_PAGE_2=2,
+    FLASH_FS_PAGE_1 = 1,
+    FLASH_FS_PAGE_2 = 2,
 
-    FLASH_FS_PAGE_UNDEF=0x55,
+    FLASH_FS_PAGE_UNDEF = 0,
 }FlashFsPage_t;
 
 #define QWORD_LEN 4

@@ -10,9 +10,6 @@
 
 #include <string.h>
 
-#ifdef HAS_CRC8
-#include "crc8_autosar.h"
-#endif
 #include "data_types.h"
 #include "data_utils.h"
 #include "flash_config.h"
@@ -21,13 +18,18 @@
 #include "interrupt_mcal.h"
 #include "nvs_config.h"
 #include "std_includes.h"
+
 #ifdef HAS_NVS
-#include "nvs_drv.h"
+#include "nvs_mcal.h"
 #endif
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
 
+#ifdef HAS_CRC8
+#include "crc8_autosar.h"
+#endif
 /* status for a active page */
 const uint32_t active_page_token = FLASH_FS_ACTIV_PAGE_DWORD;
 #if 0
@@ -354,7 +356,7 @@ bool flash_fs_format(void) {
     res = flash_fs_zero(FlashFsConfig.page[1].offset, QWORD_LEN);
     if(res) {
         /* erase first page */
-        res = nvs_erase(FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
+        res = nvs_mcal_erase(1,FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
     }
 
     if(res) {
@@ -411,14 +413,14 @@ bool flash_fs_turn_page(void) {
     /* erase passive page and get pointer to it */
     if(FlashFsConfig.page[0].offset == ff_page_active_start) {
         /* clear page # 2 */
-        res = nvs_erase(FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size);
+        res = nvs_mcal_erase(1,FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size);
         if(false == res) {
             return false;
         }
         mmPagePassiveStart = FlashFsConfig.page[1].offset;
     } else if(FlashFsConfig.page[1].offset == ff_page_active_start) {
         /* clear page # 1 */
-        res = nvs_erase(FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
+        res = nvs_mcal_erase(1,FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
         if(false == res) {
             return false;
         }
@@ -730,8 +732,8 @@ bool flash_fs_invalidate(uint16_t data_id) {
 bool flash_fs_erase(void) {
     bool res = true;
     /* invalidate second page as passive */
-    res = nvs_erase(FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size) && res;
-    res = nvs_erase(FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size) && res;
+    res = nvs_mcal_erase(1,FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size) && res;
+    res = nvs_mcal_erase(1,FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size) && res;
     return res;
 }
 #endif
@@ -828,7 +830,7 @@ FlashFsPage_t addr2page_num(uint32_t page_start) {
 
 bool is_flash_fs_addr(uint32_t addr) {
     bool res = false;
-    res = is_nvs_addr(addr);
+    res = is_nvs_addr(1,addr);
     return res;
 }
 

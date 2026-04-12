@@ -145,7 +145,7 @@ uint32_t Nrf53Page2Addr(uint8_t page_start) {
 }
 
 #ifdef HAS_FLASH_WRITE
-bool flash_mcal_erasepages(uint8_t page_start, uint8_t page_end) {
+bool flash_erase_pages(uint8_t page_start, uint8_t page_end) {
     bool res = false;
     nrfx_err_t ret = NRFX_ERROR_NULL;
     uint32_t address = 0;
@@ -182,7 +182,7 @@ uint8_t Address2PageNum(uint32_t address) {
 }
 
 #ifdef HAS_FLASH_WRITE
-bool flash_mcal_erase(uint32_t address, uint32_t size) {
+bool flash_erase_(uint32_t address, uint32_t size) {
     bool res = false;
     LOG_DEBUG(LG_FLASH, "Errase Addr: 0x%08x Size:%u", address, size);
     res = is_erased(address, size);
@@ -195,7 +195,7 @@ bool flash_mcal_erase(uint32_t address, uint32_t size) {
                 LOG_WARNING(LG_FLASH, "Errase Addr: 0x%08x Size:%u byte=%u Pages Rest:%u byte", address, size, page_cnt,
                             rest_byte);
                 uint8_t page_start = Address2PageNum(address);
-                res = flash_mcal_erasepages(page_start, page_start + page_cnt);
+                res = flash_erase_pages(page_start, page_start + page_cnt);
                 if(res) {
                     LOG_INFO(LG_FLASH, "PageStart %u:%u Errase Ok", page_start, page_cnt);
                 } else {
@@ -248,7 +248,7 @@ uint32_t flash_get_first_spare_page(void) {
 }
 
 #ifdef HAS_FLASH_WRITE
-bool flash_mcal_eraseall(void) {
+bool flash_erase_all(void) {
     bool res = false;
     LOG_WARNING(LG_FLASH, "ErraseAll!");
     nrfx_nvmc_all_erase();

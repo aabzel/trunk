@@ -11,7 +11,7 @@
 #include "flash_fs.h"
 #include "log.h"
 #include "nvs_const.h"
-#include "nvs_drv.h"
+#include "nvs_mcal.h"
 #include "std_includes.h"
 
 /*
@@ -25,7 +25,7 @@
 bool flash_fs_write(const uint32_t address, const uint8_t* const data, const uint32_t size) {
     bool res = true;
     LOG_DEBUG(FLASH_FS, "Write Addr:0x%08x,Size:%u", address, size);
-    res = nvs_mcal_write(address, data, size);
+    res = nvs_mcal_write(1, address, data, size);
     if(false == res) {
         LOG_ERROR(NVS, "WriewErrAddr:0x%08x,Size:%u Byte", address, size);
     }
@@ -41,7 +41,7 @@ bool flash_fs_zero(uint32_t address, uint32_t len) {
     uint8_t zeroArray[MAX_FLASH_ZERO_SIZE];
     if(len <= MAX_FLASH_ZERO_SIZE) {
         memset(zeroArray, 00, len);
-        res = nvs_mcal_write(address, (uint8_t*)zeroArray, len);
+        res = nvs_mcal_write(1,address, (uint8_t*)zeroArray, len);
     }
     return res;
 }

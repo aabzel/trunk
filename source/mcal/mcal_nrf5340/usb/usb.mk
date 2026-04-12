@@ -10,7 +10,7 @@ ifneq ($(USB_DRV_MK_INC),Y)
     #@echo $(error USB_DIR=$(USB_DIR))
 
     INCDIR += -I$(USB_DIR)
-    OPT += -DHAS_USB
+    MCAL_OPT += -DHAS_USB
 
     SOURCES_C += $(USB_DIR)/usb_drv.c
     SOURCES_C += $(USB_DIR)/usb_config.c
@@ -21,7 +21,7 @@ ifneq ($(USB_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(USB_COMMANDS),Y)
-            OPT += -DHAS_USB_COMMANDS
+            MCAL_OPT += -DHAS_USB_COMMANDS
             SOURCES_C += $(USB_DIR)/usb_commands.c
         endif
     endif

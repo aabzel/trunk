@@ -56,7 +56,7 @@ bool cmd_flash_fs_diag(int32_t argc, char* argv[]) {
             strcpy(log_line, TSEP);
             snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, page_num);
             snprintf(log_line, sizeof(log_line), "%s 0x%08x " TSEP, log_line, page_base_addr);
-            snprintf(log_line, sizeof(log_line), "%s %5s " TSEP, log_line, OnOff2Str(flash_fs_is_active(page_num)));
+            snprintf(log_line, sizeof(log_line), "%s %5s " TSEP, log_line, OnOffToStr(flash_fs_is_active(page_num)));
             snprintf(log_line, sizeof(log_line), "%s %5u " TSEP, log_line, page_len);
             snprintf(log_line, sizeof(log_line), "%s %4u " TSEP, log_line, files);
             snprintf(log_line, sizeof(log_line), "%s %5u " TSEP, log_line, spare_cnt);
@@ -111,7 +111,7 @@ bool cmd_flash_fs_get(int32_t argc, char* argv[]) {
             if((res) && (0 < file_len)) {
 #ifdef HAS_ARRAY_DIAG
                 cli_printf("| %5u | 0x%08p | ", file_id, file_Address);
-                print_bin(array, file_len, 0);
+                //print_bin(array, file_len, 0);
                 print_ascii_line((char*)array, file_len, 1);
                 cli_printf(CRLF);
                 res = true;

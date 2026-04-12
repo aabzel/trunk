@@ -14,12 +14,12 @@ ifneq ($(USB_DEVICE_DRV_MK_INC),Y)
     SOURCES_C += $(USB_DEVICE_DIR)/usb_device.c
 
     USB_DEVICE=Y
-    OPT += -DHAS_USB_DEVICE
+    MCAL_OPT += -DHAS_USB_DEVICE
 
 
     ifeq ($(CLI),Y)
         ifeq ($(USB_DEVICE_COMMANDS),Y)
-            OPT += -DHAS_USB_DEVICE_COMMANDS
+            MCAL_OPT += -DHAS_USB_DEVICE_COMMANDS
             SOURCES_C += $(USB_DEVICE_DIR)/usb_device_commands.c
         endif
     endif

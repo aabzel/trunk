@@ -1,7 +1,7 @@
 #ifndef FLASH_FS_PARAMS_H
 #define FLASH_FS_PARAMS_H
 
-#include "param_types.h"
+#include "storage_file_ids.h"
 
 #define PARAMS_FLASH_FS                   \
     {                                     \
@@ -11,7 +11,10 @@
         .type = TYPE_UINT32,              \
         .default_value = "0",             \
         .name = "FFSpageToggleCnt",       \
-        },
+        .parser = U32DecToStr,            \
+    },
+
+
 
 
 #endif /* FLASH_FS_PARAMS_H */

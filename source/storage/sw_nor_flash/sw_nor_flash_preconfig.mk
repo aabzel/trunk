@@ -1,0 +1,6 @@
+ifneq ($(SW_NOR_FLASH_PRECONFIG_INC),Y)
+    SW_NOR_FLASH_PRECONFIG_INC=Y
+    
+    NOR_FLASH=Y
+    SW_NOR_FLASH=Y
+endif

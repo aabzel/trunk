@@ -9,16 +9,16 @@ ifneq ($(PDM_CUSTOM_DRIVERV_MK_INC),Y)
     #@echo $(error PDM_DIR=$(PDM_DIR))
 
     INCDIR += -I$(PDM_DIR)
-    OPT += -DHAS_PDM
-    OPT += -DHAS_PDM_CUSTOM
+    MCAL_OPT += -DHAS_PDM
+    MCAL_OPT += -DHAS_PDM_CUSTOM
 
-    OPT += -DHAS_PDM0
+    MCAL_OPT += -DHAS_PDM0
 
     SOURCES_C += $(PDM_DIR)/pdm_drv.c
     PDM_ISR=Y
 
     ifeq ($(PDM_ISR),Y)
-        OPT += -DHAS_PDM_ISR
+        MCAL_OPT += -DHAS_PDM_ISR
         SOURCES_C += $(PDM_DIR)/pdm_isr.c
     endif
 
@@ -32,7 +32,7 @@ ifneq ($(PDM_CUSTOM_DRIVERV_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(PDM_COMMANDS),Y)
             $(info + PDM Commands)
-            OPT += -DHAS_PDM_COMMANDS
+            MCAL_OPT += -DHAS_PDM_COMMANDS
             SOURCES_C += $(PDM_DIR)/pdm_custom_commands.c
         endif
     endif

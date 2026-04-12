@@ -9,28 +9,28 @@ ifneq ($(RTC_CUSTOM_DRIVERV_MK_INC),Y)
     #@echo $(error RTC_DIR=$(RTC_DIR))
 
     INCDIR += -I$(RTC_DIR)
-    OPT += -DHAS_RTC
-    #OPT += -DHAS_RTC_CUSTOM
+    MCAL_OPT += -DHAS_RTC
+    #MCAL_OPT += -DHAS_RTC_CUSTOM
 
     SOURCES_C += $(RTC_DIR)/rtc_drv.c
     RTC_ISR=Y
 
     ifeq ($(RTC_ISR),Y)
-        OPT += -DHAS_RTC_ISR
+        MCAL_OPT += -DHAS_RTC_ISR
         $(info + RTC_ISR)
         SOURCES_C += $(RTC_DIR)/rtc_isr.c
     endif
 
     ifeq ($(RTC0),Y)
-        OPT += -DHAS_RTC0
+        MCAL_OPT += -DHAS_RTC0
     endif
 
     ifeq ($(RTC1),Y)
-        OPT += -DHAS_RTC1
+        MCAL_OPT += -DHAS_RTC1
     endif
 
     ifeq ($(RTC2),Y)
-        OPT += -DHAS_RTC2
+        MCAL_OPT += -DHAS_RTC2
     endif
 
     ifeq ($(DIAG),Y)
@@ -43,7 +43,7 @@ ifneq ($(RTC_CUSTOM_DRIVERV_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(RTC_COMMANDS),Y)
             $(info + RTC Commands)
-            OPT += -DHAS_RTC_CUSTOM_COMMANDS
+            MCAL_OPT += -DHAS_RTC_CUSTOM_COMMANDS
             SOURCES_C += $(RTC_DIR)/rtc_custom_commands.c
         endif
     endif

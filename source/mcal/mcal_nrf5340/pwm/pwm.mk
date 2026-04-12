@@ -8,31 +8,31 @@ ifneq ($(PWM_NRF_DRV_MK_INC),Y)
     #@echo $(error PWM_DIR=$(PWM_DIR))
 
     INCDIR += -I$(PWM_DIR)
-    OPT += -DHAS_PWM
-    OPT += -DHAS_PWM_INIT
-    OPT += -DHAS_PWM_NRFX
+    MCAL_OPT += -DHAS_PWM
+    MCAL_OPT += -DHAS_PWM_INIT
+    MCAL_OPT += -DHAS_PWM_NRFX
 
     SOURCES_C += $(PWM_DIR)/pwm_drv.c
     SOURCES_C += $(PWM_DIR)/pwm_isr.c
 
     ifeq ($(PWM0),Y)
         $(info + PWM0)
-        OPT += -DHAS_PWM0
+        MCAL_OPT += -DHAS_PWM0
     endif
 
     ifeq ($(PWM1),Y)
         $(info + PWM1)
-        OPT += -DHAS_PWM1
+        MCAL_OPT += -DHAS_PWM1
     endif
 
     ifeq ($(PWM2),Y)
         $(info + PWM2)
-        OPT += -DHAS_PWM2
+        MCAL_OPT += -DHAS_PWM2
     endif
 
     ifeq ($(PWM3),Y)
         $(info + PWM3)
-        OPT += -DHAS_PWM3
+        MCAL_OPT += -DHAS_PWM3
     endif
 
     ifeq ($(DIAG),Y)
@@ -45,7 +45,7 @@ ifneq ($(PWM_NRF_DRV_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(PWM_COMMANDS),Y)
             $(info + PWM Commands)
-            OPT += -DHAS_PWM_COMMANDS
+            MCAL_OPT += -DHAS_PWM_COMMANDS
             SOURCES_C += $(PWM_DIR)/pwm_custom_commands.c
         endif
     endif
