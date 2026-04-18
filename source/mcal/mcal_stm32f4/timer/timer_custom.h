@@ -8,9 +8,9 @@
 
 //uint8_t IS_TIM_CCX_INSTANCE(TIM_TypeDef* TIMx, uint8_t channel);
 int8_t TimInstance2Num(const TIM_TypeDef* const TIMERx);
-bool timer_set_cc_val(uint8_t num, TimerCapComChannel_t chaneel, uint32_t cc_value, bool int_on);
+bool timer_set_cc_val(uint8_t num, TimerOutChannel_t chaneel, uint32_t cc_value, bool int_on);
 TIM_TypeDef* timer_get_ptr(uint8_t num);
 uint32_t TimerChannelToHalChannel(uint8_t channel) ;
-uint32_t timer_get_counter(uint8_t num, TimerCapComChannel_t channel);
+uint32_t timer_get_counter(uint8_t num, TimerOutChannel_t channel);
 
 #endif /* TIM_DRV_H  */

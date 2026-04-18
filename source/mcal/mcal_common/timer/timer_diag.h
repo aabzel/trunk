@@ -21,6 +21,7 @@ bool timer_diag_interrupt(void);
 bool timer_channel_diag(void);
 
 bool timer_raw_reg_diag(uint8_t i);
+const char* TimChanToStr(const TimerChannel_t  TimerChannel) ;
 const char *TimerDirToStr(const TimerDir_t code);
 const char *TimerConfigToStr(const TimerConfig_t* const Config);
 const char *BusClockToStr(uint32_t bus_clock);

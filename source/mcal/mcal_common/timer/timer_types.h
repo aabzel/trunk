@@ -13,13 +13,30 @@
 #endif
 
 
+typedef union {
+    uint8_t byte;
+    struct {
+        uint8_t timer  : 5; /*0 1 2 ...31*/
+        uint8_t channel : 3; /*0 1 2 3 4 .. 7 */
+    };
+}TimerChannel_t;
 
-#define TIMER_COMMON_VARIABLES     \
+
+#define TIMER_SLAVE_VARIABLES \
+    TimerSlaveMode_t slave_mode;   \
+    uint32_t slave_trigger_prescaler;    \
+    uint32_t slave_trigger_filter;       \
+    TimerSlaveInTrigger_t slave_input_trigger;   \
+    TimerSlaveTriggerPolarity_t slave_trigger_polarity;
+
+#define TIMER_COMMON_VARIABLES TIMER_SLAVE_VARIABLES    \
     uint8_t num;                   \
     float period_s;                \
-    uint32_t cnt_period_ns;        \
     char* name;                    \
     TimerDir_t dir;                \
+    TimerRole_t role;              \
+    TimerMasterOutTrigger_t master_out_trigger;              \
+    uint32_t cnt_period_ns;              \
     bool interrupt_on;             \
     bool on_off;                   \
     bool valid;

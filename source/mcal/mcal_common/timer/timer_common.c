@@ -121,21 +121,21 @@ _WEAK_FUN_ uint8_t timer_bitness_get(uint8_t num) {
     return 0;
 }
 
-_WEAK_FUN_ bool timer_compare_set(uint8_t num, TimerCapComChannel_t channel, uint32_t compare_value) {
+_WEAK_FUN_ bool timer_compare_set(uint8_t num, TimerOutChannel_t channel, uint32_t compare_value) {
 #ifdef HAS_LOG
     LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return false;
 }
 
-_WEAK_FUN_ bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bool on_off) {
+_WEAK_FUN_ bool timer_channel_ctrl(uint8_t num, TimerOutChannel_t channel, bool on_off) {
 #ifdef HAS_LOG
     LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
     return false;
 }
 
-_WEAK_FUN_ bool timer_out_channel_pad_get(uint8_t num, TimerCapComChannel_t channel, Pad_t* const Pad) {
+_WEAK_FUN_ bool timer_out_channel_pad_get(uint8_t num, TimerOutChannel_t channel, Pad_t* const Pad) {
 #ifdef HAS_LOG
 
     LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
@@ -153,7 +153,7 @@ int32_t timer_bus_clock_get(uint8_t num) {
 }
 
 _WEAK_FUN_
-bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel) {
+bool timer_channel_is_work(const uint8_t num, const TimerOutChannel_t channel) {
     int32_t clock_hz = -1;
 #ifdef HAS_LOG
     LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
@@ -162,7 +162,7 @@ bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel
 }
 
 /*comparator values*/
-_WEAK_FUN_ uint32_t timer_get_cc_val(uint8_t num, TimerCapComChannel_t chaneel) {
+_WEAK_FUN_ uint32_t timer_get_cc_val(uint8_t num, TimerOutChannel_t chaneel) {
 #ifdef HAS_LOG
     LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
@@ -193,7 +193,7 @@ bool timer_get_status(uint8_t num) {
     return status;
 }
 
-_WEAK_FUN_ uint32_t timer_ccc_val_get(uint8_t num, TimerCapComChannel_t chaneel) {
+_WEAK_FUN_ uint32_t timer_ccc_val_get(uint8_t num, TimerOutChannel_t chaneel) {
 #ifdef HAS_LOG
     LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
@@ -251,7 +251,7 @@ bool timer_period_set_s(uint8_t num, float period_s) {
     return res;
 }
 
-_WEAK_FUN_ uint32_t timer_cc_val_get(uint8_t num, TimerCapComChannel_t channel) {
+_WEAK_FUN_ uint32_t timer_cc_val_get(uint8_t num, TimerOutChannel_t channel) {
 #ifdef HAS_LOG
     LOG_ERROR(TIMER, "[%s]NotImplemented", __FUNCTION__);
 #endif
@@ -279,6 +279,34 @@ float TimerConfigToPeriodSec(const TimerConfig_t* const Config) {
     return des_period_s;
 }
 
+bool TimerIsValidSlaveConfig(const TimerConfig_t* const Config) {
+    bool res = true;
+
+    if(TIMER_ROLE_SLAVE == Config->role) {
+        ifn(Config->slave_input_trigger) {
+            res = false;
+#ifdef HAS_LOG
+            LOG_ERROR(TIMER, "%u,Cfg,Err,slave_input_trigger", Config->num);
+#endif
+        }
+
+        ifn(Config->slave_trigger_polarity) {
+            res = false;
+#ifdef HAS_LOG
+            LOG_ERROR(TIMER, "%u,Cfg,Err,slave_trigger_polarity", Config->num);
+#endif
+        }
+
+        ifn(Config->slave_mode) {
+            res = false;
+#ifdef HAS_LOG
+            LOG_ERROR(TIMER, "%u,Cfg,Err,slave_mode", Config->num);
+#endif
+        }
+    }
+    return res;
+}
+
 bool TimerIsValidConfig(const TimerConfig_t* const Config) {
     bool res = false;
     if(Config) {
@@ -289,6 +317,13 @@ bool TimerIsValidConfig(const TimerConfig_t* const Config) {
             res = false;
 #ifdef HAS_LOG
             LOG_ERROR(TIMER, "%u,TimerNum,Err", Config->num);
+#endif
+        }
+
+        ifn( Config->role) {
+            res = false;
+#ifdef HAS_LOG
+            LOG_ERROR(TIMER, "%u,Cfg,Err,Role", Config->num);
 #endif
         }
 
@@ -312,12 +347,14 @@ bool TimerIsValidConfig(const TimerConfig_t* const Config) {
             LOG_ERROR(TIMER, "%u,Cfg,Err,Name", Config->num);
 #endif
         }
+
         ifn(Config->dir) {
             res = false;
 #ifdef HAS_LOG
             LOG_ERROR(TIMER, "%u,Cfg,Err,Dir", Config->num);
 #endif
         }
+
     }
     return res;
 }
@@ -423,7 +460,7 @@ bool timer_overflow_set(uint8_t num, uint32_t overflow) {
     return res;
 }
 
-bool timer_duty_get(uint8_t num, TimerCapComChannel_t channel, float* const duty) {
+bool timer_duty_get(uint8_t num, TimerOutChannel_t channel, float* const duty) {
     bool res;
     if(duty) {
         float duty_cycle = 0.0;
@@ -453,7 +490,7 @@ bool timer_frequency_get(uint8_t num, float* const frequency_hz) {
     if(frequency_hz) {
         *frequency_hz = -1.0;
         float period_s = timer_period_get_s(num);
-        if(0.0 < period_s) {
+        if(0.0 <= period_s) {
             *frequency_hz = 1.0 / period_s;
             res = true;
         }
@@ -551,12 +588,29 @@ uint64_t timer_get_us(uint8_t num) {
     return up_time_us;
 }
 
-uint32_t timer_period_get_ms(uint8_t num) {
+
+uint32_t timer_period_to_us(const uint8_t num, const uint32_t period) {
+    uint32_t period_us = 0;
+    float tick_s = 0.0;
+    tick_s = timer_tick_get_s(num);
+    period_us = SEC_2_USEC(((float)period) * tick_s);
+    return period_us;
+}
+
+
+
+uint32_t timer_period_to_ms(uint8_t num, uint32_t period) {
     uint32_t period_ms = 0;
-    uint32_t period = timer_period_get(num);
     float tick_s = 0.0;
     tick_s = timer_tick_get_s(num);
     period_ms = SEC_2_MSEC(((float)period) * tick_s);
+    return period_ms;
+}
+
+uint32_t timer_period_get_ms(uint8_t num) {
+    uint32_t period_ms = 0;
+    uint32_t period = timer_period_get(num);
+    period_ms= timer_period_to_ms(  num,   period) ;
     return period_ms;
 }
 
@@ -570,7 +624,13 @@ bool timer_init_common(const TimerConfig_t* const Config, TimerHandle_t* const N
             Node->on_off = Config->on_off;
             Node->cnt_period_ns = Config->cnt_period_ns;
             Node->interrupt_on = Config->interrupt_on;
+            Node->role = Config->role;
             Node->dir = Config->dir;
+            Node->slave_trigger_prescaler = Config->slave_trigger_prescaler;
+            Node->slave_trigger_filter = Config->slave_trigger_filter;
+            Node->slave_input_trigger = Config->slave_input_trigger;
+            Node->slave_trigger_polarity = Config->slave_trigger_polarity;
+            Node->slave_mode = Config->slave_mode;
             Node->valid = true;
             res = true;
         }

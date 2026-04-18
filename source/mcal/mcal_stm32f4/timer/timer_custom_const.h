@@ -10,6 +10,13 @@ typedef enum {
     TIMER_CEN_COUNTER_ENABLED = 1, /*  1: Counter enabled */
 } Stm32TimerControl_t;
 
+/*CCxP: Capture/Compare x output polarity  */
+typedef enum {
+    STM32_TIMER_OCX_ACTIVE_HIGH   = 0,   /*           0: OC1 active high */
+    STM32_TIMER_OCX_ACTIVE_LOW    = 1,   /*           1: OC1 active low */
+} Stm32TimerPolarity_t;
+
+
 /**
  * @brief Capture/Compare 1 Selection enumeration (Bits 1:0 of TIMx_CCMR1)
  *

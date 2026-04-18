@@ -225,7 +225,7 @@ bool timer_channel_ctrl_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
     bool on_off = 0;
-    TimerCapComChannel_t channel = TIMER_CC_UNDEF;
+    uint8_t channel = 0;
     if(3 == argc) {
         res = try_str2uint8(argv[0], &num);
         log_res(TIMER, res, "Num");
@@ -253,7 +253,7 @@ bool timer_compare_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
     uint32_t compare_value = 0;
-    TimerCapComChannel_t channel = TIMER_CC_UNDEF;
+    uint8_t channel = 0;
     if(3 == argc) {
         res = try_str2uint8(argv[0], &num);
         log_res(TIMER, res, "Num");

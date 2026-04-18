@@ -19,21 +19,22 @@ TimerHandle_t* TimerGetNode(uint8_t num);
 float  TimerConfigToPeriodSec(const TimerConfig_t* const Config);
 const TimerConfig_t* TimerGetConfig(uint8_t num);
 TimerChannelInfo_t* TimerChannelGetNode(const uint8_t timer_num, const uint8_t channel);
-#ifdef HAS_TIMER_CUSTOM
-TimerInfo_t* TimerGetInfo(const uint8_t num) ;
-#endif
 bool timer_init_common(const TimerConfig_t * const Config, TimerHandle_t*const Node);
 bool timer_mcal_init(void);
 bool timer_init_one(uint8_t num);
 bool timer_init_custom(void);
 bool timer_wait_us(uint32_t pause_us);
 bool TimerIsValidConfig(const TimerConfig_t* const Config);
+#ifdef HAS_TIMER_CUSTOM
+TimerInfo_t* TimerGetInfo(const uint8_t num) ;
+#endif
 
 
 /*Setters------------------------*/
 bool timer_base_clock_ctrl(const uint8_t num,const  bool on_off);
-bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bool on_off);
-bool timer_compare_set(uint8_t num, TimerCapComChannel_t channel, uint32_t compare_value);
+bool timer_polarity_set(uint8_t num, TimerOutChannel_t channel, TimerPolarity_t polarity);
+bool timer_channel_ctrl(uint8_t num, TimerOutChannel_t channel, bool on_off);
+bool timer_compare_set(uint8_t num, TimerOutChannel_t channel, uint32_t compare_value);
 bool timer_counter_set(uint8_t num, uint32_t value);
 bool timer_counter_set_percent_u(uint8_t num, uint8_t counter_percent);
 bool timer_overflow_set(uint8_t num, uint32_t overflow);
@@ -45,23 +46,24 @@ bool timer_ctrl(uint8_t num, bool on_off);
 bool timer_frequency_set(uint8_t num, float frequency_hz);
 
 /*Getters-------------------------------------*/
-
 ClockBus_t timer_clock_bus_name_get(const uint8_t num);
 TimerDir_t timer_dir_get(uint8_t num);
 uint32_t timer_counter_get_us(const uint8_t num);
 uint8_t timer_bitness_get(uint8_t num);
 uint32_t TimerGetCntFreq(uint32_t cnt_period_us);
-const TimerChannelInfo_t* TimerChannelGetInfo(uint8_t num, TimerCapComChannel_t channel);
-bool timer_out_channel_pad_get(uint8_t num, TimerCapComChannel_t channel, Pad_t* const Pad) ;
-bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel);
+const TimerChannelInfo_t* TimerChannelGetInfo(uint8_t num, TimerOutChannel_t channel);
+bool timer_channel_is_valid(const TimerChannel_t tim_ch);
+bool timer_out_channel_pad_get(uint8_t num, TimerOutChannel_t channel, Pad_t* const Pad) ;
+bool timer_channel_is_work(const uint8_t num, const TimerOutChannel_t channel);
 bool timer_get_status(uint8_t num);
 bool timer_is_valid(uint8_t num);
 bool timer_is_valid_channel( const uint8_t num, const uint8_t channel);
+bool timer_polarity_get(uint8_t num, TimerOutChannel_t channel, TimerPolarity_t * const polarity);
 /*freq period*/
 bool timer_frequency_get(uint8_t num, float * const frequency);
 
 uint32_t timer_counter_to_us(uint8_t num, uint32_t  counter);
-uint32_t timer_cc_val_get(const uint8_t num, TimerCapComChannel_t chaneel) ;
+uint32_t timer_cc_val_get(const uint8_t num, TimerOutChannel_t chaneel) ;
 uint64_t timer_get_period_us(uint8_t num) ;
 float timer_get_period_s(uint8_t num) ;
 float timer_tick_get_s(uint8_t num);
@@ -76,6 +78,7 @@ float timer_period_get_s(uint8_t num);
 uint32_t timer_get_auto_reload(uint8_t num);
 uint32_t timer_period_get(uint8_t num);
 uint64_t timer_period_get_us(uint8_t num);
+uint32_t timer_period_to_us(const uint8_t num, const uint32_t period) ;
 uint32_t timer_period_get_ms(uint8_t num);
 
 /*counter*/
@@ -84,9 +87,9 @@ uint32_t timer_counter_get(uint8_t num);
 
 /*output comparator*/
 float timer_get_s(uint8_t num);
-bool timer_duty_get(uint8_t num,TimerCapComChannel_t channel, float* const duty);
-uint32_t timer_ccc_val_get(uint8_t num, TimerCapComChannel_t channel);
-uint32_t timer_cc_val_get(uint8_t num,const TimerCapComChannel_t channel);
+bool timer_duty_get(uint8_t num,TimerOutChannel_t channel, float* const duty);
+uint32_t timer_ccc_val_get(uint8_t num, TimerOutChannel_t channel);
+uint32_t timer_cc_val_get(uint8_t num,const TimerOutChannel_t channel);
 /*up time*/
 uint32_t timer_get_ms(uint8_t num);
 uint32_t timer_get_uptime_ms(uint8_t num);

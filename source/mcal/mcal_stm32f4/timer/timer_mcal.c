@@ -15,6 +15,7 @@
 #include "stm32f4xx_hal.h"
 #include "sys_config.h"
 #include "timer_custom.h"
+
 #ifdef HAS_CORE
 #include "core_driver.h"
 #endif
@@ -31,7 +32,45 @@
 #include "systick_mcal.h"
 #endif
 
-uint32_t TimerChannelToHalChannel(TimerCapComChannel_t channel) {
+static TimerPolarity_t Stm32TimerPolarityToTimerPolarity(const Stm32TimerPolarity_t stm32_polarity) {
+    TimerPolarity_t polarity = TIMER_POLARITY_UNDEF;
+    switch (stm32_polarity) {
+        case STM32_TIMER_OCX_ACTIVE_LOW:  polarity = TIMER_POLARITY_LOW;  break;
+        case STM32_TIMER_OCX_ACTIVE_HIGH: polarity = TIMER_POLARITY_HIGH; break;
+        default: polarity = TIMER_POLARITY_UNDEF;        break;
+    }
+    return polarity;
+}
+
+static uint32_t TimerSlaveInModeToStm32SlaveInTrigMode(const TimerSlaveInTrigger_t slave_input_trigger){
+    uint32_t InputTrigger=TIM_TS_NONE;
+    switch(slave_input_trigger){
+    case TIMER_SLAVE_IN_TRIG_INTERNAL_TRIGGER_0: InputTrigger=TIM_TS_ITR0;  break;
+    case TIMER_SLAVE_IN_TRIG_INTERNAL_TRIGGER_1: InputTrigger=TIM_TS_ITR1;  break;
+    case TIMER_SLAVE_IN_TRIG_INTERNAL_TRIGGER_2: InputTrigger=TIM_TS_ITR2;  break;
+    case TIMER_SLAVE_IN_TRIG_INTERNAL_TRIGGER_3: InputTrigger=TIM_TS_ITR3;  break;
+    case TIMER_SLAVE_IN_TRIG_TI1_EDGE_DETECTOR: InputTrigger=TIM_TS_TI1F_ED;  break;
+    case TIMER_SLAVE_IN_TRIG_FILTERED_TIMER_INPUT_1: InputTrigger=TIM_TS_TI1FP1;  break;
+    case TIMER_SLAVE_IN_TRIG_FILTERED_TIMER_INPUT_2: InputTrigger=TIM_TS_TI2FP2;  break;
+    case TIMER_SLAVE_IN_TRIG_FILTERED_EXTERNAL_TRIGGER_INPUT: InputTrigger=TIM_TS_ETRF;  break;
+    case TIMER_SLAVE_IN_TRIG_NO_TRIGGER_SELECTED: InputTrigger=TIM_TS_NONE;  break;
+    default: InputTrigger=TIM_TS_NONE; break;
+    }
+    return InputTrigger;
+}
+
+static Stm32TimerPolarity_t TimerPolarityToStmPolarity(const TimerPolarity_t polarity){
+    Stm32TimerPolarity_t stm32_polarity=STM32_TIMER_OCX_ACTIVE_HIGH;
+    switch(polarity){
+        case TIMER_POLARITY_LOW: stm32_polarity=STM32_TIMER_OCX_ACTIVE_LOW;break;
+        case TIMER_POLARITY_HIGH: stm32_polarity=STM32_TIMER_OCX_ACTIVE_HIGH;break;
+        default:stm32_polarity=STM32_TIMER_OCX_ACTIVE_HIGH; break;
+    }
+    return stm32_polarity;
+}
+
+
+uint32_t TimerChannelToHalChannel(TimerOutChannel_t channel) {
     uint32_t hal_channel = 0;
     switch(channel) {
     case 1:
@@ -50,6 +89,21 @@ uint32_t TimerChannelToHalChannel(TimerCapComChannel_t channel) {
         break;
     }
     return hal_channel;
+}
+
+uint32_t TimerSlaveModeToStm32SlaveMode(TimerSlaveMode_t slave_mode){
+    uint32_t  stm32_slave_mode=TIM_SLAVEMODE_DISABLE;
+    switch(slave_mode){
+    case TIMER_SLAVE_MODE_DISABLE:stm32_slave_mode=TIM_SLAVEMODE_DISABLE; break;
+    case TIMER_SLAVE_MODE_RESET : stm32_slave_mode= TIM_SLAVEMODE_RESET; break;
+    case TIMER_SLAVE_MODE_GATED: stm32_slave_mode= TIM_SLAVEMODE_GATED ; break;
+    case TIMER_SLAVE_MODE_TRIGGER: stm32_slave_mode= TIM_SLAVEMODE_TRIGGER;  break;
+    case TIMER_SLAVE_MODE_EXTERNAL1: stm32_slave_mode= TIM_SLAVEMODE_EXTERNAL1 ; break;
+    case TIMER_SLAVE_MODE_UNDEF:stm32_slave_mode=TIM_SLAVEMODE_DISABLE; break;
+    default:stm32_slave_mode=TIM_SLAVEMODE_DISABLE; break;
+    }
+
+    return stm32_slave_mode;
 }
 
 #if 0
@@ -293,6 +347,37 @@ static const TimerInfo_t TimerInfo[] = {
 #endif
 };
 
+
+bool timer_channel_is_valid(const TimerChannel_t tim_ch) {
+    bool res = false;
+    TimerInfo_t *Info = TimerGetInfo(tim_ch.timer);
+    if(Info) {
+        switch (tim_ch.channel) {
+        case 1: {
+            res = Info->Comparators.compare1;
+        }
+            break;
+        case 2: {
+            res = Info->Comparators.compare2;
+        }
+            break;
+        case 3: {
+            res = Info->Comparators.compare3;
+        }
+            break;
+        case 4: {
+            res = Info->Comparators.compare4;
+        }
+            break;
+        default: {
+            res = false;
+        }
+            break;
+        }
+    }
+    return res;
+}
+
 static const TimerChannelInfo_t TimerChannelInfo[] = {
     {
         .timer_num = 9,
@@ -422,12 +507,39 @@ uint32_t timer_period_get(uint8_t num) {
     return timer_period32;
 }
 
+uint32_t TimerSlaveTriggerPolarityToStmTriggerPolarity(const TimerSlaveTriggerPolarity_t slave_trigger_polarity) {
+    uint32_t  TriggerPolarity=TIM_TRIGGERPOLARITY_INVERTED;
+    switch(slave_trigger_polarity) {
+        case TIMER_SLAVE_TRIGGER_POLARITY_INVERTED:TriggerPolarity=TIM_TRIGGERPOLARITY_INVERTED; break;
+        case TIMER_SLAVE_TRIGGER_POLARITY_NONINVERTED:TriggerPolarity=TIM_TRIGGERPOLARITY_NONINVERTED; break;
+        case TIMER_SLAVE_TRIGGER_POLARITY_RISING:TriggerPolarity=TIM_TRIGGERPOLARITY_RISING; break;
+        case TIMER_SLAVE_TRIGGER_POLARITY_FALLING:TriggerPolarity=TIM_TRIGGERPOLARITY_FALLING; break;
+        case TIMER_SLAVE_TRIGGER_POLARITY_BOTHEDGE:TriggerPolarity=TIM_TRIGGERPOLARITY_BOTHEDGE; break;
+        default: TriggerPolarity=TIM_TRIGGERPOLARITY_INVERTED; break;
+    }
+    return TriggerPolarity;
+}
+
+static uint32_t TimerSlaveTriggerPrescalerToStmTriggerPrescaler(const uint32_t  slave_trigger_prescaler) {
+    uint32_t  TriggerPrescaler=TIM_TRIGGERPRESCALER_DIV1;
+
+    switch(slave_trigger_prescaler){
+        case 1: TriggerPrescaler=TIM_TRIGGERPRESCALER_DIV1; break;
+        case 2: TriggerPrescaler=TIM_TRIGGERPRESCALER_DIV2; break;
+        case 3: TriggerPrescaler=TIM_TRIGGERPRESCALER_DIV4; break;
+        case 4: TriggerPrescaler=TIM_TRIGGERPRESCALER_DIV8; break;
+        default:  TriggerPrescaler=TIM_TRIGGERPRESCALER_DIV1;break;
+    }
+
+    return TriggerPrescaler;
+}
+
 #if 0
-uint32_t timer_get_cc_val( uint8_t  num,   TimerCapComChannel_t chaneel  ){
+uint32_t timer_get_cc_val( uint8_t  num,   TimerOutChannel_t chaneel  ){
 	return 0;
 }
 
-bool timer_set_cc_val( uint8_t num, TimerCapComChannel_t channel,
+bool timer_set_cc_val( uint8_t num, TimerOutChannel_t channel,
 		uint32_t cc_value, bool int_on){
 	return false;
 }
@@ -509,6 +621,20 @@ bool timer_get_status(uint8_t num) {
     return status;
 }
 
+bool timer_period_set_ll(TimerHandle_t* const Node, const uint32_t period) {
+    bool res = false;
+    if(Node) {
+        /*auto-reload register*/
+        if(period){
+            Node->Handle.Instance->ARR = period-1;
+        } else {
+            Node->Handle.Instance->ARR = 0;
+        }
+        res = true;
+    }
+    return res;
+}
+
 static bool timer_channel_out_pwm_is_work_ll(const TimerRegCCMR_t* const pRegChan) {
     bool res = false;
     if(TIM_CC1S_OUTPUT_COMPARE == pRegChan->CCxS) {
@@ -545,7 +671,7 @@ static bool timer_channel_out_pwm_is_work_ll(const TimerRegCCMR_t* const pRegCha
     return res;
 }
 
-bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel) {
+bool timer_channel_is_work(const uint8_t num, const TimerOutChannel_t channel) {
     bool res = false;
     TimerInfo_t* Info = TimerGetInfo(num);
     if(Info) {
@@ -563,22 +689,22 @@ bool timer_channel_is_work(const uint8_t num, const TimerCapComChannel_t channel
 
         if(TIMER_CEN_COUNTER_ENABLED == CR1.CEN) {
             switch(channel) {
-            case TIMER_CC_CHAN_1: {
+            case TIMER_OUT_CHANNEL_1: {
                 res = timer_channel_out_pwm_is_work_ll(&CCMR1.CH1);
                 res = CCER.CC1E && res;
             } break;
 
-            case TIMER_CC_CHAN_2: {
+            case TIMER_OUT_CHANNEL_2: {
                 res = timer_channel_out_pwm_is_work_ll(&CCMR1.CH2);
                 res = CCER.CC2E && res;
             } break;
 
-            case TIMER_CC_CHAN_3: {
+            case TIMER_OUT_CHANNEL_3: {
                 res = timer_channel_out_pwm_is_work_ll(&CCMR2.CH3);
                 res = CCER.CC3E && res;
             } break;
 
-            case TIMER_CC_CHAN_4: {
+            case TIMER_OUT_CHANNEL_4: {
                 res = timer_channel_out_pwm_is_work_ll(&CCMR2.CH4);
                 res = CCER.CC4E && res;
             } break;
@@ -640,6 +766,7 @@ bool timer_ctrl(uint8_t num, bool on_off) {
     TimerHandle_t* Node = TimerGetNode(num);
     if(Node) {
         HAL_StatusTypeDef ret = HAL_ERROR;
+        ret = HAL_TIM_Base_Stop(&Node->Handle);
         if(on_off) {
             ret = HAL_TIM_Base_Start_IT(&Node->Handle);
             // ret = HAL_TIM_Base_Start(&Node->Handle);
@@ -653,7 +780,7 @@ bool timer_ctrl(uint8_t num, bool on_off) {
     return res;
 }
 
-bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bool on_off) {
+bool timer_channel_ctrl(uint8_t num, TimerOutChannel_t channel, bool on_off) {
     bool res = false;
     TimerHandle_t* Node = TimerGetNode(num);
     if(Node) {
@@ -664,6 +791,7 @@ bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bool on_off) 
 #ifdef HAS_HAL_TIM_PWM
             uint32_t hal_channel = TimerChannelToHalChannel(channel);
             HAL_StatusTypeDef ret = HAL_ERROR;
+            ret = HAL_TIM_PWM_Stop_IT(&Node->Handle, hal_channel);
             if(on_off) {
                 res = HAL_TIM_CHANNEL_STATE_READY == TIM_CHANNEL_STATE_GET(&Node->Handle, hal_channel);
                 if(res) {
@@ -690,13 +818,19 @@ bool timer_channel_ctrl(uint8_t num, TimerCapComChannel_t channel, bool on_off) 
     return res;
 }
 
-bool timer_period_set_ll(TimerHandle_t* const Node, const uint32_t period) {
+
+static bool timer_init_slave(TimerHandle_t* const  Node) {
     bool res = false;
-    if(Node) {
-        /*auto-reload register*/
-        Node->Handle.Instance->ARR = period;
-        res = true;
-    }
+    TIM_SlaveConfigTypeDef SlaveConfig = { 0 };
+    SlaveConfig.SlaveMode = TimerSlaveModeToStm32SlaveMode(Node->slave_mode);
+    SlaveConfig.InputTrigger = TimerSlaveInModeToStm32SlaveInTrigMode(Node->slave_input_trigger);
+    SlaveConfig.TriggerPolarity = TimerSlaveTriggerPolarityToStmTriggerPolarity(Node->slave_trigger_polarity);
+    SlaveConfig.TriggerPrescaler = TimerSlaveTriggerPrescalerToStmTriggerPrescaler(Node->slave_trigger_prescaler);
+    SlaveConfig.TriggerFilter = uint32_limiter(Node->slave_trigger_filter,0xF);
+
+    HAL_StatusTypeDef ret = HAL_ERROR;
+    ret = HAL_TIM_SlaveConfigSynchro(&Node->Handle, &SlaveConfig);
+    res = HAL_retToRes(ret);
     return res;
 }
 
@@ -794,7 +928,7 @@ TimerDir_t timer_dir_get(uint8_t num) {
     return dir;
 }
 
-bool timer_out_channel_pad_get(uint8_t num, TimerCapComChannel_t channel, Pad_t* const Pad) {
+bool timer_out_channel_pad_get(uint8_t num, TimerOutChannel_t channel, Pad_t* const Pad) {
     bool res = false;
     TimerChannelInfo_t* Channel = TimerChannelGetNode(num, channel);
     if(Channel) {
@@ -828,26 +962,107 @@ bool timer_counter_set(uint8_t num, uint32_t value) {
     return res;
 }
 
-bool timer_compare_set(uint8_t num, TimerCapComChannel_t channel, uint32_t compare_value) {
+bool timer_polarity_set(uint8_t num, TimerOutChannel_t channel, TimerPolarity_t polarity) {
+    bool res = false;
+    TimerInfo_t* Info = TimerGetInfo(num);
+    if(Info ){
+        TimerRegCCER_t CCER;
+        CCER.dword = Info->TIMx->CCER;
+
+        switch(channel){
+            case TIMER_OUT_CHANNEL_0:{
+                res = false;
+            } break;
+            case TIMER_OUT_CHANNEL_1:{
+                CCER.CC1P = TimerPolarityToStmPolarity(polarity);
+            } break;
+            case TIMER_OUT_CHANNEL_2:{
+                CCER.CC2P = TimerPolarityToStmPolarity(polarity);
+            } break;
+            case TIMER_OUT_CHANNEL_3:{
+                CCER.CC3P = TimerPolarityToStmPolarity(polarity);
+            } break;
+            case TIMER_OUT_CHANNEL_4:{
+                CCER.CC4P = TimerPolarityToStmPolarity(polarity);
+            } break;
+            case TIMER_OUT_CHANNEL_5:{
+                res = false;
+            } break;
+            default : res = false; break;
+        }
+        Info->TIMx->CCER=CCER.dword ;
+    }
+    return res;
+}
+
+bool timer_polarity_get(uint8_t num, TimerOutChannel_t channel, TimerPolarity_t* const polarity) {
+    bool res = false;
+    TimerInfo_t *Info = TimerGetInfo(num);
+    if(Info) {
+        if(polarity) {
+            TimerRegCCER_t CCER;
+            CCER.dword = Info->TIMx->CCER;
+            switch (channel) {
+            case TIMER_OUT_CHANNEL_0: {
+                res = false;
+            }
+                break;
+            case TIMER_OUT_CHANNEL_1: {
+                *polarity = Stm32TimerPolarityToTimerPolarity(CCER.CC1P);
+                res = true;
+            }
+                break;
+            case TIMER_OUT_CHANNEL_2: {
+                *polarity = Stm32TimerPolarityToTimerPolarity(CCER.CC2P);
+                res = true;
+            }
+                break;
+            case TIMER_OUT_CHANNEL_3: {
+                *polarity = Stm32TimerPolarityToTimerPolarity(CCER.CC3P);
+                res = true;
+            }
+                break;
+            case TIMER_OUT_CHANNEL_4: {
+                *polarity = Stm32TimerPolarityToTimerPolarity(CCER.CC4P);
+                res = true;
+            }
+                break;
+            case TIMER_OUT_CHANNEL_5: {
+                res = false;
+            }
+                break;
+            default:
+                res = false;
+                break;
+            }
+        }
+
+    }
+    return res;
+}
+
+
+
+bool timer_compare_set(uint8_t num, TimerOutChannel_t channel, uint32_t compare_value) {
     bool res = false;
     TimerInfo_t* Info = TimerGetInfo(num);
     if(Info) {
         res = timer_is_valid_channel(num, channel);
         if(res) {
             switch(channel) {
-            case TIMER_CC_CHAN_1: {
+            case TIMER_OUT_CHANNEL_1: {
                 Info->TIMx->CCR1 = compare_value;
                 res = true;
             } break;
-            case TIMER_CC_CHAN_2: {
+            case TIMER_OUT_CHANNEL_2: {
                 Info->TIMx->CCR2 = compare_value;
                 res = true;
             } break;
-            case TIMER_CC_CHAN_3: {
+            case TIMER_OUT_CHANNEL_3: {
                 Info->TIMx->CCR3 = compare_value;
                 res = true;
             } break;
-            case TIMER_CC_CHAN_4: {
+            case TIMER_OUT_CHANNEL_4: {
                 Info->TIMx->CCR4 = compare_value;
                 res = true;
             } break;
@@ -860,22 +1075,22 @@ bool timer_compare_set(uint8_t num, TimerCapComChannel_t channel, uint32_t compa
     return res;
 }
 
-uint32_t timer_cc_val_get(const uint8_t num, const TimerCapComChannel_t channel) {
+uint32_t timer_cc_val_get(const uint8_t num, const TimerOutChannel_t channel) {
     uint32_t cap_com_val = 0;
     TimerInfo_t* Info = TimerGetInfo(num);
     if(Info) {
         if(Info->TIMx) {
             switch(channel) {
-            case TIMER_CC_CHAN_1: {
+            case TIMER_OUT_CHANNEL_1: {
                 cap_com_val = Info->TIMx->CCR1;
             } break;
-            case TIMER_CC_CHAN_2: {
+            case TIMER_OUT_CHANNEL_2: {
                 cap_com_val = Info->TIMx->CCR2;
             } break;
-            case TIMER_CC_CHAN_3: {
+            case TIMER_OUT_CHANNEL_3: {
                 cap_com_val = Info->TIMx->CCR3;
             } break;
-            case TIMER_CC_CHAN_4: {
+            case TIMER_OUT_CHANNEL_4: {
                 cap_com_val = Info->TIMx->CCR4;
             } break;
             default:
@@ -887,7 +1102,7 @@ uint32_t timer_cc_val_get(const uint8_t num, const TimerCapComChannel_t channel)
     return cap_com_val;
 }
 
-uint32_t timer_ccc_val_get(uint8_t num, TimerCapComChannel_t channel) {
+uint32_t timer_ccc_val_get(uint8_t num, TimerOutChannel_t channel) {
     uint32_t ccc_val = timer_cc_val_get(num, channel);
     return ccc_val;
 }
@@ -897,9 +1112,9 @@ static bool timer_config_to_init(uint32_t prescaler, uint32_t out_load, TIM_Base
     if(Init) {
         if(out_load) {
             Init->RepetitionCounter = 0;
-            Init->Prescaler = prescaler;
+            Init->Prescaler = prescaler-1;
             Init->CounterMode = TIM_COUNTERMODE_UP;
-            Init->Period = out_load;
+            Init->Period = out_load-1;
             Init->ClockDivision = TIM_CLOCKDIVISION_DIV1;
             Init->AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
             res = true;
@@ -959,15 +1174,80 @@ bool timer_is_valid(uint8_t num) {
     return res;
 }
 
-bool timer_init_one(uint8_t num) {
-    bool res = false;
-#ifdef HAS_LOG
-    LOG_WARNING(TIMER, "%u Init", num);
-#endif
-    TimerHandle_t* Node = TimerGetNode(num);
-    const TimerConfig_t* Config = TimerGetConfig(num);
-    TimerInfo_t* Info = TimerGetInfo(num);
+static uint32_t  TimerMasterOutputTriggerToStmMasterOutTg( const TimerMasterOutTrigger_t mas_out_tg){
+    uint32_t MasterOutputTrigger = TIM_TRGO_OC1;
+    switch(mas_out_tg) {
+        case TIMER_MASTER_OUT_TRG_RESET:MasterOutputTrigger = TIM_TRGO_RESET; break;
+        case TIMER_MASTER_OUT_TRG_ENABLE:MasterOutputTrigger = TIM_TRGO_ENABLE; break;
+        case TIMER_MASTER_OUT_TRG_UPDATE:MasterOutputTrigger = TIM_TRGO_UPDATE; break;
+        case TIMER_MASTER_OUT_TRG_OC1: MasterOutputTrigger = TIM_TRGO_OC1; break;
+        case TIMER_MASTER_OUT_TRG_OC1REF:MasterOutputTrigger = TIM_TRGO_OC1REF; break;
+        case TIMER_MASTER_OUT_TRG_OC2REF:MasterOutputTrigger = TIM_TRGO_OC2REF; break;
+        case TIMER_MASTER_OUT_TRG_OC3REF:MasterOutputTrigger = TIM_TRGO_OC3REF; break;
+        case TIMER_MASTER_OUT_TRG_OC4REF:MasterOutputTrigger = TIM_TRGO_OC4REF; break;
 
+        default: MasterOutputTrigger = TIM_TRGO_OC1;break;
+    }
+    return MasterOutputTrigger;
+};
+
+
+
+static bool timer_init_role_master(TimerHandle_t* Node) {
+    bool res = false;
+    TIM_MasterConfigTypeDef MasterConfig = {0};
+
+    MasterConfig.MasterOutputTrigger = TimerMasterOutputTriggerToStmMasterOutTg( Node->master_out_trigger); // TIM_TRGO_UPDATE;//TIM_TRGO_OC2REF;
+    MasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_ENABLE;
+
+    HAL_StatusTypeDef ret = HAL_ERROR;
+    ret = HAL_TIMEx_MasterConfigSynchronization(&Node->Handle, &MasterConfig);
+    res = HAL_retToRes(ret);
+    if(!res) {
+        res = false;
+#ifdef HAS_LOG
+        LOG_ERROR(TIMER, "%u SetSyncErr",Node->num);
+#endif
+    }
+    return res;
+}
+
+static bool timer_init_role(TimerHandle_t* Node) {
+    bool res = false;
+    switch (Node->role) {
+        case TIMER_ROLE_MASTER: {
+            res = timer_init_role_master(Node);
+        } break;
+        case TIMER_ROLE_SLAVE: {
+            res = timer_init_slave(Node);
+        } break;
+        default: {
+            res = false;
+        } break;
+    }
+    return res;
+}
+
+static bool timer_init_clock(TimerHandle_t* Node) {
+    bool res = false;
+    TIM_ClockConfigTypeDef sClockSourceConfig = { 0 };
+    sClockSourceConfig.ClockFilter = 0;
+    sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
+    sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_RISING;
+    sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+    HAL_StatusTypeDef ret;
+    ret=HAL_TIM_ConfigClockSource(&Node->Handle, &sClockSourceConfig) ;
+    res = HAL_retToRes(ret);
+    if(res) {
+#ifdef HAS_LOG
+        LOG_ERROR(TIMER, "%u SetClkSrcErr", Node->num);
+#endif
+    }
+    return res;
+}
+
+static bool timer_verify( TimerHandle_t* Node,const TimerConfig_t* Config , TimerInfo_t* Info){
+    bool res = false;
     if(Info) {
 #ifdef HAS_TIMER_DIAG
         LOG_WARNING(TIMER, "%s", TimerInfoToStr(Info));
@@ -985,22 +1265,29 @@ bool timer_init_one(uint8_t num) {
             }
         }
     }
+    return res;
+}
+
+bool timer_init_one(uint8_t num) {
+    bool res = false;
+#ifdef HAS_LOG
+    LOG_WARNING(TIMER, "%u Init", num);
+#endif
+    TimerHandle_t* Node = TimerGetNode(num);
+    const TimerConfig_t* Config = TimerGetConfig(num);
+    TimerInfo_t* Info = TimerGetInfo(num);
+    res=timer_verify(  Node,Config ,  Info);
 
     if(res) {
         uint32_t out_load = 0;
-
         uint32_t prescaler = 0;
-
         uint32_t bus_clock_hz = 0;
+        res = timer_init_common(Config, Node);
         bus_clock_hz = timer_bus_clock_get(num);
         prescaler = timer_calc_prescaler((uint32_t)bus_clock_hz, Config->cnt_period_ns, TIMER_PRESCALER_MAX) - 1;
         res = timer_calc_registers(Config->period_s, bus_clock_hz, prescaler, &out_load, 0xFFFFFFFF);
         if(res) {
             // HAL_TIM_IRQHandler(&Node->Handle);
-
-            TIM_MasterConfigTypeDef sMasterConfig = {0};
-            TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-
             if(Info->TIMx) {
                 if(Config->interrupt_on) {
                     res = timer_init_interrupts_ll(Info);
@@ -1017,29 +1304,9 @@ bool timer_init_one(uint8_t num) {
                     LOG_DEBUG(TIMER, "%uInitOk", num);
 #endif
                 }
-
-                sClockSourceConfig.ClockFilter = 0;
-                sClockSourceConfig.ClockPrescaler = TIM_CLOCKPRESCALER_DIV1;
-                sClockSourceConfig.ClockPolarity = TIM_CLOCKPOLARITY_RISING;
-                sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-                if(HAL_TIM_ConfigClockSource(&Node->Handle, &sClockSourceConfig) != HAL_OK) {
-                    res = false;
-#ifdef HAS_LOG
-                    LOG_ERROR(TIMER, "%u SetClkSrcErr", num);
-#endif
-                }
-
-                sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-                sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-                if(HAL_TIMEx_MasterConfigSynchronization(&Node->Handle, &sMasterConfig) != HAL_OK) {
-                    res = false;
-#ifdef HAS_LOG
-                    LOG_ERROR(TIMER, "%u SetSyncErr", num);
-#endif
-                }
-
+                res = timer_init_clock(Node);
+                res = timer_init_role(Node);
                 res = timer_errata_fix(Node);
-
                 res = timer_ctrl(num, Config->on_off);
             } else {
                 res = false;
@@ -1093,7 +1360,7 @@ static bool timer_base_clock_on(const uint8_t num) {
         __HAL_RCC_TIM9_CLK_DISABLE();
         res = true;
     } break;
-    case 0: {
+    case 10: {
         __HAL_RCC_TIM10_CLK_DISABLE();
         res = true;
     } break;

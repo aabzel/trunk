@@ -36,6 +36,12 @@ const char* TimerDirToStr(const TimerDir_t code) {
     return name;
 }
 
+const char* TimChanToStr(const TimerChannel_t  TimerChannel) {
+    static char ltext[20]={0};
+    snprintf(ltext, sizeof(ltext), "TIM%u_CH%u", TimerChannel.timer, TimerChannel.channel);
+    return ltext;
+}
+
 bool timer_diag_interrupt(void){
     bool res = false;
     uint32_t ok = 0;
@@ -266,7 +272,7 @@ bool timer_diag_compare_complimentary(void) {
             int32_t channel = 0;
             uint32_t channel_value = 0;
             for(channel = 1; channel <= 5; channel++) {
-                channel_value = timer_ccc_val_get(num, (TimerCapComChannel_t)channel);
+                channel_value = timer_ccc_val_get(num, (TimerOutChannel_t)channel);
                 cli_printf(" %10u " TSEP, channel_value);
             }
 
@@ -310,8 +316,8 @@ bool timer_diag_compare(void) {
             int32_t channel = 0;
             uint32_t channel_value = 0;
             for(channel = 1; channel <= 4; channel++) {
-                channel_value = timer_cc_val_get(num, (TimerCapComChannel_t)channel);
-                bool ch_out_en = timer_channel_is_work(num, (TimerCapComChannel_t) channel);
+                channel_value = timer_cc_val_get(num, (TimerOutChannel_t)channel);
+                bool ch_out_en = timer_channel_is_work(num, (TimerOutChannel_t) channel);
 
                 strncpy(temp, "", sizeof(temp));
                 cli_printf(" %10u " TSEP, channel_value);
@@ -349,10 +355,10 @@ bool timer_channel_diag(void) {
             res = timer_frequency_get(num, &frequency_hz);
             if(res) {
                 float duty = 0.0;
-                bool ch_out_en = timer_channel_is_work(num, (TimerCapComChannel_t) channel);
+                bool ch_out_en = timer_channel_is_work(num, (TimerOutChannel_t) channel);
                 res = timer_duty_get(num, channel, &duty);
                 uint32_t channel_value = 0;
-                channel_value = timer_cc_val_get(num, (TimerCapComChannel_t)channel);
+                channel_value = timer_cc_val_get(num, (TimerOutChannel_t)channel);
 
                 char temp[200] = "";
                 strcpy(temp, TSEP);
