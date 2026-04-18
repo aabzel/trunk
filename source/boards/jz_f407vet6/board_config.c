@@ -10,6 +10,11 @@
 #include "usb_device.h"
 #endif
 
+bool board_indicate_init_error(void) {
+    bool res = true;
+    return res;
+}
+
 bool board_init(void) {
     bool res = true;
 #ifdef HAS_LOG

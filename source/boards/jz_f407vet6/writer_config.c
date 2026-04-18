@@ -24,7 +24,6 @@
 #endif
 
 #ifdef HAS_UART
-//#define MAX_UART_BLOCK 100U
 static uint8_t DbgOutData[DBG_TX_ARRAY_SIZE] = {0};
 
 WriterHandle_t dbg_o = {
@@ -94,20 +93,6 @@ void writer_puts(void* _s, const char* s, int32_t len);
 
 const WriterConfig_t WriterConfig[] = {
 
-#ifdef HAS_UART1
-    {
-     .num = WRITER_NUM_UART1,
-     .name = "UART1",
-     .valid = true,
-     .inter_face = {.interface_name=INTERFACE_NAME_UART, .num=1,},
-     .TxArray = Writer1Array,
-     .tx_array_size = ARRAY_SIZE(Writer1Array),
-     .f_putch = uart1_putc,
-     .f_putstr = uart1_puts,
-     .f_transmit = uart_writer_transmit,
-    },
-#endif
-
 #ifdef HAS_SEGGER_RTT
     {
      .num = WRITER_NUM_SEGGER_RTT1,
@@ -119,6 +104,20 @@ const WriterConfig_t WriterConfig[] = {
      .f_putch = segger_rtt1_putc,
      .f_putstr = segger_rtt1_puts,
      .f_transmit = segger_rtt1_writer_transmit,
+    },
+#endif
+
+#ifdef HAS_UART1
+    {
+     .num = WRITER_NUM_UART1,
+     .name = "UART1",
+     .valid = true,
+     .inter_face = {.interface_name=INTERFACE_NAME_UART, .num=1,},
+     .TxArray = Writer1Array,
+     .tx_array_size = ARRAY_SIZE(Writer1Array),
+     .f_putch = uart1_putc,
+     .f_putstr = uart1_puts,
+     .f_transmit = uart_writer_transmit,
     },
 #endif
 
@@ -177,19 +176,19 @@ const WriterConfig_t WriterConfig[] = {
      .f_transmit = esp01_writer_transmit,
     },
 #endif
-
-
 };
 
 WriterHandle_t WriterInstance[6] = {
+
+#ifdef HAS_SEGGER_RTT
+    { .num = WRITER_NUM_SEGGER_RTT1, .valid = true, },
+#endif
 
 #ifdef HAS_UART1
     { .num = WRITER_NUM_UART1, .valid = true, },
 #endif
 
-#ifdef HAS_SEGGER_RTT
-    { .num = WRITER_NUM_SEGGER_RTT1, .valid = true, },
-#endif
+
 
 #ifdef HAS_ISO_TP
     { .num = WRITER_NUM_ISO_TP1, .valid = true, },

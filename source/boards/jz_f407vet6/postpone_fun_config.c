@@ -2,7 +2,10 @@
 
 #include "data_utils.h"
 #include "log.h"
+
+#ifdef HAS_CAN
 #include "can_mcal.h"
+#endif
 
 static bool fun1(void) {
     bool res = true;

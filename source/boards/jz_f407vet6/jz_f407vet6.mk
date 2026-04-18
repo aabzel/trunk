@@ -241,6 +241,10 @@ ifneq ($(JZ_F407VET6_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/xml_config.c
     endif
 
+    ifeq ($(PWM_PHASE_DEMO),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/pwm_phase_demo_config.c
+    endif
+
     ifeq ($(TBFP),Y)
         MCAL_OPT += -DTBFP_MAX_PAYLOAD=20
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c

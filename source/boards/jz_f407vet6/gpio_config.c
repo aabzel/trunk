@@ -11,8 +11,15 @@
 #error "that file only for STM32 MCUs"
 #endif
 
+#define GPIO_CONFIG_LASER   \
+    {.Pad={.port=PORT_A, .pin=8,}, .name="TIM1_CH1", .mux = GPIO_AF1_TIM1, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
+    {.Pad={.port=PORT_E, .pin=5,}, .name="laser", .mux = GPIO_AF3_TIM9, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
+    {.Pad={.port=PORT_B, .pin=7,}, .name="laser", .mux = GPIO_AF2_TIM4, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
+    {.Pad={.port=PORT_A, .pin=6,}, .name="laser", .mux = GPIO_AF2_TIM3, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
 
 const GpioConfig_t GpioConfig[] = {
+        GPIO_CONFIG_LASER
+
         { .Pad = { .port = PORT_A, .pin = 5 },
           .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,
     #ifdef HAS_LOG
@@ -93,8 +100,8 @@ const GpioConfig_t GpioConfig[] = {
 #endif /*HAS_USB*/
 
 #ifdef HAS_CAN1
-    {.Pad={.port=PORT_D, .pin=0,}, .name="CAN1_RX", .mux = GPIO_AF9_CAN1, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
     {.Pad={.port=PORT_D, .pin=1,}, .name="CAN1_TX", .mux = GPIO_AF9_CAN1, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
+    {.Pad={.port=PORT_D, .pin=0,}, .name="CAN1_RX", .mux = GPIO_AF9_CAN1, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
 #endif /*HAS_CAN1*/
 
 #ifdef HAS_CAN2
@@ -137,27 +144,6 @@ const GpioConfig_t GpioConfig[] = {
 #endif /*HAS_USB_DEVICE*/
 
 
-
-#ifdef HAS_TIMER1
-    {.Pad = {.port=PORT_E, .pin=13}, .mux=GPIO_AF1_TIM1,
-#ifdef HAS_LOG
-            .name="TIM1_CH3",
-#endif
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .logic_level=GPIO_LVL_HI},
-    {.Pad = {.port=PORT_E, .pin=14}, .mux=GPIO_AF1_TIM1,
-#ifdef HAS_LOG
-            .name="TIM1_CH4",
-#endif
-            .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .logic_level=GPIO_LVL_HI},
-#endif /*HAS_TIMER1*/
-
-#ifdef HAS_TIMER3
-    {.pad = {.port=PORT_A, .pin=6}, .mux=GPIO_AF2_TIM3, .name="TIM3_CH1", .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .logic_level=GPIO_LVL_HI},
-    {.pad = {.port=PORT_A, .pin=7}, .mux=GPIO_AF2_TIM3, .name="TIM3_CH2", .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .logic_level=GPIO_LVL_HI},
-#endif /*HAS_TIMER3*/
-
-
-
 #ifdef HAS_IR
     {.Pad = {.port=PORT_F, .pin=3},
 #ifdef HAS_LOG
@@ -180,9 +166,6 @@ const GpioConfig_t GpioConfig[] = {
     {.Pad = {.port=PORT_F, .pin=0}, .name="I2C2_SDA",  .mode=GPIO_API_MODE_I2C, .pull=GPIO__PULL_UP,  .mux=GPIO_AF4_I2C2, .logic_level=GPIO_LVL_HI},
 #endif
 
-#ifdef HAS_LTR390_GPIO
-    {.Pad = {.port=PORT_F, .pin=2}, .name="LTR390_INT",  .mode=GPIO_API_MODE_INPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
-#endif
 
 #ifdef HAS_UART6
     {.Pad = {.port=PORT_C, .pin=6}, .name="USART6_TX", .mode=GPIO_API_MODE_ALT1, .mux=GPIO_AF8_USART6, .pull=GPIO__PULL_AIR,  .logic_level=GPIO_LVL_HI},
@@ -199,17 +182,6 @@ const GpioConfig_t GpioConfig[] = {
     {.Pad = {.port=PORT_B, .pin=11}, .name="UART3_RX",   .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=GPIO_AF7_USART3, .logic_level=GPIO_LVL_HI},
 #endif /*HAS_UART3*/
 
-#ifdef HAS_SI4703
-    {.Pad = {.port=PORT_C, .pin=3,}, .name="SI4703_RST", .connector1="UEXT.8", .connector2="JP1.3", .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_UP,   .mux=0, .logic_level=GPIO_LVL_LOW},
-    {.Pad = {.port=PORT_C, .pin=2,}, .name="SI4703_SEN", .connector1="UEXT.7", .connector2="JP1.4", .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
-    {.Pad = {.port=PORT_D, .pin=0,}, .name="SI4703_GPIO1", .connector1="PD.3", .connector2="JP1.2", .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_LOW},
-    {.Pad = {.port=PORT_D, .pin=1,}, .name="SI4703_GPIO2", .connector1="PD.4", .connector2="JP1.1", .mode=GPIO_API_MODE_OUTPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_LOW},
-#endif /*HAS_SI4703*/
-
-#ifdef HAS_I2C3
-    //{.Pad = {.port=PORT_X, .pin=x}, .name="I2C3_SCL", .connector1="Host", .connector2="", .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=xxxxxxx, .logic_level=xxxxxx},
-    //{.Pad = {.port=PORT_X, .pin=x}, .name="I2C3_SDA", .connector1="Host", .connector2="", .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=xxxxxxx, .logic_level=xxxxxx},
-#endif
 };
 
 uint32_t gpio_get_cnt(void) {

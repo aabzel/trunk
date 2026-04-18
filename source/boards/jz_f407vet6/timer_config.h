@@ -5,9 +5,11 @@
 #include "timer_types.h"
 
 typedef enum {
-    TIMER_NUM_RTC = 1,
+    TIMER_NUM_LO_BASE = 8,
     TIMER_NUM_US = 2,
-    TIMER_NUM_STACK = 3,
+    TIMER_NUM_LASER = 3,
+    TIMER_NUM_LO = 4,
+    TIMER_NUM_LASER3 = 9,
     TIMER_NUM_MS = 5,
 } TimerLegalNums_t;
 

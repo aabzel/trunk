@@ -16,7 +16,6 @@ typedef enum{
     WRITER_NUM_UART2  ,
 }WriterLegalNum_t;
 
-//extern uint8_t DbgOutData[DBG_TX_ARRAY_SIZE] ;
 extern WriterHandle_t dbg_o;
 
 extern WriterHandle_t *curWriterPtr;

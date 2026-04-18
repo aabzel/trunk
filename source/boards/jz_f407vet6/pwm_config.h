@@ -6,7 +6,7 @@
 
 #ifndef HAS_PWM
 #error "Add HAS_PWM"
-#endif /*HAS_PWM*/
+#endif
 
 extern const PwmConfig_t PwmConfig[];
 extern PwmHandle_t PwmInstance[];

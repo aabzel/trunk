@@ -22,5 +22,6 @@ uint32_t wires_get_cnt(void);
 
 bool board_init(void);
 bool board_proc(void);
+bool board_indicate_init_error(void);
 
 #endif /* BOARD_CONFIG_H  */
