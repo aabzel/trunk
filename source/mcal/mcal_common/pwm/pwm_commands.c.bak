@@ -212,10 +212,6 @@ bool pwm_frequency_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-/*
- pwm_phase 3 0
- */
 bool pwm_phase_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -228,38 +224,14 @@ bool pwm_phase_command(int32_t argc, char* argv[]) {
         log_res(PWM, res, "Phase");
     }
     if(res) {
-        res = pwm_phase_set_hw(num, phase);
+        res = pwm_phase_set(num, phase);
         if(res) {
-            LOG_INFO(PWM, "SetPhaseOk PWM%u,Pha:%u", num, phase);
+            LOG_INFO(PWM, "SetPhaseOk T:%u P:%u", num, phase);
         } else {
-            LOG_ERROR(PWM, "SetPhaseErr PWM%u,Pha:%u", num, phase);
+            LOG_ERROR(PWM, "SetPhaseErr T:%u P:%u", num, phase);
         }
     } else {
         LOG_ERROR(PWM, "Usage: psd TimNum Phase");
-    }
-    return res;
-}
-
-bool pwm_polarity_command(int32_t argc, char* argv[]){
-    bool res = false;
-    uint8_t num = 0;
-    uint8_t polarity = 0;
-
-    if(1 <= argc) {
-        res = try_str2uint8(argv[0], &num);
-        log_res(PWM, res, "Num");
-    }
-
-    if(2 <= argc) {
-        res = try_str2uint8(argv[1], &polarity);
-        log_res(PWM, res, "polarity");
-    }
-
-    if(res){
-        res = pwm_polarity_set(num, polarity);
-        log_res(PWM, res, "SetPolarity");
-    }else {
-        LOG_ERROR(PWM, "Usage: po Num Polarity");
     }
     return res;
 }

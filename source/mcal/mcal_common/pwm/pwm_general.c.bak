@@ -9,27 +9,12 @@
 #include "log.h"
 #include "pwm_config.h"
 #include "timer_mcal.h"
-#include "time_mcal.h"
 
 COMPONENT_IS_VALID(Pwm, pwm)
 
 COMPONENT_GET_NODE(Pwm, pwm)
 
 COMPONENT_GET_CONFIG(Pwm, pwm)
-
-int32_t pwm_phase_deg_to_phase_us(uint8_t num, float phase_deg) {
-    int32_t phase_us = 0;
-    bool res = false;
-    float period_s = 0.0f;
-    res = pwm_period_get(num, &period_s);
-    if(res) {
-        float phase_s = (phase_deg * period_s) / 360.0f;
-        phase_us = (int32_t) SEC_2_USEC(phase_s);
-        LOG_DEBUG(PWM, "phase:%f deg=%d us", phase_deg, phase_us);
-    }
-    return phase_us;
-}
-
 
 bool pwm_is_valid_duty_cycle(float duty_cycle) {
     bool res = false;
@@ -46,7 +31,7 @@ PwmHandle_t* PwmTimerNumToNode(uint8_t timer_num) {
     uint32_t i = 0;
     uint32_t cnt = pwm_get_cnt();
     for(i = 0; i < cnt; i++) {
-        if(timer_num == PwmInstance[i].TimChan.timer) {
+        if(timer_num == PwmInstance[i].timer_num) {
             if(PwmInstance[i].valid) {
                 Node = &PwmInstance[i];
                 break;
@@ -93,19 +78,19 @@ bool PwmIsValidConfig(const PwmConfig_t* const Config) {
     if(Config) {
         out_res = true;
 
-        res = pwm_is_valid_polarity(Config->polarity);
+        res = pwm_is_valid_polarity(Config->Polarity);
         ifn(res) {
             LOG_ERROR(PWM, "PWM%u,Polarity,Err", Config->num);
             out_res = false;
         }
 
-        res = timer_is_valid(Config->TimChan.timer);
+        res = timer_is_valid(Config->timer_num);
         ifn(res) {
             LOG_ERROR(PWM, "PWM%u,TimerNum,Err", Config->num);
             out_res = false;
         }
 
-        res = timer_is_valid_channel(Config->TimChan.timer, Config->TimChan.channel);
+        res = timer_is_valid_channel(Config->timer_num, Config->timer_channel);
         ifn(res) {
             LOG_ERROR(PWM, "PWM%u,TimChNum,Err", Config->num);
             out_res = false;
@@ -137,12 +122,6 @@ bool PwmIsValidConfig(const PwmConfig_t* const Config) {
 
         ifn(Config->PeriodDoneHandler) { LOG_WARNING(PWM, "PWM%u,PeriodDoneHandler,Err", Config->num); }
 
-        res = timer_channel_is_valid(Config->PhaseComparator);
-        ifn(res) {
-            LOG_WARNING(PWM, "PWM%u,PhaseComparator,Err", Config->num);
-            //out_res = false;
-        }
-
         ifn(Config->name) {
             LOG_ERROR(PWM, "PWM%u,name,Err", Config->num);
             // res = false;
@@ -159,7 +138,8 @@ bool pwm_init_common(const PwmConfig_t* const Config, PwmHandle_t* const Node) {
             Node->num = Config->num;
             Node->phase_s = Config->phase_s;
             Node->name = Config->name;
-            Node->polarity = Config->polarity;
+            Node->timer_channel = Config->timer_channel;
+            Node->Polarity = Config->Polarity;
             Node->duty = Config->duty;
             Node->on = Config->on;
             Node->Pad = Config->Pad;
@@ -167,9 +147,7 @@ bool pwm_init_common(const PwmConfig_t* const Config, PwmHandle_t* const Node) {
             Node->frequency_hz = Config->frequency_hz;
             Node->ComparatorHandler = Config->ComparatorHandler;
             Node->PeriodDoneHandler = Config->PeriodDoneHandler;
-            //Node->TimChan.channel = Config->TimChan.channel;
-            Node->TimChan = Config->TimChan;
-            Node->PhaseComparator = Config->PhaseComparator;
+            Node->timer_num = Config->timer_num;
             Node->init_phase = Config->init_phase;
             res = true;
         }
@@ -231,12 +209,12 @@ _WEAK_FUN_ bool pwm_ctrl_ll(PwmHandle_t* Node, bool on_off) {
         } else {
             gpio_pad_mux_set(Node->Pad, 0);
         }
-        res = timer_channel_ctrl(Node->TimChan.timer, (TimerOutChannel_t)Node->TimChan.channel, on_off);
+        res = timer_channel_ctrl(Node->timer_num, (TimerCapComChannel_t)Node->timer_channel, on_off);
         if(res) {
             Node->mode = PwmOnOffToMode(on_off);
-            LOG_PARN(PWM, "TIMER%u,%s,CtrlOk", Node->TimChan.timer, OnOffToStr(on_off));
+            LOG_PARN(PWM, "TIMER%u,%s,CtrlOk", Node->timer_num, OnOffToStr(on_off));
         } else {
-            LOG_DEBUG(PWM, "TIMER%u CtrlErr", Node->TimChan.timer);
+            LOG_DEBUG(PWM, "TIMER%u CtrlErr", Node->timer_num);
             res = false;
         }
     }
@@ -263,13 +241,7 @@ _WEAK_FUN_ bool pwm_init_custom(void) {
     return res;
 }
 
-_WEAK_FUN_ bool pwm_phase_set(uint8_t num, int32_t phase_us) {
-    bool res = false;
-    LOG_ERROR(PWM, "[%s]NotImplemented", __FUNCTION__);
-    return res;
-}
-
-_WEAK_FUN_ bool pwm_polarity_set(uint8_t num, PwmPolarity_t polarity) {
+_WEAK_FUN_ bool pwm_phase_set(uint8_t num, uint32_t phase_us) {
     bool res = false;
     LOG_ERROR(PWM, "[%s]NotImplemented", __FUNCTION__);
     return res;
@@ -278,20 +250,6 @@ _WEAK_FUN_ bool pwm_polarity_set(uint8_t num, PwmPolarity_t polarity) {
 _WEAK_FUN_ bool pwm_frequency_get(uint8_t num, float* const frequency_hz) {
     bool res = false;
     LOG_ERROR(PWM, "[%s]NotImplemented", __FUNCTION__);
-    return res;
-}
-
-_WEAK_FUN_
-bool pwm_period_get(uint8_t num, float* const period_s) {
-    float frequency_hz = 0.0f;
-    bool res = pwm_frequency_get(num, &frequency_hz);
-    if(res) {
-        res = false;
-        if(0 <= frequency_hz) {
-            *period_s = 1.0f / frequency_hz;
-            res = true;
-        }
-    }
     return res;
 }
 

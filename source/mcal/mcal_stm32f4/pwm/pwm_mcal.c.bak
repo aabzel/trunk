@@ -16,7 +16,6 @@
 #include "stm32f4xx_hal_tim.h"
 #include "sys_config.h"
 #include "timer_mcal.h"
-#include "time_mcal.h"
 
 #ifdef HAS_CLOCK
 #include "clock_mcal.h"
@@ -25,25 +24,6 @@
 #ifdef HAS_LOG
 #include "log.h"
 #endif
-
-static uint32_t TimerPhaseUsToCompareValue(uint8_t num,
-                                           uint32_t phase_us) {
-    uint32_t phase_value = 0;
-    float tick_s = timer_tick_get_s(num);
-    float phase_s = USEC_2_SEC(phase_us);
-    phase_value = (uint32_t) (phase_s / tick_s);
-    return phase_value;
-}
-
-static PwmPolarity_t  PwmPolarityToggle(const PwmPolarity_t prev_polarity){
-    PwmPolarity_t out_polarity=PWM_POLARITY_LOW;
-    switch(prev_polarity){
-        case PWM_POLARITY_LOW: out_polarity=PWM_POLARITY_HIGH;break;
-        case PWM_POLARITY_HIGH: out_polarity=PWM_POLARITY_LOW;break;
-        default: out_polarity=PWM_POLARITY_LOW;break;
-    }
-    return out_polarity;
-}
 
 static const Channal2Code_t ChannalToCodeLUT[] = {
     {
@@ -265,37 +245,6 @@ bool pwm_frequency_set(uint8_t num, float frequency_hz) {
     return res;
 }
 
-bool pwm_polarity_set(const uint8_t num, const PwmPolarity_t polarity) {
-    bool res = false;
-    PwmHandle_t *Node = PwmGetNode(num);
-    if (Node) {
-        res = timer_polarity_set(Node->timer_num, Node->timer_channel, (TimerPolarity_t) polarity);
-    }
-    return res;
-}
-
-bool pwm_phase_set(uint8_t num, uint32_t phase_us) {
-    bool res = false;
-    PwmHandle_t *Node = PwmGetNode(num);
-    if (Node) {
-        uint32_t compare_value = TimerPhaseUsToCompareValue(num, phase_us);
-        res = timer_compare_set(Node->PhaseComparator.timer,
-                                Node->PhaseComparator.channel,
-                                compare_value);
-    }
-    return res;
-}
-
-bool pwm_polarity_toggle(const uint8_t num) {
-    bool res = false;
-    PwmHandle_t *Node = PwmGetNode(num);
-    if (Node) {
-        Node->Polarity = PwmPolarityToggle(Node->Polarity);
-        res = pwm_polarity_set(num, Node->Polarity);
-    }
-    return res;
-}
-
 bool pwm_pad_get(const uint8_t num, Pad_t* const pad) {
     bool res = false;
     PwmHandle_t* Node = PwmGetNode(num);
@@ -310,7 +259,7 @@ bool pwm_duty_get(const uint8_t num, float* const duty_out) {
     bool res = false;
     PwmHandle_t* Node = PwmGetNode(num);
     if(Node) {
-        uint32_t comparator = timer_cc_val_get(Node->timer_num, (TimerOutChannel_t)Node->timer_channel);
+        uint32_t comparator = timer_cc_val_get(Node->timer_num, (TimerCapComChannel_t)Node->timer_channel);
         uint32_t period = timer_period_get(Node->timer_num);
         if(duty_out) {
             *duty_out = ((float)comparator) / ((float)period);
@@ -324,7 +273,7 @@ bool pwm_is_work(uint8_t num) {
     bool res = false;
     PwmHandle_t* Node = PwmGetNode(num);
     if(Node) {
-        res = timer_channel_is_work(Node->timer_num, (TimerOutChannel_t)Node->timer_channel);
+        res = timer_channel_is_work(Node->timer_num, (TimerCapComChannel_t)Node->timer_channel);
     }
     return res;
 }
@@ -439,7 +388,7 @@ bool pwm_ctrl_ll(PwmHandle_t* Node, bool on_off) {
         } else {
             gpio_pad_mux_set(Node->Pad, 0);
         }
-        res = timer_channel_ctrl(Node->timer_num, (TimerOutChannel_t)Node->timer_channel, on_off);
+        res = timer_channel_ctrl(Node->timer_num, (TimerCapComChannel_t)Node->timer_channel, on_off);
         if(res) {
             Node->mode = PwmOnOffToMode(on_off);
 #ifdef HAS_DIAG

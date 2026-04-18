@@ -32,7 +32,7 @@ static bool PwmPeriodFinishedCallback(PwmHandle_t* Node) {
                 Node->Modulation.impulse_cnt = 0;
                 Node->Modulation.cur_signal = toggle_u8(Node->Modulation.cur_signal);
                 res = pwm_period_set_ll(Node, Node->Modulation.Signal[Node->Modulation.cur_signal].period);
-                res = pwm_pulse_diration_set_ll(Node, Node->TimChan.channel,
+                res = pwm_pulse_diration_set_ll(Node, Node->timer_channel,
                                                 Node->Modulation.Signal[Node->Modulation.cur_signal].pulse_diration);
             }
         } break;
@@ -73,8 +73,8 @@ bool PwmPulseFinishedCallback(uint8_t timer_num, TimerOutChannel_t channel) {
     pwm_cnt = pwm_get_cnt();
     uint8_t p = 0;
     for(p = 0; p < pwm_cnt; p++) {
-        if(timer_num == PwmInstance[p].TimChan.timer) {
-            if(channel == PwmInstance[p].TimChan.channel) {
+        if(timer_num == PwmInstance[p].timer_num) {
+            if(channel == PwmInstance[p].timer_channel) {
                 res = PwmPulseFinishedCallback_ll(&PwmInstance[p], channel);
             }
         }
@@ -88,7 +88,7 @@ bool PwmPeriodElapsedCallback(uint8_t timer_num) {
     uint8_t p = 0;
     pwm_cnt = pwm_get_cnt();
     for(p = 0; p < pwm_cnt; p++) {
-        if(timer_num == PwmInstance[p].TimChan.timer) {
+        if(timer_num == PwmInstance[p].timer_num) {
             res = PwmPeriodFinishedCallback(&PwmInstance[p]);
         }
     }
