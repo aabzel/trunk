@@ -1,0 +1,4 @@
+
+config PWM_PHASE_DEMO
+    bool "Enable use of the PWM_PHASE_DEMO drivers"
+
