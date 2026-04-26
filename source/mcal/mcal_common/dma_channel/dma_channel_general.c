@@ -2,12 +2,12 @@
 
 #include "code_generator.h"
 #include "compiler_const.h"
+#include "dma_const.h"
 #include "dma_mcal.h"
 #include "log.h"
 #include "microcontroller_const.h"
 #include "std_includes.h"
 #include "time_mcal.h"
-#include "dma_const.h"
 
 COMPONENT_GET_NODE(DmaChannel, dma_channel)
 COMPONENT_GET_CONFIG(DmaChannel, dma_channel)
@@ -64,16 +64,16 @@ bool DmaChannelIsValidConfig(const DmaChannelConfig_t* const Config) {
         }
 #endif
 
-        if(Config->aligment_source) {
+        if(Config->aligment_mem) {
         } else {
             res = false;
-            LOG_ERROR(DMA_CHANNEL, "%u,Aligment_source,Err", Config->aligment_source);
+            LOG_ERROR(DMA_CHANNEL, "%u,aligment_mem,Err", Config->aligment_mem);
         }
 
-        if(Config->aligment_destination) {
+        if(Config->aligment_per) {
         } else {
             res = false;
-            LOG_ERROR(DMA_CHANNEL, "%u,Aligment_destination,Err", Config->aligment_destination);
+            LOG_ERROR(DMA_CHANNEL, "%u,aligment_per,Err", Config->aligment_per);
         }
 
         if(Config->dir) {
@@ -82,16 +82,16 @@ bool DmaChannelIsValidConfig(const DmaChannelConfig_t* const Config) {
             LOG_ERROR(DMA_CHANNEL, "%u,dir,Err", Config->dir);
         }
 
-        if(Config->inc_destination) {
+        if(Config->mem_inc) {
         } else {
             res = false;
-            LOG_ERROR(DMA_CHANNEL, "%u,IncDest,Err", Config->inc_destination);
+            LOG_ERROR(DMA_CHANNEL, "%u,IncDest,Err", Config->mem_inc);
         }
 
-        if(Config->inc_source) {
+        if(Config->per_inc) {
         } else {
             res = false;
-            LOG_ERROR(DMA_CHANNEL, "%u,IncSrc,Err", Config->inc_source);
+            LOG_ERROR(DMA_CHANNEL, "%u,IncSrc,Err", Config->per_inc);
         }
 
         if(Config->priority) {
@@ -125,10 +125,6 @@ static bool MemCpyHalf(void) {
     return res;
 }
 
-#ifdef HAS_DMA_CUSTOM
-static void MemCpyTransferCompleteNotify(void* arg) {}
-#endif
-
 bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t size, uint8_t dma_num, uint8_t channel
 
 ) {
@@ -152,22 +148,18 @@ bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t s
         Channel.base_addr_source = (uint32_t)source;
         Channel.block_size = size;
         Channel.block_count = 1;
-        Channel.aligment_source = DMA_ALIGNMENT_BYTE;
+        Channel.aligment_mem = DMA_ALIGNMENT_BYTE;
         Channel.interrupt_on = true;
-        Channel.aligment_destination = DMA_ALIGNMENT_BYTE;
+        Channel.aligment_per = DMA_ALIGNMENT_BYTE;
         Channel.dir = DMA_MCAL_DIR_MEMORY_TO_MEMORY;
-        Channel.inc_destination = DMA_INC_ON;
-        Channel.inc_source = DMA_INC_ON;
+        Channel.mem_inc = DMA_INC_ON;
+        Channel.per_inc = DMA_INC_ON;
         Channel.mode = DMA_MODE_NORMAL;
         Channel.mux = 0;
         Channel.fifo = DMA_FIFO_OFF;
         Channel.interrupt_on = false;
         Channel.CallBackHalf = MemCpyHalf;
         Channel.CallBackDone = MemCpyDone;
-#ifdef HAS_DMA_CUSTOM
-        Channel.pTransferCompleteNotify = MemCpyTransferCompleteNotify;
-        Channel.pTransferErrorNotify = NULL;
-#endif
 
         res = dma_channel_control(&Channel, (void*)source);
         if(res) {
@@ -195,16 +187,19 @@ bool dma_channel_proc_one(uint8_t i) {
     return res;
 }
 
+
+
 _WEAK_FUN_
 bool dma_channel_init_common(const DmaChannelConfig_t* const Config, DmaChannelHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
             // Node->CallBackError = Config->CallBackError;
-            Node->aligment_destination = Config->aligment_destination;
-            Node->aligment_source = Config->aligment_source;
+            Node->aligment_per = Config->aligment_per;
+            Node->aligment_mem = Config->aligment_mem;
             Node->base_addr_source = Config->base_addr_source;
             Node->base_addr_destination = Config->base_addr_destination;
+            Node->move_size = Config->move_size;
             Node->block_count = Config->block_count;
             Node->block_size = Config->block_size;
             Node->CallBackHalf = Config->CallBackHalf;
@@ -212,8 +207,8 @@ bool dma_channel_init_common(const DmaChannelConfig_t* const Config, DmaChannelH
             Node->dir = Config->dir;
             Node->DmaPad.byte = Config->DmaPad.byte;
             Node->fifo = Config->fifo;
-            Node->inc_destination = Config->inc_destination;
-            Node->inc_source = Config->inc_source;
+            Node->mem_inc = Config->mem_inc;
+            Node->per_inc = Config->per_inc;
             Node->interrupt_on = Config->interrupt_on;
             Node->num = Config->num;
             Node->name = Config->name;
@@ -232,6 +227,31 @@ bool dma_channel_init_common(const DmaChannelConfig_t* const Config, DmaChannelH
         }
     }
     return res;
+}
+
+
+DmaChannelHandle_t* DmaChannelGetNodeItem(uint8_t dma_num, DmaChannel_t channel) {
+    DmaChannelHandle_t* Node = NULL;
+    uint32_t i = 0;
+    uint32_t cnt = dma_channel_get_cnt();
+    for(i = 0; i < cnt; i++) {
+        if(DmaChannelInstance[i].valid) {
+            if(dma_num == DmaChannelInstance[i].DmaPad.dma_num) {
+                if(channel == DmaChannelInstance[i].DmaPad.channel) {
+                    Node = &DmaChannelInstance[i];
+                    break;
+                }
+            }
+        }
+    }
+
+    return Node;
+}
+
+DmaChannelHandle_t* DmaPadGetNodeItem(DmaChannelPad_t DmaPad) {
+    DmaChannelHandle_t* Node = NULL;
+    Node = DmaChannelGetNodeItem(DmaPad.dma_num, (DmaChannel_t)DmaPad.channel);
+    return Node;
 }
 
 DmaChannelHandle_t* DmaChannelToNode(DmaChannelPad_t DmaPad) {

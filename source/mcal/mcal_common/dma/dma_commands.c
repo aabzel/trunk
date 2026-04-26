@@ -25,6 +25,7 @@ bool dma_diag_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+#if 0
 bool dma_channel_diag_command(int32_t argc, char* argv[]) {
     bool res = true;
 
@@ -39,7 +40,9 @@ bool dma_channel_diag_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+#endif
 
+#if 0
 bool dma_channel_mux_command(int32_t argc, char* argv[]) {
     bool res = true;
     uint8_t dma_num = 0;
@@ -92,3 +95,5 @@ bool dma_channel_mux_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+
+#endif

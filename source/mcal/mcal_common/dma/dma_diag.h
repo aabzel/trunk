@@ -15,15 +15,20 @@ extern "C" {
 bool dma_diag(void);
 bool dma_channel_diag(void);
 
+#if 0
 const char* DmaPadToStr(DmaPad_t DmaPad);
 const char* DmaConfigToStr(const DmaConfig_t* const Config);
 const char* DmaChannelConfigToStr(const DmaChannelConfig_t* const Config);
-const char* DmaDirToStr(DmaDir_t dir);
-const char* DmaIncr2Str(DmaInc_t code);
-const char* DmaMode2Str(DmaMode_t code);
-const char* DmaPriority2Str(DmaPriority_t code);
+#endif
 
-uint8_t DmaDataSizeBits2Str(DmaAligmant_t code);
+const char* DmaConfigToStr(const DmaConfig_t* const Config);
+const char* DmaDirToStr(DmaDir_t dir);
+const char* DmaPriorityToStr(const DmaPriority_t priority);
+const char* DmaIncrToStr(DmaInc_t code);
+const char* DmaModeToStr(DmaMode_t code);
+const char* DmaPriorityToStr(DmaPriority_t code);
+uint8_t DmaDataSizeToBits(const DmaAligmant_t code);
+uint8_t DmaDataSizeBitsToStr(DmaAligmant_t code);
 #ifdef __cplusplus
 }
 #endif

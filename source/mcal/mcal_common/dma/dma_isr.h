@@ -7,9 +7,11 @@ extern "C" {
 
 #include "dma_types.h"
 
+#if 0
 bool DmaChannelHalfIsrLL(DmaChannelHandle_t* const Node) ;
 bool DmaChannelDoneIsrLL(DmaChannelHandle_t* const Node);
 bool DmaChannelErrorIsr_ll(DmaChannelHandle_t* const Node);
+#endif
 
 #ifdef __cplusplus
 }

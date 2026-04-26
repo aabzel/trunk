@@ -4,6 +4,7 @@
 #include "diag_inc.h"
 #include "dma_channel_mcal.h"
 #include "dma_diag.h"
+#include "microcontroller_const.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
@@ -21,8 +22,8 @@ const char* DmaChannelConfigSrcToStr(const DmaChannelConfig_t* const Config) {
         snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
         snprintf(text, sizeof(text), "%s%s,", text, DmaPadToStr(Config->DmaPad));
         snprintf(text, sizeof(text), "%s0x%08X->", text, Config->base_addr_source);
-        snprintf(text, sizeof(text), "%sAli:%u->", text, DmaDataSizeToBits(Config->aligment_source));
-        snprintf(text, sizeof(text), "%sInc:%s->", text, DmaIncrToStr(Config->inc_source));
+        // snprintf(text, sizeof(text), "%sAli:%u->", text, DmaDataSizeToBits(Config->aligment_source));
+        // snprintf(text, sizeof(text), "%sInc:%s->", text, DmaIncrToStr(Config->inc_source));
         snprintf(text, sizeof(text), "%sDir:%s,", text, DmaDirToStr(Config->dir));
     }
     return text;
@@ -34,11 +35,11 @@ const char* DmaChannelConfigToStr(const DmaChannelConfig_t* const Config) {
         snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
         snprintf(text, sizeof(text), "%s%s,", text, DmaPadToStr(Config->DmaPad));
         snprintf(text, sizeof(text), "%sMux:%u=", text, Config->mux);
-        snprintf(text, sizeof(text), "%s%s,", text, DmaChanelMuxToStr(Config->mux));
-        snprintf(text, sizeof(text), "%sAli:%u->", text, DmaDataSizeToBits(Config->aligment_source));
-        snprintf(text, sizeof(text), "%s%u Bit,", text, DmaDataSizeToBits(Config->aligment_destination));
-        snprintf(text, sizeof(text), "%sInc:%s->", text, DmaIncrToStr(Config->inc_source));
-        snprintf(text, sizeof(text), "%s%s,", text, DmaIncrToStr(Config->inc_destination));
+        snprintf(text, sizeof(text), "%s%s,", text, DmaChannelMuxToStr(Config->mux));
+        snprintf(text, sizeof(text), "%sAliPer:%u->", text, DmaDataSizeToBits(Config->aligment_per));
+        snprintf(text, sizeof(text), "%sAliMem:%u Bit,", text, DmaDataSizeToBits(Config->aligment_mem));
+        snprintf(text, sizeof(text), "%sIncMem:%s", text, DmaIncrToStr(Config->mem_inc));
+        snprintf(text, sizeof(text), "%sIncPer:%s,", text, DmaIncrToStr(Config->per_inc));
         snprintf(text, sizeof(text), "%s0x%08X->", text, Config->base_addr_source);
         snprintf(text, sizeof(text), "%s0x%08X,", text, Config->base_addr_destination);
         snprintf(text, sizeof(text), "%sINT:%s,", text, OnOffToStr(Config->interrupt_on));
@@ -57,7 +58,7 @@ const char* DmaChannelIsrInfo(const DmaChannelHandle_t* const Node) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%s%s,", text, DmaPadToStr(Node->DmaPad));
         snprintf(text, sizeof(text), "%sMux:%u=", text, Node->mux);
-        snprintf(text, sizeof(text), "%s%s,", text, DmaChanelMuxToStr(Node->mux));
+        snprintf(text, sizeof(text), "%s%s,", text, DmaChannelMuxToStr(Node->mux));
         snprintf(text, sizeof(text), "%s%s,", text, Node->name);
     }
     return text;
@@ -68,7 +69,7 @@ const char* DmaChannelCtrlNodeToStr(const DmaChannelHandle_t* const Node) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%s%s,", text, DmaPadToStr(Node->DmaPad));
         snprintf(text, sizeof(text), "%sMux:%u=", text, Node->mux);
-        snprintf(text, sizeof(text), "%s%s,", text, DmaChanelMuxToStr(Node->mux));
+        snprintf(text, sizeof(text), "%s%s,", text, DmaChannelMuxToStr(Node->mux));
         snprintf(text, sizeof(text), "%s0x%08X->", text, Node->base_addr_source);
         snprintf(text, sizeof(text), "%s0x%08X,", text, Node->base_addr_destination);
         snprintf(text, sizeof(text), "%sDir:%s,", text, DmaDirToStr(Node->dir));
@@ -88,11 +89,11 @@ const char* DmaChannelNodeToStr(const DmaChannelHandle_t* const Node) {
         snprintf(text, sizeof(text), "%sN:%u,", text, Node->num);
         snprintf(text, sizeof(text), "%s%s,", text, DmaPadToStr(Node->DmaPad));
         snprintf(text, sizeof(text), "%sMux:%u=", text, Node->mux);
-        snprintf(text, sizeof(text), "%s%s,", text, DmaChanelMuxToStr(Node->mux));
-        snprintf(text, sizeof(text), "%sAli:%u->", text, DmaDataSizeToBits(Node->aligment_source));
-        snprintf(text, sizeof(text), "%s%u Bit,", text, DmaDataSizeToBits(Node->aligment_destination));
-        snprintf(text, sizeof(text), "%sInc:%s->", text, DmaIncrToStr(Node->inc_source));
-        snprintf(text, sizeof(text), "%s%s,", text, DmaIncrToStr(Node->inc_destination));
+        snprintf(text, sizeof(text), "%s%s,", text, DmaChannelMuxToStr(Node->mux));
+        snprintf(text, sizeof(text), "%sAliMem:%u Bit", text, DmaDataSizeToBits(Node->aligment_per));
+        snprintf(text, sizeof(text), "%sAliPer:%u Bit,", text, DmaDataSizeToBits(Node->aligment_mem));
+        snprintf(text, sizeof(text), "%sIncPer:%s", text, DmaIncrToStr(Node->per_inc));
+        snprintf(text, sizeof(text), "%sMemInc:%s,", text, DmaIncrToStr(Node->mem_inc));
         snprintf(text, sizeof(text), "%s0x%08X->", text, Node->base_addr_source);
         snprintf(text, sizeof(text), "%s0x%08X,", text, Node->base_addr_destination);
         snprintf(text, sizeof(text), "%sINT:%s,", text, OnOffToStr(Node->interrupt_on));
@@ -123,7 +124,7 @@ bool dma_channel_diag(void) {
 
     uint16_t d = 0;
     for(d = 0; d <= 2; d++) {
-        for(channel = DMA_CHANNEL_0; channel <= DMA_CHANNEL_31; channel++) {
+        for(channel = DMA_CHANNEL_0; channel <= DMA_CHANNEL_COUNT; channel++) {
             DmaChannelPad_t DmaPad = {
                 .dma_num = d,
                 .channel = channel,
@@ -144,7 +145,7 @@ bool dma_channel_diag(void) {
                 snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->global_cnt);
                 snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->init);
                 snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, mux);
-                snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, DmaChanelMuxToStr(mux));
+                snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, DmaChannelMuxToStr(mux));
                 cli_printf("%s" CRLF, log_line);
                 res = true;
             }

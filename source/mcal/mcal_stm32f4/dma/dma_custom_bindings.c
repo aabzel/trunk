@@ -1,6 +1,7 @@
 #include "dma_custom_bindings.h"
 #include "stm32f4xx_hal.h"
 
+#if 0
 uint32_t DmaDirToStm32DmaDir(DmaDir_t dir) {
     uint32_t code = 0xFFFFFFFF;
     switch(dir) {
@@ -19,3 +20,4 @@ uint32_t DmaDirToStm32DmaDir(DmaDir_t dir) {
     }
     return code;
 }
+#endif

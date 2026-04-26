@@ -7,7 +7,16 @@ extern "C" {
 
 #include "std_includes.h"
 #include "dma_channel_types.h"
+#include "dma_channel_config_adc.h"
 
+typedef enum{
+   DMA_CHANNEL_NUM_ADC1 = 1,
+   DMA_CHANNEL_NUM_SDIO_RX ,
+   DMA_CHANNEL_NUM_SDIO_TX ,
+   DMA_CHANNEL_NUM_MEMCPY1 ,
+   DMA_CHANNEL_NUM_MEMCPY2 ,
+   DMA_CHANNEL_NUM_CNT
+}DmaChannelLegalNums_t;
 
 extern const DmaChannelConfig_t DmaChannelConfig[];
 extern volatile DmaChannelHandle_t DmaChannelInstance[];

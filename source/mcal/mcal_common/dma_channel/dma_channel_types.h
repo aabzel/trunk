@@ -1,19 +1,39 @@
 #ifndef DMA_CHANNEL_MCAL_TYPES_H
 #define DMA_CHANNEL_MCAL_TYPES_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "std_includes.h"
 #include "dma_channel_const.h"
 #include "dma_channel_general_types.h"
+
 #ifdef HAS_DMA
 #include "dma_types.h"
 #endif
-
 
 #ifdef HAS_DMA_CHANNEL_CUSTOM
 #include "dma_channel_custom_types.h"
 #else
 #define DMA_CHANNEL_CUSTOM_VARIABLES
 #endif
+
+//Table 9-3 Flexible DMA1/DMA2 request mapping
+typedef struct {
+    uint8_t mux;
+    bool valid;
+    char* name;
+}DmaMuxInfo_t;
+
+
+#define DMA_STREAM           \
+    DmaChannel_t channel;    \
+    uint8_t dma_num;
+
+typedef struct {
+    DMA_STREAM
+}DmaStream_t;
+
 
 typedef bool (*DmaIsrHandler_t)(void);
 
@@ -22,17 +42,17 @@ typedef bool (*DmaIsrHandler_t)(void);
     DmaIsrHandler_t CallBackDone;
 
 #define DMA_CHANNEL_ALIGMENT_VARIABLES                   \
-    DmaAligmant_t aligment_source;                       \
-    DmaAligmant_t aligment_destination;
+    DmaAligmant_t aligment_per;                          \
+    DmaAligmant_t aligment_mem;
 
-#define DMA_CHANNEL_BASE_ADDR_VARIABLES                   \
+#define DMA_CHANNEL_BASE_ADDR_VARIABLES                                                 \
     uint32_t base_addr_source;    /* base addrress for peripheral source */             \
-    uint32_t base_addr_destination;        /* base addrress for memory destination */
+    uint32_t base_addr_destination;        /* base addrress for memory destination */   \
+    uint32_t move_size;        /*   */
 
 #define DMA_CHANNEL_COMMON_INCREMENT_VARIABLES          \
-    DmaInc_t inc_destination;                           \
-    DmaInc_t inc_source;
-
+    DmaInc_t mem_inc;                                   \
+    DmaInc_t per_inc;
 
 #define DMA_CHANNEL_COMMON_VARIABLES                    \
     uint8_t num;                                        \
@@ -54,10 +74,13 @@ typedef bool (*DmaIsrHandler_t)(void);
     bool interrupt_on;                                  \
     bool valid;
 
-
 typedef struct {
     DMA_CHANNEL_COMMON_VARIABLES
 }DmaChannelConfig_t;
+
+
+
+
 
 #define DMA_CHANNEL_ISR_HALF_VARIABLES         \
     volatile bool half;  \
@@ -88,13 +111,17 @@ typedef struct {
     volatile bool busy;                   \
     volatile bool processed;
 
+
 typedef struct {
+    DMA_CHANNEL_COMMON_VARIABLES
+    DMA_CHANNEL_CUSTOM_VARIABLES
+    DMA_CHANNEL_ISR_VARIABLES
     bool init;
     uint32_t spin;
-    DMA_CHANNEL_CUSTOM_VARIABLES
-    DMA_CHANNEL_COMMON_VARIABLES
-    DMA_CHANNEL_ISR_VARIABLES
 }DmaChannelHandle_t;
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* DMA_CHANNEL_MCAL_TYPES_H */

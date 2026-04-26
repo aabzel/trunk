@@ -53,13 +53,13 @@ typedef enum {
 } DmaMode_t;
 
 typedef enum {
-    DMA_ALIGNMENT_BYTE = 1,
-    DMA_ALIGNMENT_HALF_WORD = 1,
-    DMA_ALIGNMENT_WORD = 2,
-    DMA_ALIGNMENT_DWORD = 4,
-    DMA_ALIGNMENT_QWORD = 8,
-    DMA_ALIGNMENT_HWORD = 16,
-    DMA_ALIGNMENT_UNDEF = 0,
+    DMA_ALIGNMENT_BYTE = 1,          /* 8 bit  */
+    DMA_ALIGNMENT_HALF_WORD = 1,     /* 16 bit  */
+    DMA_ALIGNMENT_WORD = 2,     /* 16 bit  */
+    DMA_ALIGNMENT_DWORD = 4,     /*32 bit   */
+    DMA_ALIGNMENT_QWORD = 8,     /* 64 bit */
+    DMA_ALIGNMENT_HWORD = 16,     /* 128 bit  */
+    DMA_ALIGNMENT_UNDEF = 0,     /*   */
 } DmaAligmant_t;
 
 typedef enum  {
@@ -70,12 +70,11 @@ typedef enum  {
 } DmaBurst_t;
 
 typedef enum  {
-    DMA_PRIOR_LOW=1,
-    DMA_PRIOR_MED=2,
-    DMA_PRIOR_HIGH=3,
-    DMA_PRIOR_VERY_HIGH=4,
-
-    DMA_PRIOR_UNDEF=0,
+    DMA_PRIOR_LOW = 1,
+    DMA_PRIOR_MED = 2,
+    DMA_PRIOR_HIGH = 3,
+    DMA_PRIOR_VERY_HIGH = 4,
+    DMA_PRIOR_UNDEF = 0,
 } DmaPriority_t;
 
 typedef enum {

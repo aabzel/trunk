@@ -6,7 +6,7 @@
 
 /*
  { .dma_num=dma_num,      .channel=channel, }
- * */
+ */
 typedef union {
     uint8_t byte;
     struct{

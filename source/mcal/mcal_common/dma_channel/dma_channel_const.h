@@ -4,7 +4,7 @@
 //#include "time_mcal.h"
 #include "dma_channel_dep.h"
 
-#define DMA_CHANNEL_VERSION "3"
+#define DMA_CHANNEL_VERSION 3
 #define DMA_CHANNEL_PERIOD_US 500000
 #define DMA_CHANNEL_TRANSFER_TIMEOUT_MS 3000
 

@@ -9,93 +9,60 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-const char* DmaDirToStr(DmaDir_t dir) {
+const char* DmaIncrToStr(DmaInc_t code) {
     const char* name = "?";
-
-    switch((uint8_t)dir) {
-    case DMA_MCAL_DIR_PERIPH_TO_MEMORY:
-        name = "Per->Mem";
-        break;
-    case DMA_MCAL_DIR_MEMORY_TO_PERIPH:
-        name = "Mem->Per";
-        break;
-    case DMA_MCAL_DIR_MEMORY_TO_MEMORY:
-        name = "Mem->Mem";
-        break;
-    default:
-        break;
+    switch( code) {
+        case DMA_INC_OFF:        name = "Off";        break;
+        case DMA_INC_ON:        name = "On";        break;
+        default:        break;
     }
     return name;
 }
 
-const char* DmaMode2Str(DmaMode_t mode) {
-    const char* name = "?";
-    switch((uint8_t)mode) {
-    case DMA_MODE_NORMAL:
-        name = "Norm";
-        break;
-    case DMA_MODE_CIRCULAR:
-        name = "Circ";
-        break;
-    default:
-        break;
-    }
-    return name;
-}
-
-uint8_t DmaDataSizeBits2Str(DmaAligmant_t code) {
+uint8_t DmaDataSizeToBits(DmaAligmant_t code) {
     uint8_t bit_num = 0;
-
-    switch((uint8_t)code) {
-    case DMA_ALIG_BYTE:
-        bit_num = 8;
-        break;
-    case DMA_ALIG_HALF_WORD:
-        bit_num = 16;
-        break;
-    case DMA_ALIG_WORD:
-        bit_num = 32;
-        break;
-    default:
-        break;
+    switch(code) {
+        case DMA_ALIGNMENT_BYTE:        bit_num = 8;        break;
+        case DMA_ALIGNMENT_WORD:        bit_num = 16;        break;
+        case DMA_ALIGNMENT_DWORD:       bit_num = 32;        break;
+        case DMA_ALIGNMENT_QWORD:       bit_num = 64;        break;
+        case DMA_ALIGNMENT_HWORD:       bit_num = 128;        break;
+        default:         break;
     }
     return bit_num;
 }
 
-const char* DmaIncr2Str(DmaInc_t code) {
+const char* DmaDirToStr(DmaDir_t dir) {
     const char* name = "?";
-
-    switch((uint8_t)code) {
-    case DMA_INC_OFF:
-        name = "Off";
-        break;
-    case DMA_INC_ON:
-        name = "On";
-        break;
-    default:
-        break;
+    switch(dir) {
+        case DMA_MCAL_DIR_PERIPH_TO_MEMORY:        name = "Per->Mem";        break;
+        case DMA_MCAL_DIR_MEMORY_TO_PERIPH:        name = "Mem->Per";        break;
+        case DMA_MCAL_DIR_MEMORY_TO_MEMORY:        name = "Mem->Mem";        break;
+        default:   name = "?";          break;
     }
     return name;
 }
 
-const char* DmaPriority2Str(DmaPriority_t code) {
+const char* DmaModeToStr(DmaMode_t mode) {
+    const char* name = "?";
+    switch( mode) {
+    case DMA_MODE_NORMAL:        name = "Norm";        break;
+    case DMA_MODE_CIRCULAR:        name = "Circ";        break;
+    default:        break;
+    }
+    return name;
+}
+
+
+const char* DmaPriorityToStr(DmaPriority_t code) {
     const char* name = "?";
 
-    switch((uint8_t)code) {
-    case DMA_PRIOR_LOW:
-        name = "Low";
-        break;
-    case DMA_PRIOR_MED:
-        name = "Med";
-        break;
-    case DMA_PRIOR_HIGH:
-        name = "Hi";
-        break;
-    case DMA_PRIOR_VERY_HIGH:
-        name = "VerHi";
-        break;
-    default:
-        break;
+    switch( code) {
+    case DMA_PRIOR_LOW:        name = "Low";        break;
+    case DMA_PRIOR_MED:        name = "Med";        break;
+    case DMA_PRIOR_HIGH:        name = "Hi";        break;
+    case DMA_PRIOR_VERY_HIGH:        name = "VerHi";        break;
+    default:        break;
     }
     return name;
 }
@@ -108,6 +75,7 @@ const char* DmaConfigToStr(const DmaConfig_t* const Config) {
     return text;
 }
 
+#if 0
 const char* DmaPadToStr(DmaPad_t DmaPad) {
     strcpy(text, "");
     snprintf(text, sizeof(text), "%sDMA:%u,", text, DmaPad.dma_num);
@@ -126,15 +94,16 @@ const char* DmaChannelConfigToStr(const DmaChannelConfig_t* const Config) {
         snprintf(text, sizeof(text), "%sMbase:0x%x,", text, Config->memory_base_addr);
         snprintf(text, sizeof(text), "%sDir:%s,", text, DmaDirToStr(Config->dir));
         snprintf(text, sizeof(text), "%sBuffSZ:%u,", text, Config->buffer_size);
-        snprintf(text, sizeof(text), "%sMode:%s,", text, DmaMode2Str(Config->mode));
-        snprintf(text, sizeof(text), "%sMemInc:%s,", text, DmaIncr2Str(Config->mem_inc));
-        snprintf(text, sizeof(text), "%sPerInc:%s,", text, DmaIncr2Str(Config->per_inc));
-        snprintf(text, sizeof(text), "%sMemAli:%u Bit,", text, DmaDataSizeBits2Str(Config->aligment_per));
-        snprintf(text, sizeof(text), "%sPerAli:%u Bit,", text, DmaDataSizeBits2Str(Config->aligment_mem));
-        snprintf(text, sizeof(text), "%sPri:%s,", text, DmaPriority2Str(Config->priority));
+        snprintf(text, sizeof(text), "%sMode:%s,", text, DmaModeToStr(Config->mode));
+        snprintf(text, sizeof(text), "%sMemInc:%s,", text, DmaIncrToStr(Config->mem_inc));
+        snprintf(text, sizeof(text), "%sPerInc:%s,", text, DmaIncrToStr(Config->per_inc));
+        snprintf(text, sizeof(text), "%sMemAli:%u Bit,", text, DmaDataSizeBitsToStr(Config->aligment_per));
+        snprintf(text, sizeof(text), "%sPerAli:%u Bit,", text, DmaDataSizeBitsToStr(Config->aligment_mem));
+        snprintf(text, sizeof(text), "%sPri:%s,", text, DmaPriorityToStr(Config->priority));
     }
     return text;
 }
+#endif
 
 bool dma_diag(void) {
     bool res = false;
@@ -155,7 +124,9 @@ bool dma_diag(void) {
             // ret=dmamux_sync_flag_get(Node->DMAx, uint32_t flag);
             strcpy(log_line, TSEP);
             snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, i);
+#ifdef HAS_DMA_CUSTOM
             snprintf(log_line, sizeof(log_line), "%s 0x%08x " TSEP, log_line, Node->DMAx);
+#endif
             cli_printf("%s" CRLF, log_line);
             res = true;
         }
@@ -166,6 +137,7 @@ bool dma_diag(void) {
     return res;
 }
 
+#if 0
 bool dma_channel_diag(void) {
     bool res = false;
     uint16_t channel = 0;
@@ -201,3 +173,4 @@ bool dma_channel_diag(void) {
 
     return res;
 }
+#endif

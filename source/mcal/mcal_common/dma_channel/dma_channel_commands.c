@@ -49,21 +49,21 @@ bool dma_channel_mux_command(int32_t argc, char* argv[]) {
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &dma_num);
         if(false == res) {
-            LOG_ERROR(SYS, "ParseErr DmaNum %s", argv[0]);
+            LOG_ERROR(DMA_CHANNEL, "ParseErr DmaNum %s", argv[0]);
         }
     }
 
     if(2 <= argc) {
         res = try_str2uint8(argv[1], &channel);
         if(false == res) {
-            LOG_ERROR(SYS, "ParseErr Chan %s", argv[1]);
+            LOG_ERROR(DMA_CHANNEL, "ParseErr Chan %s", argv[1]);
         }
     }
 
     if(3 <= argc) {
         res = try_str2uint8(argv[2], &mux);
         if(false == res) {
-            LOG_ERROR(SYS, "ParseErr Mux %s", argv[2]);
+            LOG_ERROR(DMA_CHANNEL, "ParseErr Mux %s", argv[2]);
         }
     }
 
@@ -78,11 +78,11 @@ bool dma_channel_mux_command(int32_t argc, char* argv[]) {
             mux = 0;
             res = dma_channel_mux_get(DmaPad, &mux);
             if(res) {
-                LOG_INFO(SYS, "Get,DmaNum:%u,Channel:%u,Mux:%u", dma_num, channel, mux);
+                LOG_INFO(DMA_CHANNEL, "Get,DmaNum:%u,Channel:%u,Mux:%u", dma_num, channel, mux);
             }
         } break;
         case 3: {
-            LOG_INFO(SYS, "Set,DmaNum:%u,Channel:%u,Mux:%u", dma_num, channel, mux);
+            LOG_INFO(DMA_CHANNEL, "Set,DmaNum:%u,Channel:%u,Mux:%u", dma_num, channel, mux);
             res = dma_channel_mux_set(DmaPad, mux);
             log_info_res(DMA_CHANNEL, res, "MuxSet");
         } break;
@@ -90,7 +90,7 @@ bool dma_channel_mux_command(int32_t argc, char* argv[]) {
             break;
         }
     } else {
-        LOG_ERROR(SYS, "Usage: dcm DmaNum Channel Mux");
+        LOG_ERROR(DMA_CHANNEL, "Usage: dcm DmaNum Channel Mux");
     }
     return res;
 }
@@ -104,21 +104,21 @@ bool dma_channel_priority_command(int32_t argc, char* argv[]) {
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &dma_num);
         if(false == res) {
-            LOG_ERROR(SYS, "ParseErr DmaNum %s", argv[0]);
+            LOG_ERROR(DMA_CHANNEL, "ParseErr DmaNum %s", argv[0]);
         }
     }
 
     if(2 <= argc) {
         res = try_str2uint8(argv[1], &channel);
         if(false == res) {
-            LOG_ERROR(SYS, "ParseErr Chan %s", argv[1]);
+            LOG_ERROR(DMA_CHANNEL, "ParseErr Chan %s", argv[1]);
         }
     }
 
     if(3 <= argc) {
         res = try_str2uint8(argv[2], &priority);
         if(false == res) {
-            LOG_ERROR(SYS, "ParseErr Mux %s", argv[2]);
+            LOG_ERROR(DMA_CHANNEL, "ParseErr Mux %s", argv[2]);
         }
     }
 
@@ -133,11 +133,11 @@ bool dma_channel_priority_command(int32_t argc, char* argv[]) {
             priority = 0;
             res = dma_channel_priority_get(DmaPad, &priority);
             if(res) {
-                LOG_INFO(SYS, "Get,DmaNum:%u,Channel:%u,Priority:%u", dma_num, channel, priority);
+                LOG_INFO(DMA_CHANNEL, "Get,DmaNum:%u,Channel:%u,Priority:%u", dma_num, channel, priority);
             }
         } break;
         case 3: {
-            LOG_INFO(SYS, "Set,DmaNum:%u,Channel:%u,Priority:%u", dma_num, channel, priority);
+            LOG_INFO(DMA_CHANNEL, "Set,DmaNum:%u,Channel:%u,Priority:%u", dma_num, channel, priority);
             res = dma_channel_priority_set(DmaPad, priority);
             log_info_res(DMA_CHANNEL, res, "PrioritySet");
         } break;
@@ -145,7 +145,7 @@ bool dma_channel_priority_command(int32_t argc, char* argv[]) {
             break;
         }
     } else {
-        LOG_ERROR(SYS, "Usage: dcp DmaNum Channel Priority");
+        LOG_ERROR(DMA_CHANNEL, "Usage: dcp DmaNum Channel Priority");
     }
     return res;
 }

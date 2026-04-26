@@ -2,13 +2,14 @@ ifneq ($(DMA_CUSTOM_MK_INC),Y)
     DMA_CUSTOM_MK_INC=Y
 
     DMA_DIR = $(MCAL_STM32F4_DIR)/dma
-    #@echo $(error DMA_DIR=$(DMA_DIR))
+    # $(error DMA_DIR=$(DMA_DIR))
 
     INCDIR += -I$(DMA_DIR)
     MCAL_OPT += -DHAS_DMA_CUSTOM
 
     SOURCES_C += $(DMA_DIR)/dma_mcal.c
     SOURCES_C += $(DMA_DIR)/dma_custom_bindings.c
+    SOURCES_C += $(DMA_DIR)/dma_custom_misc.c
 
     ifeq ($(DMA1),Y)
         MCAL_OPT += -DHAS_DMA1
@@ -18,8 +19,9 @@ ifneq ($(DMA_CUSTOM_MK_INC),Y)
         MCAL_OPT += -DHAS_DMA2
     endif
 
-    ifeq ($(DIAG),Y)
-        SOURCES_C += $(DMA_DIR)/dma_custom_diag.c
+    ifeq ($(DMA_DIAG),Y)
+        MCAL_OPT += -DHAS_DMA_CUSTOM_DIAG
+        SOURCES_DIAG_C += $(DMA_DIR)/dma_custom_diag.c
     endif
 
     ifeq ($(CLI),Y)

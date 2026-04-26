@@ -1,5 +1,6 @@
 #include "dma_isr.h"
 
+#if 0
 bool DmaChannelHalfIsrLL(DmaChannelHandle_t* const Node) {
     bool res = false;
     if(Node) {
@@ -41,3 +42,4 @@ bool DmaChannelErrorIsr_ll(DmaChannelHandle_t* const Node) {
     }
     return res;
 }
+#endif
