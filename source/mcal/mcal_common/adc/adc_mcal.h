@@ -20,57 +20,31 @@ extern "C" {
 
 /*API*/
 /*proc*/
+bool AdcIsValidConfig(const AdcConfig_t* const Config);
 bool adc_proc(void);
 bool adc_proc_one(uint8_t num);
-bool adc_channel_proc(void);
 void AdcConvCpltCallback(AdcHandle_t* Node) ;
 
-#ifdef HAS_ADC_CUSTOM
-const AdcChannelInfo_t* AdcChannelToInfo(uint8_t adc_num, AdcChannel_t channel) ;
-#endif
-
 /*ADC*/
-const AdcConfig_t* AdcGetConfig(AdcNum_t adc_num);
 AdcHandle_t* AdcGetNode(AdcNum_t adc_num);
-/*Channel*/
-const AdcChannelConfig_t* AdcChannelGetConfig(uint8_t num);
-const AdcChannelConfig_t* AdcChannelGetConfigV2(AdcNum_t adc_num, AdcChannel_t channel);
-bool AdcChannelGetVoltage(uint8_t node_num, float* const voltage_scale);
-
-AdcChannelHandle_t* AdcChannelGetNodeV2(AdcNum_t adc_num, AdcChannel_t channel);
-AdcChannelHandle_t* AdcChannelGetNode(uint8_t num);
-
+const AdcConfig_t* AdcGetConfig(AdcNum_t adc_num);
 
 /*init */
-bool adc_channel_init_node(const AdcChannelConfig_t* const Config, AdcChannelHandle_t*  const Node);
-bool adc_channel_init_custom(void);
-bool adc_channel_init_one(uint8_t num);
-bool adc_channel_mcal_init(void);
 bool adc_init_custom(void);
 bool adc_init_one(uint8_t num);
+bool adc_init_common(const AdcConfig_t* const Config, AdcHandle_t* const Node);
 bool adc_mcal_init(void);
 
-
-Pad_t AdcChannel2Pad(AdcNum_t adc_num, AdcChannel_t channel);
 bool adc_wait_convert_done_ll(AdcHandle_t* Node, uint32_t time_out_ms) ;
-uint32_t AdcCode2mV(AdcNum_t adc_num, AdcChannel_t channel, int32_t code);
 
 
 /*Get*/
+float AdcSample12ToVoltageVef3_3(const uint32_t sample);
 float AdcCode2Voltage(const int32_t code);
-bool adc_code_to_params(AdcChannelHandle_t* const Channel) ;
 bool adc_is_valid_num(AdcNum_t adc_num);
-AdcChannel_t AdcPad2Channel(Pad_t pad);
-bool adc_is_valid_channel(AdcChannel_t channel);
-bool adc_channel_read_code(AdcNum_t adc_num, AdcChannel_t channel, int32_t* const code);
-bool adc_channel_read_voltage(AdcNum_t adc_num, AdcChannel_t channel, float* const voltage);
-bool adc_pad_read_code(Pad_t pad, int32_t* code);
-bool adc_pad_read_voltage(Pad_t pad, float* const voltage);
-float adc_channel_read_voltage_short(AdcNum_t adc_num, AdcChannel_t channel);
-float adc_pad_read_voltage_short(Pad_t pad);
-float AdcChannelGetVoltageScale(uint8_t num);
 
 /*setters*/
+bool adc_wait_conv_done_ll(AdcHandle_t* Node, uint32_t time_out_ms) ;
 bool adc_start(uint8_t num );
 bool adc_set_vref(uint8_t adc_num, float v_ref_voltage);
 

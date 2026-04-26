@@ -5,11 +5,11 @@ ifneq ($(ADC_DRV_CUSTOM_MK_INC),Y)
     ADC_CUSTOM_DIR = $(MCAL_STM32F4_DIR)/adc
     # $(error ADC_CUSTOM_DIR=$(ADC_CUSTOM_DIR))
     MCAL_OPT += -DHAS_ADC_CUSTOM
-    MCAL_OPT += -DHAS_ADC
 
     INCDIR += -I$(ADC_CUSTOM_DIR)
 
     SOURCES_C += $(ADC_CUSTOM_DIR)/adc_mcal.c
+    SOURCES_C += $(ADC_CUSTOM_DIR)/adc_custom_isr.c
 
     ifeq ($(ADC1),Y)
         MCAL_OPT += -DHAS_ADC1

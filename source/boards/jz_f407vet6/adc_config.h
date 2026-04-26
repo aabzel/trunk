@@ -4,14 +4,14 @@
 #include "adc_types.h"
 #include "sys_config.h"
 
-#define ADC_NUM 1
+#define ADC_REF_VOLTAGE (3.3f)
 
-extern const AdcConfig_t AdcConfig[ADC_NUM];
-extern const AdcChannelConfig_t AdcChannelConfig[];
-extern AdcHandle_t AdcInstance[ADC_NUM];
-extern AdcChannelHandle_t AdcChannels[];
+#define ADC1_RX_SAMPLE_CNT 1024
+extern uint16_t Adc1RxSamples[ADC1_RX_SAMPLE_CNT];
+
+extern const AdcConfig_t AdcConfig[];
+extern AdcHandle_t AdcInstance[];
 
 uint32_t adc_get_cnt(void);
-uint32_t adc_channel_get_cnt(void);
 
 #endif /* ADC_CONFIG_H  */

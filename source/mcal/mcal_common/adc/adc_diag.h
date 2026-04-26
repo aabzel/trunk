@@ -13,13 +13,9 @@ extern "C" {
 #endif
 
 const char* AdcConfigToStr(const AdcConfig_t* const Config);
-const char* AdcChannelConfigToStr(const AdcChannelConfig_t* const Config);
-const char* AdcChannelToStr(uint8_t channel);
+
 const char* AdcNodeToStr(const AdcHandle_t* const Node);
 const char* AdcNumToStr(uint8_t adc_num);
-
-bool AdcDiagConfigChannel(AdcChannelConfig_t* const Config);
-bool adc_channel_diag(const char* const key_word1, const char* const key_word2);
 bool adc_diag_isr(const char* const key_word1, const char* const key_word2);
 bool adc_diag(const char* const key1, const char* const key2);
 

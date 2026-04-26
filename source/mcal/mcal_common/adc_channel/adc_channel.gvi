@@ -1,0 +1,3 @@
+REG->ADC
+GPIO->ADC
+NVIC->ADC

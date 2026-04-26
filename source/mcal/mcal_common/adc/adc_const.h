@@ -13,7 +13,7 @@ extern "C" {
 #include "bit_const.h"
 #include "time_mcal.h"
 
-#define ADC_POLL_PERIOD_US MSEC_2_USEC(1)
+#define ADC_POLL_PERIOD_US 1
 #define ADC_CHANNEL_PERIOD_US MSEC_2_USEC(5)
 
 typedef enum {
@@ -37,28 +37,35 @@ typedef enum {
 } AdcResolution_t;
 
 typedef enum {
-    ADC_CHAN_0 = 0,
-    ADC_CHAN_1 = 1,
-    ADC_CHAN_2 = 2,
-    ADC_CHAN_3 = 3,
-    ADC_CHAN_4 = 4,
-    ADC_CHAN_5 = 5,
-    ADC_CHAN_6 = 6,
-    ADC_CHAN_7 = 7,
-    ADC_CHAN_8 = 8,
-    ADC_CHAN_9 = 9,
-    ADC_CHAN_10 = 10,
-    ADC_CHAN_11 = 11,
-    ADC_CHAN_12 = 12,
-    ADC_CHAN_13 = 13,
-    ADC_CHAN_14 = 14,
-    ADC_CHAN_15 = 15,
-    ADC_CHAN_16 = 16,
-    ADC_CHAN_17 = 17,
-    ADC_CHAN_18 = 18,
+    ADC_MAX_VAL_6BIT = 63,
+    ADC_MAX_VAL_8BIT = 255,
+    ADC_MAX_VAL_10BIT = 1023,
+    ADC_MAX_VAL_12BIT = 4095,
+    ADC_MAX_VAL_14BIT = 16383,
+    ADC_MAX_VAL_UNDEF = 0,
+} AdcMaxVal_t;
 
-    ADC_CHAN_UNDEF = 19,
-} AdcChannel_t;
+typedef enum {
+    ADC_MCAL_TRIG_SRC_UNDEF = 0 ,    //
+    ADC_MCAL_TRIG_SRC_SOFTWARE_START    ,    //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER2_TRGO ,      //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER3_TRGO ,      //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER8_TRGO ,      //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER1_COM_CH1  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER1_COM_CH2  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER1_COM_CH3  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER2_COM_CH2  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER2_COM_CH3  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER2_COM_CH4  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER3_COM_CH1  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER4_COM_CH4  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER5_COM_CH1  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER5_COM_CH2  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER5_COM_CH3  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_TIRER8_COM_CH1  ,  //
+    ADC_MCAL_TRIG_SRC_EXT_IT11 ,             //
+} AdcExternalTriggerSource_t;
+
 
 #ifdef __cplusplus
 }

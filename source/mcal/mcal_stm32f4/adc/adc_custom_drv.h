@@ -12,15 +12,16 @@ extern "C" {
 #include "adc_custom_types.h"
 #include "adc_types.h"
 #include "stm32f4xx_hal.h"
+#include "adc_channel_const.h"
 
 #ifndef HAS_ADC
 #error "+ HAS_ADC"
 #endif
 
-bool adc_init_channel(uint8_t adc_num, AdcChannel_t adc_channel);
 bool adc_init(void);
 bool adc_proc(void);
-bool adc_channel_read(uint8_t adc_num, uint16_t adc_channel, uint32_t* code);
+uint8_t ADC_HandleTypeDefToNum(const ADC_HandleTypeDef* const hadc);
+AdcHandle_t* AdcHalHandle2Handle(const ADC_HandleTypeDef* const hadc);
 
 #ifdef __cplusplus
 }

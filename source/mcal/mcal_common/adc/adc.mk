@@ -9,7 +9,7 @@ ifneq ($(ADC_GENERAL_MK_INC),Y)
     MCAL_OPT += -DHAS_ADC
     MCAL_OPT += -DHAS_ADC_PROC
 
-    SOURCES_C += $(ADC_MCAL_DIR)/adc_general_api.c
+    SOURCES_C += $(ADC_MCAL_DIR)/adc_general.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(ADC_DIAG),Y)

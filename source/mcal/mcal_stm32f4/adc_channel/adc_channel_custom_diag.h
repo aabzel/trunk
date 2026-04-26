@@ -1,0 +1,4 @@
+#ifndef ADC_CHANNEL_STM32_DIAG_H
+#define ADC_CHANNEL_STM32_DIAG_H
+
+#endif /* ADC_STM32_DIAG_H  */

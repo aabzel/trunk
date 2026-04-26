@@ -1,5 +1,5 @@
-#ifndef ADC_STM_TYPES_H
-#define ADC_STM_TYPES_H
+#ifndef ADC_CUSTOM_TYPES_H
+#define ADC_CUSTOM_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,19 +7,14 @@ extern "C" {
 
 #include "std_includes.h"
 #include "adc_custom_const.h"
+#include "adc_channel_const.h"
 #include "adc_types.h"
 #include "stm32f4xx_hal.h"
+
 
 #define ADC_CUSTOM_VARIABLES  \
        ADC_HandleTypeDef adc_h;
 
-typedef struct {
-    AdcNum_t num;
-    AdcChannel_t adc_channel;
-    uint32_t code;
-    Pad_t pad;
-    bool valid;
-} AdcChannelInfo_t;
 
 typedef struct {
     uint8_t resolution;
@@ -37,4 +32,4 @@ typedef struct {
 }
 #endif
 
-#endif /* ADC_STM_TYPES_H  */
+#endif /* ADC_CUSTOM_TYPES_H  */
