@@ -25,13 +25,13 @@
 //#define TIMER_MAX_COUNT (TIMER_COUNT+1)
 #define TRNG_COUNT 0
 
-
 // control
 #define LSI_FREQ 32000
 #define DAC_COUNT 2
 #define DMA_COUNT 2
 #define GPIO_PIN_MAX 15
 #define DMA_STREAM_COUNT 8
+#define DMA_CHANNEL_COUNT DMA_STREAM_COUNT
 
 // computing
 #define CPU_MAX_HZ 168000000

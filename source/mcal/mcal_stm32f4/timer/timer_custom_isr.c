@@ -72,6 +72,11 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef* pHandle) {
         if(Timer) {
             Timer->delay_elapse_cnt++;
             Timer->comparator_cnt++;
+
+            if(Timer->ComparatorHandler){
+                Timer->ComparatorHandler();
+            }
+
 #ifdef HAS_PWM
             PwmHandle_t* Pwm = PwmTimerNumToNode(timer_num);
             if(Pwm) {
@@ -89,6 +94,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* pHandle) {
         int8_t num = TimInstance2Num(pHandle->Instance);
         TimerHandle_t* Node = TimerGetNode(num);
         if(Node) {
+            if(Node->PeriodDoneHandler){
+                Node->PeriodDoneHandler();
+            }
 #ifdef HAS_PWM
             PwmHandle_t* Pwm = PwmTimerNumToNode(num);
             if(Pwm) {

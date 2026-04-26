@@ -61,7 +61,6 @@ bool timer_is_valid_channel( const uint8_t num, const uint8_t channel);
 bool timer_polarity_get(uint8_t num, TimerOutChannel_t channel, TimerPolarity_t * const polarity);
 /*freq period*/
 bool timer_frequency_get(uint8_t num, float * const frequency);
-
 uint32_t timer_counter_to_us(uint8_t num, uint32_t  counter);
 uint32_t timer_cc_val_get(const uint8_t num, TimerOutChannel_t chaneel) ;
 uint64_t timer_get_period_us(uint8_t num) ;

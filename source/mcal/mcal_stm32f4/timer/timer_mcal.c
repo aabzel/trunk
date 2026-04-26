@@ -114,6 +114,22 @@ uint8_t timer_get_width(uint32_t timer_base) {
 #endif
 
 static const int32_t Timer1IRQs[] = {TIM1_CC_IRQn, TIM1_TRG_COM_TIM11_IRQn, TIM1_UP_TIM10_IRQn, TIM1_BRK_TIM9_IRQn};
+static const int32_t Timer2IRQs[] = {TIM2_IRQn};
+static const int32_t Timer3IRQs[] = {TIM3_IRQn};
+static const int32_t Timer4IRQs[] = {TIM4_IRQn};
+static const int32_t Timer5IRQs[] = {TIM5_IRQn};
+static const int32_t Timer6IRQs[] = {TIM6_DAC_IRQn};
+static const int32_t Timer7IRQs[] = {TIM7_IRQn};
+static const int32_t Timer8IRQs[] = {TIM8_BRK_TIM12_IRQn, TIM8_UP_TIM13_IRQn, TIM8_TRG_COM_TIM14_IRQn, TIM8_CC_IRQn};
+static const int32_t Timer9IRQs[] = {TIM1_BRK_TIM9_IRQn};
+static const int32_t Timer10IRQs[] = {TIM1_UP_TIM10_IRQn};
+static const int32_t Timer11IRQs[] = {TIM1_TRG_COM_TIM11_IRQn};
+static const int32_t Timer12IRQs[] = {TIM8_BRK_TIM12_IRQn};
+static const int32_t Timer13IRQs[] = {TIM8_UP_TIM13_IRQn};
+static const int32_t Timer14IRQs[] = {TIM8_TRG_COM_TIM14_IRQn};
+
+
+
 
 static const TimerInfo_t TimerInfo[] = {
 #ifdef TIM1
@@ -141,6 +157,8 @@ static const TimerInfo_t TimerInfo[] = {
         .valid = true,
         .clock_bus = CLOCK_BUS_APB1,
         .num = 2,
+        .irq_n = Timer2IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer2IRQs),
         .TIMx = TIM2,
         .Comparators =
             {
@@ -158,6 +176,8 @@ static const TimerInfo_t TimerInfo[] = {
         .valid = true,
         .clock_bus = CLOCK_BUS_APB1,
         .num = 3,
+        .irq_n = Timer3IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer3IRQs),
         .TIMx = TIM3,
         .Comparators =
             {
@@ -176,6 +196,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB1,
         .num = 4,
         .TIMx = TIM4,
+        .irq_n = Timer4IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer4IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -193,6 +215,8 @@ static const TimerInfo_t TimerInfo[] = {
         .num = 5,
         .bitness = 32,
         .TIMx = TIM5,
+        .irq_n = Timer5IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer5IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -210,6 +234,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB1,
         .num = 6,
         .TIMx = TIM6,
+        .irq_n = Timer6IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer6IRQs),
         .Comparators =
             {
                 .compare1 = 0,
@@ -227,6 +253,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB1,
         .num = 7,
         .TIMx = TIM7,
+        .irq_n = Timer7IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer7IRQs),
         .Comparators =
             {
                 .compare1 = 0,
@@ -244,6 +272,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB2,
         .num = 8,
         .TIMx = TIM8,
+        .irq_n = Timer8IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer8IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -262,6 +292,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB2,
         .num = 9,
         .TIMx = TIM9,
+        .irq_n = Timer9IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer9IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -278,6 +310,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB2,
         .num = 10,
         .TIMx = TIM10,
+        .irq_n = Timer10IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer10IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -293,6 +327,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB2,
         .num = 11,
         .TIMx = TIM11,
+        .irq_n = Timer11IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer11IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -308,6 +344,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB1,
         .num = 12,
         .TIMx = TIM12,
+        .irq_n = Timer12IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer12IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -323,6 +361,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB1,
         .num = 13,
         .TIMx = TIM13,
+        .irq_n = Timer13IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer13IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -338,6 +378,8 @@ static const TimerInfo_t TimerInfo[] = {
         .clock_bus = CLOCK_BUS_APB1,
         .num = 14,
         .TIMx = TIM14,
+        .irq_n = Timer14IRQs,
+        .irq_cnt = ARRAY_SIZE(Timer14IRQs),
         .Comparators =
             {
                 .compare1 = 1,
@@ -347,6 +389,14 @@ static const TimerInfo_t TimerInfo[] = {
 #endif
 };
 
+uint32_t timer_period_get(uint8_t num) {
+    uint32_t timer_period32 = 0;
+    TIM_TypeDef* TIMx = timer_get_ptr(num);
+    if(TIMx) {
+        timer_period32 = TIMx->ARR+1;
+    }
+    return timer_period32;
+}
 
 bool timer_channel_is_valid(const TimerChannel_t tim_ch) {
     bool res = false;
@@ -498,14 +548,6 @@ uint8_t timer_bitness_get(uint8_t num) {
     return bitness;
 }
 
-uint32_t timer_period_get(uint8_t num) {
-    uint32_t timer_period32 = 0;
-    TIM_TypeDef* TIMx = timer_get_ptr(num);
-    if(TIMx) {
-        timer_period32 = TIMx->ARR;
-    }
-    return timer_period32;
-}
 
 uint32_t TimerSlaveTriggerPolarityToStmTriggerPolarity(const TimerSlaveTriggerPolarity_t slave_trigger_polarity) {
     uint32_t  TriggerPolarity=TIM_TRIGGERPOLARITY_INVERTED;
@@ -587,21 +629,19 @@ int32_t timer_bus_clock_get(uint8_t num) {
     return clock_hz;
 }
 
-#if 0
-bool timer_frequency_get(uint8_t num, double * const frequency){
+bool timer_frequency_get(uint8_t num, float * const frequency){
 //double timer_frequency_get(uint8_t num) {
     bool res = false ;
-    double frequency_hz = 0.0;
     TIM_TypeDef* TIMx = timer_get_ptr(num);
     if(TIMx) {
         int32_t bus_clock = timer_bus_clock_get(num);
-        frequency_hz = ((double)bus_clock) / (((double)TIMx->ARR + 1) * ((double)TIMx->PSC + 1));
+        float frequency_hz = 0.0f;
+        frequency_hz = ((float)bus_clock) / (    ((float)TIMx->ARR+1) * ((float)TIMx->PSC + 1)     );
         *frequency=frequency_hz;
         res = true;
     }
     return res;
 }
-#endif
 
 bool timer_get_status(uint8_t num) {
     bool res = true;
@@ -725,7 +765,11 @@ uint32_t timer_prescaler_get(uint8_t num) {
     TIM_TypeDef* TIMx = timer_get_ptr(num);
     if(TIMx) {
         res = true;
-        timer_prescaler32 = TIMx->PSC;
+        /*The counter clock frequency CK_CNT is equal to fCK_PSC / (PSC[15:0] + 1).
+        PSC contains the value to be loaded in the active prescaler register at each update event
+        (including when the counter is cleared through UG bit of TIMx_EGR register or through
+        trigger controller when configured in “reset mode”)*/
+        timer_prescaler32 = TIMx->PSC + 1;
     } else {
         res = false;
     }
@@ -740,7 +784,7 @@ uint32_t timer_get_auto_reload(uint8_t num) {
     uint32_t auto_reload = 0;
     TIM_TypeDef* TIMx = timer_get_ptr(num);
     if(TIMx) {
-        auto_reload = TIMx->ARR;
+        auto_reload = TIMx->ARR+1;
     }
 
     return auto_reload;
@@ -853,8 +897,8 @@ uint64_t timer_period_get_us(uint8_t num) {
     if(Node) {
         double fck = (double)timer_bus_clock_get(num);
         double tf = 1.0 / fck;
-        prescaler = Node->Handle.Instance->PSC;
-        reload = Node->Handle.Instance->ARR;
+        prescaler = Node->Handle.Instance->PSC+1;
+        reload = Node->Handle.Instance->ARR+1;
         double t_psc = tf * ((double)prescaler);
 
         real_period_us = (uint64_t)(t_psc * ((double)reload)) * 1000000.0;
@@ -871,8 +915,8 @@ double timer_period_get_s(uint8_t num) {
     if(Node) {
         double fck = (double)timer_bus_clock_get(num);
         double tf = 1.0 / fck;
-        prescaler = Node->Handle.Instance->PSC;
-        reload = Node->Handle.Instance->ARR;
+        prescaler = Node->Handle.Instance->PSC+1;
+        reload = Node->Handle.Instance->ARR+1;
         double t_psc = tf * ((double)prescaler);
 
         real_period_s = (t_psc * ((double)reload));
@@ -1113,8 +1157,8 @@ static bool timer_config_to_init(uint32_t prescaler, uint32_t out_load, TIM_Base
         if(out_load) {
             Init->RepetitionCounter = 0;
             Init->Prescaler = prescaler-1;
-            Init->CounterMode = TIM_COUNTERMODE_UP;
             Init->Period = out_load-1;
+            Init->CounterMode = TIM_COUNTERMODE_UP;
             Init->ClockDivision = TIM_CLOCKDIVISION_DIV1;
             Init->AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
             res = true;
@@ -1284,7 +1328,7 @@ bool timer_init_one(uint8_t num) {
         uint32_t bus_clock_hz = 0;
         res = timer_init_common(Config, Node);
         bus_clock_hz = timer_bus_clock_get(num);
-        prescaler = timer_calc_prescaler((uint32_t)bus_clock_hz, Config->cnt_period_ns, TIMER_PRESCALER_MAX) - 1;
+        prescaler = timer_calc_prescaler((uint32_t)bus_clock_hz, Config->cnt_period_ns, TIMER_PRESCALER_MAX) ;
         res = timer_calc_registers(Config->period_s, bus_clock_hz, prescaler, &out_load, 0xFFFFFFFF);
         if(res) {
             // HAL_TIM_IRQHandler(&Node->Handle);
@@ -1307,6 +1351,10 @@ bool timer_init_one(uint8_t num) {
                 res = timer_init_clock(Node);
                 res = timer_init_role(Node);
                 res = timer_errata_fix(Node);
+
+                float frequency_hz =1.0f/ Config->period_s;
+                res = timer_frequency_set( num,  frequency_hz);
+
                 res = timer_ctrl(num, Config->on_off);
             } else {
                 res = false;

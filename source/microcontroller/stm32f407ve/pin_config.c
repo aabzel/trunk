@@ -6,7 +6,6 @@
 #include "data_utils.h"
 #include "microcontroller.h"
 #include "gpio_mcal.h"
-#include "macro_utils.h"
 
 const PinData_t SECTION_CFG_DATA PinConfig[] = {
 #ifndef HAS_MBR

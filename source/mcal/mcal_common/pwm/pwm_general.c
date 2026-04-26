@@ -8,8 +8,8 @@
 #include "gpio_mcal.h"
 #include "log.h"
 #include "pwm_config.h"
-#include "timer_mcal.h"
 #include "time_mcal.h"
+#include "timer_mcal.h"
 
 COMPONENT_IS_VALID(Pwm, pwm)
 
@@ -24,12 +24,11 @@ int32_t pwm_phase_deg_to_phase_us(uint8_t num, float phase_deg) {
     res = pwm_period_get(num, &period_s);
     if(res) {
         float phase_s = (phase_deg * period_s) / 360.0f;
-        phase_us = (int32_t) SEC_2_USEC(phase_s);
+        phase_us = (int32_t)SEC_2_USEC(phase_s);
         LOG_DEBUG(PWM, "phase:%f deg=%d us", phase_deg, phase_us);
     }
     return phase_us;
 }
-
 
 bool pwm_is_valid_duty_cycle(float duty_cycle) {
     bool res = false;
@@ -140,7 +139,7 @@ bool PwmIsValidConfig(const PwmConfig_t* const Config) {
         res = timer_channel_is_valid(Config->PhaseComparator);
         ifn(res) {
             LOG_WARNING(PWM, "PWM%u,PhaseComparator,Err", Config->num);
-            //out_res = false;
+            // out_res = false;
         }
 
         ifn(Config->name) {
@@ -167,7 +166,7 @@ bool pwm_init_common(const PwmConfig_t* const Config, PwmHandle_t* const Node) {
             Node->frequency_hz = Config->frequency_hz;
             Node->ComparatorHandler = Config->ComparatorHandler;
             Node->PeriodDoneHandler = Config->PeriodDoneHandler;
-            //Node->TimChan.channel = Config->TimChan.channel;
+            // Node->TimChan.channel = Config->TimChan.channel;
             Node->TimChan = Config->TimChan;
             Node->PhaseComparator = Config->PhaseComparator;
             Node->init_phase = Config->init_phase;

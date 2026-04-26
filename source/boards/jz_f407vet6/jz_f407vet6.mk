@@ -19,6 +19,18 @@ ifneq ($(JZ_F407VET6_MK_INC),Y)
 
     SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_config.c
 
+    ifeq ($(ADC),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/adc_config.c
+    endif
+
+    ifeq ($(DDS),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/dds_config.c
+    endif
+
+    ifeq ($(ADC_CHANNEL),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/adc_channel_config.c
+    endif
+
     ifeq ($(EXT_INT),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/ext_int_config.c
     endif
@@ -221,7 +233,7 @@ ifneq ($(JZ_F407VET6_MK_INC),Y)
     endif
 
     ifeq ($(DMA),Y)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/dma_config.c
+        #SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/dma_config.c
     endif
 
     ifeq ($(UDS),Y)

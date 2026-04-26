@@ -44,25 +44,13 @@ const LedMonoConfig_t LedMonoConfig[] = {
       .active = GPIO_LVL_LOW,
       .valid = true,
       },
-      {
-       .num = 4, .group = 1,
-       .period_ms = 50, .led_phy=LED_PHY_GPIO,
-       .phase_ms = 0, .duty = 30,
-       .duration_ms = 10, .on_time_ms = 0,
-       .pad = {.port = PORT_A, .pin = 5},
-       .color = COLOR_RED,
-       .name = "red",
-       .mode = LED_MCAL_MODE_PWM,
-       .active = GPIO_LVL_LOW,
-       .valid = true,
-       },
+
 };
 
 LedMonoHandle_t LedMonoInstance[] = {
      { .num = 1, .valid = true, .active = GPIO_LVL_LOW,},
      { .num = 2, .valid = true, .active = GPIO_LVL_LOW,},
      { .num = 3, .valid = true, .active = GPIO_LVL_LOW,},
-     { .num = 4, .valid = true, .active = GPIO_LVL_LOW,},
 };
 
 

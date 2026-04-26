@@ -88,7 +88,7 @@ typedef enum {
     TIMER_MASTER_OUT_TRG_OC2REF   = 6, /*   OC2REF signal is used as trigger output(TRGO)                 */
     TIMER_MASTER_OUT_TRG_OC3REF   = 7, /*   OC3REF signal is used as trigger output(TRGO)                 */
     TIMER_MASTER_OUT_TRG_OC4REF   = 8, /*   OC4REF signal is used as trigger output(TRGO)                 */
-    TIMER_MASTER_OUT_TRG_UNDER    = 0, /*   OC4REF signal is used as trigger output(TRGO)                 */
+    TIMER_MASTER_OUT_TRG_UNDEF    = 0, /*   OC4REF signal is used as trigger output(TRGO)                 */
 } TimerMasterOutTrigger_t;
 
 

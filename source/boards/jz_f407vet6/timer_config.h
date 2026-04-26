@@ -6,7 +6,7 @@
 
 typedef enum {
     TIMER_NUM_LO_BASE = 8,
-    TIMER_NUM_US = 2,
+    TIMER_NUM_ADC1_TRIG = 2,
     TIMER_NUM_LASER = 3,
     TIMER_NUM_LO = 4,
     TIMER_NUM_LASER3 = 9,

@@ -2,6 +2,7 @@
 
 #include "data_utils.h"
 #include "log.h"
+#include "adc_mcal.h"
 
 #ifdef HAS_CAN
 #include "can_mcal.h"
@@ -37,17 +38,27 @@ static bool fun3_app_loaded_fine(void) {
     return res;
 }
 
+static bool adc1_start(void){
+    bool res = true;
+    LOG_INFO(POSTPONE_FUN,"Start:%s",__FUNCTION__);
+    res = adc_start(1 );
+    return res;
+}
+
+
 /*constant compile-time known settings*/
 const PostponeFunConfig_t PostponeFunConfig[] = {
     { .num = 1, .name = "fun1", .call_back = fun1,  .valid = true, .up_time_s = 5.0, },
-    { .num = 2, .name = "fun2", .call_back = fun2,   .valid = true, .up_time_s = 4.0, },
+    { .num = 2, .name = "Adc1Start", .call_back = adc1_start,   .valid = true, .up_time_s = 3.0, },
     { .num = 3, .name = "fun3_app_loaded_fine", .call_back = fun3_app_loaded_fine,  .valid = true, .up_time_s = 15.0, },
+    { .num = 4, .name = "fun2", .call_back = fun2,   .valid = true, .up_time_s = 4.0, },
 };
 
 PostponeFunHandle_t PostponeFunInstance[] = {
     {  .num = 1, .valid = true, },
     {  .num = 2, .valid = true, },
     {  .num = 3, .valid = true, },
+    {  .num = 4, .valid = true, },
 };
 
 COMPONENT_GET_CNT(PostponeFun, postpone_fun)

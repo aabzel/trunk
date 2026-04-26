@@ -26,12 +26,28 @@
 #include "log.h"
 #endif
 
-static uint32_t TimerPhaseUsToCompareValue(uint8_t num,
-                                           uint32_t phase_us) {
-    uint32_t phase_value = 0;
+static uint32_t PwmPolarityToStm32OCPolarity(const PwmPolarity_t pwm_polarity) {
+    uint32_t oc_polarity = TIM_OCPOLARITY_HIGH;
+    switch(pwm_polarity) {
+    case PWM_POLARITY_LOW:
+        oc_polarity = TIM_OCPOLARITY_LOW;
+        break;
+    case PWM_POLARITY_HIGH:
+        oc_polarity = TIM_OCPOLARITY_HIGH;
+        break;
+    default:
+        break;
+    }
+    return oc_polarity;
+}
+
+static int32_t TimerPhaseUsToCompareValue(uint8_t num,
+                                          int32_t phase_us) {
+    int32_t phase_value = 0;
     float tick_s = timer_tick_get_s(num);
     float phase_s = USEC_2_SEC(phase_us);
-    phase_value = (uint32_t) (phase_s / tick_s);
+    float phase_value_f =  (phase_s / tick_s);
+    phase_value = (int32_t) phase_value_f;
     return phase_value;
 }
 
@@ -213,16 +229,16 @@ static bool is_valid_duty_cycle(float duty_cycle) {
     return res;
 }
 
-bool pwm_timer_duty(uint8_t timer_num, TimerOutChannel_t channel, float duty_cycle) {
+bool timer_duty_set(uint8_t timer_num, TimerOutChannel_t channel, float duty_cycle) {
     bool res = false;
     TimerInfo_t* Info = TimerGetInfo(timer_num);
     if(Info) {
         res = is_valid_duty_cycle(duty_cycle);
         if(res) {
             uint32_t compare = 0;
-            compare = (uint32_t)(((float)Info->TIMx->ARR) * duty_cycle / 100.0);
+            compare = (uint32_t)(   (        (  (float)  Info->TIMx->ARR ) * duty_cycle )/ 100.0f          );
 #ifdef HAS_DIAG
-            LOG_DEBUG(PWM, "T:%u C:%u Compare:%u ARR:%u", timer_num, channel, compare, Info->TIMx->ARR);
+            LOG_DEBUG(PWM, "TIM%u_CH%u,Compare:%u,ARR:%u", timer_num, channel, compare, Info->TIMx->ARR);
 #endif
             res = is_valid_channel(channel);
             if(res) {
@@ -237,7 +253,7 @@ bool pwm_duty_set(uint8_t num, float duty) {
     bool res = false;
     PwmHandle_t* Node = PwmGetNode(num);
     if(Node) {
-        res = pwm_timer_duty(Node->timer_num, (TimerOutChannel_t)Node->timer_channel, duty);
+        res = timer_duty_set(Node->TimChan.timer, (TimerOutChannel_t)Node->TimChan.channel, duty);
     }
     // res = pwm_ctrl(num, true);
     return res;
@@ -260,7 +276,7 @@ bool pwm_frequency_set(uint8_t num, float frequency_hz) {
     PwmHandle_t* Node = PwmGetNode(num);
     if(Node) {
         float period_s = 1.0f / frequency_hz;
-        res = timer_period_set_s(Node->timer_num, period_s);
+        res = timer_period_set_s(Node->TimChan.timer, period_s);
     }
     return res;
 }
@@ -269,19 +285,91 @@ bool pwm_polarity_set(const uint8_t num, const PwmPolarity_t polarity) {
     bool res = false;
     PwmHandle_t *Node = PwmGetNode(num);
     if (Node) {
-        res = timer_polarity_set(Node->timer_num, Node->timer_channel, (TimerPolarity_t) polarity);
+        res = timer_polarity_set(Node->TimChan.timer, Node->TimChan.channel, (TimerPolarity_t) polarity);
     }
     return res;
 }
 
-bool pwm_phase_set(uint8_t num, uint32_t phase_us) {
+bool pwm_polarity_get(const uint8_t num, PwmPolarity_t* const polarity) {
+    bool res = false;
+    PwmHandle_t *Node = PwmGetNode(num);
+    if(Node) {
+        if(polarity) {
+            *polarity = PWM_POLARITY_UNDEF;
+            TimerPolarity_t tim_polarity;
+            res = timer_polarity_get(Node->TimChan.timer, Node->TimChan.channel, &tim_polarity);
+            if(res) {
+                *polarity = (PwmPolarity_t) tim_polarity;
+            }
+        }
+    }
+    return res;
+}
+
+bool pwm_phase_set_sw(uint8_t num, int32_t phase_us) {
+    bool res = false;
+    PwmHandle_t *Node = PwmGetNode(num);
+    if(Node) {
+        timer_ctrl(Node->PhaseComparator.timer, false);
+        timer_ctrl(Node->TimChan.timer, false);
+
+        int32_t compare_value = TimerPhaseUsToCompareValue(Node->PhaseComparator.timer, phase_us);
+        int32_t counter_base = (int32_t) timer_counter_get(Node->PhaseComparator.timer);
+        int32_t value = counter_base + compare_value;
+        res = timer_counter_set(Node->TimChan.timer, (uint32_t) value);
+
+        timer_ctrl(Node->PhaseComparator.timer, true);
+        timer_ctrl(Node->TimChan.timer, true);
+
+        LOG_INFO(PWM, "SetPhaSW:%d us,compareValue:%d,CNTMaster:%u,CNTslave:%u", phase_us, compare_value,counter_base,value);
+    }
+    return res;
+}
+
+bool pwm_phase_deg(uint8_t num,float phase_deg) {
+    int32_t phase_us = pwm_phase_deg_to_phase_us(num, phase_deg);
+    bool res = pwm_phase_set_hw(num,   phase_us);
+    return res;
+}
+
+static bool pwm_phase_get_hw(const uint8_t num, uint32_t * const phase_us){
     bool res = false;
     PwmHandle_t *Node = PwmGetNode(num);
     if (Node) {
-        uint32_t compare_value = TimerPhaseUsToCompareValue(num, phase_us);
+        if(phase_us) {
+            uint32_t compare_value = timer_cc_val_get(Node->PhaseComparator.timer, Node->PhaseComparator.channel);
+            *phase_us = (int32_t) timer_period_to_us(Node->PhaseComparator.timer, compare_value);
+            LOG_DEBUG(PWM, "GetPha:PWM%u,PHA:%u cnt=%u us",num, compare_value, *phase_us);
+            res = true;
+        }
+    }
+    return res;
+}
+
+bool pwm_phase_get(uint8_t num, uint32_t* const phase_us){
+    bool res=pwm_phase_get_hw(num, phase_us);
+    return res;
+}
+
+bool pwm_phase_set_hw(const uint8_t num, const int32_t phase_us) {
+    bool res = false;
+    PwmHandle_t *Node = PwmGetNode(num);
+    if (Node) {
+        int32_t compare_value = TimerPhaseUsToCompareValue(Node->PhaseComparator.timer, phase_us);
         res = timer_compare_set(Node->PhaseComparator.timer,
                                 Node->PhaseComparator.channel,
                                 compare_value);
+        LOG_DEBUG(PWM,"SetPhaHW:%u us,compareValue:%u,PHAcmp:%s",phase_us,compare_value,TimChanToStr(Node->PhaseComparator));
+    }
+    return res;
+}
+
+
+bool pwm_phase_set(uint8_t num, int32_t phase_us) {
+    bool res = false;
+    PwmHandle_t *Node = PwmGetNode(num);
+    if (Node) {
+        res = pwm_phase_set_hw(num, phase_us);
     }
     return res;
 }
@@ -290,8 +378,8 @@ bool pwm_polarity_toggle(const uint8_t num) {
     bool res = false;
     PwmHandle_t *Node = PwmGetNode(num);
     if (Node) {
-        Node->Polarity = PwmPolarityToggle(Node->Polarity);
-        res = pwm_polarity_set(num, Node->Polarity);
+        Node->polarity = PwmPolarityToggle(Node->polarity);
+        res = pwm_polarity_set(num, Node->polarity);
     }
     return res;
 }
@@ -310,10 +398,10 @@ bool pwm_duty_get(const uint8_t num, float* const duty_out) {
     bool res = false;
     PwmHandle_t* Node = PwmGetNode(num);
     if(Node) {
-        uint32_t comparator = timer_cc_val_get(Node->timer_num, (TimerOutChannel_t)Node->timer_channel);
-        uint32_t period = timer_period_get(Node->timer_num);
+        uint32_t comparator = timer_cc_val_get(Node->TimChan.timer, (TimerOutChannel_t)Node->TimChan.channel);
+        uint32_t period = timer_period_get(Node->TimChan.timer);
         if(duty_out) {
-            *duty_out = ((float)comparator) / ((float)period);
+            *duty_out = ( (float)comparator*100.0f ) / ((float)period);
             res = true;
         }
     }
@@ -324,7 +412,7 @@ bool pwm_is_work(uint8_t num) {
     bool res = false;
     PwmHandle_t* Node = PwmGetNode(num);
     if(Node) {
-        res = timer_channel_is_work(Node->timer_num, (TimerOutChannel_t)Node->timer_channel);
+        res = timer_channel_is_work(Node->TimChan.timer, (TimerOutChannel_t)Node->TimChan.channel);
     }
     return res;
 }
@@ -333,7 +421,7 @@ bool pwm_frequency_get(uint8_t num, float* const frequency_hz) {
     bool res = false;
     PwmHandle_t* Node = PwmGetNode(num);
     if(Node) {
-        res = timer_frequency_get(Node->timer_num, frequency_hz);
+        res = timer_frequency_get(Node->TimChan.timer, frequency_hz);
     }
     return res;
 }
@@ -439,15 +527,15 @@ bool pwm_ctrl_ll(PwmHandle_t* Node, bool on_off) {
         } else {
             gpio_pad_mux_set(Node->Pad, 0);
         }
-        res = timer_channel_ctrl(Node->timer_num, (TimerOutChannel_t)Node->timer_channel, on_off);
+        res = timer_channel_ctrl(Node->TimChan.timer, (TimerOutChannel_t)Node->TimChan.channel, on_off);
         if(res) {
             Node->mode = PwmOnOffToMode(on_off);
 #ifdef HAS_DIAG
-            LOG_PARN(PWM, "TIMER%u,%s,CtrlOk", Node->timer_num, OnOffToStr(on_off));
+            LOG_PARN(PWM, "TIMER%u,%s,CtrlOk", Node->TimChan.timer, OnOffToStr(on_off));
 #endif
         } else {
 #ifdef HAS_DIAG
-            LOG_DEBUG(PWM, "TIMER%u CtrlErr", Node->timer_num);
+            LOG_DEBUG(PWM, "TIMER%u CtrlErr", Node->TimChan.timer);
 #endif
             res = false;
         }
@@ -461,36 +549,28 @@ bool pwm_init_custom(void) {
     return res;
 }
 
+static bool pwm_init_compose(const PwmConfig_t* const Config, TIM_OC_InitTypeDef* const sConfig) {
+    bool res = false;
+    if(Config) {
+        if(sConfig) {
+            sConfig->OCMode = TIM_OCMODE_PWM1;
+            sConfig->OCPolarity = PwmPolarityToStm32OCPolarity(Config->polarity);
+            sConfig->OCNPolarity = TIM_OCNPOLARITY_HIGH;
+            sConfig->OCFastMode = TIM_OCFAST_DISABLE;
+            sConfig->Pulse = (0xFFFF / 3)-1;
+            sConfig->OCIdleState = TIM_OCIDLESTATE_RESET;
+            sConfig->OCNIdleState = TIM_OCNIDLESTATE_RESET;
+            res = true;
+        }
+    }
+    return res;
+}
+
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef* tim_pwmHandle) {}
 
 void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle) {}
 
-static uint32_t PwmPolarityToStm32OCPolarity(const PwmPolarity_t pwm_polarity) {
-    uint32_t oc_polarity = TIM_OCPOLARITY_HIGH;
-    switch(pwm_polarity) {
-    case PWM_POLARITY_LOW:
-        oc_polarity = TIM_OCPOLARITY_LOW;
-        break;
-    case PWM_POLARITY_HIGH:
-        oc_polarity = TIM_OCPOLARITY_HIGH;
-        break;
-    default:
-        break;
-    }
-    return oc_polarity;
-}
 
-static bool pwm_init_compose(const PwmConfig_t* const Config, TIM_OC_InitTypeDef* const sConfig) {
-    bool res = false;
-    sConfig->OCMode = TIM_OCMODE_PWM1;
-    sConfig->OCPolarity = PwmPolarityToStm32OCPolarity(Config->Polarity);
-    sConfig->OCNPolarity = TIM_OCNPOLARITY_HIGH;
-    sConfig->OCFastMode = TIM_OCFAST_ENABLE;
-    sConfig->Pulse = 0xFFFF / 3;
-    sConfig->OCIdleState = TIM_OCIDLESTATE_SET;
-    sConfig->OCNIdleState = TIM_OCNIDLESTATE_SET;
-    return res;
-}
 
 bool pwm_init_one(uint8_t num) {
     bool res = false;
@@ -507,10 +587,10 @@ bool pwm_init_one(uint8_t num) {
             PwmHandle_t* Node = PwmGetNode(num);
             if(Node) {
                 res = pwm_init_common(Config, Node);
-                TimerHandle_t* Timer = TimerGetNode(Config->timer_num);
+                TimerHandle_t* Timer = TimerGetNode(Config->TimChan.timer);
                 if(Timer) {
                     res = pwm_init_compose(Config, &Node->ConfigOC);
-                    uint32_t hal_channel = Channel2Code((TimerOutChannel_t)Config->timer_channel);
+                    uint32_t hal_channel = Channel2Code((TimerOutChannel_t)Config->TimChan.channel);
                     HAL_StatusTypeDef ret = HAL_TIM_PWM_ConfigChannel(&Timer->Handle, &Node->ConfigOC, hal_channel);
                     res = HAL_retToRes(ret);
                     if(res) {
@@ -518,11 +598,13 @@ bool pwm_init_one(uint8_t num) {
                         if(res) {
                             res = pwm_duty_set(num, Config->duty);
                             if(res) {
+                                res = pwm_frequency_set(num, Config->frequency_hz);
+                                res = pwm_duty_set(num, Config->duty);
                                 res = pwm_ctrl(num, Config->on);
                             }
                         }
                     }
-                    // res = pwm_timer_duty(Config->timer_num, (TimerOutChannel_t) Config->channel, (float)
+                    // res = timer_duty_set(Config->TimChan.timer, (TimerOutChannel_t) Config->channel, (float)
                     // Config->duty);
                 }
             }

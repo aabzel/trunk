@@ -5,7 +5,6 @@
 extern "C" {
 #endif
 
-
 #ifndef HAS_PWM
 #error "+HAS_PWM"
 #endif
@@ -18,7 +17,17 @@ extern "C" {
 #error "+HAS_PWM_CUSTOM_COMMANDS"
 #endif
 
-#define PWM_CUSTOM_COMMANDS
+#include "std_includes.h"
+
+bool pwm_phase_sw_command(int32_t argc, char* argv[]) ;
+bool pwm_phase_deg_command(int32_t argc, char* argv[]) ;
+bool pwm_phase_hw_command(int32_t argc, char* argv[]) ;
+
+#define PWM_CUSTOM_COMMANDS                                                             \
+        SHELL_CMD("pwm_phase_hw", "pphah", pwm_phase_hw_command, "PwmPhaseHw"),         \
+        SHELL_CMD("pwm_phase_deg", "ppasd", pwm_phase_deg_command, "PwmPhaseDeg"),      \
+        SHELL_CMD("pwm_phase_sw", "ppas", pwm_phase_sw_command, "PwmPhaseSw"),
+
 
 #ifdef __cplusplus
 }

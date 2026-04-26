@@ -320,7 +320,7 @@ bool TimerIsValidConfig(const TimerConfig_t* const Config) {
 #endif
         }
 
-        ifn( Config->role) {
+        ifn(Config->role) {
             res = false;
 #ifdef HAS_LOG
             LOG_ERROR(TIMER, "%u,Cfg,Err,Role", Config->num);
@@ -354,7 +354,6 @@ bool TimerIsValidConfig(const TimerConfig_t* const Config) {
             LOG_ERROR(TIMER, "%u,Cfg,Err,Dir", Config->num);
 #endif
         }
-
     }
     return res;
 }
@@ -419,6 +418,11 @@ uint32_t timer_calc_prescaler(uint32_t bus_clock_hz, uint32_t des_tick_per_ns, u
         if(!prescaler) {
             prescaler = 1;
         }
+    }else{
+#ifdef HAS_LOG
+            LOG_ERROR(TIMER, "busC"
+                    "lockZero");
+#endif
     }
     return prescaler;
 }
@@ -480,11 +484,12 @@ float timer_tick_get_s(uint8_t num) {
     if(0.0 < bus_clock) {
         uint32_t prescaler = timer_prescaler_get(num); // 62888
         // see page 251 14.1.3.2 Counting mode
-        tick_s = ((float)(prescaler + 1)) / bus_clock;
+        tick_s = ((float)(prescaler)) / bus_clock;
     }
     return tick_s;
 }
 
+_WEAK_FUN_
 bool timer_frequency_get(uint8_t num, float* const frequency_hz) {
     bool res = false;
     if(frequency_hz) {
@@ -498,6 +503,7 @@ bool timer_frequency_get(uint8_t num, float* const frequency_hz) {
     return res;
 }
 
+_WEAK_FUN_
 bool timer_frequency_set(uint8_t num, float frequence_hz) {
     bool res = false;
     float period_s = 1.0 / frequence_hz;
@@ -534,6 +540,7 @@ _WEAK_FUN_ uint32_t timer_get_tick_us(uint8_t num) {
     return tick_us;
 }
 
+_WEAK_FUN_
 bool timer_overflow_get(uint8_t num, uint32_t* const overflow) {
     bool res = false;
     TimerHandle_t* Node = TimerGetNode(num);
@@ -564,6 +571,8 @@ uint64_t timer_get_period_us(uint8_t num) {
     return real_period_us;
 }
 
+#if 0
+_WEAK_FUN_
 float timer_get_period_s(uint8_t num) {
     float real_period_s = 0;
     uint32_t prescaler = 0;
@@ -580,6 +589,7 @@ float timer_get_period_s(uint8_t num) {
     }
     return real_period_s;
 }
+#endif
 
 uint64_t timer_get_us(uint8_t num) {
     uint64_t up_time_us = 0;
@@ -588,7 +598,7 @@ uint64_t timer_get_us(uint8_t num) {
     return up_time_us;
 }
 
-
+_WEAK_FUN_
 uint32_t timer_period_to_us(const uint8_t num, const uint32_t period) {
     uint32_t period_us = 0;
     float tick_s = 0.0;
@@ -597,8 +607,7 @@ uint32_t timer_period_to_us(const uint8_t num, const uint32_t period) {
     return period_us;
 }
 
-
-
+_WEAK_FUN_
 uint32_t timer_period_to_ms(uint8_t num, uint32_t period) {
     uint32_t period_ms = 0;
     float tick_s = 0.0;
@@ -607,13 +616,15 @@ uint32_t timer_period_to_ms(uint8_t num, uint32_t period) {
     return period_ms;
 }
 
+_WEAK_FUN_
 uint32_t timer_period_get_ms(uint8_t num) {
     uint32_t period_ms = 0;
     uint32_t period = timer_period_get(num);
-    period_ms= timer_period_to_ms(  num,   period) ;
+    period_ms = timer_period_to_ms(num, period);
     return period_ms;
 }
 
+_WEAK_FUN_
 bool timer_init_common(const TimerConfig_t* const Config, TimerHandle_t* const Node) {
     bool res = false;
     if(Config) {
@@ -626,10 +637,13 @@ bool timer_init_common(const TimerConfig_t* const Config, TimerHandle_t* const N
             Node->interrupt_on = Config->interrupt_on;
             Node->role = Config->role;
             Node->dir = Config->dir;
+            Node->master_out_trigger = Config->master_out_trigger;
             Node->slave_trigger_prescaler = Config->slave_trigger_prescaler;
             Node->slave_trigger_filter = Config->slave_trigger_filter;
             Node->slave_input_trigger = Config->slave_input_trigger;
             Node->slave_trigger_polarity = Config->slave_trigger_polarity;
+            Node->ComparatorHandler = Config->ComparatorHandler;
+            Node->PeriodDoneHandler = Config->PeriodDoneHandler;
             Node->slave_mode = Config->slave_mode;
             Node->valid = true;
             res = true;
@@ -637,5 +651,6 @@ bool timer_init_common(const TimerConfig_t* const Config, TimerHandle_t* const N
     }
     return res;
 }
+
 
 COMPONENT_INIT_PATTERT_CNT(TIMER, TIMER, timer, TIMER_MAX_NUM)

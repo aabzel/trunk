@@ -357,12 +357,12 @@ bool timer_frequency_command(int32_t argc, char* argv[]) {
     if(res) {
         switch(argc) {
         case 2: {
-            LOG_INFO(TIMER, "Set:Timer:%u,Frequency:%u Hz", num, frequency_hz);
+            LOG_INFO(TIMER, "Set:Timer:%u,Frequency:%f Hz", num, frequency_hz);
             res = timer_frequency_set(num, frequency_hz);
         } break;
         case 1: {
             res = timer_frequency_get(num, &frequency_hz);
-            LOG_INFO(TIMER, "Get,Timer:%u,Frequency:%u Hz", num, frequency_hz);
+            LOG_INFO(TIMER, "Get,Timer:%u,Frequency:%f Hz", num, frequency_hz);
         } break;
         default:
             res = false;

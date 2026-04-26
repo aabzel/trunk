@@ -29,11 +29,28 @@ ifneq ($(STM32F407VE_MK_INC),Y)
     ifeq ($(BOOT),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/boot_config.c
     endif
-    
+
+    ifeq ($(DAC),Y)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dac_config.c
+    endif
+
+    ifeq ($(DAC_CHANNEL),Y)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dac_channel_config.c
+    endif
+
+    ifeq ($(DMA),Y)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_config.c
+    endif
+
+    ifeq ($(DMA_CHANNEL),Y)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config.c
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config_adc.c
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config_memcpy.c
+    endif
+
     ifeq ($(PIN),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/pin_config.c
     endif
-
 
     ifeq ($(CLOCK),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/clock_config.c
@@ -86,7 +103,6 @@ ifneq ($(STM32F407VE_MK_INC),Y)
         endif
     endif
 
-   
     ifeq ($(MPU),Y)
         $(info Add config MPU)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/mpu_config.c
@@ -110,7 +126,7 @@ ifneq ($(STM32F407VE_MK_INC),Y)
     ifeq ($(SYSTICK),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/systick_config.c
     endif
-
+    
     ifeq ($(NVS),Y)
         $(info Add config NVS)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/nvs_config.c

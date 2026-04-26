@@ -212,7 +212,6 @@ bool pwm_frequency_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
 /*
  pwm_phase 3 0
  */
@@ -240,7 +239,7 @@ bool pwm_phase_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool pwm_polarity_command(int32_t argc, char* argv[]){
+bool pwm_polarity_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
     uint8_t polarity = 0;
@@ -255,10 +254,10 @@ bool pwm_polarity_command(int32_t argc, char* argv[]){
         log_res(PWM, res, "polarity");
     }
 
-    if(res){
+    if(res) {
         res = pwm_polarity_set(num, polarity);
         log_res(PWM, res, "SetPolarity");
-    }else {
+    } else {
         LOG_ERROR(PWM, "Usage: po Num Polarity");
     }
     return res;

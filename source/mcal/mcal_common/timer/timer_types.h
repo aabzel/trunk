@@ -13,6 +13,8 @@
 #endif
 
 
+typedef bool (*TimerCallBack_t)(void);
+
 typedef union {
     uint8_t byte;
     struct {
@@ -29,8 +31,15 @@ typedef union {
     TimerSlaveInTrigger_t slave_input_trigger;   \
     TimerSlaveTriggerPolarity_t slave_trigger_polarity;
 
-#define TIMER_COMMON_VARIABLES TIMER_SLAVE_VARIABLES    \
-    uint8_t num;                   \
+
+#define TIMER_COMMON_CALLBACK_VARIABLES                        \
+    TimerCallBack_t ComparatorHandler;                         \
+    TimerCallBack_t PeriodDoneHandler;
+
+#define TIMER_COMMON_VARIABLES              \
+    TIMER_COMMON_CALLBACK_VARIABLES         \
+    TIMER_SLAVE_VARIABLES                   \
+    uint8_t num;                            \
     float period_s;                \
     char* name;                    \
     TimerDir_t dir;                \

@@ -3,13 +3,12 @@
 #include "microcontroller_const.h"
 #include "std_includes.h"
 #include "code_generator.h"
-#include "macro_utils.h"
 
 #ifdef HAS_LINKER_INFO
 extern uint8_t __Core0_StackLimit, __Core0_StackTop  ;
 #endif
 
-const BootConfig_t  BootConfig[] = {
+const BootConfig_t SECTION_CFG_DATA BootConfig[] = {
         { .num = 1,
           .fw_start_address = ROM_START,
           .valid =  true,
@@ -19,6 +18,7 @@ const BootConfig_t  BootConfig[] = {
           .stack_top_address = (uint32_t) &__Core0_StackTop,
 #endif
         },
+#if 0
         { .num = 2,
           .fw_start_address = 0x08060000,
           .valid =  true,
@@ -28,6 +28,7 @@ const BootConfig_t  BootConfig[] = {
           .stack_top_address = (uint32_t) &__Core0_StackTop,
 #endif
         },
+#endif
 };
 
 BootHandle_t BootInstance[] = {

@@ -2,7 +2,10 @@
 
 #include "data_utils.h"
 #include "iqueue_types.h"
+
+#ifdef HAS_CAN
 #include "can_types.h"
+#endif
 
 #ifdef HAS_ISO_TP_CUSTOM
 #include "lib_iso15765.h"
@@ -14,15 +17,19 @@
 // 7- lost 0
 // 8- lost 0
 // 11- lost 0
+#ifdef HAS_CAN
 static CanMessage_t ArrayCan1Frames[7] = {0};
 static CanMessage_t ArrayCan2Frames[7] = {0};
+#endif
 static uint8_t ArrayU8[5] = {0};
 static int16_t ArrayS16[6] = {0};
 
 static iqueue_t iQueueHandleS16 = {0};
 static iqueue_t iQueueHandleU8 = {0};
+#ifdef HAS_CAN
 static iqueue_t iQueueHandleCAN1 = {0};
 static iqueue_t iQueueHandleCAN2 = {0};
+#endif
 
 const iQueueConfig_t SECTION_CFG_DATA iQueueConfig[] = {
     { .num = IQUEUE_NUN_U8_5,
@@ -48,6 +55,7 @@ const iQueueConfig_t SECTION_CFG_DATA iQueueConfig[] = {
       .element_size = sizeof(int16_t),
       .name = "S16", .valid = true, },
 
+#ifdef HAS_CAN
     {
       .num = IQUEUE_NUN_CAN1,
       .Interface={.interface_name=INTERFACE_NAME_CAN, .num = 1,},
@@ -61,7 +69,9 @@ const iQueueConfig_t SECTION_CFG_DATA iQueueConfig[] = {
       .name = "CAN1",
       .valid = true,
     },
+#endif
 
+#ifdef HAS_CAN
     {
         .num = IQUEUE_NUN_CAN2,
         .Interface={.interface_name=INTERFACE_NAME_CAN, .num = 2,},
@@ -75,13 +85,17 @@ const iQueueConfig_t SECTION_CFG_DATA iQueueConfig[] = {
         .name = "CAN2",
         .valid = true,
     },
+#endif
 };
 
 iQueueHandle_t iQueueInstance[] = {
     { .num = IQUEUE_NUN_U8_5,  .valid = true,    },
     { .num = IQUEUE_NUN_S16_6, .valid = true,    },
+
+#ifdef HAS_CAN
     { .num = IQUEUE_NUN_CAN1,  .valid = true,    },
     { .num = IQUEUE_NUN_CAN2,  .valid = true,    },
+#endif
 };
 
 COMPONENT_GET_CNT(iQueue, iqueue)

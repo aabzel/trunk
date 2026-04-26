@@ -15,7 +15,7 @@
 
 #ifndef USE_HAL_DRIVER
 #error "that wile only for STM32 MCUs"
-#endif /*USE_HAL_DRIVER*/
+#endif
 
 #define SYSTEM_DEBUG_PORT PORT_A
 #define SYSTEM_DEBUG_PIN  6

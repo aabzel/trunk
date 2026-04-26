@@ -13,20 +13,20 @@
 #include "timer_diag.h"
 #include "writer_config.h"
 
-
 const char* PwmPolarityToStr(const PwmPolarity_t polarity) {
-    const char *name = "?";
-    switch (polarity) {
-    case PWM_POLARITY_LOW:        name = "Norm";        break;
-    case PWM_POLARITY_HIGH:        name = "Inve";        break;
-    default:        break;    }
+    const char* name = "?";
+    switch(polarity) {
+    case PWM_POLARITY_LOW:
+        name = "Norm";
+        break;
+    case PWM_POLARITY_HIGH:
+        name = "Inve";
+        break;
+    default:
+        break;
+    }
     return name;
 }
-
-
-
-
-
 
 const char* PwmSignalToStr(const PwmSignalBinary_t* const PwmSignal) {
     if(PwmSignal) {
@@ -37,7 +37,6 @@ const char* PwmSignalToStr(const PwmSignalBinary_t* const PwmSignal) {
     }
     return text;
 }
-
 
 const char* PwmConfigToStr(const PwmConfig_t* const Config) {
     if(Config) {
@@ -79,17 +78,8 @@ bool pwm_diag(char* key_word1, char* key_word2) {
     uint16_t cnt = 0;
     uint32_t pwm_cnt = pwm_get_cnt();
     LOG_INFO(PWM, "Cnt:%u", pwm_cnt);
-    static const table_col_t cols[] = {
-            {4, "No"},
-            {10, "TimCh"},
-            {10, "Freq,Hz"},
-            {10, "Period,s"},
-            {7, "Duty"},
-            {6, "Pola"},
-            {6, "Pad"},
-            {10, "MasTimCh"},
-            {8, "PhaseUs"},
-            {10, "name"}};
+    static const table_col_t cols[] = {{4, "No"},   {10, "TimCh"}, {10, "Freq,Hz"},  {10, "Period,s"}, {7, "Duty"},
+                                       {6, "Pola"}, {6, "Pad"},    {10, "MasTimCh"}, {8, "PhaseUs"},   {10, "name"}};
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint16_t num = 0;
@@ -103,12 +93,12 @@ bool pwm_diag(char* key_word1, char* key_word2) {
                 float period_s = 0.0f;
                 char temp_str[120] = {0};
                 Pad_t Pad = {0};
-                uint32_t phase_us = 0 ;
+                uint32_t phase_us = 0;
                 res = pwm_duty_get(num, &duty_cycle);
                 res = pwm_frequency_get(num, &frequency_hz);
                 res = pwm_period_get(num, &period_s);
                 res = pwm_pad_get(num, &Pad);
-                PwmPolarity_t  polarity = PWM_POLARITY_UNDEF;
+                PwmPolarity_t polarity = PWM_POLARITY_UNDEF;
                 res = pwm_polarity_get(num, &polarity);
                 res = pwm_phase_get(num, &phase_us);
 

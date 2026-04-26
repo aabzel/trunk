@@ -13,6 +13,7 @@ ifneq ($(TIMER_CUSTOM_DRV_MK_INC),Y)
     SOURCES_C += $(TIMER_CUSTOM_DIR)/timer_core.c
 
     ifeq ($(TIMER_INTERRUPT),Y)
+        MCAL_OPT += -DHAS_TIMER_INTERRUPT
         # $(error TIMER_INTERRUPT=$(TIMER_INTERRUPT))
         SOURCES_C += $(TIMER_CUSTOM_DIR)/timer_custom_isr.c
     endif

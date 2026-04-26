@@ -98,18 +98,19 @@ bool timer_diag(void) {
     uint32_t ok = 0;
     static const table_col_t cols[] = {
         {5, "Num"},
-        {12, "cnt"},
         {5, "En"},
-        {8, "busName"},
         {10, "busFreq"},
         {5, "bit"},      
-        {12, "period"},  
+        {12, "periodReg"},
         {7, "psc"},
         {6, "dir"},
         {9, "fill"},
         {9, "period,s"},
+        {9, "freq,Hz"},
         {9, "UpTimeS"},
         {8, "Int"}, 
+        {12, "cnt"},
+        {8, "busName"},
     };
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
@@ -119,7 +120,8 @@ bool timer_diag(void) {
         if(res) {
             TimerHandle_t* Node = TimerGetNode(num);
             if(Node) {
-                char temp[120]={0};
+                float frequency_hz = 0.0f;
+                char temp[250]={0};
                 memset(temp,0,sizeof(temp));
                 strcpy(temp, TSEP);
               
@@ -127,26 +129,32 @@ bool timer_diag(void) {
                 bool status = timer_get_status(num);
                 uint32_t  counter = timer_counter_get(num);
                 uint32_t prescaler = timer_prescaler_get(num);
-                uint32_t period = timer_period_get(num);
-                float fill = (float)100 * counter / period;
+                uint32_t period_reg = timer_period_get(num);
+                float fill = (float)((100 * counter) / period_reg);
                 TimerDir_t dir = timer_dir_get(num);
                 float period_real_s = timer_period_get_s(num);
+
+                timer_frequency_get(num, &frequency_hz);
+                float bus_clock=(float) timer_bus_clock_get(num);
+
                 float up_time_s = timer_get_s(num);
                 ClockBus_t clock_bus_name=timer_clock_bus_name_get(num);
 
                 snprintf(temp, sizeof(temp),"%s %02u  " TSEP,temp, num);
-                snprintf(temp, sizeof(temp),"%s %10u " TSEP,temp, counter);
                 snprintf(temp, sizeof(temp),"%s %3s " TSEP,temp, OnOffToStr(status));
-                snprintf(temp, sizeof(temp),"%s %6s " TSEP,temp, ClockBusToStr(clock_bus_name));
-                snprintf(temp, sizeof(temp),"%s %8u " TSEP,temp, timer_bus_clock_get(num));
+                snprintf(temp, sizeof(temp),"%s %8s " TSEP,temp,  FloatBigToStr(   bus_clock));
+
                 snprintf(temp, sizeof(temp),"%s %02u  " TSEP,temp, bitness);
-                snprintf(temp, sizeof(temp),"%s %10u " TSEP,temp, period);
+                snprintf(temp, sizeof(temp),"%s %10u " TSEP,temp, period_reg  );
                 snprintf(temp, sizeof(temp),"%s %5u " TSEP,temp, prescaler);
                 snprintf(temp, sizeof(temp),"%s %4s " TSEP,temp, TimerDirToStr(dir));
-                snprintf(temp, sizeof(temp),"%s %7s " TSEP,temp, FloatToStr( fill,3));
-                snprintf(temp, sizeof(temp),"%s %7s " TSEP,temp, FloatToStr(period_real_s,2));
-                snprintf(temp, sizeof(temp),"%s %7s " TSEP,temp, FloatToStr(up_time_s,1));
+                snprintf(temp, sizeof(temp),"%s %7s " TSEP,temp, DoubleToStr( fill));
+                snprintf(temp, sizeof(temp),"%s %7s " TSEP,temp, DoubleToStr(period_real_s));
+                snprintf(temp, sizeof(temp),"%s %7s " TSEP,temp, DoubleToStr(frequency_hz));
+                snprintf(temp, sizeof(temp),"%s %7s " TSEP,temp, DoubleToStr(up_time_s));
                 snprintf(temp, sizeof(temp),"%s %6u " TSEP,temp, Node->int_cnt);
+                snprintf(temp, sizeof(temp),"%s %10u " TSEP,temp, counter);
+                snprintf(temp, sizeof(temp),"%s %6s " TSEP,temp, ClockBusToStr(clock_bus_name));
                 cli_printf("%s"CRLF, temp);
                 ok++;
             }
