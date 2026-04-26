@@ -1,0 +1,35 @@
+#add_library(dac)
+message(STATUS "DAC_GENERAL_MK_INC=${DAC_GENERAL_MK_INC}")
+if( NOT (DAC_GENERAL_MK_INC STREQUAL Y))
+    set(DAC_GENERAL_MK_INC Y)
+    message(STATUS "+ DAC General")
+
+    set(DAC_GENERAL_DIR ${MCAL_COMMON_DIR}/dac)
+    message(STATUS "DAC_GENERAL_DIR=${DAC_GENERAL_DIR}")
+
+    include_directories(${DAC_GENERAL_DIR})
+    target_include_directories(app PUBLIC ${DAC_GENERAL_DIR})
+    target_compile_definitions(app PUBLIC HAS_DAC)
+
+    add_compile_definitions(HAS_DAC)
+    add_compile_options(-DHAS_DAC)
+    target_sources(app PRIVATE ${DAC_GENERAL_DIR}/dac_general_api.c)
+
+    if(DIAG STREQUAL Y)
+        if(DAC_DIAG STREQUAL Y)
+            message(STATUS "+ DAC Diag")
+            target_compile_definitions(app PUBLIC HAS_DAC_DIAG)
+            target_sources(app PRIVATE ${DAC_GENERAL_DIR}/dac_diag.c)
+        endif()
+    endif()
+
+    if(CLI STREQUAL Y)
+        if(DAC_COMMANDS STREQUAL Y)
+            message(STATUS "+ DAC Commands")
+            target_compile_definitions(app PUBLIC HAS_DAC_COMMANDS)
+            target_sources(app PRIVATE ${DAC_GENERAL_DIR}/dac_commands.c)
+        endif()
+    endif()
+
+    #target_include_directories(dac PUBLIC ${DAC_GENERAL_DIR})
+endif()

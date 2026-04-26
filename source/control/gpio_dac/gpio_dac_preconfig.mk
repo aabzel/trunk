@@ -1,0 +1,5 @@
+ifneq ($(GPIO_DAC_PRECONFIG_INC),Y)
+    GPIO_DAC_PRECONFIG_INC=Y
+    
+    GPIO_DAC=Y
+endif

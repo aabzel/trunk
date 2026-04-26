@@ -1,5 +1,5 @@
-#ifndef DAC_STM_TYPES_H
-#define DAC_STM_TYPES_H
+#ifndef DAC_CUSTOM_TYPES_H
+#define DAC_CUSTOM_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,7 +7,7 @@ extern "C" {
 
 #include "std_includes.h"
 #include "dac_custom_const.h"
-#include "dac_types.h"
+//#include "dac_types.h"
 #include "gpio_types.h"
 #include "stm32f4xx_hal.h"
 
@@ -40,4 +40,4 @@ typedef struct {
 }
 #endif
 
-#endif /* DAC_STM_TYPES_H  */
+#endif /* DAC_CUSTOM_TYPES_H  */

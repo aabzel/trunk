@@ -36,5 +36,11 @@ bool dac_is_allowed(uint8_t num) {
     return res;
 }
 
+
+uint32_t dac_get_clock(uint8_t num) {
+    uint32_t clock = 0;
+    return clock;
+}
+
 COMPONENT_INIT_PATTERT_CNT(LG_DAC, DAC, dac, DAC_COUNT)
 COMPONENT_PROC_PATTERT_CNT(LG_DAC, DAC, dac, DAC_COUNT)

@@ -15,19 +15,20 @@ extern "C" {
 #define DAC_CUSTOM_VARIABLES
 #endif
 
-#define DAC_COMMON_VARIABLES                                                                                           \
-    uint8_t num;                                                                                                       \
-    uint32_t bit_rate_hz;                                                                                              \
+#ifdef HAS_GPIO
+#define DAC_GPIO_COMMON_VARIABLES Pad_t Pad;
+#endif
+
+#define DAC_COMMON_VARIABLES                   \
+    DAC_GPIO_COMMON_VARIABLES                  \
+    uint8_t num;                               \
+    uint8_t irq_priority;                      \
+    bool interrupt_on;                         \
+    char* name;                                \
     bool valid;
 
 typedef struct {
     DAC_COMMON_VARIABLES
-    // uint32_t base_addr;
-    char* name;
-    bool interrupt_on;
-#ifdef HAS_GPIO
-    Pad_t Pad; /*Some MCU DAC has HW chip select capability*/
-#endif /*HAS_GPIO*/
 } DacConfig_t;
 
 #define DAC_ISR_VARIABLES                          \
@@ -38,13 +39,8 @@ typedef struct {
 
 typedef struct {
     DAC_COMMON_VARIABLES
-
     DAC_ISR_VARIABLES
-
     DAC_CUSTOM_VARIABLES
-
-    uint32_t base_addr;
-
     bool init_done;
 } DacHandle_t;
 

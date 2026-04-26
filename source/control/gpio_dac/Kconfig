@@ -1,0 +1,4 @@
+
+config GPIO_DAC
+    bool "Enable use of the GPIO_DAC drivers"
+

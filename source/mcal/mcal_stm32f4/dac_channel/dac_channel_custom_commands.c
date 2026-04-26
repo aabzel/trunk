@@ -61,12 +61,12 @@ bool dac_custom_read_command(int32_t argc, char* argv[]) {
 }
 #endif
 
-bool dac_custom_diag_command(int32_t argc, char* argv[]) {
+bool dac_channel_custom_custom_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     return res;
 }
 
-bool dac_custom_init_command(int32_t argc, char* argv[]) {
+bool dac_channel_custom_custom_init_command(int32_t argc, char* argv[]) {
     bool res = false;
     return res;
 }

@@ -7,7 +7,7 @@ extern "C" {
 
 #ifndef HAS_DAC
 #error "+HAS_DAC"
-#endif /*HAS_DAC*/
+#endif
 
 #include <stdint.h>
 
