@@ -4,23 +4,19 @@
 
 #ifndef HAS_DDS
 #error  "+HAS_DDS"
-#endif /*HAS_DDS*/
-
-#ifndef HAS_AUDIO
-#error "+HAS_AUDIO"
 #endif
 
 #ifndef HAS_ALLOCATOR
 #warning "+HAS_ALLOCATOR"
-#endif /*HAS_ALLOCATOR*/
+#endif
 
 #ifndef HAS_DDS
 #error "+HAS_DDS"
-#endif /*HAS_DDS*/
+#endif
 
 #ifndef HAS_MATH
 #error "+HAS_MATH"
-#endif /*HAS_MATH*/
+#endif
 
 
 

@@ -3,11 +3,13 @@ ifneq ($(COMPUTING_DDS_MK_INC),Y)
     COMPUTING_DDS_MK_INC=Y
     $(info Add DDS)
 
-    DDS=Y
     DDS_DIR = $(COMPUTING_DIR)/dds
     INCDIR += -I$(DDS_DIR)
     MCAL_OPT += -DHAS_DDS
-    MCAL_OPT += -DHAS_DDS_PROC
+
+    ifeq ($(DDS_PROC),Y)
+        MCAL_OPT += -DHAS_DDS_PROC
+    endif
 
     ifeq ($(DDS_STATIC_SAMPLES),Y)
         MCAL_OPT += -DHAS_DDS_STATIC_SAMPLES
@@ -21,19 +23,18 @@ ifneq ($(COMPUTING_DDS_MK_INC),Y)
         MCAL_OPT += -DHAS_REAL_SAMPLE_ARRAY
     endif
 
-    SOURCES_C += $(DDS_DIR)/dds_config.c
+    #SOURCES_C += $(DDS_DIR)/dds_config.c
     SOURCES_C += $(DDS_DIR)/dds_drv.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(DDS_DIAG),Y)
-            #@echo $(error DDS_DIAG=$(DDS_DIAG))
+            #  $(error DDS_DIAG=$(DDS_DIAG))
             $(info Add DDS)
             MCAL_OPT += -DHAS_DDS_DIAG
-            SOURCES_C += $(DDS_DIR)/dds_diag.c
+            SOURCES_DIAG_C += $(DDS_DIR)/dds_diag.c
         endif
     endif
 
-    #@echo $(error DDS_DIR=$(DDS_DIR))
 
     ifeq ($(CLI),Y)
         ifeq ($(DDS_COMMANDS),Y)

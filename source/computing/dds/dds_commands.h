@@ -10,11 +10,11 @@ extern "C" {
 
 #ifndef HAS_DDS
 #error "+ HAS_DDS"
-#endif /*HAS_DDS*/
+#endif /**/
 
 #ifndef HAS_DDS_COMMANDS
 #error "+ HAS_DDS_COMMANDS"
-#endif /*HAS_DDS_COMMANDS*/
+#endif /**/
 
 
 bool cmd_dds_phase(int32_t argc, char* argv[]);

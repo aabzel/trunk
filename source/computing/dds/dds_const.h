@@ -28,16 +28,21 @@ typedef enum {
 } DdsState_t;
 
 typedef enum {
-    DDS_PLAYER_I2S0 = 0U,
-    DDS_PLAYER_I2S1 = 1U,
-    DDS_PLAYER_I2S2 = 2U,
-    DDS_PLAYER_I2S3 = 3U,
-    DDS_PLAYER_I2S4 = 4U,
-    DDS_PLAYER_I2S5 = 5U,
-    DDS_PLAYER_I2S6 = 6U,
-    DDS_PLAYER_WAV_FILE = 7U,
-    DDS_PLAYER_CSV_FILE = 8U,
-    DDS_PLAYER_UNDEF = 8U
+    DDS_PLAYER_UNDEF = 0,
+    DDS_PLAYER_DAC_CHANNEL1 ,
+    DDS_PLAYER_DAC_CHANNEL2  ,
+#ifdef HAS_I2S
+    DDS_PLAYER_I2S0 ,
+    DDS_PLAYER_I2S1 ,
+    DDS_PLAYER_I2S2 ,
+    DDS_PLAYER_I2S3 ,
+    DDS_PLAYER_I2S4 ,
+    DDS_PLAYER_I2S5 ,
+    DDS_PLAYER_I2S6 ,
+#endif
+    DDS_PLAYER_WAV_FILE  ,
+    DDS_PLAYER_CSV_FILE  ,
+
 } DdsPlayer_t;
 
 typedef enum {

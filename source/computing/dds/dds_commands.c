@@ -58,42 +58,42 @@ bool cmd_dds_set_pwm(int32_t argc, char* argv[]) {
         if(false == res) {
             LOG_ERROR(DDS, "ParseErr DacNum [%s]", argv[0]);
         }
-        double dac_amplitude = 0.0f;
+        float dac_amplitude = 0.0f;
 
-        double dacFrequency = 0.0f;
+        float dacFrequency = 0.0f;
         if(res) {
-            res = try_str2double(argv[1], &dacFrequency);
+            res = try_str2float(argv[1], &dacFrequency);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr frequency  [%s]", argv[1]);
             }
         }
 
         if(res) {
-            res = try_str2double(argv[2], &dac_amplitude);
+            res = try_str2float(argv[2], &dac_amplitude);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr voltage amplitude [%s]", argv[2]);
             }
         }
 
-        double dacDutyCycle = 0.0f;
+        float dacDutyCycle = 0.0f;
         if(res) {
-            res = try_str2double(argv[3], &dacDutyCycle);
+            res = try_str2float(argv[3], &dacDutyCycle);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr duty cycle  [%s]", argv[3]);
             }
         }
 
-        double dacPhase = 0.0f;
+        float dacPhase = 0.0f;
         if(res) {
-            res = try_str2double(argv[4], &dacPhase);
+            res = try_str2float(argv[4], &dacPhase);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr phase [%s]", argv[4]);
             }
         }
 
-        double dacVoltageOffset = 0.0f;
+        float dacVoltageOffset = 0.0f;
         if(res) {
-            res = try_str2double(argv[5], &dacVoltageOffset);
+            res = try_str2float(argv[5], &dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr voltage Y offset  [%s]", argv[5]);
             }
@@ -124,31 +124,31 @@ bool cmd_dds_set_saw(int32_t argc, char* argv[]) {
                 LOG_ERROR(DDS, "ParseErr DacNum [%s]", argv[0]);
             }
         }
-        double dacFrequency = 0.0f;
-        double dacVoltageOffset = 0.0f;
+        float dacFrequency = 0.0f;
+        float dacVoltageOffset = 0.0f;
         if(res) {
-            res = try_str2double(argv[1], &dacFrequency);
+            res = try_str2float(argv[1], &dacFrequency);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[1]);
             }
         }
-        double dac_amplitude = 0.0f;
+        float dac_amplitude = 0.0f;
         if(res) {
-            res = try_str2double(argv[2], &dac_amplitude);
+            res = try_str2float(argv[2], &dac_amplitude);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr amplitude [%s]", argv[2]);
             }
         }
 
-        double dacPhase = 0.0f;
+        float dacPhase = 0.0f;
         if(res) {
-            res = try_str2double(argv[3], &dacPhase);
+            res = try_str2float(argv[3], &dacPhase);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr phase [%s]", argv[3]);
             }
         }
         if(res) {
-            res = try_str2double(argv[4], &dacVoltageOffset);
+            res = try_str2float(argv[4], &dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr voltage Y offset [%s]", argv[4]);
             }
@@ -180,31 +180,31 @@ bool cmd_dds_set_fence(int32_t argc, char* argv[]) {
                 LOG_ERROR(DDS, "ParseErr DacNum [%s]", argv[0]);
             }
         }
-        double dacFrequency = 0.0f;
+        float dacFrequency = 0.0f;
         if(res) {
-            res = try_str2double(argv[1], &dacFrequency);
+            res = try_str2float(argv[1], &dacFrequency);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[1]);
             }
         }
-        double dac_amplitude = 0.0f;
+        float dac_amplitude = 0.0f;
         if(res) {
-            res = try_str2double(argv[2], &dac_amplitude);
+            res = try_str2float(argv[2], &dac_amplitude);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr amplitude [%s]", argv[2]);
             }
         }
 
-        double dacPhase = 0.0f;
+        float dacPhase = 0.0f;
         if(res) {
-            res = try_str2double(argv[3], &dacPhase);
+            res = try_str2float(argv[3], &dacPhase);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr phase [%s]", argv[3]);
             }
         }
-        double dacVoltageOffset = 0.0f;
+        float dacVoltageOffset = 0.0f;
         if(res) {
-            res = try_str2double(argv[4], &dacVoltageOffset);
+            res = try_str2float(argv[4], &dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr voltage Y offset [%s]", argv[4]);
             }
@@ -236,31 +236,31 @@ bool cmd_dds_set_sin(int32_t argc, char* argv[]) {
                 LOG_ERROR(DDS, "ParseErr DacNum [%s]", argv[0]);
             }
         }
-        double dac_amplitude = 0.0f;
-        double dacFrequency = 0.0f;
-        double dacPhase = 0.0f;
-        double dacVoltageOffset = 0.0f;
+        float dac_amplitude = 0.0f;
+        float dacFrequency = 0.0f;
+        float dacPhase = 0.0f;
+        float dacVoltageOffset = 0.0f;
         if(res) {
-            res = try_str2double(argv[1], &dacFrequency);
+            res = try_str2float(argv[1], &dacFrequency);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[1]);
             }
         }
         if(res) {
-            res = try_str2double(argv[2], &dac_amplitude);
+            res = try_str2float(argv[2], &dac_amplitude);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr amplitude [%s]", argv[2]);
             }
         }
 
         if(res) {
-            res = try_str2double(argv[3], &dacPhase);
+            res = try_str2float(argv[3], &dacPhase);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr phase [%s]", argv[3]);
             }
         }
         if(res) {
-            res = try_str2double(argv[4], &dacVoltageOffset);
+            res = try_str2float(argv[4], &dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "ParseErr voltage Y offset [%s]", argv[4]);
             }
@@ -520,9 +520,9 @@ bool cmd_dds_set_chirp(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0U;
     int32_t amplitude = 0;
-    double frequency1 = 0;
-    double frequency2 = 0;
-    double chirp_duration_s = 0;
+    float frequency1 = 0;
+    float frequency2 = 0;
+    float chirp_duration_s = 0;
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
@@ -540,21 +540,21 @@ bool cmd_dds_set_chirp(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = try_str2double(argv[2], &frequency1);
+        res = try_str2float(argv[2], &frequency1);
         if(false == res) {
             LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[2]);
         }
     }
 
     if(res) {
-        res = try_str2double(argv[3], &frequency2);
+        res = try_str2float(argv[3], &frequency2);
         if(false == res) {
             LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[3]);
         }
     }
 
     if(res) {
-        res = try_str2double(argv[4], &chirp_duration_s);
+        res = try_str2float(argv[4], &chirp_duration_s);
         if(false == res) {
             LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[4]);
         }
@@ -571,7 +571,7 @@ bool cmd_dds_set_chirp(int32_t argc, char* argv[]) {
 
 
 bool cmd_dds_phase(int32_t argc, char* argv[]){
-    double phase_s=0.0;
+    float phase_s=0.0;
     uint8_t num = 0U;
     bool res = false;
     if(1 <= argc) {
@@ -582,7 +582,7 @@ bool cmd_dds_phase(int32_t argc, char* argv[]){
     }
 
     if(res) {
-        res = try_str2double(argv[2], &phase_s);
+        res = try_str2float(argv[2], &phase_s);
         if(false == res) {
             LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[2]);
         }

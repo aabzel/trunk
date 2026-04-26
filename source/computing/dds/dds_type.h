@@ -6,22 +6,19 @@
 
 #include "std_includes.h"
 #include "dds_const.h"
+#include "dsp_types.h"
 
-#ifdef HAS_AUDIO
-#include "audio_types.h"
-#endif
-    // uint32_t sample_size;
 
 #define DDS_MCAL_COMMON_VARIABLE   \
     SampleType_t* sample_array;    \
     uint32_t array_size;           \
     uint8_t num;                   \
     bool valid;                    \
-    double phase_ms;               \
-    double duty_cycle;             \
-    double frequency;              \
-    double frequency2;             \
-    double signal_diration_s;      \
+    float phase_ms;                \
+    float duty_cycle;              \
+    float frequency;               \
+    float frequency2;              \
+    float signal_diration_s;       \
     DdsPlayer_t player;            \
     SampleType_t amplitude;        \
     uint32_t sample_per_second;    \
@@ -39,8 +36,8 @@ typedef struct {
     DDS_MCAL_COMMON_VARIABLE
     SampleType_t cur_sample;
     SampleType_t prev_sample;
-    SampleType_t tx_sample; // one
-    double tx_sample_d ;
+    SampleType_t tx_sample;
+    float tx_sample_d ;
     DdsState_t state;
     uint64_t play_off_time_stamp_ms;
     uint32_t sample_cnt;
