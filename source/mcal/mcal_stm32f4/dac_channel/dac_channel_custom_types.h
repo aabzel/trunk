@@ -11,7 +11,7 @@ extern "C" {
 #include "gpio_types.h"
 #include "stm32f4xx_hal.h"
 
-#define DAC_CHANNEL_CUSTOM_VARIABLES  \
+#define DAC_CHANNEL_CUSTOM_VARIABLES
 
 typedef struct {
     uint8_t num;

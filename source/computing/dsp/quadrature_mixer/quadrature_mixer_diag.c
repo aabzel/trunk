@@ -3,16 +3,18 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "float_diag.h"
 #include "quadrature_mixer.h"
 #include "log.h"
-#ifdef HAS_PC
-#include "win_utils.h"
-#endif
 #include "circular_buffer_index.h"
 #include "dsp_diag.h"
 #include "num_to_str.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
+#ifdef HAS_PC
+#include "win_utils.h"
+#endif
 
 bool quadrature_mixer_diag(uint8_t num) {
     bool res = false;
@@ -25,36 +27,36 @@ bool quadrature_mixer_diag(uint8_t num) {
 
 
 const char* QuadratureMixerNodeToStr(const  QuadratureMixerHandle_t* const Node){
-    static char text[300] = "?";
+    static char temp[300] = "?";
     if(Node) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sN:%u,", text, Node->num);
-        snprintf(text, sizeof(text), "%sTime:%ss,", text, DoubleToStr(Node->time_s));
-        snprintf(text, sizeof(text), "%sSam:%s,", text, DoubleToStr(Node->sample));
-        snprintf(text, sizeof(text), "%sPhaErr:%s rad,", text, DoubleToStr(Node->phase_error_rad));
-        snprintf(text, sizeof(text), "%sInit:%u,", text, Node->init);
-        snprintf(text, sizeof(text), "%sFsam:%s Hz,", text, DoubleToStr(Node->sample_rate_hz));
-        snprintf(text, sizeof(text), "%sLoFerq:%s Hz,", text, DoubleToStr(Node->lo_frequency_hz));
-        snprintf(text, sizeof(text), "%sInCnt:%u,", text, Node->proc_cnt);
-        snprintf(text, sizeof(text), "%sLoPha:%f rad,", text, Node->lo_phase_rad);
+        strcpy(temp, "");
+        snprintf(temp, sizeof(temp), "%sN:%u,", temp, Node->num);
+        snprintf(temp, sizeof(temp), "%sTime:%ss,", temp, FloatToStr(Node->time_s,3));
+        snprintf(temp, sizeof(temp), "%sSam:%s,", temp, FloatToStr(Node->sample,3));
+        snprintf(temp, sizeof(temp), "%sPhaErr:%s rad,", temp, FloatToStr(Node->phase_error_rad,3));
+        snprintf(temp, sizeof(temp), "%sInit:%u,", temp, Node->init);
+        snprintf(temp, sizeof(temp), "%sFsam:%s Hz,", temp, FloatToStr(Node->sample_rate_hz,3));
+        snprintf(temp, sizeof(temp), "%sLoFerq:%s Hz,", temp, FloatToStr(Node->lo_frequency_hz,3));
+        snprintf(temp, sizeof(temp), "%sInCnt:%u,", temp, Node->proc_cnt);
+        snprintf(temp, sizeof(temp), "%sLoPha:%f rad,", temp, Node->lo_phase_rad);
     }
-    return text;
+    return temp;
 }
 
 const char* QuadratureMixerConfigToStr(const  QuadratureMixerConfig_t* const Config){
-    static char text[300] = "?";
+    static char temp[300] = "?";
     if(Config) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
-        snprintf(text, sizeof(text), "%s%s,", text, Config->name);
-        snprintf(text, sizeof(text), "%sFiltType:%s,", text, DspFilterTypeToStr(Config->filter_type));
-        snprintf(text, sizeof(text), "%sFiltOrder:%u,", text, Config->filter_order);
-        snprintf(text, sizeof(text), "%sFiltI:%u,", text, Config->filter_num[0]);
-        snprintf(text, sizeof(text), "%sFiltQ:%u,", text, Config->filter_num[1]);
-        snprintf(text, sizeof(text), "%sFsam:%s Hz,", text, DoubleToStr(Config->sample_rate_hz));
-        snprintf(text, sizeof(text), "%sFcut:%s Hz,", text, DoubleToStr(Config->cut_off_freq_hz));
+        strcpy(temp, "");
+        snprintf(temp, sizeof(temp), "%sN:%u,", temp, Config->num);
+        snprintf(temp, sizeof(temp), "%s%s,", temp, Config->name);
+        snprintf(temp, sizeof(temp), "%sFiltType:%s,", temp, DspFilterTypeToStr(Config->filter_type));
+        snprintf(temp, sizeof(temp), "%sFiltOrder:%u,", temp, Config->filter_order);
+        snprintf(temp, sizeof(temp), "%sFiltI:%u,", temp, Config->filter_num[0]);
+        snprintf(temp, sizeof(temp), "%sFiltQ:%u,", temp, Config->filter_num[1]);
+        snprintf(temp, sizeof(temp), "%sFsam:%s Hz,", temp, FloatToStr(Config->sample_rate_hz,3));
+        snprintf(temp, sizeof(temp), "%sFcut:%s Hz,", temp, FloatToStr(Config->cut_off_freq_hz,3));
     }
-    return text;
+    return temp;
 }
 
 bool QuadratureMixerDiagConfig(const QuadratureMixerConfig_t* const Config) {

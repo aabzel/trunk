@@ -1,5 +1,5 @@
-#ifndef DSP_TYPES_H
-#define DSP_TYPES_H
+#ifndef DSP_MCAL_TYPES_H
+#define DSP_MCAL_TYPES_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,22 +21,28 @@ typedef union {
     BitField24_t bits24;
 } Sample24bit_t;
 
-
 typedef float FilterSample_t;
 typedef int8_t Gain_t;
 
 typedef FilterSample_t DspSample_t;
 
+#ifdef HAS_PCM_DOUBLE
+typedef double SampleType_t;
+#endif
 
-//#ifdef HAS_PC
-//typedef double SampleType_t;
-//#else
+#ifdef HAS_PCM_FLOAT
+typedef float SampleType_t;
+#endif
 
-#ifdef HAS_PCM_16_BIT
+#ifdef HAS_PCM_U16
+typedef uint16_t SampleType_t;
+#endif
+
+#ifdef HAS_PCM_S16
 typedef int16_t SampleType_t;
 #endif
 
-#ifdef HAS_PCM_32_BIT
+#ifdef HAS_PCM_S32
 typedef int32_t SampleType_t;
 #endif
 
@@ -44,4 +50,4 @@ typedef int32_t SampleType_t;
 }
 #endif
 
-#endif /* DSP_TYPES_H */
+#endif /* DSP_MCAL_TYPES_H */

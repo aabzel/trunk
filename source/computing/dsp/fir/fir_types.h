@@ -13,10 +13,10 @@ typedef float FirSample_t;
 
 #define FIR_COMMON_VARIABLE                  \
     FirMode_t mode;                          \
-    double sample_rate_hz;                   \
+    float sample_rate_hz;                   \
     char* file_name_out;                     \
     char* file_name_in ;                     \
-    double cut_off_freq_hz;                  \
+    float cut_off_freq_hz;                  \
     uint32_t num;                            \
     uint32_t size;    /*config Order M*/     \
     uint32_t max_size;    /*max Order M*/    \

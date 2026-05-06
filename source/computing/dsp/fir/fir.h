@@ -5,6 +5,7 @@
 #include "fir_config.h"
 #include "fir_types.h"
 #include "fir_isr.h"
+
 #ifdef HAS_FIR_DIAG
 #include "fir_diag.h"
 #endif
@@ -26,15 +27,17 @@ bool fir_impulse_response(uint8_t num);
 
 //bool fir_proc_in_out(uint8_t num, FirSample_t in, FirSample_t* const out);
 //bool fir_push(uint8_t num, FirSample_t in);
-bool fir_save_csv_line(char* file_name_out, double value_x, double value_y);
-bool fir_proc_file(uint8_t num, char* file_name, uint16_t column_x, uint16_t column_y);
 bool fir_set_b(uint8_t num, uint32_t k, FirSample_t b);
 bool fir_set_mode(uint8_t num, FirMode_t mode);
 bool fir_synthesize(uint8_t num,
-		uint32_t order,
-		FirSample_t cutoff_frequency_hz,
-        FirSample_t sample_frequency_hz);
+                    uint32_t order,
+                    FirSample_t cutoff_frequency_hz,
+                    FirSample_t sample_frequency_hz);
 
+#ifdef HAS_FILE_PC
+bool fir_save_csv_line(char* file_name_out, double value_x, double value_y);
+bool fir_proc_file(uint8_t num, char* file_name, uint16_t column_x, uint16_t column_y);
+#endif
 //bool fir_pop(uint8_t num, FirSample_t in, FirSample_t* const out);
 
 #endif

@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
-#include "dac_channel_const.h"
 #include "dac_const.h"
+#include "dac_channel_const.h"
 #include "gpio_types.h"
 #include "lib_iqueue.h"
 

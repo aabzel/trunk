@@ -120,10 +120,10 @@ static bool quadrature_mixer_is_valid_config(const QuadratureMixerConfig_t *cons
 }
 
 bool quadrature_mixer_proc_sample_ll(QuadratureMixerHandle_t* const Node,
-                                     double time_s,
-                                     double carrier_frequency_hz,
-                                     double lo_phase_rad,
-                                     double sample) {
+                                     float time_s,
+                                     float carrier_frequency_hz,
+                                     float lo_phase_rad,
+                                     float sample) {
     bool res = false;
     if(Node) {
         LOG_DEBUG(QUADRATURE_MIXER, "sample:%f" ,sample);
@@ -145,8 +145,8 @@ bool quadrature_mixer_proc_sample_ll(QuadratureMixerHandle_t* const Node,
             if(qres) {
                 Vector_t x_axis = {0};
                 Vector_t phaseVector = { 0};
-                phaseVector.dx = (double) Node->SdrI.AfterFilt;
-                phaseVector.dy = (double) Node->SdrQ.AfterFilt;
+                phaseVector.dx = (float) Node->SdrI.AfterFilt;
+                phaseVector.dy = (float) Node->SdrQ.AfterFilt;
                 phaseVector.dz = 0.0;
                 x_axis.dx = 10.0;
                 x_axis.dy = 0;
@@ -165,10 +165,10 @@ bool quadrature_mixer_proc_sample_ll(QuadratureMixerHandle_t* const Node,
 }
 
 bool quadrature_mixer_proc_sample(uint8_t num,
-                                  double time_s,
-                                  double carrier_frequency_hz,
-                                  double lo_phase_rad,
-                                  double sample) {
+                                  float time_s,
+                                  float carrier_frequency_hz,
+                                  float lo_phase_rad,
+                                  float sample) {
     bool res = false;
     QuadratureMixerHandle_t* Node = QuadratureMixerGetNode(num);
     if(Node) {
@@ -177,7 +177,7 @@ bool quadrature_mixer_proc_sample(uint8_t num,
     return res;
 }
 
-bool quadrature_mixer_lpf_iir(uint8_t num, double k){
+bool quadrature_mixer_lpf_iir(uint8_t num, float k){
     bool res = false;
     QuadratureMixerHandle_t *Node = QuadratureMixerGetNode(num);
     if(Node) {

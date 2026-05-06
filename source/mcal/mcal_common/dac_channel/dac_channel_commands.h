@@ -8,7 +8,7 @@ extern "C" {
 #include "std_includes.h"
 
 #ifdef HAS_DAC_CHANNEL_CUSTOM
-#include "dac_custom_commands.h"
+#include "dac_channel_custom_commands.h"
 #else
 #define DAC_CHANNEL_CUSTOM_COMMANDS
 #endif

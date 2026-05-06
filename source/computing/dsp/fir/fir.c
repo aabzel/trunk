@@ -19,9 +19,10 @@
 #include "utils_math.h"
 #include "writer_config.h"
 #include "debug_info.h"
-
-#include "file_pc.h"
 #include "csv.h"
+#ifdef HAS_FILE_PC
+#include "file_pc.h"
+#endif
 
 COMPONENT_GET_NODE(Fir, fir)
 COMPONENT_GET_CONFIG(Fir, fir)
@@ -470,6 +471,7 @@ int32_t fir_order_get(uint8_t num) {
     return order;
 }
 
+#ifdef HAS_FILE_PC
 bool fir_save_csv_line(char* file_name_out, double value_x, double value_y) {
     bool res = false;
     if(file_name_out) {
@@ -479,7 +481,9 @@ bool fir_save_csv_line(char* file_name_out, double value_x, double value_y) {
     }
     return res;
 }
+#endif
 
+#ifdef HAS_FILE_PC
 bool fir_proc_file(uint8_t num, char* file_name, uint16_t column_x, uint16_t column_y) {
     bool res = false;
     LOG_WARNING(FIR, "FIR%u,File:[%s],ColX:%u,ColY:%u", num, file_name, column_x, column_y);
@@ -530,6 +534,7 @@ bool fir_proc_file(uint8_t num, char* file_name, uint16_t column_x, uint16_t col
     }
     return res;
 }
+#endif
 
 
 

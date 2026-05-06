@@ -6,7 +6,10 @@ ifneq ($(DAC_CHANNEL_GENERAL_MK_INC),Y)
 
     INCDIR += -I$(DAC_CHANNEL_MCAL_DIR)
     MCAL_OPT += -DHAS_DAC_CHANNEL
-    MCAL_OPT += -DHAS_DAC_CHANNEL_PROC
+
+    ifeq ($(DAC_CHANNEL_PROC),Y)
+        MCAL_OPT += -DHAS_DAC_CHANNEL_PROC
+    endif
 
     SOURCES_C += $(DAC_CHANNEL_MCAL_DIR)/dac_channel_general.c
 

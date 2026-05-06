@@ -8,11 +8,11 @@
 bool quadrature_mixer_proc_command(int32_t argc, char* argv[]){
     bool res = false;
     uint8_t num = 0;
-    double value = 0.0;
+    float value = 0.0;
 
     if(2==argc){
         res = try_str2uint8(argv[0], &num);
-        res = try_str2double(argv[1], &value);
+        res = try_str2float(argv[1], &value);
     }
 
     if(res) {
@@ -26,11 +26,11 @@ bool quadrature_mixer_proc_command(int32_t argc, char* argv[]){
 bool quadrature_mixer_lpf_iir_command(int32_t argc, char* argv[]){
     bool res = false;
     uint8_t num = 0;
-    double k = 0.0;
+    float k = 0.0;
 
     if(2==argc){
         res = try_str2uint8(argv[0], &num);
-        res = try_str2double(argv[1], &k);
+        res = try_str2float(argv[1], &k);
     }
 
     if(res) {

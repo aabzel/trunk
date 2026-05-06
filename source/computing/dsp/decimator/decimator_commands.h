@@ -20,8 +20,10 @@ extern "C" {
 
 bool decimator_proc_command(int32_t argc, char* argv[]);
 bool decimator_diag_command(int32_t argc, char* argv[]);
+bool decimator_set_command(int32_t argc, char* argv[]);
 
 #define DECIMATOR_COMMANDS                                                                        \
+    SHELL_CMD("decimator_set", "des", decimator_set_command, "DecimatorSet"),       \
     SHELL_CMD("decimator_diag", "ded", decimator_diag_command, "DecimatorDiag"),       \
     SHELL_CMD("decimator_proc", "dep", decimator_proc_command, "DecimatorProc"),
 

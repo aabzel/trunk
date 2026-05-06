@@ -2,12 +2,15 @@ ifneq ($(DSP_MK_INC),Y)
     DSP_MK_INC=Y
 
     DSP_DIR = $(COMPUTING_DIR)/dsp
-    #  $(error DSP_DIR= $(DSP_DIR))
+    # $(error DSP_DIR= $(DSP_DIR))
 
     MCAL_OPT += -DHAS_DSP
+    INCDIR += -I$(DSP_DIR)
     SOURCES_C += $(DSP_DIR)/dsp.c
 
-    INCDIR += -I$(DSP_DIR)
+    ifeq ($(PCM_U16),Y)
+        MCAL_OPT += -DHAS_PCM_U16
+    endif
 
     ifeq ($(DECIMATOR),Y)
         include $(DSP_DIR)/decimator/decimator.mk
@@ -25,7 +28,10 @@ ifneq ($(DSP_MK_INC),Y)
         include $(DSP_DIR)/correlator/correlator.mk
     endif
 
-
+    ifeq ($(QUAD_MIX_4FS),Y)
+        include $(DSP_DIR)/quad_mix_4fs/quad_mix_4fs.mk
+    endif
+    
     ifeq ($(QUADRATURE_MIXER),Y)
         include $(DSP_DIR)/quadrature_mixer/quadrature_mixer.mk
     endif
@@ -33,7 +39,7 @@ ifneq ($(DSP_MK_INC),Y)
     ifeq ($(ECHO_EFFECT),Y)
         include $(DSP_DIR)/echo_effect/echo_effect.mk
     endif
-    
+
     ifeq ($(FOURIER_SERIES),Y)
         include $(DSP_DIR)/fourier_series/fourier_series.mk
     endif
@@ -42,7 +48,12 @@ ifneq ($(DSP_MK_INC),Y)
         # $(error SCAN=$(SCAN))
         include $(DSP_DIR)/scan/scan.mk
     endif
-    
+
+    ifeq ($(SLIDING_INTEGRAL),Y)
+        # $(error SLIDING_INTEGRAL=$(SLIDING_INTEGRAL))
+        include $(DSP_DIR)/sliding_integral/sliding_integral.mk
+    endif
+
     ifeq ($(FFT),Y)
         include $(DSP_DIR)/fft/fft.mk
     endif
@@ -61,7 +72,12 @@ ifneq ($(DSP_MK_INC),Y)
         #  $(error MEDIAN_FILTER_FAST=$(MEDIAN_FILTER_FAST))
         include $(DSP_DIR)/median_filter_fast/median_filter_fast.mk
     endif
-    
+
+    ifeq ($(DC_CUT_FILTER),Y)
+        #  $(error phase_detector=$(phase_detector))
+        include $(DSP_DIR)/dc_cut_filter/dc_cut_filter.mk
+    endif
+
     ifeq ($(PHASE_DETECTOR),Y)
         #  $(error phase_detector=$(phase_detector))
         include $(DSP_DIR)/phase_detector/phase_detector.mk
@@ -91,7 +107,7 @@ ifneq ($(DSP_MK_INC),Y)
     ifeq ($(DIAG),Y)
         ifeq ($(DSP_DIAG),Y)
             MCAL_OPT += -DHAS_DSP_DIAG
-            SOURCES_C += $(DSP_DIR)/dsp_diag.c
+            SOURCES_DIAG_C += $(DSP_DIR)/dsp_diag.c
         endif
     endif
     

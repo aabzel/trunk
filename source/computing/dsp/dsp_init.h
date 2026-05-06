@@ -7,27 +7,33 @@
 #error  "+HAS_DSP"
 #endif
 
+#ifdef HAS_SLIDING_INTEGRAL
+#include "sliding_integral.h"
+#define SLIDING_INTEGRAL_INIT {.init_function=sliding_integral_mcal_init, .name="SlidingIntegral",},
+#else
+#define SLIDING_INTEGRAL_INIT
+#endif
 
 #ifdef HAS_DECIMATOR
 #include "decimator.h"
 #define DECIMATOR_INIT {.init_function=decimator_mcal_init, .name="Decimator",},
 #else
 #define DECIMATOR_INIT
-#endif /*HAS_DECIMATOR*/
+#endif
 
 #ifdef HAS_DELTA_SIGMA
 #include "delta_sigma.h"
 #define DELTA_SIGMA_INIT {.init_function=delta_sigma_mcal_init, .name="DeltaSigma",},
 #else
 #define DELTA_SIGMA_INIT
-#endif /*HAS_DELTA_SIGMA*/
+#endif
 
 #ifdef HAS_ECHO_EFFECT
 #include "echo_effect.h"
 #define ECHO_EFFECT_INIT {.init_function=echo_effect_mcal_init, .name="EchoEeffect",},
 #else
 #define ECHO_EFFECT_INIT
-#endif /*HAS_SCHMITT_TRIGGER*/
+#endif
 
 #ifdef HAS_MEDIAN_FILTER
 #include "median_filter.h"
@@ -88,6 +94,13 @@
 #define PHASE_DETECTOR_INIT
 #endif
 
+#ifdef HAS_DC_CUT_FILTER
+#include "dc_cut_filter_mcal.h"
+#define DC_CUT_FILTER_INIT {.init_function=dc_cut_filter_mcal_init, .name="DcCutFilter",},
+#else
+#define DC_CUT_FILTER_INIT
+#endif
+
 #ifdef HAS_SCHMITT_TRIGGER
 #include "schmitt_trigger.h"
 #define SCHMITT_TRIGGER_INIT {.init_function=schmitt_trigger_mcal_init, .name="SchmittTrigger",},
@@ -117,7 +130,9 @@
     FOURIER_SERIES_INIT        \
     FIR_INIT                   \
     HIST_FILTER_INIT           \
+    DC_CUT_FILTER_INIT         \
     FIR_INT_INIT               \
+    SLIDING_INTEGRAL_INIT      \
     IIR_INIT                   \
     MEDIAN_FILTER_INIT         \
     MEDIAN_FILTER_FAST_INIT    \

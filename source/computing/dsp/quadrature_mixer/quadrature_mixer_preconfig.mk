@@ -8,5 +8,4 @@ ifneq ($(QUADRATURE_MIXER_PRECONFIG_INC),Y)
     #IIR=Y
     COMPLEX=Y
     DSP=Y
-
 endif

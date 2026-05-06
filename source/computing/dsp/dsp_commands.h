@@ -17,11 +17,24 @@
 #error "+HAS_DSP_COMMANDS"
 #endif
 
+#ifdef HAS_SLIDING_INTEGRAL_COMMANDS
+#include "sliding_integral_commands.h"
+#else
+#define SLIDING_INTEGRAL_COMMANDS
+#endif
+
 #ifdef HAS_ECHO_EFFECT_COMMANDS
 #include "echo_effect_commands.h"
 #else
 #define ECHO_EFFECT_COMMANDS
 #endif
+
+#ifdef HAS_DC_CUT_FILTER_COMMANDS
+#include "dc_cut_filter_commands.h"
+#else
+#define DC_CUT_FILTER_COMMANDS
+#endif
+
 
 #ifdef HAS_DECIMATOR_COMMANDS
 #include "decimator_commands.h"
@@ -96,22 +109,22 @@
 #define HIST_FILTER_COMMANDS
 #endif
 
-
-
-
 #define DSP_COMMANDS                 \
     DECIMATOR_COMMANDS               \
+    DELTA_SIGMA_COMMANDS             \
+    ECHO_EFFECT_COMMANDS             \
+    DC_CUT_FILTER_COMMANDS           \
+    FIR_COMMANDS                     \
+    FIR_INT_COMMANDS                 \
+    FOURIER_SERIES_COMMANDS          \
+    HIST_FILTER_COMMANDS             \
+    IIR_COMMANDS                     \
     MEDIAN_FILTER_COMMANDS           \
     MEDIAN_FILTER_FAST_COMMANDS      \
-    DELTA_SIGMA_COMMANDS        \
-    ECHO_EFFECT_COMMANDS        \
-    HIST_FILTER_COMMANDS        \
-    FOURIER_SERIES_COMMANDS     \
-    FIR_COMMANDS                \
-    PHASE_DETECTOR_COMMANDS     \
-    FIR_INT_COMMANDS            \
-    IIR_COMMANDS                \
-    QUADRATURE_MIXER_COMMANDS   \
-    SCHMITT_TRIGGER_COMMANDS
+    PHASE_DETECTOR_COMMANDS          \
+    QUADRATURE_MIXER_COMMANDS        \
+    SCHMITT_TRIGGER_COMMANDS         \
+    SLIDING_INTEGRAL_COMMANDS
+
 
 #endif /* DSP_COMMANDS_H */

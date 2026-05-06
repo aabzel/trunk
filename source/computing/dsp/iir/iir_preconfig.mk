@@ -6,6 +6,7 @@ ifneq ($(IIR_PRECONFIG_MK_INC),Y)
     IIR=Y
     DSP=Y
     COMPUTING=Y
+    CIRCULAR_BUFFER=Y
 endif
 
 

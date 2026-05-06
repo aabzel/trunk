@@ -81,3 +81,23 @@ bool decimator_diag_command(int32_t argc, char* argv[]) {
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     return res;
 }
+
+
+bool decimator_set_command(int32_t argc, char* argv[]){
+    bool res = false;
+    uint8_t num = 0;
+    uint32_t samples_per_bit = 40;
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &samples_per_bit);
+    }
+
+    if(res){
+        res = decimator_adjust(  num,   samples_per_bit);
+    }
+
+    return res;
+}

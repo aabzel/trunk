@@ -1,0 +1,6 @@
+ifneq ($(DC_CUT_FILTER_PRECONFIG_INC),Y)
+    DC_CUT_FILTER_PRECONFIG_INC=Y
+    
+    DSP=Y
+    DC_CUT_FILTER=Y
+endif

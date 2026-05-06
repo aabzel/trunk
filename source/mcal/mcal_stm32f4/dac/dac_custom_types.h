@@ -14,13 +14,6 @@ extern "C" {
 #define DAC_CUSTOM_VARIABLES  \
        DAC_HandleTypeDef dac_h;
 
-typedef struct {
-    uint8_t num;
-    uint8_t dac_channel;
-    uint32_t dac_channel_code;
-    Pad_t pad;
-    bool valid;
-} DacChannelInfo_t;
 
 typedef struct {
     uint8_t resolution;

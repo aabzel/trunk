@@ -3,6 +3,7 @@
 
 #include "decimator_types.h"
 
+const char* DecimatorInputToStr(DecimatorInput_t input);
 const char* DecimatorConfigToStr(const DecimatorConfig_t* const Config);
 const char* DecimatorNodeToStr(const DecimatorHandle_t* const Node);
 const char* DecimatorStateToStr(DecimatorState_t state);

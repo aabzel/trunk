@@ -146,6 +146,7 @@ bool adc_wait_convert_done_ll(AdcHandle_t* Node, uint32_t time_out_ms) {
 _WEAK_FUN_
 bool adc_proc_one(uint8_t num) {
     bool res = false;
+#ifdef HAS_ADC_DEBUG
     log_level_t ll = log_level_get(LG_ADC);
     AdcHandle_t* Node = AdcGetNode(num);
     if(Node) {
@@ -175,6 +176,7 @@ bool adc_proc_one(uint8_t num) {
             }
         }
     }
+#endif
     return res;
 }
 

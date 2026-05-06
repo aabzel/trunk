@@ -8,11 +8,12 @@ extern "C" {
 #include "std_includes.h"
 
 #include "iir_config.h"
+#include "iir_types.h"
+#include "iir_isr.h"
+
 #ifdef HAS_IIR_DIAG
 #include "iir_diag.h"
 #endif
-#include "iir_types.h"
-#include "iir_isr.h"
 
 // API
 const IirConfig_t* IirGetConfig(uint8_t num);

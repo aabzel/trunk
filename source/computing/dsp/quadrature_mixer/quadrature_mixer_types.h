@@ -10,12 +10,12 @@ extern "C" {
 #include "dsp_types.h"
 
 typedef struct {
-    double LocalOcs;
-    double AfterMux;
+    float LocalOcs;
+    float AfterMux;
     FilterSample_t AfterFilt;
 }SdrData_t;
 
-typedef double QuadratureMixerSample_t;
+typedef float QuadratureMixerSample_t;
 
 #define QUADRATURE_MIXER_COMMON_VARIABLE        \
     uint8_t filter_num[2];                      \
@@ -33,11 +33,11 @@ typedef struct {
 
 typedef struct {
     QUADRATURE_MIXER_COMMON_VARIABLE
-    double time_s; // in
-    double sample; // in
-    double lo_phase_rad; // in
-    double lo_frequency_hz; // in
-    double phase_error_rad; // out
+    float time_s; // in
+    float sample; // in
+    float lo_phase_rad; // in
+    float lo_frequency_hz; // in
+    float phase_error_rad; // out
     bool init;
     uint32_t proc_cnt;
     SdrData_t SdrI; //out

@@ -15,10 +15,12 @@ extern "C" {
 #error "+HAS_DAC_COMMANDS"
 #endif
 
+#include "dac_custom_commands.h"
+
 bool dac_init_command(int32_t argc, char* argv[]);
 bool dac_diag_command(int32_t argc, char* argv[]);
 
-#define DAC_COMMANDS                                                             \
+#define DAC_COMMANDS    DAC_CUSTOM_COMMANDS                                                         \
     SHELL_CMD("dac_init", "daci", dac_init_command, "DacInit"),                  \
     SHELL_CMD("dac_diag", "dacd", dac_diag_command, "DacDiag"),
 
