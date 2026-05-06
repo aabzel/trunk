@@ -1,0 +1,13 @@
+$(info TEST_BPSK_4FS_MK_INC=$(TEST_BPSK_4FS_MK_INC))
+
+ifneq ($(TEST_BPSK_4FS_MK_INC),Y)
+    TEST_BPSK_4FS_MK_INC=Y
+
+    TEST_BPSK_4FS_DIR = $(TEST_SET_SW_DIR)/test_bpsk_4fs
+    #@echo $(error TEST_BPSK_DIR= $(TEST_BPSK_DIR))
+    INCDIR  += -I$(TEST_BPSK_4FS_DIR)
+
+    MCAL_OPT += -DHAS_TEST_SUIT_BPSK_4FS
+
+    SOURCES_C += $(TEST_BPSK_4FS_DIR)/test_bpsk_4fs.c
+endif
