@@ -14,10 +14,10 @@
 
 #define MX25L6433F_COMMON_VARIABLES     \
     MX25L6433F_COMMON_GPIO_VARIABLES    \
-    uint8_t spi_num;                    \
-    uint8_t num;                        \
-    char* name;                         \
     bool valid;                         \
+    uint8_t num;                        \
+    uint8_t spi_num;                    \
+    char* name;
 
 typedef struct {
     MX25L6433F_COMMON_VARIABLES

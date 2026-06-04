@@ -20,10 +20,15 @@ extern "C" {
 #error "+HAS_DIAG"
 #endif
 
-bool mx25l6433f_diag(void);
-bool mx25l6433f_diag_one(uint8_t num);
 const char* Mx25l6433fConfigToStr(const Mx25l6433fConfig_t* const Config);
 const char* Mx25l6433fNodeToStr(const Mx25l6433fHandle_t* const Node);
+
+bool mx25_diag_configuration(uint8_t num,Mx25l6433fRegConfiguration_t* configuration);
+bool mx25_diag_id(Mx25l6433fRegIdentification_t* reg);
+bool mx25l6433f_diag(void);
+bool mx25l6433f_diag_one(uint8_t num);
+bool mx25l6433f_diag_high_level(uint8_t num);
+bool mx25l6433f_usage(uint8_t num,uint32_t piece_size);
 
 #ifdef __cplusplus
 }
