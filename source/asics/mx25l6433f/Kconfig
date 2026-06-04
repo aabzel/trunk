@@ -1,0 +1,4 @@
+
+config MX25L6433F
+    bool "Enable use of the MX25L6433F drivers"
+

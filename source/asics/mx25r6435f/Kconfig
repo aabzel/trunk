@@ -1,0 +1,4 @@
+
+config HW_CODEC_MX25R6435F
+    bool "Enable use of the MX25R6435F drivers"
+
