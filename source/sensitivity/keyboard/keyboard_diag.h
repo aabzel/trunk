@@ -16,7 +16,7 @@ extern "C" {
 #error "+HAS_KEYBOARD_DIAG"
 #endif
 
-const char* KeyBoard2Str(const KeyBoard_t* const key_code);
+const char* KeyBoardToStr(const KeyBoard_t* const key_code);
 
 #ifdef __cplusplus
 }

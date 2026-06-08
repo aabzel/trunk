@@ -13,7 +13,7 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-const char* ChipModel2Str(At24cChipModel_t chip_model) {
+const char* ChipModelToStr(At24cChipModel_t chip_model) {
     const char* name = "?";
     switch((uint8_t)chip_model) {
     case AT24C02:
@@ -56,10 +56,10 @@ const char* ChipModel2Str(At24cChipModel_t chip_model) {
     return name;
 }
 
-const char* At24cxxConfig2Str(const At24cxxConfig_t* const Config) {
+const char* At24cxxConfigToStr(const At24cxxConfig_t* const Config) {
     static char name[80] = "?";
     if(Config) {
-        snprintf(name, sizeof(name), "Model:%s,I2C%u,Addr: 0x%x,Pad:%s", ChipModel2Str(Config->chip_model),
+        snprintf(name, sizeof(name), "Model:%s,I2C%u,Addr: 0x%x,Pad:%s", ChipModelToStr(Config->chip_model),
                  Config->i2c_num, Config->chip_addr, GpioPadToStr(Config->wp));
     }
     return name;
@@ -68,17 +68,17 @@ const char* At24cxxConfig2Str(const At24cxxConfig_t* const Config) {
 bool At24cxxDiagConfig(const At24cxxConfig_t* const Config) {
     bool res = false;
     if(Config) {
-        LOG_NOTICE(AT24C, "%s", At24cxxConfig2Str(Config));
+        LOG_NOTICE(AT24C, "%s", At24cxxConfigToStr(Config));
         res = true;
     }
     return res;
 }
 
-const char* At24cxxInfo2Str(const At24cxxInfo_t* const Info) {
+const char* At24cxxInfoToStr(const At24cxxInfo_t* const Info) {
     static char name[80] = "?";
     if(Info) {
         snprintf(name, sizeof(name), "Model:%s,%u Bytes,%u Pages,PageSize:%u byte, Addr %u bit",
-                 ChipModel2Str(Info->chip_model), Info->capacity_bytes, Info->pages, Info->page_size, Info->addr_bit);
+                 ChipModelToStr(Info->chip_model), Info->capacity_bytes, Info->pages, Info->page_size, Info->addr_bit);
     }
     return name;
 }
@@ -86,7 +86,7 @@ const char* At24cxxInfo2Str(const At24cxxInfo_t* const Info) {
 bool At24cxxDiagInfo(const At24cxxInfo_t* const Info) {
     bool res = false;
     if(Info) {
-        LOG_INFO(AT24C, "%s", At24cxxInfo2Str(Info));
+        LOG_INFO(AT24C, "%s", At24cxxInfoToStr(Info));
         res = true;
     }
     return res;
@@ -111,7 +111,7 @@ bool at24cxx_diag(void) {
             res = at24cxx_read_address(i, &address);
             snprintf(line, sizeof(line), "%s %1u " TSEP, line, Node->num);
             snprintf(line, sizeof(line), "%s 0x%2X " TSEP, line, Node->chip_addr);
-            snprintf(line, sizeof(line), "%s %8s " TSEP, line, ChipModel2Str(Node->chip_model));
+            snprintf(line, sizeof(line), "%s %8s " TSEP, line, ChipModelToStr(Node->chip_model));
             snprintf(line, sizeof(line), "%s 0x%04x " TSEP, line, address);
             res = at24cxx_is_connected(i);
             snprintf(line, sizeof(line), "%s %4s " TSEP, line, res ? "yes" : "No");

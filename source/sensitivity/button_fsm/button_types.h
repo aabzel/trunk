@@ -11,6 +11,7 @@ typedef bool (*ButtonIsrHandler_t)(void);
 #define BUTTON_COMMON_VARIABLES                \
     uint32_t num;                              \
     uint32_t debug_led_num;                    \
+    char* name;                                \
     bool valid;                                \
     Pad_t pad;                                 \
     GpioLogicLevel_t active;                                \
@@ -22,7 +23,6 @@ typedef bool (*ButtonIsrHandler_t)(void);
 #define BUTTON_NAME_SIZE 20
 typedef struct {
     BUTTON_COMMON_VARIABLES
-    char name[BUTTON_NAME_SIZE];
 } ButtonConfig_t;
 
 typedef struct {

@@ -12,6 +12,14 @@ extern "C" {
 #define ADC_IF_TASK
 #endif
 
+#ifdef HAS_INCREMENTAL_ENCODER_PROC
+#include "incremental_encoder_mcal.h"
+#define INCREMENTAL_ENCODER_TASK { .name="IncrementalEncoder", .period_us=INCREMENTAL_ENCODER_POLL_PERIOD_US, .limiter.function=incremental_encoder_proc,},
+#else
+#define INCREMENTAL_ENCODER_TASK
+#endif
+
+
 #ifdef HAS_BUTTON_PROC
 #include "button_drv.h"
 #define BUTTON_TASK { .name="BUTTON", .period_us=BUTTON_POLL_PERIOD_US, .limiter.function=button_proc,},

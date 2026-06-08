@@ -7,7 +7,9 @@ extern "C" {
 
 #include "sensitivity_const.h"
 
-const char* UnitsToStr(Units_t units);
+const char* UnitsToStr(const Units_t units);
+
+
 #ifdef __cplusplus
 }
 #endif

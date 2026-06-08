@@ -27,6 +27,13 @@ extern "C" {
 #define BUTTON_COMMANDS
 #endif
 
+#ifdef HAS_INCREMENTAL_ENCODER_COMMANDS
+#include "incremental_encoder_commands.h"
+#else
+#define INCREMENTAL_ENCODER_COMMANDS
+#endif
+
+
 #ifdef HAS_CROSS_DETECT_COMMANDS
 #include "cross_detect_commands.h"
 #else

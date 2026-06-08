@@ -4,13 +4,18 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
 
     MCAL_OPT += -DHAS_SENSITIVITY
     SENSITIVITY_DIR = $(WORKSPACE_LOC)/sensitivity
-    #  $(error SENSITIVITY_DIR=$(SENSITIVITY_DIR))
+    # $(error SENSITIVITY_DIR=$(SENSITIVITY_DIR))
 
     INCDIR += -I$(SENSITIVITY_DIR)
 
     ifeq ($(BUTTON),Y)
         include $(SENSITIVITY_DIR)/button_fsm/button.mk
     endif
+
+    ifeq ($(INCREMENTAL_ENCODER),Y)
+        include $(SENSITIVITY_DIR)/incremental_encoder/incremental_encoder.mk
+    endif
+
 
     ifeq ($(CROSS_DETECT),Y)
         include $(SENSITIVITY_DIR)/cross_detect/cross_detect.mk
@@ -29,7 +34,7 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
     endif
 
     ifeq ($(DISTANCE),Y)
-        #  $(error DISTANCE=$(DISTANCE))
+        # $(error DISTANCE=$(DISTANCE))
         include $(SENSITIVITY_DIR)/distance/distance.mk
     endif
     
@@ -46,7 +51,7 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
     endif
 
     ifeq ($(LOAD_DETECT),Y)
-        #  $(error LOAD_DETECT= $(LOAD_DETECT))
+        # $(error LOAD_DETECT= $(LOAD_DETECT))
         include $(SENSITIVITY_DIR)/load_detect/load_detect.mk
     endif
 

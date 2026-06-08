@@ -4,11 +4,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#ifdef HAS_FREE_RTOS
-#include <FreeRTOS.h>
-#include <task.h>
-#endif /*HAS_FREE_RTOS*/
-
 #include "button_config.h"
 #include "code_generator.h"
 #include "data_utils.h"
@@ -166,8 +161,7 @@ bool ButtonStateToOnOff(ButtonState_t state) {
     case BUTTON_STATE_PRESSED_PROCESSED:
         res = true;
         break;
-    default:
-        break;
+    default: break;
     }
     return res;
 }
@@ -278,9 +272,8 @@ static bool button_init_custom(void) {
     return res;
 }
 
-static bool button_init_one(uint32_t num) {
+bool button_init_one(uint32_t num) {
     bool res = false;
-
     const ButtonConfig_t* Config = ButtonGetConfig(num);
     if(Config) {
 #ifdef HAS_BUTTON_DIAG
@@ -335,40 +328,14 @@ bool button_press(uint8_t num, ButtonPressType_t press_type) {
     return res;
 }
 
-#ifdef HAS_FREE_RTOS
+#ifdef HAS_RTOS
 void button_thread(void* arg) {
     for(;;) {
         button_proc();
-        vTaskDelay(50 / portTICK_RATE_MS);
+        rtos_delay(50);
     }
 }
 #endif /*HAS_FREE_RTOS*/
 
 COMPONENT_INIT_PATTERT(BUTTON, BUTTON, button)
-
-#if 0
-//COMPONENT_INIT_PATTERT_CNT(FASIL, XXX, xxx, cnt)
-bool button_mcal_init(void) {
-    bool res = true;
-    res = button_init_custom();
-    uint32_t ok = 0;
-    uint32_t cnt = button_get_cnt();
-    (void) cnt ;
-    uint8_t num = 0;
-    for(num = 0; num <= cnt; num++) {
-        res = button_init_one(num);
-        if(res) {
-            ok++;
-        } else {
-        }
-    }
-    if(cnt==ok) {
-        res = true;
-    } else {
-        res = false;
-    }
-    return res;
-}
-#endif
-
 COMPONENT_PROC_PATTERT(BUTTON, BUTTON, button)

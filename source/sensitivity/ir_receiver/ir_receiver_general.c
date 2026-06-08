@@ -4,7 +4,8 @@
 #include "compiler_const.h"
 #include "ir_samsung_mcal.h"
 #include "log.h"
-#include "timer_mcal.h"
+//#include "timer_mcal.h"
+#include "time_mcal.h"
 
 COMPONENT_GET_NODE(IrReceiver, ir_receiver)
 COMPONENT_GET_CONFIG(IrReceiver, ir_receiver)
@@ -82,7 +83,7 @@ bool ir_receiver_proc_event(const uint8_t num, const PinIntEdge_t event) {
     bool res = false;
     IrReceiverHandle_t* Node = IrReceiverGetNode(num);
     if(Node) {
-        uint32_t up_time_us = timer_counter_get_us(Node->timer_num);
+        uint32_t up_time_us = time_get_us32();
 
         IrReceiverEvent_t Event;
         Event.event = event;

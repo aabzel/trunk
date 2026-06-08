@@ -18,6 +18,8 @@ void button_thread(void* arg);
 ButtonHandle_t* ButtonGetNode(uint8_t num);
 const ButtonConfig_t* ButtonGetConfig(uint8_t num);
 bool button_mcal_init(void);
+bool button_init_one(uint32_t num) ;
+
 bool button_proc(void);
 
 bool ButtonStateToOnOff( ButtonState_t state) ;

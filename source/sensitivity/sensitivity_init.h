@@ -72,6 +72,14 @@ extern "C" {
 #define PHOTORESISTOR_INIT
 #endif
 
+#ifdef HAS_INCREMENTAL_ENCODER
+#include "incremental_encoder_mcal.h"
+#define INCREMENTAL_ENCODER_INIT {.init_function=incremental_encoder_mcal_init, .name="IncrementalEncoder",},
+#else
+#define INCREMENTAL_ENCODER_INIT
+#endif
+
+
 #ifdef HAS_HW_VERSION
 #include "hw_version_drv.h"
 #define HW_VERSION_INIT {.init_function=hw_version_mcal_init, .name="HwInit",},

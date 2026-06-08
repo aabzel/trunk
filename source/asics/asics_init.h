@@ -3,19 +3,26 @@
 
 #include "std_includes.h"
 
-#ifdef HAS_AT24CXX
+#ifdef HAS_AT24CX
 #include "at24cxx_drv.h"
-#define AT24CXX_INIT   {.init_function=at24cxx_mcal_init, .name="AT24Cxx",},
+#define AT24CX_INIT   {.init_function=at24cxx_mcal_init, .name="AT24Cxx",},
 #else
-#define AT24CXX_INIT
-#endif /*HAS_AT24CXX*/
+#define AT24CX_INIT
+#endif /**/
+
+#ifdef HAS_MX25L6433F
+#include "mx25l6433f_mcal.h"
+#define MX25L6433F_INIT   {.init_function = mx25l6433f_mcal_init, .name = "MX25L6433F",},
+#else
+#define MX25L6433F_INIT
+#endif /**/
 
 #ifdef HAS_GM67
 #include "gm67_drv.h"
 #define GM67_INIT   {.init_function=gm67_mcal_init, .name="gm67",},
 #else
 #define GM67_INIT
-#endif /*HAS_GM67*/
+#endif /**/
 
 #ifdef HAS_BC127
 #include "bc127_drv.h"
@@ -30,6 +37,16 @@
 #else
 #define BT1026_INIT
 #endif /*HAS_BT1026*/
+
+
+#ifdef HAS_ESP_01
+#include "esp_01.h"
+#define ESP_01_INIT   {.init_function=esp_01_mcal_init, .name="ESP_01",},
+#else
+#define ESP_01_INIT
+#endif /*HAS_ESP_01*/
+
+
 
 #ifdef HAS_FDA801
 #include "fda801_drv.h"
@@ -57,28 +74,28 @@
 #define MAX98357_INIT   {.init_function=max98357_mcal_init, .name="max98357",},
 #else
 #define MAX98357_INIT
-#endif /*HAS_MAX98357*/
+#endif
 
 #ifdef HAS_SD_CARD
 #include "sd_card_drv.h"
 #define SD_CARD_INIT   {.init_function=sd_card_mcal_init, .name="SdCard",},
 #else
 #define SD_CARD_INIT
-#endif /*HAS_SD_CARD*/
+#endif
 
 #ifdef HAS_SI4703
-#include "si4703_drv.h"
+#include "si4703_mcal.h"
 #define SI4703_INIT   {.init_function=si4703_mcal_init, .name="Si4703",},
 #else
 #define SI4703_INIT
-#endif /*HAS_SI4703*/
+#endif
 
 #ifdef HAS_SI4737
 #include "si4737_drv.h"
 #define SI4737_INIT   {.init_function=si4737_mcal_init, .name="Si4737",},
 #else
 #define SI4737_INIT
-#endif /*HAS_SI4737*/
+#endif
 
 #ifdef HAS_BQ24079
 #include "bq24079_drv.h"
@@ -129,6 +146,13 @@
 #define RS2058_INIT   {.init_function=rs2058_mcal_init, .name="Rs2058",},
 #else
 #define RS2058_INIT
+#endif
+
+#ifdef HAS_DRV8870
+#include "drv8870_mcal.h"
+#define DRV8870_INIT   {.init_function=drv8870_mcal_init, .name="DRV8870",},
+#else
+#define DRV8870_INIT
 #endif
 
 #ifdef HAS_W25Q32JV_INIT
@@ -215,11 +239,14 @@
 #define ASICS_CONNECTIVITY_INIT   \
     SX1262_INIT                   \
     BT1026_INIT                   \
+    ESP_01_INIT                   \
     BC127_INIT
 
 #define ASICS_STORAGE_INIT        \
-    AT24CXX_INIT                  \
-    W25Q32JV_INIT
+    AT24CX_INIT                   \
+    MX25L6433F_INIT               \
+    W25Q32JV_INIT                 \
+    SD_CARD_INIT
 
 #define ASICS_CONTROL_INIT        \
     FDA801_INIT                   \
@@ -228,6 +255,7 @@
     WM8731_INIT                   \
     MAX9860_INIT                  \
     MAX98357_INIT                 \
+    DRV8870_INIT                  \
     SSD1306_INIT                  \
     BQ24079_INIT                  \
     TPA2013D1_INIT

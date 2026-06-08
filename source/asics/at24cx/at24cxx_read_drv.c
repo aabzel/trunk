@@ -19,7 +19,7 @@ bool at24cxx_read(uint8_t num, uint16_t address, void* const data, size_t size) 
         if(data) {
             if(size) {
                 uint8_t address_u8 = WORD_LO_BYTE(address);
-                res = i2c_api_read_mem(Node->i2c_num, Node->chip_addr, (uint8_t*)&address_u8, 1, (uint8_t*)data,
+                res = i2c_mcal_read_mem(Node->i2c_num, Node->chip_addr, (uint8_t*)&address_u8, 1, (uint8_t*)data,
                                        (uint32_t)size);
                 if(res) {
                     LOG_INFO(AT24C, "ReadOk");
@@ -40,10 +40,10 @@ bool at24cxx_read_byte(uint8_t num, uint16_t address, uint8_t* const data) {
     At24cxxHandle_t* Node = At24cxxGetNode(num);
     if(Node) {
         if(data) {
-            // res=i2c_api_read_byte(Node->i2c_num, Node->chip_addr, address, (uint8_t*)data);
+            // res=i2c_mcal_read_byte(Node->i2c_num, Node->chip_addr, address, (uint8_t*)data);
             // address = reverse_byte_order_uint16(address);
             uint8_t address_u8 = WORD_LO_BYTE(address);
-            res = i2c_api_read_mem(Node->i2c_num, Node->chip_addr, (uint8_t*)&address_u8, 1, (uint8_t*)data, 1);
+            res = i2c_mcal_read_mem(Node->i2c_num, Node->chip_addr, (uint8_t*)&address_u8, 1, (uint8_t*)data, 1);
             if(false == res) {
                 LOG_ERROR(AT24C, "AT24C_%u,Read,Addr:0x%x,size:%u,byte Err", num, address);
             } else {
@@ -59,7 +59,7 @@ bool at24cxx_read_byte(uint8_t num, uint16_t address, uint8_t* const data) {
 bool at24cxx_read_address_ll(At24cxxHandle_t* const Node, uint16_t* const address) {
     bool res = false;
     if(Node) {
-            res = i2c_api_read(Node->i2c_num, Node->chip_addr, (uint8_t*)address, 2);
+            res = i2c_mcal_read(Node->i2c_num, Node->chip_addr, (uint8_t*)address, 2);
             LOG_DEBUG(AT24C, "AT24C_%u,Addr:0x%04x", Node->num, *address);
     }
     return res;

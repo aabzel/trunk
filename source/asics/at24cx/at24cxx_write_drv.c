@@ -62,7 +62,7 @@ bool at24cxx_write_page(uint8_t num, uint16_t address, const uint8_t* const page
             // byte_train[0] = WORD_HI_BYTE(address);
             byte_train[0] = WORD_LO_BYTE(address);
             memcpy(&byte_train[1], page, AT24C02_PAGE_SIZE);
-            res = i2c_api_write(Node->i2c_num, Node->chip_addr, byte_train, AT24C02_PAGE_SIZE + 1);
+            res = i2c_write_wait(Node->i2c_num, Node->chip_addr, byte_train, AT24C02_PAGE_SIZE + 1);
             if(res) {
                 time_delay_ms(10);
                 LOG_DEBUG(AT24C, "WriteOk Addr 0x%04x, %u Byte", address, AT24C02_PAGE_SIZE);
@@ -83,7 +83,7 @@ bool at24cxx_write_byte(uint8_t num, uint16_t address, uint8_t byte) {
     At24cxxHandle_t* Node = At24cxxGetNode(num);
     if(Node) {
         uint8_t data[2] = {WORD_LO_BYTE(address), byte};
-        res = i2c_api_write(Node->i2c_num, Node->chip_addr, data, sizeof(data));
+        res = i2c_write_wait(Node->i2c_num, Node->chip_addr, data, sizeof(data));
         if(res) {
             time_delay_ms(10);
             LOG_DEBUG(AT24C, "WriteByteOk Addr 0x%x, 0x%x", address, byte);

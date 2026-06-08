@@ -164,7 +164,7 @@ static bool distance_proc_one(uint8_t num) {
             Node->new_dist_time_stamp_ms = cur_up_time_ms;
         }
 #ifdef HAS_DISTANCE_DIAG
-        LOG_DEBUG(DISTANCE,"%s", DistanceNode2Str(Node));
+        LOG_DEBUG(DISTANCE,"%s", DistanceNodeToStr(Node));
 #endif
     } else {
         LOG_PARN(DISTANCE, "%u NodeErr", num);
@@ -216,7 +216,7 @@ bool distance_init_one(uint8_t num) {
             Node->new_dist_time_stamp_ms = 0;
             Node->distance_m = DISTANCE_INFINITY_M;
 #ifdef HAS_DISTANCE_DIAG
-            LOG_WARNING(DISTANCE, "%s", DistanceNode2Str(Node));
+            LOG_WARNING(DISTANCE, "%s", DistanceNodeToStr(Node));
 #endif
             res = true;
         } else {

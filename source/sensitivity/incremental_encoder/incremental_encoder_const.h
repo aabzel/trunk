@@ -1,0 +1,29 @@
+#ifndef INCREMENTAL_ENCODER_CONST_H
+#define INCREMENTAL_ENCODER_CONST_H
+
+#include "time_mcal.h"
+#include "incremental_encoder_dep.h"
+
+#define INCREMENTAL_ENCODER_POLL_PERIOD_US 1
+#define INCREMENTAL_ENCODER_VERSION 2
+#define INCREMENTAL_ENCODER_PERIOD_US MSEC_2_USEC(500)
+
+typedef enum {
+    INC_ENCODER_STATE_B0A0 = 0,
+    INC_ENCODER_STATE_B0A1 = 1,
+    INC_ENCODER_STATE_B1A1 = 3,
+    INC_ENCODER_STATE_B1A0 = 2,
+    INC_ENCODER_STATE_UNDEF = 0,
+}IncrementalEncoderState_t;
+
+
+typedef enum{
+    INC_ENCODER_INPUT_A_RISE = 0,
+    INC_ENCODER_INPUT_A_FALL = 1,
+    INC_ENCODER_INPUT_B_RISE = 3,
+    INC_ENCODER_INPUT_B_FALL = 2,
+    INC_ENCODER_INPUT_UNDEF = 4,
+}IncrementalEncoderInput_t;
+
+
+#endif /* INCREMENTAL_ENCODER_CONST_H */

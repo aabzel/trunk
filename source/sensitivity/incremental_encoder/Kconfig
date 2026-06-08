@@ -1,0 +1,4 @@
+
+config INCREMENTAL_ENCODER
+    bool "Enable use of the INCREMENTAL_ENCODER drivers"
+

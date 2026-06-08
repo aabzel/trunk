@@ -18,7 +18,7 @@
 #error "+HAS_DIAG"
 #endif /*HAS_DIAG*/
 
-const char* At24cxxConfig2Str(const At24cxxConfig_t* const Config);
+const char* At24cxxConfigToStr(const At24cxxConfig_t* const Config);
 bool at24cxx_diag(void);
 bool At24cxxDiagConfig(const At24cxxConfig_t* const Config);
 bool At24cxxDiagInfo(const At24cxxInfo_t* const Info);

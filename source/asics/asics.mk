@@ -3,13 +3,13 @@ ifneq ($(ASICS_MK_INC),Y)
     ASICS_MK_INC=Y
 
     ASICS_DIR = $(WORKSPACE_LOC)/asics
-    #@echo $(error ASICS_DIR=$(ASICS_DIR))
+    # $(error ASICS_DIR=$(ASICS_DIR))
 
     INCDIR += -I$(ASICS_DIR)
 
-    OPT += -DHAS_ASICS
+    MCAL_OPT += -DHAS_ASICS
     ifeq ($(ASICS_COMMANDS),Y)
-        OPT += -DHAS_ASICS_COMMANDS
+        MCAL_OPT += -DHAS_ASICS_COMMANDS
     endif
 
     #SOURCES_C += $(ASICS_DIR)/asics_drv.c
@@ -17,7 +17,14 @@ ifneq ($(ASICS_MK_INC),Y)
     ifeq ($(AT24C02),Y)
         include $(ASICS_DIR)/at24cxx/at24cxx.mk
     endif
- 
+
+    ifeq ($(DRV8870),Y)
+        include $(ASICS_DIR)/drv8870/drv8870.mk
+    endif
+    
+    ifeq ($(ESP_01),Y)
+        include $(ASICS_DIR)/esp_01/esp_01.mk
+    endif
     ifeq ($(AD9833),Y)
         include $(ASICS_DIR)/ad9833/ad9833.mk
     endif
@@ -30,22 +37,26 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/bc127/bc127.mk
     endif
 
+    ifeq ($(BTS724G),Y)
+        include $(ASICS_DIR)/bts724g/bts724g.mk
+    endif
+
     ifeq ($(BT1026),Y)
         include $(ASICS_DIR)/bt1026/bt1026.mk
     endif
 
     ifeq ($(BH1750),Y)
-        #@echo $(error BH1750=$(BH1750))
+        # $(error BH1750=$(BH1750))
         include $(ASICS_DIR)/bh1750/bh1750.mk
     endif
 
     ifeq ($(DECADRIVER),Y)
-        #@echo $(error DECADRIVER= $(DECADRIVER))
+        # $(error DECADRIVER= $(DECADRIVER))
         include $(ASICS_DIR)/decadriver/decadriver.mk
     endif
 
     ifeq ($(DS3231),Y)
-        #@echo $(error DS3231= $(DS3231))
+        # $(error DS3231= $(DS3231))
         include $(ASICS_DIR)/ds3231/ds3231.mk
     endif
 
@@ -53,8 +64,20 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/dw1000/dw1000.mk
     endif
 
+    ifeq ($(DWM1000),Y)
+        include $(ASICS_DIR)/dwm1000/dwm1000.mk
+    endif
+
+    ifeq ($(DWM3000),Y)
+        include $(ASICS_DIR)/dwm3000/dwm3000.mk
+    endif
+
+    ifeq ($(DWS3000),Y)
+        include $(ASICS_DIR)/dws3000/dws3000.mk
+    endif
+
     ifeq ($(LTR390),Y)
-        #@echo $(error LTR390=$(LTR390))
+        # $(error LTR390=$(LTR390))
         include $(ASICS_DIR)/ltr390/ltr390.mk
     endif
 
@@ -62,6 +85,10 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/fda801/fda801.mk
     endif
 
+    ifeq ($(GD5F1GQ5),Y)
+        include $(ASICS_DIR)/gd5f1gq5/gd5f1gq5.mk
+    endif
+    
     ifeq ($(GM67),Y)
         include $(ASICS_DIR)/gm67/gm67.mk
     endif
@@ -94,6 +121,10 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/mx25r6435f/mx25r6435f.mk
     endif
 
+    ifeq ($(MX25L6433F),Y)
+        include $(ASICS_DIR)/mx25l6433f_transformed/mx25l6433f.mk
+    endif
+
     ifeq ($(SI4703),Y)
         include $(ASICS_DIR)/si4703/si4703.mk
     endif
@@ -103,7 +134,7 @@ ifneq ($(ASICS_MK_INC),Y)
     endif
 
     ifeq ($(SD_CARD),Y)
-        #@echo $(error SD_CARD=$(SD_CARD))
+        # $(error SD_CARD=$(SD_CARD))
         include $(ASICS_DIR)/sd_card/sd_card.mk
     endif
 
@@ -127,4 +158,7 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/ublox_neo_6m/ublox_neo_6m.mk
     endif
 
+    ifeq ($(ZED_F9P),Y)
+        include $(ASICS_DIR)/zed_f9p/zed_f9p.mk
+    endif
 endif

@@ -8,6 +8,7 @@ extern "C" {
 #include "std_includes.h"
 #include "ir_receiver_config.h"
 #include "ir_receiver_types.h"
+
 #ifdef HAS_IR_RECEIVER_DIAG
 #include "ir_receiver_diag.h"
 #endif

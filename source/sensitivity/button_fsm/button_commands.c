@@ -18,7 +18,7 @@
 
 #ifndef HAS_BUTTON_COMMANDS
 #error "+HAS_BUTTON_COMMANDS"
-#endif /*HAS_BUTTON_COMMANDS*/
+#endif
 
 bool button_set_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -126,6 +126,29 @@ bool button_press_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = button_press(num, press_type);
+    }
+    return res;
+}
+
+
+bool button_init_command(int32_t argc, char* argv[]){
+    bool res = false;
+    uint8_t num = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+    switch(argc){
+        case 0 : {
+            res = button_mcal_init();
+        } break;
+        case 1 : {
+            res = button_init_one(num) ;
+        } break;
+        default : {
+
+        } break;
     }
     return res;
 }
