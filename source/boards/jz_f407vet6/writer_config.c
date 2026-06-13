@@ -188,7 +188,9 @@ WriterHandle_t WriterInstance[6] = {
     { .num = WRITER_NUM_UART1, .valid = true, },
 #endif
 
-
+#ifdef HAS_UART2
+    { .num = WRITER_NUM_UART2, .valid = true, },
+#endif
 
 #ifdef HAS_ISO_TP
     { .num = WRITER_NUM_ISO_TP1, .valid = true, },
@@ -203,9 +205,6 @@ WriterHandle_t WriterInstance[6] = {
     { .num = WRITER_NUM_ESP_01, .valid = true, },
 #endif
 
-#ifdef HAS_UART2
-    { .num = WRITER_NUM_UART2, .valid = true, },
-#endif
 };
 
 COMPONENT_GET_CNT(Writer, writer)

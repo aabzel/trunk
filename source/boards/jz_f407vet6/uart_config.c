@@ -27,10 +27,11 @@ static uint8_t Uart6TxFifoArray[UART_TX_FIFO_SIZE/4];
 const UartConfig_t UartConfig[] = {
 
 #ifdef HAS_UART1
-    { .num = 1,
+    {
+      .num = 1,
       .baud_rate = 460800,
       .name = "CLI",
-      .dma = { .tx = false, .rx = false,},
+   //   .dma = { .tx = false, .rx = false,},
       .interrupts_on = true,
       .irq_priority = 0,
       .momve_method = MOVE_MODE_INTERRUPT,
@@ -88,12 +89,21 @@ const UartConfig_t UartConfig[] = {
 #endif
 
 #ifdef HAS_UART6
-    { .num = 6,
-      .baud_rate = 9600,
-      .name = "GNSS",
-      .rx_buff_size = sizeof(Uart6RxFifoArray),
-      .RxFifoArray = Uart6RxFifoArray,
-      .valid=true,},
+    {
+        .num = 6,
+        .baud_rate = 9600,
+        .word_len_bit = 8,
+        .stop_bit_cnt = 2,
+        .dma = { .tx = false, .rx = false,},
+        .name = "GNSS",
+        .irq_priority = 0,
+        .momve_method = MOVE_MODE_INTERRUPT,
+        .TxFifoArray = Uart3TxFifoArray,
+        .tx_buff_size = sizeof(Uart3TxFifoArray),
+        .rx_buff_size = sizeof(Uart6RxFifoArray),
+        .RxFifoArray = Uart6RxFifoArray,
+        .valid=true,
+    },
 #endif
 };
 

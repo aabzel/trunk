@@ -72,5 +72,3 @@ RunningLineHandle_t RunningLineInstance[] = {
 
 
 COMPONENT_GET_CNT(RunningLine, running_line)
-
-

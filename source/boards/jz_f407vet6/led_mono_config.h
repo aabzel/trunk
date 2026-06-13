@@ -10,11 +10,12 @@ extern "C" {
 
 #ifndef HAS_LED
 #error "Add HAS_LED"
-#endif 
+#endif
 
-#define LED_GREEN_ID 1
-
-#define LED_HEARTBEAT_ID 1
+typedef enum{
+    LED_ID_HEARTBEAT =1,
+    LED_ID_ERROR = 2,
+}LedLegalNum_t;
 
 extern const LedMonoConfig_t LedMonoConfig[];
 extern LedMonoHandle_t LedMonoInstance[];

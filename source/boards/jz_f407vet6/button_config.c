@@ -2,26 +2,34 @@
 
 #include "data_utils.h"
 
+#ifdef HAS_SMOOTH_LAMP
+#include "smooth_lamp.h"
+#endif
+
 #ifndef HAS_BUTTON
 #error "Add HAS_BUTTON"
 #endif
 
 static bool button1_proc(void) {
     bool res = false;
+#ifdef HAS_SMOOTH_LAMP
+    res = smooth_lamp_ctrl(1, true);
+#endif
     return res;
 }
 
 static bool button2_proc(void) {
     bool res = false;
+#ifdef HAS_SMOOTH_LAMP
+    res = smooth_lamp_ctrl(1, false);
+#endif
     return res;
 }
-
 
 static bool button3_proc(void) {
     bool res = false;
     return res;
 }
-
 
 const ButtonConfig_t ButtonConfig[ ] = {
     {

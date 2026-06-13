@@ -1,9 +1,7 @@
 #ifndef INPUT_CAPTURE_CONFIG_GENERAL_H
 #define INPUT_CAPTURE_CONFIG_GENERAL_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "input_capture_types.h"
 
 #ifndef HAS_INPUT_CAPTURE

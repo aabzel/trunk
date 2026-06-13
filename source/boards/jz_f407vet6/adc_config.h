@@ -6,7 +6,13 @@
 
 #define ADC_REF_VOLTAGE (3.3f)
 
-#define ADC1_RX_SAMPLE_CNT 1024
+/*
+  3200 samples - 10 byte
+  1600 samples - 5 byte
+ */
+#define ADC1_RX_HALF_SAMPLE_CNT (1600)
+
+#define ADC1_RX_SAMPLE_CNT (2*ADC1_RX_HALF_SAMPLE_CNT)
 extern uint16_t Adc1RxSamples[ADC1_RX_SAMPLE_CNT];
 
 extern const AdcConfig_t AdcConfig[];

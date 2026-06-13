@@ -21,10 +21,7 @@ const Esp01Config_t Esp01Config[] = {
 };
 
 Esp01Handle_t Esp01Instance[] = {
-    {
-     .num = 1,
-     .valid = true,
-    },
+    {.num=1, .valid=true, }
 };
 
 uint32_t esp_01_get_cnt(void) {

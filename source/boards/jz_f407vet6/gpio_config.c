@@ -11,32 +11,71 @@
 #error "that file only for STM32 MCUs"
 #endif
 
+#ifdef HAS_INCREMENTAL_ENCODER
+#define GPIO_CONFIG_INCREMENTAL_ENCODER                                                      \
+        { .Pad = { .port = PORT_E, .pin = 0, }, .name = "IncEnA", .mode = GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE, .pull = GPIO__PULL_UP, .speed=GPIO_SPEED_LOW_SPEED, .mux = 0, .logic_level = GPIO_LVL_HI, }, \
+        { .Pad = { .port = PORT_E, .pin = 1, }, .name = "IncEnB", .mode = GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE, .pull = GPIO__PULL_UP, .speed=GPIO_SPEED_LOW_SPEED, .mux = 0, .logic_level = GPIO_LVL_HI, },
+#else
+#define GPIO_CONFIG_INCREMENTAL_ENCODER
+#endif
+
+//        { .Pad = { .port = PORT_E, .pin = 4, }, .name = "RxClk", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,             },
+
+#ifdef HAS_GPIO_DEBUG
+#define GPIO_CONFIG_DEBUG                                                      \
+        { .Pad = { .port = PORT_E, .pin = 0, }, .name = "Pha15", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_LOW,             },     \
+        { .Pad = { .port = PORT_E, .pin = 1, }, .name = "RxData", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,             },     \
+        { .Pad = { .port = PORT_D, .pin = 4, }, .name = "TxClk", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,             },     \
+        { .Pad = { .port = PORT_D, .pin = 15, }, .name = "TIM2overflow", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,     },     \
+        { .Pad = { .port = PORT_D, .pin = 13, }, .name = "HalfAdc1", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,           },    \
+        { .Pad = { .port = PORT_D, .pin = 11, }, .name = "DoneAdc1", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,       },
+#else
+#define GPIO_CONFIG_DEBUG
+#endif
+
+#ifdef HAS_LASER_TX
 #define GPIO_CONFIG_LASER                                                                 \
+    {.Pad={.port=PORT_E, .pin=6,}, .name="TxBitData", .mux = 0, .mode = GPIO_API_MODE_GPIO, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
     {.Pad={.port=PORT_A, .pin=8,}, .name="TIM1_CH1", .mux = GPIO_AF1_TIM1, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
     {.Pad={.port=PORT_E, .pin=5,}, .name="laser", .mux = GPIO_AF3_TIM9, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
     {.Pad={.port=PORT_B, .pin=7,}, .name="laser", .mux = GPIO_AF2_TIM4, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
     {.Pad={.port=PORT_A, .pin=6,}, .name="laser", .mux = GPIO_AF2_TIM3, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
+#else
+#define GPIO_CONFIG_LASER
+#endif
 
+#ifdef HAS_IR_RECEIVER
+#define GPIO_CONFIG_IR_SENSOR                        \
+    {.Pad={.port=PORT_A, .pin=6,},                   \
+     .name="IRsensor",                               \
+     .mux = 0,                                       \
+     .mode = GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE,    \
+     .pull=GPIO__PULL_UP,                            \
+     .speed=GPIO_SPEED_FREQ_VERY_HIGH,               \
+     .logic_level = GPIO_LVL_HI,                     \
+     },
+#else
+#define GPIO_CONFIG_IR_SENSOR
 
+#endif
 
-
+#ifdef HAS_ADC
 #define GPIO_CONFIG_ADC                                                                                                                                     \
     {.Pad={.port=PORT_A, .pin=3,}, .name="ADC123_IN3", .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },   \
     {.Pad={.port=PORT_A, .pin=0,}, .name="ADC123_IN0", .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },   \
     {.Pad={.port=PORT_B, .pin=1,}, .name="ADC12_IN9",  .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },   \
-    {.Pad={.port=PORT_B, .pin=0,}, .name="ADC12_IN8",  .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },   \
-    {.Pad={.port=PORT_A, .pin=6,}, .name="ADC12_IN6",  .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
+    {.Pad={.port=PORT_B, .pin=0,}, .name="ADC12_IN8",  .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
+#else
+#define GPIO_CONFIG_ADC
+#endif
 
+#ifdef HAS_DAC
 #define GPIO_CONFIG_DAC                                                                                                                                     \
-    {.Pad={.port=PORT_A, .pin=4,}, .name="DAC_OUT1", .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },   \
+    {.Pad={.port=PORT_A, .pin=4,}, .name="DAC_OUT1", .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },     \
     {.Pad={.port=PORT_A, .pin=5,}, .name="DAC_OUT2", .mux = 0, .mode = GPIO_API_MODE_ANALOG, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
-
-
-
-#define GPIO_CONFIG_DEBUG                  \
-        { .Pad = { .port = PORT_D, .pin = 15 }, .name = "TIM2overflow", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,             },     \
-        { .Pad = { .port = PORT_D, .pin = 13 }, .name = "HalfAdc1", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,           },    \
-        { .Pad = { .port = PORT_D, .pin = 11 }, .name = "DoneAdc1", .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,       },
+#else
+#define GPIO_CONFIG_DAC
+#endif
 
 
 #ifdef HAS_CAN1
@@ -60,12 +99,18 @@
         GPIO_CONFIG_CAN1    \
         GPIO_CONFIG_CAN2
 
+#define GPIO_CONFIG_PWM                      \
+    {.Pad={.port=PORT_A, .pin=0,}, .name="TIM5_CH1", .mux = GPIO_AF2_TIM5, .logic_level = GPIO_LVL_LOW, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
+    {.Pad={.port=PORT_A, .pin=3,}, .name="TIM9_CH2", .mux = GPIO_AF3_TIM9, .logic_level = GPIO_LVL_LOW, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
+
+
 const GpioConfig_t GpioConfig[] = {
         GPIO_CONFIG_ADC
         GPIO_CONFIG_DAC
         GPIO_CONFIG_LASER
         GPIO_CONFIG_DEBUG
         GPIO_CONFIG_CAN
+        GPIO_CONFIG_PWM
 
 
 
@@ -90,20 +135,32 @@ const GpioConfig_t GpioConfig[] = {
 #endif
     },
 
+
+
+
+#if 0
     { .Pad = { .port = PORT_A, .pin = 6 },
       .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_LOW,
 #ifdef HAS_LOG
       .name = "DEBUG",
 #endif
     },
-
-
-
-#if 0
     { .Pad = { .port = PORT_A, .pin = 3 },
       .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_LOW,
 #ifdef HAS_LOG
       .name = "DEBUG_PA3",
+#endif
+    },
+#endif
+
+#ifdef HAS_SIGMA_DELTA
+    { .Pad = { .port = PORT_E, .pin = 4 },
+      .mux = 0,
+      .mode = GPIO_API_MODE_OUTPUT,
+      .pull = GPIO__PULL_AIR,
+      .logic_level = GPIO_LVL_LOW,
+#ifdef HAS_LOG
+      .name = "SigmaDelta",
 #endif
     },
 #endif
@@ -130,14 +187,11 @@ const GpioConfig_t GpioConfig[] = {
     {.Pad={.port=PORT_A, .pin=11,}, .name="USB_FS_DM", .mux = GPIO_AF10_OTG_FS,  .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH,   .logic_level=GPIO_LVL_HI,},
 #endif
 
-
 #ifdef HAS_BUTTON
     {.Pad = {.port=PORT_E, .pin=10,}, .name="SW1", .mode=GPIO_API_MODE_INPUT_EXINT_FAILLING, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
     {.Pad = {.port=PORT_E, .pin=11,}, .name="SW2", .mode=GPIO_API_MODE_INPUT_EXINT_FAILLING, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
     {.Pad = {.port=PORT_E, .pin=12,}, .name="SW3", .mode=GPIO_API_MODE_INPUT_EXINT_FAILLING, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
 #endif
-
-
 
 #ifdef HAS_UART1
     {.Pad = {.port=PORT_A, .pin=10, }, .name="USART1_RX",   .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,   .mux=GPIO_AF7_USART1, .logic_level=GPIO_LVL_HI},
@@ -203,7 +257,8 @@ const GpioConfig_t GpioConfig[] = {
     {.Pad = {.port=PORT_B, .pin=10}, .name="UART3_TX",   .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .mux=GPIO_AF7_USART3, .logic_level=GPIO_LVL_HI},
     {.Pad = {.port=PORT_B, .pin=11}, .name="UART3_RX",   .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=GPIO_AF7_USART3, .logic_level=GPIO_LVL_HI},
 #endif /*HAS_UART3*/
-
+    GPIO_CONFIG_IR_SENSOR
+    GPIO_CONFIG_INCREMENTAL_ENCODER
 };
 
 uint32_t gpio_get_cnt(void) {

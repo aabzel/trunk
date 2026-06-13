@@ -18,7 +18,10 @@ const CliConfig_t SECTION_CFG_DATA CliConfig[] = {
 };
 
 CliHandle_t CliInstance[] = {
-    {    .num = 1,    .valid = true,    },
+    {
+        .num = 1,
+        .valid = true,
+    },
 };
 
 uint32_t cli_get_command_cnt(void) {

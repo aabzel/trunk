@@ -8,6 +8,14 @@
 #error "Add HAS_PWM"
 #endif
 
+typedef enum {
+    PWM_NUM_UNDEF = 0,
+    PWM_NUM_DRV8870_CH1_IN1,
+    PWM_NUM_DRV8870_CH1_IN2,
+    PWM_NUM_LASER_TX,
+    PWM_NUM_CNT,
+} PwmLegalNums_t;
+
 extern const PwmConfig_t PwmConfig[];
 extern PwmHandle_t PwmInstance[];
 

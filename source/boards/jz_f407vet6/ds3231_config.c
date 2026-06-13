@@ -11,7 +11,7 @@ const Ds3231Config_t Ds3231Config[]={
     {.num = 1, .i2c_num = 1, .valid = true, .hour_mode = HOUR_MODE_24H, .offset = 127, .rate_select = RS_8192_HZ,},
 };
 
-Ds3231Handle_t Ds3231Item[]={
+Ds3231Handle_t Ds3231Instance[]={
     {.num=1, .valid=true, .init=false,}
 };
 
@@ -24,10 +24,5 @@ uint32_t ds3231_get_reg_config_cnt(void){
     return cnt;
 }
 
-
-uint32_t ds3231_get_cnt(void){
-    uint8_t cnt=0;
-    cnt = ARRAY_SIZE(Ds3231Config);
-    return cnt;
-}
+COMPONENT_GET_CNT(Ds3231, ds3231)
 

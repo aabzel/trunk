@@ -18,9 +18,9 @@ const DidConfig_t DidConfig[] = {
 };
 
 DidHandle_t DidInstance[] = {
-    {.num=1, .valid= true,},
-    {.num=2, .valid= true,},
-    {.num=3, .valid= true,},
+    {.num = 1, .valid = true,},
+    {.num = 2, .valid = true,},
+    {.num = 3, .valid = true,},
 };
 
 COMPONENT_GET_CNT(Did, did)

@@ -10,5 +10,4 @@
 
 #define XTALL_FREQ_HZ (HSE_VALUE)
 
-
 #endif /* BOARD_JZ_F407VET6_H407_H   */

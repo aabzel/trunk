@@ -2,7 +2,7 @@
 
 #ifndef HAS_INPUT_CAPTURE
 #error "Add HAS_INPUT_CAPTURE"
-#endif /*HAS_INPUT_CAPTURE*/
+#endif /**/
 
 #include "data_utils.h"
 

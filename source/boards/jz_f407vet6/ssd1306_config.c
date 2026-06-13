@@ -12,14 +12,4 @@ Ssd1306Handle_t Ssd1306Instance[] = {
      {.num=1, .valid=true,},
 };
 
-uint32_t ssd1306_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(Ssd1306Instance);
-    cnt2 = ARRAY_SIZE(Ssd1306Config);
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Ssd1306, ssd1306)

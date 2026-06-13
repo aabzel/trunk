@@ -1,6 +1,7 @@
 #ifndef IQUEUE_CONFIG_H
 #define IQUEUE_CONFIG_H
 
+#include "std_includes.h"
 #include "iqueue_types.h"
 
 typedef enum {

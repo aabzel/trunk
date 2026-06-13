@@ -19,10 +19,7 @@ const LogConfig_t SECTION_CFG_DATA LogConfig[] = {
         .valid = true,
         .colored = false,
         .time_stamp = true,
-
-#ifdef HAS_INTERFACES
         .inter_face = {.interface_name = INTERFACE_NAME_USB, .num = 1, },
-#endif
     },
 #endif
 };

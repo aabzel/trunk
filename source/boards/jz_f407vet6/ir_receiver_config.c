@@ -22,7 +22,7 @@ const IrReceiverConfig_t IrReceiverConfig[] = {
         .signal_fix = signalArrayFix,
         .signal_size = ARRAY_SIZE(signalArrayCur),
         .valid = true,
-        .IrPad = {.port=PORT_F, .pin=3,},
+        .IrPad = {.port = PORT_A, .pin = 6,},
         .name = "IrSamsung",
     },
 };

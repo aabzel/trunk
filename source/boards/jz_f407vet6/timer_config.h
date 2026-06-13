@@ -5,6 +5,7 @@
 #include "timer_types.h"
 
 typedef enum {
+    TIMER_NUM_DELTA_SIGMA = 1,
     TIMER_NUM_LO_BASE = 8,
     TIMER_NUM_ADC1_TRIG = 2,
     TIMER_NUM_LASER = 3,
@@ -14,7 +15,7 @@ typedef enum {
 } TimerLegalNums_t;
 
 extern const TimerConfig_t TimerConfig[];
-extern TimerHandle_t TimerInstance[];
+extern TimerHandle_t TimerInstance[15];
 
 uint32_t timer_get_cnt(void);
 

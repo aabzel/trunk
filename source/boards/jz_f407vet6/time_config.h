@@ -12,9 +12,11 @@ typedef enum {
     TIME_PCAN_TIMESTAMP = 4,
     TIME_HAL_TICK = 5,
     TIME_DWT= 6,
+    TIME_CNT= 7,
 }TimeLegalNum_t;
 
 #define TIME_MAIN_NUM TIME_DWT
+#define TIME_US_MAIN_NUM TIME_DWT
 
 extern const TimeConfig_t TimeConfig[];
 extern TimeHandle_t TimeInstance[];

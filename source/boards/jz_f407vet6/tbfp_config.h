@@ -2,9 +2,7 @@
 #ifndef TBFP_CONFIG_H
 #define TBFP_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "tbfp_types.h"
 
 #ifndef HAS_TBFP
