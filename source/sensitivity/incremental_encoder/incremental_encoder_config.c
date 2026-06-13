@@ -6,6 +6,8 @@ static IncrementalEncoderEvent_t IncEncEventMem[100]={0};
 
 const IncrementalEncoderConfig_t IncrementalEncoderConfig[] = {
     {
+        .limit_down = 0,
+        .limit_up = 1600,
         .num = 1,
         .EventMem = IncEncEventMem,
         .event_mem_size = ARRAY_SIZE(IncEncEventMem),
@@ -16,6 +18,7 @@ const IncrementalEncoderConfig_t IncrementalEncoderConfig[] = {
         .name = "brightness",
     },
 };
+
 
 IncrementalEncoderHandle_t IncrementalEncoderInstance[] = {
     {

@@ -25,6 +25,7 @@ const IncrementalEncoderInfo_t* IncrementalEncoderGetInfo(uint8_t num);
 #endif
 
 
+bool incremental_encoder_is_valid(uint8_t num);
 bool incremental_encoder_mcal_init(void);
 bool incremental_encoder_init_custom(void);
 bool incremental_encoder_init_common(const IncrementalEncoderConfig_t* const Config, IncrementalEncoderHandle_t* const Node);
@@ -36,9 +37,11 @@ bool incremental_encoder_proc(void);
 
 /*setters*/
 bool incremental_encoder_set_0(uint8_t num);
+bool incremental_encoder_set_counter(uint8_t num, int32_t counter);
 
 /*getters*/
 IncrementalEncoderState_t incremental_encoder_read_state( IncrementalEncoderHandle_t *Node );
+int32_t incremental_encoder_get_counter_limited(const uint8_t num);
 int32_t incremental_encoder_get_counter(const uint8_t num);
 float  incremental_encoder_get_revolutions(const uint8_t num);
 

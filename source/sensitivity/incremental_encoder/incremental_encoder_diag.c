@@ -96,6 +96,7 @@ const char* IncrementalEncoderNodeToStr(const IncrementalEncoderHandle_t* const 
         snprintf(text, sizeof(text), "%sNewLoState:%s,", text, IncrementalEncoderStateToStr(Node->logic_state));
         snprintf(text, sizeof(text), "%sNewReState:%s,", text,IncrementalEncoderStateToStr( Node->new_state));
         snprintf(text, sizeof(text), "%sCNT:%d,", text, Node->cnt);
+        snprintf(text, sizeof(text), "%sCntLim:%d,", text, Node->cnt_limited);
         snprintf(text, sizeof(text), "%sRev:%d,", text, Node->revolutions);
         snprintf(text, sizeof(text), "%sSpin:%u,", text, Node->spin);
         snprintf(text, sizeof(text), "%sInit:%s,", text, OnOffToStr(Node->init));

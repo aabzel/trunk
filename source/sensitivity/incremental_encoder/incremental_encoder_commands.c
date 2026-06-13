@@ -1,9 +1,8 @@
 #include "incremental_encoder_commands.h"
 
 #include "convert.h"
-#include "log.h"
 #include "incremental_encoder_mcal.h"
-
+#include "log.h"
 
 bool incremental_encoder_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -47,8 +46,7 @@ bool incremental_encoder_init_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-bool incremental_encoder_set_0_command(int32_t argc, char* argv[]){
+bool incremental_encoder_set_0_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
 

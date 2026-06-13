@@ -5,7 +5,7 @@
 #include "incremental_encoder_dep.h"
 
 #define INCREMENTAL_ENCODER_POLL_PERIOD_US 1
-#define INCREMENTAL_ENCODER_VERSION 2
+#define INCREMENTAL_ENCODER_VERSION 3
 #define INCREMENTAL_ENCODER_PERIOD_US MSEC_2_USEC(500)
 
 typedef enum {
