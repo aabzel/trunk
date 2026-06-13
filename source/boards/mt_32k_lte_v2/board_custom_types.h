@@ -1,0 +1,6 @@
+#ifndef BOARD_CUSTOM_TYPE_H
+#define BOARD_CUSTOM_TYPE_H
+
+#define BOARD_CUSTOM_CONFIG
+
+#endif /* BOARD_CUSTOM_TYPE_H  */

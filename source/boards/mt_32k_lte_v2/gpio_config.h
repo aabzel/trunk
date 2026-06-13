@@ -1,0 +1,27 @@
+#ifndef GPIO_CONFIG_H
+#define GPIO_CONFIG_H
+
+#include <stdint.h>
+
+#ifndef HAS_GPIO
+#error "+HAS_GPIO"
+#endif
+
+#include "gpio_mcal.h"
+#include "gpio_types.h"
+
+#include "sys_config.h"
+#include "stm32f4xx_hal.h"
+
+#ifndef USE_HAL_DRIVER
+#error "that wile only for STM32 MCUs"
+#endif
+
+#define SYSTEM_DEBUG_PORT PORT_A
+#define SYSTEM_DEBUG_PIN 6
+
+extern const GpioConfig_t GpioConfig[];
+
+uint32_t gpio_get_cnt(void);
+
+#endif /* GPIO_CONFIG_H  */
