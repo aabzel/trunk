@@ -1,0 +1,4 @@
+
+config BICYCLE_HEADLAMP
+    bool "Enable use of the BICYCLE_HEADLAMP drivers"
+

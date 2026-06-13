@@ -1,0 +1,4 @@
+
+config ENCODER_LAMP
+    bool "Enable use of the ENCODER_LAMP drivers"
+

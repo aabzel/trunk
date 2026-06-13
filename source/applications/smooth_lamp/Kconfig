@@ -1,0 +1,4 @@
+
+config SMOOTH_LAMP
+    bool "Enable use of the SMOOTH_LAMP drivers"
+
