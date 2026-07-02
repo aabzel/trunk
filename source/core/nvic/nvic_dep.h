@@ -2,9 +2,10 @@
 #define NVIC_DEPEND_H
 
 
-
+#ifdef HAS_VENDOR_SDK
 #ifndef HAS_CMSIS
 #error "+HAS_CMSIS"
+#endif
 #endif
 
 #ifndef HAS_NVIC

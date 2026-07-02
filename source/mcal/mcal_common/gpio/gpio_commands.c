@@ -334,7 +334,7 @@ bool gpio_mode_command(int32_t argc, char* argv[]) {
     if(res) {
         switch(argc) {
         case 2: {
-            GpioApiMode_t mode = gpio_mode_get(Pad);
+            mode = gpio_mode_get(Pad);
             LOG_INFO(GPIO, "Get,%s,Mode:%s", GpioPadToStr(Pad), GpioModeToStr(mode));
         } break;
         case 3: {

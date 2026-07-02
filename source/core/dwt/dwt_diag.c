@@ -46,6 +46,7 @@ const char* DwtNodeToStr(const DwtHandle_t* const Node) {
         uint32_t time_ms32 = dwt_get_time_ms32(Node->num);
         uint64_t time_us64 = dwt_get_time_us64(Node->num);
 
+        snprintf(text, sizeof(text), "%sCPUinitFreq:%u Hz,", text, Node->counter_freq);
         snprintf(text, sizeof(text), "%sUpTime:%u ms,", text, time_ms32);
         snprintf(text, sizeof(text), "%sUpTime:%llu us,", text, time_us64);
         snprintf(text, sizeof(text), "%sUpTimeU32:%u,", text, Node->up_time_u32);

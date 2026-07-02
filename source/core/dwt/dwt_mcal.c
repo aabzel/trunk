@@ -3,14 +3,18 @@
 #include "clock_mcal.h"
 #include "code_generator.h"
 #include "compiler_const.h"
+#include "core_driver.h"
+
+#ifdef HAS_STM_HAL
 #include "hal_mcal.h"
+#endif
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
 
 COMPONENT_GET_NODE(Dwt, dwt)
 COMPONENT_GET_CONFIG(Dwt, dwt)
-
 
 /*   ISO-26262 require verify configuration   */
 bool DwtIsValidConfig(const DwtConfig_t* const Config) {
@@ -21,7 +25,7 @@ bool DwtIsValidConfig(const DwtConfig_t* const Config) {
 #ifdef HAS_LOG
             LOG_ERROR(LG_DWT, "DWT%u,Name,Err", Config->num);
 #endif
-            //res = false;
+            // res = false;
         }
         ifn(Config->DWTx) {
 #ifdef HAS_LOG
@@ -33,7 +37,7 @@ bool DwtIsValidConfig(const DwtConfig_t* const Config) {
 #ifdef HAS_LOG
             LOG_ERROR(LG_DWT, "DWT%u,CoreFreq,Err", Config->num);
 #endif
-            //res = false;
+            // res = false;
         }
     }
     return res;
@@ -122,7 +126,6 @@ uint64_t dwt_get_time_us64(uint8_t num) {
     DwtHandle_t* Node = DwtGetNode(num);
     if(Node) {
         uint64_t counter_u64 = dwt_get_run_time_counter_u64(num);
-        // Node->divider_1us = Node->counter_freq/1000000UL;
         time_us64 = (counter_u64 / Node->divider_1us);
     }
     return time_us64;
@@ -158,6 +161,24 @@ bool dwt_proc_one(uint8_t num) {
     return res;
 }
 
+bool dwt_init_node(DwtHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+        Node->valid = true;
+        Node->valid = true;
+        Node->DWTx->CYCCNT = 0;
+        Node->wrap_counter = 0;
+        Node->up_time_u32_prev = 0;
+        Node->divider_1us = 0;
+        Node->up_time_u32 = 0;
+        Node->divider_1ms = 0;
+        Node->up_time_u64 = 0;
+        Node->spin = 0;
+        res = true;
+    }
+    return res;
+}
+
 bool dwt_init_one(uint8_t num) {
     bool res = false;
 #ifdef HAS_LOG
@@ -173,6 +194,7 @@ bool dwt_init_one(uint8_t num) {
             DwtHandle_t* Node = DwtGetNode(num);
             if(Node) {
                 res = dwt_init_common(Config, Node);
+                res = dwt_init_node(Node);
 
                 // Enable trace block (Core Debug Interface)
                 CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // set bit 24

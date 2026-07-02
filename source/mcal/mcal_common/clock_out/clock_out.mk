@@ -3,7 +3,7 @@ ifneq ($(CLOCK_OUT_DRV_MK_INC),Y)
     CLOCK_OUT_DRV_MK_INC=Y
 
     CLOCK_OUT_DIR = $(MCAL_COMMON_DIR)/clock_out
-    #@echo $(error CLOCK_OUT_DIR=$(CLOCK_OUT_DIR))
+    # $(error CLOCK_OUT_DIR=$(CLOCK_OUT_DIR))
 
     INCDIR += -I$(CLOCK_OUT_DIR)
 
@@ -19,7 +19,7 @@ ifneq ($(CLOCK_OUT_DRV_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(CLOCK_OUT_COMMANDS),Y)
-            #@echo $(error CLOCK_OUT_COMMANDS=$(CLOCK_OUT_COMMANDS))
+            # $(error CLOCK_OUT_COMMANDS=$(CLOCK_OUT_COMMANDS))
             MCAL_OPT += -DHAS_CLOCK_OUT_COMMANDS
             SOURCES_C += $(CLOCK_OUT_DIR)/clock_out_commands.c
         endif

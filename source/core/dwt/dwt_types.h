@@ -3,7 +3,7 @@
 
 #include "std_includes.h"
 #include "dwt_const.h"
-#include "microcontroller_const.h"
+#include "microcontroller.h"
 
 /* Table C1-24 DWT_CTRL (0xE0001000) */
 typedef union{

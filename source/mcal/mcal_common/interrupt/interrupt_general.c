@@ -23,6 +23,12 @@ const InterruptConfig_t* InterruptGetConfig(int16_t int_n) {
     return Config;
 }
 
+_WEAK_FUN_
+uint32_t interrupt_info_get_cnt(void) {
+    uint32_t cnt = 0;
+    return cnt;
+}
+
 _WEAK_FUN_ uint32_t interrupt_get_isr_handler(int16_t irq_n) { return 0; }
 
 _WEAK_FUN_

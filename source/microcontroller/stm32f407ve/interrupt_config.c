@@ -1,6 +1,7 @@
 #include "interrupt_config.h"
 
 #include "sys_config.h"
+
 #ifdef HAS_MISCELLANEOUS
 #include "data_utils.h"
 #endif
@@ -67,9 +68,19 @@
 #define INTERRUPT_CONFIG_TIMER
 #endif
 
-
 const InterruptConfig_t SECTION_CFG_DATA InterruptConfig[] ={
+        { .irq_n = EXTI0_IRQn, .priority = 0, .on_off = true, .valid = true,},
+        { .irq_n = EXTI1_IRQn, .priority = 0, .on_off = true, .valid = true,},
+        { .irq_n = EXTI2_IRQn, .priority = 0, .on_off = true, .valid = true,},
+        { .irq_n = EXTI3_IRQn, .priority = 0, .on_off = true, .valid = true,},
+        { .irq_n = EXTI4_IRQn, .priority = 0, .on_off = true, .valid = true,},
+        { .irq_n = EXTI9_5_IRQn, .priority = 0, .on_off = true, .valid = true,},
+        { .irq_n = EXTI15_10_IRQn, .priority = 0, .on_off = true, .valid = true,},
+        { .irq_n = USART2_IRQn, .priority = 1, .on_off = true, .valid = true,},
+        { .irq_n = USART3_IRQn, .priority = 1, .on_off = true, .valid = true,},
+        { .irq_n = UART4_IRQn, .priority = 1, .on_off = true, .valid = true,},
         { .irq_n = UART5_IRQn, .priority = 1, .on_off = true, .valid = true,},
+        { .irq_n = USART6_IRQn, .priority = 1, .on_off = true, .valid = true,},
      //   { .irq_n = ADC_IRQn, .priority = 1, .on_off = true, .valid = true,},
         INTERRUPT_CONFIG_CAN
         INTERRUPT_CONFIG_DMA

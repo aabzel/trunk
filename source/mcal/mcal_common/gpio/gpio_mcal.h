@@ -35,8 +35,11 @@ bool gpio_init_custom(void);
 bool gpio_init_pad(const Pad_t Pad);
 bool gpio_init_one(const GpioConfig_t* const Config);
 bool gpio_init_out(const Pad_t Pad);
+bool gpio_init_out_pad(const Pad_t Pad);
 bool gpio_mcal_init(void); //gpio_init-busy name
 bool gpio_deinit_pad(const Pad_t Pad);
+bool gpio_init_adc_pad(const Pad_t Pad);
+bool gpio_init_ext_int(const Pad_t Pad);
 
 bool gpio_proc(void);
 bool gpio_proc_one(const GpioConfig_t* const Config);
@@ -56,6 +59,7 @@ bool gpio_toggle(const Pad_t Pad);
 #endif /*HAS_MULTICORE*/
 
 /*Get*/
+uint8_t gpio_port_cnt_get(void);
 GpioApiMode_t gpio_pin_mux_to_mode(const uint8_t mux);
 bool GpioIsValidConfig(const GpioConfig_t* const Config);
 uint32_t GpioPinNumToPinMask(uint8_t pin_num);
@@ -69,7 +73,7 @@ bool gpio_is_valid_mode(GpioApiMode_t mode);
 bool gpio_is_valid_pull(GpioPullMode_t pull);
 bool pin_get_int_pend(uint8_t pin);
 bool pin_get_int(uint8_t pin);
-PinInt_t* PinIntGetNode(uint16_t gpio_pin);
+//PinInt_t* PinIntGetNode(uint16_t gpio_pin);
 GpioApiMode_t gpio_mode_get(Pad_t Pad);
 GpioDir_t gpio_dir_get(const Pad_t Pad);
 GpioLogicLevel_t gpio_opposite_level_get(GpioLogicLevel_t origin_ll);

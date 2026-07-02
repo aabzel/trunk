@@ -16,8 +16,8 @@
 typedef union {
     uint8_t byte;
     struct {
-        uint8_t pin  : 4; /**/
-        uint8_t port : 4; /* */
+        uint8_t pin  : 4; /*0....15*/
+        uint8_t port : 4; /*A0 B1 C2 D3 E4 F5 G6 H7 I8 J9 K10 L11 M12 N13 O14 P15 */
     };
 }Pad_t;
 
@@ -29,19 +29,10 @@ typedef struct {
 } GpioLogicLevelState_t;
 
 
-
-typedef struct {
-    uint16_t gpio_pin;
-    uint32_t int_cnt;
-} PinInt_t;
-
 typedef struct {
     uint32_t mux; /*STM32-4byte, AT32-1byte*/
     Pad_t Pad;
     uint16_t mcu_pin;
-#ifdef HAS_TI
-    uint8_t config_number;
-#endif
 #ifdef HAS_LOG
     char* name;
     char* function;

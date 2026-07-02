@@ -159,7 +159,7 @@ void clock_config_25_120mhz(void)
 bool clock_config_default(void) {
     bool res = true;
     //clock_config_25_100mhz();
-    //clock_config_25_120mhz();
+    clock_config_25_120mhz();
     //clock_config_25_96mhz();
     return res;
 }

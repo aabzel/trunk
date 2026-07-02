@@ -32,6 +32,7 @@
 #include "debugger.h"
 #endif
 
+_WEAK_FUN_
 uint32_t GpioPinNumToPinMask(uint8_t pin_num) {
     uint32_t pin_mask = 0;
     if(pin_num < 31) {
@@ -41,6 +42,7 @@ uint32_t GpioPinNumToPinMask(uint8_t pin_num) {
 }
 
 #ifdef HAS_CLI
+_WEAK_FUN_
 bool parse_pad(char* argv[], Pad_t* pad) {
     bool res = false;
     uint8_t cnt = 0;
@@ -94,20 +96,27 @@ GpioPort_t PortLetter2PortNum(char port) {
 }
 #endif
 
+_WEAK_FUN_
+GpioLogicLevel_t gpio_get_state_short(const Pad_t pad) { return GPIO_LVL_UNDEF; }
+
 #ifdef HAS_GPIO_EXT
+_WEAK_FUN_
 uint8_t gpio_port_pin2pad(GpioPort_t port, uint8_t pin) {
     Pad_t pad = {0};
-    pad.port = port;
-    pad.pin = pin;
+    pad.port = (uint8_t)port;
+    pad.pin = (uint8_t)pin;
     return pad.byte;
 }
 
+_WEAK_FUN_
 uint8_t gpio_padval_2pin(Pad_t Pad) { return Pad.pin; }
 
+_WEAK_FUN_
 uint8_t gpio_padval_2port(Pad_t Pad) { return Pad.port; }
 #endif
 
 #ifdef HAS_GPIO_EXT
+_WEAK_FUN_
 bool gpio_set_state_verify(Pad_t Pad, GpioLogicLevel_t logic_level) {
     bool res;
     GpioLogicLevel_t logic_level_effective = GPIO_LVL_UNDEF;
@@ -129,6 +138,7 @@ bool gpio_set_state_verify(Pad_t Pad, GpioLogicLevel_t logic_level) {
 #endif
 
 #ifdef HAS_GPIO_EXT
+_WEAK_FUN_
 uint8_t pad_assign(Pad_t Pad, char* wire_name) {
     bool res = false;
     uint8_t pad = 0;
@@ -259,6 +269,7 @@ bool gpio_mcal_init(void) {
     return res;
 }
 
+#ifdef HAS_GPIO_EXT
 const GpioConfig_t* gpio_get_config(Pad_t pad) {
     const GpioConfig_t* ConfNode = NULL;
     uint32_t cnt = gpio_get_cnt();
@@ -271,7 +282,6 @@ const GpioConfig_t* gpio_get_config(Pad_t pad) {
     }
     return ConfNode;
 }
-#ifdef HAS_GPIO_EXT
 #endif
 
 #ifdef HAS_GPIO_EXT
@@ -290,11 +300,11 @@ _WEAK_FUN_ GpioPullMode_t gpio_pull_get(Pad_t Pad) {
 }
 #endif
 
+#ifdef HAS_GPIO_EXT
 _WEAK_FUN_ bool gpio_dir_set(Pad_t Pad, GpioDir_t dir) {
     /*This function must be implemented in in platform specific code*/
     return false;
 }
-#ifdef HAS_GPIO_EXT
 #endif
 
 #ifdef HAS_GPIO_EXT
@@ -363,8 +373,6 @@ bool gpio_init_pad(const Pad_t Pad) {
     }
     return res;
 }
-
-
 
 bool gpio_init_out(const Pad_t Pad) {
     bool res = false;
@@ -438,6 +446,7 @@ bool gpio_is_valid_pull(GpioPullMode_t pull) {
 }
 #endif
 
+#ifdef HAS_GPIO_EXT
 bool gpio_is_valid_mode(GpioApiMode_t mode) {
     bool res = false;
     switch(mode) {
@@ -458,9 +467,9 @@ bool gpio_is_valid_mode(GpioApiMode_t mode) {
     }
     return res;
 }
-#ifdef HAS_GPIO_EXT
 #endif
 
+#ifdef HAS_GPIO_EXT
 bool gpio_is_pin_single(const Pad_t Pad) {
     bool res = false;
     uint32_t i = 0, pin_cnt = 0;
@@ -478,7 +487,6 @@ bool gpio_is_pin_single(const Pad_t Pad) {
     }
     return res;
 }
-#ifdef HAS_GPIO_EXT
 #endif
 
 bool GpioIsValidConfig(const GpioConfig_t* const Config) {

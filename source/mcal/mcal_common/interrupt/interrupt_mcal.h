@@ -30,6 +30,7 @@ bool interrupt_get_priority(int16_t irq_n, uint8_t* const preempt_priority, uint
 bool interrupt_is_valid_num(int16_t irq_n) ;
 bool interrupt_is_active(int16_t irq_n);
 bool interrupt_is_valid_irq_num(int16_t irq_n);
+uint32_t interrupt_info_get_cnt(void);
 
 /*setter*/
 bool interrupt_control(int16_t irq_n, bool on_off);

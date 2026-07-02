@@ -4,9 +4,10 @@
 #include <string.h>
 
 #include "common_diag.h"
+#include "compiler_const.h"
 #include "interrupt_mcal.h"
 #include "log.h"
-#include "microcontroller_drv.h"
+#include "microcontroller.h"
 #include "shared_array.h"
 #include "str_utils.h"
 #include "table_utils.h"
@@ -15,6 +16,12 @@
 #ifdef HAS_NVIC_DIAG
 #include "nvic_diag.h"
 #endif
+
+_WEAK_FUN_
+uint32_t interrupt_info_get_cnt(void) {
+    uint32_t cnt = 0;
+    return cnt;
+}
 
 const char* InterruptNumToStr(const int16_t int_n) {
     const char* name = "?";
@@ -33,14 +40,14 @@ bool interrupt_diag(char* key_word1, char* key_word2) {
     bool res = false;
 
     static const table_col_t cols[] = {
-        {5, "No"},    {5, "irq"},     {17, "name"},  {5, "En"},     {12, "Base"},
+        {5, "No"},    {5, "irq"},     {21, "name"},  {5, "En"},     {12, "Base"},
         {6, "prior"}, {6, "pending"}, {9, "SubPri"}, {9, "PrePri"}, {9, "SubPri"},
     };
     uint16_t num = 0;
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     // uint32_t PriorityGroup=NVIC_GetPriorityGrouping();
     int16_t irq_n = 0;
-    for(irq_n = 0; irq_n <= MAX_IRQ_NUM; irq_n++) {
+    for(irq_n = 0; irq_n <= ((int16_t)MAX_IRQ_NUM); irq_n++) {
         uint8_t preempt_priority = 0;
         uint8_t sub_priority = 0;
         uint32_t handler_addr = 0;
@@ -52,7 +59,7 @@ bool interrupt_diag(char* key_word1, char* key_word2) {
         char lText[120] = "";
         strcpy(lText, TSEP);
         snprintf(lText, sizeof(lText), "%s %3d " TSEP, lText, irq_n);
-        snprintf(lText, sizeof(lText), "%s %15s " TSEP, lText, InterruptNumToStr(irq_n));
+        snprintf(lText, sizeof(lText), "%s %19s " TSEP, lText, InterruptNumToStr(irq_n));
         snprintf(lText, sizeof(lText), "%s %3s " TSEP, lText, OnOffToStr(on_off));
         snprintf(lText, sizeof(lText), "%s 0x%08x " TSEP, lText, (unsigned int)handler_addr);
         snprintf(lText, sizeof(lText), "%s %4u " TSEP, lText, (unsigned int)priority1);

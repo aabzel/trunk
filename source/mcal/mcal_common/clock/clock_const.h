@@ -85,7 +85,7 @@ typedef enum {
     CLOCK_BUS_XTALL,        /**/
     CLOCK_BUS_AHB_TIMERS,   /**/
     CLOCK_BUS_LOW_POWER,    /**/
-    CLOCK_BUS_SYS,     /*system clock*/
+    CLOCK_BUS_SYS,      /*system clock*/
     CLOCK_BUS_PLL0,
     CLOCK_BUS_PLL1,
 

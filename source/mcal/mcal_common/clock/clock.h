@@ -8,13 +8,16 @@ extern "C" {
 #include "std_includes.h"
 #include "clock_config.h"
 #include "clock_types.h"
+#include "clock_utils.h"
+
 #ifdef HAS_CLOCK_CUSTOM
 #include "clock_custom.h"
 #endif
-#include "clock_utils.h"
+
 #ifdef HAS_CLOCK_DIAG
 #include "clock_diag.h"
 #endif
+
 #ifdef HAS_CLOCK_CUSTOM
 #include "clock_custom.h"
 #endif
@@ -26,8 +29,8 @@ bool clock_core_set_reboot(uint32_t core_freq_hz);
 bool clock_audio_freq_set(uint32_t audio_freq_hz);
 bool clock_core_freq_set(uint32_t core_freq_hz);
 //bool clock_config_100mhz(void);
-uint64_t pause_1us(void);
-uint64_t pause_1ms(void);
+//uint64_t pause_1us(void);
+//uint64_t pause_1ms(void);
 uint64_t clock_sw_pause_ms(uint32_t delay_in_ms);
 
 //uint64_t pause_1ms(void) ;

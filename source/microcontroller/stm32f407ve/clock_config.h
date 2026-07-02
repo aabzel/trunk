@@ -4,7 +4,6 @@
 #include "std_includes.h"
 #include "clock_types.h"
 
-//#define HSE_VALUE 25000000U /*Value of the External oscillator in Hz */
 extern ClockConfig_t ClockConfig;
 extern ClockHandle_t ClockInstance;
 

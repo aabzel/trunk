@@ -39,6 +39,7 @@ bool gpio_test_command(int32_t argc, char* argv[]);
 bool gpio_get_command(int32_t argc, char* argv[]);
 bool gpio_set_command(int32_t argc, char* argv[]);
 bool gpio_mux_command(int32_t argc, char* argv[]);
+bool gpio_mode_command(int32_t argc, char* argv[]);
 bool gpio_dir_command(int32_t argc, char* argv[]);
 bool gpio_pull_command(int32_t argc, char* argv[]);
 bool gpio_toggle_command(int32_t argc, char* argv[]);
@@ -48,14 +49,15 @@ bool gpio_reg_map_command(int32_t argc, char* argv[]);
     GPIO_CUSTOM_COMMANDS                                                                                               \
     SHELL_CMD("gpio_reg_map", "gr", gpio_reg_map_command, "GpioRegs"),                                                 \
     SHELL_CMD("gpio_list", "gl", gpio_list_command, "GpioList"),                                                       \
-        SHELL_CMD("gpio_init", "gi", gpio_init_command, "GpioInit"),                                                   \
-        SHELL_CMD("gpio_mux", "gm", gpio_mux_command, "GpioPinMux"),                                                   \
-        SHELL_CMD("gpio_dir", "gd", gpio_dir_command, "GpioDir"),                                                      \
-        SHELL_CMD("gpio_test", "ge", gpio_test_command, "GpioTest"),                                                   \
-        SHELL_CMD("gpio_toggle", "gt", gpio_toggle_command, "GpioToggle"),                                             \
-        SHELL_CMD("gpio_get", "gg", gpio_get_command, "GpioGet"),                                                      \
-        SHELL_CMD("gpio_pull", "gp", gpio_pull_command, "GpioPull"),                                                   \
-        SHELL_CMD("gpio_set", "gs", gpio_set_command, "GpioSet"),
+    SHELL_CMD("gpio_init", "gi", gpio_init_command, "GpioInit"),                                                       \
+    SHELL_CMD("gpio_mux", "gm", gpio_mux_command, "GpioPinMux"),                                                       \
+    SHELL_CMD("gpio_mode", "gmd", gpio_mode_command, "GpioPinMode"),                                                       \
+    SHELL_CMD("gpio_dir", "gd", gpio_dir_command, "GpioDir"),                                                          \
+    SHELL_CMD("gpio_test", "ge", gpio_test_command, "GpioTest"),                                                       \
+    SHELL_CMD("gpio_toggle", "gt", gpio_toggle_command, "GpioToggle"),                                                 \
+    SHELL_CMD("gpio_get", "gg", gpio_get_command, "GpioGet"),                                                          \
+    SHELL_CMD("gpio_pull", "gp", gpio_pull_command, "GpioPull"),                                                       \
+    SHELL_CMD("gpio_set", "gs", gpio_set_command, "GpioSet"),
 
 #ifdef __cplusplus
 }

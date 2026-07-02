@@ -24,11 +24,19 @@
 #include "time_mcal.h"
 #endif
 
+_WEAK_FUN_ uint64_t pause_1ms(void) {
+    uint64_t in = 0, cnt = 0;
+    for(in = 0; in < 1397; in++) {
+        cnt++;
+    }
+    return cnt;
+}
+
 bool clock_is_valid_config(const ClockConfig_t* const Config) {
     bool res = false;
     if(Config) {
         res = true;
-#ifdef HAS_DATA_MISC
+#ifdef HAS_BYTE_MICS
         res = is_range_uint32(Config->core_clock_hz, 10000, 310000000);
         if(!res) {
 #ifdef HAS_LOG
@@ -57,6 +65,12 @@ _WEAK_FUN_ uint32_t clock_core_freq_get(void) {
     uint32_t core_freq_hz = 0;
     /*TODO*/
     return core_freq_hz;
+}
+
+_WEAK_FUN_
+uint64_t pause_1us(void) {
+    uint64_t res = 0;
+    return res;
 }
 
 _WEAK_FUN_ bool clock_config_100mhz(void) {
@@ -106,7 +120,7 @@ _WEAK_FUN_ bool clock_mcal_init(void) {
 #endif
         uint32_t core_freq_hz = ClockConfig.core_clock_hz;
 #ifdef HAS_STORE_FS
-        res = store_fs_get(1, PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
+        res = store_fs_get(PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
         if(!res) {
             core_freq_hz = ClockConfig.core_clock_hz;
         }
@@ -160,14 +174,6 @@ uint32_t clock_int_per_ms(uint32_t delay_ms) {
     return cnt;
 }
 #endif
-
-_WEAK_FUN_ uint64_t pause_1ms(void) {
-    uint64_t in = 0, cnt = 0;
-    for(in = 0; in < 1397; in++) {
-        cnt++;
-    }
-    return cnt;
-}
 
 uint64_t clock_sw_pause_ms(uint32_t delay_ms) {
     uint64_t cnt = 0;
@@ -276,7 +282,7 @@ bool clock_core_set_reboot(uint32_t core_freq_hz) {
 #endif
 
 #ifdef HAS_STORE_FS
-    res = store_fs_set(1, PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
+    res = store_fs_set(PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
     // res = clock_core_freq_set(core_freq_hz);
     if(res) {
 #ifdef HAS_LOG
@@ -302,7 +308,7 @@ _WEAK_FUN_ bool clock_core_freq_set(const uint32_t core_freq_hz) {
 #endif
     if(core_freq_hz) {
 #ifdef HAS_STORE_FS
-        res = store_fs_set(1, PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
+        res = store_fs_set(PAR_ID_SYS_CLOCK_HZ, &core_freq_hz);
 #endif
     }
     return res;

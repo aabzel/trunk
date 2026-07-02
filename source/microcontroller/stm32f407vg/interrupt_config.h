@@ -3,7 +3,6 @@
 
 #include "interrupt_types.h"
 
-
 #ifndef HAS_INTERRUPT
 #error "+HAS_INTERRUPT"
 #endif

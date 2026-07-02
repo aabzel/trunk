@@ -43,7 +43,7 @@ const char* ClockMuxToStr(const ClockMux_t clock_mux) {
 
 const char* ClockBusToStr(ClockBus_t clock_bus) {
     const char* name = "?";
-    switch((uint32_t)clock_bus) {
+    switch(clock_bus) {
     case CLOCK_BUS_AHB1:
         name = "AHB1";
         break;

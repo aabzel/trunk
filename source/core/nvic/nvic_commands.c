@@ -19,7 +19,7 @@
 
 #ifndef HAS_NVIC_COMMANDS
 #error "+HAS_NVIC_COMMANDS"
-#endif /*HAS_NVIC_COMMANDS*/
+#endif /**/
 
 bool nvic_get_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -91,12 +91,12 @@ static bool nvic_diag(char* key_word1, char* key_word2) {
     uint16_t num = 0;
     uint32_t PriorityGroup = NVIC_GetPriorityGrouping();
     LOG_INFO(SYS, "PriorityGroup %u", PriorityGroup);
-    int8_t irq_n = 0;
+    int16_t irq_n = 0;
     char temp_str[120];
     uint32_t Priority = 0;
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    for(irq_n = NonMaskableInt_IRQn; irq_n <= MAX_IRQ_NUM; irq_n++) {
+    for(irq_n = NonMaskableInt_IRQn; irq_n <= ((int16_t)MAX_IRQ_NUM); irq_n++) {
 #ifdef HAS_CMSIS
         Priority = NVIC_GetPriority((IRQn_Type)irq_n);
         uint32_t status = NVIC_GetEnableIRQ((IRQn_Type)irq_n);
@@ -145,7 +145,7 @@ bool nvic_diag_command(int32_t argc, char* argv[]) {
     }
 
     if(2 < argc) {
-        LOG_ERROR(SYS, "Usage: id keyWord");
+        LOG_ERROR(LG_NVIC, "Usage: id keyWord");
     }
     if(true == res) {
         res = nvic_diag(keyWord1, keyWord2);

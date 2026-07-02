@@ -24,12 +24,14 @@ typedef enum {
     GPIO_PORT_G = 6,
     GPIO_PORT_H = 7,
     GPIO_PORT_I = 8,
-    GPIO_PORT_UNDEF = 9,
+    GPIO_PORT_J = 9,
+    GPIO_PORT_CNT ,
+    GPIO_PORT_UNDEF ,
 } GpioPort_t;
 
 
 typedef enum {
-/*GPIO_PULL_DOWN Was in conflict with Zephyr constants*/
+/*GPIO_PULL_DOWN Was in conflict with Zephyr constants. USE GPIO_MCAL_PULL_DOWN*/
     GPIO__PULL_DOWN = 1,
     GPIO__PULL_UP = 2,
     GPIO__PULL_AIR = 3,

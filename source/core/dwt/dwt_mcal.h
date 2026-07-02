@@ -21,7 +21,7 @@ extern "C" {
 #define DWT_NAME
 #endif
 
-#define DWT_INIT { .init_function=dwt_mcal_init, DWT_NAME},
+#define DWT_INIT { .init_function = dwt_mcal_init, DWT_NAME},
 
 
 

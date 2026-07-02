@@ -38,7 +38,7 @@ const char* GpioModeToStr(GpioApiMode_t code);
 const char* GpioOutTypeToStr(Pad_t Pad);
 const char* GpioPadToStr(Pad_t Pad);
 const char* GpioDriveSelectToStr(const GpioDriveSelect_t drive_select);
-const char* GpioPad2WireName(Pad_t Pad);
+const char* GpioPad2WireName(const Pad_t Pad);
 const char* GpioPullToStr(GpioPullMode_t code);
 const char* GpioSpeedToStr(const GpioSpeed_t speed) ;
 const char* GpioTypeToStr(Pad_t Pad);

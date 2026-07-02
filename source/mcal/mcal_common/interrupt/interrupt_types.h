@@ -10,7 +10,7 @@ extern "C" {
 
 typedef struct  {
     const char *name;
-    int16_t int_n;/*IRQn_Type*/
+    int16_t int_n;  /*IRQn_Type*/
 }IntNumInfo_t;
 
 typedef struct {
