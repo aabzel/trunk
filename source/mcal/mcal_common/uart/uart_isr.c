@@ -26,13 +26,20 @@
 
 #ifdef HAS_RS232
 #include "rs232_mcal.h"
-#endif /**/
+#endif
 
 #ifdef HAS_RS485
 #include "rs485_mcal.h"
-#endif /**/
+#endif
 
-static bool UartErrorProcIsrLL(UartHandle_t* const Node) {
+bool UartProcIsrLL(UartHandle_t* const Node) {
+    bool res = false;
+    Node->isr_done = true;
+    Node->isr_cnt++;
+    return res;
+}
+
+bool UartErrorProcIsrLL(UartHandle_t* const Node) {
     bool res = false;
     Node->error_cnt++;
     Node->error_done = true;
@@ -42,7 +49,7 @@ static bool UartErrorProcIsrLL(UartHandle_t* const Node) {
 
 bool UartTxProcIsrLL(UartHandle_t* const Node) {
     bool res = false;
-    Node->tx_cnt++;
+    Node->tx_done_cnt++;
     Node->tx_done = true;
     Node->cnt.byte_tx++;
     res = true;
@@ -118,6 +125,62 @@ bool UartRxProcIsr(uint8_t num, uint8_t rx_byte) {
     UartHandle_t* Node = UartGetNode(num);
     if(Node) {
         res = UartRxProcIsrLL(Node, rx_byte);
+    }
+    return res;
+}
+
+bool UartDmaCallBackRxHalfCpltLL(UartHandle_t* Node) {
+    bool res = false;
+    res = UartProcIsrLL(Node);
+    Node->rx_half_cnt++;
+    Node->rx_half = true;
+    return res;
+}
+
+bool UartDmaCallBackRxHalfCplt(const uint8_t num) {
+    bool res = false;
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+        UartDmaCallBackRxHalfCpltLL(Node);
+    }
+    return res;
+}
+
+bool UartDmaCallBackRxDoneCplt(const uint8_t num) {
+    bool res = false;
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+        res = UartProcIsrLL(Node);
+        Node->rx_done_cnt++;
+        Node->rx_done = true;
+    }
+    return res;
+}
+
+bool UartDmaCallBackTxDoneCplt(const uint8_t num) {
+    bool res = false;
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+        res = UartProcIsrLL(Node);
+        Node->tx_done_cnt++;
+        Node->tx_done = true;
+    }
+    return res;
+}
+
+bool UartDmaCallBackTxHalfCpltLL(UartHandle_t* Node) {
+    bool res = false;
+    res = UartProcIsrLL(Node);
+    Node->tx_half_cnt++;
+    Node->tx_half = true;
+    return res;
+}
+
+bool UartDmaCallBackTxHalfCplt(const uint8_t num) {
+    bool res = false;
+    UartHandle_t* Node = UartGetNode(num);
+    if(Node) {
+        UartDmaCallBackTxHalfCpltLL(Node);
     }
     return res;
 }

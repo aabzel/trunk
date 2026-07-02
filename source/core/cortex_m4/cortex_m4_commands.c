@@ -11,7 +11,7 @@
 #include "debug_info.h"
 #include "flash_config.h"
 #ifdef HAS_CMSIS
-//#include "cmsis_gcc.h"
+#include "cmsis_gcc.h"
 #endif
 #include "log.h"
 #include "microcontroller_const.h"

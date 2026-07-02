@@ -39,4 +39,15 @@ typedef enum {
 } RxUartError_t;
 
 
+typedef enum {
+    UART_MCAL_PARITY_UNDEF = 0,
+    UART_MCAL_PARITY_NONE,
+    UART_MCAL_PARITY_ODD,
+    UART_MCAL_PARITY_EVEN,
+} UartParity_t;
+
+
+
+
+
 #endif /* UART_GEN_CONST_H */

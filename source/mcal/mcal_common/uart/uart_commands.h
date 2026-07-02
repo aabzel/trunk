@@ -19,9 +19,9 @@ extern "C" {
 
 #ifdef HAS_UART_CUSTOM_COMMANDS
 #include "uart_custom_commands.h"
-#else /*HAS_UART_CUSTOM*/
+#else /**/
 #define UART_CUSTOM_COMMANDS
-#endif /*HAS_UART_CUSTOM*/
+#endif /**/
 
 bool uart_diag_low_level_command(int32_t argc, char* argv[]) ;
 bool uart_set_baudrate_command(int32_t argc, char* argv[]);

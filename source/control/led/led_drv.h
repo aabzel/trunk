@@ -1,7 +1,9 @@
 #ifndef LED_GENERAL_DRIVER_H
 #define LED_GENERAL_DRIVER_H
 
-#include "std_includes.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef HAS_LED
 #error "+HAS_LED"
@@ -11,6 +13,7 @@
 #warning "+HAS_PINS"
 #endif
 
+#include "std_includes.h"
 #include "gpio_const.h"
 #include "led_config.h"
 #include "led_dep.h"
@@ -23,11 +26,15 @@
 #include "led_rgb_drv.h"
 #endif
 
-#ifdef HAS_RTOS
-void led_thread(void *arg1, void *arg2, void *arg3);
+bool led_pwm(uint8_t led_num, float freq_hz, uint8_t duty);
+bool led_blink(const uint8_t num, const uint32_t duration_ms);
+
+
+
+#ifdef __cplusplus
+}
 #endif
 
-bool led_pwm(uint8_t led_num, float freq_hz, uint8_t duty);
-GpioLogicLevel_t LedLogicLevel2Voltage(uint8_t val, GpioLogicLevel_t active);
+
 
 #endif /* LED_GENERAL_DRIVER_H  */

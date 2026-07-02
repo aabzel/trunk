@@ -350,6 +350,7 @@ bool cmd_dds_calc_static_tone(int32_t argc, char* argv[]) {
     return res;
 }
 
+//ddspt 1
 bool cmd_dds_print_track(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 1U;
@@ -515,6 +516,30 @@ bool cmd_dds_amp(int32_t argc, char* argv[]) {
 
     return res;
 }
+
+bool cmd_dds_freq(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0U;
+    float frequency_hz = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+    if(2 <= argc) {
+        res = try_str2float(argv[1], &frequency_hz);
+    }
+
+    LOG_INFO(DDS, "argc %d", argc);
+    if(res) {
+       res = dds_frequency_set(num, frequency_hz);
+    } else {
+        LOG_ERROR(DDS, "Usage: ddf DacNum Freq");
+    }
+
+    return res;
+}
+
 
 bool cmd_dds_set_chirp(int32_t argc, char* argv[]) {
     bool res = false;

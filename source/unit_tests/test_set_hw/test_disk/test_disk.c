@@ -19,12 +19,12 @@ static uint8_t WriteBlock[DISK_BLOCK_SIZE + 1] = {0};
 
 static bool test_disk_read_write_block(uint32_t block_num) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(DISK, LOG_LEVEL_DEBUG);
+    log_level_set(DISK, LOG_LEVEL_DEBUG);
     DRESULT ret = RES_OK;
 
     ret = disk_read(0, OrigBlock, block_num, 1);
     ASSERT_EQ(RES_OK,ret);
-    array_incr(WriteBlock, DISK_BLOCK_SIZE);
+    array_incr(WriteBlock, DISK_BLOCK_SIZE,0);
     ret=disk_write(0, WriteBlock, block_num, 1);
     ASSERT_EQ(RES_OK,ret);
     ASSERT_TRUE(wait_in_loop_ms(100));
@@ -34,7 +34,7 @@ static bool test_disk_read_write_block(uint32_t block_num) {
     EXPECT_EQ_MEM(ReadBlock, WriteBlock, DISK_BLOCK_SIZE);
 
     ASSERT_EQ(RES_OK,disk_write(0, OrigBlock, block_num, 1));
-    set_log_level(DISK, LOG_LEVEL_INFO);
+    log_level_set(DISK, LOG_LEVEL_INFO);
     return true;
 }
 
@@ -43,31 +43,31 @@ static bool test_disk_read_write_block(uint32_t block_num) {
  */
 bool test_disk_read_write(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(DISK, LOG_LEVEL_DEBUG);
+    log_level_set(DISK, LOG_LEVEL_DEBUG);
     uint32_t i = 0;
     for(i = 1; i <= 2; i++) {
         ASSERT_TRUE(test_disk_read_write_block(i));
     }
-    set_log_level(DISK, LOG_LEVEL_INFO);
+    log_level_set(DISK, LOG_LEVEL_INFO);
 
     return true;
 }
 
 bool test_disk_const(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(DISK, LOG_LEVEL_DEBUG);
+    log_level_set(DISK, LOG_LEVEL_DEBUG);
    // ASSERT_GR(32, DISK_TIME_OUT_MS);
     ASSERT_EQ(1, sizeof(BYTE));
     ASSERT_EQ(2, sizeof(WORD));
     ASSERT_EQ(4, sizeof(DWORD));
-    set_log_level(DISK, LOG_LEVEL_INFO);
+    log_level_set(DISK, LOG_LEVEL_INFO);
     return true;
 }
 
 
 bool test_disk_read(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(DISK, LOG_LEVEL_DEBUG);
+    log_level_set(DISK, LOG_LEVEL_DEBUG);
     uint32_t block_num = 10;
     //bool res = false;
     bool spot_valid = false;
@@ -91,7 +91,7 @@ bool test_disk_read(void) {
         }
     }
     ASSERT_TRUE(spot_valid);
-    set_log_level(DISK, LOG_LEVEL_INFO);
+    log_level_set(DISK, LOG_LEVEL_INFO);
 
     return true;
 }
@@ -99,21 +99,21 @@ bool test_disk_read(void) {
 /*That test casuse fail*/
 bool test_disk_link(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(DISK, LOG_LEVEL_DEBUG);
+    log_level_set(DISK, LOG_LEVEL_DEBUG);
 
-    set_log_level(DISK, LOG_LEVEL_INFO);
+    log_level_set(DISK, LOG_LEVEL_INFO);
     return true;
 }
 
 bool test_disk_ioctl(void){
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(DISK, LOG_LEVEL_DEBUG);
+    log_level_set(DISK, LOG_LEVEL_DEBUG);
 
     uint8_t buff[30];
-    ASSERT_EQ(RES_OK, disk_ioctl( 0,   CTRL_SYNC, buff));
     ASSERT_EQ(RES_OK, disk_ioctl( 0,   GET_SECTOR_SIZE, buff));
+    ASSERT_EQ(RES_OK, disk_ioctl( 0,   CTRL_SYNC, buff));
     ASSERT_EQ(RES_OK, disk_ioctl( 0,   GET_SECTOR_COUNT, buff));
     ASSERT_EQ(RES_OK, disk_ioctl( 0,   GET_BLOCK_SIZE, buff));
-    set_log_level(DISK, LOG_LEVEL_INFO);
+    log_level_set(DISK, LOG_LEVEL_INFO);
     return true;
 }

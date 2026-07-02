@@ -37,11 +37,11 @@ bool cli_wrp_errase_app(void) {
 #endif
     char txBuffer[100] = "";
     snprintf(txBuffer, sizeof(txBuffer), "ea" CRLF);
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     Sleep(2000);
     char rxBuffer[1000] = "";
     uint32_t real_rx_len = 0;
-    res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
+    res = com_receive_str(h_Comm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
     return res;
 }
 #endif
@@ -53,7 +53,7 @@ bool cli_wrp_launch_app(void) {
 #endif
     char txBuffer[100] = "";
     snprintf(txBuffer, sizeof(txBuffer), "la" CRLF);
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     Sleep(2000);
     return res;
 }
@@ -67,7 +67,7 @@ static bool cli_wait_ok(uint32_t trys) {
         real_rx_len = 0;
         memset(rxBuffer, 0, sizeof(rxBuffer));
         LOG_DEBUG(CLI, "Wait Ok try:%d/%d", i, trys);
-        res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
+        res = com_receive_str(h_Comm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
         if(res) {
             if(0 < real_rx_len) {
                 res = false;
@@ -97,7 +97,7 @@ bool cli_wr_fw_crc(uint32_t fw_crc32) {
     bool res = false;
     char txBuffer[100] = "";
     snprintf(txBuffer, sizeof(txBuffer), "ps %u 0x%08x" CRLF, PAR_ID_APP_CRC32, fw_crc32);
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     if(res) {
         res = cli_wait_ok(5);
     }
@@ -110,7 +110,7 @@ bool cli_wr_fw_len(uint32_t new_fw_len) {
     bool res = false;
     char txBuffer[100] = "";
     snprintf(txBuffer, sizeof(txBuffer), "ps %u %u" CRLF, PAR_ID_APP_LEN, new_fw_len);
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     if(res) {
         res = cli_wait_ok(5);
     }
@@ -125,11 +125,11 @@ static bool cli_wait_boot_init(uint32_t trys) {
     strncpy(txBuffer, "vi" CRLF, sizeof(txBuffer));
     uint32_t i = 0;
     for(i = 0; trys; i++) {
-        res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+        res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
         Sleep(500);
         char rxBuffer[1000] = "";
         uint32_t real_rx_len = 0;
-        res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
+        res = com_receive_str(h_Comm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
         if(0 < real_rx_len) {
             char* ptr = strstr(rxBuffer, "config: Bootloader");
             if(NULL != ptr) {
@@ -147,7 +147,7 @@ bool cli_wrp_jump_to_boot(void) {
     bool res = false;
     char txBuffer[100] = "";
     snprintf(txBuffer, sizeof(txBuffer), "jb" CRLF);
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     res = cli_wait_boot_init(50);
     return res;
 }
@@ -160,11 +160,11 @@ bool cli_wrp_parse_fw_version(void) {
 #endif
     char txBuffer[100] = "";
     strncpy(txBuffer, "vi" CRLF, sizeof(txBuffer));
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     Sleep(500);
     char rxBuffer[1000] = "";
     uint32_t real_rx_len = 0;
-    res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
+    res = com_receive_str(h_Comm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
     if(0 < real_rx_len) {
         LOG_DEBUG(SYS, "[%s]", rxBuffer);
         res = true;
@@ -179,11 +179,11 @@ bool cli_wrp_restore_target(void) {
 #endif
     char txBuffer[100] = "";
     strncpy(txBuffer, "e 1" CRLF, sizeof(txBuffer));
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     Sleep(500);
     char rxBuffer[200] = "";
     uint32_t real_rx_len = 0;
-    res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
+    res = com_receive_str(h_Comm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
     if(0 < real_rx_len) {
         LOG_DEBUG(SYS, "[%s]", rxBuffer);
         LOG_DEBUG(SYS, "Target connected!");
@@ -199,17 +199,17 @@ bool is_target_connected(void) {
 #endif
     char txBuffer[100] = "";
     strncpy(txBuffer, "e 0" CRLF, sizeof(txBuffer));
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     if(res){
         Sleep(100);
 
         strncpy(txBuffer, "vi" CRLF, sizeof(txBuffer));
-        res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+        res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
 
         Sleep(100);
         char rxBuffer[200] = "";
         uint32_t real_rx_len = 0;
-        res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
+        res = com_receive_str(h_Comm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
         if(0 < real_rx_len) {
             LOG_DEBUG(SYS, "[%s] len: %u", rxBuffer, real_rx_len);
             char* ptr = strstr(rxBuffer, "config:");
@@ -226,17 +226,17 @@ bool is_target_connected(void) {
     return res;
 }
 
-bool cli_cmd_send(HANDLE hComm, char* txBuffer, uint32_t tx_buff_len) {
+bool cli_cmd_send(HANDLE h_Comm, char* txBuffer, uint32_t tx_buff_len) {
     bool res = false;
     LOG_DEBUG(SYS, "%s(): Str:[%s] Len:%u\n", __FUNCTION__, txBuffer, tx_buff_len);
     char Buffer[1000] = "";
     snprintf(Buffer, sizeof(Buffer), "%s" CRLF, txBuffer);
     uint32_t cmd_len = strlen(Buffer);
-    res = com_send_str(hComm, Buffer, cmd_len);
+    res = com_send_str(h_Comm, Buffer, cmd_len);
     char response[1000];
     uint32_t out_len = 0;
     if(res) {
-        res = com_receive_str_timeout(hComm, response, sizeof(response), &out_len, 500);
+        res = com_receive_str_timeout(h_Comm, response, sizeof(response), &out_len, 500);
     }
     if(res) {
         if(0 < out_len) {
@@ -274,7 +274,7 @@ bool cli_wrp_flash_write(uint32_t base_addr, uint8_t* chunk_data, uint32_t size)
                 LOG_DEBUG(CLI, "Send flash write command");
                 snprintf(txBuffer, sizeof(txBuffer), "fw 0x%08x 0x%s 0x%04x\n\r", base_addr, HexAscii, crc16_calc);
 
-                res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+                res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
                 if(res) {
                     res = cli_wait_ok(1);
                     if(res) {
@@ -311,7 +311,7 @@ bool cli_wrp_flash_read(uint32_t addr, uint8_t* out_array, uint32_t len) {
 #endif
     char txBuffer[1000] = "";
     snprintf(txBuffer, sizeof(txBuffer), "fr 0x%08x %u" CRLF, addr, len);
-    res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+    res = com_send_str(h_Comm, txBuffer, strlen(txBuffer));
     // Sleep(3*len*2); /*Works*/
     // Sleep(3*len);/*Works*/
     // Sleep(len);/*Works*/
@@ -319,7 +319,7 @@ bool cli_wrp_flash_read(uint32_t addr, uint8_t* out_array, uint32_t len) {
     uint32_t real_rx_len = 0;
     uint16_t crc16_read = 0;
     uint16_t crc16_calc = 0;
-    res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
+    res = com_receive_str(h_Comm, rxBuffer, sizeof(rxBuffer), &real_rx_len);
     if((2 * len) < real_rx_len) {
         LOG_DEBUG(COM, "[%s] readLen: %u ", rxBuffer, real_rx_len);
         bool res_data = parse_lhex_array_after_prefix("0x", 0, rxBuffer, out_array, len);

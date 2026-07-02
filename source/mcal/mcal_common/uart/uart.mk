@@ -17,6 +17,10 @@ ifneq ($(UART_COMMON_MCAL_MK_INC),Y)
         MCAL_OPT += -DHAS_UART_PROC
     endif
 
+    ifeq ($(UART_DMA),Y)
+        MCAL_OPT += -DHAS_UART_DMA
+    endif
+
     ifeq ($(UART_INT),Y)
         MCAL_OPT += -DHAS_UART_INT
     endif

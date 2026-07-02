@@ -124,7 +124,7 @@ bool cli_print_ascii(const uint8_t start_byte) {
         memset(temp, 0, sizeof(temp));
         snprintf(temp, sizeof(temp), "%s", TSEP);
         snprintf(temp, sizeof(temp), "%s %3d " TSEP, temp, byte);
-        // snprintf(temp, sizeof(temp), "%s %s " TSEP, temp, utoa_bin8(byte));
+        snprintf(temp, sizeof(temp), "%s %s " TSEP, temp, utoa_bin8(byte));
         snprintf(temp, sizeof(temp), "%s 0x%02x " TSEP, temp, byte);
         snprintf(temp, sizeof(temp), "%s [%c] " TSEP, temp, byte);
         cli_printf("%s" CRLF, temp);

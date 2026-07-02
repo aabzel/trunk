@@ -76,7 +76,6 @@ bool disk_init_common(const DiskConfig_t* const Config, DiskHandle_t* const Node
     bool res = false;
     if(Config) {
         if(Node) {
-
             Node->block_size = Config->block_size;
             Node->num = Config->num;
             Node->inter_face = Config->inter_face;
@@ -178,15 +177,15 @@ DRESULT disk_read(BYTE pdrv,    /* Physical drive nmuber to identify the drive *
         switch(Node->inter_face.interface_name) {
 #ifdef HAS_SDIO
         case INTERFACE_NAME_SDIO: {
-            res = sdio_read_sector(Node->if_num, (uint32_t)sector, (uint32_t)count, (uint8_t*)buff);
+            res = sdio_read_sector(Node->inter_face.num, (uint32_t)sector, (uint32_t)count, (uint8_t*)buff);
         } break;
-#endif /**/
+#endif
 
 #ifdef HAS_SD_CARD
         case INTERFACE_NAME_SPI: {
             res = sd_read_sector( sector, (uint8_t* const)buff);
         } break;
-#endif /**/
+#endif
 
 #ifdef HAS_SW_SD_CARD
         case INTERFACE_NAME_RAM: {
@@ -274,7 +273,7 @@ static DRESULT disk_sdio_ioctl(const BYTE pdrv, const BYTE cmd, void* const buff
     DRESULT ret = RES_ERROR;
     DiskHandle_t* Node = DiskGetNode((uint8_t)pdrv);
     if(Node) {
-        ret = sdio_ioctl(Node->if_num, cmd, buff);
+        ret = sdio_ioctl(Node->inter_face.num, cmd, buff);
     }
     return ret;
 }

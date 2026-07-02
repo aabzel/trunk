@@ -15,7 +15,7 @@ bool test_fifo_2(void) {
 #endif
     FifoChar_t FifiObj;
     char FiFoHeap[6] = "";
-    ASSERT_TRUE(fifo_init(&FifiObj, FiFoHeap, sizeof(FiFoHeap)));
+    ASSERT_TRUE(fifo_init(&FifiObj, (uint8_t*)FiFoHeap, sizeof(FiFoHeap)));
     ASSERT_EQ(0, fifo_get_count(&FifiObj));
 
     return true;
@@ -28,13 +28,13 @@ bool test_fifo_char_array_overrun(void) {
     FifoChar_t FifiObj;
     char peek_ch = '0';
     char FiFoHeap[6] = "";
-    fifo_init(&FifiObj, FiFoHeap, sizeof(FiFoHeap));
+    fifo_init(&FifiObj, (uint8_t*)FiFoHeap, sizeof(FiFoHeap));
     ASSERT_FALSE(fifo_push_array(&FifiObj, STRING19, strlen(STRING19)));
 
     ASSERT_TRUE(fifo_peek(&FifiObj, &peek_ch));
     ASSERT_EQ('1', peek_ch);
 
-    uint16_t outLen = 0;
+    uint32_t outLen = 0;
     char outArray[100] = "";
     ASSERT_TRUE(fifo_pull_array(&FifiObj, outArray, sizeof(outArray), &outLen));
     ASSERT_EQ(6, outLen);
@@ -50,10 +50,10 @@ bool test_fifo_char_array(void) {
     char FiFoHeap[10] = "";
     char outArray[100] = "";
     char peek_ch = '0';
-    uint16_t outLen = 0;
-    ASSERT_TRUE(fifo_init(&FifiObj, FiFoHeap, sizeof(FiFoHeap)));
+    uint32_t outLen = 0;
+    ASSERT_TRUE(fifo_init(&FifiObj, (uint8_t*)FiFoHeap, sizeof(FiFoHeap)));
 
-    ASSERT_TRUE(fifo_push_array(&FifiObj, "12345", 5));
+    ASSERT_TRUE(fifo_push_array(&FifiObj, (uint8_t*)"12345", 5));
 
     ASSERT_TRUE(fifo_peek(&FifiObj, &peek_ch));
     ASSERT_EQ('1', peek_ch);
@@ -76,7 +76,7 @@ bool test_fifo_char_overrun(void) {
 
     char outChar = '0';
     char peek_ch = '0';
-    fifo_init(&FifiObj, FiFoHeap, sizeof(FiFoHeap));
+    fifo_init(&FifiObj, (uint8_t*)FiFoHeap, sizeof(FiFoHeap));
 
     ASSERT_TRUE(fifo_push(&FifiObj, '1'));
     ASSERT_TRUE(fifo_peek(&FifiObj, &peek_ch));

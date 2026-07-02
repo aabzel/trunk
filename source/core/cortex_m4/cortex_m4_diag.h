@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
-#include "microcontroller_drv.h"
+#include "microcontroller.h"
 #include "cortex_m4_const.h"
 
 const char* CortecM4CoProcAccessToStr(CoProcAccess_t access);

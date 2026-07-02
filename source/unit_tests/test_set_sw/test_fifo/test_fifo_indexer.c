@@ -17,7 +17,7 @@ bool test_fifo_index_init(void) {
 
 bool test_fifo_index_add(void) {
     fifo_index_info_t ri;
-    FifoIndex_t index;
+    uint32_t index;
     memset(&ri, 0xFF, sizeof(ri));
     fifo_index_init(&ri, RI_SIZE);
     uint32_t i = 0;
@@ -54,7 +54,7 @@ bool test_fifo_index_add(void) {
 
 bool test_fifo_index_get(void) {
     fifo_index_info_t ri;
-    FifoIndex_t index;
+    uint32_t index;
     uint32_t i = 0;
     memset(&ri, 0xFF, sizeof(ri));
     fifo_index_init(&ri, RI_SIZE);
@@ -109,7 +109,7 @@ bool test_fifo_index_continuus_used(void) {
 
 bool test_fifo_index_free(void) {
     fifo_index_info_t ri;
-    FifoIndex_t index;
+    uint32_t index;
     uint32_t i = 0;
     memset(&ri, 0xFF, sizeof(ri));
     fifo_index_init(&ri, RI_SIZE);

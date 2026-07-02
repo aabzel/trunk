@@ -11,6 +11,7 @@
 #include "sys_config.h"
 #include "uart_mcal.h"
 #include "writer.h"
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
@@ -19,8 +20,11 @@
 void uart1_putc(void* stream_ptr, char ch) { uart_mcal_send(1, (uint8_t*)&ch, 1); }
 void uart2_putc(void* stream_ptr, char ch) { uart_mcal_send(2, (uint8_t*)&ch, 1); }
 void uart3_putc(void* stream_ptr, char ch) { uart_mcal_send(3, (uint8_t*)&ch, 1); }
+void uart4_putc(void* stream_ptr, char ch) { uart_mcal_send(4, (uint8_t*)&ch, 1); }
 void uart5_putc(void* stream_ptr, char ch) { uart_mcal_send(5, (uint8_t*)&ch, 1); }
 void uart6_putc(void* stream_ptr, char ch) { uart_mcal_send(6, (uint8_t*)&ch, 1); }
+void uart7_putc(void* stream_ptr, char ch) { uart_mcal_send(7, (uint8_t*)&ch, 1); }
+void uart8_putc(void* stream_ptr, char ch) { uart_mcal_send(8, (uint8_t*)&ch, 1); }
 
 void uart1_puts(void* stream_ptr, const char* str, int32_t len) {
     if(str) {
@@ -46,6 +50,14 @@ void uart3_puts(void* stream_ptr, const char* str, int32_t len) {
     }
 }
 
+void uart4_puts(void* stream_ptr, const char* str, int32_t len) {
+    if(str) {
+        if(len) {
+            uart_mcal_send(4, (uint8_t*)str, len);
+        }
+    }
+}
+
 void uart5_puts(void* stream_ptr, const char* str, int32_t len) {
     if(str) {
         if(len) {
@@ -58,6 +70,22 @@ void uart6_puts(void* stream_ptr, const char* str, int32_t len) {
     if(str) {
         if(len) {
             uart_mcal_send(6, (uint8_t*)str, len);
+        }
+    }
+}
+
+void uart7_puts(void* stream_ptr, const char* str, int32_t len) {
+    if(str) {
+        if(len) {
+            uart_mcal_send(7, (uint8_t*)str, len);
+        }
+    }
+}
+
+void uart8_puts(void* stream_ptr, const char* str, int32_t len) {
+    if(str) {
+        if(len) {
+            uart_mcal_send(8, (uint8_t*)str, len);
         }
     }
 }

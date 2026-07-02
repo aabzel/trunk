@@ -3,6 +3,7 @@
 
 #include "std_includes.h"
 #include "led_general_const.h"
+#include "control_const.h"
 
 #ifdef HAS_GPIO
 #include "gpio_types.h"
@@ -22,6 +23,7 @@
     LED_BLITZ_VARIABLES                       \
     char* name;                               \
     uint32_t off_time_stamp;                  \
+    ControlMode_t ctrl_mode;                  \
     uint32_t group;                           \
     LedMode_t mode;                           \
     uint8_t num;                              \

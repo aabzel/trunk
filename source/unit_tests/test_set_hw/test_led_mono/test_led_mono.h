@@ -5,10 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-
-#include "sys_config.h"
-
+#include "std_includes.h"
 #include "test_hw_dep_check.h"
 
 #ifndef HAS_LED_MONO

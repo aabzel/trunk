@@ -40,7 +40,7 @@ bool UartIsValidConfig(const UartConfig_t* const Config);
 bool uart_proc(void) ;
 bool uart_proc_one(uint8_t num);
 bool uart_heartbeat_proc_one(uint8_t num);
-bool uart_heartbeat_proc(void) ;
+bool uart_heartbeat_proc(void);
 InterfaceType_t UartNumToInterface(uint8_t num);
 uint8_t UartInterfaceToNum(const InterfaceType_t Interface);
 bool uart_wait_fifo_space_ll(UartHandle_t* Node, uint32_t size);
@@ -49,18 +49,22 @@ bool uart_wait_fifo_space_ll(UartHandle_t* Node, uint32_t size);
 #ifdef HAS_DMA
 bool uart_dma_send_wait_ll(UartHandle_t* const Node, const uint8_t* const data, uint32_t size);
 bool uart_dma_send_wait(uint8_t num, const uint8_t* const data, uint32_t len);
+bool uart_dma_send(const uint8_t num, const uint8_t* const data, const uint32_t size);
 #endif
+bool uart_veryfy_one(uint8_t num);
 bool uart_set_baudrate(uint8_t num, uint32_t baudrate); //TODO uart_baudrate_set
 bool uart_wait_send(uint8_t num, const uint8_t* const data, uint32_t len);
 bool uart_send_wait(uint8_t num, const uint8_t* const data, uint32_t len);
 bool print_banner(uint8_t num);
 bool uart_flush(uint8_t num);
 bool uart_tx_next(const uint8_t num);
+bool uart_tx_next_ll( UartHandle_t* Node );
 bool uart_send_banner(uint8_t num, char* pattern);
 bool uart_mcal_send(const uint8_t num, const uint8_t* const data, uint32_t len);
 bool uart_send_ll( UartHandle_t* Node, uint8_t* data, uint16_t array_len, bool is_wait);
 bool uart_send_wait_ll(UartHandle_t* const Node,  const uint8_t* const data, uint32_t len);
 bool uart_wait_send_ll(UartHandle_t* Node, const uint8_t* const data, uint32_t len);
+bool uart_writer(const uint8_t num);
 
 /*getters*/
 uint32_t uart_get_cfg_baudrate(uint8_t num);
@@ -68,6 +72,7 @@ uint32_t uart_baud_rate_get_ll(uint8_t num, uint16_t* mantissa, uint16_t* fracti
 uint32_t UartGetBaseClock(const uint8_t num);
 bool uart_get_baud_rate(uint8_t num, uint32_t* const baudrate) ;
 bool uart_calc_byte_rate(void);
+bool uart_wait_tx_done(UartHandle_t* const Node);
 bool uart_check(void);
 
 /*ISR code*/

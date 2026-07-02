@@ -7,6 +7,6 @@ ifneq ($(TEST_DISK_MK_INC),Y)
     #@echo $(error TEST_DISK_DIR=$(TEST_DISK_DIR))
 
     INCDIR += -I$(TEST_DISK_DIR)
-    OPT += -DHAS_TEST_DISK
+    MCAL_OPT += -DHAS_TEST_DISK
     SOURCES_C += $(TEST_DISK_DIR)/test_disk.c
 endif

@@ -3,41 +3,75 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "none_blocking_pause.h"
 #include "sys_config.h"
 #include "uart_mcal.h"
 #include "unit_test_check.h"
-#include "none_blocking_pause.h"
+
+bool test_uart_write_one(uint8_t num) {
+    LOG_INFO(TEST, "%s(),UART%u", __FUNCTION__,num);
+    bool res = true;
+    uint8_t array[20] = {0};
+    memset(array, 0x31, sizeof(array));
+    UartHandle_t* Node = UartGetNode(num);
+    ASSERT_NE(NULL, Node);
+    Node->tx_done = false ;
+    ASSERT_TRUE(uart_mcal_send(num, array, sizeof(array)));
+
+    ASSERT_TRUE(wait_in_loop_ms(200));
+
+    ASSERT_TRUE(Node->tx_done);
+    return res;
+}
+
+
+#ifdef HAS_UART_DMA
+bool test_uart_write_dma_x(const uint8_t uart_num) {
+    LOG_INFO(TEST, "%s(),UART%u", __FUNCTION__, uart_num);
+    bool res = true;
+    uint8_t array[55] = { 0 };
+    UartHandle_t *Node = UartGetNode(uart_num);
+    ASSERT_NE(NULL, Node);
+    Node->tx_done = false;
+    Node->tx_half = false;
+    memset(array, 0xAA, sizeof(array));
+    ASSERT_TRUE(uart_dma_send(uart_num, array, sizeof(array)));
+    ASSERT_TRUE(wait_in_loop_ms(500));
+    ASSERT_TRUE(Node->tx_done);
+    ASSERT_TRUE(Node->tx_half);
+    return res;
+}
+#endif
 
 bool test_uart_loopback(uint8_t num) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
     uint16_t i = 0;
     UartHandle_t* Node = UartGetNode(num);
     ASSERT_NE(0, Node);
-    uint32_t duration_us = uart_calc_transfer_time_us(9600,  5);
+    uint32_t duration_us = uart_calc_transfer_time_us(9600, 5);
     LOG_INFO(TEST, "RxTimeOut:%u us", duration_us);
-    for(i=0; i < 256; i++) {
+    for(i = 0; i < 256; i++) {
         uint8_t send_byte = (uint8_t)i;
         ASSERT_TRUE(uart_mcal_send(num, &send_byte, 1));
-        ASSERT_TRUE(wait_us((uint64_t) duration_us));
+        ASSERT_TRUE(wait_us((uint64_t)duration_us));
         ASSERT_EQ(send_byte, Node->rx_byte);
     }
 
     return true;
 }
 
-static bool test_uart_wait_write(uint8_t num) {
+bool test_uart_mcal_write(uint8_t num) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
     set_log_level(UART, LOG_LEVEL_DEBUG);
     bool res = true;
     uint8_t array[10] = {0};
-    EXPECT_TRUE(uart_wait_send(num, (uint8_t*)array, sizeof(array)));
-    EXPECT_TRUE(uart_wait_send(num, (uint8_t*)array, sizeof(array)));
-    EXPECT_TRUE(uart_wait_send(num, (uint8_t*)array, sizeof(array)));
-    EXPECT_TRUE(uart_wait_send(num, (uint8_t*)array, sizeof(array)));
+    EXPECT_TRUE(uart_mcal_send(num, (uint8_t*)array, sizeof(array)));
+    EXPECT_TRUE(uart_mcal_send(num, (uint8_t*)array, sizeof(array)));
+    EXPECT_TRUE(uart_mcal_send(num, (uint8_t*)array, sizeof(array)));
+    EXPECT_TRUE(uart_mcal_send(num, (uint8_t*)array, sizeof(array)));
     set_log_level(UART, LOG_LEVEL_INFO);
     return res;
 }
-
 
 bool test_uart_time(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
@@ -52,12 +86,11 @@ bool test_uart_time(void) {
 
 #ifdef HAS_UART0
 
-bool test_uart0_loopback(void){
+bool test_uart0_loopback(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    ASSERT_TRUE( test_uart_loopback(0))
+    ASSERT_TRUE(test_uart_loopback(0))
     return true;
 }
-
 
 bool test_uart0_write(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
@@ -102,9 +135,9 @@ bool test_uart0_read(void) {
 
 #ifdef HAS_UART1
 
-bool test_uart1_loopback(void){
+bool test_uart1_loopback(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    ASSERT_TRUE( test_uart_loopback(1))
+    ASSERT_TRUE(test_uart_loopback(1))
     return true;
 }
 
@@ -131,7 +164,44 @@ bool test_uart1_read(void) {
 bool test_uart1_wait_write(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
     bool res = true;
-    EXPECT_TRUE(test_uart_wait_write(1));
+    EXPECT_TRUE(test_uart_mcal_write(1));
+    return res;
+}
+
+#endif
+
+#ifdef HAS_UART2
+
+bool test_uart2_loopback(void) {
+    LOG_INFO(TEST, "%s()", __FUNCTION__);
+    ASSERT_TRUE(test_uart_loopback(2))
+    return true;
+}
+
+bool test_uart2_write(void) {
+    LOG_INFO(TEST, "%s()", __FUNCTION__);
+    bool res = true;
+    uint8_t array[2] = {0};
+    UartHandle_t* UartNode = UartGetNode(2);
+    ASSERT_NE(NULL, UartNode);
+    uint32_t init_tx_cnt = UartNode->cnt.byte_tx;
+    memset(array, 0xFF, sizeof(array));
+    ASSERT_TRUE(uart_mcal_send(2, array, sizeof(array)));
+    ASSERT_GR(init_tx_cnt, UartNode->cnt.byte_tx);
+    return res;
+}
+bool test_uart2_read(void) {
+    LOG_INFO(TEST, "%s()", __FUNCTION__);
+    bool res = true;
+    uint8_t byte = 0xFF;
+    EXPECT_FALSE(uart_read(2, &byte, 1));
+    return res;
+}
+
+bool test_uart2_wait_write(void) {
+    LOG_INFO(TEST, "%s()", __FUNCTION__);
+    bool res = true;
+    EXPECT_TRUE(test_uart_mcal_write(2));
     return res;
 }
 
@@ -139,12 +209,11 @@ bool test_uart1_wait_write(void) {
 
 #ifdef HAS_UART3
 
-bool test_uart3_loopback(void){
+bool test_uart3_loopback(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    ASSERT_TRUE( test_uart_loopback(3))
+    ASSERT_TRUE(test_uart_loopback(3))
     return true;
 }
-
 
 bool test_uart3_write(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
@@ -158,11 +227,11 @@ bool test_uart3_write(void) {
     return res;
 }
 
-//static const char g_array[10] = "87654321";
+// static const char g_array[10] = "87654321";
 bool test_uart3_wait_write(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
     bool res = true;
-    EXPECT_TRUE(test_uart_wait_write(3));
+    EXPECT_TRUE(test_uart_mcal_write(3));
     return res;
 }
 

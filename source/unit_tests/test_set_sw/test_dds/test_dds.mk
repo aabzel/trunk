@@ -6,8 +6,8 @@ ifneq ($(TEST_DDS_MK),Y)
     $(info + DDS Test)
     INCDIR += -I$(TEST_DDS_DIR)
 
-    OPT += -DHAS_TEST_SUIT_DDS
-    OPT += -DHAS_TEST_DDS
+    MCAL_OPT += -DHAS_TEST_SUIT_DDS
+    MCAL_OPT += -DHAS_TEST_DDS
 
     SOURCES_C += $(TEST_DDS_DIR)/test_dds.c
 

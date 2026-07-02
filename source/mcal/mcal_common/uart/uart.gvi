@@ -6,4 +6,58 @@ REG->UART [color = darkorange]
 
 INTERRUPT->UART [color = blue]
 
+
+#ifdef HAS_UART1
+    UART1->UART
+#endif
+
+#ifdef HAS_UART2
+    UART2->UART
+#endif
+
+#ifdef HAS_UART3
+    UART3->UART
+#endif
+
+
+#ifdef HAS_UART4
+    UART4->UART
+#endif
+
+
+#ifdef HAS_UART5
+    UART5->UART
+#endif
+
+
+#ifdef HAS_UART6
+    UART6->UART
+#endif
+
+#ifdef HAS_UART7
+    UART7->UART
+#endif
+
+#ifdef HAS_UART8
+    UART8->UART
+#endif
+
+#ifdef HAS_UART9
+    UART9->UART
+#endif
+
+#ifdef HAS_UART10
+    UART10->UART
+#endif
+
+#ifdef HAS_UART11
+    UART11->UART
+#endif
+
+#ifdef HAS_UART12
+    UART12->UART
+#endif
+
+
+
 //https://graphviz.org/doc/info/colors.html

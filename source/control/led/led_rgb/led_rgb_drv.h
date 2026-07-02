@@ -26,23 +26,36 @@
 
 extern const LedRgbInfo_t LedRgbInfoLUT[];
 
-bool led_rgb_init(void);
+/*API*/
+LedRgbHandle_t* LedRgbGetNode(uint8_t led_rgb_num);
+const LedRgbConfig_t* LedRgbGetConfig(uint8_t led_rgb_num);
 bool led_rgb_init_one(uint32_t num );
-bool led_rgb_set_color(uint8_t led_rgb_num, Color_t color);
+bool led_rgb_init_custom(void);
+bool led_rgb_proc_one(uint32_t num );
+bool led_rgb_proc(void);
+bool led_rgb_mcal_init(void);
+bool proc_led_rgbs(void);
+
+/*setters*/
 bool led_rgb_test(void);
 bool led_rgb_test_one(uint8_t led_rgb_num) ;
-bool led_rgb_blink(uint8_t led_rgb_num, uint32_t duration_ms, Color_t color) ;
-bool led_rgb_blink_ll(LedRgbHandle_t* inLed, uint32_t duration_ms, Color_t color) ;
-bool led_rgb_pwm(uint8_t led_rgb_num, double freq, uint8_t duty);
+bool led_rgb_pwm(uint8_t led_rgb_num, float freq, uint8_t duty);
 bool led_rgb_on(LedRgbHandle_t* inLedRgb);
 bool led_rgb_off(LedRgbHandle_t* inLedRgb);
-bool proc_led_rgbs(void);
+bool led_rgb_blink(uint8_t led_rgb_num, uint32_t duration_ms, Color_t color) ;
+bool led_rgb_blink_ll(LedRgbHandle_t* inLed, uint32_t duration_ms, Color_t color) ;
+bool led_rgb_set_color(uint8_t led_rgb_num, Color_t color);
 bool led_rgb_add(void);
-Color_t led_rgb_get_color_ll(LedRgbHandle_t* inLed);
-Color_t led_rgb_get_color(uint8_t led_rgb_num);
-const LedRgbConfig_t* LedRgbGetConfig(uint8_t led_rgb_num);
-LedRgbHandle_t* LedRgbGetNode(uint8_t led_rgb_num);
-uint8_t Color2RgbGpio(Color_t color);
+
+/*getters*/
 uint32_t led_rgb_get_color_cnt(void);
+Color_t led_rgb_get_color(uint8_t led_rgb_num);
+Color_t led_rgb_get_color_ll(LedRgbHandle_t* inLed);
+uint8_t Color2RgbGpio(Color_t color);
+GpioLogicLevel_t LedRgbLogicLevelHi2Voltage(GpioLogicLevel_t active);
+GpioLogicLevel_t LedRgbLogicLevelZero2Voltage(GpioLogicLevel_t active);
+
+
+
 
 #endif /* LED_RGB_DRIVER_H  */

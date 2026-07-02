@@ -1,0 +1,23 @@
+ien -1 1
+ien -1 0
+
+ien 80 1
+id 80
+id syst
+
+
+h syst
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |     stkd |       systick_diag | SysTickDiag
+|   2 |     stks |      systick_start | SysTicStart
+|   3 |     stkp |       systick_stop | SysTicStop
+|   4 |    stksl |    systic_set_load | SysTicSetLoad
+|   5 |    stksp |     systic_set_per | SysTicSetPeriod
+|   6 |    stksd |    systic_stm_diag | SysTicStmDiag
+stkd
+stksd
+
+rm 0xE000E010 16
+ 

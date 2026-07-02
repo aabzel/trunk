@@ -27,6 +27,7 @@ ifneq ($(CRC_MK_INC),Y)
     ifeq ($(CRC16),Y)
         MCAL_OPT += -DHAS_CRC16
         SOURCES_C += $(CRC_DIR)/crc16_ccitt.c
+        SOURCES_C += $(CRC_DIR)/crc16_ibm.c
     endif
 
     ifeq ($(CRC24),Y)

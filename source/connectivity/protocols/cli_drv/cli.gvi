@@ -19,6 +19,7 @@
     UWB->STREAM [color=chartreuse]
 #endif
 
+    FIFO->STRING_READER [color=aqua]
 #ifdef HAS_USB
     USB->STREAM [color=chartreuse]
 #endif

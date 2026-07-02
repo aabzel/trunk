@@ -4,13 +4,12 @@
 #include <stdbool.h>
 
 
-bool test_crc16(void);
-bool test_crc7(void);
-
+bool test_sd_card_crc16(void);
+bool test_sd_card_crc7(void);
 
 #define TEST_SUIT_SD_CARD_CRC  \
-    {"sd_card_crc16", test_crc16}, \
-    {"sd_card_crc7", test_crc7},
+    {"sd_card_crc16", test_sd_card_crc16}, \
+    {"sd_card_crc7", test_sd_card_crc7},
 
 
 

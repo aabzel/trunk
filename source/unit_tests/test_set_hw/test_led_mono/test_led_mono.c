@@ -11,7 +11,7 @@
 
 static bool test_led_mono_one_level(uint8_t led_num, GpioLogicLevel_t set_level) {
     bool res = true;
-    LOG_INFO(LED_MONO, "%u Test %u=%s", led_num, set_level, GpioLevel2Str(set_level));
+    LOG_INFO(LED_MONO, "%u Test %u=%s", led_num, set_level, GpioLevelToStr(set_level));
 
     Color_t orig_level = led_mono_get(led_num);
 
@@ -36,23 +36,23 @@ bool test_led_mono_one(uint8_t led_num) {
 
 bool test_led_mono_set(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LED_MONO, LOG_LEVEL_DEBUG);
-    set_log_level(GPIO, LOG_LEVEL_DEBUG);
+    log_level_set(LED_MONO, LOG_LEVEL_DEBUG);
+    log_level_set(GPIO, LOG_LEVEL_DEBUG);
     bool res = true;
     uint32_t led_num = 0;
     uint32_t cnt = led_mono_get_cnt();
     for(led_num = 1; led_num <= cnt; led_num++) {
         EXPECT_TRUE(test_led_mono_one(led_num));
     }
-    set_log_level(LED_MONO, LOG_LEVEL_INFO);
-    set_log_level(GPIO, LOG_LEVEL_INFO);
+    log_level_set(LED_MONO, LOG_LEVEL_INFO);
+    log_level_set(GPIO, LOG_LEVEL_INFO);
     return res;
 }
 
 bool test_led_mono_blink(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LED_MONO, LOG_LEVEL_DEBUG);
-    set_log_level(GPIO, LOG_LEVEL_DEBUG);
+    log_level_set(LED_MONO, LOG_LEVEL_DEBUG);
+    log_level_set(GPIO, LOG_LEVEL_DEBUG);
     bool res = true;
     uint32_t led_num = 0;
     uint32_t cnt = led_mono_get_cnt();
@@ -60,15 +60,15 @@ bool test_led_mono_blink(void) {
         EXPECT_TRUE(led_mono_blink(led_num, 50));
         EXPECT_TRUE(wait_in_loop_ms(1000));
     }
-    set_log_level(LED_MONO, LOG_LEVEL_INFO);
-    set_log_level(GPIO, LOG_LEVEL_INFO);
+    log_level_set(LED_MONO, LOG_LEVEL_INFO);
+    log_level_set(GPIO, LOG_LEVEL_INFO);
     return res;
 }
 
 bool test_led_mono_pwm(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LED_MONO, LOG_LEVEL_DEBUG);
-    set_log_level(GPIO, LOG_LEVEL_DEBUG);
+    log_level_set(LED_MONO, LOG_LEVEL_DEBUG);
+    log_level_set(GPIO, LOG_LEVEL_DEBUG);
     bool res = true;
     uint32_t led_num = 0;
     uint32_t cnt = led_mono_get_cnt();
@@ -76,8 +76,8 @@ bool test_led_mono_pwm(void) {
         EXPECT_TRUE(led_mono_pwm(led_num, 2, 50));
         EXPECT_TRUE(wait_in_loop_ms(2000));
     }
-    set_log_level(LED_MONO, LOG_LEVEL_INFO);
-    set_log_level(GPIO, LOG_LEVEL_INFO);
+    log_level_set(LED_MONO, LOG_LEVEL_INFO);
+    log_level_set(GPIO, LOG_LEVEL_INFO);
     return res;
 }
 

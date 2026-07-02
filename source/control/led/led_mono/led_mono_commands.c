@@ -184,7 +184,11 @@ bool led_mono_init_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = led_mono_init_one(num);
+        if(1 <= argc) {
+            res = led_mono_init_one(num);
+        } else {
+            res = led_mono_mcal_init();
+        }
         if(res) {
             LOG_INFO(LED, "Ok");
         }

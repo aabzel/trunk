@@ -32,11 +32,13 @@ bool cmd_dds_set_chirp(int32_t argc, char* argv[]);
 bool cmd_dds_set_saw(int32_t argc, char* argv[]);
 bool cmd_dds_set_fence(int32_t argc, char* argv[]);
 bool cmd_dds_diag(int32_t argc, char* argv[]);
+bool cmd_dds_freq(int32_t argc, char* argv[]);
 bool cmd_dds_play(int32_t argc, char* argv[]);
 
 #define DDS_COMMANDS                                                       \
     SHELL_CMD("dds_phase", "ddp", cmd_dds_phase, "DdsPhase"),              \
     SHELL_CMD("dds_play", "ddl", cmd_dds_play, "DdsPlay"),                 \
+    SHELL_CMD("dds_freq", "ddf", cmd_dds_freq, "DdsFreq"),                                                        \
     SHELL_CMD("dds_amp", "ddsa", cmd_dds_amp, "DdsAmp"),                                                        \
     SHELL_CMD("dds_fps", "ddsf", cmd_dds_fps, "DdsFps"),                                                        \
     SHELL_CMD("dds_pattern", "ddsp", cmd_dds_pattern, "DdsPattern"),                                            \

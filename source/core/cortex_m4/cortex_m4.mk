@@ -28,6 +28,38 @@ ifneq ($(CORTEX_SELECT_MK_INC),Y)
 
     MICROPROCESSOR += -mcpu=cortex-m4 
     MICROPROCESSOR += -march=armv7e-m
+
+
+    # Do not use the standard system startup files or libraries when linking. No
+    # startup files and only the libraries you specify are passed to the linker, and
+    # options specifying linkage of the system libraries, such as ‘-static-libgcc’ or
+    # ‘-shared-libgcc’, are ignored.
+    # The compiler may generate calls to memcmp, memset, memcpy and memmove.
+    # These entries are usually resolved by entries in libc. These entry points should
+    # be supplied through some other mechanism when this option is specified.
+    # One of the standard libraries bypassed by ‘-nostdlib’ and ‘-nodefaultlibs’
+    # is ‘libgcc.a’, a library of internal subroutines which GCC uses to overcome
+    # shortcomings of particular machines, or special needs for some languages. 
+    # In most cases, you need ‘libgcc.a’ even when you want to avoid other standard libraries. 
+    # In other words, when you specify ‘-nostdlib’ or ‘-nodefaultlibs’ you should usually specify ‘-lgcc’ as
+    # well. This ensures that you have no unresolved references to internal GCC
+    # library subroutines. (An example of such an internal subroutine is __main,
+    # used to ensure C++ constructors are called; see Section “collect2” in GNU
+    # Compiler Collection (GCC) Internals.)
+        # MICROPROCESSOR += -nostdlib
+
+    # Do not use the standard system startup files when linking. The standard system
+    # libraries are used normally, unless ‘-nostdlib’, ‘-nolibc’, or ‘-nodefaultlibs’
+    # is used.
+     #MICROPROCESSOR += -nostartfiles
+
+
+    # Assert that compilation targets a freestanding environment. This implies
+    # ‘-fno-builtin’. A freestanding environment is one in which the standard
+    # library may not exist, and program startup may not necessarily be at
+    # main. The most obvious example is an OS kernel. This is equivalent to
+    # ‘-fno-hosted’.
+    MICROPROCESSOR += -ffreestanding
     MICROPROCESSOR += -mthumb
     
     ifeq ($(MPU),Y)

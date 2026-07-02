@@ -4,7 +4,7 @@
 #include "sd_card_crc16.h"
 #include "unit_test_check.h"
 
-bool test_crc16(void) {
+bool test_sd_card_crc16(void) {
   LOG_INFO(TEST,"%s()", __FUNCTION__);
 
   uint16_t crc16;
@@ -16,7 +16,7 @@ bool test_crc16(void) {
   return true;
 }
 
-bool test_crc7(void) {
+bool test_sd_card_crc7(void) {
 	  LOG_INFO(TEST,"%s()", __FUNCTION__);
   uint8_t crc;
   uint8_t message40[] = {0x40, 0x00, 0x00, 0x00, 0x00};

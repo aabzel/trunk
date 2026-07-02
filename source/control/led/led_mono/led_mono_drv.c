@@ -6,16 +6,9 @@
 #include "code_generator.h"
 #include "compiler_const.h"
 #include "gpio_mcal.h"
+#include "led_mono_pwm.h"
 #include "std_includes.h"
 #include "sys_config.h"
-
-#ifdef HAS_DWT
-#include "dwt_mcal.h"
-#endif
-
-#ifdef HAS_SYSTICK
-#include "systick_mcal.h"
-#endif
 
 #ifdef HAS_PWM
 #include "pwm_mcal.h"
@@ -102,7 +95,7 @@ static GpioLogicLevel_t LedLogicLevelZero2Voltage(GpioLogicLevel_t active) {
 
 uint8_t LedMonoPadToNum(const Pad_t Pad) {
     uint8_t num = 0;
-    LedMonoHandle_t* Node = LedPadToNode(Pad);
+    LedMonoHandle_t* Node = LedPad2Node(Pad);
     if(Node) {
         num = Node->num;
     }
@@ -127,6 +120,15 @@ static GpioLogicLevel_t LedLogicLevel2Voltage(uint8_t val, GpioLogicLevel_t acti
         break;
     }
     return voltage;
+}
+
+bool led_mono_is_valid_num(uint8_t num) {
+    bool res = false;
+    LedMonoHandle_t* Node=LedMonoGetNode(num);
+    if(Node) {
+        res = true;
+    }
+    return res;
 }
 
 #ifdef HAS_LED_EXT
@@ -180,7 +182,8 @@ static GpioLogicLevel_t Voltage2LedLogicLevel(uint8_t voltage, GpioLogicLevel_t 
 }
 #endif
 
-LedMonoHandle_t* LedPadToNode(Pad_t Pad) {
+#ifdef HAS_LED_EXT
+LedMonoHandle_t* LedPad2Node(Pad_t Pad) {
     LedMonoHandle_t* Node = NULL;
     uint32_t i = 0;
     uint32_t cnt = led_mono_get_cnt();
@@ -194,7 +197,6 @@ LedMonoHandle_t* LedPadToNode(Pad_t Pad) {
     }
     return Node;
 }
-#ifdef HAS_LED_EXT
 #endif
 
 static bool led_set_state_ll(LedMonoHandle_t* const Node, const GpioLogicLevel_t des_logic_level) {
@@ -262,7 +264,7 @@ bool led_set_state(Pad_t Pad, GpioLogicLevel_t des_logic_level) {
     LOG_DEBUG(LED_MONO, "Set:%s,Val:%u", GpioPadToStr(Pad), des_logic_level);
 #endif
     LedMonoHandle_t* Node = NULL;
-    Node = LedPadToNode(Pad);
+    Node = LedPad2Node(Pad);
     if(Node) {
         res = led_set_state_ll(Node, des_logic_level);
     }
@@ -298,7 +300,7 @@ bool led_mono_on(LedMonoHandle_t* const Node) {
     if(Node) {
         res = true;
         res = led_set_state_ll(Node, GPIO_LVL_HI); // Error
-        // Node->mode = LED_MCAL_MODE_ON;
+        Node->mode = LED_MCAL_MODE_ON;
         Node->prev = GPIO_LVL_UNDEF; // Error
     } else {
 #ifdef HAS_LOG
@@ -345,6 +347,7 @@ bool led_mono_ctrl(const uint8_t num, const bool on_off) {
     return res;
 }
 
+#if 0
 bool led_mono_hw_pwm(uint8_t num, float frequency_hz, float duty_cycle) {
     bool res = false;
 #ifdef HAS_PWM
@@ -358,6 +361,7 @@ bool led_mono_hw_pwm(uint8_t num, float frequency_hz, float duty_cycle) {
 #endif
     return res;
 }
+#endif
 
 bool led_mono_frequency_set(const uint8_t num, const float frequency_hz) {
     bool res = true;
@@ -498,7 +502,8 @@ bool led_mono_mode_set(uint8_t num, LedMode_t mode) {
 bool led_mono_init_custom(void) {
     bool res = true;
 #ifdef HAS_LOG
-    log_level_get_set(LED_MONO, LOG_LEVEL_INFO);
+    uint32_t cnt = led_mono_get_cnt();
+    LOG_INFO(LED_MONO, "LEDcnt:%u", cnt);
 #endif
     return res;
 }
@@ -590,6 +595,12 @@ static bool LedMonoIsValidConfig(const LedMonoConfig_t* const Config) {
 #endif
         }
 
+        ifn(Config->led_phy) {
+#ifdef HAS_LOG
+            LOG_ERROR(LED_MONO, "ledPhy,Err:%u", Config->num);
+#endif
+        }
+
         ifn(Config->mode) {
 #ifdef HAS_LOG
             LOG_ERROR(LED_MONO, "mode,Err:%u", Config->num);
@@ -645,7 +656,6 @@ _WEAK_FUN_ bool led_mono_fix(void) { return true; }
 
 static bool led_mono_proc_one_ll(LedMonoHandle_t* const Node) {
     bool res = false;
-
 #ifdef HAS_LOG
     LOG_PARN(LED_MONO, "Proc:%u", Node->num);
 #endif
@@ -665,15 +675,8 @@ static bool led_mono_proc_one_ll(LedMonoHandle_t* const Node) {
         Node->cur_time_ms = (uint32_t)(time_us / 1000);
 #else
         Node->cur_time_ms++;
-#ifdef HAS_DWT
-        time_us = dwt_get_time_us64(1);
-        ;
-#endif /**/
-#ifdef HAS_SYSTICK
-        time_us = systick_get_us();
-#endif /**/
+        time_us = Node->cur_time_ms;
 #endif /*HAS_TIME*/
-
         uint8_t val = 0;
         switch(Node->mode) {
         case LED_MCAL_MODE_ON: {
@@ -702,7 +705,7 @@ static bool led_mono_proc_one_ll(LedMonoHandle_t* const Node) {
             }
         } break;
 #endif
-        case LED_MCAL_MODE_PWM: { // ok
+        case LED_MCAL_MODE_PWM: {
 #ifdef HAS_MATH
             val = calc_pwm_sample_num(time_us, Node->period_ms, Node->duty, Node->phase_ms);
 #else
@@ -716,7 +719,7 @@ static bool led_mono_proc_one_ll(LedMonoHandle_t* const Node) {
         }
 
         if(res) {
-            if(Node->prev != val) { // no
+            if(Node->prev != val) {
 #ifdef HAS_GPIO_DIAG
                 LOG_NOTICE(LED_MONO, "%s NewVal: %u", GpioPadToStr(Node->pad), val);
 #endif

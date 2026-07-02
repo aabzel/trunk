@@ -6,7 +6,7 @@ TEST_FIFO_DIR = $(TEST_SET_SW_DIR)/test_fifo
 
 INCDIR += -I$(TEST_FIFO_DIR)
 
-OPT += -DHAS_TEST_SUIT_FIFO
+MCAL_OPT += -DHAS_TEST_SUIT_FIFO
 
 SOURCES_C += $(TEST_FIFO_DIR)/test_fifo_array.c
 SOURCES_C += $(TEST_FIFO_DIR)/test_fifo_char.c

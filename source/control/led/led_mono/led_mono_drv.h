@@ -29,7 +29,7 @@
 /*API*/
 const LedMonoConfig_t* LedMonoGetConfig(uint8_t num);
 LedMonoHandle_t* LedMonoGetNode(uint8_t num);
-LedMonoHandle_t* LedPadToNode(Pad_t Pad);
+LedMonoHandle_t* LedPad2Node(Pad_t Pad);
 bool led_mono_proc_one(uint32_t num);
 bool led_mono_proc_group(uint32_t group);
 bool led_mono_proc(void);
@@ -56,6 +56,7 @@ bool led_mono_mode_set(uint8_t num, LedMode_t mode);
 bool led_mono_set(uint8_t num, GpioLogicLevel_t level);
 
 /*Getters*/
+bool led_mono_is_valid_num(uint8_t num);
 bool led_mono_set_off_duty(const uint8_t num, const float off_duty) ;
 float led_logic_level_to_duty(const LedMonoHandle_t* const Node, const GpioLogicLevel_t des_logic_level);
 GpioLogicLevel_t led_mono_get(uint8_t num);

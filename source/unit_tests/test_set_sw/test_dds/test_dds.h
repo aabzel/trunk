@@ -19,11 +19,15 @@ extern "C" {
 #error "It is needed to add HAS_DDS option"
 #endif
 
+
+
 bool test_dds_chirp_wav(void);
 bool test_dds_chirp(void);
 bool test_dds_chirp_30ms_wav(void);
+bool test_dds_sin(void);
 
 #define TEST_SUIT_DDS  \
+	{"dds_sin", test_dds_sin}, \
 	{"dds_chirp", test_dds_chirp}, \
 	{"dds_chirp_30ms_wav", test_dds_chirp_30ms_wav}, \
 	{"dds_chirp_wav", test_dds_chirp_wav},

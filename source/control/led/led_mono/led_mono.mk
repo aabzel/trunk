@@ -16,6 +16,10 @@ ifneq ($(LED_MONO_MK_INC),Y)
         SOURCES_C += $(LED_MONO_DIR)/led_mono_pwm.c
     endif
 
+    ifeq ($(LED_MONO_EXT),Y)
+        MCAL_OPT += -DHAS_LED_MONO_EXT
+    endif
+
     MCAL_OPT += -DHAS_LED_MONO
     MCAL_OPT += -DHAS_LED_MONO_PROC
 

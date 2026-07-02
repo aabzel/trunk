@@ -49,6 +49,10 @@ bool uart_wait_send_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+/*
+uart_dma_send 1 0x12345678
+uart_dma_send 1 Hello!
+ * */
 bool uart_dma_send_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -75,7 +79,7 @@ bool uart_dma_send_command(int32_t argc, char* argv[]) {
     if(res) {
         res = true;
 #ifdef HAS_UART_DMA
-        res = uart_dma_send_wait(num, data, size);
+        res = uart_dma_send(num, data, size);
         if(res) {
             cli_printf(CRLF);
             LOG_INFO(UART, "UART%u,SendOk", num);

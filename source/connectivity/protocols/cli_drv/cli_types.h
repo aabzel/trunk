@@ -4,8 +4,7 @@
 #include <std_includes.h>
 
 #include "cli_const.h"
-//#include "sys_constants.h"
-//#include "string_reader.h"
+
 #ifdef HAS_GPIO
 #include "gpio_types.h"
 #endif
@@ -21,14 +20,15 @@ typedef struct {
 
 #define CLI_COMMON_VARIABLES      \
     uint8_t num;                  \
+    uint8_t rtc_num;              \
     bool valid;                   \
     CliCmdInfo_t* CommandArray;   \
+    char * name;                  \
     uint32_t cmd_cnt;             \
     uint8_t feedback_led;
 
 typedef struct {
     CLI_COMMON_VARIABLES
-    char * name;
 } CliConfig_t;
 
 typedef struct {

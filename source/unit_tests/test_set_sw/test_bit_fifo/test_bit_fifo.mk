@@ -1,0 +1,13 @@
+$(info TEST_BIT_FIFO_MK_INC=$(TEST_BIT_FIFO_MK_INC))
+ifneq ($(TEST_BIT_FIFO_MK_INC),Y)
+    TEST_BIT_FIFO_MK_INC=Y
+
+    TEST_BIT_FIFO_DIR = $(TEST_SET_SW_DIR)/test_bit_fifo
+    #@echo $(error TEST_BIT_FIFO_DIR= $(TEST_BIT_FIFO_DIR))
+
+    MCAL_OPT += -DHAS_TEST_SUIT_BIT_FIFO
+    MCAL_OPT += -DHAS_TEST_BIT_FIFO
+    INCDIR  += -I$(TEST_BIT_FIFO_DIR)
+
+    SOURCES_C += $(TEST_BIT_FIFO_DIR)/test_bit_fifo.c
+endif

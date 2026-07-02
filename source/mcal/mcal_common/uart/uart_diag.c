@@ -39,8 +39,8 @@ const char* UartConfigToStr(const UartConfig_t* const Config) {
         snprintf(text, sizeof(text), "%sTxBuff:0x%p,", text, Config->TxFifoArray);
         snprintf(text, sizeof(text), "%sTxSz:%u,", text, Config->tx_buff_size);
 #ifdef HAS_DMA_CHANNEL
-        snprintf(text, sizeof(text), "%sDmaTx:%s,", text, DmaPadToStr(Config->DmaTx));
-        snprintf(text, sizeof(text), "%sDmaRx:%s,", text, DmaPadToStr(Config->DmaRx));
+        // snprintf(text, sizeof(text), "%sDmaTx:%s,", text, DmaPadToStr(Config->DmaTx));
+        // snprintf(text, sizeof(text), "%sDmaRx:%s,", text, DmaPadToStr(Config->DmaRx));
 #endif
     }
 

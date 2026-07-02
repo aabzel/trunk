@@ -27,6 +27,7 @@ typedef enum {
     DDS_STATE_UNDEF = 0,
 } DdsState_t;
 
+#if 0
 typedef enum {
     DDS_PLAYER_UNDEF = 0,
     DDS_PLAYER_DAC_CHANNEL1 ,
@@ -44,6 +45,7 @@ typedef enum {
     DDS_PLAYER_CSV_FILE  ,
 
 } DdsPlayer_t;
+#endif
 
 typedef enum {
     CHANNEL_ONLY_RIGHT=1,

@@ -11,17 +11,16 @@ extern "C" {
 #define APPLICATIONS_COMMANDS
 #endif
 
-#ifdef HAS_PHYSICS_COMMANDS
-#include "physics_commands.h"
-#else
-#define PHYSICS_COMMANDS
-#endif
-
-
 #ifdef HAS_ADT_COMMANDS
 #include "adt_commands.h"
 #else
 #define ADT_COMMANDS
+#endif
+
+#ifdef HAS_ASICS_COMMANDS
+#include "asics_commands.h"
+#else
+#define ASICS_COMMANDS
 #endif
 
 #ifdef HAS_MICROCONTROLLER
@@ -36,16 +35,16 @@ extern "C" {
 #define BIT_COMMANDS
 #endif
 
+#ifdef HAS_FONT_COMMANDS
+#include "font_commands.h"
+#else
+#define FONT_COMMANDS
+#endif
+
 #ifdef HAS_MCAL_COMMANDS
 #include "mcal_commands.h"
 #else
 #define MCAL_COMMANDS
-#endif
-
-#ifdef HAS_ASICS_COMMANDS
-#include "asics_commands.h"
-#else
-#define ASICS_COMMANDS
 #endif
 
 #ifdef HAS_AES_COMMANDS
@@ -96,12 +95,6 @@ extern "C" {
 #define PROTOTYPE_COMMANDS
 #endif
 
-#ifdef HAS_RNG_COMMANDS
-#include "rng_commands.h"
-#else
-#define TRNG_COMMANDS
-#endif
-
 #ifdef HAS_GAMES_COMMANDS
 #include "games_commands.h"
 #else
@@ -132,10 +125,11 @@ extern "C" {
 #define COMMON_COMMANDS
 #endif
 
-#ifdef HAS_FONT_COMMANDS
-#include "font_commands.h"
+
+#ifdef HAS_SW_COMPONENT_COMMANDS
+#include "sw_component_commands.h"
 #else
-#define FONT_COMMANDS
+#define SW_COMPONENT_COMMANDS
 #endif
 
 #ifdef HAS_THIRD_PARTY_COMMANDS
@@ -144,23 +138,17 @@ extern "C" {
 #define THIRD_PARTY_COMMANDS
 #endif
 
-
-
-
 #define CLI_SECURITY_COMMANDS                                              \
     CRYP_COMMANDS                                                          \
-    AES_COMMANDS                                                           \
-    TRNG_COMMANDS
-
+    AES_COMMANDS
 
 #define CLI_COMMANDS                                                       \
     ADT_COMMANDS                                                           \
-    CLI_SECURITY_COMMANDS                                                  \
+    APPLICATIONS_COMMANDS                                                  \
     ASICS_COMMANDS                                                         \
     BIT_COMMANDS                                                           \
-    APPLICATIONS_COMMANDS                                                  \
+    CLI_SECURITY_COMMANDS                                                  \
     CONTROL_COMMANDS                                                       \
-    PHYSICS_COMMANDS                                                       \
     COMMON_COMMANDS                                                        \
     CONNECTIVITY_COMMANDS                                                  \
     COMPUTING_COMMANDS                                                     \
@@ -174,7 +162,8 @@ extern "C" {
     STORAGE_COMMANDS                                                       \
     SENSITIVITY_COMMANDS                                                   \
     SOFTWARE_TIMER_COMMANDS                                                \
-    THIRD_PARTY_COMMANDS                                                   \
+    SW_COMPONENT_COMMANDS                                                  \
+    THIRD_PARTY_COMMANDS
 
 #ifdef __cplusplus
 } /* extern "C" */

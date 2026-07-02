@@ -7,10 +7,12 @@
 #include "crc16_ccitt.h"
 #include "crc24_q.h"
 #include "crc32.h"
-#include "crc8_autosar.h"
-#include "crc8_sae_j1850.h"
 #include "data_utils.h"
 #include "unit_test_check.h"
+#ifdef HAS_CRC8
+#include "crc8_autosar.h"
+#include "crc8_sae_j1850.h"
+#endif
 
 #define TEST_PAYLOAD (const uint8_t*)"12345678"
 
@@ -33,6 +35,7 @@ static const Crc8TestCase_t cases_crc8_auto[] = {
 };
 #endif
 
+#ifdef HAS_CRC8
 static const Crc8TestCase_t cases_crc8_j1850[] = {
     {.len = 4, .buf = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, .crc8 = 0x59},
     {.len = 3, .buf = {0xF2, 0x01, 0x83, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, .crc8 = 0x37},
@@ -42,6 +45,7 @@ static const Crc8TestCase_t cases_crc8_j1850[] = {
     {.len = 3, .buf = {0x92, 0x6B, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, .crc8 = 0x8C},
     {.len = 4, .buf = {0xff, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00}, .crc8 = 0x74},
 };
+#endif
 
 #ifdef HAS_CRC8_AUTOSAR
 static bool test_crc8_autosar(void) {
@@ -55,6 +59,7 @@ static bool test_crc8_autosar(void) {
 }
 #endif
 
+#ifdef HAS_CRC8
 static bool test_crc8_sae_j1850(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     uint32_t i = 0;
@@ -65,7 +70,9 @@ static bool test_crc8_sae_j1850(void) {
     }
     return res;
 }
+#endif
 
+#ifdef HAS_CRC8
 bool test_crc8(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     bool res = true;
@@ -75,7 +82,9 @@ bool test_crc8(void) {
     ASSERT_TRUE(test_crc8_sae_j1850());
     return res;
 }
+#endif
 
+#ifdef HAS_CRC16
 bool test_crc16(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     uint16_t crc16 = 0;
@@ -84,10 +93,12 @@ bool test_crc16(void) {
     EXPECT_EQ(0xA12B, crc16);
     return res;
 }
+#endif
 
 /*
  * https://crccalc.com/
  */
+#ifdef HAS_CRC16
 bool test_crc16_stream(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     bool res = true;
@@ -99,6 +110,7 @@ bool test_crc16_stream(void) {
     EXPECT_EQ(0xA12B, crc16_cur);
     return res;
 }
+#endif
 
 /*crc24 0x244B24*/
 const uint8_t rtcm3frame80[83] = {0xD3, 0x00, 0x50, 0x43, 0xC0, 0x00, 0xD4, 0x8B, 0x66, 0x3E, 0x00, 0x00, 0x04, 0x02,
@@ -112,6 +124,7 @@ const uint8_t rtcm3frame80[83] = {0xD3, 0x00, 0x50, 0x43, 0xC0, 0x00, 0xD4, 0x8B
 const uint8_t rtcm3frame13[22] = {0xD3, 0x00, 0x13, 0x3E, 0xD0, 0x00, 0x03, 0x86, 0xA2, 0x16, 0xA1,
                                   0x25, 0x85, 0x13, 0x8B, 0xFB, 0xA2, 0x0C, 0x3C, 0xE2, 0x79, 0x9D};
 
+#ifdef HAS_CRC24
 bool test_crc24q13(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     uint32_t crc24 = 0;
@@ -121,7 +134,9 @@ bool test_crc24q13(void) {
     ASSERT_TRUE(crc24_q_check(rtcm3frame13, sizeof(rtcm3frame13), 0x0C17FB));
     return res;
 }
+#endif
 
+#ifdef HAS_CRC24
 bool test_crc24q80(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
     uint32_t crc24 = 0;
@@ -131,6 +146,7 @@ bool test_crc24q80(void) {
     ASSERT_TRUE(crc24_q_check(rtcm3frame80, sizeof(rtcm3frame80), 0x244B24));
     return res;
 }
+#endif
 
 static bool test_calc_crc32(void) {
     bool res = true;

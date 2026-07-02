@@ -1,14 +1,13 @@
 #ifndef CRC_16_CCITT_FALSE_H
 #define CRC_16_CCITT_FALSE_H
 
-#include <stdbool.h>
-#include <stdint.h>
 #include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include "std_includes.h"
 #include "crc_types.h"
 
 #define INIT_VALUE (0xFFFFU)

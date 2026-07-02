@@ -9,9 +9,7 @@
 #include "interrupt_mcal.h"
 #include "log_config.h"
 #include "std_includes.h"
-#include "time_mcal.h"
 #include "uart_config.h"
-#include "utils_math.h"
 
 #ifdef HAS_LOG
 #include "log.h"
@@ -302,10 +300,14 @@ bool uart_init_common(const UartConfig_t* const Config, UartHandle_t* const Node
             Node->baud_rate = Config->baud_rate;
             Node->stop_bit_cnt = Config->stop_bit_cnt;
             Node->word_len_bit = Config->word_len_bit;
-#ifdef HAS_DMA_CHANNEL
-            Node->DmaRx = Config->DmaRx;
-            Node->DmaTx = Config->DmaTx;
-            Node->dma = Config->dma;
+
+#ifdef HAS_UART_DMA
+            const UartInfo_t* Info = UartGetInfo(Config->num);
+            if(Info) {
+                Node->DmaPadTx = Info->DmaPadTx;
+                Node->DmaPadRx = Info->DmaPadRx;
+                Node->dma = Config->dma;
+            }
 #endif
             res = true;
         }
@@ -395,13 +397,13 @@ bool uart_calc_byte_rate(void) {
         UartHandle_t* Node = UartGetNode(num);
         if(Node) {
             Node->rx_rate.cur = Node->cnt.byte_rx - Node->cnt_prev.byte_rx;
-            Node->rx_rate.min = MATH_MIN(Node->rx_rate.min, Node->rx_rate.cur);
-            Node->rx_rate.max = MATH_MAX(Node->rx_rate.max, Node->rx_rate.cur);
+            Node->rx_rate.min = DATA_MIN(Node->rx_rate.min, Node->rx_rate.cur);
+            Node->rx_rate.max = DATA_MAX(Node->rx_rate.max, Node->rx_rate.cur);
             Node->cnt_prev.byte_rx = Node->cnt.byte_rx;
 
             Node->tx_rate.cur = Node->cnt.byte_tx - Node->cnt_prev.byte_tx;
-            Node->tx_rate.min = MATH_MIN(Node->tx_rate.min, Node->tx_rate.cur);
-            Node->tx_rate.max = MATH_MAX(Node->tx_rate.max, Node->tx_rate.cur);
+            Node->tx_rate.min = DATA_MIN(Node->tx_rate.min, Node->tx_rate.cur);
+            Node->tx_rate.max = DATA_MAX(Node->tx_rate.max, Node->tx_rate.cur);
             Node->cnt_prev.byte_tx = Node->cnt.byte_tx;
         }
         res = true;
@@ -624,6 +626,7 @@ bool uart_proc_one(uint8_t num) {
 #endif
 
 #ifdef HAS_UART_EXT
+_WEAK_FUN_
 bool uart_flush(uint8_t num) {
     bool res = false;
     UartHandle_t* Node = UartGetNode(num);
@@ -654,6 +657,7 @@ bool uart_flush(uint8_t num) {
 #endif
 
 /*Wait until a free spot appears in the queue*/
+_WEAK_FUN_
 bool uart_wait_fifo_space_ll(UartHandle_t* Node, uint32_t size) {
     bool res = false;
     if(Node->init_done) {
@@ -679,6 +683,7 @@ bool uart_wait_fifo_space_ll(UartHandle_t* Node, uint32_t size) {
     return res;
 }
 
+_WEAK_FUN_
 bool uart_mcal_send(const uint8_t num, const uint8_t* const data, uint32_t size) {
     bool res = false;
     if(size) {
@@ -749,6 +754,14 @@ bool uart_mcal_send_v0(uint8_t num, const uint8_t* const data, uint32_t size) {
 /*ISR code*/
 
 #ifdef HAS_UART_DMA
+_WEAK_FUN_
+bool uart_dma_send(uint8_t num, const uint8_t* const data, uint32_t size) {
+    bool res = false;
+    res = uart_dma_send_wait(num, data, size);
+    return res;
+}
+
+_WEAK_FUN_
 bool uart_dma_send_wait(uint8_t num, const uint8_t* const data, uint32_t size) {
     bool res = false;
     UartHandle_t* Node = UartGetNode(num);
@@ -764,18 +777,21 @@ bool uart_dma_send_wait(uint8_t num, const uint8_t* const data, uint32_t size) {
 #endif
 
 #ifdef HAS_UART_EXT
-
+_WEAK_FUN_
 bool uart_send_wait(uint8_t num, const uint8_t* const data, uint32_t size) {
     bool res = false;
     UartHandle_t* Node = UartGetNode(num);
     if(Node) {
         if(data) {
             if(size) {
+#ifdef HAS_DMA_CHANNEL
                 if(Node->dma.tx) {
 #ifdef HAS_UART_DMA
                     res = uart_dma_send_wait_ll(Node, data, size);
-#endif
-                } else {
+#endif // HAS_UART_DMA
+                }
+#endif // HAS_DMA_CHANNEL
+                if(!res) {
                     res = uart_send_wait_ll(Node, data, size);
                 }
             }
@@ -786,6 +802,7 @@ bool uart_send_wait(uint8_t num, const uint8_t* const data, uint32_t size) {
 #endif
 
 #ifdef HAS_UART_EXT
+_WEAK_FUN_
 bool uart_wait_send(uint8_t num, const uint8_t* const data, uint32_t size) {
     bool res = false;
     UartHandle_t* Node = UartGetNode(num);
@@ -800,7 +817,18 @@ bool uart_wait_send(uint8_t num, const uint8_t* const data, uint32_t size) {
 }
 #endif
 
+_WEAK_FUN_
+bool uart_writer(const uint8_t num) {
+    bool res = false;
+    InterfaceType_t interface_if;
+    interface_if.num = num;
+    interface_if.interface_name = INTERFACE_NAME_UART;
+    res = writer_interface_set(interface_if);
+    return res;
+}
+
 #ifdef HAS_UART_EXT
+_WEAK_FUN_
 bool UartIsValidConfig(const UartConfig_t* const Config) {
     bool res = false;
     if(Config) {
@@ -827,6 +855,7 @@ bool UartIsValidConfig(const UartConfig_t* const Config) {
 #endif
 
 #ifdef HAS_UART_EXT
+_WEAK_FUN_
 bool uart_heartbeat_proc(void) {
     bool res = false;
     uint32_t ok = 0;
@@ -845,4 +874,4 @@ bool uart_heartbeat_proc(void) {
 #endif
 
 COMPONENT_PROC_PATTERT_CNT(UART, UART, uart, UART_MAX_NUM)
-COMPONENT_INIT_PATTERT_CNT(UART, UART, uart, UART_MAX_NUM)
+COMPONENT_INIT_ANY_PATTERT_CNT(UART, UART, uart, UART_MAX_NUM)

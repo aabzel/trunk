@@ -1,12 +1,22 @@
 #include "cli_drv.h"
-/**
- *  Description : Driver for Bash-like UART console.
- *  CLI-Command Line Interface
+/*
+   Description : Driver for Bash-like UART console.
+   CLI-Command Line Interface
  */
 
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "cli_config.h"
+#include "code_generator.h"
+#include "convert.h"
+#include "data_utils.h"
+#include "log.h"
+#include "str_utils.h"
+#include "string_reader.h"
+#include "table_utils.h"
+#include "terminal_codes.h"
 
 #ifdef HAS_MINGW
 #include <conio.h> /*for kbhit getch function. Clang/cygwin64 build error*/
@@ -23,10 +33,6 @@
 #include "csv.h"
 #endif
 
-#include "code_generator.h"
-#include "table_utils.h"
-#include "terminal_codes.h"
-
 #ifdef HAS_FAT_FS
 #include "fat_fs.h"
 #endif
@@ -40,29 +46,21 @@
 #include "task.h"
 #endif
 
-#include "data_utils.h"
-#include "log.h"
-#include "string_reader.h"
-//#include "cli_commands.h"
-#include "convert.h"
-//#include "sys_config.h"
-
 #ifdef HAS_WRITER
 #include "writer.h"
-#endif /* */
+#endif
 
 #ifdef HAS_UART
 #include "uart_mcal.h"
-#endif /**/
-
-#ifdef HAS_TIME
-#include "none_blocking_pause.h"
-#include "time_mcal.h"
 #endif
 
-#include "cli_config.h"
-#include "str_utils.h"
-#include "string_reader.h"
+#ifdef HAS_LED
+#include "led_drv.h"
+#endif
+
+#ifdef HAS_TIME
+#include "time_mcal.h"
+#endif
 
 COMPONENT_GET_CONFIG(Cli, cli)
 COMPONENT_GET_NODE(Cli, cli)
@@ -295,9 +293,9 @@ static void cli_prompt_ll(CliHandle_t* Node) {
 
 #ifdef HAS_RTC
             struct tm time_date = {0};
-            bool res = rtc_get(1, &time_date);
+            bool res = rtc_get(Node->rtc_num, &time_date);
             if(res) {
-                res = TimeDateToStr(&time_date, time_stamp, sizeof(time_stamp));
+                res = TimeDateToStrExt(&time_date, time_stamp, sizeof(time_stamp));
             }
 #endif
             snprintf(time_stamp, sizeof(time_stamp), "%s%s", time_stamp, CLI_CURSOR);
@@ -338,9 +336,9 @@ bool cli_prepare_cmd(char* original_cmd) {
     return res;
 }
 
-static bool cli_process_one_cmd_data(CliHandle_t* Node, char* original_cmd, const uint32_t cmd_len) {
+static bool cli_process_one_cmd_data(CliHandle_t* Node, char* original_cmd, const uint32_t cmd_size) {
     bool res = false;
-   // size_t cmd_len = strlen(original_cmd);
+    size_t cmd_len = strlen(original_cmd);
     memset(Node->in_cmd_line, 0, sizeof(Node->in_cmd_line));
     strncpy(Node->in_cmd_line, original_cmd, cmd_len);
 
@@ -382,6 +380,9 @@ static bool cli_process_one_cmd_data(CliHandle_t* Node, char* original_cmd, cons
             if(res) {
                 const CliCmdInfo_t* CmdInfo = CliCmdInfoGet(Node->num, shell_argv[0]); // 3s
                 if(CmdInfo) {
+#ifdef HAS_LED
+                    res = led_blink(Node->feedback_led, 50);
+#endif
                     cli_printf(CRLF); /* in order to not to overlap the cursor (-->)   */
                     res = CmdInfo->handler(cli_argc - 1, shell_argv + 1);
                     if(false == res) {
@@ -398,8 +399,7 @@ static bool cli_process_one_cmd_data(CliHandle_t* Node, char* original_cmd, cons
         if(res) {
             if(Node->log_commands) {
 
-#ifdef HAS_FAT_FS
-
+#ifdef HAS_CLI_FAT_FS
                 if(1 <= cmd_len) {
                     res = fat_fs_write(CLI_HISTORY_FILE, Node->in_cmd_line);
                 }
@@ -434,7 +434,7 @@ bool cli_process_cmd_ll(CliHandle_t* const Node, char* const cmd_line, uint32_t 
     LOG_DEBUG(CLI, "Commands:[%s]", cmd_line);
     /*Delete 0d,0a*/
     uint32_t cmd_len = strlen(cmd_line);
-    if(2 <= cmd_len) {
+    if(3 <= cmd_len) {
         str_del_char_inplace(cmd_line, (char)0x0d);
         str_del_char_inplace(cmd_line, (char)0x0a);
     }
@@ -474,7 +474,7 @@ bool cli_init_custom(void) {
 bool cli_process_cmd(uint8_t num, char* const cmd_line) {
     bool res = false;
     uint32_t cmd_len = strlen(cmd_line);
-    if(2 <= cmd_len) {
+    if(3 <= cmd_len) {
         str_del_char_inplace(cmd_line, (char)0x0d);
         str_del_char_inplace(cmd_line, (char)0x0a);
     }
@@ -492,7 +492,7 @@ bool cli_process_cmd(uint8_t num, char* const cmd_line) {
 bool cli_process_data(uint8_t num, uint8_t* const cmd_line, uint32_t size) {
     bool res = false;
     uint32_t cmd_len = strlen((char*)cmd_line);
-    if(2 <= cmd_len) {
+    if(3 <= cmd_len) {
         str_del_char_inplace((char*)cmd_line, (char)0x0d);
         str_del_char_inplace((char*)cmd_line, (char)0x0a);
     }
@@ -672,11 +672,12 @@ static bool cli_init_common(const CliConfig_t* const Config, CliHandle_t* const 
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->rtc_num = Config->rtc_num;
+            Node->name = Config->name;
             Node->num = Config->num;
             Node->feedback_led = Config->feedback_led;
             Node->CommandArray = Config->CommandArray;
             Node->cmd_cnt = Config->cmd_cnt;
-
             Node->valid = true;
             Node->run_cmd = false;
             Node->echo = true;
@@ -727,6 +728,12 @@ bool cli_init_one(uint8_t num) {
     }
     return res;
 }
+
+bool cli1_init(void) { return cli_init_one(1); }
+
+bool cli2_init(void) { return cli_init_one(2); }
+
+bool cli3_init(void) { return cli_init_one(3); }
 
 COMPONENT_PROC_PATTERT(CLI, CLI, cli)
 

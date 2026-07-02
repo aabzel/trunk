@@ -6,6 +6,8 @@
 #include <winsock2.h> /*socket() WSAStartup()*/
 #include <ws2tcpip.h>
 
+#include "socket_if.h"
+#include "array_diag.h"
 #include "byte_utils.h"
 #include "code_generator.h"
 #include "debug_info.h"
@@ -91,14 +93,14 @@ bool socket_proc_client(SocketHandle_t* Node ) {
     bool res = false;
     if(0 != Node->socket_client_descriptor) {
         char RxData[1000] = {0};
-        int ret = recv(Node->socket_client_descriptor, RxData, sizeof(RxData), 0);
-        if(SOCKET_ERROR == ret) {
+        int rx_size = recv(Node->socket_client_descriptor, RxData, sizeof(RxData), 0);
+        if(SOCKET_ERROR == rx_size) {
             LOG_PARN(LG_SOCKET_CLIENT, "RxErr: %d", ret);
             res = false;
         } else {
-            if(ret) {
-                LOG_INFO(LG_SOCKET_CLIENT, "RxOk %d", ret);
-                print_mem(RxData, ret, true, true, true, false);
+            if(0<rx_size) {
+                LOG_INFO(LG_SOCKET_CLIENT, "RxCnt:%d", rx_size);
+                print_mem((uint8_t*)RxData, rx_size, true, true, true, false);
                 res = true;
             }
         }

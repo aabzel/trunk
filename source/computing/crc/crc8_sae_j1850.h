@@ -1,7 +1,6 @@
 #ifndef CRC8_SAE_J1850_H_
 #define CRC8_SAE_J1850_H_
 
-#include "std_includes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,6 +9,8 @@ extern "C" {
 #ifndef HAS_CRC8
 #error "+HAS_CRC8"
 #endif
+
+#include "std_includes.h"
 
 bool crc8_sae_j1850_check(const void* in_buf, uint32_t len, uint8_t exp_crc, uint8_t* calc_crc8);
 uint8_t crc8_sae_j1850_calc(const void* buf, uint32_t len);

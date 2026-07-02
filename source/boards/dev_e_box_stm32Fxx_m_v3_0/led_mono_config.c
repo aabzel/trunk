@@ -2,7 +2,7 @@
 
 #ifndef HAS_LED
 #error "Add HAS_LED"
-#endif /*HAS_LED*/
+#endif
 
 #include "data_utils.h"
 #include "gpio_custom_const.h"
@@ -25,14 +25,4 @@ LedMonoHandle_t LedMonoInstance[] = {
      {.num = 1, .valid = true, .active = GPIO_LVL_LOW,},
 };
 
-uint32_t led_mono_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(LedMonoInstance); 
-    cnt2 = ARRAY_SIZE(LedMonoConfig); 
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(LedMono, led_mono)

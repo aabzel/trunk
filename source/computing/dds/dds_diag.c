@@ -8,11 +8,23 @@
 #include "common_diag.h"
 #include "data_utils.h"
 #include "dds_drv.h"
+#include "dds_config.h"
 #include "debug_info.h"
 #include "log.h"
 #include "table_utils.h"
+#include "interfaces_diag.h"
+#include "physics_const.h"
 #include "writer_config.h"
 //#include "physics_const.h"
+
+const char* SampleSize2Format(uint8_t sample_size) {
+    const char* name = "0x08x";
+    switch(sample_size) {
+    case 2:        name = "0x%04x";        break;
+    case 4:        name = "0x%08x";        break;
+    default:        break;    }
+    return name;
+}
 
 const char* FramePatternToStr(FramePattern_t frame_pattern) {
     const char* name = "?";
@@ -44,6 +56,7 @@ const char* DdsModeToStr(DdsMode_t mode) {
     return name;
 }
 
+#if 0
 const char* DdsPlayerToStr(DdsPlayer_t player) {
     const char* name = "?";
     switch(player) {
@@ -60,15 +73,7 @@ const char* DdsPlayerToStr(DdsPlayer_t player) {
     }
     return name;
 }
-
-const char* SampleSize2Format(uint8_t sample_size) {
-    const char* name = "0x08x";
-    switch(sample_size) {
-    case 2:        name = "0x%04x";        break;
-    case 4:        name = "0x%08x";        break;
-    default:        break;    }
-    return name;
-}
+#endif
 
 bool dds_print_track_2byte(uint8_t dds_num) {
     bool res = false;
@@ -81,9 +86,11 @@ bool dds_print_track_2byte(uint8_t dds_num) {
 #ifdef HAS_REAL_SAMPLE_ARRAY
             {12, "SampleDec"}, {8, "SampleHex"},
 #endif
-#ifdef HAS_DYNAMIC_SAMPLES
+
             {8, "RAM"},        {8, "Tx hex"},    {12, "Tx dec"},
-#endif
+
+            {12, "L,dec"},
+            {12, "R,dec"},
         };
         float up_time_s = 0.0;
         LOG_INFO(DDS, "SampleCnt: %u, SampleSize %u bit, SizeOfSampleType %u byte", Node->sample_cnt,
@@ -103,7 +110,6 @@ bool dds_print_track_2byte(uint8_t dds_num) {
             }
 #endif
 
-#ifdef HAS_DYNAMIC_SAMPLES
             if(&Node->sample_array[i]) {
                 cli_printf(" 0x");
                 uint8_t sample_size = Node->sample_bitness / 8;
@@ -111,8 +117,9 @@ bool dds_print_track_2byte(uint8_t dds_num) {
                 cli_printf(" " TSEP);
                 cli_printf(" 0x%04x " TSEP, (uint16_t)Node->sample_array[i]);
                 cli_printf(" %10d " TSEP, Node->sample_array[i]);
+                cli_printf(" %10d " TSEP, Node->sample_array[i]);
+                cli_printf(" %10d " TSEP, Node->sample_array[i+1]);
             }
-#endif
             cli_printf(CRLF);
         }
         table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
@@ -132,9 +139,7 @@ bool dds_print_track_4byte(uint8_t dds_num) {
             {12, "SampleDec"}, {12, "SampleHex"},
 #endif
 
-#ifdef HAS_DYNAMIC_SAMPLES
             {12, "RAM"},       {12, "Tx hex"},    {12, "Tx dec"},
-#endif
         };
         float up_time_s = 0.0;
         uint8_t sample_size = Node->sample_bitness / 8;
@@ -155,16 +160,13 @@ bool dds_print_track_4byte(uint8_t dds_num) {
             }
 #endif
 
-#ifdef HAS_DYNAMIC_SAMPLES
             if(&Node->sample_array[i]) {
                 cli_printf(" 0x");
-                uint8_t sample_size = Node->sample_bitness / 8;
                 print_hex((uint8_t*)&Node->sample_array[i], sample_size);
                 cli_printf(" " TSEP);
                 cli_printf(" 0x%08x " TSEP, (uint32_t)Node->sample_array[i]);
                 cli_printf(" %10d " TSEP, Node->sample_array[i]);
             }
-#endif
             cli_printf(CRLF);
         }
         table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
@@ -252,7 +254,7 @@ bool dds_diag(void) {
             snprintf(temp, sizeof(temp), "%s %3.1f " TSEP, temp, Node->duty_cycle);
             snprintf(temp, sizeof(temp), "%s %4u " TSEP, temp, (unsigned int)Node->offset);
             snprintf(temp, sizeof(temp), "%s %5.0f   " TSEP, temp, Node->phase_ms);
-            snprintf(temp, sizeof(temp), "%s %4s " TSEP, temp, OnOffToStr((uint8_t)Node->init));
+            snprintf(temp, sizeof(temp), "%s %4s " TSEP, temp, OnOffToStr((uint8_t)Node->init_done));
             snprintf(temp, sizeof(temp), "%s %4u " TSEP, temp, (unsigned int)Node->sample_cnt);
             snprintf(temp, sizeof(temp), "%s %4s " TSEP, temp, Config->name);
             cli_printf("%s" CRLF, temp);
@@ -297,7 +299,10 @@ const char* DdsNodeToStr(const DdsHandle_t* const Node) {
         snprintf(temp, sizeof(temp), "%s%u,", temp, (unsigned int)Node->offset);
         snprintf(temp, sizeof(temp), "%sPha %5.0f ms,", temp, Node->phase_ms);
         snprintf(temp, sizeof(temp), "%sDuty:%3.1f,", temp, Node->duty_cycle);
+        snprintf(temp, sizeof(temp), "%sSam:%u,", temp, Node->sample_cnt);
+        snprintf(temp, sizeof(temp), "%sDuration:%f s,", temp, Node->signal_diration_s);
         snprintf(temp, sizeof(temp), "%s%u bit,", temp, Node->sample_bitness);
+        snprintf(temp, sizeof(temp), "%sPlayer:%u,", temp, Node->player);
         snprintf(temp, sizeof(temp), "%sSignalPer:%ss,", temp, BigValToStr(signalPeriod));
 #ifdef HAS_PHYSICS
         if(DDS_MODE_CHIRP==Node->dds_mode) {
@@ -330,10 +335,10 @@ const char* DdsConfigToStr(const DdsConfig_t* const Config) {
             snprintf(temp, sizeof(temp), "%sResol:%sm,", temp, BigValToStr(resolution_m));
         }
 #endif
-        snprintf(temp, sizeof(temp), "%sSamCnt:%u,", temp, Config->array_size);
+        snprintf(temp, sizeof(temp), "%sSamCnt:%u,", temp, Config->sample_cnt);
         snprintf(temp, sizeof(temp), "%s%s,", temp, Config->name);
         snprintf(temp, sizeof(temp), "%sMode:%s,", temp, DdsModeToStr(Config->dds_mode));
-        snprintf(temp, sizeof(temp), "%sPlay:%s,", temp, DdsPlayerToStr(Config->player));
+        snprintf(temp, sizeof(temp), "%sPlay:%s,", temp, InterfaceTypeToStrShort(Config->player));
         snprintf(temp, sizeof(temp), "%sPha %5.0f ms,", temp, Config->phase_ms);
         snprintf(temp, sizeof(temp), "%sSigDur:%f,", temp, Config->signal_diration_s);
         snprintf(temp, sizeof(temp), "%sDuty:%3.1f,", temp, Config->duty_cycle);
