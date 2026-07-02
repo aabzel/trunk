@@ -20,6 +20,8 @@ const char* I2cSignalToStr(const I2cSignal_t Signal) {
     case I2C_STOP:
         name = "Stop";
         break;
+    default:
+        break;
     }
     return name;
 }
@@ -74,6 +76,42 @@ bool i2c_diag(void) {
         }
     }
 
+    table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+
+    return res;
+}
+
+bool i2c_scan2_diag(uint8_t num) {
+    bool res = false;
+    LOG_INFO(I2C, "InterfaceNum %u", num);
+    static const table_col_t cols[] = {
+        {4, "--"}, {4, "x0"}, {4, "x1"}, {4, "x2"}, {4, "x3"}, {4, "x4"}, {4, "x5"}, {4, "x6"}, {4, "x7"},
+        {4, "x8"}, {4, "x9"}, {4, "xA"}, {4, "xB"}, {4, "xC"}, {4, "xD"}, {4, "xE"}, {4, "xF"},
+    };
+    Type8Union_t un8;
+    table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+    uint8_t l = 0, h = 0;
+    bool lres = false;
+    for(h = 0; h <= 0xF; h++) {
+        un8.nibble_h = h;
+        cli_printf(TSEP);
+        cli_printf(" %xx " TSEP, h);
+        for(l = 0; l <= 0xF; l++) {
+            un8.nibble_h = h;
+            un8.nibble_l = l;
+            lres = i2c_check2_addr(num, un8.u8);
+            if(lres) {
+                cli_printf(" %02x " TSEP, un8.u8);
+                res = true;
+            } else {
+                cli_printf(" -- " TSEP);
+            }
+#ifdef HAS_TIME
+            wait_in_loop_ms(10);
+#endif
+        }
+        cli_printf(CRLF);
+    }
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
     return res;

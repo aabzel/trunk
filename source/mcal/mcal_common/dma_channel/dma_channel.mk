@@ -15,7 +15,7 @@ ifneq ($(DMA_CHANNEL_MCAL_MK_INC),Y)
     SOURCES_C += $(DMA_CHANNEL_MCAL_DIR)/dma_channel_general.c
 
     ifeq ($(DMA_INTERRUPT),Y)
-        MCAL_OPT += -DHAS_DMA_INTERRUPT
+        MCAL_OPT += -DHAS_DMA_CHANNEL_INTERRUPT
         SOURCES_C += $(DMA_CHANNEL_MCAL_DIR)/dma_channel_isr.c
     endif
 
@@ -27,7 +27,7 @@ ifneq ($(DMA_CHANNEL_MCAL_MK_INC),Y)
     endif
 
     ifeq ($(CLI),Y)
-        ifeq ($(DMA_COMMANDS),Y)
+        ifeq ($(DMA_CHANNEL_COMMANDS),Y)
             MCAL_OPT += -DHAS_DMA_CHANNEL_COMMANDS
             SOURCES_C += $(DMA_CHANNEL_MCAL_DIR)/dma_channel_commands.c
         endif

@@ -1,0 +1,13 @@
+$(info TEST_I2S_ARTERY_MK_INC=$(TEST_I2S_ARTERY_MK_INC))
+
+ifneq ($(TEST_I2S_ARTERY_MK_INC),Y)
+    TEST_I2S_ARTERY_MK_INC=Y
+
+    TEST_I2S_ARTERY_DIR = $(TEST_SET_HW_DIR)/test_i2s_artery
+    #@echo $(error TEST_I2S_ARTERY_DIR=$(TEST_I2S_ARTERY_DIR))
+    INCDIR += -I$(TEST_I2S_ARTERY_DIR)
+    OPT += -DHAS_TEST_I2S
+    OPT += -DHAS_I2S_artery_TEST
+
+    SOURCES_C += $(TEST_I2S_ARTERY_DIR)/test_i2s_artery.c
+endif

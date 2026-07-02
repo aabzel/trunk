@@ -4,18 +4,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAS_ARRAY
-#include "array.h"
-#endif
 #include "common_diag.h"
 #include "convert.h"
 #include "data_utils.h"
 #include "debug_info.h"
 #include "i2s_mcal.h"
+#include "interfaces_diag.h"
 #include "log.h"
 #include "none_blocking_pause.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
+#ifdef HAS_ARRAY
+#include "array.h"
+#endif
 
 #ifdef HAS_TEST_I2S
 #include "test_i2s.h"
@@ -23,7 +25,7 @@
 
 #ifndef HAS_I2S_COMMANDS
 #error "+HAS_I2S_COMMANDS"
-#endif /*HAS_I2S_COMMANDS*/
+#endif
 
 bool i2s_read_sample_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -195,7 +197,7 @@ bool i2s_write_command(int32_t argc, char* argv[]) {
         res = true;
         static uint8_t array[256];
         memset(array, 0, sizeof(array));
-        size_t array_len = 0;
+        uint32_t array_len = 0;
         res = try_str2uint8(argv[0], &num);
         if(false == res) {
             LOG_ERROR(I2S, "ParseErr I2SNum [0-%u]", I2S_COUNT);
@@ -215,7 +217,7 @@ bool i2s_write_command(int32_t argc, char* argv[]) {
         }
 
         if(res) {
-            res = i2s_api_write(num, (SampleType_t*)array, words);
+            res = i2s_mcal_write(num, (uint16_t*) array, words);
             if(false == res) {
                 LOG_ERROR(I2S, "%u WriteErr %u words", num, words);
             } else {
@@ -418,37 +420,6 @@ SET_COMMAND(echo, "i2se")
 SET_COMMAND(dac, "i2sdac")
 // SET_COMMAND(play, "i2sp")
 
-#ifdef HAS_DDS
-bool i2s_set_dac_num_command(int32_t argc, char* argv[]) {
-    bool res = false;
-    uint8_t num = 0;
-    uint8_t dac_num = 0;
-    if(2 == argc) {
-        res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(I2S, "ParseErr I2sNum [1-%u]", I2S_COUNT);
-        }
-        res = try_str2uint8(argv[0], &dac_num);
-        if(false == res) {
-            LOG_ERROR(I2S, "ParseErr DacNum");
-        }
-    }
-
-    if(res) {
-        I2sHandle_t* Node = I2sGetNode(num);
-        if(Node) {
-            Node->dac_num = dac_num;
-            LOG_INFO(I2S, "%u Set DacNum %u", num, dac_num);
-        } else {
-            LOG_ERROR(I2S, "NodeErr");
-        }
-    } else {
-        LOG_ERROR(I2S, "Usage: i2sdn I2sNum DacNum");
-    }
-    return res;
-}
-#endif
-
 // i2r 0 0xef 1  -- hang on
 // i2r 0 0xef 2  -- hang on
 
@@ -483,15 +454,15 @@ bool i2s_read_command(int32_t argc, char* argv[]) {
                 }
                 Node->rx_buffer = (SampleType_t*)malloc(array_len * 2);
 #endif
-                if(Node->RxBuffer) {
+                if(Node->RxArray) {
                     // Node->rx_buff_size = array_len * 2;
-                    res = i2s_api_read(num, (SampleType_t*)Node->RxBuffer, Node->samples_cnt);
+                    res = i2s_mcal_read(num, (uint16_t*)Node->RxArray, Node->samples_cnt);
                     if(false == res) {
                         LOG_ERROR(I2S, "ReadErr");
                     } else {
 #ifdef HAS_ARRAY_DIAG
-                        double sample_period = 1.0 / ((double)Node->audio_freq_hz);
-                        res = array_i32_print((int32_t*)&Node->RxBuffer[0], Node->samples_cnt, sample_period);
+                        double sample_period = 1.0 / ((double)Node->audio_frequency_hz);
+                        res = array_i32_print((int32_t*)&Node->RxArray[0], Node->samples_cnt, sample_period);
 #endif
                         cli_printf(CRLF);
                     }
@@ -507,16 +478,35 @@ bool i2s_read_command(int32_t argc, char* argv[]) {
 }
 
 bool i2s_init_command(int32_t argc, char* argv[]) {
-    uint8_t num = 0;
+    uint8_t num = 0xFF;
     bool res = false;
+
+    if(0 <= argc) {
+        res = true;
+    }
+
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
         if(false == res) {
             LOG_ERROR(I2S, "ParseErr I2sNum");
         }
     }
+
     if(res) {
-        res = i2s_init_one(num);
+        switch(argc) {
+        case 1: {
+            res = i2s_init_one(num);
+
+        } break;
+        case 0: {
+            res = i2s_mcal_init();
+
+        } break;
+        default: {
+
+        } break;
+        }
+
         if(false == res) {
             LOG_ERROR(I2S, "I2sInitErr %u", num);
         }
@@ -551,10 +541,9 @@ bool i2s_play_tone_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = i2s_play_static_tx(num, dac_num, status);
+        log_info_res(I2S, res, "PlayStaticTx");
         if(res) {
             LOG_INFO(I2S, "I2S%u PlayStatic DAC%u %s Ok", num, dac_num, OnOffToStr(status));
-        } else {
-            LOG_ERROR(I2S, "PlayErr");
         }
     } else {
         LOG_ERROR(I2S, "Usage: i2spt I2sNum DacNum On");
@@ -562,6 +551,7 @@ bool i2s_play_tone_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+#if  0
 bool i2s_play_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -587,16 +577,13 @@ bool i2s_play_command(int32_t argc, char* argv[]) {
     }
     if(res) {
         res = i2s_play_tx(num, dac_num, status);
-        if(res) {
-            LOG_INFO(I2S, "%u Dac %u %s Ok", num, dac_num, OnOffToStr(status));
-        } else {
-            LOG_ERROR(I2S, "PlayErr");
-        }
+        log_info_res(I2S, res, "PlayTx");
     } else {
         LOG_ERROR(I2S, "Usage: i2spl I2sNum DacNum On");
     }
     return res;
 }
+#endif
 
 bool i2s_dma_pause_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -608,6 +595,7 @@ bool i2s_dma_pause_command(int32_t argc, char* argv[]) {
         }
     }
     res = i2s_dma_stop(num);
+    log_info_res(I2S, res, "DmaStop");
     return res;
 }
 
@@ -633,6 +621,7 @@ bool i2s_dma_stop_command(int32_t argc, char* argv[]) {
         }
     }
     res = i2s_dma_stop(num);
+    log_info_res(I2S, res, "DmaStop");
     return res;
 }
 
@@ -650,11 +639,7 @@ bool i2s_test_command(int32_t argc, char* argv[]) {
 #ifdef HAS_TEST_I2S
         res = test_i2s_write_one_qword(num);
 #endif
-        if(res) {
-            LOG_INFO(I2S, "%u Test Ok", num);
-        } else {
-            LOG_INFO(I2S, "%u Test Err", num);
-        }
+        log_info_res(I2S, res, "WriteQword");
     } else {
         LOG_ERROR(I2S, "Usage: i2st I2sNum");
     }
@@ -666,7 +651,7 @@ bool i2s_config_command(int32_t argc, char* argv[]) {
     uint8_t num = 0;
     uint8_t word_size = 0;
     uint8_t channels = 0;
-    uint32_t audio_freq_hz = I2S_AUDIO_FREQ_41K;
+    uint32_t audio_frequency_hz = AUDIO_FREQ_41K;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
         if(false == res) {
@@ -687,20 +672,16 @@ bool i2s_config_command(int32_t argc, char* argv[]) {
     }
 
     if(4 <= argc) {
-        res = try_str2uint32(argv[3], &audio_freq_hz);
+        res = try_str2uint32(argv[3], &audio_frequency_hz);
         if(false == res) {
             LOG_ERROR(I2S, "ParseErr AudioFreq [%s]", argv[3]);
         }
     }
     if(res && (4 == argc)) {
-        res = i2s_config_tx(num, word_size, channels, audio_freq_hz);
-        if(res) {
-            LOG_INFO(I2S, "%u ConfigOk", num);
-        } else {
-            LOG_ERROR(I2S, "%u ConfigErr", num);
-        }
+        res = i2s_config_tx(num, word_size, channels, audio_frequency_hz);
+        log_info_res(I2S, res, "CfgTx");
     } else {
-        LOG_ERROR(I2S, "Usage: i2sc I2sNum word_size channels audio_freq_hz");
+        LOG_ERROR(I2S, "Usage: i2sc I2sNum word_size channels audio_frequency_hz");
     }
     return res;
 }
@@ -725,11 +706,7 @@ bool i2s_ctrl_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = i2s_send(num, status);
-        if(res) {
-            LOG_INFO(I2S, "%u Send %s Ok", num, OnOffToStr(status));
-        } else {
-            LOG_ERROR(I2S, "PlayErr");
-        }
+        log_info_res(I2S, res, "Send");
     } else {
         LOG_ERROR(I2S, "Usage: i2sct I2sNum OnOff");
     }
@@ -772,11 +749,7 @@ bool i2s_set_loopback_command(int32_t argc, char* argv[]) {
             res = false;
             break;
         }
-        if(res) {
-            LOG_INFO(I2S, "LoopBackOk");
-        } else {
-            LOG_ERROR(I2S, "LoopBackErr");
-        }
+        log_info_res(I2S, res, "LoopBack");
     } else {
         LOG_ERROR(I2S, "i2sl I2sNum Words mode");
     }
@@ -784,6 +757,7 @@ bool i2s_set_loopback_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+#if 0
 bool i2s_set_tone_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -815,16 +789,13 @@ bool i2s_set_tone_command(int32_t argc, char* argv[]) {
 #ifdef HAS_TEST_I2S
         res = test_i2s_play_freq_com(num, freq, amp);
 #endif
-        if(res) {
-            LOG_INFO(I2S, "ToneOk");
-        } else {
-            LOG_ERROR(I2S, "ToneErr");
-        }
+        log_info_res(I2S, res, "Play");
     } else {
         LOG_ERROR(I2S, "Usage: i2sn I2sNum Freq Amp");
     }
     return res;
 }
+#endif
 
 bool i2s_stream_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -843,6 +814,7 @@ bool i2s_stream_diag_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = i2s_stream_diag(num);
+        log_info_res(I2S, res, "StreamDiag");
     } else {
         LOG_ERROR(I2S, "Usage: i2ssd Num");
         LOG_INFO(I2S, "i2sNum [0..%u]", I2S_COUNT);
@@ -856,33 +828,54 @@ bool i2s_bus_role_command(int32_t argc, char* argv[]) {
     uint8_t bus_role = 0;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(I2S, "ParseErr I2SNum [0-%u]", I2S_COUNT);
-        }
+        log_info_res(I2S, res, "Num");
     }
 
     if(2 <= argc) {
         res = try_str2uint8(argv[1], &bus_role);
-        if(false == res) {
-            LOG_ERROR(I2S, "ParseErr BusRole");
-        }
+        log_info_res(I2S, res, "BusRole");
     }
 
     if(res) {
         switch(argc) {
         case 1: {
-            // I2sDirRole_t bus_role = I2S_DIR_BUS_MODE_UNDEF;
-            res = i2s_dir_bus_role_get(num, (I2sDirRole_t*)&bus_role);
-            LOG_INFO(I2S, "Get,I2S_%u,Role:%s", num, I2sBusRole2Str(bus_role));
+            // IfBusRole_t bus_role = I2S_DIR_BUS_MODE_UNDEF;
+            res = i2s_dir_bus_role_get(num, (IfBusRole_t*)&bus_role);
+            LOG_INFO(I2S, "Get,I2S_%u,Role:%s", num, IfBusRoleToStr(bus_role));
         } break;
         case 2: {
-            LOG_INFO(I2S, "Set,I2S_%u,Role:%s", num, I2sBusRole2Str((I2sDirRole_t)bus_role));
-            res = i2s_dir_bus_role_set(num, (I2sDirRole_t)bus_role);
+            LOG_INFO(I2S, "Set,I2S_%u,Role:%s", num, IfBusRoleToStr((IfBusRole_t)bus_role));
+            res = i2s_dir_bus_role_set(num, (IfBusRole_t)bus_role);
 
         } break;
         }
     } else {
         LOG_ERROR(I2S, "Usage: i2sbr I2sNum BusRole");
+        LOG_INFO(I2S, "I2sNum [0..%u]", I2S_COUNT);
+    }
+    return res;
+}
+
+bool i2s_freq_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    uint32_t audio_frequency_hz = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(I2S, res, "Num");
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &audio_frequency_hz);
+        log_info_res(I2S, res, "Freq");
+    }
+
+    if(res) {
+        res = i2s_audio_frequency_set(num, audio_frequency_hz);
+        log_info_res(I2S, res, "FreqSet");
+    } else {
+        LOG_ERROR(I2S, "Usage: i2sf I2sNum audioFrequencyHz");
         LOG_INFO(I2S, "I2sNum [0..%u]", I2S_COUNT);
     }
     return res;

@@ -5,11 +5,10 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "test_hw_dep_check.h"
 #include "audio_types.h"
+#include "test_i2s_dma.h"
 
 #ifndef HAS_I2S
 #error "It is needed HAS_I2S option for that component"
@@ -18,15 +17,18 @@ extern "C" {
 #define PLAY_DURATION 1000
 
 #define I2S_SAMPLE_CNT 2
-#define I2S_SAMPLE_SIZE 4
+#define I2S_SAMPLE_SIZE 2
 #define I2S_CHANNEL_CNT 2
 #define I2S_TEST_BLOCK_SIZE (I2S_CHANNEL_CNT * I2S_SAMPLE_CNT * I2S_SAMPLE_SIZE)
 
+bool test_i2s_write_one_word(uint8_t num) ;
+bool test_i2s_write_toggle(uint8_t num);
 bool test_i2s_types(void);
-bool test_i2s_play_freq(uint8_t num, double freq, SampleType_t amp, uint32_t pause_ms) ;
-bool test_i2s_play_freq_com(uint8_t num, double freq, SampleType_t amp);
+bool test_i2s_play_freq(uint8_t num, float freq, SampleType_t amp, uint32_t pause_ms) ;
+bool test_i2s_play_freq_com(uint8_t num, float freq, SampleType_t amp);
 bool test_i2s_write_one(uint8_t num);
 bool test_i2s_write_one_qword(uint8_t num);
+bool test_i2s_write_single(uint8_t num);
 
 #ifdef HAS_I2S0
 bool test_i2s0_read(void);
@@ -105,9 +107,15 @@ bool test_i2s5_write(void);
 #define TEST_SUIT_I2S5
 #endif
 
-#define TEST_SUIT_I2S                                                                                                  \
-    {"i2s_types", test_i2s_types},                                                                                     \
-        TEST_SUIT_I2S0 TEST_SUIT_I2S1 TEST_SUIT_I2S2 TEST_SUIT_I2S3 TEST_SUIT_I2S4 TEST_SUIT_I2S5
+#define TEST_SUIT_I2S                           \
+    {"i2s_types", test_i2s_types},              \
+    TEST_SUIT_I2S_DMA                           \
+    TEST_SUIT_I2S0              \
+    TEST_SUIT_I2S1              \
+    TEST_SUIT_I2S2              \
+    TEST_SUIT_I2S3              \
+    TEST_SUIT_I2S4              \
+    TEST_SUIT_I2S5
 
 
 #define TEST_SUIT_I2S_INTEGRATION    \

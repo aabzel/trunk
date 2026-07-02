@@ -1,57 +1,46 @@
 #include "dma_config.h"
 
 #include <stddef.h>
-#include <stdint.h>
 #include <string.h>
 
+#include "std_includes.h"
 #include "data_utils.h"
 #include "stm32f4xx_hal.h"
 #include "hal_diag.h"
 
 #ifndef HAS_DMA
 #error "+ HAS_DMA"
-#endif /*HAS_DMA*/
+#endif
 
 const DmaConfig_t DmaConfig[]={
 #ifdef HAS_DMA1
     {
     		.num=1,    .dma_num=1,   .name="DMA1",     .valid=true,
     },
-#endif /*HAS_DMA2*/
+#endif /**/
 
 #ifdef HAS_DMA2
     {
     		.num=2,    .dma_num=2,   .name="DMA2",     .valid=true,
     },
-#endif /*HAS_DMA2*/
+#endif /**/
 
 };
 
 DmaHandle_t DmaInstance[]={
 #ifdef HAS_DMA1
     {.num=1, .valid=true,},
-#endif /*HAS_DMA1*/
+#endif
 
 #ifdef HAS_DMA2
     {.num=2, .valid=true,},
-#endif /*HAS_DMA2*/
+#endif
 };
 
-uint32_t dma_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(DmaInstance); 
-    cnt2 = ARRAY_SIZE(DmaConfig); 
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    assert_param(2==cnt);
-    return cnt;
-}
+COMPONENT_GET_CNT(Dma, dma)
 
-static uint16_t DmaSdioMem[16]={0};
 
+#if 0
 const DmaChannelConfig_t DmaChannelConfig[] ={
         {
                 .num=DMA2_SDIO_RX,
@@ -102,14 +91,17 @@ const DmaChannelConfig_t DmaChannelConfig[] ={
                 .mux=0,
         },
 };
+#endif
 
 
-
+#if 0
 volatile DmaChannelHandle_t DmaChannelInstance[]={
         {.valid=true, .num=DMA2_SDIO_TX,},
         {.valid=true, .num=DMA2_SDIO_RX,}
 };
+#endif
 
+#if 0
 uint32_t dma_channel_get_cnt(void) {
     uint32_t cnt = 0;
     uint32_t cnt1 = 0;
@@ -121,3 +113,4 @@ uint32_t dma_channel_get_cnt(void) {
     }
     return cnt;
 }
+#endif

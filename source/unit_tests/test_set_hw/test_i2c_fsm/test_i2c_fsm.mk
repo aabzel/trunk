@@ -1,0 +1,13 @@
+$(info TEST_I2C_FSM_MK_INC=$(TEST_I2C_FSM_MK_INC))
+
+ifneq ($(TEST_I2C_FSM_MK_INC),Y)
+    TEST_I2C_FSM_MK_INC=Y
+    TEST_I2C_FSM_DIR = $(TEST_SET_HW_DIR)/test_i2c_fsm
+    #@echo $(error TEST_I2C_FSM_DIR=$(TEST_I2C_FSM_DIR))
+    INCDIR += -I$(TEST_I2C_FSM_DIR)
+    OPT += -DHAS_TEST_I2C_FSM
+    OPT += -DHAS_I2C_FSM_TEST
+
+    SOURCES_C += $(TEST_I2C_FSM_DIR)/test_i2c_fsm.c
+endif
+

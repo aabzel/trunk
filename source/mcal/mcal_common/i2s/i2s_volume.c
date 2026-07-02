@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "i2s_diag.h"
-#include "i2s_drv.h"
+#include "i2s_mcal.h"
 #include "log.h"
 
 static bool i2s_proc_off_ll(I2sHandle_t* const Node) {
@@ -52,7 +52,7 @@ bool i2s_volume_proc_ll(I2sHandle_t* const Node) {
     if(Node) {
         if(Node->rx_tx_done) {
             LOG_DEBUG(I2S, "I2S%u RxTxDone +%u Sa", Node->samples_cnt);
-            LOG_DEBUG(I2S, "%s", I2sFsmDiag2Str(Node));
+            LOG_DEBUG(I2S, "%s", I2sFsmDiagToStr(Node));
             switch(Node->state) {
             case I2S_STATE_OFF:
                 res = i2s_proc_off_ll(Node);

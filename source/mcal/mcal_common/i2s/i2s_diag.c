@@ -3,55 +3,26 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "byte_utils.h"
 #include "common_diag.h"
+#include "dma_channel_diag.h"
 #include "i2s_mcal.h"
 #include "i2s_types.h"
+#include "interfaces_diag.h"
 #include "log.h"
-#include "num_to_str.h"
-#ifdef HAS_I2S_DMA
-#include "dma_diag.h"
-#endif
-#include "byte_utils.h"
+#include "mcal_diag.h"
 #include "microcontroller_const.h"
+#include "num_to_str.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
-static char text[200] = {0};
+#ifdef HAS_I2S_DMA
+#include "dma_diag.h"
+#endif
 
-const char* I2sAudioFreq2Str(AudioFreq_t freq) {
-    snprintf(text, sizeof(text), "%u Hz", freq);
-    return text;
-}
-
-const char* I2sResolution2Str(I2sDataFormat_t code) {
+const char* I2sDirBusRoleToStr(I2sDirAndBusRole_t code) {
     const char* name = "?";
-    switch((uint8_t)code) {
-    case I2S_DATA_FORMAT_8B:
-        name = "8";
-        break;
-    case I2S_DATA_FORMAT_16B:
-        name = "16";
-        break;
-    case I2S_DATA_FORMAT_16B_EXTENDED:
-        name = "16";
-        break;
-    case I2S_DATA_FORMAT_24B:
-        name = "24";
-        break;
-    case I2S_DATA_FORMAT_32B:
-        name = "32";
-        break;
-
-    default:
-        name = "??";
-        break;
-    }
-    return name;
-}
-
-const char* I2sBusRole2Str(I2sDirRole_t code) {
-    const char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case I2S_DIR_BUS_MODE_SLAVE:
         name = "Slave";
         break;
@@ -77,14 +48,28 @@ const char* I2sBusRole2Str(I2sDirRole_t code) {
     return name;
 }
 
-const char* I2sSampleMode2Str(SampleMode_t sample_mode) {
+const char* I2sAudioFreqToStr(AudioFreq_t freq) {
+    snprintf(text, sizeof(text), "%u Hz", freq);
+    return text;
+}
+
+const char* I2sResolutionToStr(I2sDataFormat_t code) {
     const char* name = "?";
-    switch((uint8_t)sample_mode) {
-    case SAMPLE_MODE_MONO:
-        name = "Mono";
+    switch(code) {
+    case I2S_DATA_FORMAT_8B:
+        name = "8";
         break;
-    case SAMPLE_MODE_STEREO:
-        name = "Stereo";
+    case I2S_DATA_FORMAT_16B:
+        name = "16";
+        break;
+    case I2S_DATA_FORMAT_16B_EXTENDED:
+        name = "16";
+        break;
+    case I2S_DATA_FORMAT_24B:
+        name = "24";
+        break;
+    case I2S_DATA_FORMAT_32B:
+        name = "32";
         break;
 
     default:
@@ -94,9 +79,25 @@ const char* I2sSampleMode2Str(SampleMode_t sample_mode) {
     return name;
 }
 
-const char* I2sStandard2Str(Standard_t standard) {
+const char* I2sSampleModeToStr(DspSampleMode_t sample_mode) {
     const char* name = "?";
-    switch((uint8_t)standard) {
+    switch(sample_mode) {
+    case SAMPLE_MODE_MONO:
+        name = "Mono";
+        break;
+    case SAMPLE_MODE_STEREO:
+        name = "Stereo";
+        break;
+    default:
+        name = "??";
+        break;
+    }
+    return name;
+}
+
+const char* I2sStandardToStr(I2sStandard_t standard) {
+    const char* name = "?";
+    switch(standard) {
     case I2S_STD_PHILIPS:
         name = "Philips";
         break;
@@ -120,16 +121,15 @@ const char* I2sStandard2Str(Standard_t standard) {
     return name;
 }
 
-const char* I2sClockSource2Str(I2sClockSource_t clock_source) {
+const char* I2sClockSourceToStr(I2sClockSource_t clock_source) {
     const char* name = "?";
-    switch((uint8_t)clock_source) {
+    switch(clock_source) {
     case I2S_CLK_PLL:
         name = "PLL";
         break;
     case I2S_CLK_EXT:
         name = "Exp";
         break;
-
     default:
         name = "??";
         break;
@@ -137,16 +137,15 @@ const char* I2sClockSource2Str(I2sClockSource_t clock_source) {
     return name;
 }
 
-const char* I2sFullDuplex2Str(FullDuplex_t full_duplex) {
+const char* I2sFullDuplexToStr(I2sFullDuplex_t full_duplex) {
     const char* name = "?";
-    switch((uint8_t)full_duplex) {
+    switch(full_duplex) {
     case FULL_DUPLEX_OFF:
         name = "Simplex";
         break;
     case FULL_DUPLEX_ON:
         name = "FullDuplex";
         break;
-
     default:
         name = "??";
         break;
@@ -154,9 +153,9 @@ const char* I2sFullDuplex2Str(FullDuplex_t full_duplex) {
     return name;
 }
 
-const char* I2sState2Str(I2sState_t state) {
+const char* I2sStateToStr(I2sState_t state) {
     const char* name = "?";
-    switch((uint8_t)state) {
+    switch(state) {
     case I2S_STATE_OFF:
         name = "Off";
         break;
@@ -177,43 +176,22 @@ const char* I2sState2Str(I2sState_t state) {
     return name;
 }
 
-const char* I2sModeToStr(I2sMode_t mode) {
-    const char* name = "?";
-    switch((uint8_t)mode) {
-    case I2S_MODE_INTERRUPT:
-        name = "Int";
-        break;
-    case I2S_MODE_DMA:
-        name = "Dma";
-        break;
-
-    default:
-        name = "??";
-        break;
-    }
-    return name;
-}
-
 const char* I2sConfigToStr(const I2sConfig_t* const Config) {
     strncpy(text, "", sizeof(text) - 1);
-
     if(Config) {
         snprintf(text, sizeof(text), "%sI2S_%u,", text, Config->num);
-        snprintf(text, sizeof(text), "%sMode:%s,", text, I2sModeToStr(Config->mode));
-#ifdef HAS_I2S_DMA
-        snprintf(text, sizeof(text), "%s%s,", text, DmaPadToStr(Config->Dma));
-#endif
-        snprintf(text, sizeof(text), "%sSampleRate:%u Hz,", text, Config->audio_freq_hz);
+        snprintf(text, sizeof(text), "%sMoveMode:%s,", text, McalMoveModeToStr(Config->move_mode));
+        snprintf(text, sizeof(text), "%sSampleRate:%u Hz,", text, Config->audio_frequency_hz);
         snprintf(text, sizeof(text), "%sRxBuff:%u Sample,", text, Config->samples_cnt);
-        snprintf(text, sizeof(text), "%sBusRole:%s,", text, I2sBusRole2Str(Config->bus_role));
+        snprintf(text, sizeof(text), "%sBusRole:%s,", text, IfBusRoleToStr(Config->bus_role));
         snprintf(text, sizeof(text), "%sDataFormat:%u bit,", text, Config->data_format);
         snprintf(text, sizeof(text), "%sSckFreq:%u Hz,", text, Config->sck_freq_hz);
-        snprintf(text, sizeof(text), "%sClock:%s", text, I2sClockSource2Str(Config->clock_source));
-        snprintf(text, sizeof(text), "%sStd:%s,", text, I2sStandard2Str(Config->standard));
+        snprintf(text, sizeof(text), "%sClock:%s", text, I2sClockSourceToStr(Config->clock_source));
+        snprintf(text, sizeof(text), "%sStd:%s,", text, I2sStandardToStr(Config->standard));
         snprintf(text, sizeof(text), "%sMclkOut:%s,", text, OnOffToStr(Config->mclk_out));
-        snprintf(text, sizeof(text), "%sSampleMode:%s,", text, I2sSampleMode2Str(Config->sample_mode));
+        snprintf(text, sizeof(text), "%sSampleMode:%s,", text, I2sSampleModeToStr(Config->sample_mode));
         snprintf(text, sizeof(text), "%sIrqPri:%u,", text, Config->irq_priority);
-        snprintf(text, sizeof(text), "%sFullDuplex:%s,", text, I2sFullDuplex2Str(Config->full_duplex));
+        snprintf(text, sizeof(text), "%sFullDuplex:%s,", text, I2sFullDuplexToStr(Config->full_duplex));
     }
     return text;
 }
@@ -229,10 +207,10 @@ bool I2sDiagConfig(const I2sConfig_t* const Config) {
 }
 
 #ifdef HAS_I2S_VOLUME
-const char* I2sFsmDiag2Str(const I2sHandle_t* const Node) {
+const char* I2sFsmDiagToStr(const I2sHandle_t* const Node) {
     if(Node) {
         strncpy(text, "", sizeof(text) - 1);
-        snprintf(text, sizeof(text), "%s State %s,", text, I2sState2Str(Node->state));
+        snprintf(text, sizeof(text), "%s State %s,", text, I2sStateToStr(Node->state));
         snprintf(text, sizeof(text), "%s PCMmaxSet %d,", text, Node->pcm_max_set);
         snprintf(text, sizeof(text), "%s PCMmaxGet %d,", text, Node->pcm_max_get);
     }
@@ -333,30 +311,30 @@ bool i2s_diag_errors(void) {
 
 bool i2s_diag_config(void) {
     bool res = false;
-
     static const table_col_t cols[] = {
         {4, "No"}, {8, "SampSz"}, {9, "SamFreq"}, {10, "Role"}, {9, "DataFmt"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
-    char line[200];
     for(num = 0; num <= I2S_COUNT; num++) {
 
         I2sHandle_t* Node = I2sGetNode(num);
         if(Node) {
+            char line[200] = {0};
             I2sDataFormat_t data_format = I2S_DATA_FORMAT_UNDEF;
-            uint32_t audio_freq_hz = 0;
-            I2sDirRole_t bus_role = I2S_DIR_BUS_MODE_UNDEF;
+            uint32_t audio_frequency_hz = 0;
+            IfBusRole_t bus_role = IF_BUS_ROLE_UNDEF;
+
             uint8_t sample_size = i2s_sample_size_get(num);
             res = i2s_dir_bus_role_get(num, &bus_role);
             res = i2s_data_format_get(num, &data_format);
-            res = i2s_sample_freq_get(num, &audio_freq_hz);
+            res = i2s_sample_freq_get(num, &audio_frequency_hz);
             strcpy(line, TSEP);
             snprintf(line, sizeof(line), "%s %2u " TSEP, line, Node->num);
             snprintf(line, sizeof(line), "%s %6u " TSEP, line, sample_size);
-            snprintf(line, sizeof(line), "%s %7u " TSEP, line, audio_freq_hz);
-            snprintf(line, sizeof(line), "%s %8s " TSEP, line, I2sBusRole2Str(bus_role));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, I2sResolution2Str(data_format));
+            snprintf(line, sizeof(line), "%s %7u " TSEP, line, audio_frequency_hz);
+            snprintf(line, sizeof(line), "%s %8s " TSEP, line, IfBusRoleToStr(bus_role));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, I2sResolutionToStr(data_format));
             cli_printf("%s" CRLF, line);
             res = true;
         }
@@ -383,7 +361,7 @@ bool i2s_diag_rx(void) {
         if(Node) {
             strcpy(line, TSEP);
             snprintf(line, sizeof(line), "%s %1u   " TSEP, line, Node->num);
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->rx_buff_full_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->rx_buff_full_cnt));
             snprintf(line, sizeof(line), "%s %3s " TSEP, line, OnOffToStr(Node->rx_buff_full));
             snprintf(line, sizeof(line), "%s %3s " TSEP, line, OnOffToStr(Node->rec));
 
@@ -402,45 +380,38 @@ bool i2s_diag_rx(void) {
 bool i2s_diag_all(void) {
     bool res = false;
     static const table_col_t cols[] = {
-        {5, "No"},        {5, "num"},     {7, "WS,Freq"},       {9, "TxSampleCnt"}, {9, "ToggleCnt"},
-        {9, "ItCnt"},     {9, "StopCnt"}, {9, "StatusStopCnt"},
-#ifdef HAS_DDS
-        {5, "Dac"},
-#endif
-        {6, "echo"},      {6, "loop"},    {6, "iir"},           {6, "Err"},         {9, "rxHalfCnt"},
-        {9, "txHalfCnt"}, {9, "rxCnt"},   {9, "txCnt"},         {8, "name"},
+        {5, "No"},        {5, "num"},           {7, "WS,Freq"}, {9, "TxSampleCnt"}, {9, "ToggleCnt"}, {9, "ItCnt"},
+        {9, "StopCnt"},   {9, "StatusStopCnt"}, {6, "echo"},    {6, "loop"},        {6, "iir"},       {6, "Err"},
+        {9, "rxHalfCnt"}, {9, "txHalfCnt"},     {9, "rxCnt"},   {9, "txCnt"},       {8, "name"},
     };
     uint16_t cnt = 0;
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
-    char line[200];
     for(num = 0; num <= I2S_COUNT; num++) {
 
         I2sHandle_t* Node = I2sGetNode(num);
         // TODO: get bittness
         if(Node) {
-            uint32_t audio_freq_hz = 0;
-            res = i2s_sample_freq_get(num, &audio_freq_hz);
+            uint32_t audio_frequency_hz = 0;
+            res = i2s_sample_freq_get(num, &audio_frequency_hz);
             uint32_t err = i2s_err_total(&(Node->Err));
+            char line[200] = {0};
             strcpy(line, TSEP);
             snprintf(line, sizeof(line), "%s %1u   " TSEP, line, Node->num);
-            snprintf(line, sizeof(line), "%s %5u " TSEP, line, audio_freq_hz);
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->tx_sample_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->toggle_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->it_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->total_stop_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->status_stop_cnt));
-#ifdef HAS_DDS
-            snprintf(line, sizeof(line), "%s %3u " TSEP, line, Node->dac_num);
-#endif
+            snprintf(line, sizeof(line), "%s %5u " TSEP, line, audio_frequency_hz);
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->tx_sample_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->toggle_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->it_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->total_stop_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->status_stop_cnt));
             snprintf(line, sizeof(line), "%s %3s  " TSEP, line, OnOffToStr(Node->echo));
             snprintf(line, sizeof(line), "%s %3s  " TSEP, line, OnOffToStr(Node->loopback));
             snprintf(line, sizeof(line), "%s %3s  " TSEP, line, OnOffToStr(Node->iir));
             snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)err);
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->rx_half_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->tx_half_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->rx_done_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32val2Str(Node->tx_done_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->rx_half_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->tx_half_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->rx_done_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->tx_done_cnt));
             const I2sConfig_t* I2sConfNode = I2sGetConfig(num);
             if(I2sConfNode) {
                 snprintf(line, sizeof(line), "%s %6s " TSEP, line, I2sConfNode->name);
@@ -494,22 +465,6 @@ bool i2s_stream_diag(uint8_t num) {
     return res;
 }
 
-bool i2s_rec_reverse_byte_order(uint8_t num) {
-    bool res = false;
-    I2sHandle_t* Node = I2sGetNode(num);
-    if(Node) {
-        LOG_INFO(I2S, "SampleSize:%u byte", sizeof(SampleType_t));
-        uint32_t w = 0;
-        for(w = 0; w < I2S_BUFFER_SIZE; w++) {
-            if(2 == sizeof(SampleType_t)) {
-                Node->RxBuffer[w] = reverse_byte_order_uint16(Node->RxBuffer[w]);
-            }
-            res = true;
-        }
-    }
-    return res;
-}
-
 bool i2s_print_rx_ll(const I2sHandle_t* const Node) {
     bool res = false;
     static const table_col_t cols[] = {
@@ -518,10 +473,10 @@ bool i2s_print_rx_ll(const I2sHandle_t* const Node) {
 
     uint32_t t = 0;
     uint32_t offset = 0;
-    double t_step = 1.0 / ((double)Node->audio_freq_hz);
+    double t_step = 1.0 / ((double)Node->audio_frequency_hz);
     double up_time = 0.0;
-    LOG_INFO(I2S, "AudioFreq:%u Hz,Step:%s s", Node->audio_freq_hz, DoubleToStr(t_step));
-    uint32_t rx_size = sizeof(Node->RxBuffer);
+    LOG_INFO(I2S, "AudioFreq:%u Hz,Step:%s s", Node->audio_frequency_hz, DoubleToStr(t_step));
+    uint32_t rx_size = sizeof(Node->RxArray);
     uint32_t double_sample_size = 2 * sizeof(SampleType_t);
     uint32_t i2s_sample_cnt = rx_size / double_sample_size;
     LOG_INFO(I2S, "RxBuff,%u byte,SamSize:%u Byte,I2Ssam:%u Sam", rx_size, sizeof(SampleType_t), i2s_sample_cnt);
@@ -532,8 +487,9 @@ bool i2s_print_rx_ll(const I2sHandle_t* const Node) {
         up_time = ((double)t) * t_step;
         offset = t * double_sample_size;
         I2sSampleType_t I2sSampleType = {0};
-        /// I2sSampleType_t* I2sSamplePtr= (I2sSampleType_t*)    ( ((void*)Node->RxBuffer)+ offset);
-        memcpy(&I2sSampleType, (void*)((void*)Node->RxBuffer) + offset, sizeof(I2sSampleType_t));
+        /// I2sSampleType_t* I2sSamplePtr= (I2sSampleType_t*)    ( ((void*)Node->RxArray)+ offset);
+        uint32_t offset_sample = Node->RxArray + offset;
+        memcpy((void*)&I2sSampleType, (void*)offset_sample, sizeof(I2sSampleType_t));
         snprintf(line, sizeof(line), "%s %3u " TSEP, line, t);
         snprintf(line, sizeof(line), "%s %4u " TSEP, line, offset);
         snprintf(line, sizeof(line), "%s %6s " TSEP, line, DoubleToStr(up_time));

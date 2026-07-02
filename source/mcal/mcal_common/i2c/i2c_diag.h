@@ -13,6 +13,7 @@ extern "C" {
 #include "i2c_custom_diag.h"
 #endif
 
+bool i2c_scan2_diag(uint8_t num);
 bool i2c_diag_one(uint8_t num);
 bool i2c_diag(void);
 bool i2c_scan_diag(uint8_t num);

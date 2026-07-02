@@ -49,9 +49,9 @@ static bool DmaChannelErrorIsrLL(DmaChannelHandle_t* const Node) {
 
 bool DmaChannelErrorIsr(Dma_t dma_num, DmaChannel_t channel) {
     bool res = false;
-    DmaChannelPad_t DmaPad = {
+    DmaInfoChannel_t DmaPad = {
         .dma_num = dma_num,
-        .channel = channel,
+        .stream = channel,
     };
     const DmaChannelHandle_t* Node = DmaChannelToNode(DmaPad);
     if(Node) {
@@ -62,9 +62,9 @@ bool DmaChannelErrorIsr(Dma_t dma_num, DmaChannel_t channel) {
 
 bool DmaChannelHalfIsr(Dma_t dma_num, DmaChannel_t channel) {
     bool res = false;
-    DmaChannelPad_t DmaPad = {
+    DmaInfoChannel_t DmaPad = {
         .dma_num = dma_num,
-        .channel = channel,
+        .stream = channel,
     };
     const DmaChannelHandle_t* Node = DmaChannelToNode(DmaPad);
     if(Node) {
@@ -75,9 +75,9 @@ bool DmaChannelHalfIsr(Dma_t dma_num, DmaChannel_t channel) {
 
 bool DmaChannelDoneIsr(Dma_t dma_num, DmaChannel_t channel) {
     bool res = false;
-    DmaChannelPad_t DmaPad = {
+    DmaInfoChannel_t DmaPad = {
         .dma_num = dma_num,
-        .channel = channel,
+        .stream = channel,
     };
     const DmaChannelHandle_t* Node = DmaChannelToNode(DmaPad);
     if(Node) {

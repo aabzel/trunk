@@ -3,21 +3,24 @@
 #include "clock_utils.h"
 #include "data_utils.h"
 #include "log_config.h"
+#include "mcal_const.h"
 
-/*48MHz - err*/
-/*30MHz - err*/
-/*28MHz - */
-/*24MHz - OK*/
-/*20MHz - Err*/
-/*10MHz - Err*/
-/*5MHz  - Err*/
+/*
+2 MHz, 1 bit, DMA - OK totalSize:1920044 Byte,Duration:12832 ms,ReadSpeed:149629 Byte/s
+4 MHz, 1 bit, DMA - OK totalSize:1920044 Byte,Duration:6671 ms, ReadSpeed:287819 Byte/s
+8 MHz, 1 bit, DMA - OK totalSize:1920044 Byte,Duration:3828 ms,ReadSpeed:501578 Byte/s
+16 MHz, 1 bit, DMA - OK totalSize:1920044 Byte,Duration:2425 ms,ReadSpeed:791770 Byte/s=773 kByte/s
+25 MHz, 1 bit, DMA - OK totalSize:1920044 Byte,Duration:1943 ms,ReadSpeed:988185 Byte/s=965.02441 kByte/s
+*/
 
 /*constant compile-time known settings in Flash*/
-const SdioConfig_t SdioConfig[] = {
+const SdioConfig_t SECTION_CFG_DATA SdioConfig[] = {
     {
         .num = 1,
-        .bit_rate_hz = MHZ_2_HZ(1), // FatFsInitErr: 500000 1000000  < 10000000 24000000-err
+        .bit_rate_hz = MHZ_2_HZ(20),
         .name = "SdCard",
+        .interrupt_on = true,
+        .move_mode = MOVE_MODE_DMA,
         .valid = true,
     },
 };
@@ -29,12 +32,4 @@ SdioHandle_t SdioInstance[] = {
     },
 };
 
-uint32_t sdio_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt_conf = ARRAY_SIZE(SdioConfig);
-    uint32_t cnt_ints = ARRAY_SIZE(SdioInstance);
-    if(cnt_conf == cnt_ints) {
-        cnt = cnt_ints;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Sdio, sdio)

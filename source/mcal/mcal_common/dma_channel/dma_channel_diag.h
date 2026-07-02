@@ -14,22 +14,24 @@ extern "C" {
 
 #ifndef HAS_LOG
 #error "+HAS_LOG"
-#endif /**/
+#endif
 
 #ifndef HAS_DMA_CHANNEL
 #error "+HAS_DMA_CHANNEL"
-#endif /**/
+#endif
 
 #ifndef HAS_DMA_CHANNEL_DIAG
 #error "+HAS_DMA_CHANNEL_DIAG"
-#endif /**/
+#endif
 
 #ifndef HAS_DIAG
 #error "+HAS_DIAG"
-#endif /**/
+#endif
 
 bool dma_channel_diag(void);
-const char* DmaPadToStr(const DmaChannelPad_t DmaPad) ;
+//const char* DmaPadToStr(const DmaChannelPad_t DmaPad) ;
+const char* DmaInfoPadToStr(const DmaInfoChannel_t * const pDmaPad) ;
+const char* DmaChannnelNumToStr(uint8_t num);
 const char* DmaChannelMuxToStr(uint8_t mux);
 const char* DmaChannelConfigToStr(const DmaChannelConfig_t* const Config);
 const char* DmaChannelNodeToStr(const DmaChannelHandle_t* const Node);

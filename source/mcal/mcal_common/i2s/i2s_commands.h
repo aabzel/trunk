@@ -28,6 +28,7 @@ extern "C" {
 #error "+ HAS_CLI"
 #endif
 
+bool i2s_freq_command(int32_t argc, char* argv[]);
 bool i2s_set_dac_command(int32_t argc, char* argv[]);
 bool i2s_bus_role_command(int32_t argc, char* argv[]);
 bool i2s_test_command(int32_t argc, char* argv[]);
@@ -47,14 +48,6 @@ bool i2s_set_echo_command(int32_t argc, char* argv[]);
 bool i2s_init_command(int32_t argc, char* argv[]);
 bool i2s_diag_rx_command(int32_t argc, char* argv[]);
 
-#ifdef HAS_DDS
-bool i2s_set_dac_num_command(int32_t argc, char* argv[]);
-
-#define I2S_DAC_COMMANDS                                                                           \
-        SHELL_CMD("i2s_dac_num", "i2sdn", i2s_set_dac_num_command, "I2sSetDacNum"),
-#else
-#define I2S_DAC_COMMANDS
-#endif
 
 #define I2S_DIAG_COMMANDS                                                                                              \
     SHELL_CMD("i2s_diag_cfg", "i2sdc", i2s_diag_configs_command, "I2sDiagConfig"),                                     \
@@ -84,14 +77,16 @@ bool i2s_listen_command(int32_t argc, char* argv[]);
 
 
 bool i2s_dma_resume_command(int32_t argc, char* argv[]);
-bool i2s_set_tone_command(int32_t argc, char* argv[]);
 bool i2s_write_command(int32_t argc, char* argv[]);
 bool i2s_play_tone_command(int32_t argc, char* argv[]);
+#if  0
+bool i2s_set_tone_command(int32_t argc, char* argv[]);
 bool i2s_play_command(int32_t argc, char* argv[]);
+    SHELL_CMD("i2s_tone", "i2sn", i2s_set_tone_command, "I2sTone"),                                                \
+    SHELL_CMD("i2s_play", "i2spl", i2s_play_command, "I2sSetPlay"),
+#endif
 
 #define I2S_PLAY_COMMANDS                                                                                          \
-    SHELL_CMD("i2s_tone", "i2sn", i2s_set_tone_command, "I2sTone"),                                                \
-    SHELL_CMD("i2s_play", "i2spl", i2s_play_command, "I2sSetPlay"),                                                \
     SHELL_CMD("i2s_test", "i2st", i2s_test_command, "I2sTest"),                                                    \
     SHELL_CMD("i2s_play_tone", "i2spt", i2s_play_tone_command, "I2sPlayTone1kHz"),                                 \
     SHELL_CMD("i2s_write", "i2sw", i2s_write_command, "I2sWriteHexStr"),                                           \
@@ -103,9 +98,9 @@ bool i2s_play_command(int32_t argc, char* argv[]);
     I2S_DIAG_COMMANDS                                                                                                  \
     I2S_RECORD_COMMANDS                                                                                                \
     I2S_PLAY_COMMANDS                                                                                                  \
-    I2S_DAC_COMMANDS                                                                                                   \
     SHELL_CMD("i2s_loop", "i2sl", i2s_set_loopback_command, "I2sLoopBack"),                                            \
     SHELL_CMD("i2s_iir", "i2sii", i2s_set_iir_command, "I2sIrr"),                                                      \
+    SHELL_CMD("i2s_freq", "i2sf", i2s_freq_command, "I2sFreq"),                                                      \
     SHELL_CMD("i2s_bus_role", "i2sbr", i2s_bus_role_command, "I2sBusRole"),                                            \
     SHELL_CMD("i2s_dma_pause", "i2sdp", i2s_dma_pause_command, "I2sDmaPause"),                                         \
     SHELL_CMD("i2s_dma_stop", "i2sds", i2s_dma_stop_command, "I2sDmaStop"),                                            \

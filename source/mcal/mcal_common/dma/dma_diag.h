@@ -7,6 +7,7 @@ extern "C" {
 
 #include "std_includes.h"
 #include "dma_types.h"
+
 #ifdef HAS_DMA_COSTOM
 #include "dma_custom_diag.h"
 #include "dma_custom_types.h"
@@ -15,11 +16,6 @@ extern "C" {
 bool dma_diag(void);
 bool dma_channel_diag(void);
 
-#if 0
-const char* DmaPadToStr(DmaPad_t DmaPad);
-const char* DmaConfigToStr(const DmaConfig_t* const Config);
-const char* DmaChannelConfigToStr(const DmaChannelConfig_t* const Config);
-#endif
 
 const char* DmaConfigToStr(const DmaConfig_t* const Config);
 const char* DmaDirToStr(DmaDir_t dir);
@@ -29,6 +25,7 @@ const char* DmaModeToStr(DmaMode_t code);
 const char* DmaPriorityToStr(DmaPriority_t code);
 uint8_t DmaDataSizeToBits(const DmaAligmant_t code);
 uint8_t DmaDataSizeBitsToStr(DmaAligmant_t code);
+
 #ifdef __cplusplus
 }
 #endif

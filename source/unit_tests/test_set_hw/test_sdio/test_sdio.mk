@@ -7,6 +7,6 @@ ifneq ($(TEST_SDIO_MK_INC),Y)
     #@echo $(error TEST_SDIO_DIR=$(TEST_SDIO_DIR))
 
     INCDIR += -I$(TEST_SDIO_DIR)
-    OPT += -DHAS_TEST_SDIO
+    MCAL_OPT += -DHAS_TEST_SDIO
     SOURCES_C += $(TEST_SDIO_DIR)/test_sdio.c
 endif

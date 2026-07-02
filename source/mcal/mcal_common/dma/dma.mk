@@ -9,8 +9,12 @@ ifneq ($(DMA_GENERAL_DRV_MK_INC),Y)
     MCAL_OPT += -DHAS_DMA
     MCAL_OPT += -DHAS_DMA_TIME_OUT
 
+    ifeq ($(DMA_INTERRUPT),Y)
+        MCAL_OPT += -DHAS_DMA_INTERRUPT
+        SOURCES_C += $(DMA_MCAL_DIR)/dma_isr.c
+    endif
+
     SOURCES_C += $(DMA_MCAL_DIR)/dma_general.c
-    SOURCES_C += $(DMA_MCAL_DIR)/dma_isr.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(DMA_DIAG),Y)

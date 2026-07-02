@@ -3,37 +3,19 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "data_utils.h"
-#include "dma_custom_const.h"
 #include "dma_mcal.h"
+#include "dma_config.h"
 #include "table_utils.h"
 #include "writer_config.h"
+#include "data_utils.h"
 
-const char* DmaIncrToStr(DmaInc_t code) {
-    const char* name = "?";
-    switch( code) {
-        case DMA_INC_OFF:        name = "Off";        break;
-        case DMA_INC_ON:        name = "On";        break;
-        default:        break;
-    }
-    return name;
-}
-
-uint8_t DmaDataSizeToBits(DmaAligmant_t code) {
-    uint8_t bit_num = 0;
-    switch(code) {
-        case DMA_ALIGNMENT_BYTE:        bit_num = 8;        break;
-        case DMA_ALIGNMENT_WORD:        bit_num = 16;        break;
-        case DMA_ALIGNMENT_DWORD:       bit_num = 32;        break;
-        case DMA_ALIGNMENT_QWORD:       bit_num = 64;        break;
-        case DMA_ALIGNMENT_HWORD:       bit_num = 128;        break;
-        default:         break;
-    }
-    return bit_num;
-}
+#ifdef HAS_DMA_CUSTOM
+#include "dma_custom_const.h"
+#endif
 
 const char* DmaDirToStr(DmaDir_t dir) {
     const char* name = "?";
+
     switch(dir) {
         case DMA_MCAL_DIR_PERIPH_TO_MEMORY:        name = "Per->Mem";        break;
         case DMA_MCAL_DIR_MEMORY_TO_PERIPH:        name = "Mem->Per";        break;
@@ -53,6 +35,32 @@ const char* DmaModeToStr(DmaMode_t mode) {
     return name;
 }
 
+uint8_t DmaDataSizeToBits(const DmaAligmant_t code) {
+    uint8_t bit_num = 0;
+    switch(code) {
+    case DMA_ALIGNMENT_BYTE:        bit_num = 8;        break;
+    case DMA_ALIGNMENT_WORD:        bit_num = 16;        break;
+    case DMA_ALIGNMENT_DWORD:        bit_num = 32;        break;
+    default:        break;
+    }
+    return bit_num;
+}
+
+const char* DmaIncrToStr(DmaInc_t code) {
+    const char* name = "?";
+
+    switch(code) {
+    case DMA_INC_OFF:
+        name = "Off";
+        break;
+    case DMA_INC_ON:
+        name = "On";
+        break;
+    default:
+        break;
+    }
+    return name;
+}
 
 const char* DmaPriorityToStr(DmaPriority_t code) {
     const char* name = "?";
@@ -75,43 +83,13 @@ const char* DmaConfigToStr(const DmaConfig_t* const Config) {
     return text;
 }
 
-#if 0
-const char* DmaPadToStr(DmaPad_t DmaPad) {
-    strcpy(text, "");
-    snprintf(text, sizeof(text), "%sDMA:%u,", text, DmaPad.dma_num);
-    snprintf(text, sizeof(text), "%sCH:%u", text, DmaPad.channel);
-    return text;
-}
-
-const char* DmaChannelConfigToStr(const DmaChannelConfig_t* const Config) {
-    if(Config) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sDMA:%u,", text, Config->dma_num);
-        snprintf(text, sizeof(text), "%sCH:%u,", text, Config->channel);
-        snprintf(text, sizeof(text), "%sMux:%u,", text, Config->mux);
-        snprintf(text, sizeof(text), "%sCH:%u,", text, Config->channel);
-        snprintf(text, sizeof(text), "%sPbase:0x%x,", text, Config->peripheral_base_addr);
-        snprintf(text, sizeof(text), "%sMbase:0x%x,", text, Config->memory_base_addr);
-        snprintf(text, sizeof(text), "%sDir:%s,", text, DmaDirToStr(Config->dir));
-        snprintf(text, sizeof(text), "%sBuffSZ:%u,", text, Config->buffer_size);
-        snprintf(text, sizeof(text), "%sMode:%s,", text, DmaModeToStr(Config->mode));
-        snprintf(text, sizeof(text), "%sMemInc:%s,", text, DmaIncrToStr(Config->mem_inc));
-        snprintf(text, sizeof(text), "%sPerInc:%s,", text, DmaIncrToStr(Config->per_inc));
-        snprintf(text, sizeof(text), "%sMemAli:%u Bit,", text, DmaDataSizeBitsToStr(Config->aligment_per));
-        snprintf(text, sizeof(text), "%sPerAli:%u Bit,", text, DmaDataSizeBitsToStr(Config->aligment_mem));
-        snprintf(text, sizeof(text), "%sPri:%s,", text, DmaPriorityToStr(Config->priority));
-    }
-    return text;
-}
-#endif
 
 bool dma_diag(void) {
     bool res = false;
     // flag_status ret=RESET;
-    char log_line[120];
     uint32_t i = 0;
     uint32_t cnt = dma_get_cnt();
-    static const table_col_t cols[] = {{5, "DMA"}, {12, "Addr"}, {10, "?"}};
+    static const table_col_t cols[] = {{5, "DMA"}, {12, "Addr"}};
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
@@ -122,6 +100,7 @@ bool dma_diag(void) {
             // ret=dmamux_generator_flag_get(Node->DMAx, uint32_t flag);
             // ret=dmamux_sync_interrupt_flag_get(Node->DMAx, uint32_t flag);
             // ret=dmamux_sync_flag_get(Node->DMAx, uint32_t flag);
+            char log_line[120]={0};
             strcpy(log_line, TSEP);
             snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, i);
 #ifdef HAS_DMA_CUSTOM
@@ -137,40 +116,3 @@ bool dma_diag(void) {
     return res;
 }
 
-#if 0
-bool dma_channel_diag(void) {
-    bool res = false;
-    uint16_t channel = 0;
-    char log_line[120];
-    static const table_col_t cols[] = {
-        {5, "DMA"},  {5, "CHA"},     {10, "Dir"}, {10, "TxHalf"}, {10, "TxDone"},
-        {10, "Err"}, {10, "Global"}, {5, "init"}, {5, "Mux"},
-    };
-
-    table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-
-    uint16_t d = 0;
-    for(d = 0; d <= 2; d++) {
-        for(channel = DMA_CHAN_0; channel < DMA_CHAN_15; channel++) {
-            DmaChannelHandle_t* Node = DmaChannelGetNodeItem(d, (DmaChannel_t)channel);
-            if(Node) {
-                strcpy(log_line, TSEP);
-                snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->dma_num);
-                snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->channel);
-                snprintf(log_line, sizeof(log_line), "%s %8s " TSEP, log_line, DmaDirToStr(Node->dir));
-                snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->half_cnt);
-                snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->done_cnt);
-                snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->error_cnt);
-                snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->global_cnt);
-                snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->init);
-                snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->mux);
-                cli_printf("%s" CRLF, log_line);
-                res = true;
-            }
-        }
-    }
-    table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-
-    return res;
-}
-#endif

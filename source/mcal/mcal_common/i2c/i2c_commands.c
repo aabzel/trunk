@@ -230,6 +230,54 @@ bool i2c_read_command(int32_t argc, char* argv[]) {
 }
 
 // i2cc 2 0x1A
+bool i2c_scan2_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 2;
+    if(0 == argc) {
+        res = true;
+        LOG_ERROR(I2C, "ParseErr I2C Number");
+    }
+
+    if(1 == argc) {
+        res = try_str2uint8(argv[0], &num);
+        if(false == res) {
+            LOG_ERROR(I2C, "ParseErr I2C Number");
+        }
+    }
+
+    if(res) {
+        LOG_INFO(I2C, "I2C%u", num);
+        if(0 == argc) {
+            num = 0;
+            uint32_t cnt = i2c_get_cnt();
+            for(num = 0; num <= cnt; num++) {
+                I2cHandle_t* Node = I2cGetNode(num);
+                if(Node) {
+                    res = i2c_scan2_diag(num);
+                    if(res) {
+                        LOG_INFO(I2C, "%u ScanOk", num);
+                    } else {
+                        LOG_ERROR(I2C, "%u ScanErr", num);
+                    }
+                }
+            }
+        } else {
+            res = i2c_scan2_diag(num);
+            if(res) {
+                LOG_INFO(I2C, "%u ScanOk", num);
+            } else {
+                LOG_ERROR(I2C, "%u ScanErr", num);
+            }
+        }
+    } else {
+        LOG_ERROR(I2C, "Usage: i2cs Num");
+        LOG_INFO(I2C, "Num");
+        res = false;
+    }
+    return res;
+}
+
+// i2cc 2 0x1A
 bool i2c_scan_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 2;
@@ -297,7 +345,7 @@ bool i2c_check_addr_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = i2c_check_addr(num, chip_addr);
+        res = i2c_check2_addr(num, chip_addr);
         if(false == res) {
             LOG_ERROR(I2C, "%u Unknown I2C addr 0x%02x", num, chip_addr);
         } else {

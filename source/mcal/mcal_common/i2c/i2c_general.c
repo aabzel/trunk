@@ -18,7 +18,6 @@
 #endif
 
 COMPONENT_GET_NODE(I2c, i2c)
-
 COMPONENT_GET_CONFIG(I2c, i2c)
 
 bool i2c_is_valid_address(uint8_t addr) {
@@ -226,7 +225,7 @@ _WEAK_FUN_ bool i2c_write_wait(uint8_t num, uint8_t i2c_addr, const uint8_t* con
 }
 
 _WEAK_FUN_ bool i2c_mcal_read_mem(uint8_t num, uint8_t chip_addr, uint8_t* const addr, uint32_t addr_size,
-                                 uint8_t* const data, uint32_t size) {
+                                  uint8_t* const data, uint32_t size) {
     bool res = false;
     LOG_ERROR(I2C, "[%s]NotIplemented", __FUNCTION__);
     return res;
@@ -327,10 +326,18 @@ bool i2c_init_common(const I2cConfig_t* const Config, I2cHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->name = Config->name;
+            Node->own_addr = Config->own_addr;
+            Node->clock_speed = Config->clock_speed;
+            Node->interrupt_priority = Config->interrupt_priority;
+            Node->PadSda = Config->PadSda;
+            Node->PadScl = Config->PadScl;
+            Node->interrupt_on = Config->interrupt_on;
+            res = true;
         }
     }
     return res;
 }
 
-COMPONENT_INIT_PATTERT_CNT(I2C, I2C, i2c, I2C_COUNT)
+COMPONENT_INIT_ANY_PATTERT_CNT(I2C, I2C, i2c, I2C_COUNT)
 // COMPONENT_PROC_PATTERT_CNT(I2C, I2C, i2c, I2C_COUNT)

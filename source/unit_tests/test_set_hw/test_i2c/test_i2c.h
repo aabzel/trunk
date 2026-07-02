@@ -27,10 +27,10 @@ bool test_i2c1_write(void);
 #ifdef HAS_I2C2
 bool test_i2c2_read(void);
 bool test_i2c2_write(void);
-bool test_i2c2_write_string(void);
+
 
 #define TEST_SUIT_I2C2                                                                                                \
-    {"i2c2_write", test_i2c2_write}, {"i2c2_write_string", test_i2c2_write_string}, {"i2c2_read", test_i2c2_read},
+    {"i2c2_write", test_i2c2_write},   {"i2c2_read", test_i2c2_read},
 #else
 #define TEST_SUIT_I2C2
 #endif

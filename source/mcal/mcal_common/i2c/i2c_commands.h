@@ -33,11 +33,13 @@ bool i2c_read_reg_command(int32_t argc, char* argv[]);
 bool i2c_read_word_command(int32_t argc, char* argv[]);
 bool i2c_read_memory_command(int32_t argc, char* argv[]);
 bool i2c_scan_command(int32_t argc, char* argv[]);
+bool i2c_scan2_command(int32_t argc, char* argv[]);
 bool i2c_check_addr_command(int32_t argc, char* argv[]);
 
 #define I2C_READ_COMMANDS                      \
         SHELL_CMD("i2c_check", "i2cc", i2c_check_addr_command, "I2cCheckAddr"),            \
         SHELL_CMD("i2c_scan", "i2cs", i2c_scan_command, "I2cScan"),                        \
+        SHELL_CMD("i2c_scan2", "i2cs2", i2c_scan2_command, "I2cScan2"),                    \
         SHELL_CMD("i2c_read", "i2cr", i2c_read_command, "I2cRead"),                        \
         SHELL_CMD("i2c_read_word", "i2crd", i2c_read_word_command, "I2cReadWord"),         \
         SHELL_CMD("i2c_read_reg", "i2crr", i2c_read_reg_command, "I2cRegRead"),            \

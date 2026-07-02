@@ -7,10 +7,16 @@ extern "C" {
 
 #include "std_includes.h"
 #include "dma_channel_types.h"
+
+#ifdef HAS_ADC
 #include "dma_channel_config_adc.h"
+#endif
 
 typedef enum{
-   DMA_CHANNEL_NUM_ADC1 = 1,
+   DMA_CHANNEL_NUM_UNDEF = 0,
+#ifdef HAS_ADC
+   DMA_CHANNEL_NUM_ADC1 ,
+#endif
    DMA_CHANNEL_NUM_SDIO_RX ,
    DMA_CHANNEL_NUM_SDIO_TX ,
    DMA_CHANNEL_NUM_MEMCPY1 ,

@@ -1,0 +1,15 @@
+i2sfdc 1 1
+eef 1 0.9
+
+eef 1 0.5
+eef 1 0.5
+
+eef 1 0.999
+
+eed 1 
+
+
+tsa circular
+
+
+tsr 31

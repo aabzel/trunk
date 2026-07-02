@@ -1,7 +1,9 @@
 #include "dma_channel_commands.h"
 
+#include "array_diag.h"
 #include "convert.h"
 #include "dma_channel_mcal.h"
+#include "dma_mcal.h"
 #include "log.h"
 
 bool dma_channel_reg_map_command(int32_t argc, char* argv[]) {
@@ -68,9 +70,9 @@ bool dma_channel_mux_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        DmaChannelPad_t DmaPad = {
+        DmaInfoChannel_t DmaPad = {
             .dma_num = dma_num,
-            .channel = channel,
+            .stream = channel,
         };
 
         switch(argc) {
@@ -123,9 +125,9 @@ bool dma_channel_priority_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        DmaChannelPad_t DmaPad = {
+        DmaInfoChannel_t DmaPad = {
             .dma_num = dma_num,
-            .channel = channel,
+            .stream = channel,
         };
 
         switch(argc) {
@@ -146,6 +148,35 @@ bool dma_channel_priority_command(int32_t argc, char* argv[]) {
         }
     } else {
         LOG_ERROR(DMA_CHANNEL, "Usage: dcp DmaNum Channel Priority");
+    }
+    return res;
+}
+
+/*
+ dcmr 0x20000000 32
+  dcmr 0x20000001 32
+ */
+bool dma_channel_memory_read_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t address = 0;
+    uint32_t size = 0;
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &address);
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &size);
+    }
+
+    if(res) {
+        void* pSource = (void*)address;
+        uint8_t data[128] = {0};
+        res = dma_memcpy(data, pSource, size);
+        if(res) {
+            res = array_print_hex(data, size);
+        }
+    } else {
+        LOG_ERROR(DMA_CHANNEL, "Usage: dcmr Address Size");
     }
     return res;
 }

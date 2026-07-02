@@ -1,3 +1,12 @@
-DFT->I2S
-DDS->I2S
-DMA->I2S
+
+#ifdef HAS_DFT
+    I2S->DFT
+#endif
+
+#ifdef HAS_DDS
+    I2S->DDS
+#enif
+
+#ifdef HAS_DMA
+    DMA->I2S
+#enif

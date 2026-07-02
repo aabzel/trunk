@@ -10,7 +10,12 @@ ifneq ($(I2S_MCAL_MK_INC),Y)
     INCDIR += -I$(I2S_MCAL_DIR)
     MCAL_OPT += -DHAS_I2S
     MCAL_OPT += -DHAS_I2S_PROC
-
+    I2S_ISR=Y
+    
+    ifeq ($(I2S_DMA),Y)
+        MCAL_OPT += -DHAS_I2S_DMA
+    endif
+    
     ifeq ($(I2S_ISR),Y)
         MCAL_OPT += -DHAS_I2S_ISR
         SOURCES_C += $(I2S_MCAL_DIR)/i2s_isr.c

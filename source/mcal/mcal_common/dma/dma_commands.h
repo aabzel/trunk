@@ -7,7 +7,7 @@ extern "C" {
 
 #include "std_includes.h"
 
-#ifndef HAS_DMA_COMMANDS
+#ifdef HAS_DMA_CUSTOM_COMMANDS
 #include "dma_custom_commands.h"
 #else
 #define DMA_CUSTOM_COMMANDS
@@ -17,21 +17,17 @@ extern "C" {
 #error "+HAS_DMA_COMMANDS"
 #endif
 
+bool dma_start_command(int32_t argc, char* argv[]);
+bool dma_stop_command(int32_t argc, char* argv[]);
+bool dma_init_command(int32_t argc, char* argv[]);
 bool dma_diag_command(int32_t argc, char* argv[]);
-#if 0
-bool dma_channel_diag_command(int32_t argc, char* argv[]);
-bool dma_channel_mux_command(int32_t argc, char* argv[]);
-#endif
 
-#define DMA_COMMANDS DMA_CUSTOM_COMMANDS                                               \
+#define DMA_COMMANDS                                                  \
+    DMA_CUSTOM_COMMANDS                                               \
+    SHELL_CMD("dma_start", "dt", dma_start_command, "DmaStart"),      \
+    SHELL_CMD("dma_stop", "ds", dma_stop_command, "DmaStop"),      \
+    SHELL_CMD("dma_init", "di", dma_init_command, "DmaInit"),      \
     SHELL_CMD("dma_diag", "dd", dma_diag_command, "DmaDiag"),
-
-#if 0
-    SHELL_CMD("dma_channel_mux", "dcm", dma_channel_mux_command, "DmaChannelMux"),     \
-    SHELL_CMD("dma_channel_diag", "dcd", dma_channel_diag_command, "DmaChannelDiag"),
-#endif
-
-
 
 #ifdef __cplusplus
 }

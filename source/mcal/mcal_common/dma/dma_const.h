@@ -53,6 +53,16 @@ typedef enum {
 } DmaMode_t;
 
 typedef enum {
+    DMA_MCAL_ALIGNMENT_BYTE = 1,       /*  Byte  8   bit  */
+    DMA_MCAL_ALIGNMENT_BYTE_2 = 2,     /*  WORD  16  bit  */
+    DMA_MCAL_ALIGNMENT_BYTE_4 = 4,     /*  DWORD 32  bit  */
+    DMA_MCAL_ALIGNMENT_BYTE_8 = 8,     /*  QWORD 64  bit  */
+    DMA_MCAL_ALIGNMENT_BYTE_16 = 16,    /*  HWORD 128 bit  */
+    DMA_MCAL_ALIGNMENT_UNDEF = 0,      /*                 */
+} DmaByteAligmant_t;
+
+// TODO substitute for DmaByteAligmant_t
+typedef enum {
     DMA_ALIGNMENT_BYTE = 1,          /* 8 bit  */
     DMA_ALIGNMENT_HALF_WORD = 1,     /* 16 bit  */
     DMA_ALIGNMENT_WORD = 2,     /* 16 bit  */

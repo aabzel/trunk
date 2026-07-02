@@ -15,6 +15,7 @@ ifneq ($(SDIO_MCAL_MK_INC),Y)
     endif
 
     SOURCES_C += $(SDIO_MCAL_DIR)/sdio_general.c
+    SOURCES_C += $(SDIO_MCAL_DIR)/sdio_isr.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(SDIO_DIAG),Y)

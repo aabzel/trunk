@@ -16,11 +16,11 @@
 #define DMA_CHANNEL_SPI1
 #endif
 
-//    DMA_CHANNEL_SPI1
 //    DMA_CHANNEL_MEMCPY
 
 #define DMA_CHANNEL_ALL  \
-    DMA_CHANNEL_ADC
+    DMA_CHANNEL_ADC   \
+    DMA_CHANNEL_SPI1
 
 const DmaChannelConfig_t SECTION_CFG_DATA DmaChannelConfig[] = {
     DMA_CHANNEL_ALL

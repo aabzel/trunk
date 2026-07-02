@@ -27,34 +27,35 @@ typedef struct {
     char* name;
 } I2cRecord_t;
 
-#define I2C_COMMAN_VARIABLES                                                                                           \
-    bool valid;                                                                                                        \
-    uint8_t num;                                                                                                       \
-    bool interrupt_on;
+#define I2C_GPIO_VARIABLES                                                                \
+    Pad_t PadScl;                                                                         \
+    Pad_t PadSda;
+
+#define I2C_COMMAN_VARIABLES                                                                            \
+        I2C_GPIO_VARIABLES                                                                              \
+    bool valid;                                                                                         \
+    uint8_t num;                                                                                        \
+    uint8_t interrupt_priority;                                                                         \
+    uint16_t own_addr;                                                                                  \
+    bool interrupt_on;                                                                                  \
+    uint32_t clock_speed;                                                                               \
+    char* name;
 
 typedef struct {
     I2C_COMMAN_VARIABLES
-    uint32_t clock_speed;
-    char* name;
-    uint16_t own_addr;
-    uint8_t interrupt_priority;
-#ifdef HAS_GPIO
-    Pad_t PadScl;
-    Pad_t PadSda;
-#endif
 } I2cConfig_t;
 
-#define I2C_TX_INTERRUPT_VARIABLES    \
-    volatile uint32_t tx_cpl_cnt;                                                                                      \
-    volatile bool tx_int;                                                                                              \
-    volatile bool tx_done;                                                                                             \
+#define I2C_TX_INTERRUPT_VARIABLES                                          \
+    volatile uint32_t tx_cpl_cnt;                                           \
+    volatile bool tx_int;                                                   \
+    volatile bool tx_done;                                                  \
     volatile uint32_t tx_cnt;
 
 #define I2C_RX_INTERRUPT_VARIABLES    \
-    volatile bool rx_done;                                                                                             \
-    volatile bool rx_int;                                                                                              \
-    volatile uint8_t rx_byte;                                                                                          \
-    volatile uint8_t* rx_buff;                                                                                         \
+    volatile bool rx_done;            \
+    volatile bool rx_int;             \
+    volatile uint8_t rx_byte;         \
+    volatile uint8_t* rx_buff;        \
     volatile uint32_t rx_cnt;
 
 #define I2C_INTERRUPT_VARIABLES   \

@@ -31,9 +31,11 @@ bool dma_channel_mux_command(int32_t argc, char* argv[]);
 bool dma_channel_diag_command(int32_t argc, char* argv[]);
 bool dma_channel_init_command(int32_t argc, char* argv[]);
 bool dma_channel_reg_map_command(int32_t argc, char* argv[]);
+bool dma_channel_memory_read_command(int32_t argc, char* argv[]);
 
 #define DMA_CHANNEL_COMMANDS                                                                                          \
         DMA_CHANNEL_CUSTOM_COMMANDS                                                                                   \
+        SHELL_CMD("dma_channel_memread", "dcmr", dma_channel_memory_read_command, "DmaChannelMemoryRead"),            \
         SHELL_CMD("dma_channel_priority", "dcp", dma_channel_priority_command, "DmaChannelPriority"),                 \
         SHELL_CMD("dma_channel_diag", "dcd", dma_channel_diag_command, "DmaChannelDiag"),                             \
         SHELL_CMD("dma_channel_mux", "dcm", dma_channel_mux_command, "DmaChannelMux"),                                \

@@ -45,6 +45,7 @@ bool sdio_proc(void);
 bool sdio_init_ll(uint32_t num);
 
 /*setters*/
+bool sdio_init_4bit_mode(SdioHandle_t* Node);
 bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const RxData);
 uint8_t sdio_ioctl(uint8_t pdrv, uint8_t cmd, void* buff);
 

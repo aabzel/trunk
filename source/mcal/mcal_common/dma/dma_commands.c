@@ -25,75 +25,75 @@ bool dma_diag_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-#if 0
-bool dma_channel_diag_command(int32_t argc, char* argv[]) {
-    bool res = true;
-
+bool dma_init_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t dma_num = 1;
     if(0 <= argc) {
         res = true;
+        dma_num = 1;
     }
-
-    if(res) {
-        res = dma_channel_diag();
-    } else {
-        LOG_ERROR(SYS, "Usage: dcd");
-    }
-    return res;
-}
-#endif
-
-#if 0
-bool dma_channel_mux_command(int32_t argc, char* argv[]) {
-    bool res = true;
-    uint8_t dma_num = 0;
-    uint8_t channel = 0;
-    uint8_t dmamux = 0;
-
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &dma_num);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr DmaNum %s", argv[0]);
-        }
-    }
-
-    if(2 <= argc) {
-        res = try_str2uint8(argv[1], &channel);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr Chan %s", argv[1]);
-        }
-    }
-
-    if(3 <= argc) {
-        res = try_str2uint8(argv[2], &dmamux);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr Mux %s", argv[2]);
-        }
     }
 
     if(res) {
         switch(argc) {
-        case 2: {
-            dmamux = 0;
-            res = dma_mux_get(dma_num, channel, &dmamux);
-            if(res) {
-                LOG_INFO(SYS, "Get,DmaNum:%u,Channel:%u,Mux:%u", dma_num, channel, dmamux);
-            }
+        case 0: {
+            res = dma_mcal_init();
         } break;
-        case 3: {
-            LOG_INFO(SYS, "Set,DmaNum:%u,Channel:%u,Mux:%u", dma_num, channel, dmamux);
-            res = dma_mux_set(dma_num, channel, dmamux);
-            if(res) {
-                LOG_INFO(SYS, "SetOk");
-            } else {
-                LOG_ERROR(SYS, "SetErr");
-            }
+        case 1: {
+            res = dma_init_one(dma_num);
         } break;
-        default: break;
+        default:
+            break;
         }
     } else {
-        LOG_ERROR(SYS, "Usage: dcm DmaNum Channel Mux");
+        LOG_ERROR(LG_DMA, "Usage: di DmaNum");
     }
     return res;
 }
 
-#endif
+bool dma_stop_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t dma_num = 1;
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &dma_num);
+    }
+    if(res) {
+        res = dma_stop(dma_num);
+    } else {
+        LOG_ERROR(LG_DMA, "Usage: ds DmaNum");
+    }
+    return res;
+}
+
+bool dma_start_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t dma_num = 1;
+    uint32_t src_address = 0;
+    uint32_t dst_address = 0;
+    uint32_t bytes = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &dma_num);
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &src_address);
+    }
+
+    if(3 <= argc) {
+        res = try_str2uint32(argv[2], &dst_address);
+    }
+
+    if(4 <= argc) {
+        res = try_str2uint32(argv[3], &bytes);
+    }
+
+    if(res) {
+        res = dma_start(dma_num, src_address, dst_address, bytes);
+    } else {
+        LOG_ERROR(LG_DMA, "Usage: dt DmaNum SrcAddr dstAddr Size");
+    }
+    return res;
+}

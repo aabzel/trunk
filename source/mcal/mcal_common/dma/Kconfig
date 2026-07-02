@@ -1,0 +1,4 @@
+
+config DMA
+    bool "Enable use of the DMA drivers"
+

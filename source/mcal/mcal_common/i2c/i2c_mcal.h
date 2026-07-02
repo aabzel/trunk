@@ -11,6 +11,7 @@ extern "C" {
 #include "i2c_config.h"
 #include "i2c_types.h"
 #include "connectivity_const.h"
+
 #ifdef HAS_I2C_CUSTOM
 #include "i2c_custom_drv.h"
 #endif
@@ -21,6 +22,7 @@ extern "C" {
 
 I2cHandle_t* I2cGetNode(uint8_t num);
 const I2cConfig_t* I2cGetConfig(uint8_t num);
+
 #ifdef HAS_I2C_CUSTOM
 const I2cInfo_t* I2cGetInfo(uint8_t num);
 #endif
@@ -51,6 +53,7 @@ bool i2c_mcal_read_mem(uint8_t num, uint8_t chip_addr, uint8_t* const addr, uint
 bool i2c_mcal_read_byte(uint8_t num, uint8_t chip_addr, uint8_t reg_addr, uint8_t* const value);
 bool i2c_mcal_read_word(uint8_t num, uint8_t chip_addr, uint8_t reg_addr, uint16_t* const word);
 bool i2c_mcal_read_byte_old(uint8_t num, uint8_t chip_addr, uint8_t reg_addr, uint8_t* const value);
+bool i2c_check2_addr(uint8_t num, uint8_t i2c_addr) ;
 bool i2c_check_addr(uint8_t num, uint8_t chip_addr);
 bool I2cWaitRxDoneTimeOut(const I2cHandle_t* const Node, uint32_t time_out_ms, uint32_t* const real_time);
 bool i2c_scan(uint8_t num);

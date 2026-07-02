@@ -17,9 +17,9 @@ static uint8_t WriteBlock[SDIO_BLOCK_SIZE + 1] = {0};
 
 static bool test_sdio_read_write_block(uint32_t block_num) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     ASSERT_TRUE(sdio_read_sector(SD_CARD_SDIO_NUM, block_num, 1, OrigBlock));
-    array_incr(WriteBlock, SDIO_BLOCK_SIZE);
+    array_incr(WriteBlock, SDIO_BLOCK_SIZE,0);
 
     ASSERT_TRUE(sdio_write_sector(SD_CARD_SDIO_NUM, block_num, 1, WriteBlock));
     ASSERT_TRUE(wait_in_loop_ms(100));
@@ -28,7 +28,7 @@ static bool test_sdio_read_write_block(uint32_t block_num) {
     EXPECT_EQ_MEM(ReadBlock, WriteBlock, SDIO_BLOCK_SIZE);
 
     ASSERT_TRUE(sdio_write_sector(SD_CARD_SDIO_NUM, block_num, 1, OrigBlock));
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 
@@ -37,27 +37,27 @@ static bool test_sdio_read_write_block(uint32_t block_num) {
  */
 bool test_sdio_read_write(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     uint32_t i = 0;
     for(i = 1; i <= 2; i++) {
         ASSERT_TRUE(test_sdio_read_write_block(i));
     }
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
 
     return true;
 }
 
 bool test_sdio_const(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     ASSERT_GR(32, SDIO_TIME_OUT_MS);
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 
 bool test_sdio_read(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     uint32_t block_num = 10;
     bool res = false;
     bool spot_valid = false;
@@ -80,7 +80,7 @@ bool test_sdio_read(void) {
         }
     }
     ASSERT_TRUE(spot_valid);
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
 
     return true;
 }
@@ -88,9 +88,9 @@ bool test_sdio_read(void) {
 #ifdef HAS_SDIO_DMA
 static bool test_sdio_read_write_block_dma(uint32_t block_num) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     ASSERT_TRUE(sdio_read_sector_dma(SD_CARD_SDIO_NUM, block_num, 1, OrigBlock));
-    array_incr(WriteBlock, SDIO_BLOCK_SIZE);
+    array_incr(WriteBlock, SDIO_BLOCK_SIZE,0);
 
     ASSERT_TRUE(sdio_write_sector_dma(SD_CARD_SDIO_NUM, block_num, 1, WriteBlock));
     ASSERT_TRUE(wait_in_loop_ms(100));
@@ -99,13 +99,13 @@ static bool test_sdio_read_write_block_dma(uint32_t block_num) {
     EXPECT_EQ_MEM(ReadBlock, WriteBlock, SDIO_BLOCK_SIZE);
 
     ASSERT_TRUE(sdio_write_sector_dma(SD_CARD_SDIO_NUM, block_num, 1, OrigBlock));
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 
 bool test_sdio_read_dma(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     bool res = false;
     uint32_t i = 0;
     for(i = 0; i < 100; i++) {
@@ -113,16 +113,16 @@ bool test_sdio_read_dma(void) {
         res = sdio_read_sector_dma(SD_CARD_SDIO_NUM, i, 1, ReadBlock);
         ASSERT_TRUE(res);
     }
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 
 bool test_sdio_write_dma(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     ASSERT_TRUE(test_sdio_read_write_block_dma(3));
     ASSERT_TRUE(test_sdio_read_write_block_dma(2));
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 #endif
@@ -130,9 +130,9 @@ bool test_sdio_write_dma(void) {
 #ifdef HAS_SDIO_INTERRUPT
 static bool test_sdio_read_write_block_it(uint32_t block_num) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     ASSERT_TRUE(sdio_read_sector_it(SD_CARD_SDIO_NUM, block_num, 1, OrigBlock));
-    array_incr(WriteBlock, SDIO_BLOCK_SIZE);
+    array_incr(WriteBlock, SDIO_BLOCK_SIZE,0);
     ASSERT_TRUE(wait_in_loop_ms(100));
 
     ASSERT_TRUE(sdio_write_sector_it(SD_CARD_SDIO_NUM, block_num, 1, WriteBlock));
@@ -142,29 +142,29 @@ static bool test_sdio_read_write_block_it(uint32_t block_num) {
     EXPECT_EQ_MEM(ReadBlock, WriteBlock, SDIO_BLOCK_SIZE);
 
     ASSERT_TRUE(sdio_write_sector_it(SD_CARD_SDIO_NUM, block_num, 1, OrigBlock));
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 
 bool test_sdio_read_it(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     bool res = false;
     uint32_t i = 0;
     for(i = 0; i < 100; i++) {
         res = sdio_read_sector_it(SD_CARD_SDIO_NUM, i, 1, ReadBlock);
         ASSERT_TRUE(res);
     }
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 
 bool test_sdio_write_it(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     ASSERT_TRUE(test_sdio_read_write_block_it(3));
     ASSERT_TRUE(test_sdio_read_write_block_it(2));
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }
 #endif
@@ -172,8 +172,8 @@ bool test_sdio_write_it(void) {
 /*That test casuse fail*/
 bool test_sdio_link(void) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
-    set_log_level(LG_SDIO, LOG_LEVEL_DEBUG);
+    log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);
     // ASSERT_TRUE(sdio_is_connected(1)); /*Cause bug*/
-    set_log_level(LG_SDIO, LOG_LEVEL_INFO);
+    log_level_set(LG_SDIO, LOG_LEVEL_INFO);
     return true;
 }

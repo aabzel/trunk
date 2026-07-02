@@ -17,6 +17,9 @@ COMPONENT_GET_CONFIG(DmaChannel, dma_channel)
 #endif
 
 _WEAK_FUN_
+uint32_t dma_channel_spare_get_cnt(void) { return 0; }
+
+_WEAK_FUN_
 bool dma_channel_start_ll(DmaChannelHandle_t* Node) { return false; }
 
 _WEAK_FUN_
@@ -35,7 +38,7 @@ bool DmaChannelIsValidConfig(const DmaChannelConfig_t* const Config) {
         } else {
 #ifdef HAS_DMA_CHANNEL_DIAG
             // res = false;
-            LOG_WARNING(DMA_CHANNEL, "%s,Mux,Err", DmaPadToStr(Config->DmaPad), Config->mux);
+            LOG_WARNING(DMA_CHANNEL, "%s,Mux,Err", DmaInfoPadToStr(&Config->DmaChPad), Config->mux);
 #endif
         }
 
@@ -115,6 +118,15 @@ bool DmaChannelIsValidConfig(const DmaChannelConfig_t* const Config) {
     return res;
 }
 
+bool dma_channel_is_valid_num(uint8_t num) {
+    bool res = false;
+    DmaChannelHandle_t* Node = DmaChannelGetNode(num);
+    if(Node) {
+        res = true;
+    }
+    return res;
+}
+
 static bool MemCpyDone(void) {
     bool res = true;
     return res;
@@ -125,9 +137,15 @@ static bool MemCpyHalf(void) {
     return res;
 }
 
-bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t size, uint8_t dma_num, uint8_t channel
+_WEAK_FUN_
+bool dma_memcpy_custom_ll(void* const destination, const void* const source, uint32_t size, uint8_t dma_num,
+                          uint8_t dma_channel, uint8_t channel) {
+    bool res = false;
+    return res;
+}
 
-) {
+bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t size, uint8_t dma_num, uint8_t stream,
+                   uint8_t channel) {
     bool res = false;
     if(destination) {
         if(source) {
@@ -141,8 +159,9 @@ bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t s
     if(res) {
         res = false;
         static DmaChannelHandle_t Channel = {0};
-        Channel.DmaPad.dma_num = dma_num;
-        Channel.DmaPad.channel = channel;
+        Channel.DmaChPad.dma_num = dma_num;
+        Channel.DmaChPad.stream = stream;
+        Channel.DmaChPad.channel = channel;
         Channel.priority = channel;
         Channel.base_addr_destination = (uint32_t)destination;
         Channel.base_addr_source = (uint32_t)source;
@@ -172,7 +191,8 @@ bool dma_memcpy_ll(void* const destination, const void* const source, uint32_t s
 _WEAK_FUN_
 bool dma_channel_init_custom(void) {
     bool res = false;
-    LOG_INFO(DMA_CHANNEL, "Version:%s", DMA_CHANNEL_VERSION);
+    LOG_INFO(DMA_CHANNEL, "Version:%u", DMA_CHANNEL_VERSION);
+    LOG_INFO(DMA_CHANNEL, "CNT:%u", dma_channel_get_cnt());
     return res;
 }
 
@@ -186,8 +206,6 @@ bool dma_channel_proc_one(uint8_t i) {
     }
     return res;
 }
-
-
 
 _WEAK_FUN_
 bool dma_channel_init_common(const DmaChannelConfig_t* const Config, DmaChannelHandle_t* const Node) {
@@ -205,7 +223,7 @@ bool dma_channel_init_common(const DmaChannelConfig_t* const Config, DmaChannelH
             Node->CallBackHalf = Config->CallBackHalf;
             Node->CallBackDone = Config->CallBackDone;
             Node->dir = Config->dir;
-            Node->DmaPad.byte = Config->DmaPad.byte;
+            Node->DmaChPad = Config->DmaChPad;
             Node->fifo = Config->fifo;
             Node->mem_inc = Config->mem_inc;
             Node->per_inc = Config->per_inc;
@@ -229,15 +247,14 @@ bool dma_channel_init_common(const DmaChannelConfig_t* const Config, DmaChannelH
     return res;
 }
 
-
-DmaChannelHandle_t* DmaChannelGetNodeItem(uint8_t dma_num, DmaChannel_t channel) {
+DmaChannelHandle_t* DmaChannelGetNodeItem(uint8_t dma_num, DmaChannel_t stream) {
     DmaChannelHandle_t* Node = NULL;
     uint32_t i = 0;
     uint32_t cnt = dma_channel_get_cnt();
     for(i = 0; i < cnt; i++) {
         if(DmaChannelInstance[i].valid) {
-            if(dma_num == DmaChannelInstance[i].DmaPad.dma_num) {
-                if(channel == DmaChannelInstance[i].DmaPad.channel) {
+            if(dma_num == DmaChannelInstance[i].DmaChPad.dma_num) {
+                if(stream == DmaChannelInstance[i].DmaChPad.stream) {
                     Node = &DmaChannelInstance[i];
                     break;
                 }
@@ -248,21 +265,23 @@ DmaChannelHandle_t* DmaChannelGetNodeItem(uint8_t dma_num, DmaChannel_t channel)
     return Node;
 }
 
-DmaChannelHandle_t* DmaPadGetNodeItem(DmaChannelPad_t DmaPad) {
+DmaChannelHandle_t* DmaPadGetNodeItem(DmaInfoChannel_t DmaPad) {
     DmaChannelHandle_t* Node = NULL;
-    Node = DmaChannelGetNodeItem(DmaPad.dma_num, (DmaChannel_t)DmaPad.channel);
+    Node = DmaChannelGetNodeItem(DmaPad.dma_num, (DmaChannel_t)DmaPad.stream);
     return Node;
 }
 
-DmaChannelHandle_t* DmaChannelToNode(DmaChannelPad_t DmaPad) {
+DmaChannelHandle_t* DmaChannelToNode(DmaInfoChannel_t DmaPad) {
     DmaChannelHandle_t* Node = NULL;
     uint32_t i = 0;
     uint32_t cnt = dma_channel_get_cnt();
     for(i = 0; i < cnt; i++) {
         if(DmaChannelInstance[i].valid) {
-            if(DmaPad.byte == DmaChannelInstance[i].DmaPad.byte) {
-                Node = &DmaChannelInstance[i];
-                break;
+            if(DmaPad.stream == DmaChannelInstance[i].DmaChPad.stream) {
+                if(DmaPad.dma_num == DmaChannelInstance[i].DmaChPad.dma_num) {
+                    Node = &DmaChannelInstance[i];
+                    break;
+                }
             }
         }
     }
@@ -270,12 +289,12 @@ DmaChannelHandle_t* DmaChannelToNode(DmaChannelPad_t DmaPad) {
     return Node;
 }
 
-DmaChannelHandle_t* DmaChannelPadGetNode(DmaChannelPad_t DmaPad) {
+DmaChannelHandle_t* DmaChannelPadGetNode(DmaInfoChannel_t DmaPad) {
     DmaChannelHandle_t* Node = NULL;
     Node = DmaChannelToNode(DmaPad);
     return Node;
 }
-bool dma_channel_wait_done(DmaChannelPad_t DmaPad) {
+bool dma_channel_wait_done(DmaInfoChannel_t DmaPad) {
     bool res = false;
     DmaChannelHandle_t* Node = DmaChannelToNode(DmaPad);
     if(Node) {
@@ -305,12 +324,12 @@ bool dma_channel_wait_done(DmaChannelPad_t DmaPad) {
     return res;
 }
 
-_WEAK_FUN_ bool dma_channel_mux_get(DmaChannelPad_t DmaPad, uint8_t* const mux) {
+_WEAK_FUN_ bool dma_channel_mux_get(DmaInfoChannel_t DmaPad, uint8_t* const mux) {
     LOG_ERROR(DMA_CHANNEL, "%s NotInplemented", __FUNCTION__);
     return false;
 }
 
-_WEAK_FUN_ bool dma_channel_mux_set(DmaChannelPad_t DmaPad, uint8_t mux) {
+_WEAK_FUN_ bool dma_channel_mux_set(DmaInfoChannel_t DmaPad, uint8_t mux) {
     LOG_ERROR(DMA_CHANNEL, "%s NotInplemented", __FUNCTION__);
     return false;
 }
@@ -318,7 +337,7 @@ _WEAK_FUN_ bool dma_channel_mux_set(DmaChannelPad_t DmaPad, uint8_t mux) {
 _WEAK_FUN_
 bool dma_channel_init_one(uint8_t num) {
     bool res = false;
-    LOG_WARNING(DMA_CHANNEL, "DMA_CHANNEL%u", num);
+    LOG_WARNING(DMA_CHANNEL, "DMA_CHANNEL_%u=%s", num, DmaChannnelNumToStr(num));
     const DmaChannelConfig_t* Config = DmaChannelGetConfig(num);
     if(Config) {
         res = DmaChannelIsValidConfig(Config);
@@ -343,5 +362,5 @@ bool dma_channel_init_one(uint8_t num) {
     return res;
 }
 
-COMPONENT_INIT_PATTERT_CNT(DMA_CHANNEL, DMA_CHANNEL, dma_channel, DMA_CHANNEL_COUNT)
-COMPONENT_PROC_PATTERT_CNT(DMA_CHANNEL, DMA_CHANNEL, dma_channel, DMA_CHANNEL_COUNT)
+COMPONENT_INIT_PATTERT_CNT(DMA_CHANNEL, DMA_CHANNEL, dma_channel, DMA_CHANNEL_NUM_CNT)
+COMPONENT_PROC_PATTERT_CNT(DMA_CHANNEL, DMA_CHANNEL, dma_channel, DMA_CHANNEL_NUM_CNT)
