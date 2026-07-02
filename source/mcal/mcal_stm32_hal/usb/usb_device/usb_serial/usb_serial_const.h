@@ -1,0 +1,7 @@
+#ifndef USB_SERIAL_CONST_H
+#define USB_SERIAL_CONST_H
+
+#define USB_SERIAL_RX_SIZE_MAX 128
+#define USB_SERIAL_TX_SIZE_MAX 64
+
+#endif

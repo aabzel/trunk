@@ -1,0 +1,14 @@
+$(info SPI_CUSTOM_PRECONFIG_INC=$(SPI_CUSTOM_PRECONFIG_INC) )
+ifneq ($(SPI_CUSTOM_PRECONFIG_INC),Y)
+    SPI_CUSTOM_PRECONFIG_INC=Y
+
+    SPI=Y
+    GPIO=Y
+    TIME=Y
+
+    ifeq ($(SPI_DMA),Y)
+        DMA=Y
+        DMA_CHANNEL=Y
+    endif
+endif
+

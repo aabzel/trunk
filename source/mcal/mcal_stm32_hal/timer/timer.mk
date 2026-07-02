@@ -1,0 +1,89 @@
+ifneq ($(TIMER_CUSTOM_DRV_MK_INC),Y)
+    TIMER_CUSTOM_DRV_MK_INC=Y
+
+    TIMER_CUSTOM_DIR = $(MCAL_CUSTOM_DIR)/timer
+    # $(error TIMER_CUSTOM_DIR=$(TIMER_CUSTOM_DIR))
+
+    INCDIR += -I$(TIMER_CUSTOM_DIR)
+    MCAL_OPT += -DHAS_TIMER
+    MCAL_OPT += -DHAS_TIMER_CUSTOM
+    HAL_DMA=Y
+
+    SOURCES_C += $(TIMER_CUSTOM_DIR)/timer_mcal.c
+    SOURCES_C += $(TIMER_CUSTOM_DIR)/timer_core.c
+
+    ifeq ($(TIMER_INTERRUPT),Y)
+        MCAL_OPT += -DHAS_TIMER_INTERRUPT
+        # $(error TIMER_INTERRUPT=$(TIMER_INTERRUPT))
+        SOURCES_C += $(TIMER_CUSTOM_DIR)/timer_custom_isr.c
+    endif
+
+    ifeq ($(TIMER1),Y)
+        MCAL_OPT += -DHAS_TIMER1
+    endif
+
+    ifeq ($(TIMER2),Y)
+        MCAL_OPT += -DHAS_TIMER2
+    endif
+
+    ifeq ($(TIMER3),Y)
+        MCAL_OPT += -DHAS_TIMER3
+    endif
+
+    ifeq ($(TIMER4),Y)
+        MCAL_OPT += -DHAS_TIMER4
+    endif
+
+    ifeq ($(TIMER5),Y)
+        MCAL_OPT += -DHAS_TIMER5
+    endif
+
+    ifeq ($(TIMER6),Y)
+        MCAL_OPT += -DHAS_TIMER6
+    endif
+
+    ifeq ($(TIMER7),Y)
+        MCAL_OPT += -DHAS_TIMER7
+    endif
+
+    ifeq ($(TIMER8),Y)
+        MCAL_OPT += -DHAS_TIMER8
+    endif
+
+    ifeq ($(TIMER9),Y)
+        MCAL_OPT += -DHAS_TIMER9
+    endif
+
+    ifeq ($(TIMER10),Y)
+        MCAL_OPT += -DHAS_TIMER10
+    endif
+
+    ifeq ($(TIMER11),Y)
+        MCAL_OPT += -DHAS_TIMER11
+    endif
+
+    ifeq ($(TIMER12),Y)
+        MCAL_OPT += -DHAS_TIMER12
+    endif
+
+    ifeq ($(TIMER13),Y)
+        MCAL_OPT += -DHAS_TIMER13
+    endif
+
+    ifeq ($(TIMER14),Y)
+        MCAL_OPT += -DHAS_TIMER14
+    endif
+
+    ifeq ($(DIAG),Y)
+        MCAL_OPT += -DHAS_TIMER_CUSTOM_DIAG
+        SOURCES_DIAG_C += $(TIMER_CUSTOM_DIR)/timer_custom_diag.c
+    endif
+
+    ifeq ($(CLI),Y)
+        ifeq ($(TIMER_COMMANDS),Y)
+            # $(error TIMER_COMMANDS=$(TIMER_COMMANDS))
+            MCAL_OPT += -DHAS_TIMER_CUSTOM_COMMANDS
+            SOURCES_C += $(TIMER_CUSTOM_DIR)/timer_custom_commands.c
+        endif
+    endif
+endif

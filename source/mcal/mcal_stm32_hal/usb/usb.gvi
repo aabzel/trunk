@@ -1,0 +1,7 @@
+
+GPIO->USB
+INTERRUPT->USB
+
+#ifdef HAS_USB_DEVICE
+    #include "usb_device.gvi"
+#endif

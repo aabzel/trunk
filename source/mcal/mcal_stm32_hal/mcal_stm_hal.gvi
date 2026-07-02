@@ -1,0 +1,76 @@
+
+    #ifdef HAS_ADC
+        #include "mcal_stm_hal/adc/adc.gvi"
+    #endif
+
+    #ifdef HAS_CLOCK
+        #include "mcal_stm_hal/clock/clock.gvi"
+    #endif
+
+    #ifdef HAS_CAN
+        #include "mcal_stm_hal/can/can.gvi"
+    #endif
+    
+    #ifdef HAS_FLASH
+        #include "mcal_stm_hal/flash/flash.gvi"
+    #endif
+
+    #ifdef HAS_GPIO
+        #include "mcal_stm_hal/gpio/gpio.gvi"
+    #endif
+
+    #ifdef HAS_I2C
+        #include "mcal_stm_hal/i2c/i2c.gvi"
+    #endif
+
+    #ifdef HAS_I2S
+        #include "mcal_stm_hal/i2s/i2s.gvi"
+    #endif
+
+    #ifdef HAS_IPC
+        #include "mcal_stm_hal/ipc/ipc.gvi"
+    #endif
+
+    #ifdef HAS_NVS
+        #include "mcal_stm_hal/nvs/nvs.gvi"
+    #endif
+
+    #ifdef HAS_PDM
+        #include "mcal_stm_hal/pdm/pdm.gvi"
+    #endif
+
+    #ifdef HAS_PWM
+        #include "mcal_stm_hal/pwm/pwm.gvi"
+    #endif
+
+    #ifdef HAS_RTC
+        #include "mcal_stm_hal/rtc/rtc.gvi"
+    #endif
+
+    #ifdef HAS_SPI
+        #include "mcal_stm_hal/spi/spi.gvi"
+    #endif
+
+    #ifdef HAS_SYSTICK
+        #include "mcal_stm_hal/systick/systick.gvi"
+    #endif
+
+    #ifdef HAS_SDIO
+        #include "mcal_stm_hal/sdio/sdio.gvi"
+    #endif
+
+    #ifdef HAS_TIMER
+        #include "mcal_stm_hal/timer/timer.gvi"
+    #endif
+    
+    #ifdef HAS_QSPI
+        #include "mcal_stm_hal/qspi/qspi.gvi"
+    #endif
+
+    #ifdef HAS_UART
+        #include "mcal_stm_hal/uart/uart.gvi"
+    #endif
+
+    #ifdef HAS_USB
+        #include "mcal_stm_hal/usb/usb.gvi"
+    #endif

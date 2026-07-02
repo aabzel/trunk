@@ -1,0 +1,28 @@
+ifneq ($(CLOCK_STM32_MK_INC),Y)
+    CLOCK_STM32_MK_INC=Y
+    #@echo $(error CLOCK=$(CLOCK))
+    #mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+ 
+    CLOCK_STM32_DIR = $(MCAL_CUSTOM_DIR)/clocks
+    #@echo $(error CLOCK_STM32_DIR=$(CLOCK_STM32_DIR))
+
+    INCDIR += -I$(CLOCK_STM32_DIR)
+
+    MCAL_OPT += -DHAS_CLOCK_CUSTOM
+
+    SOURCES_C += $(CLOCK_STM32_DIR)/clock_mcal.c
+
+    ifeq ($(DIAG),Y)
+        ifeq ($(CLOCK_DIAG),Y)
+            MCAL_OPT += -DHAS_CLOCK_DIAG
+            SOURCES_C += $(CLOCK_STM32_DIR)/clock_custom_diag.c
+        endif
+    endif
+
+    ifeq ($(CLI),Y)
+        ifeq ($(CLOCK_COMMANDS),Y)
+            MCAL_OPT += -DHAS_CLOCK_CUSTOM_COMMANDS
+            SOURCES_C += $(CLOCK_STM32_DIR)/clock_custom_commands.c
+        endif
+    endif
+endif

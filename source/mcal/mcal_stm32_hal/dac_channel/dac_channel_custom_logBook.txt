@@ -1,0 +1,5 @@
+Tutorial
+
+
+https://deepbluembedded.com/stm32-dac-tutorial-example-hal-code-analog-signal-genreation/
+https://microtechnics.ru/stm32cube-cap-ispolzovanie-dac/

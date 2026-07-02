@@ -1,0 +1,9 @@
+#ifndef CLOCK_CUSTOM_PARAMS_H
+#define CLOCK_CUSTOM_PARAMS_H
+
+
+#define PARAMS_CLOCK_CUSTOM
+
+
+
+#endif /* CLOCK_CUSTOM_PARAMS_H */

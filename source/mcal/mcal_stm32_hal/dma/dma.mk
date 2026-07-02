@@ -1,0 +1,33 @@
+ifneq ($(DMA_CUSTOM_MK_INC),Y)
+    DMA_CUSTOM_MK_INC=Y
+
+    DMA_DIR = $(MCAL_CUSTOM_DIR)/dma
+    # $(error DMA_DIR=$(DMA_DIR))
+
+    INCDIR += -I$(DMA_DIR)
+    MCAL_OPT += -DHAS_DMA_CUSTOM
+
+    SOURCES_C += $(DMA_DIR)/dma_mcal.c
+    SOURCES_C += $(DMA_DIR)/dma_custom_bindings.c
+    SOURCES_C += $(DMA_DIR)/dma_custom_misc.c
+
+    ifeq ($(DMA1),Y)
+        MCAL_OPT += -DHAS_DMA1
+    endif
+
+    ifeq ($(DMA2),Y)
+        MCAL_OPT += -DHAS_DMA2
+    endif
+
+    ifeq ($(DMA_DIAG),Y)
+        MCAL_OPT += -DHAS_DMA_CUSTOM_DIAG
+        SOURCES_DIAG_C += $(DMA_DIR)/dma_custom_diag.c
+    endif
+
+    ifeq ($(CLI),Y)
+        ifeq ($(DMA_COMMANDS),Y)
+            MCAL_OPT += -DHAS_DMA_CUSTOM_COMMANDS
+            SOURCES_C += $(DMA_DIR)/dma_custom_commands.c
+        endif
+    endif
+endif
