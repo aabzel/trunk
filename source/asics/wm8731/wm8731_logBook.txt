@@ -1,0 +1,86 @@
+Play
+wmk 400 100000
+
+Записать семплов
+
+
+Record 1s of sound
+wml 990000
+i2sn 2 2000 1000
+i2sn 2 4000 1000
+wml 99000
+wml 99000
+
+Analusis sound
+wmk 1000 9999990
+wmk 10 999999
+wml 2000
+i2sli 5 2000
+i2sre 5;i2sdf 5
+
+wmk 1000 2222
+i2sre 2
+i2sdf 2
+
+i2ssd 2
+i2sd 2
+
+i2sfdc 1 1
+i2sfdd
+
+
+Воспроизвести 500Hz
+ll SwDAC debug
+wm8731_play 10000 32000 2000
+wm8731_play 2000 32000 2000
+wm8731_play 2000 16000 1000
+wm8731_play 1500 16000 1000
+wm8731_play 1200 16000 1000
+
+wm8731_play 10000 30000 3000
+wm8731_play 5000 30000 3000
+wm8731_play 4000 30000 3000
+wm8731_play 1000 30000 3000
+wm8731_play 950 16000 1000
+wm8731_play 945 16000 1000
+wm8731_play 940 16000 1000
+wm8731_play 925 16000 800
+wm8731_play 900 16000 2000
+wm8731_play 500 16000 3000
+wm8731_play 100 30000 3000
+
+Error
+wm8731_play 50 32000 1000 
+
+wm8731_play 117 20000 1000
+wm8731_play 136 40000 1000
+
+ll SwDAC debug;wm8731_play 2000 32000 1000;
+зависает на 51 семпле при нашем алокаторе
+
+
+
+https://aliexpress.ru/item/32775839699.html?spm=a2g2w.productlist.0.0.66655c0dsAu1Qy&sku_id=62460367725
+
+
+i2sl 0 128 0
+
+wmi
+wmp 1000 42222 600000
+wmp 2000 42222 600000
+wmp 5000 10000 659000
+
+wmp 1000 100 1000
+
+DACMUTE 0  Reg 0Ah 
+
+518.500 :E [I2S] Usage: i2spl I2sNum DacNum On
+
+https://neokt.ru/ru/katalog/wago/wago-221-413
+
+i2sl 0 32 1
+
+Воспроизвести 1kHz с амплитудой 2000 в течении 1000 ms
+wmk 400 10000
+wmk 3200 10000
+wmk 3200 1000

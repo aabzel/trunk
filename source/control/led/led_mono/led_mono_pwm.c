@@ -1,6 +1,7 @@
 #include "led_mono_pwm.h"
 
 #include "code_generator.h"
+#include "led_mono_drv.h"
 #include "std_includes.h"
 
 #ifdef HAS_PWM
@@ -13,31 +14,28 @@
 
 float led_logic_level_to_duty(const LedMonoHandle_t* const Node, const GpioLogicLevel_t des_logic_level) {
     float pwm_duty = 0.0;
-    switch (des_logic_level) {
+    switch(des_logic_level) {
     case GPIO_LVL_LOW: {
         pwm_duty = Node->pwm_duty_off;
-    }
-        break;
+    } break;
 
     case GPIO_LVL_HI: {
         pwm_duty = Node->pwm_duty_on;
-    }
-        break;
+    } break;
     default: {
         pwm_duty = 0.0;
-    }
-        break;
+    } break;
     }
     return pwm_duty;
 }
 
 bool led_mono_hw_pwm(uint8_t num, float frequency_hz, float duty_cycle) {
     bool res = false;
-    LedMonoHandle_t *Node = LedMonoGetNode(num);
+    LedMonoHandle_t* Node = LedMonoGetNode(num);
     if(Node) {
         int8_t pwm_num = pwm_gpio_pad_to_pwm_num(Node->pad);
         if(0 <= pwm_num) {
-            res = pwm_freq_duty_set((uint8_t) pwm_num, frequency_hz, duty_cycle);
+            res = pwm_freq_duty_set((uint8_t)pwm_num, frequency_hz, duty_cycle);
         }
     }
     return res;
@@ -45,7 +43,7 @@ bool led_mono_hw_pwm(uint8_t num, float frequency_hz, float duty_cycle) {
 
 bool led_mono_set_off_duty(const uint8_t num, const float off_duty) {
     bool res = false;
-    LedMonoHandle_t *Node = LedMonoGetNode(num);
+    LedMonoHandle_t* Node = LedMonoGetNode(num);
     if(Node) {
         res = pwm_is_valid_duty_cycle(off_duty);
         if(LED_PHY_PWM != Node->led_phy) {
@@ -63,7 +61,7 @@ bool led_mono_set_off_duty(const uint8_t num, const float off_duty) {
 
 bool led_mono_set_on_duty(const uint8_t num, const float on_duty) {
     bool res = false;
-    LedMonoHandle_t *Node = LedMonoGetNode(num);
+    LedMonoHandle_t* Node = LedMonoGetNode(num);
     if(Node) {
         res = pwm_is_valid_duty_cycle(on_duty);
         if(LED_PHY_PWM != Node->led_phy) {

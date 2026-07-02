@@ -227,11 +227,11 @@ bool pwm_phase_command(int32_t argc, char* argv[]) {
         log_res(PWM, res, "Phase");
     }
     if(res) {
-        res = pwm_phase_set_hw(num, phase);
+        res = pwm_phase_set(num, phase);
         if(res) {
-            LOG_INFO(PWM, "SetPhaseOk PWM%u,Pha:%u", num, phase);
+            LOG_INFO(PWM, "SetPhaseOk T:%u P:%u", num, phase);
         } else {
-            LOG_ERROR(PWM, "SetPhaseErr PWM%u,Pha:%u", num, phase);
+            LOG_ERROR(PWM, "SetPhaseErr T:%u P:%u", num, phase);
         }
     } else {
         LOG_ERROR(PWM, "Usage: psd TimNum Phase");

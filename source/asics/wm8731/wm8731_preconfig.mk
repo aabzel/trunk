@@ -1,0 +1,12 @@
+ifneq ($(WM8731_PRECONFIG_MK_INC),Y)
+    WM8731_PRECONFIG_MK_INC=Y
+
+    WM8731=Y
+    I2C=Y
+    I2S=Y
+    GPIO=Y
+    ASICS=Y
+    DDS=Y
+    TIME=Y
+
+endif

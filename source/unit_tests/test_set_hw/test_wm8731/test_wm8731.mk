@@ -7,6 +7,6 @@ ifneq ($(TEST_WM8731_MK_INC),Y)
     TEST_WM8731_DIR = $(TEST_SET_HW_DIR)/test_wm8731
     #@echo $(error TEST_WM8731_DIR=$(TEST_WM8731_DIR))
     INCDIR += -I$(TEST_WM8731_DIR)
-    OPT += -DHAS_TEST_WM8731
+    MCAL_OPT += -DHAS_TEST_WM8731
     SOURCES_C += $(TEST_WM8731_DIR)/test_wm8731.c
 endif

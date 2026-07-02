@@ -24,8 +24,6 @@ typedef struct {
 
 typedef bool (*PwmIsrHandler_t)(void);
 
-//    uint8_t timer_num;
-//    TimerOutChannel_t timer_channel; /*TimerChannel*/
 
 #define PWM_COMMON_VARIABLES  \
     PWM_SIGNAL_VARIABLES      \

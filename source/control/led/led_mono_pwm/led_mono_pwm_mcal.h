@@ -30,7 +30,7 @@ bool led_mono_pwm_proc(void);
 
 /*setters*/
 bool led_mono_pwm_set_duty(uint8_t num, float duty) ;
-bool led_mono_pwm_ctrl(const Pad_t Pad, const bool on_off) ;
+bool led_mono_pwm_ctrl(const Pad_t Pad, const bool on_off);
 
 /*getters*/
 LedMonoPwmHandle_t* LedMonoPwmPadToNode(const Pad_t Pad) ;

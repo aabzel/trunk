@@ -26,11 +26,13 @@ extern "C" {
 #error "+HAS_WM8731_TESTS"
 #endif
 
+
+bool test_wm8731_play_freq(uint8_t num, float freq, SampleType_t amplitude, uint32_t duration_ms);
+
 bool test_wm8731_hashset(void);
 bool test_wm8731_sidetone(void);
 bool test_wm8731_set_vol(void);
 bool test_wm8731_reinit(void);
-bool test_wm8731_play_freq(double freq, SampleType_t amplitude, uint32_t duration_ms);
 bool test_wm8731_play(void);
 bool test_wm8731_types(void);
 
