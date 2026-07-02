@@ -1,0 +1,6 @@
+ifneq ($(WAV_PLAYER_PRECONFIG_INC),Y)
+    WAV_PLAYER_PRECONFIG_INC=Y
+
+    I2S=Y
+    WAV_PLAYER=Y
+endif

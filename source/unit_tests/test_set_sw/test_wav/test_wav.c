@@ -10,11 +10,11 @@
 bool test_wav_types(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
 
-    set_log_level(WAV, LOG_LEVEL_DEBUG);
+    log_level_set(WAV, LOG_LEVEL_DEBUG);
 
     ASSERT_EQ(44, sizeof(WavHeader_t));
     ASSERT_EQ(4, sizeof(WavSample16_t));
 
-    set_log_level(WAV, LOG_LEVEL_INFO);
+    log_level_set(WAV, LOG_LEVEL_INFO);
     return true;
 }

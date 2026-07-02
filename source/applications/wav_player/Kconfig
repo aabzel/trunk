@@ -1,0 +1,4 @@
+
+config WAV_PLAYER
+    bool "Enable use of the WAV_PLAYER drivers"
+

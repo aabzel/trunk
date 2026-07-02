@@ -7,8 +7,8 @@ ifneq ($(TEST_WAV_MK_INC),Y)
 
     #@echo $(error TEST_WAV_DIR=$(TEST_WAV_DIR))
 
-    OPT += -DHAS_TEST_SUIT_WAV
-    OPT += -DHAS_TEST_WAV
+    MCAL_OPT += -DHAS_TEST_SUIT_WAV
+    MCAL_OPT += -DHAS_TEST_WAV
 
     SOURCES_C += $(TEST_WAV_DIR)/test_wav.c
 endif

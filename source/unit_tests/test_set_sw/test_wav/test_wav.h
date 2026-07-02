@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
+#include "std_includes.h"
 
 bool test_wav_types(void);
 
