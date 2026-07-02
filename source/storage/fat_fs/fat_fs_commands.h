@@ -8,11 +8,11 @@ extern "C" {
 #include "std_includes.h"
 
 #ifndef HAS_FAT_FS
-#error "+ HAS_FAT_FS"
+#error "+HAS_FAT_FS"
 #endif
 
 #ifndef HAS_FAT_FS_COMMANDS
-#error "+ HAS_FAT_FS_COMMANDS"
+#error "+HAS_FAT_FS_COMMANDS"
 #endif
 
 bool fat_fs_cat_command(int32_t argc, char* argv[]);
@@ -31,8 +31,10 @@ bool fat_fs_close_command(int32_t argc, char* argv[]);
 bool fat_fs_seek_command(int32_t argc, char* argv[]);
 bool fat_fs_unlink_command(int32_t argc, char* argv[]);
 bool fat_fs_init_command(int32_t argc, char* argv[]);
+bool fat_fs_delete_command(int32_t argc, char* argv[]);
 
 #define FAT_FS_COMMANDS                                                                      \
+    SHELL_CMD("fat_fs_del",  "ftfsdel", fat_fs_delete_command, "FatFsDelete"),               \
     SHELL_CMD("fat_fs_format",  "fatff", fat_fs_format_command, "FatFsFormat"),              \
     SHELL_CMD("fat_fs_root",  "ffr", fat_fs_root_command, "FatFsRoot"),                      \
     SHELL_CMD("fat_fs_unlink",  "funl", fat_fs_unlink_command, "FatFsUnLink"),               \
@@ -45,11 +47,10 @@ bool fat_fs_init_command(int32_t argc, char* argv[]);
     SHELL_CMD("fat_fs_file_write", "ffw", fat_fs_file_write_command, "FatFsFileWrite"),      \
     SHELL_CMD("fat_fs_read",  "ftfsr", fat_fs_read_command, "FatFsRead"),                    \
     SHELL_CMD("fat_fs_seek",  "ftfss", fat_fs_seek_command, "FatFsSeek"),                    \
-    SHELL_CMD("fat_fs_scan",  "ftfs", fat_fs_scan_command, "FatFsScan"),                      \
+    SHELL_CMD("fat_fs_scan",  "ftfs", fat_fs_scan_command, "FatFsScan"),                     \
     SHELL_CMD("fat_fs_close", "ftfsc", fat_fs_close_command, "FatFsClose"),                  \
     SHELL_CMD("fat_fs_init", "ftfsi", fat_fs_init_command, "FatFsInit"),                     \
     SHELL_CMD("fat_fs_mount", "ftfsm", fat_fs_mount_command, "FatFsMount"),
-
 
 #ifdef __cplusplus
 } /* extern "C" */

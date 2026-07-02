@@ -3,12 +3,23 @@
 #include <string.h>
 
 #include "array_diag.h"
+#include "ff.h"
 #include "code_generator.h"
 #include "compiler_const.h"
 #include "log.h"
 
 COMPONENT_GET_NODE(FatFs, fat_fs)
 COMPONENT_GET_CONFIG(FatFs, fat_fs)
+
+
+bool fat_fs_ret_to_res(const FRESULT ret) {
+    bool res = false;
+    if(FR_OK == ret) {
+        res = true;
+    }
+    return res;
+}
+
 
 bool FatFsRetToRes(FRESULT ret, const char* const prefix) {
     bool res = false;
@@ -41,7 +52,6 @@ bool fat_fs_open(const uint8_t num, const char* const path, const BYTE mode) {
 }
 
 /*ISO-26262 require verify configuration*/
-_WEAK_FUN_
 bool FatFsIsValidConfig(const FatFsConfig_t* const Config) {
     bool res = false;
     if(Config) {
@@ -58,14 +68,14 @@ bool FatFsIsValidConfig(const FatFsConfig_t* const Config) {
     return res;
 }
 
-_WEAK_FUN_
+
 bool fat_fs_init_custom(void) {
     bool res = false;
     LOG_INFO(FAT_FS, "Version:%s", FAT_FS_VERSION);
     return res;
 }
 
-_WEAK_FUN_
+
 bool fat_fs_proc_one(uint8_t i) {
     bool res = false;
     LOG_PARN(FAT_FS, "Proc %u", i);
@@ -126,6 +136,21 @@ bool fat_fs_init_one(uint8_t num) {
     return res;
 }
 
+int32_t fat_fs_file_get_size(const char* const path){
+    FIL file;
+    int32_t file_size=-1;
+    FRESULT ret = f_open(&file, path, FA_READ|FA_OPEN_EXISTING);
+    if(FR_OK==ret){
+        file_size = ( int32_t) f_size(&file);
+        ret = f_close(&file);
+        FatFsRetToRes(ret, "Close");
+    }else{
+        FatFsRetToRes(ret, "Open");
+    }
+
+    return file_size;
+}
+
 bool fat_fs_write_file(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size) {
     bool res = false;
     if(file_name) {
@@ -142,14 +167,87 @@ bool fat_fs_write_file(uint8_t num, const char* const file_name, const uint8_t* 
     return res;
 }
 
+
+bool fat_fs_save_array_puts(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size) {
+    bool res = false;
+    if(file_name) {
+        if(array && size) {
+            LOG_DEBUG(FAT_FS, "SaveArray,File:[%s],Len:%u,data:[%s]", file_name,size, array);
+            FIL File = {0};
+            FRESULT ret = FR_INT_ERR;
+            ret = f_open(&File, (const TCHAR*)file_name,  FA_OPEN_APPEND | FA_WRITE | FA_OPEN_ALWAYS );
+            if(FR_OK == ret) {
+                res = true;
+                LOG_DEBUG(FAT_FS, "Open[%s]Ok", file_name);
+
+                /* Put a string to the file */
+                int wr_len = f_puts((TCHAR*) array, &File);
+                if (size<=wr_len) {
+                    res = true;
+                } else {
+                    LOG_ERROR(FAT_FS, "size:%u,WrLen:%u",size,wr_len);
+                    res = false;
+                }
+
+                ret = f_close(&File);
+                res = FatFsRetToRes(ret, "Close") && res;
+            } else {
+#ifdef HAS_FAT_FS_DIAG
+                LOG_ERROR(FAT_FS, "Open[%s]Err:%d=%s", file_name, ret, FatFsResToStr(ret));
+#endif
+            }
+        }
+    }
+    return res;
+}
+
+
+bool fat_fs_save_array_printf(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size) {
+    bool res = false;
+    if(file_name) {
+        if(array && size) {
+            LOG_DEBUG(FAT_FS, "SaveArray,File:[%s],Len:%u,data:[%s]", file_name,size, array);
+            FIL File = {0};
+            FRESULT ret = FR_INT_ERR;
+            ret = f_open(&File, (const TCHAR*)file_name,  FA_OPEN_APPEND | FA_WRITE | FA_OPEN_ALWAYS );
+            if(FR_OK == ret) {
+                res = true;
+                LOG_DEBUG(FAT_FS, "Open[%s]Ok", file_name);
+
+                /* Put a string to the file */
+                int wr_len = f_printf( &File,"%s",array);
+                if (size <= wr_len) {
+                    res = true;
+                } else {
+                    LOG_ERROR(FAT_FS, "size:%u,WrLen:%u",size,wr_len);
+                    res = false;
+                }
+
+                ret = f_close(&File);
+                res = FatFsRetToRes(ret, "Close") && res;
+            } else {
+#ifdef HAS_FAT_FS_DIAG
+                LOG_ERROR(FAT_FS, "Open[%s]Err:%d=%s", file_name, ret, FatFsResToStr(ret));
+#endif
+            }
+        }
+    }
+    return res;
+}
+
+
+
+
 bool fat_fs_save_array(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size) {
     bool res = false;
     if(file_name) {
         if(array && size) {
+            LOG_DEBUG(FAT_FS, "SaveArray,File:[%s],Len:%u,data:[%s]", file_name,size, array);
             FIL File = {0};
             FRESULT ret = FR_INT_ERR;
-            ret = f_open(&File, (const TCHAR*)file_name, FA_WRITE | FA_OPEN_ALWAYS | FA_READ);
+            ret = f_open(&File, (const TCHAR*)file_name, FA_WRITE | FA_READ | FA_OPEN_ALWAYS);
             if(FR_OK == ret) {
+                res = true;
                 LOG_DEBUG(FAT_FS, "Open[%s]Ok", file_name);
                 DWORD file_size = f_size(&File);
                 ret = f_lseek(&File, file_size);
@@ -166,11 +264,12 @@ bool fat_fs_save_array(uint8_t num, const char* const file_name, const uint8_t* 
 
                 if(res) {
                     res = false;
-                    UINT ByteWritten = 0;
-                    ret = f_write(&File, array, (UINT)size, &ByteWritten);
+                    UINT byte_written = 0;
+                    ret = f_write(&File, array, (UINT)size, &byte_written);
                     if(FR_OK == ret) {
-                        if(ByteWritten == size) {
+                        if(byte_written == size) {
                             res = true;
+                            LOG_DEBUG(FAT_FS, "Write,Size:%u,Ok",size);
                         } else {
                             res = false;
                             LOG_ERROR(FAT_FS, "Write,Size,Err");
@@ -182,7 +281,6 @@ bool fat_fs_save_array(uint8_t num, const char* const file_name, const uint8_t* 
 #endif
                     }
                 }
-
                 ret = f_close(&File);
                 res = FatFsRetToRes(ret, "Close") && res;
             } else {
@@ -261,15 +359,15 @@ bool fat_fs_write_line(uint8_t num, const char* const file_name, char* const in_
     bool res = false;
     FatFsHandle_t* Node = FatFsGetNode(num);
     if(Node) {
-        LOG_DEBUG(FAT_FS, "File:[%s],text:[%s]", file_name, in_text);
+            uint32_t wr_len = 0;
+            wr_len = strlen(in_text);
+        LOG_DEBUG(FAT_FS, "File:[%s],Len:%u,text:[%s]", file_name,wr_len, in_text);
         static bool rec_prot = false;
         if(false == rec_prot) {
             rec_prot = true;
-            uint32_t wr_len = 0;
-            wr_len = strlen(in_text);
             strcat(in_text, CRLF);
             wr_len += 2;
-            res = fat_fs_save_array(num, file_name, (const uint8_t* const)in_text, (uint32_t)wr_len);
+            res = fat_fs_save_array_printf(num, file_name, (  uint8_t*  )in_text, (uint32_t)wr_len);
             rec_prot = false;
         }
     }
@@ -390,12 +488,13 @@ bool fat_fs_mount(uint8_t num, uint8_t opt, char* path) {
     FatFsHandle_t* Node = FatFsGetNode(num);
     if(Node) {
         // char path[100] = "\\";
-        LOG_INFO(FAT_FS, "Mount Path [%s] Opt:%u", path, opt);
+        LOG_INFO(FAT_FS, "Mount:Path:[%s],Opt:%u", path, opt);
         FRESULT ret;
         ret = f_mount((FATFS*)&Node->fileSystem, (const TCHAR*)path, (BYTE)opt);
         res = FatFsRetToRes(ret, "Mount");
         if(FR_NO_FILESYSTEM == ret) {
-            res = fat_fs_format(num, FM_FAT32, 512);
+            res = fat_fs_format(num, FM_FAT32, 4096);
+            //res = fat_fs_format(num, FM_FAT, 512);
         }
     }
     return res;
@@ -407,7 +506,7 @@ bool fat_fs_format(uint8_t num, BYTE format_opt, DWORD allocation_unit) {
     // DWORD allocation_unit = 512;
 
     BYTE WorkingBuffer[_MAX_SS] = {0};
-    LOG_INFO(FAT_FS, "Call f_mkfs Opt:%s, AllocUnit:%u byte...", FatFormatOptionsToStr(format_opt), allocation_unit);
+    LOG_INFO(FAT_FS, "f_mkfs,Opt:%u=%s,AllocUnit:%u byte", format_opt,FatFormatOptionsToStr(format_opt), allocation_unit);
     FRESULT ret = FR_DISK_ERR;
     ret = f_mkfs("",                   /* [IN] Logical drive number */
                  format_opt,           /* [IN] Format options (FM_FAT) */
@@ -420,6 +519,38 @@ bool fat_fs_format(uint8_t num, BYTE format_opt, DWORD allocation_unit) {
 
     return res;
 }
+
+int32_t fat_fs_file_line_cnt(const char* const path){
+    int32_t line_count = -1;
+    FRESULT ret;
+    FIL file;
+    ret = f_open(&file, path, FA_READ);
+    if (FR_OK==ret ) {
+        while (1) {
+            char buffer[64]={0};
+            UINT bytes_read = 0;
+            ret = f_read(&file, buffer, sizeof(buffer), &bytes_read);
+            if(FR_OK==ret) {
+                if(0<bytes_read) {
+                    uint32_t i;
+                    for (i = 0; i < bytes_read; i++) {
+                        if (buffer[i] == '\n') {
+                            line_count++;
+                        }
+                    }
+                }else{
+                   break;
+                }
+            }else{
+                break;
+            }
+        }
+        f_close(&file);
+    }
+
+    return line_count;
+}
+
 
 bool fat_fs_close(uint8_t num) {
     bool res = false;

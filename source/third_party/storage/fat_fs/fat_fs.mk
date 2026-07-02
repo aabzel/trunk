@@ -7,6 +7,9 @@ ifneq ($(FAT_FS_MK_INC),Y)
     INCDIR += -I$(FAT_FS_DIR)/src
     INCDIR += -I$(FAT_FS_DIR)/src/options
 
+    MCAL_OPT += -D_FS_READONLY=0
+    MCAL_OPT += -D_USE_STRFUNC=2
+    
     #SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/diskio.c
     #SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/option/unicode.c
     SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/option/ccsbcs.c

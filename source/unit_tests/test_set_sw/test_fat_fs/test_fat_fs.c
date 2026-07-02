@@ -2,97 +2,106 @@
 
 #include <string.h>
 
-#include "fat_fs_config.h"
+#include "fat_fs.h"
 #include "ff.h"
 #include "log.h"
 #include "unit_test_check.h"
+#include "time_mcal.h"
+
 #ifdef HAS_FAT_FS_DIAG
 #include "fat_fs_diag.h"
 #endif
-#include "fat_fs_drv.h"
+
+bool test_fat_fs_types(void) {
+    LOG_INFO(TEST, "%s():", __FUNCTION__);
+
+    ASSERT_EQ(4, sizeof(FatFsTime_t));
+
+    return true;
+}
 
 bool test_fat_fs_write_line(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
-    set_log_level(FAT_FS, LOG_LEVEL_DEBUG);
-#ifdef HAS_SD_CARD
-    set_log_level(SD_CARD, LOG_LEVEL_DEBUG);
-#endif
+
     bool res = false;
-    char text[30] = "";
-    strcpy(text, "Line1");
+    char locText[30] = "";
+    strcpy(locText, "Line1");
 
-    res = fat_fs_write("test_log.txt", text);
+    res = fat_fs_write_line(TEST_FAT_FS_NUM, "test_log.txt", locText);
     ASSERT_TRUE(res);
 
-    strcpy(text, "Line2");
-    res = fat_fs_write("test_log.txt", text);
+    strcpy(locText, "Line2");
+    res = fat_fs_write_line(TEST_FAT_FS_NUM, "test_log.txt", locText);
     ASSERT_TRUE(res);
 
-    strcpy(text, "[]");
-    res = fat_fs_write("keylog.txt", text);
+    strcpy(locText, "[]");
+    res = fat_fs_write_line(TEST_FAT_FS_NUM, "keylog.txt", locText);
     ASSERT_TRUE(res);
 
-    set_log_level(FAT_FS, LOG_LEVEL_INFO);
-#ifdef HAS_SD_CARD
-    set_log_level(SD_CARD, LOG_LEVEL_INFO);
-#endif
     return true;
 }
 
 bool test_fat_fs_write_new(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
-    uint8_t array[500];
+    char array[500] = {0};
     strncpy((char*)array, "TestWrite", sizeof(array));
+    bool res = false;
 
-#ifdef HAS_SD_CARD
-    set_log_level(SD_CARD, LOG_LEVEL_DEBUG);
-#endif
-    set_log_level(FAT_FS, LOG_LEVEL_DEBUG);
-
-    UINT array_len = 0;
-    FRESULT ret;
     char file_name[] = "test_open.txt";
-    ret = f_open((FIL*)&FatFsInstance.file, (const TCHAR*)file_name, FA_CREATE_ALWAYS | FA_WRITE);
-#ifdef HAS_FAT_FS_DIAG
-    LOG_WARNING(FAT_FS, "%u %s", ret, FatFsRes2Str(ret));
-#endif
-    ASSERT_EQ(FR_OK, ret);
-    LOG_INFO(TEST, "Open %s Ok %p", file_name, &FatFsInstance.file);
 
-    ret = f_write((FIL*)&FatFsInstance.file, (const void*)array, (UINT)strlen((char*)array), &array_len);
-    ASSERT_EQ(FR_OK, ret);
-    ASSERT_GR(0, array_len);
-    LOG_INFO(TEST, "WriteOk");
+    res = fat_fs_open(TEST_FAT_FS_NUM, file_name, FA_CREATE_ALWAYS | FA_WRITE);
+    ASSERT_TRUE(res);
 
-    ret = f_close((FIL*)&FatFsInstance.file);
-#ifdef HAS_FAT_FS_DIAG
-    LOG_WARNING(FAT_FS, "ret:%u=%s", ret, FatFsRes2Str(ret));
-#endif
-    ASSERT_EQ(FR_OK, ret);
-    LOG_INFO(TEST, "CloseOk");
-#ifdef HAS_SD_CARD
-    set_log_level(SD_CARD, LOG_LEVEL_INFO);
-#endif
-    set_log_level(FAT_FS, LOG_LEVEL_INFO);
+    res = fat_fs_write_bin(TEST_FAT_FS_NUM, (uint8_t*)array, strlen(array));
+    ASSERT_TRUE(res);
+
+    res = fat_fs_close(1);
+    ASSERT_TRUE(res);
 
     return true;
 }
 
 bool test_fat_fs_open(void) {
     LOG_INFO(TEST, "%s():", __FUNCTION__);
-    FRESULT ret;
     char file_name[] = "test.txt";
     LOG_INFO(TEST, "OpenFile %s", file_name);
-    ret = f_open((FIL*)&FatFsInstance.file, (const TCHAR*)file_name, FA_OPEN_ALWAYS | FA_READ);
-#ifdef HAS_FAT_FS_DIAG
-    LOG_INFO(FAT_FS, "%u %s", ret, FatFsRes2Str(ret));
-#endif
-    ASSERT_EQ(FR_OK, ret);
+    bool res = fat_fs_open(TEST_FAT_FS_NUM, file_name, FA_OPEN_ALWAYS | FA_READ);
+    ASSERT_TRUE(res);
 
-    ret = f_close((FIL*)&FatFsInstance.file);
-#ifdef HAS_FAT_FS_DIAG
-    LOG_WARNING(FAT_FS, "%u %s", ret, FatFsRes2Str(ret));
-#endif
+    res = fat_fs_close(1);
+    ASSERT_TRUE(res);
+
+    return true;
+}
+
+#define TEST_FILE_NAME "sin2kHz5s.wav"
+#define READ_PART_SIZE 2048
+bool test_fat_fs_read(void){
+    LOG_INFO(TEST, "%s():", __FUNCTION__);
+    FIL File={0};
+    uint32_t total_size = 0;
+    uint32_t start_ms = time_get_ms32();
+    BYTE mode = FA_READ | FA_OPEN_EXISTING;
+    FRESULT ret = f_open((FIL*)&File, (const TCHAR*) TEST_FILE_NAME, mode);
     ASSERT_EQ(FR_OK, ret);
+    while(1) {
+        UINT real_read = 0;
+        uint8_t data[READ_PART_SIZE+1]={0};
+        ret = f_read(&File, data, (UINT)READ_PART_SIZE, &real_read);
+        ASSERT_EQ(FR_OK, ret);
+        total_size +=real_read;
+        if (0==real_read) {
+            break;
+        }
+        //ASSERT_GR(0, real_read);
+    }
+
+    ret = f_close(&File);
+    ASSERT_EQ(FR_OK, ret);
+    uint32_t stop_ms = time_get_ms32();
+    uint32_t diff_ms = stop_ms-start_ms;
+    uint32_t data_rate= (1000*total_size)/(diff_ms);
+    LOG_INFO(TEST,"totalSize:%u Byte,Duration:%u ms,ReadSpeed:%u Byte/s=%f kByte/s",total_size,diff_ms,data_rate,BYTES_2_KBYTES(data_rate));
+    ASSERT_GR((96000*2*2), data_rate);
     return true;
 }

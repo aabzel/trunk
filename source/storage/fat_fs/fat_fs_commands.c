@@ -66,7 +66,10 @@ bool fat_fs_read_dirr_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
-
+/*
+ * ffw log.txt line2 ;  cat log.txt
+ * ffw ac_Po.txt line2 ;  cat ac_Po.txt
+ * */
 bool fat_fs_file_write_command(int32_t argc, char* argv[]) {
     bool res = false;
     char filename[100] = "";
@@ -227,14 +230,15 @@ bool fat_fs_seek_command(int32_t argc, char* argv[]) {
 }
 
 /*
- * fatff 0 4096
-//
- * FAT16 fatff 1 512
-// FAT32 fatff 2 512
-//
-//EXFAT fatff 4 512
-//ANY fatff 7 512
-//fatff 0 1024
+ fatff 0 4096
+ fatff 1 4096
+
+ FAT16 fatff 1 512
+ FAT32 fatff 2 512
+
+EXFAT fatff 4 512
+ANY fatff 7 512
+fatff 0 1024
 */
 bool fat_fs_format_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -288,4 +292,28 @@ bool fat_fs_scan_command(int32_t argc, char* argv[]) {
         LOG_ERROR(FAT_FS, "Usage ffs path");
     }
     return res;
+}
+
+
+bool fat_fs_delete_command(int32_t argc, char* argv[]){
+    bool res = false;
+    char path[30] = "";
+    if(1 <= argc) {
+        strcpy(path, argv[0]);
+        res = true;
+    }
+
+    if(res) {
+        FRESULT ret=f_unlink ( (TCHAR*) path );
+        res = FatFsRetToRes( ret, "DeleteFile");
+        if(res){
+            LOG_INFO(FAT_FS, "Del,File:[%s]Ok",path);
+        }else {
+            LOG_ERROR(FAT_FS, "Del,File:[%s]Err",path);
+        }
+    } else {
+        LOG_ERROR(FAT_FS, "Usage ftfsdel path");
+    }
+    return res;
+
 }

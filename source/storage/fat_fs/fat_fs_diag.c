@@ -140,20 +140,19 @@ bool FatFsParseFileInfo(FILINFO* FileInfo) {
 
 bool fat_fs_scan(const char* const path) {
     bool res = false;
-    DIR dir = {0};
-    FRESULT ret = FR_INT_ERR;
 
     static const table_col_t cols[] = {
         {5, "Num"},  {9, "SizeB"}, {10, "SizekB"},  {8, "fdate"},  {8, "ftime"},
         {6, "attr"}, {11, "Attr"}, {14, "altname"}, {22, "fname"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    char line_str[120] = {0};
-    uint16_t num = 0;
+    FRESULT ret = FR_INT_ERR;
+    DIR dir = {0};
     ret = f_opendir(&dir, path);
     if(FR_OK == ret) {
-        FILINFO FileInfo = {0};
+        uint16_t num = 0;
         for(;;) {
+            FILINFO FileInfo = {0};
             ret = f_readdir(&dir, &FileInfo); /* Read a directory item */
             if(FR_OK == ret) {
                 if(0 == FileInfo.fname[0]) {
@@ -162,6 +161,7 @@ bool fat_fs_scan(const char* const path) {
                 if('.' == FileInfo.fname[0]) {
                     continue;
                 } else {
+                    char line_str[120] = {0};
                     strcpy(line_str, TSEP);
                     snprintf(line_str, sizeof(line_str), "%s %7u " TSEP, line_str, FileInfo.fsize);
                     snprintf(line_str, sizeof(line_str), "%s %8.3f " TSEP, line_str, BYTES_2_KBYTES(FileInfo.fsize));
@@ -176,7 +176,7 @@ bool fat_fs_scan(const char* const path) {
                     cli_printf(TSEP " %3u ", num);
                     cli_printf("%s" CRLF, line_str);
                     num++;
-
+                    res = true;
                     // if(0==(FileInfo.fattrib & AM_DIR)){
                     //    cli_printf("%s/%s"CRLF,path,FileInfo.fname);
                     //}
