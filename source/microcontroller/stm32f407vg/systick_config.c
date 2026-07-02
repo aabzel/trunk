@@ -3,26 +3,41 @@
 #include "board_config.h"
 #include "clock_utils.h"
 
-const SysTickConfig_t SysTickConfig[] = {
+const SysTickConfig_t SECTION_CFG_DATA SysTickConfig[] = {
     {
-        .SYSTICKx = SysTick_BASE,
-        .period_ms = 1,
-        .clk_source = SYSTICK_CLK_SRC_PROC, //
+#ifdef HAS_VENDOR_SDK
+        .SYSTICKx = (SysTickMap_t*) SysTick,
+#endif
+        .bus_clock_hz = 168000000,
         .num = 1,
+        .clk_source = SYSTICK_CLK_SRC_PROC,
         .interrupt_on = true,
+        .period_ms = 1,
         .valid = true,
-        .bus_clock_hz = 48000000,
     },
 };
 
 SysTickHandle_t SysTickInstance[] = {
     {
         .num = 1,
-        .valid = true,
+        .init_done = false,
         .err_cnt = 0,
         .int_cnt = 0,
-        .SYSTICKx = (SysTickMap_t*)SysTick_BASE,
+#ifdef HAS_VENDOR_SDK
+        .SYSTICKx = (SysTickMap_t*) SysTick_BASE,
+#endif
+        .valid = true,
     },
 };
 
-uint32_t systick_get_cnt(void) { return 1; }
+uint32_t systick_get_cnt(void) {
+    uint32_t cnt = 0;
+    uint32_t cnt_node = 0;
+    uint32_t cnt_cfg = 0;
+    cnt_node = ARRAY_SIZE( SysTickInstance);
+    cnt_cfg = ARRAY_SIZE( SysTickConfig);
+    if(cnt_cfg <= cnt_node) {
+        cnt = cnt_cfg;
+    }
+    return cnt;
+}

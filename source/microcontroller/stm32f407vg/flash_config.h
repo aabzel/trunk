@@ -1,26 +1,30 @@
 #ifndef FLASH_CONFIG_H
 #define FLASH_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "flash_types.h"
 
 #ifndef HAS_FLASH
 #error "Add HAS_FLASHER"
-#endif /*HAS_FLASHER*/
+#endif
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
-
 #define NOR_FLASH_BASE 0x08000000
 #ifndef MBR_START_ADDRESS
 #define MBR_START_ADDRESS NOR_FLASH_BASE
 #endif
-#define BOOT_START_ADDRESS 0x080E0000
-#define APP_START_ADDRESS 0x08010000
+
+#ifndef BOOT_START_ADDRESS
+#define BOOT_START_ADDRESS NOR_FLASH_BASE
+#endif
+
+#ifndef APP_START_ADDRESS
+#define APP_START_ADDRESS NOR_FLASH_BASE
+#endif
+
 #define APP_SIZE (832 * K_BYTES)
 
 #ifdef HAS_GENERIC
@@ -29,16 +33,18 @@
 
 #ifdef HAS_MBR
 #define FW_START_ADDRESS NOR_FLASH_BASE
-#endif /*HAS_MBR*/
+#endif
 
 #ifdef HAS_BOOTLOADER
 #define FW_START_ADDRESS BOOT_START_ADDRESS
-#endif /*HAS_BOOTLOADER*/
+#endif
 
 extern FlashHandle_t FlashInstance;
 extern const FlashConfig_t FlashConfig;
-extern const FlashSectorConfig_t FlashSectorConfig[];
+extern const MemoryConfig_t FlashSectorConfig[];
+extern const MemoryConfig_t RamSectorConfig[];
 
 uint32_t flash_get_sector_cnt(void);
+uint32_t ram_get_sector_cnt(void) ;
 
 #endif /* FLASH_CONFIG_H  */

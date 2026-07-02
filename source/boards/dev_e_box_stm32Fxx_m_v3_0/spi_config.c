@@ -2,29 +2,59 @@
 
 #ifndef HAS_SPI
 #error "Add HAS_SPI"
-#endif /*HAS_SPI*/
+#endif
 
 #include "data_utils.h"
 #include "spi_types.h"
 
 const SpiConfig_t SpiConfig[] = {
-   {.num = 1, .name = "SPI1", .bit_rate_hz = 200000, .valid = true},
-   {.num = 3, .name = "SPI3", .bit_rate_hz = 2000000, .valid = true},
+#ifdef HAS_SPI1
+   {
+           .num = 1,
+           .name = "W25Q16",
+           .bit_rate_hz = 250000,
+           .bus_role = BUS_ROLE_MASTER,
+           .frame_size =  8,
+           .tx_mode = SPI_TX_FULL_DUPLEX,
+           .move_mode = MOVE_MODE_INTERRUPT,
+           .bit_order = BIT_ORDER_LSB,
+           .polarity =  SPI_POLARITY_LATCH_FALING,
+           .phase =  SPI_PHASE_1,
+           .chip_select = SPI_CHIP_SEL_SW,
+           .interrupt_on = true,
+           .irq_priority =  0,
+           .valid = true,
+   },
+#endif
+
+#ifdef HAS_SPI2
+    {
+        .num = 2,
+        .name = "GamePadPS2",
+        .bit_rate_hz = 250000,
+        .bus_role = BUS_ROLE_MASTER ,
+        .frame_size =  8 ,
+        .tx_mode = SPI_TX_FULL_DUPLEX ,
+        .move_mode = MOVE_MODE_INTERRUPT ,
+        .bit_order = BIT_ORDER_LSB ,
+        .polarity =  SPI_POLARITY_LATCH_FALING ,
+        .phase =  SPI_PHASE_1 ,
+        .chip_select = SPI_CHIP_SEL_SW ,
+        .interrupt_on = true ,
+        .irq_priority =  0 ,
+        .valid = true,
+    },
+#endif
 };
 
 SpiHandle_t SpiInstance[] = {
-    {.num=1, .valid=true},
-    {.num=3, .valid=true},
+#ifdef HAS_SPI1
+    {.num = 1, .valid = true,},
+#endif
+
+#ifdef HAS_SPI2
+    {.num = 2, .valid = true,},
+#endif
 };
 
-uint32_t spi_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(SpiInstance);
-    cnt2 = ARRAY_SIZE(SpiConfig); 
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(Spi, spi)

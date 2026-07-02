@@ -37,14 +37,5 @@ SchmittTriggerHandle_t SchmittTriggerInstance[] = {
     },
 };
 
-uint32_t schmitt_trigger_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(SchmittTriggerInstance);
-    cnt2 = ARRAY_SIZE(SchmittTriggerConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(SchmittTrigger, schmitt_trigger)
+

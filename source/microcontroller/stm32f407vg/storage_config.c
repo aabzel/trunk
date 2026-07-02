@@ -86,6 +86,17 @@
 #define PARAMS_TIME
 #endif
 
+#define STORAGE_ARRAY_ALL                                                                                              \
+    PARAMS_CLOCK                                                                                                       \
+    PARAMS_BOOT                                                                                                        \
+    PARAMS_FLASH_FS                                                                                                    \
+    PARAMS_GNSS                                                                                                        \
+    PARAMS_GENERIC                                                                                                     \
+    PARAMS_WATCHDOG                                                                                                        \
+    PARAMS_SDIO                                                                                                        \
+    PARAMS_TIME                                                                                                        \
+    PARAMS_BOOTLOADER
+    
 /*TODO: Sort by index for bin search in future*/
 const StorageItem_t StorageArray[] = {
     PARAMS_BOOT PARAMS_LIGHT_NAVIGATOR PARAMS_FLASH_FS PARAMS_GNSS PARAMS_GENERIC IWDG_PARAMS PARAMS_KEEPASS

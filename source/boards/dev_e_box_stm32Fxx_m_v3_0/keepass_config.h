@@ -1,9 +1,7 @@
 #ifndef KEEPASS_CONFIG_H
 #define KEEPASS_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "keepass_types.h"
 #include "keepass_cfg.h"
 

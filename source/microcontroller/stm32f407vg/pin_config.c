@@ -160,4 +160,3 @@ uint16_t pin_get_cnt(void) {
     return cnt;
 }
 
-

@@ -26,14 +26,5 @@ RtosTaskHandle_t RtosTaskInstance[] = {
 #endif
 };
 
-uint32_t rtos_task_get_cnt(void){
-    uint32_t  cnt  = 0 ;
-    uint32_t  cnt1  = 0 ;
-    uint32_t  cnt2  = 0 ;
-    cnt1 = ARRAY_SIZE(RtosTaskConfig);
-    cnt2 = ARRAY_SIZE(RtosTaskInstance);
-    if(cnt1==cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(RtosTask, rtos_task)
+

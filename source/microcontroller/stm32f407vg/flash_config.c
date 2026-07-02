@@ -2,7 +2,7 @@
 
 #ifndef HAS_FLASH
 #error "Add HAS_FLASH"
-#endif /*HAS_FLASH*/
+#endif
 
 #include "data_utils.h"
 #include "flash_types.h"
@@ -11,8 +11,7 @@
 
 FlashHandle_t FlashInstance = {0};
 
-
-const FlashSectorConfig_t FlashSectorConfig[] = {
+const MemoryConfig_t FlashSectorConfig[] = {
     {
         .sector = 0,
         .start = 0x08000000,
@@ -98,9 +97,30 @@ const FlashConfig_t FlashConfig = {
     .is_equal_sectors = false,
 };
 
- 
 uint32_t flash_get_sector_cnt(void) {
     uint32_t cnt = 0;
     cnt = ARRAY_SIZE(FlashSectorConfig);
+    return cnt;
+}
+
+const MemoryConfig_t RamSectorConfig[] = {
+    {
+        .sector = 0,          // CCMRAM
+        .start = 0x10000000,  //
+        .size = 64 * K_BYTES, //
+        .content = MEM_CONTENT_SRAM,
+    },
+    {
+        .sector = 1,           // RAM
+        .start = 0x20000000,   //
+        .size = 128 * K_BYTES, //
+        .content = MEM_CONTENT_SRAM,
+    },
+
+};
+
+uint32_t ram_get_sector_cnt(void) {
+    uint32_t cnt = 0;
+    cnt = ARRAY_SIZE(RamSectorConfig);
     return cnt;
 }

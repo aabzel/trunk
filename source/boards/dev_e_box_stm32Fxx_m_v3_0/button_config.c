@@ -7,7 +7,7 @@
 #include "data_utils.h"
 
 #ifdef HAS_BOOTLOADER
-#include "boot_driver.h"
+#include "bootloader.h"
 #endif
 
 #ifdef HAS_SI4703

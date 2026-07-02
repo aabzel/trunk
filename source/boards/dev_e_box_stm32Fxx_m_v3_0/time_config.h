@@ -5,14 +5,17 @@
 
 #include "time_types.h"
 
-#ifdef HAS_TIMER
-#include "timer_config.h"
+typedef enum {
+    TIME_SYSTICK ,
+    TIME_TIMER5 ,
+    TIME_HAL_TICK ,
+    TIME_DWT ,
+    TIME_CNT ,
+}TimeLegalNum_t;
 
-#define TIME_MAIN_NUM 1
-#else
-#define TIME_MAIN_NUM 1
-#endif
+#define TIME_US_MAIN_NUM TIME_DWT
 
+#define TIME_MAIN_NUM TIME_DWT
 
 extern const TimeConfig_t TimeConfig[];
 extern TimeHandle_t TimeInstance[];

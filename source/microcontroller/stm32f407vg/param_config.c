@@ -74,11 +74,11 @@
 #endif
 
 /*TODO: Sort by index for bin search in future*/
-const ParamItem_t ParamArray[] = {
+const ParamItem_t SECTION_CFG_DATA ParamArray[] = {
     PARAMS_BOOT
     PARAMS_LIGHT_NAVIGATOR
     PARAMS_FLASH_FS
-	PARAMS_GNSS
+    PARAMS_GNSS
     IWDG_PARAMS
     PARAMS_KEEPASS
     PARAMS_PASTILDA

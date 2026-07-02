@@ -1,8 +1,7 @@
-
 #ifndef XML_CONFIG_H
 #define XML_CONFIG_H
 
-#include <stdint.h>
+#include "std_includes.h"
 
 #ifdef __cplusplus
 extern "C" {

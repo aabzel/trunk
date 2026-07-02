@@ -1,7 +1,6 @@
 /*
 
 **
-**  Author		: aabdev
 **
 **  Abstract    : Linker script for STM32F407ZGTx series
 **                1024Kbytes FLASH and 192Kbytes RAM

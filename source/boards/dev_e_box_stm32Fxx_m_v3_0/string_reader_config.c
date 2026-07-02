@@ -2,24 +2,33 @@
 
 #include "data_utils.h"
 #include "cli_drv.h"
-//#include "c_defines_generated.h"
 
-static char FifoData1[100]={0};
-static char LineData1[100]={0};
+
+#ifdef HAS_UART1
+static uint8_t FifoData1[100] = {0};
+static uint8_t LineData1[100] = {0};
+#endif
+
+#ifdef HAS_UART2
+static uint8_t FifoData2[100] = {0};
+static uint8_t LineData2[100] = {0};
+#endif
+
+
 #ifdef HAS_USB
-static char FifoData2[100]={0};
-static char LineData2[100]={0};
+static uint8_t FifoData3[100] = {0};
+static uint8_t LineData3[100] = {0};
 #endif
 
 const StringReaderConfig_t StringReaderConfig[] = {
+#ifdef HAS_UART1
     { 
-        .num = 1,
+        .num = STRING_READER_NUM_UART1,
+        .interface_if = {.interface_name = INTERFACE_NAME_UART, .num = 1, } ,
         .valid = true,
         .echo = true,
-        .cli_num= 1,
-        .interface_if = IF_UART1,
-        .if_num = 3,
-        .name= "UART1",
+        .cli_num = 1,
+        .name= "CLI",
         .fifo_heap = FifoData1,
         .fifo_heap_size=sizeof(FifoData1),
         .string=LineData1,
@@ -27,20 +36,38 @@ const StringReaderConfig_t StringReaderConfig[] = {
         .callback =(handle_string_f)(cli_process_cmd),
         .feedback_led=1,
     },
+#endif
+
+#ifdef HAS_UART2
+    {
+        .num = STRING_READER_NUM_UART2,
+        .interface_if = {.interface_name = INTERFACE_NAME_UART, .num = 2, } ,
+        .valid = true,
+        .echo = true,
+        .cli_num = 1,
+        .name= "CLI",
+        .fifo_heap = FifoData2,
+        .fifo_heap_size=sizeof(FifoData2),
+        .string=LineData2,
+        .string_size= sizeof(LineData2),
+        .callback =(handle_string_f)(cli_process_cmd),
+        .feedback_led=1,
+    },
+#endif
 
 #ifdef HAS_USB
     {
-        .num = 2,
+        .num = STRING_READER_NUM_USB,
         .valid = true,
         .echo = true,
         .cli_num = 1,
         .interface_if = IF_USB_HID,
         .if_num = 3,
         .name = "USB_HOST_HID",
-        .fifo_heap = FifoData2,
-        .fifo_heap_size = sizeof(FifoData2),
-        .string = LineData2,
-        .string_size = sizeof(LineData2),
+        .fifo_heap = FifoData3,
+        .fifo_heap_size = sizeof(FifoData3),
+        .string = LineData3,
+        .string_size = sizeof(LineData3),
         .callback = (handle_string_f)(cli_process_cmd),
         .feedback_led = 1,
     },
@@ -48,20 +75,20 @@ const StringReaderConfig_t StringReaderConfig[] = {
 };
 
 StringReaderHandle_t StringReaderInstance[]={
-    {.num=1, .valid=true, },
+#ifdef HAS_UART1
+    {.num=STRING_READER_NUM_UART1,
+     .valid=true, },
+#endif
+
+#ifdef HAS_UART2
+    {.num=STRING_READER_NUM_UART2,
+     .valid=true, },
+#endif
+
 #ifdef HAS_USB
-    {.num=2, .valid=true, },
+    {.num=STRING_READER_NUM_USB,
+     .valid=true, },
 #endif
 };
 
-uint32_t string_reader_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(StringReaderInstance);
-    cnt2 = ARRAY_SIZE(StringReaderConfig);
-    if (cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(StringReader, string_reader)

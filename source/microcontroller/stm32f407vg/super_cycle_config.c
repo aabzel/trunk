@@ -1,15 +1,16 @@
 #include "super_cycle_config.h"
 
+#include "time_mcal.h"
 #include "data_utils.h"
-#include "super_cycle_config.h"
 
 #ifndef HAS_SUPER_CYCLE
 #error "Add HAS_SUPER_CYCLE"
-#endif /*HAS_SUPER_CYCLE*/
+#endif /**/
 
-const SuperCycleConfig_t SuperCycleConfig[] = {
+const SuperCycleConfig_t SECTION_CFG_DATA SuperCycleConfig[] = {
 
     {
+        .max_duration_us = MSEC_2_USEC(100),
         .num = SUPER_CYCLE_CORE_0,
         .scheduler_num = 1,
         .valid = true,
@@ -24,14 +25,6 @@ SuperCycleHandle_t SuperCycleInstance[] = {
     },
 };
 
-uint32_t super_cycle_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(SuperCycleInstance);
-    cnt2 = ARRAY_SIZE(SuperCycleConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(SuperCycle, super_cycle)
+
+

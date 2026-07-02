@@ -1,14 +1,12 @@
 #ifndef CRYP_CONFIG_GEN_H
 #define CRYP_CONFIG_GEN_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "cryp_types.h"
 
 #ifndef HAS_CRYP
 #error "Add HAS_CRYP"
-#endif /*HAS_CRYP*/
+#endif /**/
 
 #define CRYP_SW_NUM 1
 

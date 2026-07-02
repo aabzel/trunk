@@ -1,6 +1,5 @@
 
 /*
-**  Author		: aabdev
 **  Abstract    : Linker script for STM32F407VGTx series
 **                1024Kbytes FLASH and 192Kbytes RAM
 **
@@ -19,15 +18,15 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 0x200;      /* required amount of heap  */
-_Min_Stack_Size = 0x900; /* required amount of stack */
+_Min_Heap_Size = 8K;      /* required amount of heap  */
+_Min_Stack_Size = 8K; /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
 RAM (xrw)    : ORIGIN = 0x20000000, LENGTH = 128K
 CCMRAM (xrw) : ORIGIN = 0x10000000, LENGTH = 64K
-FLASH (rx)   : ORIGIN = 0x080E0000, LENGTH = 128K
+FLASH (rx)   : ORIGIN = 0x08000000, LENGTH = 256K
 }
 
 /* Define output sections */
@@ -153,8 +152,12 @@ SECTIONS
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
+    
+    __Core0_StackLimit = .;
+    
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
+    __Core0_StackTop = . ;
   } >RAM
 
   

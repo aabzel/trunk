@@ -4,10 +4,6 @@
 #include "std_includes.h"
 #include "super_cycle_types.h"
 
-#ifndef HAS_LED
-#error "Add HAS_LED"
-#endif /*HAS_LED*/
-
 typedef enum {
    SUPER_CYCLE_CORE_0 = 1,
    SUPER_CYCLE_CORE_UNDEF = 0,

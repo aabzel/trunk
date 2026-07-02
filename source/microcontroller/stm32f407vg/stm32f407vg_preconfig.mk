@@ -1,0 +1,11 @@
+#protection against repeated include as in C preprocessor
+$(info STM32F407VG_PRECONFIG_MK_INC=$(STM32F407VG_PRECONFIG_MK_INC) )
+ifneq ($(STM32F407VG_PRECONFIG_MK_INC),Y)
+    STM32F407VG_PRECONFIG_MK_INC=Y
+    CORTEX_M4=Y
+    MICROCONTROLLER=Y
+    STM32=Y
+    HAL_DMA=Y
+    STM32F4X=Y
+    STM32F407VG=Y
+endif

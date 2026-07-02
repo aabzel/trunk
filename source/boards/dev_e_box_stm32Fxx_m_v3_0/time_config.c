@@ -1,30 +1,20 @@
 #include "time_config.h"
 
-
 #include "data_utils.h"
 
-const TimeConfig_t TimeConfig[] = {
-    {.num=1,  .time_source = TIME_SRC_SYSTICK,  .valid=true,},
-#ifdef HAS_TIMER
-    {.num=2 , .time_source = TIME_SRC_TIMER5,   .valid=true,},
-#endif
+const TimeConfig_t SECTION_CFG_DATA TimeConfig[] = {
+        { .num = TIME_SYSTICK, .time_source = TIME_SRC_SYSTICK, .valid = true, },
+        { .num = TIME_TIMER5, .time_source = TIME_SRC_TIMER5, .valid = true, },
+        { .num = TIME_HAL_TICK, .time_source = TIME_SRC_HAL_TICK, .valid = true, },
+        { .num = TIME_DWT, .time_source = TIME_SRC_DWT, .valid = true, },
 };
 
-TimeHandle_t TimeInstance[]={
-    {.num=1, .valid=true,},
-#ifdef HAS_TIMER
-    {.num=2, .valid=true,},
-#endif
+TimeHandle_t TimeInstance[] = {
+        { .num = TIME_SYSTICK, .valid = true, },
+        { .num = TIME_TIMER5, .valid = true, },
+        { .num = TIME_HAL_TICK, .valid = true, },
+        { .num = TIME_DWT, .valid = true, },
 };
 
-uint32_t time_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(TimeInstance);
-    cnt2 = ARRAY_SIZE(TimeConfig);
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(Time, time)
+
