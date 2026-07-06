@@ -95,24 +95,47 @@
 #define GPIO_CONFIG_CAN2
 #endif
 
-#define GPIO_CONFIG_CAN     \
-        GPIO_CONFIG_CAN1    \
-        GPIO_CONFIG_CAN2
-
 #define GPIO_CONFIG_PWM                      \
     {.Pad={.port=PORT_A, .pin=0,}, .name="TIM5_CH1", .mux = GPIO_AF2_TIM5, .logic_level = GPIO_LVL_LOW, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, }, \
     {.Pad={.port=PORT_A, .pin=3,}, .name="TIM9_CH2", .mux = GPIO_AF3_TIM9, .logic_level = GPIO_LVL_LOW, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
 
+#ifdef HAS_DCF77
+#define GPIO_CONFIG_DCF77 \
+    {.Pad={.port=PORT_E, .pin=5,}, .name="DCF77_IN", .mux = 0, .logic_level = GPIO_LVL_LOW,     .mode = GPIO_API_MODE_INPUT_EXINT_FAILLING, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },  \
+    {.Pad={.port=PORT_A, .pin=6,}, .name="DCF77_ENABLE", .mux = 0, .logic_level = GPIO_LVL_LOW, .mode = GPIO_API_MODE_OUTPUT,               .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
+#else
+#define GPIO_CONFIG_DCF77
+#endif
 
-const GpioConfig_t GpioConfig[] = {
-        GPIO_CONFIG_ADC
-        GPIO_CONFIG_DAC
-        GPIO_CONFIG_LASER
-        GPIO_CONFIG_DEBUG
-        GPIO_CONFIG_CAN
+#ifdef HAS_USB_DEVICE
+   // {.Pad = {.port=PORT_A, .pin=9}, .name="OTG_FS_VBUS", .mode=GPIO_MODE_INPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
+
+#define GPIO_CONFIG_USB_FULL_SPEED    \
+    {.Pad = {.port = PORT_A, .pin = 11,}, .name = "OTG_FS_DM",  .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .mux=GPIO_AF10_OTG_FS, .logic_level=GPIO_LVL_HI},\
+    {.Pad = {.port = PORT_A, .pin = 12,}, .name = "OTG_FS_DP",  .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,   .mux=GPIO_AF10_OTG_FS, .logic_level=GPIO_LVL_HI},
+
+#else
+#define GPIO_CONFIG_USB_FULL_SPEED
+#endif
+
+
+
+#define GPIO_CONFIG_CAN     \
+        GPIO_CONFIG_CAN1    \
+        GPIO_CONFIG_CAN2
+
+#define GPIO_CONFIG_ALL                             \
+        GPIO_CONFIG_ADC                             \
+        GPIO_CONFIG_DAC                             \
+        GPIO_CONFIG_LASER                           \
+        GPIO_CONFIG_DEBUG                           \
+        GPIO_CONFIG_CAN                             \
+        GPIO_CONFIG_DCF77                           \
+        GPIO_CONFIG_USB_FULL_SPEED                  \
         GPIO_CONFIG_PWM
 
-
+const GpioConfig_t GpioConfig[] = {
+        GPIO_CONFIG_ALL
 
     { .Pad = { .port = PORT_E, .pin = 13 },
       .mode = GPIO_API_MODE_OUTPUT, .pull = GPIO__PULL_AIR, .mux = 0, .logic_level = GPIO_LVL_HI,
@@ -182,10 +205,6 @@ const GpioConfig_t GpioConfig[] = {
 #ifdef HAS_LED
 #endif/*HAS_LED*/
 
-#ifdef HAS_USB
-    {.Pad={.port=PORT_A, .pin=12,}, .name="USB_FS_DP", .mux = GPIO_AF10_OTG_FS,  .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .speed=GPIO_SPEED_FREQ_VERY_HIGH,   .logic_level=GPIO_LVL_HI,},
-    {.Pad={.port=PORT_A, .pin=11,}, .name="USB_FS_DM", .mux = GPIO_AF10_OTG_FS,  .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH,   .logic_level=GPIO_LVL_HI,},
-#endif
 
 #ifdef HAS_BUTTON
     {.Pad = {.port=PORT_E, .pin=10,}, .name="SW1", .mode=GPIO_API_MODE_INPUT_EXINT_FAILLING, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
@@ -208,11 +227,6 @@ const GpioConfig_t GpioConfig[] = {
     {.Pad={.port=PORT_A, .pin=8,}, .name="MCO1", .mux = GPIO_AF0_MCO, .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, },
 #endif /*HAS_MCO*/
 
-#ifdef HAS_USB_DEVICE
-   // {.Pad = {.port=PORT_A, .pin=9}, .name="OTG_FS_VBUS", .mode=GPIO_MODE_INPUT, .pull=GPIO__PULL_AIR,   .mux=0, .logic_level=GPIO_LVL_HI},
-   // {.Pad = {.port=PORT_A, .pin=11}, .name="OTG_FS_DM",  .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .mux=GPIO_AF10_OTG_FS, .logic_level=GPIO_LVL_HI},
-   // {.Pad = {.port=PORT_A, .pin=12}, .name="OTG_FS_DP",  .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=GPIO_AF10_OTG_FS, .logic_level=GPIO_LVL_HI},
-#endif
 
 #ifdef HAS_USB_HOST
    // {.Pad = {.port=PORT_B, .pin=15}, .name="OTG_HS_DP", .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=GPIO_AF12_OTG_HS_FS, .logic_level=GPIO_LVL_HI},

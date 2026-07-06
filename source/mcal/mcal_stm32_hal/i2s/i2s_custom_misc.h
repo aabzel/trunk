@@ -15,11 +15,15 @@ uint32_t I2sParseDataFormat(I2sDataFormat_t data_format) ;
 uint32_t I2sParseCPol(I2sCpol_t cpol) ;
 uint32_t I2sParseClockSource(I2sClockSource_t clock_source) ;
 uint32_t I2sParseAudioFreq(AudioFreq_t audio_freq) ;
-uint32_t I2sDirRoleToMode(I2sDirAndBusRole_t mode);
+uint32_t I2sMasterDirToMode(const ConnectivitDir_t direction);
+uint32_t I2sDirRoleToMode( const IfBusRole_t bus_role,
+                           const ConnectivitDir_t direction );
+uint32_t I2sSlaveDirToMode(const ConnectivitDir_t direction);
 uint32_t I2sParseMCLKOutput(const I2sMclkOut_t mclk_out) ;
 uint32_t I2sParseStandard(I2sStandard_t standard) ;
-uint32_t I2sSampleRate2Hz(AudioFreq_t code) ;
+// uint32_t I2sSampleRate2Hz(AudioFreq_t code) ;
 SPI_TypeDef* I2sGetBaseAddr(uint8_t num);
+ConnectivitDir_t I2SOperationToDirection(const IfOperation_t operation);
 
 #ifdef __cplusplus
 }

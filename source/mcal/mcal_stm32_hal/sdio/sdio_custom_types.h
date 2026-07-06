@@ -16,9 +16,6 @@ typedef union {
     };
 }ProdRev_t;
 
-
-
-
 #define SDIO_CUSTOM_TYPES                        \
     SDIO_TypeDef* SDIOx;                         \
     SD_HandleTypeDef Handle;                     \

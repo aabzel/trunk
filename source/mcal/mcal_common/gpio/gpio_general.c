@@ -480,7 +480,7 @@ bool gpio_is_pin_single(const Pad_t Pad) {
             pin_real_cnt++;
         }
     }
-    if(1 == pin_real_cnt) {
+    if(pin_real_cnt <= 1) {
         res = true;
     } else {
         res = false;

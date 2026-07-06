@@ -30,7 +30,7 @@ bool CallBackErrorSdio1Tx(void);
         .memory_burst = DMA_BURST_INC4,              \
         .periph_burst = DMA_BURST_INC4,              \
         .fifo = DMA_FIFO_ON,                         \
-        .priority = DMA_PRIOR_MED,                   \
+        .priority = DMA_PRIOR_VERY_HIGH,             \
         .mode = DMA_MODE_PFCTRL,                     \
         .valid = true,                               \
         .interrupt_on = true,
@@ -52,11 +52,11 @@ bool CallBackErrorSdio1Tx(void);
 
 #define DMA_CHANNEL_SDIO_TX                         \
     {                                               \
-        .DmaChPad = { .dma_num = 2,  .stream = 6,  .channel = 4, .name = "SDIO1_TX",},      \
+        .DmaChPad = { .dma_num = 2,  .stream = 6,  .channel = 4, .name = "SDIO_TX",},      \
         .dir = DMA_MCAL_DIR_MEMORY_TO_PERIPH,       \
          DMA_CHANNEL_SDIO_COMMON                    \
         .num = DMA_CHANNEL_NUM_SDIO_TX,             \
-        .name = "SDIO1_TX",                         \
+        .name = "SDIO_TX",                         \
         .CallBackHalf = CallBackHalfSdio1Tx,        \
         .CallBackDone = CallBackDoneSdio1Tx,        \
         .base_addr_source = (uint32_t)fromArray,    \

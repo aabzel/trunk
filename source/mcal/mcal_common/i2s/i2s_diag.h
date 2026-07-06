@@ -21,7 +21,7 @@ const char* I2sStateToStr(I2sState_t state);
 #endif
 
 const char* I2sAudioFreqToStr(AudioFreq_t freq);
-const char* I2sDirBusRoleToStr(I2sDirAndBusRole_t code) ;
+//const char* I2sDirBusRoleToStr(I2sDirAndBusRole_t code) ;
 const char* I2sDftInfoToStr(const I2sHandle_t* const Node );
 const char* I2sConfigToStr(const I2sConfig_t* const Config);
 const char* I2sClockSourceToStr(I2sClockSource_t clock_source) ;

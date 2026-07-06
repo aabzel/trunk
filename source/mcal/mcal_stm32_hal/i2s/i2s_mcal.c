@@ -11,10 +11,12 @@
 #include "clock_utils.h"
 #include "i2s_config.h"
 #include "hal_mcal.h"
+#include "gpio_mcal.h"
 #include "i2s_custom_diag.h"
 #include "i2s_custom_misc.h"
 #include "i2s_custom_drv.h"
 #include "i2s_custom_types.h"
+#include "interfaces_diag.h"
 #include "i2s_diag.h"
 #include "log.h"
 #include "hal_diag.h"
@@ -375,7 +377,6 @@ bool i2s_read_write(uint8_t num, uint32_t tx_sample) {
 bool i2s_mcal_read(uint8_t num, uint16_t* array, uint32_t words) {
     bool res = false;
     res = i2s_dma_read(num, array, words);
-
     return res;
 }
 
@@ -599,7 +600,7 @@ uint32_t i2s_get_sample_rate(uint8_t num) {
     uint32_t sample_rate = 0;
     const I2sHandle_t *Node = I2sGetNode(num);
     if(Node) {
-        sample_rate = I2sSampleRate2Hz(Node->audio_frequency_hz);
+        sample_rate = Node->audio_frequency_hz;
     }
     return sample_rate;
 }
@@ -625,7 +626,7 @@ static bool i2s_init_hal(const I2sConfig_t* const Config, I2S_InitTypeDef* const
             pInit->CPOL = I2sParseCPol(Config->cpol); // I2S_CPOL_LOW;
             pInit->DataFormat = I2sParseDataFormat(Config->data_format);
             pInit->FullDuplexMode = I2sParseFullDuplexMode(Config->full_duplex);
-            pInit->Mode = I2sDirRoleToMode(Config->dir_role);
+            pInit->Mode = I2sDirRoleToMode(Config->bus_role, Config->direction);
             pInit->MCLKOutput = I2sParseMCLKOutput(Config->mclk_out);
             pInit->Standard = I2sParseStandard(Config->standard);
             res = true;
@@ -668,6 +669,37 @@ bool i2s_vefify_one(const uint8_t num) {
     }
     return res;
 }
+
+bool i2s_gpio_set_read(const uint8_t num) {
+    bool res = false;
+    I2sHandle_t* Node = I2sGetNode(num);
+    if(Node){
+
+        res = gpio_init_input(Node->GpioMClk.Pad);
+        res = gpio_init_input(Node->GpioSdOut.Pad);
+
+        res = gpio_init_one(&Node->GpioLrCk);
+        res = gpio_init_one(&Node->GpioSck);
+        res = gpio_init_one(&Node->GpioSdIn);
+    }
+    return res;
+}
+
+
+bool i2s_gpio_set_write(const uint8_t num){
+    bool res = false;
+    I2sHandle_t* Node = I2sGetNode(num);
+    if(Node){
+        res = gpio_init_input(Node->GpioMClk.Pad);
+        res = gpio_init_input(Node->GpioSdIn.Pad);
+
+        res = gpio_init_one(&Node->GpioLrCk);
+        res = gpio_init_one(&Node->GpioSck);
+        res = gpio_init_one(&Node->GpioSdOut);
+    }
+    return res;
+}
+
 
 static bool i2s_init_one_ll(const I2sConfig_t* const Config, I2sHandle_t* const Node) {
     bool res = false;
@@ -726,16 +758,36 @@ bool i2s_audio_frequency_set(const uint8_t num,
     I2sHandle_t *Node = I2sGetNode(num);
     if (Node) {
         LOG_INFO(I2S, "I2S_%u,Set,AudioFreq:%u Hz", num, audio_frequency_hz);
-        Node->audio_frequency_hz = audio_frequency_hz;
         const I2sConfig_t *Config = I2sGetConfig(num);
         if (Config) {
             I2sConfig_t NewConfig = { 0 };
             memcpy(&NewConfig, Config, sizeof(I2sConfig_t));
+            NewConfig.audio_frequency_hz = audio_frequency_hz;
+            Node->audio_frequency_hz = audio_frequency_hz;
             res = i2s_init_one_ll(&NewConfig, Node);
         }
     }
     return res;
 }
+
+bool i2s_audio_set_data_dirrection(const uint8_t num,
+                                   const IfOperation_t operation) {
+    bool res = false;
+    I2sHandle_t *Node = I2sGetNode(num);
+    if (Node) {
+        LOG_INFO(I2S, "I2S_%u,Set,Operation:%s", num, IfOperationToStr(operation));
+        const I2sConfig_t *Config = I2sGetConfig(num);
+        if (Config) {
+            I2sConfig_t NewConfig = { 0 };
+            memcpy(&NewConfig, Config, sizeof(I2sConfig_t));
+            NewConfig.direction = I2SOperationToDirection(operation);
+            Node->direction = I2SOperationToDirection(operation);
+            res = i2s_init_one_ll(&NewConfig, Node);
+        }
+    }
+    return res;
+}
+
 
 bool i2s_init_one(const uint8_t num) {
     bool res = false;

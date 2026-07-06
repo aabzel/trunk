@@ -45,14 +45,14 @@ bool sdio_proc(void);
 bool sdio_init_ll(uint32_t num);
 
 /*setters*/
-bool sdio_init_4bit_mode(SdioHandle_t* Node);
 bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const RxData);
+bool sdio_init_4bit_mode(SdioHandle_t* Node);
 uint8_t sdio_ioctl(uint8_t pdrv, uint8_t cmd, void* buff);
 
 /*getters*/
+bool sdio_read_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, uint8_t* const RxData);
 bool SdioIsValid(uint8_t num);
 bool SdioIsValidConfig(const SdioConfig_t* const Config);
-bool sdio_read_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, uint8_t* const RxData);
 bool sdio_card_info_get(uint32_t num);
 bool sdio_init_test(SdioHandle_t* Node);
 bool sdio_is_connected(uint32_t num);

@@ -970,6 +970,26 @@ bool gpio_init_out_pad(const Pad_t Pad) {
     return res;
 }
 
+bool gpio_init_input(const Pad_t Pad) {
+    bool res = false;
+#ifdef HAS_GPIO_DIAG
+    LOG_INFO(GPIO, "Init,%s,IN", GpioPadToStr(Pad));
+#endif
+    GPIO_TypeDef* GPIOx = GpioPortToPortPtr(Pad.port);
+    if(GPIOx) {
+        GPIO_InitTypeDef GPIO_InitStruct = {0};
+        uint32_t pin_mask = PinNum2PinMask(Pad.pin);
+        GPIO_InitStruct.Pin = pin_mask;
+        GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.Alternate = 0;
+        HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+        res = true;
+    }
+    return res;
+}
+
 bool gpio_init_adc_pad(const Pad_t Pad) {
     bool res = false;
 #ifdef HAS_GPIO_DIAG

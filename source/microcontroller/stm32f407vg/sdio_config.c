@@ -17,7 +17,11 @@
 const SdioConfig_t SECTION_CFG_DATA SdioConfig[] = {
     {
         .num = 1,
-        .bit_rate_hz = MHZ_2_HZ(20),
+        .bit_rate_hz = MHZ_2_HZ(21),
+        // 20MHz Write perf error timeOut
+        // 10MHz Write perf error timeOut
+        // 5MHz Write perf ok
+        // 25MHz Unstable write
         .name = "SdCard",
         .interrupt_on = true,
         .move_mode = MOVE_MODE_DMA,

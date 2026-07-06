@@ -1,0 +1,28 @@
+#ifndef SOUND_RECORDER_CONST_H
+#define SOUND_RECORDER_CONST_H
+
+#include "time_mcal.h"
+#include "sound_recorder_dep.h"
+
+#define SOUND_RECORDER_VERSION 3
+#define SOUND_RECORDER_POLL_PERIOD_US 1
+
+typedef enum {
+    SOUND_RECORDER_STATE_UNDEF = 0,
+    SOUND_RECORDER_STATE_IDLE ,
+    SOUND_RECORDER_STATE_REC_PART_1 ,
+    SOUND_RECORDER_STATE_REC_PART_2 ,
+}SoundRecorderState_t;
+
+typedef enum {
+    SOUND_RECORDER_ACTION_UNDEF = 0,
+    SOUND_RECORDER_ACTION_NOPE ,
+    SOUND_RECORDER_ACTION_SAVE_PART_1 ,
+    SOUND_RECORDER_ACTION_SAVE_PART_2 ,
+}SoundRecorderAction_t;
+
+
+
+
+
+#endif /* SOUND_RECORDER_CONST_H */

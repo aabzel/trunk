@@ -1,0 +1,9 @@
+#ifndef SOUND_RECORDER_DEP_H
+#define SOUND_RECORDER_DEP_H
+
+#ifndef HAS_SOUND_RECORDER
+#error "+HAS_SOUND_RECORDER"
+#endif
+
+#endif /* SOUND_RECORDER_DEP_H */
+

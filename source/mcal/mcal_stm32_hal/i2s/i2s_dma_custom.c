@@ -12,7 +12,7 @@ bool i2s_dma_init_tx(const uint8_t num) {
         res = dma_channel_init_one(Node->dma_channel_tx_num);
         //DMA_HandleTypeDef* pDmaTxHandle = dma_get_handle(Node->DmaChTx.dma_num);
         DmaChannelHandle_t* DmaCh = DmaChannelGetNode(Node->dma_channel_tx_num);
-        if(DmaCh){
+        if(DmaCh) {
             SET_BIT(Node->handle.Instance->CR2, SPI_CR2_TXDMAEN );
             __HAL_LINKDMA(&Node->handle, hdmatx, (DmaCh->dma_h));
             res = true;
@@ -37,39 +37,44 @@ bool i2s_dma_init_rx(const uint8_t num) {
 }
 
 bool i2s_dma_init(const uint8_t num) {
-    bool res = true;
-    res = i2s_dma_init_rx(num)&&res;
-    res = i2s_dma_init_tx(num)&&res;
+    bool res = false;
+    I2sHandle_t *Node = I2sGetNode(num);
+    if(Node){
+        switch(Node->direction) {
+
+            case CONNECT_DIR_TRANSMIT: {
+                res = i2s_dma_init_tx(num) ;
+            } break;
+
+            case CONNECT_DIR_RECEIVER: {
+                res = i2s_dma_init_rx(num) ;
+            } break;
+
+            default:{
+                res = false;
+            } break;
+        }
+    }
     return res;
 }
 
-
-
-bool i2s_dma_read(uint8_t num, uint16_t* array, uint32_t words) {
+bool i2s_dma_read(const uint8_t num, uint16_t* const array, const uint32_t words) {
     bool res = false;
     I2sHandle_t* Node = I2sGetNode(num);
     if(Node) {
-        uint32_t init_rx_cnt = Node->rx_cnt;
-        HAL_StatusTypeDef ret = HAL_I2S_Receive_DMA(&Node->handle, (uint16_t*)array, words);
+        Node->rx_done = false;
+        Node->rx_half = false;
+        //HAL_DMA_Abort(Node->handle.hdmarx);
+        //HAL_I2S_DMAStop(&Node->handle);
+        HAL_StatusTypeDef ret = HAL_I2S_Receive_DMA(&Node->handle, (uint16_t*) array, words);
         if(HAL_OK == ret) {
             res = true;
-            uint32_t cnt = 0;
-            while(init_rx_cnt == Node->rx_cnt) {
-                cnt++;
-                if(0x008FFFFF < cnt) {
-                    LOG_ERROR(I2S, "RdTimeOut");
-                    res = false;
-                    break;
-                }
-            }
         } else {
             LOG_ERROR(I2S, "ReadErr:%u %s", ret, HalStatusToStr(ret));
         }
     }
     return res;
 }
-
-
 
 bool i2s_dma_pause(uint8_t num) {
     bool res = false;
@@ -88,7 +93,6 @@ bool i2s_dma_pause(uint8_t num) {
     }
     return res;
 }
-
 
 bool i2s_dma_stop(uint8_t num) {
     bool res = false;

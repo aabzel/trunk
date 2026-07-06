@@ -1,0 +1,4 @@
+
+config SOUND_RECORDER
+    bool "Enable use of the SOUND_RECORDER drivers"
+

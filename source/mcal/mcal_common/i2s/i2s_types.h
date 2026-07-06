@@ -58,9 +58,10 @@ typedef struct {
 
 typedef struct {
     bool num;
-    I2sDirAndBusRole_t i2s_bus_dir;
     IfBusRole_t bus_role;
     ConnectivitDir_t direction;
+#if 0
+#endif
     bool valid;
 } I2sBusDirInfo_t;
 
@@ -138,23 +139,24 @@ typedef union {
 #define I2S_COMMON_GPIO_VARIABLES
 #endif
 
+#define I2S_DEBUG_GPIO_VARIABLES           \
+    Pad_t PadDmaRx;                        \
+    Pad_t PadDmaTx;
+
 #define I2S_DEBUG_VARIABLES           \
     uint8_t led_tx_num;               \
     uint8_t led_rx_num;               \
-    Pad_t PadDebug1;                  \
-    Pad_t PadDebug2;
 
 #define I2S_BASE_VARIABLES            \
     I2sMclkOut_t mclk_out;            \
     I2sStandard_t standard;           \
-    I2sDirAndBusRole_t dir_role;      \
     I2sClockSource_t clock_source;    \
     DspSampleMode_t sample_mode;      \
     I2sFullDuplex_t full_duplex;      \
     ConnectivitDir_t direction;       \
+    IfBusRole_t bus_role;             \
     I2sDataFormat_t data_format;      \
-    uint32_t audio_frequency_hz;      \
-    IfBusRole_t bus_role;
+    uint32_t audio_frequency_hz;
 
 #define I2S_BUFFER_VARIABLES          \
     uint16_t* TxArray;                \
@@ -163,6 +165,7 @@ typedef union {
 
 #define I2S_COMMON_VARIABLES          \
     I2S_BASE_VARIABLES                \
+    I2S_DEBUG_GPIO_VARIABLES          \
     I2S_DEBUG_VARIABLES               \
     I2S_DMA_COMMON_VARIABLES          \
     I2S_COMMON_GPIO_VARIABLES         \

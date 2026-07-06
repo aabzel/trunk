@@ -38,6 +38,7 @@ typedef enum {
     I2S_CLOCK_POL_HIGH ,
 } I2sCpol_t;
 
+#if 0
 typedef enum {
     I2S_DIR_BUS_MODE_UNDEF = 0,
     I2S_DIR_BUS_MODE_SLAVE = 1,    /*He clocks I2S,*/
@@ -47,6 +48,7 @@ typedef enum {
     I2S_DIR_BUS_MODE_MASTER_TX = 5,/*I clock I2S, I Out TX*/
     I2S_DIR_BUS_MODE_MASTER_RX = 6,/*I clock I2S, I In Rx*/
 } I2sDirAndBusRole_t;
+#endif
 
 typedef enum {
     I2S_DATA_FORMAT_UNDEF = 0,

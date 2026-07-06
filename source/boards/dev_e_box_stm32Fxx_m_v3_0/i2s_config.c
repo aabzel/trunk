@@ -9,48 +9,58 @@
 #error "+ HAS_I2S"
 #endif
 
+
 #ifdef HAS_I2S_GPIO
-#define I2S2_COMMON_GPIO_VARIABLES             \
-        .PadDebug1 = { .port=PORT_?, .pin=?, },                                           \
-        .PadDebug2 = { .port=PORT_?, .pin=?, },                                           \
-    .GpioSdIn={.pad = {.port=PORT_C, .pin=2,},  \
-              .connector2="J3.36",             \
-              .mux = 6,                        \
-              .dir=GPIO_DIR_IN,                \
-              .name="I2S2_SDEXT",              \
-              .mode = GPIO_API_MODE_ALT1,      \
-              .pull = GPIO__PULL_UP,           \
-              .logic_level = GPIO_LVL_HI,},    \
-    .GpioSck= {.pad = {.port=PORT_B, .pin=10,}, \
-              .connector2="J3.13",             \
-              .mux = 5, .dir=GPIO_DIR_OUT,     \
-              .name="I2S2_CK",                 \
-              .mode = GPIO_API_MODE_ALT1,      \
-              .pull=GPIO__PULL_DOWN,           \
-              .logic_level=GPIO_LVL_HI,},      \
-    .GpioLrCk={.pad = {.port=PORT_B, .pin=12,}, \
-               .connector2="J3.11",            \
-              .mux = 5,                        \
-              .dir=GPIO_DIR_OUT, \
-              .name="I2S2_WS",    \
-              .mode = GPIO_API_MODE_ALT1, \
-              .pull=GPIO__PULL_UP, \
-              .logic_level=GPIO_LVL_HI,  \
-             },     \
-    .GpioSdOut={.pad = {.port=PORT_C, .pin=3}, \
-               .connector2="J3.35",   \
-               .mux = 5, \
-               .dir=GPIO_DIR_OUT, \
-               .name="I2S2_SD",    \
-               .mode = GPIO_API_MODE_ALT1, \
-               .pull=GPIO__PULL_UP, \
-               .logic_level=GPIO_LVL_HI, },
+
+#define I2S2_COMMON_GPIO_CLK_VARIABLE                   \
+    .GpioSck= {.Pad = {.port = PORT_B, .pin = 13, },    \
+               .logic_level = GPIO_LVL_HI,              \
+               .name = " I2S2_CK",                      \
+               .connector2 = "J3.10/J4.4",              \
+               .dir = GPIO_DIR_OUT,                     \
+               .speed=GPIO_SPEED_HIGH_SPEED,            \
+               .mode = GPIO_API_MODE_ALT1,              \
+               .pull = GPIO__PULL_DOWN,                  \
+               .mux = 5,                                \
+              },
 
 
+#define I2S2_COMMON_GPIO_VARIABLES                      \
+    I2S2_COMMON_GPIO_CLK_VARIABLE                       \
+    .GpioLrCk={.Pad = {.port = PORT_B, .pin = 12,},     \
+               .connector2 = "J3.11",                   \
+               .mux = 5,                                \
+               .dir = GPIO_DIR_OUT,                     \
+               .name = "I2S2_WS",                       \
+               .speed=GPIO_SPEED_HIGH_SPEED,            \
+               .mode = GPIO_API_MODE_ALT1,              \
+               .pull = GPIO__PULL_DOWN,                 \
+               .logic_level = GPIO_LVL_HI,              \
+             },                                         \
+    .GpioSdIn = {.Pad = {.port = PORT_B, .pin = 15,},   \
+              .connector2 = "J2.8",                     \
+              .mux = 5,                                 \
+              .dir = GPIO_DIR_IN,                       \
+              .name = "I2S2_SDEXT",                     \
+              .mode = GPIO_API_MODE_ALT1,               \
+               .speed=GPIO_SPEED_HIGH_SPEED,            \
+              .pull = GPIO__PULL_DOWN,                  \
+              .logic_level = GPIO_LVL_HI,},             \
+    .GpioSdOut={.Pad = {.port=PORT_C, .pin=3},          \
+               .connector2="J3.35",                     \
+               .mux = 5,                                \
+               .dir = GPIO_DIR_OUT,                     \
+               .speed=GPIO_SPEED_HIGH_SPEED,            \
+               .name="I2S2_SD",                         \
+               .mode = GPIO_API_MODE_ALT1,              \
+               .pull=GPIO__PULL_DOWN,                   \
+               .logic_level=GPIO_LVL_HI,                \
+    },
 
 #else
 #define I2S2_COMMON_GPIO_VARIABLES
 #endif
+
 
 
 
@@ -84,6 +94,8 @@ bool I2s2CallBackRxDone(void){
 static uint16_t I2s2TxSampleArray[I2S_MEM_SIZE]={0};
 static uint16_t I2s2RxSampleArray[I2S_MEM_SIZE]={0};
 
+//        .dir_role = I2S_DIR_BUS_MODE_MASTER_TX,
+
 #define I2S_CONFIG_I2S2                                               \
     {                                                                 \
          I2S2_COMMON_GPIO_VARIABLES                                   \
@@ -94,20 +106,21 @@ static uint16_t I2s2RxSampleArray[I2S_MEM_SIZE]={0};
         .dma_channel_tx_num=DMA_CHANNEL_NUM_I2S2_TX,                  \
         .dma_channel_rx_num=DMA_CHANNEL_NUM_I2S2_RX,                  \
         .num = 2,                                                     \
+        .bus_role = IF_BUS_ROLE_MASTER ,                              \
+        .direction = CONNECT_DIR_RECEIVER,                            \
+        .PadDmaRx =  { .port=PORT_A, .pin=4, },                       \
+        .PadDmaTx =  { .port=PORT_A, .pin=8, },                       \
         .led_tx_num = 1,                                              \
         .led_rx_num = 1,                                              \
-        .dir_role = I2S_DIR_BUS_MODE_MASTER_TX,                       \
         .sample_mode = SAMPLE_MODE_STEREO,                            \
-        .direction = CONNECT_DIR_TRANSMIT,                            \
         .audio_frequency_hz = AUDIO_FREQ_96K,                         \
-        .bus_role = IF_BUS_ROLE_MASTER ,                              \
         .data_format = I2S_DATA_FORMAT_16B,                           \
         .irq_priority = 0 ,                                           \
         .move_mode = MOVE_MODE_DMA ,                                  \
         .RxArray = I2s2RxSampleArray,                                 \
         .TxArray = I2s2TxSampleArray,                                 \
         .samples_cnt = ARRAY_SIZE(I2s2TxSampleArray),                 \
-        .full_duplex = FULL_DUPLEX_ON,                                \
+        .full_duplex = FULL_DUPLEX_OFF,                               \
         .mclk_out = I2S_MCLKOUT_OFF,                                  \
         .standard = I2S_STD_PHILIPS,                                  \
         .cpol = I2S_CLOCK_POL_LOW,                                    \
@@ -115,6 +128,7 @@ static uint16_t I2s2RxSampleArray[I2S_MEM_SIZE]={0};
         .name = "WavPlayer",                                          \
         .valid=true,                                                  \
     },
+
 #else
 #define I2S_CONFIG_I2S2
 #endif

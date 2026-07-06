@@ -1,6 +1,7 @@
 #include "i2s_custom_misc.h"
 
 #include "stm32fx_hal.h"
+#include "connectivity_const.h"
 
 uint32_t I2sBus2Code(const ClockBus_t CurBus) {
     uint32_t periph_clk_code = 0;
@@ -221,26 +222,61 @@ uint32_t I2sParseAudioFreq(AudioFreq_t audio_freq) {
     return code;
 }
 
-uint32_t I2sDirRoleToMode(I2sDirAndBusRole_t mode) {
-    uint32_t code = I2S_MODE_SLAVE_RX;
-    switch (mode) {
-    case I2S_DIR_BUS_MODE_SLAVE_TX:
-        code = I2S_MODE_SLAVE_TX;
-        break;
-    case I2S_DIR_BUS_MODE_SLAVE_RX:
-        code = I2S_MODE_SLAVE_RX;
-        break;
-    case I2S_DIR_BUS_MODE_MASTER_TX:
-        code = I2S_MODE_MASTER_TX;
-        break;
-    case I2S_DIR_BUS_MODE_MASTER_RX:
-        code = I2S_MODE_MASTER_RX;
-        break;
-    default:
-        break;
+
+/*
+possible return values:
+    I2S_MODE_MASTER_TX
+    I2S_MODE_MASTER_RX
+ */
+uint32_t I2sMasterDirToMode(const ConnectivitDir_t direction) {
+    uint32_t master_code = I2S_MODE_MASTER_RX;
+    switch (direction) {
+        case CONNECT_DIR_TRANSMIT:   master_code = I2S_MODE_MASTER_TX; break;
+        case CONNECT_DIR_RECEIVER:   master_code = I2S_MODE_MASTER_RX; break;
+        case CONNECT_DIR_RX_TX:      master_code = I2S_MODE_MASTER_RX; break;
+        default: { master_code = I2S_MODE_MASTER_RX;}  break;
     }
-    return code;
+    return master_code;
 }
+
+/*
+possible return values:
+    I2S_MODE_SLAVE_TX
+    I2S_MODE_SLAVE_RX
+ */
+uint32_t I2sSlaveDirToMode(const ConnectivitDir_t direction) {
+    uint32_t slave_code = I2S_MODE_SLAVE_RX;
+    switch (direction) {
+        case CONNECT_DIR_TRANSMIT:   slave_code = I2S_MODE_SLAVE_TX; break;
+        case CONNECT_DIR_RECEIVER:   slave_code = I2S_MODE_SLAVE_RX; break;
+        case CONNECT_DIR_RX_TX:      slave_code = I2S_MODE_SLAVE_RX; break;
+        default: { slave_code = I2S_MODE_SLAVE_RX;}  break;
+    }
+    return slave_code;
+}
+
+/*
+possible return values:
+    I2S_MODE_SLAVE_TX
+    I2S_MODE_SLAVE_RX
+    I2S_MODE_MASTER_TX
+    I2S_MODE_MASTER_RX
+ */
+uint32_t I2sDirRoleToMode( const IfBusRole_t bus_role,
+                           const ConnectivitDir_t direction ) {
+    uint32_t slave_code = I2S_MODE_SLAVE_RX;
+    switch (bus_role) {
+        case IF_BUS_ROLE_MASTER:
+            slave_code = I2sMasterDirToMode(direction);
+            break;
+        case IF_BUS_ROLE_SLAVE:
+            slave_code = I2sSlaveDirToMode(direction);
+            break;
+        default: { slave_code = I2S_MODE_SLAVE_RX;}  break;
+    }
+    return slave_code;
+}
+
 
 uint32_t I2sParseStandard(I2sStandard_t standard) {
     uint32_t code = I2S_STANDARD_LSB;
@@ -289,6 +325,7 @@ uint8_t I2sSampleBitness2bytes(Stm32I2sDatLen_t code) {
     return num_bytes;
 }
 
+#if 0
 uint32_t I2sSampleRate2Hz(AudioFreq_t code) {
     uint32_t sample_rate = 0;
    switch ( code) {
@@ -323,4 +360,16 @@ uint32_t I2sSampleRate2Hz(AudioFreq_t code) {
         break;
     }
     return sample_rate;
+}
+#endif
+
+ConnectivitDir_t I2SOperationToDirection(const IfOperation_t operation) {
+    ConnectivitDir_t dir = CONNECT_DIR_UNDEF;
+    switch ( operation) {
+        case INTERFACE_OPERATION_RECEPTION:         dir = CONNECT_DIR_RECEIVER;         break;
+        case INTERFACE_OPERATION_SEND:         dir = CONNECT_DIR_TRANSMIT;         break;
+        case INTERFACE_OPERATION_RECEPTION_AND_TRANSMISSION:         dir = CONNECT_DIR_RX_TX;        break;
+        default:        dir = CONNECT_DIR_UNDEF;        break;
+    }
+    return dir;
 }

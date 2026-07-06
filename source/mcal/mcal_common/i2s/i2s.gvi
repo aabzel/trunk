@@ -5,8 +5,8 @@
 
 #ifdef HAS_DDS
     I2S->DDS
-#enif
+#endif
 
 #ifdef HAS_DMA
     DMA->I2S
-#enif
+#endif

@@ -11,6 +11,7 @@
 #include "float_diag.h"
 #include "gpio_mcal.h"
 #include "i2s_config.h"
+#include "audio.h"
 #include "i2s_diag.h"
 #include "i2s_mcal.h"
 #include "led_mono_drv.h"
@@ -30,90 +31,47 @@
 COMPONENT_GET_NODE(I2s, i2s)
 COMPONENT_GET_CONFIG(I2s, i2s)
 
-bool i2s_is_valid_audio_frequency(const uint32_t audio_frequency_hz) {
-    bool res = false;
-    switch(audio_frequency_hz) {
-    case AUDIO_FREQ_8K:
-        res = true;
-        break;
-    case AUDIO_FREQ_11K:
-        res = true;
-        break;
-    case AUDIO_FREQ_16K:
-        res = true;
-        break;
-    case AUDIO_FREQ_22K:
-        res = true;
-        break;
-    case AUDIO_FREQ_32K:
-        res = true;
-        break;
-    case AUDIO_FREQ_41K:
-        res = true;
-        break;
-    case AUDIO_FREQ_48K:
-        res = true;
-        break;
-    case AUDIO_FREQ_44K:
-        res = true;
-        break;
-    case AUDIO_FREQ_88K:
-        res = true;
-        break;
-    case AUDIO_FREQ_96K:
-        res = true;
-        break;
-    case AUDIO_FREQ_176K:
-        res = true;
-        break;
-    case AUDIO_FREQ_192K:
-        res = true;
-        break;
-    case AUDIO_FREQ_384K:
-        res = true;
-        break;
-    case AUDIO_FREQ_768K:
-        res = true;
-        break;
-    default:
-        res = false;
-        break;
-    }
-    return res;
-}
 
 static const I2sBusDirInfo_t I2sBusDirInfo[] = {
     {
         .bus_role = IF_BUS_ROLE_SLAVE,
         .direction = CONNECT_DIR_TRANSMIT,
+#if 0
         .i2s_bus_dir = I2S_DIR_BUS_MODE_SLAVE_TX,
+#endif
         .num = 1,
         .valid = true,
     },
     {
         .bus_role = IF_BUS_ROLE_SLAVE,
         .direction = CONNECT_DIR_RECEIVER,
+#if 0
         .i2s_bus_dir = I2S_DIR_BUS_MODE_SLAVE_RX,
+#endif
         .num = 2,
         .valid = true,
     },
     {
         .bus_role = IF_BUS_ROLE_MASTER,
         .direction = CONNECT_DIR_TRANSMIT,
+#if 0
         .i2s_bus_dir = I2S_DIR_BUS_MODE_MASTER_TX,
+#endif
         .num = 3,
         .valid = true,
     },
     {
         .bus_role = IF_BUS_ROLE_MASTER,
         .direction = CONNECT_DIR_RECEIVER,
+#if 0
         .i2s_bus_dir = I2S_DIR_BUS_MODE_MASTER_RX,
+#endif
         .num = 4,
         .valid = true,
     },
 };
 
-static const I2sBusDirInfo_t* I2sRoleAndDirToInfo(const IfBusRole_t bus_role, const ConnectivitDir_t direction) {
+const I2sBusDirInfo_t* I2sRoleAndDirToInfo(const IfBusRole_t bus_role, const ConnectivitDir_t direction) {
     I2sBusDirInfo_t* BusInfo = NULL;
     uint32_t cnt = ARRAY_SIZE(I2sBusDirInfo);
     uint32_t i = 0;
@@ -175,7 +133,7 @@ static bool i2s_gpio_is_valid_config(const I2sConfig_t* const Config) {
     if(Config) {
         bool l_res = true;
         res = true;
-#ifdef HAS_I2S_GPIO
+#if 0
         l_res = GpioIsValidConfig(&Config->GpioMClk);
         ifn(l_res) {
             res = false;
@@ -234,6 +192,7 @@ static bool i2s_gpio_is_valid_config(const I2sConfig_t* const Config) {
         }
 #endif
 
+#if 0
         l_res = gpio_is_valid_pad(Config->PadDebug1);
         ifn(l_res) {
             res = false;
@@ -245,6 +204,7 @@ static bool i2s_gpio_is_valid_config(const I2sConfig_t* const Config) {
             res = false;
             LOG_ERROR(I2S, "I2S_%u,Err,PadDebug2", Config->num);
         }
+#endif
     }
     return res;
 }
@@ -255,7 +215,7 @@ bool i2s_is_valid_config(const I2sConfig_t* const Config) {
         bool l_res = true;
         res = true;
 
-        l_res = i2s_is_valid_audio_frequency(Config->audio_frequency_hz);
+        l_res = audio_is_valid_frequency(Config->audio_frequency_hz);
         ifn(l_res) {
             res = false;
             LOG_ERROR(I2S, "I2S_%u,Err,audioFrequencyHz", Config->num);
@@ -282,11 +242,12 @@ bool i2s_is_valid_config(const I2sConfig_t* const Config) {
             res = false;
             LOG_ERROR(I2S, "I2S_%u,Err,standard", Config->num);
         }
-
+#if 0
         ifn(Config->dir_role) {
             res = false;
             LOG_ERROR(I2S, "I2S_%u,Err,dir_role", Config->num);
         }
+#endif
 
         ifn(Config->clock_source) {
             res = false;
@@ -393,6 +354,7 @@ bool i2s_play_static_tx(uint8_t num, uint8_t dac_num, bool status) {
 }
 #endif
 
+#if 0
 const I2sBusDirInfo_t* I2S_DirRoleToInfo(const I2sDirAndBusRole_t i2s_bus_dir) {
     I2sBusDirInfo_t* BusInfo = NULL;
     uint32_t cnt = ARRAY_SIZE(I2sBusDirInfo);
@@ -406,7 +368,9 @@ const I2sBusDirInfo_t* I2S_DirRoleToInfo(const I2sDirAndBusRole_t i2s_bus_dir) {
     }
     return BusInfo;
 }
+#endif
 
+#if 0
 I2sDirAndBusRole_t i2s_role_and_dir_to_dir_bus(const IfBusRole_t bus_role, const ConnectivitDir_t direction) {
     I2sDirAndBusRole_t bus_dir_role = I2S_DIR_BUS_MODE_UNDEF;
     const I2sBusDirInfo_t* BusInfo = I2sRoleAndDirToInfo(bus_role, direction);
@@ -416,6 +380,7 @@ I2sDirAndBusRole_t i2s_role_and_dir_to_dir_bus(const IfBusRole_t bus_role, const
 
     return bus_dir_role;
 }
+#endif
 
 #ifdef HAS_I2S
 bool i2s_common_init(uint8_t num) {
@@ -504,7 +469,7 @@ bool i2s_init_common(const I2sConfig_t* const Config, I2sHandle_t* const Node) {
             Node->CallBackRxDone = Config->CallBackRxDone;
 #endif
 
-#ifdef HAS_GPIO
+#ifdef HAS_I2S_GPIO
             Node->GpioSck = Config->GpioSck;
             Node->GpioLrCk = Config->GpioLrCk;
             Node->GpioSdOut = Config->GpioSdOut;
@@ -513,17 +478,19 @@ bool i2s_init_common(const I2sConfig_t* const Config, I2sHandle_t* const Node) {
 #endif
 
             Node->bus_role = Config->bus_role;
+            Node->direction = Config->direction;
             Node->led_rx_num = Config->led_rx_num;
             Node->led_tx_num = Config->led_tx_num;
-            Node->PadDebug1 = Config->PadDebug1;
-            Node->PadDebug2 = Config->PadDebug2;
+            Node->PadDmaRx = Config->PadDmaRx;
+            Node->PadDmaTx = Config->PadDmaTx;
+#if 0
+            Node->dir_role = Config->dir_role;
+#endif
             Node->mclk_out = Config->mclk_out;
             Node->standard = Config->standard;
-            Node->dir_role = Config->dir_role;
             Node->clock_source = Config->clock_source;
             Node->sample_mode = Config->sample_mode;
             Node->full_duplex = Config->full_duplex;
-            Node->direction = Config->direction;
             Node->data_format = Config->data_format;
             Node->audio_frequency_hz = Config->audio_frequency_hz;
             Node->irq_priority = Config->irq_priority;

@@ -86,6 +86,7 @@ bool test_sdio_read(void) {
 }
 
 #ifdef HAS_SDIO_DMA
+
 static bool test_sdio_read_write_block_dma(uint32_t block_num) {
     LOG_INFO(TEST, "%s()", __FUNCTION__);
     log_level_set(LG_SDIO, LOG_LEVEL_DEBUG);

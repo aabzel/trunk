@@ -14,7 +14,7 @@
 
 #ifdef HAS_SDIO
 #define GPIO_CONFIG_SDIO                                           \
-    {.Pad={ .port=PORT_C, .pin=12, },  .name="SD_CLK", .connector1="SD.5", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
+    {.Pad={ .port=PORT_C, .pin=12, },  .name="SD_CLK", .connector1="SD.5", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
     {.Pad={ .port=PORT_D, .pin=2,  },  .name="SD_CMD", .connector1="SD.3", .connector2="PD.5", .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
     {.Pad={ .port=PORT_C, .pin=8,  },  .name="SD_D0",  .connector1="SD.7", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
     {.Pad={ .port=PORT_C, .pin=9,  },  .name="SD_D1",  .connector1="SD.8", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
@@ -25,11 +25,15 @@
 #endif
 
 #ifdef HAS_I2S2
-#define GPIO_CONFIG_I2S2                                                                                                                                                                       \
-    {.Pad = {.port=PORT_C, .pin=2,},  .connector2="J3.36/PC2", .mux = 6, .dir=GPIO_DIR_IN,  .name="I2S2_SDEXT", .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },    \
-    {.Pad = {.port=PORT_B, .pin=13,}, .connector2="J4.4/PB13", .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_CK",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_DOWN, .logic_level=GPIO_LVL_HI, },    \
-    {.Pad = {.port=PORT_B, .pin=12,}, .connector2="J3.11/PB12", .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_WS",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },    \
-    {.Pad = {.port=PORT_C, .pin=3,}, .connector2="J3.35/PC3",   .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_SD",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },
+    // {.Pad = {.port=PORT_B, .pin=15,}, .connector2="J3.35/PC3",   .mux = 5, .dir=GPIO_DIR_IN, .name="I2S2_SD",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },
+
+#define GPIO_CONFIG_I2S2                                                                                                                                                                                 \
+    {.Pad=  { .port=PORT_A, .pin=8,}, .name="I2S2_TX_DMA",     .connector1="-", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,  .mux=0,  .logic_level=GPIO_LVL_LOW},    \
+    {.Pad=  { .port=PORT_A, .pin=4,}, .name="I2S2_RX_DMA",     .connector1="-", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,  .mux=0,  .logic_level=GPIO_LVL_LOW},    \
+    {.Pad = { .port=PORT_C, .pin=2,},  .connector2="J3.36/PC2", .mux = 6, .dir=GPIO_DIR_IN,  .name="I2S2_SDEXT", .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },          \
+    {.Pad = { .port=PORT_B, .pin=13,}, .connector2="J4.4/PB13", .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_CK",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_DOWN, .logic_level=GPIO_LVL_HI, },          \
+    {.Pad = { .port=PORT_B, .pin=12,}, .connector2="J3.11/PB12", .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_WS",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },         \
+    {.Pad = { .port=PORT_C, .pin=3,}, .connector2="J3.35/PC3",   .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_SD",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },
 
 #else
 #define GPIO_CONFIG_I2S2
@@ -143,6 +147,7 @@ const GpioConfig_t GpioConfig[] = {
         GPIO_CONFIG_SDIO
 
 #ifdef HAS_GAME_PAD_PS2
+#error rerer
     {.Pad = {.port = PORT_B, .pin = 12,}, .name="PS2_CS", .connector1 = "-", .mode = GPIO_API_MODE_OUTPUT,  .pull = GPIO__PULL_AIR, .speed = GPIO_SPEED_FREQ_LOW,  .mux = 0, .logic_level = GPIO_LVL_HI,},
 #endif /*HAS_GAME_PAD_PS2*/
 
@@ -155,13 +160,13 @@ const GpioConfig_t GpioConfig[] = {
 
 
 #ifdef HAS_SPI2
-    {.Pad = {.port=PORT_B, .pin=13,}, .name="SPI2_SCK",  .mode=GPIO_API_MODE_ALT1,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_VERY_HIGH, .mux=GPIO_AF5_SPI2,   .logic_level=GPIO_LVL_LOW,},
-    {.Pad = {.port=PORT_B, .pin=14,}, .name="SPI2_MISO", .mode=GPIO_API_MODE_ALT1,  .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_FREQ_VERY_HIGH, .mux=GPIO_AF5_SPI2,   .logic_level=GPIO_LVL_LOW,},
-    {.Pad = {.port=PORT_B, .pin=15,}, .name="SPI2_MOSI", .mode=GPIO_API_MODE_ALT1,  .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_FREQ_VERY_HIGH, .mux=GPIO_AF5_SPI2,   .logic_level=GPIO_LVL_LOW,},
+    {.Pad = {.port=PORT_B, .pin=13,}, .name="SPI2_SCK",  .mode=GPIO_API_MODE_ALT1,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF5_SPI2,   .logic_level=GPIO_LVL_LOW,},
+    {.Pad = {.port=PORT_B, .pin=14,}, .name="SPI2_MISO", .mode=GPIO_API_MODE_ALT1,  .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF5_SPI2,   .logic_level=GPIO_LVL_LOW,},
+    {.Pad = {.port=PORT_B, .pin=15,}, .name="SPI2_MOSI", .mode=GPIO_API_MODE_ALT1,  .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF5_SPI2,   .logic_level=GPIO_LVL_LOW,},
 #endif /* HAS_SPI2 */
 
 #ifdef HAS_LED
-    {.Pad={ .port=PORT_A, .pin=1, }, .name="LedGreem",     .connector1="-", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_LOW,       .mux=0,               .logic_level=GPIO_LVL_HI,},
+    {.Pad={ .port=PORT_A, .pin=1, }, .name="LedGreem",     .connector1="-", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,       .mux=0,               .logic_level=GPIO_LVL_HI,},
 #endif
 
     { .Pad = {.port=PORT_A, .pin=5,}, .mux = 0,  .name="IR_SENS", .connector1="", .connector2="", .mode = GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE, .pull=GPIO__PULL_UP,   .logic_level = GPIO_LVL_HI,},
@@ -180,7 +185,6 @@ const GpioConfig_t GpioConfig[] = {
   //  { .Pad = {.port=PORT_E, .pin=0,}, .name="IR_SENS1", .connector1="J2.44", .connector2="pin97", .mode = GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE, .pull=GPIO__PULL_UP,   .mux = 0, .logic_level = GPIO_LVL_HI},
   //  { .Pad = {.port=PORT_E, .pin=1,}, .name="IR_SENS2", .connector1="", .connector2="", .mode = GPIO_API_MODE_INPUT_EXINT_BOTH_EDGE, .pull=GPIO__PULL_UP,   .mux = 0, .logic_level = GPIO_LVL_HI},
 
-    //{.Pad={ .port=PORT_A, .pin=4, .name="Buzzer",     .connector1="-", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_MEDIUM,       .mux=0,               .logic_level=GPIO_LVL_LOW},
 
 
 #ifdef HAS_TIMER3
@@ -194,20 +198,20 @@ const GpioConfig_t GpioConfig[] = {
 
 
 #ifdef HAS_W25Q16BV
-    {.Pad={.port=PORT_A,  .pin=13,}, .name="F_CS",     .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_FREQ_LOW,       .mux=0,               .logic_level=GPIO_LVL_HI,},
+    {.Pad={.port=PORT_A,  .pin=13,}, .name="F_CS",     .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED,       .mux=0,               .logic_level=GPIO_LVL_HI,},
 #endif
 
 #ifdef HAS_BUTTON
-    {.Pad={ .port=PORT_A, .pin=0, },   .name="WKUP", .connector1="PA.0", .connector2="pin34", .mode=GPIO_API_MODE_INPUT_EXINT_RISING,      .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_LOW, .mux=0, .logic_level=GPIO_LVL_HI,},
+    {.Pad={ .port=PORT_A, .pin=0, },   .name="WKUP", .connector1="PA.0", .connector2="pin34", .mode=GPIO_API_MODE_INPUT_EXINT_RISING,      .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED, .mux=0, .logic_level=GPIO_LVL_HI,},
 #endif
    // {.Pad={ .port=PORT_B, .pin=1,  .name="INT", .mode=GPIO_API_MODE_INPUT_EXINT_FAILLING,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_FREQ_LOW, .mux=0, .logic_level=GPIO_LVL_HI},
 
 
 #ifdef HAS_SI4703
-    {.Pad={ .port=PORT_C, .pin=3,},  .name="SI4703_RST",     .connector1="UEXT.8",  .connector2="JP1.3", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_LOW,       .mux=0,               .logic_level=GPIO_LVL_LOW,},
-    {.Pad={ .port=PORT_C, .pin=2,},  .name="SI4703_SEN",     .connector1="UEXT.7",  .connector2="JP1.4", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_LOW,       .mux=0,               .logic_level=GPIO_LVL_HI,},
-    {.Pad={ .port=PORT_D, .pin=0,},  .name="SI4703_GPIO1",   .connector1="PD.3",    .connector2="JP1.2", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_LOW,       .mux=0,               .logic_level=GPIO_LVL_HI,},
-    {.Pad={ .port=PORT_D, .pin=1,},  .name="SI4703_GPIO2",   .connector1="PD.4",    .connector2="JP1.1", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_LOW,       .mux=0,               .logic_level=GPIO_LVL_HI,},
+    {.Pad={ .port=PORT_C, .pin=3,},  .name="SI4703_RST",     .connector1="UEXT.8",  .connector2="JP1.3", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,       .mux=0,               .logic_level=GPIO_LVL_LOW,},
+    {.Pad={ .port=PORT_C, .pin=2,},  .name="SI4703_SEN",     .connector1="UEXT.7",  .connector2="JP1.4", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,       .mux=0,               .logic_level=GPIO_LVL_HI,},
+    {.Pad={ .port=PORT_D, .pin=0,},  .name="SI4703_GPIO1",   .connector1="PD.3",    .connector2="JP1.2", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,       .mux=0,               .logic_level=GPIO_LVL_HI,},
+    {.Pad={ .port=PORT_D, .pin=1,},  .name="SI4703_GPIO2",   .connector1="PD.4",    .connector2="JP1.1", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,       .mux=0,               .logic_level=GPIO_LVL_HI,},
 #endif /*HAS_SI4703*/
 
 
@@ -217,7 +221,7 @@ const GpioConfig_t GpioConfig[] = {
 #endif /*HAS_USB_DEVICE*/
 
 #ifdef HAS_USB_HOST
-    {.Pad={ .port=PORT_A, .pin=9, },   .name="OTG_FS_VBUS",   .connector1="PA9", .connector2="USB_HOST.1", .mode=GPIO_MODE_INPUT,     .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_FREQ_LOW, .mux=0, .logic_level=GPIO_LVL_HI,},
+    {.Pad={ .port=PORT_A, .pin=9, },   .name="OTG_FS_VBUS",   .connector1="PA9", .connector2="USB_HOST.1", .mode=GPIO_MODE_INPUT,     .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED, .mux=0, .logic_level=GPIO_LVL_HI,},
     {.Pad={ .port=PORT_A, .pin=11, },  .name="OTG_FS_DM",     .connector1="D-", .connector2="USB_HOST.2", .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF10_OTG_FS, .logic_level=GPIO_LVL_HI,},
     {.Pad={ .port=PORT_A, .pin=12, },  .name="OTG_FS_DP",     .connector1="D+", .connector2="USB_HOST.3", .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF10_OTG_FS, .logic_level=GPIO_LVL_HI,},
 #endif

@@ -110,9 +110,10 @@ bool sdio_read_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, uint8
     bool res = false;
     SdioHandle_t* Node = SdioGetNode(num);
     if(Node) {
+#ifdef HAS_SDIO_DEBUG
         LOG_DEBUG(LG_SDIO, "ReadBlock Num:%u BlkNum:%u BlkCnt:%u", num, block_num, block_cnt);
-        uint32_t try
-            = 0;
+#endif
+        uint32_t try = 0;
         bool read_ok = false;
         for(try = 0; try <= SDIO_READ_TRY_CNT; try ++) {
             res = false;
@@ -146,7 +147,9 @@ bool sdio_read_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, uint8
             if(res) {
                 read_ok = true;
                 Node->read_ok_cnt++;
+#ifdef HAS_SDIO_DEBUG
                 LOG_DEBUG(LG_SDIO, "ReadBlockOk Num:%u BlkNum:%u try:%u", num, block_num, try);
+#endif
                 Node->try_read_cnt++;
                 break;
             } else {
@@ -165,11 +168,18 @@ bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, cons
     bool res = false;
     SdioHandle_t* Node = SdioGetNode(num);
     if(Node) {
+#ifdef HAS_SDIO_DEBUG
         LOG_DEBUG(LG_SDIO, "WriteBlock,Num:%u,BlkNum:%u,BlkCnt:%u", num, block_num, block_cnt);
+#endif
         uint32_t try_cnt = 0;
         for(try_cnt = 0; try_cnt < SDIO_WRITE_TRY_CNT; try_cnt++) {
             res = false;
             switch(Node->move_mode) {
+            case MOVE_MODE_DMA: {
+#ifdef HAS_SDIO_DMA
+                res = sdio_write_sector_dma(num, block_num, block_cnt, TxData);
+#endif
+            } break;
             case MOVE_MODE_POLLING: {
 #ifdef HAS_SDIO_POLL
                 res = sdio_write_sector_time_out(num, block_num, block_cnt, TxData);
@@ -180,11 +190,6 @@ bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, cons
                 res = sdio_write_sector_it(num, block_num, block_cnt, TxData);
 #endif
             } break;
-            case MOVE_MODE_DMA: {
-#ifdef HAS_SDIO_DMA
-                res = sdio_write_sector_dma(num, block_num, block_cnt, TxData);
-#endif
-            } break;
             default: {
 #ifdef HAS_SDIO_POLL
                 res = sdio_write_sector_time_out(num, block_num, block_cnt, TxData);
@@ -192,9 +197,11 @@ bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, cons
             } break;
             }
 
-            wait_ms(SDIO_TIME_OUT_MS); /*TODO: minimize that time*/
+          //  wait_ms(SDIO_TIME_OUT_MS); /*TODO: minimize that time*/
             if(res) {
+#ifdef HAS_SDIO_DEBUG
                 LOG_DEBUG(LG_SDIO, "WriteBlockOk,Num:%u,BlkNum:%u,try:%u", num, block_num, try_cnt);
+#endif
                 Node->try_write_cnt++;
                 break;
             }
@@ -240,10 +247,11 @@ static bool sdio_init_handle(SdioHandle_t* const Node, const SdioConfig_t* Confi
             LOG_INFO(LG_SDIO, "PCLK2:%u Hz", pclk2);
             uint32_t clock_div = SdioCalcClockDiv(pclk2, Config->bit_rate_hz);
             clock_div = uint32_limiter(clock_div, 254);
-            LOG_INFO(LG_SDIO, "FinalClockDiv %u", clock_div);
+            LOG_INFO(LG_SDIO, "FinalClockDiv:%u", clock_div);
             Node->Handle.Init.ClockDiv = clock_div;
             res = true;
         }
+        Node->Handle.Init.ClockDiv =3;
     }
     return res;
 }

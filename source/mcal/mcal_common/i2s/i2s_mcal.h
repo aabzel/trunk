@@ -27,6 +27,7 @@ extern "C" {
 /*API*/
 I2sHandle_t* I2sGetNode(uint8_t num);
 const I2sConfig_t* I2sGetConfig(uint8_t num);
+const I2sBusDirInfo_t* I2sRoleAndDirToInfo(const IfBusRole_t bus_role, const ConnectivitDir_t direction) ;
 
 bool i2s_mcal_init(void);
 bool i2s_init_one(const uint8_t num);
@@ -49,6 +50,7 @@ uint8_t i2s_sample_size_get(uint8_t num);
 bool i2s_listen(uint8_t num, uint32_t duration_ms);
 bool i2s_data_format_get(uint8_t num, I2sDataFormat_t * data_format);
 bool i2s_mcal_read(uint8_t num, uint16_t* array, uint32_t words) ;
+bool i2s_dma_read(const  uint8_t num, uint16_t* const array, const uint32_t words);
 bool i2s_calc_byte_rate(void);
 bool i2s_is_valid_audio_frequency(const uint32_t audio_frequency_hz);
 bool i2s_calc_dft(uint8_t num);
@@ -60,6 +62,9 @@ bool i2s_dir_bus_role_get(uint8_t num, IfBusRole_t *bus_role);
 bool i2s_load_params(I2sConfig_t* Config);
 
 /*setters*/
+bool i2s_audio_set_data_dirrection(const uint8_t num, const IfOperation_t operation);
+bool i2s_gpio_set_write(const uint8_t num);
+bool i2s_gpio_set_read(const uint8_t num);
 bool i2s_dir_bus_role_set(uint8_t num, IfBusRole_t bus_role);
 bool i2s_send(uint8_t num, bool status);
 bool i2s_mcal_start(uint8_t num, uint32_t array_len) ;

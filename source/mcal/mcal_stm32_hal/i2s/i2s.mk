@@ -15,6 +15,10 @@ ifneq ($(I2S_CUSTOM_MK_INC),Y)
     
     SOURCES_C += $(I2S_CUSTOM_DIR)/i2s_callbacks.c
 
+    ifeq ($(I2S_GPIO),Y)
+        MCAL_OPT += -DHAS_I2S_GPIO
+    endif
+
     ifeq ($(I2S_DMA),Y)
         MCAL_OPT += -DHAS_I2S_DMA
         SOURCES_C += $(I2S_CUSTOM_DIR)/dma_channel_config_i2s.c

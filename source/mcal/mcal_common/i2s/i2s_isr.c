@@ -3,6 +3,34 @@
 #include <string.h>
 
 #include "i2s_mcal.h"
+#include "sound_recorder_isr.h"
+#include "gpio_mcal.h"
+
+
+bool I2sRxHalfCallback(I2sHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+        Node->rx_half = true;
+        Node->rx_half_cnt++;
+        gpio_logic_level_set(Node->PadDmaRx, GPIO_LVL_LOW);
+        I2xRxHalfCallbackCustom(Node);
+        res = true;
+    }
+    return res;
+}
+
+bool I2sRxDoneCallback(I2sHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+        Node->rx_done = true;
+        Node->rx_done_cnt++;
+        gpio_logic_level_set(Node->PadDmaRx, GPIO_LVL_HI);
+        I2xRxDoneCallbackCustom(Node);
+        res = true;
+    }
+    return res;
+}
+
 
 bool i2s_isr_echo( I2sHandle_t* Node ){
     bool res = false ;
@@ -54,26 +82,6 @@ bool I2sDmaCallBackTxDone(uint8_t num) {
 }
 
 /*Rx*/
-
-bool I2sRxHalfCallback(I2sHandle_t* const Node) {
-    bool res = false;
-    if(Node) {
-        Node->rx_half = true;
-        Node->rx_half_cnt++;
-        res = true;
-    }
-    return res;
-}
-
-bool I2sRxDoneCallback(I2sHandle_t* const Node) {
-    bool res = false;
-    if(Node) {
-        Node->rx_done = true;
-        Node->rx_done_cnt++;
-        res = true;
-    }
-    return res;
-}
 
 bool I2sDmaCallBackRxHalf(uint8_t num) {
     bool res = false;

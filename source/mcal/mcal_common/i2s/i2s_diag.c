@@ -20,33 +20,21 @@
 #include "dma_diag.h"
 #endif
 
+#if 0
 const char* I2sDirBusRoleToStr(I2sDirAndBusRole_t code) {
     const char* name = "?";
     switch(code) {
-    case I2S_DIR_BUS_MODE_SLAVE:
-        name = "Slave";
-        break;
-    case I2S_DIR_BUS_MODE_SLAVE_RX:
-        name = "SlaveRx";
-        break;
-    case I2S_DIR_BUS_MODE_SLAVE_TX:
-        name = "SlaveTx";
-        break;
-    case I2S_DIR_BUS_MODE_MASTER:
-        name = "Master";
-        break;
-    case I2S_DIR_BUS_MODE_MASTER_TX:
-        name = "MasterTx";
-        break;
-    case I2S_DIR_BUS_MODE_MASTER_RX:
-        name = "MasterRx";
-        break;
-    default:
-        name = "??";
-        break;
+    case I2S_DIR_BUS_MODE_SLAVE:        name = "Slave";        break;
+    case I2S_DIR_BUS_MODE_SLAVE_RX:        name = "SlaveRx";        break;
+    case I2S_DIR_BUS_MODE_SLAVE_TX:        name = "SlaveTx";        break;
+    case I2S_DIR_BUS_MODE_MASTER:        name = "Master";        break;
+    case I2S_DIR_BUS_MODE_MASTER_TX:        name = "MasterTx";        break;
+    case I2S_DIR_BUS_MODE_MASTER_RX:        name = "MasterRx";        break;
+    default:        name = "??";        break;
     }
     return name;
 }
+#endif
 
 const char* I2sAudioFreqToStr(AudioFreq_t freq) {
     snprintf(text, sizeof(text), "%u Hz", freq);

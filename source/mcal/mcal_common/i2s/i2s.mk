@@ -5,12 +5,16 @@ ifneq ($(I2S_MCAL_MK_INC),Y)
 
     #I2S_VOLUME=Y
     I2S_MCAL_DIR = $(MCAL_COMMON_DIR)/i2s
-    #@echo $(error I2S_MCAL_DIR=$(I2S_MCAL_DIR))
+    # $(error I2S_MCAL_DIR=$(I2S_MCAL_DIR))
 
     INCDIR += -I$(I2S_MCAL_DIR)
     MCAL_OPT += -DHAS_I2S
-    MCAL_OPT += -DHAS_I2S_PROC
+    
     I2S_ISR=Y
+    ifeq ($(I2S_PROC),Y)
+        MCAL_OPT += -DHAS_I2S_PROC
+    endif
+    
     
     ifeq ($(I2S_DMA),Y)
         MCAL_OPT += -DHAS_I2S_DMA
@@ -35,7 +39,7 @@ ifneq ($(I2S_MCAL_MK_INC),Y)
     ifeq ($(DIAG),Y)
         ifeq ($(I2S_DIAG),Y)
             MCAL_OPT += -DHAS_I2S_DIAG
-            SOURCES_C += $(I2S_MCAL_DIR)/i2s_diag.c
+            SOURCES_DIAG_C += $(I2S_MCAL_DIR)/i2s_diag.c
         endif
     endif
     

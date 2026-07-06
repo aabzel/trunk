@@ -34,6 +34,7 @@ bool gpio_clock_init(void);
 bool gpio_init_custom(void);
 bool gpio_init_pad(const Pad_t Pad);
 bool gpio_init_one(const GpioConfig_t* const Config);
+bool gpio_init_input(const Pad_t Pad);
 bool gpio_init_out(const Pad_t Pad);
 bool gpio_init_out_pad(const Pad_t Pad);
 bool gpio_mcal_init(void); //gpio_init-busy name
