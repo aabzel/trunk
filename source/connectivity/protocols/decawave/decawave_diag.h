@@ -11,9 +11,9 @@ extern "C" {
 #include "decawave_types.h"
 #include "log.h"
 
-const char* DecaMes2Str(DwcaMess_t code);
-const char* DecaWaveHeader2Str( const DecaWaveHeader_t* const Node);
-const char* DecaWaveVarId2Str(UwbVatiable_t var_id);
+const char* DecaMesToStr(DwcaMess_t code);
+const char* DecaWaveHeaderToStr( const DecaWaveHeader_t* const Node);
+const char* DecaWaveVarIdToStr(UwbVatiable_t var_id);
 bool decawave_diag_distanse(uint8_t num);
 bool decawave_diag_flow(uint8_t num);
 bool decawave_protocol_diag(uint8_t num);

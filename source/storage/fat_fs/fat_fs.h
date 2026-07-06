@@ -10,6 +10,7 @@ extern "C" {
 #include "fat_fs_types.h"
 #include "ff.h"
 #include "fat_fs.h"
+
 #ifdef HAS_FAT_FS_DIAG
 #include "fat_fs_diag.h"
 #endif

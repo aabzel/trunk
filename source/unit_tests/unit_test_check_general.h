@@ -12,9 +12,10 @@
 #ifndef HAS_LOG
 #error "Add LOG component"
 #endif 
-#include "log.h"
 
+#include "log.h"
 #include "unit_test_run.h"
+
 /*Macros for Polymorphism*/
 #define EXPECT_EQ_MEM(memL, memR, len)                                                                                 \
     do {                                                                                                               \

@@ -24,23 +24,26 @@ typedef struct {
     int16_t right;  /**/
 }__attribute__((packed)) WavSample16_t;
 
-// 44 byte
+/* 44 byte
+   Little-Endian*/
 typedef union {
     uint8_t buff[44];
     struct {
-        uint32_t chunkId; /*contain letters    RIFF*/
-        uint32_t chunkSize;/*Chunk size �this header size*/
-        uint32_t format;/*WAVE 0x57415645*/
-        uint32_t subchunk1Id;/*fmt 0x666d7420*/
-        uint32_t subchunk1Size;/**/
-        uint16_t audioFormat;/*PCM = 1	*/
-        uint16_t numChannels;/*mono= 1, stereo= 2 */
-        uint32_t sampleRate;/*Sampling Frequency in Hz*/
-        uint32_t byteRate;/*The number of bytes transferred per second of playback.*/
-        uint16_t blockAlign;/*The number of bytes for one sample, including all channels.*/
-        uint16_t bitsPerSample;/*The number of bits in a sample. The so-called "depth" or precision of sound. 8 bit, 16 bit, etc.*/
-        uint32_t subchunk2Id;/*data*/
-        uint32_t subchunk2Size;/*Size of the audio data*/
+        uint32_t chunkId;                /* contain letters    RIFF*/
+        uint32_t chunkSize;              /* Chunk size this header size*/
+        uint32_t format;                 /* WAVE 0x57415645*/
+        uint32_t subchunk1Id;            /* Chunk ID: fmt 0x666d7420*/
+        uint32_t subchunk1Size;          /* Chunk Data Size:  16 + extra format bytes*/
+
+        uint16_t audioFormat;            /* Compression code   PCM = 1	*/
+        uint16_t numChannels;            /* Number of channels: mono= 1, stereo= 2 */
+        uint32_t sampleRate;             /* Sample rate, Sampling Frequency in Hz*/
+        uint32_t aver_bytes_per_sec;     /* Average Bytes Per Second, The number of bytes transferred per second of playback.*/
+        uint16_t blockAlign;             /* Block align, Average bytes per second, The number of bytes for one sample, including all channels.*/
+        uint16_t bitsPerSample;          /* Significant bits per sample, The number of bits in a sample. The so-called "depth" or precision of sound. 8 bit, 16 bit, etc.*/
+
+        uint32_t subchunk2Id;/*Chunk ID: data*/
+        uint32_t subchunk2Size;/*Chunk Data Size: Size of the audio data*/
     } __attribute__((packed));
 } __attribute__((packed)) WavHeader_t;
 

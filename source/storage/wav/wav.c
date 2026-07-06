@@ -37,18 +37,18 @@ bool wav_compose_header_by_dds(DdsHandle_t* const DDs,
             uint32_t byte_per_sample = (DDs->sample_bitness/8)*chan_cnt;
             uint32_t data_size =  DDs->sample_cnt*(DDs->sample_bitness/8);
 
-            Header->chunkId= reverse_byte_order_uint32(0x52494646); /*RIFF*/
-            Header->chunkSize =data_size+sizeof(WavHeader_t)-8; /**/
-            Header->format = reverse_byte_order_uint32(0x57415645); /*WAVE*/
-            Header->subchunk1Id = reverse_byte_order_uint32(0x666d7420); /*fmt */
-            Header->subchunk1Size = 16 ; /**/
-            Header->audioFormat = WAVE_FORMAT_PCM ; /*PCM*/
-            Header->numChannels = chan_cnt; /**/
-            Header->sampleRate = DDs->sample_per_second; /**/
-            Header->byteRate = byte_per_sample* DDs->sample_per_second; /**/
-            Header->blockAlign = byte_per_sample; /**/
-            Header->bitsPerSample = DDs->sample_bitness; /**/
-            Header->subchunk2Id = reverse_byte_order_uint32(0x64617461); /*data*/
+            Header->chunkId = reverse_byte_order_uint32(WAV_RIFF);     /*RIFF*/
+            Header->chunkSize = data_size+sizeof(WavHeader_t)-8;       /**/
+            Header->format = reverse_byte_order_uint32(WAV_WAVE);      /*WAVE*/
+            Header->subchunk1Id = reverse_byte_order_uint32(WAV_SECTION_ID_FMT ); /*fmt */
+            Header->subchunk1Size = WAV_SECTION_FMT_SIZE ;             /**/
+            Header->audioFormat = WAVE_COMPRESSION_CODE_PCM ;          /*PCM*/
+            Header->numChannels = chan_cnt;                            /**/
+            Header->sampleRate = DDs->sample_per_second;               /**/
+            Header->aver_bytes_per_sec = byte_per_sample* DDs->sample_per_second; /**/
+            Header->blockAlign = byte_per_sample;                      /**/
+            Header->bitsPerSample = DDs->sample_bitness;               /**/
+            Header->subchunk2Id = reverse_byte_order_uint32(WAV_SECTION_ID_DATA); /*data*/
             Header->subchunk2Size =  DDs->sample_cnt*(DDs->sample_bitness/8); /**/
             LOG_INFO(WAV, "%s",WavHeaderToStr(Header));
             res = true;
@@ -508,18 +508,18 @@ static bool wav_compose_header( WavHeader_t* const Header,
     if(Header) {
         uint32_t byte_per_sample =(sample_bitness/8)*chan_cnt;
         uint32_t data_size =  sample_cnt*(sample_bitness/8);
-        Header->chunkId= reverse_byte_order_uint32(0x52494646); /*RIFF*/
+        Header->chunkId= reverse_byte_order_uint32(WAV_RIFF); /*RIFF*/
         Header->chunkSize =data_size+sizeof(WavHeader_t)-8; /**/
-        Header->format = reverse_byte_order_uint32(0x57415645); /*WAVE*/
-        Header->subchunk1Id = reverse_byte_order_uint32(0x666d7420); /*fmt */
-        Header->subchunk1Size = sample_bitness ; /**/
-        Header->audioFormat = WAVE_FORMAT_PCM ; /*PCM*/
+        Header->format = reverse_byte_order_uint32(WAV_WAVE); /*WAVE*/
+        Header->subchunk1Id = reverse_byte_order_uint32(WAV_SECTION_ID_FMT); /*fmt */
+        Header->subchunk1Size = WAV_SECTION_FMT_SIZE ; /**/
+        Header->audioFormat = WAVE_COMPRESSION_CODE_PCM ; /*PCM*/
         Header->numChannels = chan_cnt; /**/
         Header->sampleRate = sample_per_second; /**/
-        Header->byteRate = byte_per_sample* sample_per_second; /**/
+        Header->aver_bytes_per_sec = byte_per_sample* sample_per_second; /**/
         Header->blockAlign = byte_per_sample; /**/
         Header->bitsPerSample = sample_bitness; /**/
-        Header->subchunk2Id = reverse_byte_order_uint32(0x64617461); /*data*/
+        Header->subchunk2Id = reverse_byte_order_uint32(WAV_SECTION_ID_DATA); /*data*/
         Header->subchunk2Size =  sample_cnt*(sample_bitness/8); /**/
         LOG_INFO(WAV, "%s",WavHeaderToStr(Header));
         res = true;

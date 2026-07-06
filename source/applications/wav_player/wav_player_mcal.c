@@ -6,6 +6,7 @@
 #include "ff.h" /* Declarations of FatFs API */
 #include "i2s_mcal.h"
 #include "log.h"
+#include "audio.h"
 #include "wav_diag.h"
 
 COMPONENT_IS_VALID(WavPlayer, wav_player)

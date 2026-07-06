@@ -15,7 +15,7 @@
 #include "uwb_diag.h"
 #include "writer_config.h"
 
-const char* DecaMes2Str(DwcaMess_t code) {
+const char* DecaMesToStr(DwcaMess_t code) {
     const char* name = "?";
     switch((uint8_t)code) {
     case DECA_BLINK:
@@ -40,7 +40,7 @@ const char* DecaMes2Str(DwcaMess_t code) {
     return name;
 }
 
-const char* DecaWaveVarId2Str(UwbVatiable_t var_id) {
+const char* DecaWaveVarIdToStr(UwbVatiable_t var_id) {
     const char* name = "?";
     switch((uint8_t)var_id) {
     case UWB_VAR_INITIATOR_T_LOOP:
@@ -88,50 +88,50 @@ bool decawave_diag_distanse(uint8_t num) {
 
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, "measure");
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase1.distance_m.cur));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase2.distance_m.cur));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->avarage_distance_m.cur));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->final.distance_m.cur));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase1.distance_m.cur));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase2.distance_m.cur));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->avarage_distance_m.cur));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->final.distance_m.cur));
         cli_printf("%s" CRLF, log_line);
 
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, "min");
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase1.distance_m.min));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase2.distance_m.min));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->avarage_distance_m.min));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->final.distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase1.distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase2.distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->avarage_distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->final.distance_m.min));
         cli_printf("%s" CRLF, log_line);
 
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, "max");
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase1.distance_m.max));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase2.distance_m.max));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->avarage_distance_m.max));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->final.distance_m.max));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase1.distance_m.max));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase2.distance_m.max));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->avarage_distance_m.max));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->final.distance_m.max));
         cli_printf("%s" CRLF, log_line);
 
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, "delta");
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( Node->phase1.distance_m.max - Node->phase1.distance_m.min));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( Node->phase2.distance_m.max - Node->phase2.distance_m.min));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( Node->avarage_distance_m.max - Node->avarage_distance_m.min));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( Node->final.distance_m.max - Node->final.distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( Node->phase1.distance_m.max - Node->phase1.distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( Node->phase2.distance_m.max - Node->phase2.distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( Node->avarage_distance_m.max - Node->avarage_distance_m.min));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( Node->final.distance_m.max - Node->final.distance_m.min));
         cli_printf("%s" CRLF, log_line);
 
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, "average");
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( AVERAGE_2(Node->phase1.distance_m.max, Node->phase1.distance_m.min)));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( AVERAGE_2(Node->phase2.distance_m.max, Node->phase2.distance_m.min)));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( AVERAGE_2(Node->avarage_distance_m.max, Node->avarage_distance_m.min)));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str( AVERAGE_2(Node->final.distance_m.max, Node->final.distance_m.min)));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( AVERAGE_2(Node->phase1.distance_m.max, Node->phase1.distance_m.min)));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( AVERAGE_2(Node->phase2.distance_m.max, Node->phase2.distance_m.min)));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( AVERAGE_2(Node->avarage_distance_m.max, Node->avarage_distance_m.min)));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr( AVERAGE_2(Node->final.distance_m.max, Node->final.distance_m.min)));
         cli_printf("%s" CRLF, log_line);
 
         strcpy(log_line, TSEP); /*Real*/
         snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, "real");
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase1.distance_real_m));
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->phase2.distance_real_m));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase1.distance_real_m));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->phase2.distance_real_m));
         snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, "0.0");
-        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistance2Str(Node->final.distance_real_m));
+        snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, UwbDistanceToStr(Node->final.distance_real_m));
         cli_printf("%s" CRLF, log_line);
 
         strcpy(log_line, TSEP);
@@ -149,11 +149,11 @@ bool decawave_diag_distanse(uint8_t num) {
     return res;
 }
 
-const char* DecaWaveHeader2Str( const DecaWaveHeader_t* const Header){
+const char* DecaWaveHeaderToStr( const DecaWaveHeader_t* const Header){
     static char text[80]="";
     if(Header) {
         snprintf(text,sizeof(text), "Type:%s,SN:%u,From:0x%x,To:0x%x,Payload:%u Byte",
-                 DecaMes2Str(Header->message),
+                 DecaMesToStr(Header->message),
               Header->sequence_number,
               Header->source_addr,
               Header->destination_addr,
@@ -165,7 +165,7 @@ const char* DecaWaveHeader2Str( const DecaWaveHeader_t* const Header){
 bool DecaWaveHeaderDiag(log_level_t level, const char* const prefix, const DecaWaveHeader_t* const Header) {
     bool res = false;
     if(Header) {
-        log_write(level, DECAWAVE, "[%s] %s", prefix, DecaWaveHeader2Str( Header));
+        log_write(level, DECAWAVE, "[%s] %s", prefix, DecaWaveHeaderToStr( Header));
         res = true;
     }
     return res;
@@ -176,7 +176,7 @@ bool decawave_log_sd(const DecaWaveHeader_t* const Header) {
     bool res = false;
     if(Header) {
         char file_name[20]="DecaWaveRx.txt";
-        res = fat_fs_write(file_name, DecaWaveHeader2Str(Header));
+        res = fat_fs_write(file_name, DecaWaveHeaderToStr(Header));
     }
     return res;
 }

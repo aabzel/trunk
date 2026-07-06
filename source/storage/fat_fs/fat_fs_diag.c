@@ -59,6 +59,9 @@ const char* FatFormatOptionsToStr(BYTE format_opt) {
 const char* FatFsResToStr(FRESULT code) {
     const char* name = "?";
     switch(code) {
+    case FR_INT_ERR:
+        name = "AssertionFailed";
+        break;
     case FR_NO_FILESYSTEM:
         name = "NoFileSys";
         break;
@@ -70,9 +73,6 @@ const char* FatFsResToStr(FRESULT code) {
         break;
     case FR_DISK_ERR:
         name = "DiskErr";
-        break;
-    case FR_INT_ERR:
-        name = "IntErr";
         break;
     case FR_NO_FILE:
         name = "NoFile";

@@ -1,0 +1,13 @@
+ifneq ($(TEST_DECAWAVE_NATIVE_INC),Y)
+    TEST_DECAWAVE_NATIVE_INC=Y
+
+    $(info Build  $(mkfile_path) )
+    TEST_DECAWAVE_NATIVE_DIR = $(TEST_SET_SW_DIR)/test_decawave_native
+    #@echo $(error TEST_DECAWAVE_NATIVE_DIR= $(TEST_DECAWAVE_NATIVE_DIR))
+
+    MCAL_OPT += -DHAS_TEST_DECAWAVE_NATIVE
+    MCAL_OPT += -DHAS_TEST_SUIT_DECAWAVE_NATIVE
+
+    INCDIR += -I$(TEST_DECAWAVE_NATIVE_DIR)
+    SOURCES_C += $(TEST_DECAWAVE_NATIVE_DIR)/test_decawave_native.c
+endif

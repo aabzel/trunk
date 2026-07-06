@@ -179,7 +179,7 @@ bool decawave_proc_header(DecaWaveHandle_t* const Node, const uint8_t* const arr
 bool decawave_send_ll(DecaWaveHandle_t* const Node, DwcaMess_t mess_type, uint16_t destination_id, UwbVatiable_t var_id,
                       uint8_t* buff, uint32_t payload_size) {
     bool res = false;
-    LOG_NOTICE(DECAWAVE, "Tx %s", DecaMes2Str(mess_type));
+    LOG_NOTICE(DECAWAVE, "Tx %s", DecaMesToStr(mess_type));
     if(Node) {
         Node->tx_header.preamble = Node->preamble_val;
         Node->tx_header.message = mess_type;
@@ -214,11 +214,11 @@ bool decawave_send_ll(DecaWaveHandle_t* const Node, DwcaMess_t mess_type, uint16
 #ifdef HAS_TBFP
             res = tbfp_send(Node->tx_frame, Node->tx_size, Node->interface, 1, ACK_NO_NEED, FRAME_ID_DECAWAVE);
             if(res) {
-                LOG_DEBUG(DECAWAVE, "Send %s Ok", DecaMes2Str(mess_type));
+                LOG_DEBUG(DECAWAVE, "Send %s Ok", DecaMesToStr(mess_type));
                 res = true;
             } else {
                 res = false;
-                LOG_ERROR(DECAWAVE, "Send %s Err", DecaMes2Str(mess_type));
+                LOG_ERROR(DECAWAVE, "Send %s Err", DecaMesToStr(mess_type));
             }
 #else
             res = false;
@@ -343,7 +343,7 @@ static bool decawave_calc_phase2(DecaWaveHandle_t* const Node) {
 bool decawave_proc_data(DecaWaveHandle_t* const Node) {
     bool res = false;
     if(Node) {
-        LOG_PROTECTED(DECAWAVE, "ProcDataType 0x%x=%s", Node->rx_payload[0], DecaWaveVarId2Str(Node->rx_payload[0]));
+        LOG_PROTECTED(DECAWAVE, "ProcDataType 0x%x=%s", Node->rx_payload[0], DecaWaveVarIdToStr(Node->rx_payload[0]));
         switch(Node->rx_payload[0]) {
         case UWB_VAR_SHARE_DIST: {
             if(sizeof(PollPayload_t) == (Node->rx_header.payload_size - 1)) {
@@ -431,7 +431,7 @@ bool decawave_proc_data(DecaWaveHandle_t* const Node) {
 bool decawave_proc_poll(DecaWaveHandle_t* const Node) {
     bool res = false;
 #ifdef HAS_DS_TWR
-    LOG_DEBUG(DECAWAVE, "ProcRxPoll in State %s", DsTwrState2Str(DsTwrItem.state));
+    LOG_DEBUG(DECAWAVE, "ProcRxPoll in State %s", DsTwrStateToStr(DsTwrItem.state));
     res = decawave_proc_data(Node);
 
     DsTwrItem.start_ms = time_get_ms32();
@@ -444,7 +444,7 @@ bool decawave_proc_poll(DecaWaveHandle_t* const Node) {
 bool decawave_proc_response(DecaWaveHandle_t* const Node) {
     bool res = false;
 #ifdef HAS_DS_TWR
-    LOG_PROTECTED(DECAWAVE, "ProcRxResp in State %s", DsTwrState2Str(DsTwrItem.state));
+    LOG_PROTECTED(DECAWAVE, "ProcRxResp in State %s", DsTwrStateToStr(DsTwrItem.state));
     res = decawave_proc_data(Node);
     DsTwrItem.start_ms = time_get_ms32();
     res = fifo_push(&DsTwrItem.InputFifo, DS_TWR_INPUT_RX_RESPONSE);
@@ -456,7 +456,7 @@ bool decawave_proc_response(DecaWaveHandle_t* const Node) {
 bool decawave_proc_resp_poll(DecaWaveHandle_t* const Node) {
     bool res = false;
 #ifdef HAS_DS_TWR
-    LOG_PROTECTED(DECAWAVE, "ProcRxResp+Poll in State %s", DsTwrState2Str(DsTwrItem.state));
+    LOG_PROTECTED(DECAWAVE, "ProcRxResp+Poll in State %s", DsTwrStateToStr(DsTwrItem.state));
     DsTwrItem.start_ms = time_get_ms32();
     res = fifo_push(&DsTwrItem.InputFifo, DS_TWR_INPUT_RX_PESPONSE_POLL);
 #endif
@@ -557,7 +557,7 @@ bool decawave_proc_final(DecaWaveHandle_t* const Node) {
     bool res = false;
 #ifdef HAS_DS_TWR
     DsTwrItem.start_ms = time_get_ms32();
-    LOG_DEBUG(DECAWAVE, "SignalRxTimings in State %s", DsTwrState2Str(DsTwrItem.state));
+    LOG_DEBUG(DECAWAVE, "SignalRxTimings in State %s", DsTwrStateToStr(DsTwrItem.state));
 #endif
     // res = ds_twr_parse_responder_timings(&DsTwrItem, Node->rx_payload, Node->rx_header.payload_size);
     res = decawave_proc_data(Node);

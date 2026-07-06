@@ -51,7 +51,7 @@ const char* WavHeaderToStr(const WavHeader_t* const Header) {
         snprintf(lText, sizeof(lText), "%sAudioFormat:0x%04x,", lText, Header->audioFormat);
         snprintf(lText, sizeof(lText), "%sNumChannels:%u,", lText, Header->numChannels);
         snprintf(lText, sizeof(lText), "%sSampleRate:%u Hz,", lText, Header->sampleRate);
-        snprintf(lText, sizeof(lText), "%sByteRate:%u Byte,", lText, Header->byteRate);
+        snprintf(lText, sizeof(lText), "%sByteRate:%u Byte,", lText, Header->aver_bytes_per_sec);
         snprintf(lText, sizeof(lText), "%sBlockAlign:%u Byte,", lText, Header->blockAlign);
         snprintf(lText, sizeof(lText), "%sBitsPerSample:%u bit,", lText, Header->bitsPerSample);
         snprintf(lText, sizeof(lText), "%sSubchunk2Id:%s,", lText,

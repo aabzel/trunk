@@ -493,7 +493,7 @@ bool fat_fs_mount(uint8_t num, uint8_t opt, char* path) {
         ret = f_mount((FATFS*)&Node->fileSystem, (const TCHAR*)path, (BYTE)opt);
         res = FatFsRetToRes(ret, "Mount");
         if(FR_NO_FILESYSTEM == ret) {
-            res = fat_fs_format(num, FM_FAT32, 4096);
+            res = fat_fs_format(num, FM_FAT, 4096);
             //res = fat_fs_format(num, FM_FAT, 512);
         }
     }

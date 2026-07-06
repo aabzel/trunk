@@ -1,17 +1,15 @@
 #include "unit_test_commands.h"
 
 #include "convert.h"
+#include "unit_test.h"
 
 #ifdef HAS_LOG
 #include "log.h"
-#include "log_utils.h"
 #endif
-
-#include "unit_test.h"
 
 bool cmd_unit_test_list(int32_t argc, char* argv[]) {
     bool res = true;
-    LOG_INFO(SYS, "%s() key %u", __FUNCTION__, argc);
+    LOG_DEBUG(SYS, "%s() key %u", __FUNCTION__, argc);
     if((0 != argc) && (1 != argc)) {
         cli_putstr(""
                    "Usage: tsa - Print all test" CRLF
@@ -22,10 +20,88 @@ bool cmd_unit_test_list(int32_t argc, char* argv[]) {
         dump_unit_test_all();
     }
     if(1 == argc) {
-        dump_unit_test_key(argv[0]);
+        unit_test_find_key(argv[0], "");
     }
+
+    if(2 == argc) {
+        unit_test_find_key(argv[0], argv[1]);
+    }
+
     cli_putstr("!OKTEST" CRLF);
     // cli_flush();
+    return res;
+}
+
+static bool unit_test_run_legend(void) {
+    bool res = false;
+    cli_putstr("test_run bad format" CRLF "Usage: tsr test_name [repeat_count]" CRLF);
+    cli_putstr("  test_name: test name pattern, test sequential number or test range" CRLF);
+    cli_putstr("  repeat_count: repeat test call count, valid values 1-255(default=1)" CRLF "examples:" CRLF);
+    cli_putstr("  tsr *               : run all test" CRLF);
+    cli_putstr("  tsr simple*         : run all tests which names starting with \"simple\"" CRLF);
+    cli_putstr("  tsr simple+         : run all tests which names contain string \"simple\"" CRLF);
+    cli_putstr("  tsr simple^         : run all tests excluding which names contain string \"simple\"" CRLF);
+    cli_putstr("  tsr simple_test     : run test with name \"simple_test\"" CRLF);
+    cli_putstr("  tsr 13              : run test with sequential number 13" CRLF);
+    cli_putstr("  tsr 1-13            : run tests with sequential numbers in range 1-13" CRLF);
+    cli_putstr("  tsr simple_test 10  : run test with name \"simple_test\" ten times" CRLF);
+    cli_putstr("  tsr 1-13 10         : run tests with sequential numbers in range 1-13 ten times" CRLF);
+    return res;
+}
+
+bool cmd_unit_test_run_first_fail(int32_t argc, char* argv[]) {
+    bool res = false;
+    char token[100] = {0};
+    cli_printf("argc:%d" CRLF, argc);
+    if(0 <= argc) {
+        strcpy(token, "");
+        res = true;
+    }
+
+    if(1 <= argc) {
+        strcpy(token, argv[0]);
+        res = true;
+    }
+
+    if(res) {
+        res = unit_test_run_first_fail(token);
+        log_info_res(TEST, res, "run_first_fail");
+    } else {
+        LOG_ERROR(TEST, "Usage: trf token");
+    }
+    return res;
+}
+
+bool cmd_unit_test_run_by_num(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t index = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &index);
+    }
+
+    if(res) {
+        res = unit_test_run(index - 1);
+        log_info_res(TEST, res, "RunByNum");
+    } else {
+        LOG_ERROR(TEST, "Usage: trn Num");
+    }
+    return res;
+}
+
+bool cmd_unit_test_run_by_sub_name(int32_t argc, char* argv[]) {
+    bool res = false;
+
+    if(1 <= argc) {
+        res = true;
+    }
+
+    if(res) {
+        uint32_t cnt = unit_test_run_key(argv[0]);
+        LOG_INFO(TEST, "CNT:%u", cnt);
+    } else {
+        LOG_ERROR(TEST, "Usage: trs SubName");
+    }
     return res;
 }
 
@@ -59,26 +135,15 @@ bool cmd_unit_test_run(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        LOG_INFO(TEST, "key1 [%s] %u time", argv[0], repeat_count);
+        LOG_DEBUG(TEST, "key1 [%s] %u time", argv[0], repeat_count);
         while(0 != repeat_count) {
             unit_tests_run(argv[0]);
             repeat_count--;
         }
     } else {
-        cli_putstr("test_run bad format" CRLF "Usage: tsr test_name [repeat_count]" CRLF);
-        cli_putstr("  test_name: test name pattern, test sequential number or test range" CRLF);
-        cli_putstr("  repeat_count: repeat test call count, valid values 1-255(default=1)" CRLF "examples:" CRLF);
-        cli_putstr("  tsr *               : run all test" CRLF);
-        cli_putstr("  tsr simple*         : run all tests which names starting with \"simple\"" CRLF);
-        cli_putstr("  tsr simple+         : run all tests which names contain string \"simple\"" CRLF);
-        cli_putstr("  tsr simple^         : run all tests excluding which names contain string \"simple\"" CRLF);
-        cli_putstr("  tsr simple_test     : run test with name \"simple_test\"" CRLF);
-        cli_putstr("  tsr 13              : run test with sequential number 13" CRLF);
-        cli_putstr("  tsr 1-13            : run tests with sequential numbers in range 1-13" CRLF);
-        cli_putstr("  tsr simple_test 10  : run test with name \"simple_test\" ten times" CRLF);
-        cli_putstr("  tsr 1-13 10         : run tests with sequential numbers in range 1-13 ten times" CRLF);
+        unit_test_run_legend();
     }
 
-    set_log_level(SUPER_CYCLE, LOG_LEVEL_INFO);
+    log_level_set(SUPER_CYCLE, LOG_LEVEL_INFO);
     return res;
 }
