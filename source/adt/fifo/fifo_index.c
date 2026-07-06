@@ -2,15 +2,17 @@
 
 #include "std_includes.h"
 
-bool fifo_index_init(fifo_index_info_t* Node, FifoIndex_t size) {
+bool fifo_index_init(fifo_index_info_t* Node, uint32_t size) {
     bool res = false;
-    if((NULL != Node) && (0 < size)) {
-        res = true;
-        Node->size = size;
-        Node->count = 0U;
-        Node->start = 0U;
-        Node->end = 0U;
-        Node->errors = false;
+    if(Node) {
+        if(size) {
+            Node->size = size;
+            Node->count = 0U;
+            Node->start = 0U;
+            Node->end = 0U;
+            Node->errors = false;
+            res = true;
+        }
     }
     return res;
 }
@@ -30,14 +32,14 @@ bool fifo_index_valid(const fifo_index_info_t* Node) {
         valid = false;
     }
     if(valid) {
-        FifoIndex_t idx_start = Node->start;
-        FifoIndex_t idx_end = Node->end;
+        uint32_t idx_start = Node->start;
+        uint32_t idx_end = Node->end;
         if(idx_end > idx_start) {
             if((idx_end - idx_start) != Node->count) {
                 valid = false;
             }
         } else {
-            FifoIndex_t v_count = (idx_end + Node->size) - idx_start;
+            uint32_t v_count = (idx_end + Node->size) - idx_start;
             if((v_count != (Node->count + Node->size))) {
                 if(v_count != Node->count) {
                     valid = false;
@@ -48,8 +50,8 @@ bool fifo_index_valid(const fifo_index_info_t* Node) {
     return valid;
 }
 
-FifoIndex_t fifo_index_add(fifo_index_info_t* Node) {
-    FifoIndex_t ret_add = RING_INVALID_INDEX;
+uint32_t fifo_index_add(fifo_index_info_t* Node) {
+    uint32_t ret_add = RING_INVALID_INDEX;
     if(Node->count < Node->size) {
         ret_add = Node->end;
         Node->end++;
@@ -61,8 +63,8 @@ FifoIndex_t fifo_index_add(fifo_index_info_t* Node) {
     return ret_add;
 }
 
-FifoIndex_t fifo_index_get(fifo_index_info_t* Node) {
-    FifoIndex_t ret_get = RING_INVALID_INDEX;
+uint32_t fifo_index_get(fifo_index_info_t* Node) {
+    uint32_t ret_get = RING_INVALID_INDEX;
     if(0U != Node->count) {
         ret_get = Node->start;
         Node->start++;
@@ -74,11 +76,11 @@ FifoIndex_t fifo_index_get(fifo_index_info_t* Node) {
     return ret_get;
 }
 
-bool fifo_index_free(fifo_index_info_t* Node, FifoIndex_t size_free) {
+bool fifo_index_free(fifo_index_info_t* Node, uint32_t size_free) {
     bool res = false;
     if(size_free <= Node->count) {
-        FifoIndex_t s = size_free;
-        FifoIndex_t count_before_wrap = Node->size - Node->start;
+        uint32_t s = size_free;
+        uint32_t count_before_wrap = Node->size - Node->start;
         Node->count -= s;
         if(s >= count_before_wrap) {
             s -= count_before_wrap;
@@ -95,8 +97,8 @@ bool fifo_index_free(fifo_index_info_t* Node, FifoIndex_t size_free) {
     return res;
 }
 
-FifoIndex_t fifo_index_continuus_used_size(const fifo_index_info_t* Node) {
-    FifoIndex_t ret_cus = Node->size - Node->start;
+uint32_t fifo_index_continuus_used_size(const fifo_index_info_t* Node) {
+    uint32_t ret_cus = Node->size - Node->start;
     if(ret_cus > Node->count) {
         ret_cus = Node->count;
     }
@@ -111,8 +113,8 @@ double fifo_index_get_used_pp(const fifo_index_info_t* Node) {
     return precent;
 }
 
-FifoIndex_t fifo_index_get_used(const fifo_index_info_t* Node) { return Node->count; }
+uint32_t fifo_index_get_used(const fifo_index_info_t* Node) { return Node->count; }
 
-FifoIndex_t fifo_index_get_size(const fifo_index_info_t* Node) { return Node->size; }
+uint32_t fifo_index_get_size(const fifo_index_info_t* Node) { return Node->size; }
 
-FifoIndex_t fifo_index_get_spare(const fifo_index_info_t* Node) { return Node->size - Node->count; }
+uint32_t fifo_index_get_spare(const fifo_index_info_t* Node) { return Node->size - Node->count; }

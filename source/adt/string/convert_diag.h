@@ -9,7 +9,7 @@ extern "C" {
 
 const char* SymbolToStr(char symbol);
 const char* Sign2Str(int8_t sign) ;
-const char* NumberParserState2Str(ParseNumberStates_t state) ;
+const char* NumberParserState2Str(const ParseNumberStates_t state) ;
 char* NumberParserFsm2Str(const Text2NumberFsm_t * const Node);
 
 #ifdef __cplusplus

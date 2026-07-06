@@ -44,7 +44,7 @@ bool fifo_word_reset(FifoWord_t* const Node) {
 
 bool fifo_word_clean(FifoWord_t* Node) {
     bool res = is_fifo_valid(Node);
-    FifoIndex_t i = 0;
+    uint32_t i = 0;
     int16_t out_element = 0x00;
     for(i = 0; i < Node->state.size; i++) {
         res = fifo_word_pull(Node, &out_element);
@@ -98,24 +98,24 @@ bool fifo_word_peek(FifoWord_t* Node, int16_t* const out_word) {
     return res;
 }
 
-FifoIndex_t fifo_word_get_count(FifoWord_t* const Node) {
-    FifoIndex_t ret;
+uint32_t fifo_word_get_count(FifoWord_t* const Node) {
+    uint32_t ret;
     ret = Node->state.count;
     return ret;
 }
 
-FifoIndex_t fifo_word_get_size(FifoWord_t* const Node) {
-    FifoIndex_t ret;
+uint32_t fifo_word_get_size(FifoWord_t* const Node) {
+    uint32_t ret;
     ret = fifo_index_get_size(&(Node->state));
     return ret;
 }
 
-FifoIndex_t fifo_word_get_spare(FifoWord_t* const Node) {
-    FifoIndex_t spare;
+uint32_t fifo_word_get_spare(FifoWord_t* const Node) {
+    uint32_t spare;
     spare  = fifo_index_get_spare(&Node->state);
     return spare;
 }
 
-bool fifo_word_free(FifoWord_t* Node, FifoIndex_t size) {
+bool fifo_word_free(FifoWord_t* Node, uint32_t size) {
     return fifo_index_free(&Node->state, size);
 }

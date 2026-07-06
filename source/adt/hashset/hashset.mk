@@ -10,7 +10,7 @@ ifneq ($(HASHSET_MK_INC),Y)
     HASHSET_DIR = $(ADT_DIR)/hashset
     #@echo $(error HASHSET_DIR= $(HASHSET_DIR))
     #@echo $(error CFLAGS= $(CFLAGS))
-    OPT += -DHAS_HASHSET
+    MCAL_OPT += -DHAS_HASHSET
     INCDIR += -I$(HASHSET_DIR)
     
     SOURCES_C += $(HASHSET_DIR)/hashset.c

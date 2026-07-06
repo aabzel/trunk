@@ -50,7 +50,7 @@ static uint32_t hash_function(const int32_t value, const uint32_t size) {
 
 static bool hash_table_init_custom(void) {
     bool res = false;
-    // set_log_level(HASH_TABLE, LOG_LEVEL_DEBUG);
+    // log_level_set(HASH_TABLE, LOG_LEVEL_DEBUG);
     LOG_INFO(HASH_TABLE, "Version:%u", HASH_TABLE_VERSION);
     return res;
 }

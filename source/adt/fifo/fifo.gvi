@@ -1,1 +1,5 @@
 RAM->FIFO
+
+#ifdef HAS_INTERRUPT
+INTERRUPT->FIFO
+#endif

@@ -10,24 +10,25 @@
 #include "log.h"
 #include "str_utils.h"
 
+static char lText[200] = {0};
+
 static const char symbols[] = "FEDCBA9876543210123456789ABCDEF";
 
 char* HexQWord2Str(uint32_t qword) {
-    snprintf(text, sizeof(text), "0x%08x", (unsigned int)qword);
-    return text;
+    snprintf(lText, sizeof(lText), "0x%08x", (unsigned int)qword);
+    return lText;
 }
 
 char* HexQWordRevToStr(uint64_t qword) {
     uint64_t temp_qword = reverse_byte_order_uint64(qword);
-    snprintf(text, sizeof(text), "0x%llx",temp_qword);
-    //snprintf(text, sizeof(text), "0x%" PRIx64, temp_qword);
-    return text;
+    // snprintf(lText, sizeof(lText), "0x%llx",temp_qword);
+    snprintf(lText, sizeof(lText), "0x%llx", temp_qword);
+    return lText;
 }
 
 char* HexQWordToStr(uint64_t qword) {
-    snprintf(text, sizeof(text), "0x%llu" , qword);
-    //snprintf(text, sizeof(text), "0x%" PRIx64, qword);
-    return text;
+    snprintf(lText, sizeof(lText), "0x%llx", qword);
+    return lText;
 }
 
 const char* bool2test_status(bool val) {
@@ -61,69 +62,69 @@ const char* DoubleToStr(double value) {
     case -15:
     case -14:
     case -13:
-        snprintf(text, sizeof(text), "%7.3ff", value * 1000000000000000.0);
+        snprintf(lText, sizeof(lText), "%7.3ff", value * 1000000000000000.0);
         break;
 
     case -12:
     case -11:
     case -10:
-        snprintf(text, sizeof(text), "%7.3fp", value * 1000000000000.0);
+        snprintf(lText, sizeof(lText), "%7.3fp", value * 1000000000000.0);
         break;
 
     case -9:
     case -8:
     case -7:
-        snprintf(text, sizeof(text), "%7.3fn", value * 1000000000.0);
+        snprintf(lText, sizeof(lText), "%7.3fn", value * 1000000000.0);
         break;
 
     case -6:
     case -5:
     case -4:
-        snprintf(text, sizeof(text), "%7.3fu", value * 1000000.0);
+        snprintf(lText, sizeof(lText), "%7.3fu", value * 1000000.0);
         break;
 
     case -1:
-        // snprintf(text, sizeof(text), "%7.2fd", value * 10.0);
+        // snprintf(lText, sizeof(lText), "%7.2fd", value * 10.0);
         // break;
     case -2:
-        // snprintf(text, sizeof(text), "%7.2fc", value * 100.0);
+        // snprintf(lText, sizeof(lText), "%7.2fc", value * 100.0);
         // break;
     case -3:
-        snprintf(text, sizeof(text), "%7.3fm", value * 1000.0);
+        snprintf(lText, sizeof(lText), "%7.3fm", value * 1000.0);
         break;
 
     case 0:
     case 1:
     case 2:
-        snprintf(text, sizeof(text), "%7.3f", value);
+        snprintf(lText, sizeof(lText), "%7.3f", value);
         break;
 
     case 3:
     case 4:
     case 5:
-        snprintf(text, sizeof(text), "%7.3fk", value / 1000.0);
+        snprintf(lText, sizeof(lText), "%7.3fk", value / 1000.0);
         break;
 
     case 6:
     case 7:
     case 8:
-        snprintf(text, sizeof(text), "%7.3fM", value / 1000000.0);
+        snprintf(lText, sizeof(lText), "%7.3fM", value / 1000000.0);
         break;
 
     case 9:
     case 10:
     case 11:
-        snprintf(text, sizeof(text), "%7.3fG", value / 1000000000.0);
+        snprintf(lText, sizeof(lText), "%7.3fG", value / 1000000000.0);
         break;
 
     default:
-        snprintf(text, sizeof(text), "%7.3f", value);
+        snprintf(lText, sizeof(lText), "%7.3f", value);
         break;
     }
 
-    str_del_char_inplace(text, ' ');
-    LOG_DEBUG(LINE, "%f->[%s]", value, text);
-    return text;
+    str_del_char_inplace(lText, ' ');
+    LOG_DEBUG(STR_LG, "%f->[%s]", value, lText);
+    return lText;
 }
 
 const char* uint32ToStr(uint32_t value) {
@@ -134,49 +135,49 @@ const char* uint32ToStr(uint32_t value) {
     case 0:
     case 1:
     case 2:
-        snprintf(text, sizeof(text), "%u", value);
+        snprintf(lText, sizeof(lText), "%u", value);
         break;
 
     case 3:
     case 4:
     case 5:
-        snprintf(text, sizeof(text), "%uk", value / 1000);
+        snprintf(lText, sizeof(lText), "%uk", value / 1000);
         break;
 
     case 6:
     case 7:
     case 8:
-        snprintf(text, sizeof(text), "%uM", value / 1000000);
+        snprintf(lText, sizeof(lText), "%uM", value / 1000000);
         break;
 
     case 9:
     case 10:
     case 11:
-        snprintf(text, sizeof(text), "%uG", value / 1000000000);
+        snprintf(lText, sizeof(lText), "%uG", value / 1000000000);
         break;
 
     default:
-        snprintf(text, sizeof(text), "%u", value);
+        snprintf(lText, sizeof(lText), "%u", value);
         break;
     }
 
-    str_del_char_inplace(text, ' ');
-    LOG_DEBUG(LINE, "%u->[%s]", value, text);
-    return text;
+    str_del_char_inplace(lText, ' ');
+    LOG_DEBUG(STR_LG, "%u->[%s]", value, lText);
+    return lText;
 }
 
 const char* rx_dtoa(double d) {
 #ifdef HAS_DOUBLE_TO_STR
-    dtoa_(d, -1, text);
+    dtoa_(d, -1, lText);
 #endif
-    return text;
+    return lText;
 }
 
 const char* rx_ftoa(float float_v) {
 #ifdef HAS_FLOAT_TO_STR
-    ftoa_(float_v, -1, text);
+    ftoa_(float_v, -1, lText);
 #endif
-    return text;
+    return lText;
 }
 
 const char* utoa64_(uint64_t u64_data, char u64_stringified[], uint8_t u64_base, uint32_t* u64_len) {
@@ -338,17 +339,24 @@ const char* ltoa32_(int32_t s32_data, char s32_stringified[], uint8_t s32_base, 
 static const unsigned char Nibble2Char[] = "0123456789ABCDEF";
 bool array2str(const uint8_t* const buff, uint32_t buff_len, char* const out_array, uint16_t array_size) {
     bool res = false;
-    uint32_t i = 0;
-    uint32_t j = 0;
-    memset(out_array, 0, array_size);
-    if((2 * buff_len) <= array_size) {
-        res = true;
-        for(i = 0; i < buff_len; i++, j += 2) {
-            out_array[j] = Nibble2Char[HI_NIBBLE(buff[i])];
-            out_array[j + 1] = Nibble2Char[LO_NIBBLE(buff[i])];
+    if(buff) {
+        if(out_array) {
+            uint32_t i = 0;
+            uint32_t j = 0;
+            memset(out_array, 0, array_size);
+            if((2 * buff_len) <= array_size) {
+            } else {
+                array_size = 2 * buff_len;
+                LOG_DEBUG(STR_LG, "OutSizeTooSmall,Text:[%s],BuffLen:%u,Byte,ArraySize:%uByte", buff, buff_len,
+                          array_size);
+            }
+
+            res = true;
+            for(i = 0; i < buff_len; i++, j += 2) {
+                out_array[j] = Nibble2Char[HI_NIBBLE(buff[i])];
+                out_array[j + 1] = Nibble2Char[LO_NIBBLE(buff[i])];
+            }
         }
-    } else {
-        LOG_ERROR(LINE, "BuffLen:%u,Byte,ArraySize:%uByte", buff_len, array_size);
     }
     return res;
 }
@@ -357,22 +365,22 @@ bool array2str(const uint8_t* const buff, uint32_t buff_len, char* const out_arr
 const char* utoa_bin8(uint8_t u8_bin_data) {
     uint8_t cell8 = 0u;
     uint8_t mask8 = 0x80U;
-    memset(text, 0, sizeof(text));
-    strncpy(text, "0000_0000", sizeof(text));
+    memset(lText, 0, sizeof(lText));
+    strncpy(lText, "0000_0000", sizeof(lText));
     while(0 != mask8) {
-        if(text[cell8] == '_') {
+        if(lText[cell8] == '_') {
             cell8++;
         }
         if(0u != (u8_bin_data & mask8)) {
-            text[cell8] = '1';
+            lText[cell8] = '1';
         } else {
-            text[cell8] = '0';
+            lText[cell8] = '0';
         }
         mask8 >>= 1U;
         cell8++;
     }
-    text[sizeof(text) - 1u] = '\0';
-    return text;
+    lText[sizeof(lText) - 1u] = '\0';
+    return lText;
 }
 
 #endif
@@ -381,158 +389,195 @@ const char* utoa_bin8(uint8_t u8_bin_data) {
 const char* utoa_bin8_plain(uint8_t u8_bin_data) {
     uint8_t cell8 = 0u;
     uint8_t mask8 = 0x80U;
-    memset(text, 0, SHARED_ARRAY_SIZE);
+    memset(lText, 0, sizeof(lText));
     while(0 != mask8) {
         if(0u != (u8_bin_data & mask8)) {
-            text[cell8] = 'X';
+            lText[cell8] = '1';
         } else {
-            text[cell8] = '.';
+            lText[cell8] = '0';
         }
         mask8 >>= 1U;
         cell8++;
     }
-    text[sizeof(text) - 1u] = '\0';
-    return text;
+    lText[sizeof(lText) - 1u] = '\0';
+    return lText;
 }
 
 const char* utoa_bin16(uint16_t u16_bin_data) {
     uint8_t cell16 = 0u;
     uint16_t mask16 = 0x8000U;
-    memset(text, 0, SHARED_ARRAY_SIZE);
+    memset(lText, 0, sizeof(lText));
+    strncpy(lText, "0000_0000_0000_0000", sizeof(lText));
     while(mask16 != 0U) {
-        if(text[cell16] == '_') {
+        if(lText[cell16] == '_') {
             cell16++;
         }
         if(0u != (u16_bin_data & mask16)) {
-            text[cell16] = '1';
+            lText[cell16] = '1';
         } else {
-            text[cell16] = '0';
+            lText[cell16] = '0';
         }
         mask16 >>= 1U;
         cell16++;
     }
-    text[sizeof(text) - 1u] = '\0';
-    return text;
+    lText[sizeof(lText) - 1u] = '\0';
+    return lText;
 }
 
 const char* utoa_bin16_plain(uint16_t u16_bin_data) {
     uint8_t cell16 = 0u;
     uint16_t mask16 = 0x8000U;
-    memset(text, 0, SHARED_ARRAY_SIZE);
+    memset(lText, 0, sizeof(lText));
     while(mask16 != 0U) {
         if(0u != (u16_bin_data & mask16)) {
-            text[cell16] = '1';
+            lText[cell16] = '1';
         } else {
-            text[cell16] = '0';
+            lText[cell16] = '0';
         }
         mask16 >>= 1U;
         cell16++;
     }
-    text[sizeof(text) - 1u] = '\0';
-    return text;
+    lText[sizeof(lText) - 1u] = '\0';
+    return lText;
 }
 
 const char* utoa_bin24_plain(uint32_t u32_bin_data) {
     uint8_t cell24 = 0u;
     uint32_t mask24 = (((uint32_t)1) << 23);
-    memset(text, 0, SHARED_ARRAY_SIZE);
+    memset(lText, 0, sizeof(lText));
     while(mask24 != 0U) {
         if(0u != (u32_bin_data & mask24)) {
-            text[cell24] = 'X';
+            lText[cell24] = 'X';
         } else {
-            text[cell24] = '.';
+            lText[cell24] = '.';
         }
         mask24 >>= 1U;
         cell24++;
     }
-    text[sizeof(text) - 1u] = '\0';
-    return text;
+    lText[sizeof(lText) - 1u] = '\0';
+    return lText;
 }
 
 const char* utoa_bin64(uint64_t u64_bin_data) {
     /*TODO: Implement later*/
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return text;
+    memset(lText, 0, sizeof(lText));
+    return lText;
 }
 
 const char* utoa_bin24(uint32_t u32_bin_data) {
     uint8_t cell24 = 0u;
     uint32_t mask24 = 0x00800000U;
-    memset(text, 0, SHARED_ARRAY_SIZE);
+    memset(lText, 0, sizeof(lText));
+    strcpy(lText, "0000_0000_0000_0000_0000_0000");
     while(mask24 != 0U) {
-        if(text[cell24] == '_') {
+        if(lText[cell24] == '_') {
             cell24++;
         }
         if(0u != (u32_bin_data & mask24)) {
-            text[cell24] = '1';
+            lText[cell24] = '1';
         } else {
-            text[cell24] = '0';
+            lText[cell24] = '0';
         }
         mask24 >>= 1U;
         cell24++;
     }
-    text[sizeof(text) - 1u] = '\0';
-    return text;
+    lText[sizeof(lText) - 1u] = '\0';
+    return lText;
+}
+
+const char* utoa_bin(const uint32_t u32_bin_data) {
+    static char buffer[42]; //
+    char* ptr = buffer;
+    uint32_t data = u32_bin_data;
+    int32_t msb = -1; //
+    int32_t i;
+
+    // Find the most significant bit (from 31 to 0)
+    for(i = 31; i >= 0; i--) {
+        if((data >> i) & 1) {
+            msb = i;
+            break;
+        }
+    }
+
+    if(msb == -1) {
+        buffer[0] = '0';
+        buffer[1] = '\0';
+    } else {
+        for(i = msb; i >= 0; i--) {
+            // Insert a separator before the bit that is on the group boundary
+            // (position i is a multiple of 4, counting from the least significant bit), but not before
+            // the very first bit
+            if(i % 4 == 3 && i != msb) {
+                *ptr++ = '_';
+            }
+            *ptr++ = ((data >> i) & 1) ? '1' : '0';
+        }
+        *ptr = '\0';
+    }
+
+    return buffer;
 }
 
 const char* utoa_bin32(uint32_t u32_bin_data) {
     uint8_t cell32 = 0u;
     uint32_t mask32 = 0x80000000U;
-    memset(text, 0, SHARED_ARRAY_SIZE);
+    memset(lText, 0, sizeof(lText));
+    strcpy(lText, "0000_0000|0000_0000|0000_0000|0000_0000");
     while(mask32 != 0U) {
-        if(text[cell32] == '_') {
+        if((lText[cell32] == '_') || (lText[cell32] == '|')) {
             cell32++;
         }
         if(0u != (u32_bin_data & mask32)) {
-            text[cell32] = '1';
+            lText[cell32] = '1';
         } else {
-            text[cell32] = '0';
+            lText[cell32] = '0';
         }
         mask32 >>= 1U;
         cell32++;
     }
-    text[sizeof(text) - 1u] = '\0';
-    return text;
+    lText[sizeof(lText) - 1u] = '\0';
+    return lText;
 }
 
 #endif
 
 const char* rx_ltoa32(int32_t ltoa32_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return ltoa32_(ltoa32_data, text, 10U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return ltoa32_(ltoa32_data, lText, 10U, NULL);
 }
 
 const char* rx_ltoa64(int64_t ltoa64_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return ltoa64_(ltoa64_data, text, 10U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return ltoa64_(ltoa64_data, lText, 10U, NULL);
 }
 
 const char* rx_utoa32(uint32_t utoa32_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return utoa32_(utoa32_data, text, 10U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return utoa32_(utoa32_data, lText, 10U, NULL);
 }
 
 const char* rx_utoa64(uint64_t utoa64_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return utoa64_(utoa64_data, text, 10U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return utoa64_(utoa64_data, lText, 10U, NULL);
 }
 
 const char* utoa_hex32(uint32_t u32_hex_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return utoa32_(u32_hex_data, text, 16U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return utoa32_(u32_hex_data, lText, 16U, NULL);
 }
 
 const char* utoa_hex64(uint64_t u64_hex_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return utoa64_(u64_hex_data, text, 16U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return utoa64_(u64_hex_data, lText, 16U, NULL);
 }
 
 const char* ltoa_hex32(int32_t s32_hex_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return ltoa32_(s32_hex_data, text, 16U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return ltoa32_(s32_hex_data, lText, 16U, NULL);
 }
 
 const char* ltoa_hex64(int64_t s64_hex_data) {
-    memset(text, 0, SHARED_ARRAY_SIZE);
-    return ltoa64_(s64_hex_data, text, 16U, NULL);
+    memset(lText, 0, sizeof(lText));
+    return ltoa64_(s64_hex_data, lText, 16U, NULL);
 }

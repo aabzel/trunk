@@ -9,7 +9,7 @@ extern "C" {
 #include <stdint.h>
 
 #ifndef HAS_NUM_DIAG
-#error "+HAS_NUM_DIAG"
+#warning "+HAS_NUM_DIAG"
 #endif
 
 #ifndef MAX_INT64_STR_LEN_10
@@ -42,6 +42,7 @@ const char* ltoa_hex32(int32_t s32_hex_data);
 const char* ltoa_hex64(int64_t s64_hex_data);
 
 #ifdef HAS_BIN_2_STR
+const char* utoa_bin(const uint32_t u32_bin_data);
 const char* utoa_bin8_plain(uint8_t u8_bin_data);
 const char* utoa_bin8(uint8_t u8_bin_data);
 const char* utoa_bin16(uint16_t u16_bin_data);

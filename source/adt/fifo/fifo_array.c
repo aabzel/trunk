@@ -13,7 +13,7 @@ static bool is_fifo_arr_valid(FifoArray_t* const Node) {
     return res;
 }
 
-bool fifo_arr_init(FifoArray_t* const Node, Array_t* const heap, FifoIndex_t capacity) {
+bool fifo_arr_init(FifoArray_t* const Node, Array_t* const heap, uint32_t capacity) {
     bool res = false;
     if(NULL != Node) {
         if(heap) {
@@ -29,14 +29,14 @@ bool fifo_arr_init(FifoArray_t* const Node, Array_t* const heap, FifoIndex_t cap
     return res;
 }
 
-FifoIndex_t fifo_arr_get_count(FifoArray_t* const Node) {
-    FifoIndex_t ret;
+uint32_t fifo_arr_get_count(FifoArray_t* const Node) {
+    uint32_t ret;
     ret = Node->fifoState.count;
     return ret;
 }
 
-FifoIndex_t fifo_arr_get_size(FifoArray_t* const Node) {
-    FifoIndex_t ret;
+uint32_t fifo_arr_get_size(FifoArray_t* const Node) {
+    uint32_t ret;
     ret = Node->fifoState.size;
     return ret;
 }

@@ -15,7 +15,14 @@
 #include "convert_diag.h"
 #include "convert_types.h"
 #include "log.h"
+
+#ifdef HAS_STORAGE
+#include "storage_types.h"
+#endif
+
+#ifdef HAS_STORAGE_DIAG
 #include "storage_diag.h"
+#endif
 
 #ifdef HAS_NUM_DIAG
 #include "num_to_str.h"
@@ -76,7 +83,7 @@ bool try_str2int64(const char s64_str[], int64_t* s64_value) {
     return res;
 }
 
-bool is_hex_str(const char str_to_check[], int32_t str_to_check_len, uint8_t* const out_shift) {
+bool is_hex_str(const char* const str_to_check, int32_t str_to_check_len, uint8_t* const out_shift) {
     bool is_hex_str_result = false;
     int32_t validHexCnt = 0;
     uint8_t out_shift_loc = 0U;
@@ -97,7 +104,7 @@ bool is_hex_str(const char str_to_check[], int32_t str_to_check_len, uint8_t* co
                     if(is_hex_digit(str_to_check[i])) {
                         validHexCnt++;
                     } else {
-                        LOG_DEBUG(LINE, "NotHexCh[%u]=[%c]Err ", i, str_to_check[i]);
+                        LOG_DEBUG(STR_LG, "NotHexCh[%u]=[%c]Err ", i, str_to_check[i]);
                         break;
                     }
                 }
@@ -136,7 +143,7 @@ bool try_strl2uint64(const char u64l_str[], int32_t u64l_str_len, uint64_t* u64l
                         u64l_success =
                             try_strl2uint64_hex(&u64l_str[num_shift], u64l_len - ((int32_t)num_shift), u64l_value);
                     } else {
-                        LOG_ERROR(LINE, "UndefFormat[%s]", u64l_str);
+                        LOG_ERROR(STR_LG, "UndefFormat[%s]", u64l_str);
                         u64l_success = false;
                     }
                 }
@@ -344,7 +351,8 @@ bool try_strl2int64_dec(const char s64_dec_str[], int32_t s64_dec_str_len, int64
     return s64l_dec_success;
 }
 
-/* STRING TO 32 BIT
+/*
+ parse uint32 from string
  */
 bool try_str2uint32(const char u32_str[], uint32_t* u32_value) {
     bool res = false;
@@ -359,16 +367,18 @@ bool try_str2uint32(const char u32_str[], uint32_t* u32_value) {
 
 bool try_str2int32(const char s32_str[], int32_t* s32_value) {
     bool res = false;
-    if((NULL != s32_str) && (NULL != s32_value)) {
-        int32_t s32_str_len = (int32_t)strlen(s32_str);
-        res = try_strl2int32(s32_str, s32_str_len, s32_value);
+    if(s32_str) {
+        if(s32_value) {
+            int32_t s32_str_len = (int32_t)strlen(s32_str);
+            res = try_strl2int32(s32_str, s32_str_len, s32_value);
+        }
     }
     return res;
 }
 
 bool try_strl2uint32(const char u32l_str[], int32_t u32l_str_len, uint32_t* u32l_value) {
     bool u32l_success = true;
-    LOG_DEBUG(LINE, "strl2uint32 [%s] Len:%u", u32l_str, u32l_str_len);
+    LOG_DEBUG(STR_LG, "strl2uint32 [%s] Len:%u", u32l_str, u32l_str_len);
     bool u32l_str_not_empty = true;
     int32_t u32l_len = u32l_str_len;
     if((NULL != u32l_str) && (NULL != u32l_value)) {
@@ -443,7 +453,7 @@ bool try_strl2month(const char str[], int32_t* mon_value) {
 #endif
 
 bool try_strl2int32(const char s32l_str[], int32_t s32l_str_len, int32_t* s32l_value) {
-    LOG_DEBUG(LINE, "%s() index %u len %u status %u", __FUNCTION__, s32l_str, s32l_str_len);
+    LOG_DEBUG(STR_LG, "%s() index %u len %u status %u", __FUNCTION__, s32l_str, s32l_str_len);
     bool s32l_success = true;
     bool s32l_str_not_empty = true;
     int32_t s32l_len = s32l_str_len;
@@ -466,7 +476,7 @@ bool try_strl2int32(const char s32l_str[], int32_t s32l_str_len, int32_t* s32l_v
         if(res) {
             s32l_success = try_strl2int32_dec(&s32l_str[start_index], s32l_len, s32l_value);
         } else {
-            LOG_DEBUG(LINE, "NotDec [%s]", &s32l_str[start_index]);
+            LOG_DEBUG(STR_LG, "NotDec [%s]", &s32l_str[start_index]);
             if(is_hex_str(&s32l_str[start_index], s32l_len, &out_shift)) {
                 s32l_success =
                     try_strl2int32_hex(&s32l_str[out_shift + start_index], s32l_len - ((int32_t)out_shift), s32l_value);
@@ -772,14 +782,14 @@ static bool proc_strtod(const char str[], const char** endptr, double* result) {
             temp_value = 0U;
             (void)try_dec_char_to_u8((uint8_t)str[str_index], &temp_value);
             number = (number * 10.0) + ((double)temp_value);
-            LOG_DEBUG(LINE, "digit=%c temp_value=%u", str[str_index], temp_value);
-            LOG_DEBUG(LINE, "number:%f", number);
+            LOG_DEBUG(STR_LG, "digit=%c temp_value=%u", str[str_index], temp_value);
+            LOG_DEBUG(STR_LG, "number:%f", number);
             str_index++;
             num_digits++;
         }
-        LOG_DEBUG(LINE, "number:%f", number);
+        LOG_DEBUG(STR_LG, "number:%f", number);
 
-        LOG_DEBUG(LINE, "NextSymbol:[%c]", str[str_index]);
+        LOG_DEBUG(STR_LG, "NextSymbol:[%c]", str[str_index]);
 
         if(('\n' == str[str_index]) || ('\r' == str[str_index])) {
             if(strtod_negative) {
@@ -934,7 +944,7 @@ bool try_str2float(const char float_str[], float* float_value) {
 
 #ifdef HAS_STR2_DOUBLE
 bool try_str2double(const char double_str[], double* double_value) {
-    LOG_DEBUG(LINE, "TryParseDoubleIn[%s]", double_str);
+    LOG_DEBUG(STR_LG, "TryParseDoubleIn[%s]", double_str);
     bool double_success = false;
 
     double_success = try_str2number(double_str, double_value);
@@ -957,7 +967,7 @@ bool try_str2double(const char double_str[], double* double_value) {
 #ifdef HAS_STR2_DOUBLE
 bool try_strl2double(const char double_str[], int32_t str_len, double* double_value) {
     bool double_success = false;
-    LOG_DEBUG(LINE, "strl2double [%s] %u", double_str, str_len);
+    LOG_DEBUG(STR_LG, "strl2double [%s] %u", double_str, str_len);
     if(double_str) {
         char tempStr[30] = "";
         memset(tempStr, 0x00, sizeof(tempStr));
@@ -1462,7 +1472,7 @@ static bool number_compose_mantissa(Text2NumberFsm_t* Node) {
         //}else{
         //    Node->mantissa = 1.0;
         //}
-        LOG_DEBUG(LINE, "Mantissa %f", Node->mantissa);
+        LOG_DEBUG(STR_LG, "Mantissa %f", Node->mantissa);
         res = true;
     }
     return res;
@@ -1485,12 +1495,12 @@ bool try_str2array(char* in_str_array, uint8_t* out_array, uint16_t array_size, 
     uint8_t out_shift = 0;
     uint32_t len_str_in = strlen(in_str_array);
 #ifdef HAS_CONVERT_DEBUG
-    printf("[d]len_str_in %u", len_str_in);
+    LOG_DEBUG(STR_LG, "len_str_in %u", len_str_in);
 #endif
     res = is_hex_str(in_str_array, len_str_in, &out_shift);
     if(res) {
 #ifdef HAS_CONVERT_DEBUG
-        printf("[d]shift %u", out_shift);
+        LOG_DEBUG(STR_LG, "shift %u", out_shift);
 #endif
         if(0 == (len_str_in % 2)) {
             uint32_t i;
@@ -1508,7 +1518,7 @@ bool try_str2array(char* in_str_array, uint8_t* out_array, uint16_t array_size, 
         }
     } else {
 #ifdef HAS_CONVERT_DEBUG
-        printf("[d] not a hex str [%s]", in_str_array);
+        LOG_DEBUG(STR_LG, " not a hex str [%s]", in_str_array);
 #endif
     }
 
@@ -1539,23 +1549,23 @@ bool try_strl2array(const char* const str_array, uint32_t len_str_in, uint8_t* c
                                 res = true;
                             }
                         } else {
-                            LOG_ERROR(LINE, "LenErr");
+                            LOG_ERROR(STR_LG, "LenErr");
                         }
                     } else {
-                        LOG_ERROR(LINE, "NotHexStrErr");
+                        LOG_ERROR(STR_LG, "NotHexStrErr");
                     }
                 } else {
-                    LOG_ERROR(LINE, "ret_len err");
+                    LOG_ERROR(STR_LG, "ret_len err");
                 }
             } else {
-                LOG_ERROR(LINE, "out_array err");
+                LOG_ERROR(STR_LG, "out_array err");
             }
         } else {
-            LOG_ERROR(LINE, "ZeroLenErr");
+            LOG_ERROR(STR_LG, "ZeroLenErr");
         }
 
     } else {
-        LOG_ERROR(LINE, "str_array err");
+        LOG_ERROR(STR_LG, "str_array err");
     }
     return res;
 }
@@ -1587,19 +1597,19 @@ bool number_compose_result(Text2NumberFsm_t* Node) {
     bool res = false;
     if(Node) {
         if(Node->spot_mantissa) {
-            // LOG_DEBUG(LINE,"Int:%Le", Node->integer);
-            // LOG_DEBUG(LINE,"Int:%lf", Node->integer);
-            // LOG_DEBUG(LINE,"Int:%Le", Node->integer);
-            LOG_DEBUG(LINE, "Frac:%f", Node->fraction);
-            LOG_DEBUG(LINE, "sign %f", (double)Node->sign);
+            // LOG_DEBUG(STR_LG,"Int:%Le", Node->integer);
+            // LOG_DEBUG(STR_LG,"Int:%lf", Node->integer);
+            // LOG_DEBUG(STR_LG,"Int:%Le", Node->integer);
+            LOG_DEBUG(STR_LG, "Frac:%f", Node->fraction);
+            LOG_DEBUG(STR_LG, "sign %f", (double)Node->sign);
             Node->value = ((double)Node->sign) * (((double)Node->integer) + Node->fraction);
-            // LOG_DEBUG(LINE,"Val:%f", Node->value);
-            // LOG_DEBUG(LINE,"Val:%lf", Node->value);
-            // LOG_DEBUG(LINE,"Val:%Le", Node->value);
+            // LOG_DEBUG(STR_LG,"Val:%f", Node->value);
+            // LOG_DEBUG(STR_LG,"Val:%lf", Node->value);
+            // LOG_DEBUG(STR_LG,"Val:%Le", Node->value);
             Node->state = PARSE_NUMBER_STATE_DONE;
             res = true;
         } else {
-            LOG_ERROR(LINE, "NoMantissa");
+            LOG_ERROR(STR_LG, "NoMantissa");
         }
     }
     return res;
@@ -1724,9 +1734,9 @@ static bool number_proc_parse_sign(Text2NumberFsm_t* Node) {
         Node->spot_mantissa = true;
         res = try_hex_char_to_u8((uint8_t)Node->cur_letter, &digit);
         Node->integer *= 10;
-        // LOG_DEBUG(LINE,"1CurInt %Lf",(double)Node->integer);
+        // LOG_DEBUG(STR_LG,"1CurInt %Lf",(double)Node->integer);
         Node->integer += digit;
-        // LOG_DEBUG(LINE,"2CurInt %Lf",(double)Node->integer);
+        // LOG_DEBUG(STR_LG,"2CurInt %Lf",(double)Node->integer);
         Node->state = PARSE_NUMBER_STATE_PARSE_INTEGER;
     } break;
     case '.': {
@@ -1755,7 +1765,7 @@ static bool number_mantissa_save(Text2NumberFsm_t* Node) {
     bool res = false;
     if(Node) {
         Node->mantissa = ((double)Node->sign) * (((double)Node->integer) + Node->fraction);
-        LOG_DEBUG(LINE, "Mantissa:%f", Node->mantissa);
+        LOG_DEBUG(STR_LG, "Mantissa:%f", Node->mantissa);
         res = true;
     }
     return res;
@@ -1909,11 +1919,11 @@ static bool number_proc_parse_integer(Text2NumberFsm_t* Node) {
     case '9': {
         uint8_t digit = 0;
         res = try_hex_char_to_u8((uint8_t)Node->cur_letter, &digit);
-        LOG_PARN(LINE, "ParseDigit %u", digit);
+        LOG_PARN(STR_LG, "ParseDigit %u", digit);
         Node->integer *= 10;
-        // LOG_DEBUG(LINE,"1CurInt %Lf",(double)Node->integer);
+        // LOG_DEBUG(STR_LG,"1CurInt %Lf",(double)Node->integer);
         Node->integer += digit;
-        // LOG_DEBUG(LINE,"2CurInt %Lf",(double) Node->integer);
+        // LOG_DEBUG(STR_LG,"2CurInt %Lf",(double) Node->integer);
         Node->spot_mantissa = true;
         res = true;
     } break;
@@ -1965,7 +1975,7 @@ static bool number_proc_parse_exponenta_sign(Text2NumberFsm_t* Node) {
     case '9': {
         uint8_t digit = 0;
         res = try_hex_char_to_u8((uint8_t)Node->cur_letter, &digit);
-        LOG_PARN(LINE, "ParseExpInt %u", digit);
+        LOG_PARN(STR_LG, "ParseExpInt %u", digit);
         Node->exponent_integer *= 10;
         Node->spot_exponent = true;
         Node->exponent_integer += digit;
@@ -1991,25 +2001,25 @@ static bool number_exponenta_calc(Text2NumberFsm_t* Node) {
     if(Node) {
         if(Node->spot_exponent) {
             int32_t rank = ((int32_t)Node->exponent_integer) * ((int32_t)Node->exponent_sign);
-            LOG_DEBUG(LINE, "ExpRank %d", rank);
+            LOG_DEBUG(STR_LG, "ExpRank %d", rank);
             double power = (double)rank;
-            LOG_DEBUG(LINE, "power %f", power);
+            LOG_DEBUG(STR_LG, "power %f", power);
             if(rank < 306) {
                 if(-306 < rank) {
                     Node->exponenta = pow(10.0, power);
-                    LOG_DEBUG(LINE, "Exponenta: %f", Node->exponenta);
+                    LOG_DEBUG(STR_LG, "Exponenta: %f", Node->exponenta);
                     res = true;
                 } else {
                     Node->exponenta = 0.0;
-                    LOG_ERROR(LINE, "MathError:TooSmalExpPower %d", rank);
+                    LOG_ERROR(STR_LG, "MathError:TooSmalExpPower %d", rank);
                     res = false;
                 }
             } else {
-                LOG_ERROR(LINE, "MathError:TooBigExpPower %d", rank);
+                LOG_ERROR(STR_LG, "MathError:TooBigExpPower %d", rank);
                 res = false;
             }
         } else {
-            LOG_ERROR(LINE, "NoExponents");
+            LOG_ERROR(STR_LG, "NoExponents");
         }
     }
     return res;
@@ -2019,7 +2029,7 @@ static bool number_exponenta_calc(Text2NumberFsm_t* Node) {
 #ifdef HAS_STR2_DOUBLE
 static bool number_final_value_calc(Text2NumberFsm_t* Node) {
     bool res = false;
-    LOG_DEBUG(LINE, "ComposeResult");
+    LOG_DEBUG(STR_LG, "ComposeResult");
     res = number_exponenta_calc(Node);
     if(res) {
         if(Node->spot_mantissa) {
@@ -2029,7 +2039,7 @@ static bool number_final_value_calc(Text2NumberFsm_t* Node) {
             Node->value = Node->mantissa * (Node->exponenta);
             Node->state = PARSE_NUMBER_STATE_DONE;
         } else {
-            LOG_DEBUG(LINE, "NoMantissa");
+            LOG_DEBUG(STR_LG, "NoMantissa");
             res = false;
         }
     }
@@ -2053,7 +2063,7 @@ static bool number_proc_parse_exponenta_integer(Text2NumberFsm_t* Node) {
     case '9': {
         uint8_t digit = 0;
         res = try_hex_char_to_u8((uint8_t)Node->cur_letter, &digit);
-        LOG_PARN(LINE, "ParseExpInt %u", digit);
+        LOG_PARN(STR_LG, "ParseExpInt %u", digit);
         Node->exponent_integer *= 10;
         Node->exponent_integer += digit;
         Node->spot_exponent = true;
@@ -2166,11 +2176,11 @@ static bool number_proc_parse_fracion(Text2NumberFsm_t* Node) {
         Node->state = PARSE_NUMBER_STATE_PARSE_EXPONENTA_SIGN;
     } break;
     case ' ': {
-        LOG_ERROR(LINE, "TornFlowErr!");
+        LOG_ERROR(STR_LG, "TornFlowErr!");
         res = false;
     } break;
     case '.': {
-        LOG_ERROR(LINE, "DoubleDotErr!");
+        LOG_ERROR(STR_LG, "DoubleDotErr!");
         res = false;
     } break;
     case '0':
@@ -2186,7 +2196,7 @@ static bool number_proc_parse_fracion(Text2NumberFsm_t* Node) {
         uint8_t digit = 0;
         res = try_hex_char_to_u8((uint8_t)Node->cur_letter, &digit);
         double fraction_digit = ((double)digit) / (pow(10.0, (double)Node->fraction_order));
-        LOG_DEBUG(LINE, "+ %f", fraction_digit);
+        LOG_DEBUG(STR_LG, "+ %f", fraction_digit);
         Node->spot_mantissa = true;
         Node->fraction += fraction_digit;
 
@@ -2202,6 +2212,9 @@ static bool number_proc_parse_fracion(Text2NumberFsm_t* Node) {
     case '\n': {
         res = number_compose_result(Node);
     } break;
+    default:
+        res = false;
+        break;
     }
     return res;
 }
@@ -2228,7 +2241,7 @@ static bool number_proc_done(Text2NumberFsm_t* Node) {
 bool number_proc_one(Text2NumberFsm_t* Node) {
     bool res = false;
 #ifdef HAS_STRING_PARSER_DIAG
-    LOG_DEBUG(LINE, "Proc: %s", NumberParserFsm2Str(Node));
+    LOG_DEBUG(STR_LG, "Proc: %s", NumberParserFsm2Str(Node));
 #endif
     if(Node) {
         switch(Node->state) {
@@ -2279,7 +2292,7 @@ bool try_str2number(const char* const in_text, double* const double_value) {
         uint32_t i = 0;
         uint32_t ok = 0;
         uint32_t err = 0;
-        LOG_DEBUG(LINE, "ParseDoubleIn:%u:[%s]", len, in_text);
+        LOG_DEBUG(STR_LG, "ParseDoubleIn:%u:[%s]", len, in_text);
 
         for(i = 0; i < len; i++) {
             Fsm.cur_letter = in_text[i];
@@ -2288,7 +2301,7 @@ bool try_str2number(const char* const in_text, double* const double_value) {
                 ok++;
             } else {
                 err++;
-                LOG_DEBUG(LINE, "ProcErr: ch[%u]=[%c] ", i, in_text[i]);
+                LOG_DEBUG(STR_LG, "ProcErr: ch[%u]=[%c] ", i, in_text[i]);
                 break;
             }
         }
@@ -2306,7 +2319,7 @@ bool try_str2number(const char* const in_text, double* const double_value) {
             *double_value = Fsm.value;
             res = true;
         } else {
-            LOG_DEBUG(LINE, "err:%u,len:%u,ok:%u", err, len, ok);
+            LOG_DEBUG(STR_LG, "err:%u,len:%u,ok:%u", err, len, ok);
             res = false;
         }
     }
@@ -2314,6 +2327,7 @@ bool try_str2number(const char* const in_text, double* const double_value) {
 }
 #endif
 
+#ifdef HAS_STORAGE_DIAG
 /*TODO test it
  *
  * text      [IN]   value in string
@@ -2323,7 +2337,7 @@ bool try_str2number(const char* const in_text, double* const double_value) {
  * */
 bool try_str2type(const char* const in_text, StorageType_t type, uint8_t* out_buff, uint32_t buff_size) {
     bool res = false;
-    LOG_DEBUG(LINE, "Parse:%s In[%s]OutSize:%u byte", in_text, StorageTypeToStr(type), buff_size);
+    LOG_DEBUG(STR_LG, "Parse:%s In[%s]OutSize:%u byte", in_text, StorageTypeToStr(type), buff_size);
     if(in_text) {
         if(out_buff) {
             if(buff_size) {
@@ -2382,7 +2396,7 @@ bool try_str2type(const char* const in_text, StorageType_t type, uint8_t* out_bu
                 } break;
 
                 default:
-                    LOG_ERROR(LINE, "UndefType:%s", StorageTypeToStr(type));
+                    LOG_ERROR(STR_LG, "UndefType:%s", StorageTypeToStr(type));
                     res = false;
                     break;
                 } // switch
@@ -2391,3 +2405,4 @@ bool try_str2type(const char* const in_text, StorageType_t type, uint8_t* out_bu
     }
     return res;
 }
+#endif

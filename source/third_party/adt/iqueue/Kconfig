@@ -1,0 +1,4 @@
+
+config IQUEUE
+    bool "Enable use of the IQUEUE drivers"
+

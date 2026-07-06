@@ -75,6 +75,7 @@ uint32_t circular_buffer_index_add(CircularBufferIndexInfo_t* Node) {
     } else {
         Node->cur = 0;
     }
+    Node->add_cnt++;
     return phy_index;
 }
 

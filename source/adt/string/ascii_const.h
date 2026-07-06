@@ -8,7 +8,7 @@ typedef enum {
     ASCII_SPACE = 0x20,
     ASCII_ESC = 0x1B,
     ASCII_ENTER = 0x0D,
-    ASCII_LINE_FEED = 0x0A,
+    ASCII_LINE_FEED = 0x0A
 } AsciiCode_t;
 
 

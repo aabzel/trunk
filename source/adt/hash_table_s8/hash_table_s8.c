@@ -22,7 +22,7 @@ static uint8_t hash_function(const int8_t value) {
 
 static bool hash_table_s8_init_custom(void) {
     bool res = false;
-    // set_log_level(HASH_TABLE_S8, LOG_LEVEL_DEBUG);
+    // log_level_set(HASH_TABLE_S8, LOG_LEVEL_DEBUG);
     LOG_INFO(HASH_TABLE_S8, "Version:%u", HASH_TABLE_S8_VERSION);
     return res;
 }

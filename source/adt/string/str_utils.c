@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
 #ifdef HAS_ARRAY
@@ -205,7 +206,7 @@ const char* str_del_char_inplace(char* const data, char del_char) {
     char* result = NULL;
     if(data) {
         size_t lenght = strlen(data);
-        LOG_DEBUG(LINE, "DelChar[%c]In:[%s],Len:%u", del_char, data, lenght);
+        LOG_DEBUG(STR_LG, "DelChar[%c]In:[%s],Len:%u", del_char, data, lenght);
         result = data;
         bool res = false;
         int32_t i = 0;
@@ -218,7 +219,7 @@ const char* str_del_char_inplace(char* const data, char del_char) {
                 }
             }
         }
-        LOG_DEBUG(LINE, "DelCnt:%u", del_cnt);
+        LOG_DEBUG(STR_LG, "DelCnt:%u", del_cnt);
     }
     return result;
 }
@@ -231,7 +232,7 @@ const char* str_del_substr_inplace_firts(char* const data, char* const substr) {
             size_t lenght = strlen(data);
             size_t sub_len = strlen(substr);
             bool res = false;
-            LOG_DEBUG(LINE, "Del,Sub[%s]%u]From:[%s]%u]", substr, sub_len, data, lenght);
+            LOG_DEBUG(STR_LG, "Del,Sub[%s]%u]From:[%s]%u]", substr, sub_len, data, lenght);
             size_t del_cnt = 0;
             size_t i = 0;
             for(i = 0; i < (lenght - sub_len); i++) {
@@ -245,7 +246,7 @@ const char* str_del_substr_inplace_firts(char* const data, char* const substr) {
                     }
                 }
             }
-            LOG_DEBUG(LINE, "DelCnt:%u", del_cnt);
+            LOG_DEBUG(STR_LG, "DelCnt:%u", del_cnt);
         }
     }
     return result;
@@ -259,7 +260,7 @@ const char* str_del_substr_inplace(char* const data, char* const substr) {
             size_t lenght = strlen(data);
             size_t sub_len = strlen(substr);
             bool res = false;
-            LOG_DEBUG(LINE, "Del Sub[%s]From:[%s],Len:%u", substr, data, lenght);
+            LOG_DEBUG(STR_LG, "Del Sub[%s]From:[%s],Len:%u", substr, data, lenght);
             int32_t i = 0;
             size_t del_cnt = 0;
             for(i = (lenght - 1); 0 <= i; i--) {
@@ -271,7 +272,7 @@ const char* str_del_substr_inplace(char* const data, char* const substr) {
                     }
                 }
             }
-            LOG_DEBUG(LINE, "DelCnt:%u", del_cnt);
+            LOG_DEBUG(STR_LG, "DelCnt:%u", del_cnt);
         }
     }
     return result;
@@ -298,19 +299,21 @@ int __strcasecmp(const char* s1, const char* s2) {
     return result;
 }
 
-bool is_contain(const char* const temp_str, const char* const key_word1, const char* const key_word2) {
+bool is_contain(const char* const in_line, const char* const key_word1, const char* const key_word2) {
     bool res = false;
-    if(temp_str) {
-        if((0 == strcmp("", key_word1)) && (0 == strcmp("", key_word2))) {
-            res = true;
+    if(in_line) {
+        if(0 == strcmp("", key_word1)) {
+            if(0 == strcmp("", key_word2)) {
+                res = true;
+            }
         } else {
 
             if(0 != strcmp("", key_word1) && 0 != strcmp("", key_word2)) {
-                if(str_case_str(temp_str, key_word1) && str_case_str(temp_str, key_word2)) {
+                if(str_case_str(in_line, key_word1) && str_case_str(in_line, key_word2)) {
                     res = true;
                 }
             } else if(0 != strcmp("", key_word1) && 0 == strcmp("", key_word2)) {
-                if(str_case_str(temp_str, key_word1)) {
+                if(str_case_str(in_line, key_word1)) {
                     res = true;
                 }
             } else {
@@ -335,18 +338,24 @@ bool generate_string(uint8_t* array, uint32_t size, char pattern) {
     return res;
 }
 
-char* str_limit(const char* const str, uint32_t size) {
-
+/*
+    "123456", 4 - >  "12.."
+len: 6
+  */
+char* str_limit(const char* const str, const uint32_t max_size) {
     memset(text, 0, sizeof(text));
-    uint32_t len = strlen(str);
-    if(len < sizeof(text)) {
-        strcpy(text, str);
-    }
-    if((size + 3) < sizeof(text)) {
-        if(size < len) {
-            text[size] = '.';
-            text[size + 1] = '.';
-            text[size + 2] = '\0';
+    if(str) {
+        uint32_t len = strlen(str); // 6
+        if(len < sizeof(text)) {
+            strcpy(text, str);
+        }
+
+        if(max_size < len) {
+            if(2 <= len) {
+                text[max_size - 3] = '.';
+                text[max_size - 2] = '.';
+                text[max_size - 1] = '\0';
+            }
         }
     }
     return text;
@@ -355,7 +364,7 @@ char* str_limit(const char* const str, uint32_t size) {
 uint32_t str_delete_first(char* in_text, size_t size, char letter) {
     uint32_t i = 0;
     uint32_t cnt = 0;
-    LOG_DEBUG(LINE, "DelFront:[%s]%u,Ch:[%c]", in_text, size, letter);
+    LOG_DEBUG(STR_LG, "DelFront:[%s]%u,Ch:[%c]", in_text, size, letter);
     bool res = false;
     for(i = 0; i < size; i++) {
         if(letter == in_text[0]) {
@@ -367,7 +376,7 @@ uint32_t str_delete_first(char* in_text, size_t size, char letter) {
             break;
         }
     }
-    LOG_DEBUG(LINE, "DelCnt:%u", cnt);
+    LOG_DEBUG(STR_LG, "DelCnt:%u", cnt);
     return cnt;
 }
 
@@ -376,13 +385,13 @@ uint32_t string_delete_end(char* const in_text, size_t size, char letter) {
     uint32_t cnt = 0;
     if(in_text) {
         if(size) {
-            LOG_DEBUG(LINE, "DelEnd:[%s]%u,Ch:[%c]", in_text, size, letter);
+            LOG_DEBUG(STR_LG, "DelEnd:[%s]%u,Ch:[%c]", in_text, size, letter);
             int32_t i = 0;
             for(i = (size - 1); 0 <= i; i--) {
-                LOG_DEBUG(LINE, "Proc:%u:[%c]", i, in_text[i]);
+                LOG_DEBUG(STR_LG, "Proc:%u:[%c]", i, in_text[i]);
                 if(letter == in_text[i]) {
                     in_text[i] = 0x00;
-                    LOG_DEBUG(LINE, "DelAt:%u", i);
+                    LOG_DEBUG(STR_LG, "DelAt:%u", i);
                     cnt++;
                 } else {
                     break;
@@ -390,7 +399,7 @@ uint32_t string_delete_end(char* const in_text, size_t size, char letter) {
             }
         }
     }
-    LOG_DEBUG(LINE, "DelCnt:%u", cnt);
+    LOG_DEBUG(STR_LG, "DelCnt:%u", cnt);
     return cnt;
 }
 
@@ -398,7 +407,7 @@ uint32_t string_delete_end(char* const in_text, size_t size, char letter) {
 uint32_t string_delete_continuous_duplicat(char* const in_text, char letter) {
     uint32_t cnt = 0;
     uint32_t size = strlen(in_text);
-    LOG_DEBUG(LINE, "DelDup:[%s]:%u, Del[%c]", in_text, size, letter);
+    LOG_DEBUG(STR_LG, "DelDup:[%s]:%u, Del[%c]", in_text, size, letter);
     uint32_t i = 0;
     uint32_t j = 0;
     bool res = false;
@@ -421,6 +430,19 @@ uint32_t string_delete_continuous_duplicat(char* const in_text, char letter) {
             prev = cur;
         }
     }
-    LOG_DEBUG(LINE, "DelCnt:%u", cnt);
+    LOG_DEBUG(STR_LG, "DelCnt:%u", cnt);
     return cnt;
+}
+
+const char* str_embrace(const char* const data, const char* const open, const char* const close) {
+    static char lText[400] = "";
+    memset(lText, 0, sizeof(lText));
+    if(data) {
+        if(open) {
+            if(close) {
+                snprintf(lText, sizeof(lText), "%s%s%s", open, data, close);
+            }
+        }
+    }
+    return lText;
 }

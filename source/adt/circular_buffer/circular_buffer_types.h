@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 typedef struct {
+    uint32_t add_cnt; /*just for debug*/
     int32_t size;
     volatile int32_t cur;
     bool init;

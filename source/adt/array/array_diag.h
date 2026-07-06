@@ -9,22 +9,32 @@ extern "C" {
 
 #include "std_includes.h"
 
+
+bool array_print_hex(const uint8_t* const buff, const uint32_t size);
 bool print_hex(const uint8_t* const buff, const uint32_t size);
-bool print_bin(uint8_t const* const buff, uint32_t size, uint16_t indent);
+bool array_print_bin(uint8_t const* const buff, uint32_t size, uint16_t indent);
+bool array_print_mem(const uint8_t* const addr, int32_t len, bool is_bin, bool is_ascii, bool new_line, bool is_packed);
 bool print_mem(const uint8_t* const addr, int32_t len, bool is_bin, bool is_ascii, bool new_line, bool is_packed);
 bool array_i8_print_dec(const int8_t* const data, uint32_t size);
 bool array_i32_print(const int32_t* const array, uint32_t size, double step);
+bool array_i32_print_v2(const int32_t* const array, const uint32_t size);
 bool array_i16_print(const int16_t* const array, uint32_t size, double step);
 bool array_double_i16_print(const int16_t* const array1, const int16_t* const array2, uint32_t size, double step);
 bool array_i8_print(const int8_t* const array, uint32_t size);
 bool array_u32_print(const uint32_t* const array, uint32_t size);
 bool array_16_print(const int16_t* const array, uint32_t size);
 bool array_u16_print(const uint16_t* const array, uint32_t size);
+bool array_float_print(const float* const array, const uint32_t size);
 bool array_u16_print_bin(const uint16_t* const array, uint32_t size);
+bool array_u8_print_binary(const uint8_t* const buff, const uint32_t size);
 bool array_u8_print(const uint8_t* const array, uint32_t size);
 bool array_u8_print_dec(const uint8_t* const data, uint32_t size);
-const char* ArrayToStr(const uint8_t* const array, uint32_t size);
+const char* ArrayToStr(const uint8_t* const array, uint32_t size) ;
 const char* ArrayToAsciiStr(const uint8_t* const array, uint32_t size);
+const char* ArrayU8ToBitStr(const uint8_t* const data, const uint32_t size);
+const char* ArrayI32ToStr(const int32_t* const data, const uint32_t size);
+
+
 
 #ifdef __cplusplus
 }

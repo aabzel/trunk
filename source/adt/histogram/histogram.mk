@@ -7,13 +7,13 @@ ifneq ($(HISTOGRAM_MK_INC),Y)
 
     INCDIR += -I$(HISTOGRAM_DIR)
 
-    OPT += -DHAS_HISTOGRAM
+    MCAL_OPT += -DHAS_HISTOGRAM
 
     SOURCES_C += $(HISTOGRAM_DIR)/histogram.c
 
     ifeq ($(DIAG),Y)
         ifeq ($(HISTOGRAM_DIAG),Y)
-            OPT += -DHAS_HISTOGRAM_DIAG
+            MCAL_OPT += -DHAS_HISTOGRAM_DIAG
             SOURCES_C += $(HISTOGRAM_DIR)/histogram_diag.c
         endif
     endif
@@ -21,7 +21,7 @@ ifneq ($(HISTOGRAM_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(HISTOGRAM_COMMANDS),Y)
             $(info +HISTOGRAM_COMMANDS)
-            OPT += -DHAS_HISTOGRAM_COMMANDS
+            MCAL_OPT += -DHAS_HISTOGRAM_COMMANDS
             SOURCES_C += $(HISTOGRAM_DIR)/histogram_command.c
         endif
     endif

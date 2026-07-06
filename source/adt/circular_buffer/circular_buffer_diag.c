@@ -6,24 +6,24 @@
 #include "common_diag.h"
 
 const char* CircularBufferStateToStr(const CircularBufferIndexInfo_t* const Node) {
-    static char text[350] = "";
+    static char lText[350] = "";
     if(Node) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%s%u/", text, Node->cur);
-        snprintf(text, sizeof(text), "%s%u,", text, Node->size);
-        snprintf(text, sizeof(text), "%sInit:%s", text, OnOffToStr(Node->init));
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%s%u/", lText, Node->cur);
+        snprintf(lText, sizeof(lText), "%s%u,", lText, Node->size);
+        snprintf(lText, sizeof(lText), "%sInit:%s", lText, OnOffToStr(Node->init));
     }
-    return text;
+    return lText;
 }
 
 const char* CircularBufferNodeToStr(const CircularBufferWord_t* const Node) {
-    static char text[350] = "";
+    static char lText[350] = "";
     if(Node) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%s{%s},", text, CircularBufferStateToStr(&Node->state));
-        snprintf(text, sizeof(text), "%sMem:%p,", text, Node->array);
-        snprintf(text, sizeof(text), "%sInit:%s,", text, OnOffToStr(Node->init_done));
-        snprintf(text, sizeof(text), "%sErr:%u", text, Node->err_cnt);
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%s{%s},", lText, CircularBufferStateToStr(&Node->state));
+        snprintf(lText, sizeof(lText), "%sMem:%p,", lText, Node->array);
+        snprintf(lText, sizeof(lText), "%sInit:%s,", lText, OnOffToStr(Node->init_done));
+        snprintf(lText, sizeof(lText), "%sErr:%u", lText, Node->err_cnt);
     }
-    return text;
+    return lText;
 }

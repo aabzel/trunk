@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
-const char* NumberParserState2Str(ParseNumberStates_t state) {
+const char* NumberParserState2Str(const ParseNumberStates_t state) {
     const char* name = "?";
-    switch((uint8_t)state) {
+    switch(state) {
     case PARSE_NUMBER_STATE_PARSE_SIGN:
         name = "ParseSign";
         break;
@@ -25,6 +25,9 @@ const char* NumberParserState2Str(ParseNumberStates_t state) {
     case PARSE_NUMBER_STATE_PARSE_EXPONENTA_INTEGER:
         name = "ParseExpInt";
         break;
+    default:
+        name = "?";
+        break;
     }
     return name;
 }
@@ -37,6 +40,9 @@ const char* Sign2Str(int8_t sign) {
         break;
     case -1:
         name = "-";
+        break;
+    default:
+        name = "?";
         break;
     }
     return name;

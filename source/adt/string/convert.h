@@ -6,13 +6,16 @@ extern "C" {
 #endif
 
 #include <math.h>
-#include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <string.h>
 
+#include "std_includes.h"
 #include "convert_types.h"
+
+#ifdef HAS_STORAGE
 #include "storage_const.h"
+#endif
+
 #ifdef HAS_NUM_DIAG
 #include "num_to_str.h"
 #endif
@@ -52,7 +55,7 @@ extern "C" {
 bool is_dec_digit(const char character);
 bool try_strl2month(const char str[], int32_t* mon_value);
 bool is_dec_str(const char str_to_check[], int32_t str_to_check_len);
-bool is_hex_str(const char str_to_check[], int32_t str_to_check_len, uint8_t* const out_shift);
+bool is_hex_str(const char * const str_to_check, int32_t str_to_check_len, uint8_t* const out_shift);
 // 64 bit
 bool try_str2uint64(const char u64_str[], uint64_t* u64_value);
 bool try_str2int64(const char s64_str[], int64_t* s64_value);
@@ -120,7 +123,9 @@ bool text_2_number_init(Text2NumberFsm_t* Node);
 bool try_str2number(const char* const str, double* const double_value);
 #endif
 
+#ifdef HAS_STORAGE
 bool try_str2type(const char* const text, StorageType_t type, uint8_t* buff, uint32_t buff_size);
+#endif
 bool try_hex_char_to_u8(uint8_t hex_char, uint8_t* hex_char_to_u8_value);
 bool number_compose_result(Text2NumberFsm_t* Node);
 

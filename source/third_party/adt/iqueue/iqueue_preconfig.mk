@@ -1,0 +1,5 @@
+ifneq ($(IQUEUE_PRECONFIG_INC),Y)
+    IQUEUE_PRECONFIG_INC=Y
+    
+    IQUEUE=Y
+endif

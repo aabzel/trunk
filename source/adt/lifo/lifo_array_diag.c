@@ -30,22 +30,22 @@ bool lifo_arr_peek(const LifoArray_t* const Node, Array_t* const node) {
     return res;
 }
 
-bool LivoIsValidItem(const  Array_t* const Item){
+bool LivoIsValidItem(const Array_t* const Item) {
     bool res = false;
     if(Item) {
-    	if(Item->size) {
-    		if(Item->pArr) {
-        	    LOG_DEBUG(LIFO,  "Size:%u byte,Mem:0x%p,%s",Item->size,Item->pArr,ArrayToStr(Item->pArr,Item->size));
-    			res = true;
-    		}else{
+        if(Item->size) {
+            if(Item->pArr) {
+                LOG_DEBUG(LIFO, "Size:%u byte,Mem:0x%p,%s", Item->size, Item->pArr, ArrayToStr(Item->pArr, Item->size));
+                res = true;
+            } else {
                 LOG_ERROR(LIFO, "ErrMemPtr");
-        	}
-    	}else{
+            }
+        } else {
             LOG_ERROR(LIFO, "SizeErr");
-    	}
-    }else{
+        }
+    } else {
         LOG_ERROR(LIFO, "ErrNode");
-	}
+    }
     return res;
 }
 
@@ -99,7 +99,7 @@ bool LifoArrayDiag(const LifoArray_t* const Node, Protocol_t protocol) {
                 snprintf(line, sizeof(line), "%s %u ", line, i + 1);
                 snprintf(line, sizeof(line), "%s %2u ", line, Item.size);
 #ifdef HAS_PROTOCOL_DIAG
-                snprintf(line, sizeof(line), "%s %s ", line, ProtocolFrame2Str(Item.pArr, Item.size, protocol));
+                snprintf(line, sizeof(line), "%s %s ", line, ProtocolFrameToStr(Item.pArr, Item.size, protocol));
 #endif
 
                 if(LOG_LEVEL_DEBUG == log_level) {

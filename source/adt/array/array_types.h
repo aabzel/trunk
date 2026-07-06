@@ -11,7 +11,7 @@ extern "C" {
 #include "array_dep.h"
 
 typedef struct  {
-    size_t size;
+    uint32_t size;
     uint8_t* pArr;
 } Array_t;
 

@@ -2,9 +2,11 @@
 
 #include <float.h>
 #include <stddef.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "data_utils.h"
+#include "std_includes.h"
 
 #ifdef HAS_X86_64
 #include <stdio.h>
@@ -39,7 +41,6 @@
 
 #endif /*HAS_MCU*/
 
-#include "data_utils.h"
 #ifdef HAS_STREAM
 #include "debug_info.h"
 #endif
@@ -99,16 +100,34 @@ uint8_t* memdup(const uint8_t* const data, uint32_t size) {
     return out_new_mem;
 }
 
-bool is_arr_pat(const uint8_t* const arr, uint32_t size, uint8_t patt) {
+/*
+ Check that all elements of an array are equal to the expected number
+ */
+bool is_arr_pat(const uint8_t* const data, const uint32_t size, const uint8_t patt) {
     bool res = true;
     uint32_t i = 0;
     for(i = 0; i < size; i++) {
-        if(patt != arr[i]) {
+        if(patt != data[i]) {
             res = false;
+            break;
         }
     }
     return res;
 }
+
+bool is_arr_pat2(const uint8_t* const data, const uint32_t size, const uint8_t patt, uint32_t * const diff_index) {
+    bool res = true;
+    uint32_t i = 0;
+    for(i = 0; i < size; i++) {
+        if(patt != data[i]) {
+            res = false;
+            *diff_index = i;
+            break;
+        }
+    }
+    return res;
+}
+
 
 #ifdef HAS_ARRAY_EXT
 bool array_pat_set(uint8_t* arr, uint32_t size, uint8_t patt) {
@@ -125,6 +144,45 @@ bool array_pat_set(uint8_t* arr, uint32_t size, uint8_t patt) {
     return res;
 }
 #endif
+
+#ifdef HAS_ARRAY_EXT
+/*
+  Calculate the maximum number of contiguous elements starting from the beginning of the array.
+ */
+bool array_u32_max_cont(const uint32_t* const dword, const uint32_t size_dw, const uint32_t pattern,
+                        uint32_t* const max_cont_patt) {
+    bool res = false;
+    if(dword) {
+        if(0 < size_dw) {
+            uint32_t cur_cont_pat_dw = 0;
+            uint32_t max_cont_pat_dw = 0;
+            //  uint32_t prev_elem = 0xFFFFFFFF;
+
+            uint32_t i = 0;
+            for(i = 0; i < size_dw; i++) {
+                if(pattern == dword[i]) {
+                    cur_cont_pat_dw++;
+
+                    //    if(prev_elem != dword[i]) {
+                    //        cur_cont_pat_dw = 1;
+                    //    }
+                } else {
+                    cur_cont_pat_dw = 0;
+                    break;
+                }
+                // prev_elem = dword[i];
+                max_cont_pat_dw = ARRAY_MAX(max_cont_pat_dw, cur_cont_pat_dw);
+            }
+
+            if(max_cont_patt) {
+                *max_cont_patt = max_cont_pat_dw;
+                res = true;
+            }
+        }
+    }
+
+    return res;
+}
 
 bool array_max_cont(const uint8_t* const arr, uint32_t size, uint8_t patt, uint32_t* max_cont_patt) {
     bool res = false;
@@ -157,22 +215,23 @@ bool array_max_cont(const uint8_t* const arr, uint32_t size, uint8_t patt, uint3
                     cur_cont_pat = 0;
                 }
                 prev_elem = arr[i];
-                max_cont_pat = MAX(max_cont_pat, cur_cont_pat);
+                max_cont_pat = ARRAY_MAX(max_cont_pat, cur_cont_pat);
             }
             *max_cont_patt = max_cont_pat;
         }
     }
     return res;
 }
+#endif
 
 #ifdef HAS_ARRAY_EXT
-bool array_incr(uint8_t* const arr, uint32_t size) {
+bool array_incr(uint8_t* const arr, uint32_t size, uint8_t seed) {
     bool res = false;
     uint32_t i = 0;
     if(arr) {
         if(0 < size) {
-            for(i = 1; i < size; i++) {
-                arr[i] = (uint8_t)i;
+            for(i = 0; i < size; i++) {
+                arr[i] = (uint8_t)i + seed;
             }
             res = true;
         }
@@ -224,6 +283,22 @@ bool array_u8_rand(uint8_t* const arr, uint32_t size, uint8_t min, uint8_t max) 
     return res;
 }
 
+bool array_u16_rand(uint16_t* const arr, uint32_t size, uint16_t min, uint16_t max) {
+    bool res = false;
+    uint32_t i = 0;
+#ifdef HAS_TIME
+    srand(time_get_ms32());
+#endif
+
+    if(arr && (0 < size)) {
+        for(i = 0; i < size; i++) {
+            arr[i] = (uint16_t)(rand() % max) + 1;
+        }
+        res = true;
+    }
+    return res;
+}
+
 bool is_array_equal(uint8_t* array1, uint8_t* array2, uint32_t size, uint32_t* match, uint32_t* diff) {
     LOG_DEBUG(ARRAY, "%s():", __FUNCTION__);
     bool res = false;
@@ -243,9 +318,9 @@ bool is_array_equal(uint8_t* array1, uint8_t* array2, uint32_t size, uint32_t* m
 #ifdef HAS_ARRAY_DIAG
             LOG_ERROR(ARRAY, "Match:%u", *match);
             LOG_ERROR(ARRAY, "Arr1");
-            print_mem(array1, size, true, false, true, true);
+            array_print_mem(array1, size, true, false, true, true);
             LOG_ERROR(ARRAY, "Arr2");
-            print_mem(array2, size, true, false, true, true);
+            array_print_mem(array2, size, true, false, true, true);
 #endif
         }
     }
@@ -319,10 +394,7 @@ double arr_sum_double(const double* const arr, uint32_t num) {
     return sum;
 }
 
-bool array_is_equal_ext(const uint8_t* const array1,
-		                const uint8_t* const array2,
-						const uint32_t size,
-						uint32_t* const diff) {
+bool array_is_equal_ext(const uint8_t* const array1, const uint8_t* const array2, uint32_t size, uint32_t* const diff) {
 #ifdef HAS_LOG
     LOG_DEBUG(ARRAY, "%s():", __FUNCTION__);
 #endif
@@ -338,8 +410,9 @@ bool array_is_equal_ext(const uint8_t* const array1,
                 } else {
                     l_diff++;
 #ifdef HAS_LOG
-                    LOG_DEBUG(ARRAY, "Diff i=%u,0x%02x!=0x%02x", i, array1[i], array2[i]);
+                    LOG_DEBUG(ARRAY, "Diff,Array[%u]:0x%x!=0x%x", i, array1[i], array2[i]);
 #endif
+                    break;
                 }
             }
             if(match == size) {
@@ -408,10 +481,8 @@ bool array_s16_shift_right(int16_t* const arr, uint32_t size, uint32_t shift) {
                 }
                 memset(arr, 0, shift);
                 res = true;
-            } else if(size <= shift) {
-                memset(arr, 0, size);
-                res = true;
             } else {
+                memset(arr, 0, size);
                 res = true;
             }
         }
@@ -728,6 +799,7 @@ bool array_u8_del_index(uint8_t* const data, uint32_t size, uint32_t index) {
 bool array_bit_array_to_hex(const uint8_t* const bit_array, uint32_t bit_array_size, uint8_t* const hex_data,
                             uint32_t size) {
     bool res = false;
+#ifdef HAS_BIT_UTILS
     uint8_t byte_cnt = bit_array_size / 8;
     uint8_t bits_rest = bit_array_size % 8;
 #ifdef HAS_LOG
@@ -767,6 +839,7 @@ bool array_bit_array_to_hex(const uint8_t* const bit_array, uint32_t bit_array_s
             }
         }
     }
+#endif
     return res;
 }
 
@@ -892,6 +965,20 @@ bool array_s16_add_front_zeros(int16_t* const data, uint32_t size, int32_t offse
     return res;
 }
 
+bool array_s32_scale(int32_t* const data, const uint32_t size, const int32_t scale) {
+    bool res = false;
+    if(data) {
+        if(size) {
+            uint32_t i = 0;
+            for(i = 0; i < size; i++) {
+                data[i] = data[i] * scale;
+            }
+            res = true;
+        }
+    }
+    return res;
+}
+
 bool array_s32_add_front_zeros(int32_t* const data, uint32_t size, int32_t offset) {
     bool res = false;
     if(data) {
@@ -910,6 +997,32 @@ bool array_s32_add_front_zeros(int32_t* const data, uint32_t size, int32_t offse
                 res = true;
             }
         }
+    }
+    return res;
+}
+
+bool array_is_exist(const char symbol, const char* const array, const uint32_t len) {
+    bool res = false;
+    if(array) {
+        uint32_t i = 0;
+        for(i = 0; i < len; i++) {
+            if(symbol == array[i]) {
+                res = true;
+                break;
+            }
+        }
+    }
+    return res;
+}
+
+bool array_u8_xor(const uint8_t* const arr1, const uint8_t* const arr2, uint8_t* const out, uint32_t size) {
+    bool res = false;
+    if(size) {
+        uint32_t i = 0;
+        for(i = 0; i < size; i++) {
+            out[i] = arr1[i] ^ arr2[i];
+        }
+        res = true;
     }
     return res;
 }
