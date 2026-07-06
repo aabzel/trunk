@@ -12,25 +12,25 @@
 #endif
 
 const Wm8731RegConfig_t Wm8731RegisterConfiguration[]={
-    {.reg_addr=0x00, .value.LeftLineInCtrl.linvol=31,    .value.LeftLineInCtrl.lin_mute=MUTE_ON},
-    {.reg_addr=0x01, .value.RightLineInCtrl.rinvol=31,   .value.RightLineInCtrl.rin_mute=MUTE_ON,},
-    {.reg_addr=0x02, .value.LeftHeadOutCtrl.lhpvol=127,  .value.LeftHeadOutCtrl.lzcen=0,},
-    {.reg_addr=0x03, .value.RightHeadOutCtrl.rhpvol=127, .value.RightHeadOutCtrl.rzcen=0,},
+    {.reg_addr=0x00, .value.LeftLineInCtrl.linvol=31,    .value.LeftLineInCtrl.lin_mute = MUTE_ON},
+    {.reg_addr=0x01, .value.RightLineInCtrl.rinvol=31,   .value.RightLineInCtrl.rin_mute = MUTE_ON,},
+    {.reg_addr=0x02, .value.LeftHeadOutCtrl.lhpvol=127,  .value.LeftHeadOutCtrl.lzcen = 0,},
+    {.reg_addr=0x03, .value.RightHeadOutCtrl.rhpvol=127, .value.RightHeadOutCtrl.rzcen = 0,},
 
-    {.reg_addr=0x04, .value.AnalogAudioPathCtrl ={.mic_boost=MIC_IN_BOOST_OFF,
-                                                  .mute_mic=MUTE_OFF,
-                                                  .insel=ADC_IN_SEL_MIC,
-                                                  .by_pass=BYPASS_SW_OFF,
-                                                  .dac_sel=DAC_SEL_ON,
-                                                  .side_tone=SIDE_TONE_OFF,
+    {.reg_addr=0x04, .value.AnalogAudioPathCtrl ={.mic_boost = MIC_IN_BOOST_ON,
+                                                  .side_tone = SIDE_TONE_OFF,
+                                                  .dac_sel = DAC_SEL_ON,
+                                                  .by_pass = BYPASS_SW_OFF,
+                                                  .mute_mic = MUTE_OFF,
+                                                  .insel = ADC_IN_SEL_MIC,
                                                   .sideatt=0,},
     },
 
     {   .reg_addr=WM8731_REG_APDIGI,
-                     .value.DigitalAudioPathCtrl.adchpd=ADC_HI_PASS_FILT_OFF,
-                     .value.DigitalAudioPathCtrl.deemp=DE_EMPH_OFF,
-                     .value.DigitalAudioPathCtrl.dacmute=DAC_SW_MUTE_OFF,
-                     .value.DigitalAudioPathCtrl.hpor=DC_OFFSET_CLEAR,
+                     .value.DigitalAudioPathCtrl.hpor = DC_OFFSET_CLEAR, // set DC_OFFSET_CLEAR!
+                     .value.DigitalAudioPathCtrl.adchpd = ADC_HI_PASS_FILT_OFF,
+                     .value.DigitalAudioPathCtrl.dacmute = DAC_SW_MUTE_OFF,
+                     .value.DigitalAudioPathCtrl.deemp = DE_EMPH_OFF,
     },
 
 
@@ -87,6 +87,7 @@ const Wm8731RegConfig_t Wm8731RegisterConfiguration[]={
 const Wm8731Config_t Wm8731Config[] = {
     {
         .num = 1,
+        .name = "AudioCodec",
         .chip_addr = WM8731_7BIT_ADDRESS,
         .dds_num = 1,
         .i2c_num = 2,

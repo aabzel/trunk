@@ -4,15 +4,43 @@
 
 /*constant compile-time known settings*/
 const I2cConfig_t I2cConfig[] = {
-    { .num=1, .clock_speed=400000, .name = "I2C1", .valid=true,},
-    //{ .num=2, .clock_speed=100000, .name = "I2C2", .valid=true,},
-    { .num=3, .clock_speed=400000, .name = "I2C3", .valid=true,},
+#ifdef HAS_I2C1
+    {
+        .num = 1,
+        .PadScl={ .port = PORT_B, .pin = 8,},
+        .PadSda={ .port = PORT_B, .pin = 9,},
+        .clock_speed = 10000,
+        .name = "SI4703",
+        .interrupt_on = true,
+        .interrupt_priority = 2,
+        .valid = true,
+    },
+#endif
+    //{ .num=2, .clock_speed=100000, .name = "I2C2", .interrupt_on=true,.interrupt_priority=1,  .valid=true,},
+#ifdef HAS_I2C3
+    {
+      .num = 3,
+      .clock_speed = 400000,
+      .name = "I2C3",
+      .interrupt_on = true,
+      .interrupt_priority = 1,
+      .valid = true,
+    },
+#endif
 };
 
-I2cHandle_t I2cInstance[]={
+I2cHandle_t I2cInstance[] = {
+#ifdef HAS_I2C1
     {.num=1, .valid=true, },
-   // {.num=2, .valid=true, },
-    {.num=3,  .valid=true,},
+#endif
+
+#ifdef HAS_I2C2
+    {.num=2, .valid=true, },
+#endif
+
+#ifdef HAS_I2C3
+    {.num = 3,  .valid = true,},
+#endif
 };
 
 uint32_t i2c_get_cnt(void) {

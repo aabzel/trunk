@@ -2,7 +2,7 @@
 
 #ifndef HAS_BUTTON
 #error "Add HAS_BUTTON"
-#endif /*HAS_BUTTON*/
+#endif /**/
 
 #include "data_utils.h"
 
@@ -59,14 +59,5 @@ ButtonHandle_t ButtonInstance[] = {
     },
 };
 
-uint32_t button_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(ButtonInstance);
-    cnt2 = ARRAY_SIZE(ButtonConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Button, button)
+

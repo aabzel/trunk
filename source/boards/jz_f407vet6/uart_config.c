@@ -49,7 +49,7 @@ const UartConfig_t UartConfig[] = {
 #ifdef HAS_UART2
     { .num = 2,
       .baud_rate = 115200,
-      .dma = { .tx = false, .rx = false,},
+      //.dma = { .tx = false, .rx = false,},
       .name = "RS485",
       .rx_buff_size = sizeof(Uart2RxFifoArray),
       .RxFifoArray = Uart2RxFifoArray,

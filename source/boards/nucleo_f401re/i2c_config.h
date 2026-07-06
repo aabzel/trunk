@@ -2,8 +2,6 @@
 #define I2C_CONFIG_H
 
 #include "i2c_types.h"
-#include "i2c_dep.h"
-#include "sys_config.h"
 
 #ifndef HAS_I2C
 #error "+ HAS_I2C"

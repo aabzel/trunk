@@ -3,7 +3,7 @@
 #include <inttypes.h>
 #include <stdio.h>
 
-#include "button_drv.h"
+#include "button_mcal.h"
 #include "common_diag.h"
 #include "convert.h"
 #include "data_utils.h"
@@ -130,8 +130,7 @@ bool button_press_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-bool button_init_command(int32_t argc, char* argv[]){
+bool button_init_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
 
@@ -139,16 +138,16 @@ bool button_init_command(int32_t argc, char* argv[]){
         res = try_str2uint8(argv[0], &num);
     }
 
-    switch(argc){
-        case 0 : {
-            res = button_mcal_init();
-        } break;
-        case 1 : {
-            res = button_init_one(num) ;
-        } break;
-        default : {
+    switch(argc) {
+    case 0: {
+        res = button_mcal_init();
+    } break;
+    case 1: {
+        res = button_init_one(num);
+    } break;
+    default: {
 
-        } break;
+    } break;
     }
     return res;
 }

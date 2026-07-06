@@ -13,7 +13,6 @@ typedef struct {
     char* name;
 } Wm8731Reg_t;
 
-
 typedef struct {
     uint8_t reg_addr; // register I2S address
     Wm8731RegGeneral_t value; // register value

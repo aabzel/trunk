@@ -3,18 +3,18 @@
 #include <string.h>
 
 #include "log.h"
-#include "clock.h"
+#include "clock_mcal.h"
 #include "unit_test_check.h"
 #include "button_drv.h"
 
-bool test_button_types(void){
+bool test_button_types(void) {
     LOG_INFO(BUTTON, "%s()", __FUNCTION__);
     ASSERT_EQ(1, sizeof(Pad_t));
     ASSERT_EQ(1, sizeof(ButtonState_t));
     return true;
 }
 
-bool test_button_get(void){
+bool test_button_get(void) {
     LOG_INFO(BUTTON, "%s()", __FUNCTION__);
     bool res = true;
     uint32_t i = 0;
@@ -24,7 +24,7 @@ bool test_button_get(void){
 
     for(i = 1; i <= button_cnt; i++) {
     	LOG_INFO(BUTTON, "%u TestGet", i);
-        ButtonState_t ButtonState=button_get(i);
+        ButtonState_t ButtonState = button_get(i);
         EXPECT_EQ( BUTTON_STATE_UNPRESSED, ButtonState);
     }
 

@@ -2,13 +2,8 @@
 
 #ifndef HAS_BUTTON
 #error "Add HAS_BUTTON"
-#endif /*HAS_BUTTON*/
-
-#include "data_utils.h"
-
-#ifdef HAS_SI4703
-#include "si4703_drv.h"
 #endif
+#include "data_utils.h"
 
 static bool button1_proc(void) {
     bool res = false;

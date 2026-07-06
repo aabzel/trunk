@@ -22,10 +22,10 @@
         {     .irq_n = DMA2_Stream0_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream1_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream2_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
-        {     .irq_n = DMA2_Stream3_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
+        {     .irq_n = DMA2_Stream3_IRQn, .priority = 0, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream4_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream5_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
-        {     .irq_n = DMA2_Stream6_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
+        {     .irq_n = DMA2_Stream6_IRQn, .priority = 0, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream7_IRQn, .priority = 2, .on_off = true, .valid = true,},
 
 

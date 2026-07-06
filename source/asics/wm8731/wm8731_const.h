@@ -3,7 +3,7 @@
 
 #include "wm8731_dep.h"
 
-#define WM8731_PERIOD_US 100000
+#define WM8731_PERIOD_US 1000000
 #define WM8731_7BIT_ADDRESS    (0x1a)
 #define WM8731_WRITE_ADDRESS   (0x34)
 #define WM8731_READ_ADDRESS    (0x35)
@@ -62,25 +62,25 @@ typedef enum {
 }ClkOutDivSel_t;
 
 typedef enum {
-    DAC_SW_MUTE_OFF=0,
-    DAC_SW_MUTE_ON=1,
-    DAC_SW_MUTE_UNDEF=2,
+    DAC_SW_MUTE_OFF = 0,
+    DAC_SW_MUTE_ON = 1,
+    DAC_SW_MUTE_UNDEF = 2,
 }DacSoftMute_t;
 
 //De-emphasis Control
 typedef enum {
-    DE_EMPH_48000HZ=3,
-    DE_EMPH_44100HZ=2,
-    DE_EMPH_32000HZ=1,
-    DE_EMPH_OFF=0,
+    DE_EMPH_48000HZ = 3,
+    DE_EMPH_44100HZ = 2,
+    DE_EMPH_32000HZ = 1,
+    DE_EMPH_OFF = 0,
 
-    DE_EMPH_UNDEF=4,
+    DE_EMPH_UNDEF = 4,
 }DeEmphasis_t;
 
 typedef enum {
-    DC_OFFSET_STORE=1,
-    DC_OFFSET_CLEAR=0,
-    DC_OFFSET_UNDEF=2,
+    DC_OFFSET_STORE = 1,
+    DC_OFFSET_CLEAR = 0,
+    DC_OFFSET_UNDEF = 2,
 }DcOffSet_t;
 
 /*Digital Audio Path Control*/
@@ -110,8 +110,8 @@ typedef enum {
 }AudioBittness_t;
 
 typedef enum {
-    I2S_DAC_PHASE_RIGHT_CH_DAC_DACLRC_HI=1,
-    I2S_DAC_PHASE_RIGHT_CH_DAC_DACLRC_LO=0,
+    I2S_DAC_PHASE_RIGHT_CH_DAC_DACLRC_HI = 1,
+    I2S_DAC_PHASE_RIGHT_CH_DAC_DACLRC_LO = 0,
 
     I2S_DAC_PHASE_UNDEF=2,
 }I2sDacLrPhase_t;
@@ -129,9 +129,9 @@ typedef enum {
 }Wm8731Mode_t;
 
 typedef enum {
-    DAC_LR_CLK_LEFT=1,
-    DAC_LR_CLK_RIGHT=0,
-    DAC_LR_CLK_UNDEF=2,
+    DAC_LR_CLK_RIGHT = 0,
+    DAC_LR_CLK_LEFT = 1,
+    DAC_LR_CLK_UNDEF = 2,
 }DacLRclockSwap_t;
 
 typedef enum {
@@ -141,9 +141,9 @@ typedef enum {
 }Wm8731BusRole_t;
 
 typedef enum {
-    BIT_CLOCK_INVERT=1,
-    BIT_CLOCK_NORMAL=0,
-    BIT_CLOCK_UNDEF=3,
+    BIT_CLOCK_INVERT = 1,
+    BIT_CLOCK_NORMAL = 0,
+    BIT_CLOCK_UNDEF = 3,
 }BitClockInv_t;
 
 typedef enum {

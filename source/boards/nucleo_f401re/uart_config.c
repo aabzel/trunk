@@ -1,40 +1,152 @@
 #include "uart_config.h"
 
 #include "data_utils.h"
-#include "log_config.h"
 
-#if UART_NUM_CLI != UART_NUM_LOG
-#error "UART_NUM_CLI!=UART_NUM_LOG"
+#ifdef HAS_UART1
+static uint8_t Uart1TxFifoArray[UART_TX_FIFO_SIZE];
+static uint8_t Uart1RxFifoArray[UART_RX_FIFO_SIZE];
+#endif
+
+#ifdef HAS_UART2
+static uint8_t Uart2TxFifoArray[2048];
+static uint8_t Uart2RxFifoArray[UART_RX_FIFO_SIZE];
+#endif
+
+#ifdef HAS_UART6
+static uint8_t Uart6TxFifoArray[UART_TX_FIFO_SIZE];
+static uint8_t Uart6RxFifoArray[UART_RX_FIFO_SIZE];
 #endif
 
 /*constant compile-time known settings*/
-const UartConfig_t UartConfigLuT[] = {
-#ifdef HAS_LOG
+const UartConfig_t UartConfig[] = {
+#ifdef HAS_UART1
+    {
+        .num = 1,
+        .baud_rate = 115200,
+        .word_len_bit = 8,
+        .stop_bit_cnt = 2,
+        .parity_check = false,
+        .RxPad = {.port=PORT_A, .pin=10,},
+        .TxPad = {.port=PORT_A, .pin=9,},
+        .name = "ESP-01",
+        .irq_priority = 0,
+      //  .dma = { .tx = false, .rx = false,},
+        .momve_method = MOVE_MODE_INTERRUPT,
+        .interrupts_on = true,
+        .TxFifoArray = Uart1TxFifoArray,
+        .tx_buff_size = sizeof(Uart1TxFifoArray),
+
+        .RxFifoArray = Uart1RxFifoArray,
+        .rx_buff_size = sizeof(Uart1RxFifoArray),
+
+        .valid = true,
+    },
+#endif
+
+#ifdef HAS_UART2
     {
         .num = 2,
         .baud_rate = 460800,
         .name = "CLI",
-        .rx_buff_size = 0,
+        .RxPad = {.port=PORT_A, .pin=3,},
+        .TxPad = {.port=PORT_A, .pin=2,},
+     //   .dma = { .tx = false, .rx = false,},
+        .interrupts_on = true,
+        .irq_priority = 0,
+        .momve_method = MOVE_MODE_INTERRUPT,
+        .word_len_bit = 8,
+        .stop_bit_cnt = 2,
+        .RxFifoArray = Uart2RxFifoArray,
+        .rx_buff_size = sizeof(Uart2RxFifoArray),
+
+        .TxFifoArray = Uart2TxFifoArray,
+        .tx_buff_size = sizeof(Uart2TxFifoArray),
+        .parity_check = false,
+        .valid = true,
+    },
+#endif
+
+#ifdef HAS_UART6
+    {
+        .num = 6,
+        .baud_rate = 9600,
+        .name = "GNSS",
+        .RxPad = {.port=PORT_A, .pin=12,},
+        .TxPad = {.port=PORT_A, .pin=11,},
+        .interrupts_on = true,
+     //   .dma = { .tx = false, .rx = false,},
+        .momve_method = MOVE_MODE_INTERRUPT,
+        .word_len_bit = 8,
+
+        .irq_priority = 0,
+        .RxFifoArray = Uart6RxFifoArray,
+        .rx_buff_size = sizeof(Uart6RxFifoArray),
+
+        .TxFifoArray = Uart6TxFifoArray,
+        .tx_buff_size = sizeof(Uart6TxFifoArray),
+        .stop_bit_cnt = 2,
+        .parity_check = false,
         .valid = true,
     },
 #endif
 };
 
-uint8_t LogUartTxArray[UART_TX_FIFO_SIZE];
 
 UartHandle_t UartInstance[] = {
-#ifdef HAS_LOG
+#ifdef HAS_UART1
+        {
+            .num = 1,
+            .valid = true,
+            .TxFifo =
+                {
+                    .err_cnt = 0,
+                    .init_done = true,
+                    .array = (uint8_t*)Uart1TxFifoArray,
+                    .fifoState =
+                        {
+                            .size = sizeof(Uart1TxFifoArray),
+                            .start = 0,
+                            .end = 0,
+                            .count = 0,
+                            .errors = false,
+                        },
+                },
+        },
+#endif
+
+#ifdef HAS_UART2
     {
         .num = 2,
         .valid = true,
         .TxFifo =
             {
                 .err_cnt = 0,
-                .initDone = true,
-                .array = (char*)LogUartTxArray,
+                .init_done = true,
+                .array = (uint8_t*)Uart2TxFifoArray,
                 .fifoState =
                     {
-                        .size = sizeof(LogUartTxArray),
+                        .size = sizeof(Uart2TxFifoArray),
+                        .start = 0,
+                        .end = 0,
+                        .count = 0,
+                        .errors = false,
+                    },
+            },
+    },
+#endif
+
+#ifdef HAS_UART6
+    {
+        .num = 6,
+        .valid = true,
+        .TxFifo =
+            {
+                .err_cnt = 0,
+                .init_done = true,
+                .array = (uint8_t*)Uart6TxFifoArray,
+                .fifoState =
+                    {
+                        .size = sizeof(Uart6TxFifoArray),
                         .start = 0,
                         .end = 0,
                         .count = 0,
@@ -45,12 +157,4 @@ UartHandle_t UartInstance[] = {
 #endif
 };
 
-uint32_t uart_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt_conf = ARRAY_SIZE(UartConfigLuT);
-    uint32_t cnt_ints = ARRAY_SIZE(UartInstance);
-    if(cnt_conf == cnt_ints) {
-        cnt = cnt_ints;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Uart, uart)

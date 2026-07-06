@@ -414,7 +414,7 @@ bool dma_channel_init_stm_init(const DmaChannelConfig_t* const ChannelConfig, DM
 
 bool dma_channel_init_one(uint8_t num) {
     bool res = false;
-    LOG_WARNING(DMA_CHANNEL, "DMA_CHANNEL_%u=%s", num, DmaChannnelNumToStr(num));
+    LOG_WARNING(DMA_CHANNEL, "N:%u=%s", num, DmaChannnelNumToStr(num));
     const DmaChannelConfig_t *ChannelConfig = DmaChannelGetConfig(num);
     if(ChannelConfig) {
         DmaChannelHandle_t *DmaChNode = DmaChannelGetNode(num);
@@ -424,7 +424,7 @@ bool dma_channel_init_one(uint8_t num) {
 
         uint8_t dma_num = ChannelConfig->DmaChPad.dma_num;
         uint8_t stream_num = ChannelConfig->DmaChPad.stream;
-        LOG_WARNING(LG_DMA, "%u,DMA%u,Channel%u,Init", num, dma_num, stream_num);
+        LOG_WARNING(LG_DMA, "%u,DMA%u,Stream_%u,Init", num, dma_num, stream_num);
         DMA_Stream_TypeDef *DMAx = NULL;
         DMAx = DmaChannelToDMAx(dma_num, stream_num);
         if(DMAx) {

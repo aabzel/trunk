@@ -2,10 +2,7 @@
 #define USART_CONFIG_H
 
 #include "uart_types.h"
-#include "sys_config.h"
-
-#define UART_NUM_CLI 3
-#define CLI_UART_BAUD_RATE 460800 /* bit/s */
+//#include "sys_config.h"
 
 extern const UartConfig_t UartConfig[];
 extern UartHandle_t UartInstance[];

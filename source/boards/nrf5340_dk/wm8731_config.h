@@ -1,4 +1,3 @@
-
 #ifndef WM8731_CONFIG_H
 #define WM8731_CONFIG_H
 

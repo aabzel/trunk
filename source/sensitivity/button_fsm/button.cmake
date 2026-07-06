@@ -11,7 +11,7 @@ if( NOT (BUTTON_MK_INC STREQUAL Y))
     target_compile_definitions(app PUBLIC HAS_BUTTON_PROC)
     
     target_include_directories(app PUBLIC ${BUTTON_DIR})
-    target_sources(app PRIVATE ${BUTTON_DIR}/button_drv.c)
+    target_sources(app PRIVATE ${BUTTON_DIR}/button_mcal.c)
 
     if(DIAG STREQUAL Y)
         target_compile_definitions(app PUBLIC HAS_BUTTON_DIAG)

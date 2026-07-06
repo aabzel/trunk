@@ -156,7 +156,10 @@ bool cmd_wm8731_set_sidetone(int32_t argc, char* argv[]) {
     }
     return res;
 }
-
+// wm8731_vol 1 1 1
+/*
+ wmv -73
+ * */
 bool cmd_wm8731_set_volume(int32_t argc, char* argv[]) {
     bool res = false;
     int8_t left = -73;
@@ -171,7 +174,6 @@ bool cmd_wm8731_set_volume(int32_t argc, char* argv[]) {
     }
     if(res) {
         LOG_INFO(WM8731, "TrySetVlo L%d R%d", left, right);
-        set_log_level(WM8731, LOG_LEVEL_DEBUG);
         res = wm8731_set_volume(num, left, right);
         if(res) {
             LOG_INFO(WM8731, "Ok! L%d R%d", left, right);
@@ -181,7 +183,6 @@ bool cmd_wm8731_set_volume(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(WM8731, "Usage: wmv left right");
     }
-    set_log_level(WM8731, LOG_LEVEL_INFO);
     return res;
 }
 
