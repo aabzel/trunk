@@ -13,8 +13,10 @@
     SampleType_t* SampleArray;                         \
     char* name;                                        \
     uint8_t num;                                       \
+    uint8_t led_num;                                   \
     uint8_t fat_fs_num;                                \
     uint8_t audio_codec_num;                           \
+    uint8_t wm8731_num;                                \
     uint8_t i2s_num;                                   \
     bool valid;
 

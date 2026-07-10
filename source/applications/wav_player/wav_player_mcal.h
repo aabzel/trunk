@@ -27,6 +27,7 @@ bool wav_player_init_custom(void);
 bool wav_player_init_common(const WavPlayerConfig_t* const Config, WavPlayerHandle_t* const Node);
 bool wav_player_init_node(WavPlayerHandle_t* const Node);
 bool wav_player_init_one(uint8_t num);
+bool wav_player_is_valid_num(uint8_t num);
 
 bool wav_player_proc_one(uint8_t num);
 bool wav_player_proc(void);

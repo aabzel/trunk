@@ -1,13 +1,15 @@
 #include "wav_player_mcal.h"
 
+#include "audio.h"
 #include "code_generator.h"
 #include "compiler_const.h"
 #include "fat_fs.h"
 #include "ff.h" /* Declarations of FatFs API */
 #include "i2s_mcal.h"
+#include "led_mono_drv.h"
 #include "log.h"
-#include "audio.h"
 #include "wav_diag.h"
+#include "wm8731_drv.h"
 
 COMPONENT_IS_VALID(WavPlayer, wav_player)
 COMPONENT_GET_NODE(WavPlayer, wav_player)
@@ -26,6 +28,7 @@ bool wav_player_stop_ll(WavPlayerHandle_t* Node) {
         LOG_ERROR(WAV_PLAYER, "CloseFile:[%s]Err", Node->file_name);
     }
     Node->state = WAV_PLAYER_STATE_IDLE;
+    led_mono_sw_pwm_duty(Node->led_num, 50);
     return res;
 }
 
@@ -76,10 +79,10 @@ static bool wav_player_load_to_part_offset(WavPlayerHandle_t* Node, uint32_t off
             if(need_size == real_read) {
                 Node->cur_read_size += real_read;
                 res = true;
-            }else if (0==real_read) {
+            } else if(0 == real_read) {
                 res = wav_player_stop_ll(Node);
             } else {
-                LOG_ERROR(WAV_PLAYER,"ReadUndefSize:%u Byte", real_read);
+                LOG_ERROR(WAV_PLAYER, "ReadUndefSize:%u Byte", real_read);
             }
         } else {
             Node->read_error_cnt++;
@@ -167,11 +170,12 @@ bool wav_player_proc_idle(WavPlayerHandle_t* Node) {
     return res;
 }
 
-
 bool wav_player_init_common(const WavPlayerConfig_t* const Config, WavPlayerHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->wm8731_num = Config->wm8731_num;
+            Node->led_num = Config->led_num;
             Node->i2s_num = Config->i2s_num;
             Node->SampleArray = Config->SampleArray;
             Node->fat_fs_num = Config->fat_fs_num;
@@ -190,7 +194,7 @@ bool wav_player_init_node(WavPlayerHandle_t* const Node) {
         Node->spin = 0;
         Node->valid = true;
         Node->I2s = I2sGetNode(Node->i2s_num);
-        if(Node->I2s){
+        if(Node->I2s) {
             res = true;
         }
     }
@@ -210,7 +214,7 @@ bool wav_player_play_file(const uint8_t num, const char* const file_name) {
     bool res = false;
     WavPlayerHandle_t* Node = WavPlayerGetNode(num);
     if(Node) {
-        Node->cur_read_size = 0 ;
+        Node->cur_read_size = 0;
         BYTE mode = FA_READ | FA_OPEN_EXISTING;
         FRESULT ret = f_open((FIL*)&Node->FileToPlay, (const TCHAR*)file_name, mode);
         res = FatFsRetToRes(ret, "Open");
@@ -226,14 +230,18 @@ bool wav_player_play_file(const uint8_t num, const char* const file_name) {
                 res = false;
                 if(sizeof(WavHeader_t) == realRead) {
                     LOG_INFO(WAV, "ReadHeaderOk,%s", WavHeaderToStr(&Node->WavHeader));
+                    res = i2s_audio_set_data_dirrection(Node->i2s_num, INTERFACE_OPERATION_SEND);
                     res = i2s_audio_frequency_set(Node->i2s_num, Node->WavHeader.sampleRate);
+                    res = i2s_gpio_set_write(Node->i2s_num);
+                    wm8731_sample_rate(Node->wm8731_num, (AudioFreq_t)Node->WavHeader.sampleRate);
                     if(res) {
                         res = wav_player_load_to_part(Node);
                         res = FatFsRetToRes(ret, "ReadPart");
                         if(res) {
-                            res = i2s_mcal_write(Node->i2s_num, (uint16_t*) Node->SampleArray, Node->sample_array_size);
+                            res = i2s_mcal_write(Node->i2s_num, (uint16_t*)Node->SampleArray, Node->sample_array_size);
                             if(res) {
                                 Node->state = WAV_PLAYER_STATE_PLAY_PART1;
+                                led_mono_sw_pwm_duty(Node->led_num, 90);
                             }
                         }
                     }
@@ -260,9 +268,20 @@ bool wav_player_proc_one(uint8_t num) {
         case WAV_PLAYER_STATE_PLAY_PART2: {
             res = wav_player_proc_play2(Node);
         } break;
-        default: { res = false; } break;
+        default: {
+            res = false;
+        } break;
         }
         Node->spin++;
+    }
+    return res;
+}
+
+bool wav_player_is_valid_num(uint8_t num) {
+    bool res = false;
+    WavPlayerHandle_t* Node = WavPlayerGetNode(num);
+    if(Node) {
+        res = true;
     }
     return res;
 }

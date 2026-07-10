@@ -8,7 +8,9 @@ static SampleType_t PlaySampleArray[PLAYER_MEM_SIZE]={0};
 const WavPlayerConfig_t WavPlayerConfig[] = {
     {
         .audio_codec_num = 1,
+        .wm8731_num = 1,
         .fat_fs_num = 1,
+        .led_num = 1,
         .i2s_num = 2,
         .num = 1,
         .SampleArray = PlaySampleArray,
@@ -17,7 +19,6 @@ const WavPlayerConfig_t WavPlayerConfig[] = {
         .name = "WAV_PLAYER1",
     },
 };
-
 
 WavPlayerHandle_t WavPlayerInstance[] = {
     {
