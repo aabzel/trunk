@@ -16,6 +16,7 @@
 #include "i2s_custom_misc.h"
 #include "i2s_custom_drv.h"
 #include "i2s_custom_types.h"
+#include "interrupt_mcal.h"
 #include "interfaces_diag.h"
 #include "i2s_diag.h"
 #include "log.h"
@@ -65,6 +66,10 @@ static const I2sInfo_t I2sInfo[] = {
         .CallBackTxDone = NULL,
         .CallBackRxHalf = NULL,
         .CallBackRxDone = NULL,
+        .dma_tx_irq_n = DMA1_Stream4_IRQn,
+        .DmaInfoChannelTx = { .dma_num = 1, .stream=4, .channel = 0,  .name = "I2S2_TX", },
+        .dma_rx_irq_n = DMA1_Stream3_IRQn,
+        .DmaInfoChannelRx = { .dma_num = 1, .stream=3, .channel = 0,  .name = "I2S2_RX", },
         .valid = true,
     },
 };
@@ -674,13 +679,18 @@ bool i2s_gpio_set_read(const uint8_t num) {
     bool res = false;
     I2sHandle_t* Node = I2sGetNode(num);
     if(Node){
-
-        res = gpio_init_input(Node->GpioMClk.Pad);
-        res = gpio_init_input(Node->GpioSdOut.Pad);
-
         res = gpio_init_one(&Node->GpioLrCk);
         res = gpio_init_one(&Node->GpioSck);
         res = gpio_init_one(&Node->GpioSdIn);
+#ifdef HAS_I2S_MCL
+        res = gpio_init_input(Node->GpioMClk.Pad);
+        res = gpio_pad_mux_set(Node->GpioMClk.Pad,0);
+#endif
+
+        res = gpio_init_input(Node->GpioSdOut.Pad);
+
+        res = gpio_pad_mux_set(Node->GpioSdOut.Pad,0);
+
     }
     return res;
 }
@@ -690,16 +700,30 @@ bool i2s_gpio_set_write(const uint8_t num){
     bool res = false;
     I2sHandle_t* Node = I2sGetNode(num);
     if(Node){
-        res = gpio_init_input(Node->GpioMClk.Pad);
-        res = gpio_init_input(Node->GpioSdIn.Pad);
 
         res = gpio_init_one(&Node->GpioLrCk);
         res = gpio_init_one(&Node->GpioSck);
         res = gpio_init_one(&Node->GpioSdOut);
+#ifdef HAS_I2S_MCL
+        res = gpio_init_input(Node->GpioMClk.Pad);
+#endif
+        res = gpio_init_input(Node->GpioSdIn.Pad);
+        res = gpio_pad_mux_set(Node->GpioSdIn.Pad,0);
     }
     return res;
 }
 
+bool i2s_interrupt_ctrl(const uint8_t num, bool on_off){
+    bool res = false;
+    const I2sInfo_t *Info = I2sGetInfo(num);
+    if(Info) {
+        res = true;
+        res = interrupt_control(Info->irq_n,   on_off)&&res;
+        res = interrupt_control(Info->dma_tx_irq_n,   on_off) &&res;
+        res = interrupt_control(Info->dma_rx_irq_n,   on_off) &&res;
+    }
+    return res;
+}
 
 static bool i2s_init_one_ll(const I2sConfig_t* const Config, I2sHandle_t* const Node) {
     bool res = false;
@@ -752,20 +776,14 @@ static bool i2s_init_one_ll(const I2sConfig_t* const Config, I2sHandle_t* const 
     return res;
 }
 
-bool i2s_audio_frequency_set(const uint8_t num,
-                             const uint32_t audio_frequency_hz) {
+bool i2s_audio_frequency_set(const uint8_t num, const uint32_t audio_frequency_hz) {
     bool res = false;
     I2sHandle_t *Node = I2sGetNode(num);
-    if (Node) {
+    if(Node) {
         LOG_INFO(I2S, "I2S_%u,Set,AudioFreq:%u Hz", num, audio_frequency_hz);
-        const I2sConfig_t *Config = I2sGetConfig(num);
-        if (Config) {
-            I2sConfig_t NewConfig = { 0 };
-            memcpy(&NewConfig, Config, sizeof(I2sConfig_t));
-            NewConfig.audio_frequency_hz = audio_frequency_hz;
-            Node->audio_frequency_hz = audio_frequency_hz;
-            res = i2s_init_one_ll(&NewConfig, Node);
-        }
+        Node->NewConfig.audio_frequency_hz = audio_frequency_hz;
+        Node->audio_frequency_hz = audio_frequency_hz;
+        res = i2s_init_one_ll(&Node->NewConfig, Node);
     }
     return res;
 }
@@ -778,16 +796,14 @@ bool i2s_audio_set_data_dirrection(const uint8_t num,
         LOG_INFO(I2S, "I2S_%u,Set,Operation:%s", num, IfOperationToStr(operation));
         const I2sConfig_t *Config = I2sGetConfig(num);
         if (Config) {
-            I2sConfig_t NewConfig = { 0 };
-            memcpy(&NewConfig, Config, sizeof(I2sConfig_t));
-            NewConfig.direction = I2SOperationToDirection(operation);
+            memcpy(&Node->NewConfig, Config, sizeof(I2sConfig_t));
+            Node->NewConfig.direction = I2SOperationToDirection(operation);
             Node->direction = I2SOperationToDirection(operation);
-            res = i2s_init_one_ll(&NewConfig, Node);
+            res = i2s_init_one_ll(&Node->NewConfig, Node);
         }
     }
     return res;
 }
-
 
 bool i2s_init_one(const uint8_t num) {
     bool res = false;
@@ -796,6 +812,7 @@ bool i2s_init_one(const uint8_t num) {
     if(Config) {
         I2sHandle_t* Node = I2sGetNode(num);
         if(Node) {
+            memcpy(&Node->NewConfig, Config, sizeof(I2sConfig_t));
             res = i2s_init_one_ll(Config, Node) ;
         }
     }

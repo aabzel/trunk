@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "i2s_types.h"
 #include "i2s_custom_types.h"
 #include "stm32fx_hal.h"

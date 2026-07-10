@@ -24,8 +24,14 @@ typedef struct {
     DmaIsrHandler_t CallBackRxHalf;
     DmaIsrHandler_t CallBackRxDone;
     IRQn_Type irq_n;
+    IRQn_Type dma_tx_irq_n;
+    IRQn_Type dma_rx_irq_n;
+    DmaInfoChannel_t DmaInfoChannelTx;
+    DmaInfoChannel_t DmaInfoChannelRx;
     bool valid;
 }I2sInfo_t;
+
+
 
 #ifdef __cplusplus
 }

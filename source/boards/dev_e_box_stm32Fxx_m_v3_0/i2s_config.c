@@ -10,6 +10,24 @@
 #endif
 
 
+#ifdef HAS_I2S_MCK
+#define I2S2_COMMON_GPIO_MCK_VARIABLE                     \
+    .GpioMClk = {.Pad = {.port = PORT_C, .pin = 6, },     \
+                 .logic_level = GPIO_LVL_HI,              \
+                 .name = " I2S2_MCK",                     \
+                 .connector2 = "J2.15",                   \
+                 .dir = GPIO_DIR_OUT,                     \
+                 .speed = GPIO_SPEED_HIGH_SPEED,          \
+                 .mode = GPIO_API_MODE_ALT1,              \
+                 .pull = GPIO__PULL_DOWN,                 \
+                 .mux = 5,                                \
+              },
+
+#else
+#define I2S2_COMMON_GPIO_MCK_VARIABLE
+#endif
+
+
 #ifdef HAS_I2S_GPIO
 
 #define I2S2_COMMON_GPIO_CLK_VARIABLE                   \
@@ -27,6 +45,7 @@
 
 #define I2S2_COMMON_GPIO_VARIABLES                      \
     I2S2_COMMON_GPIO_CLK_VARIABLE                       \
+    I2S2_COMMON_GPIO_MCK_VARIABLE                       \
     .GpioLrCk={.Pad = {.port = PORT_B, .pin = 12,},     \
                .connector2 = "J3.11",                   \
                .mux = 5,                                \
@@ -113,7 +132,7 @@ static uint16_t I2s2RxSampleArray[I2S_MEM_SIZE]={0};
         .led_tx_num = 1,                                              \
         .led_rx_num = 1,                                              \
         .sample_mode = SAMPLE_MODE_STEREO,                            \
-        .audio_frequency_hz = AUDIO_FREQ_96K,                         \
+        .audio_frequency_hz = AUDIO_FREQ_48K,                         \
         .data_format = I2S_DATA_FORMAT_16B,                           \
         .irq_priority = 0 ,                                           \
         .move_mode = MOVE_MODE_DMA ,                                  \

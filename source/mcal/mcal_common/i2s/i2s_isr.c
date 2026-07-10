@@ -2,10 +2,9 @@
 
 #include <string.h>
 
+#include "gpio_mcal.h"
 #include "i2s_mcal.h"
 #include "sound_recorder_isr.h"
-#include "gpio_mcal.h"
-
 
 bool I2sRxHalfCallback(I2sHandle_t* const Node) {
     bool res = false;
@@ -31,16 +30,14 @@ bool I2sRxDoneCallback(I2sHandle_t* const Node) {
     return res;
 }
 
-
-bool i2s_isr_echo( I2sHandle_t* Node ){
-    bool res = false ;
+bool i2s_isr_echo(I2sHandle_t* Node) {
+    bool res = false;
     if(Node->echo) {
         memcpy((void*)&Node->tx_sample, (void*)&Node->rx_sample, sizeof(Node->tx_sample));
         res = false;
     }
     return res;
 }
-
 
 /*tx*/
 bool I2sTxHalfCallback(I2sHandle_t* const Node) {
@@ -107,7 +104,7 @@ bool I2sErrorCallback(I2sHandle_t* const Node) {
     bool res = false;
     if(Node) {
         Node->error_cnt++;
-        Node->error= true;
+        Node->error = true;
         res = true;
     }
     return res;

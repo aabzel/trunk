@@ -31,6 +31,7 @@ const I2sBusDirInfo_t* I2sRoleAndDirToInfo(const IfBusRole_t bus_role, const Con
 
 bool i2s_mcal_init(void);
 bool i2s_init_one(const uint8_t num);
+bool i2s_interrupt_ctrl(const uint8_t num, bool on_off);
 bool i2s_init_node(I2sHandle_t* const Node );
 bool i2s_init_custom(void);
 bool i2s_proc_one(uint8_t num);

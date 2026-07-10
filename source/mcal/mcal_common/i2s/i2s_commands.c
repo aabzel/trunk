@@ -217,7 +217,7 @@ bool i2s_write_command(int32_t argc, char* argv[]) {
         }
 
         if(res) {
-            res = i2s_mcal_write(num, (uint16_t*) array, words);
+            res = i2s_mcal_write(num, (uint16_t*)array, words);
             if(false == res) {
                 LOG_ERROR(I2S, "%u WriteErr %u words", num, words);
             } else {
@@ -551,7 +551,7 @@ bool i2s_play_tone_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-#if  0
+#if 0
 bool i2s_play_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;

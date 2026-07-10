@@ -127,13 +127,21 @@ typedef union {
 #define I2S_DMA_COMMON_VARIABLES
 #endif
 
+#ifdef HAS_I2S_MCK
+#define I2S_MCK_COMMON_GPIO_VARIABLES   \
+        GpioConfig_t GpioMClk;
+#else
+#define I2S_MCK_COMMON_GPIO_VARIABLES
+#endif
+
+
 #ifdef HAS_GPIO
-#define I2S_COMMON_GPIO_VARIABLES     \
-    GpioConfig_t GpioSck;             \
-    GpioConfig_t GpioLrCk;            \
-    GpioConfig_t GpioSdOut;           \
-    GpioConfig_t GpioSdIn;            \
-    GpioConfig_t GpioMClk;
+#define I2S_COMMON_GPIO_VARIABLES         \
+        I2S_MCK_COMMON_GPIO_VARIABLES     \
+        GpioConfig_t GpioSck;             \
+        GpioConfig_t GpioLrCk;            \
+        GpioConfig_t GpioSdOut;           \
+        GpioConfig_t GpioSdIn;
 
 #else
 #define I2S_COMMON_GPIO_VARIABLES
@@ -304,6 +312,7 @@ typedef struct {
     float max_diration_s;
     FlowCnt_t cnt_prev;
     uint32_t frames_to_send;
+    I2sConfig_t NewConfig;
     /*Proc in super loop*/
 } I2sHandle_t;
 

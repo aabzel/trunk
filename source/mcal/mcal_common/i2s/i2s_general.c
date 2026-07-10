@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "audio.h"
 #include "code_generator.h"
 #include "compiler_const.h"
 #include "connectivity_const.h"
@@ -11,7 +12,6 @@
 #include "float_diag.h"
 #include "gpio_mcal.h"
 #include "i2s_config.h"
-#include "audio.h"
 #include "i2s_diag.h"
 #include "i2s_mcal.h"
 #include "led_mono_drv.h"
@@ -30,7 +30,6 @@
 
 COMPONENT_GET_NODE(I2s, i2s)
 COMPONENT_GET_CONFIG(I2s, i2s)
-
 
 static const I2sBusDirInfo_t I2sBusDirInfo[] = {
     {
@@ -133,7 +132,7 @@ static bool i2s_gpio_is_valid_config(const I2sConfig_t* const Config) {
     if(Config) {
         bool l_res = true;
         res = true;
-#if 0
+#ifdef HAS_I2S_MCK
         l_res = GpioIsValidConfig(&Config->GpioMClk);
         ifn(l_res) {
             res = false;
@@ -474,7 +473,7 @@ bool i2s_init_common(const I2sConfig_t* const Config, I2sHandle_t* const Node) {
             Node->GpioLrCk = Config->GpioLrCk;
             Node->GpioSdOut = Config->GpioSdOut;
             Node->GpioSdIn = Config->GpioSdIn;
-            Node->GpioMClk = Config->GpioMClk;
+            //  Node->GpioMClk = Config->GpioMClk;
 #endif
 
             Node->bus_role = Config->bus_role;
@@ -630,10 +629,10 @@ bool i2s_play_1khz(uint8_t i2s_num, uint8_t dac_num, SampleType_t amplitude, uin
 #ifdef HAS_DDS
     res = dds_set_sin(dac_num, 1000.0, amplitude, (float)phase_ms, 0);
     if(res) {
-        res = dds_set_array(  dac_num, 1, 0);
+        res = dds_set_array(dac_num, 1, 0);
         DdsHandle_t* Dds = DdsGetNode(dac_num);
         if(Dds) {
-            res = i2s_mcal_write(i2s_num, (uint16_t*) Dds->sample_array, Dds->sample_cnt);
+            res = i2s_mcal_write(i2s_num, (uint16_t*)Dds->sample_array, Dds->sample_cnt);
         } else {
             LOG_ERROR(I2S, "DAC%u Err", dac_num);
         }
