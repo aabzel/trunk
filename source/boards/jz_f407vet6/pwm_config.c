@@ -7,6 +7,7 @@
 #error "Add HAS_PWM"
 #endif
 
+#ifdef HAS_DRV8870
 #define PWM_CONFIG_IN1                                     \
      {  .num = PWM_NUM_DRV8870_CH1_IN1,                    \
         .PhaseComparator={.timer = 0, .channel = 0, },     \
@@ -44,28 +45,38 @@
 #define PWM_CONFIG_DRV8870     \
           PWM_CONFIG_IN1       \
           PWM_CONFIG_IN2
+#else
+#define PWM_CONFIG_DRV8870
+#endif
+
+
+#ifdef HAS_HOMING_LASER
+#define PWM_CONFIG_HOMING_LASER                         \
+     {  .num = PWM_NUM_HOMING_LASER,                        \
+        .polarity = PWM_POLARITY_HIGH,                  \
+        .TimChan={.timer = 3, .channel = 1},            \
+        .PhaseComparator={.timer = 1, .channel = 1, },  \
+        .pin_mux = 2,                                   \
+        .Pad={.port = PORT_A, .pin=6, },                \
+        .frequency_hz = 1000.0f,                        \
+        .ComparatorHandler=NULL,                        \
+        .PeriodDoneHandler=NULL,                        \
+        .duty = 50.0f,                                  \
+        .phase_s = 0.0f,                                \
+        .name="TxLaserCarrier",                         \
+        .valid = true,                                  \
+        .on = true,                                     \
+     },
+#else
+#define PWM_CONFIG_HOMING_LASER
+#endif
 
 const PwmConfig_t PwmConfig[] = {
+        PWM_CONFIG_HOMING_LASER
         PWM_CONFIG_DRV8870
 
         /*carrier*/
-#ifdef HAS_LASER_TX
-     {  .num = PWM_NUM_LASER_TX,
-        .polarity = PWM_POLARITY_HIGH,
-        .TimChan={.timer = 3, .channel = 1},
-        .PhaseComparator={.timer = 1, .channel = 1, },
-        .pin_mux = 2,
-        .Pad={.port = PORT_A, .pin=6, },
-        .frequency_hz = 1000.0f,
-        .ComparatorHandler=NULL,
-        .PeriodDoneHandler=NULL,
-        .duty = 50.0f,
-        .phase_s = 0.0f,
-        .name="TxLaserCarrier",
-        .valid = true,
-        .on = true,
-     },
-#endif
+
 #if 0
 #ifdef HAS_TIMER8
      //    PC7 TIM8_CH2
@@ -119,10 +130,13 @@ const PwmConfig_t PwmConfig[] = {
 };
 
 PwmHandle_t PwmInstance[] = {
+#ifdef HAS_DRV8870
     {.num = PWM_NUM_DRV8870_CH1_IN1,  .valid = true,},
     {.num = PWM_NUM_DRV8870_CH1_IN2,  .valid = true,},
-#ifdef HAS_LASER_TX
-    {.num = PWM_NUM_LASER_TX,  .valid = true,},
+#endif
+
+#ifdef HAS_HOMING_LASER
+    {.num = PWM_NUM_HOMING_LASER,  .valid = true,},
 #endif
 };
 

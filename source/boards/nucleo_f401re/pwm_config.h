@@ -4,9 +4,6 @@
 #include "std_includes.h"
 #include "pwm_types.h"
 
-#ifndef HAS_PWM
-#error "Add HAS_PWM"
-#endif
 
 extern const PwmConfig_t PwmConfig[];
 extern PwmHandle_t PwmInstance[];

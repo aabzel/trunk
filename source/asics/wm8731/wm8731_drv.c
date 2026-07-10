@@ -41,6 +41,31 @@
 COMPONENT_GET_NODE(Wm8731, wm8731)
 COMPONENT_GET_CONFIG(Wm8731, wm8731)
 
+static  uint8_t wm8731_audio_usb_mode_freq_to_sample_rate( AudioFreq_t audio_freq_hz) {
+    uint8_t sample_rate=WM_USB_SAMPLE_RATE_32000_HZ;
+    switch(audio_freq_hz) {
+        case AUDIO_FREQ_8K:  sample_rate=WM_USB_SAMPLE_RATE_8000_HZ; break;
+        case AUDIO_FREQ_32K: sample_rate=WM_USB_SAMPLE_RATE_32000_HZ; break;
+        case AUDIO_FREQ_48K: sample_rate=WM_USB_SAMPLE_RATE_48000_HZ; break;
+        case AUDIO_FREQ_88K: sample_rate=WM_USB_SAMPLE_RATE_88200_HZ; break;
+        case AUDIO_FREQ_96K: sample_rate=WM_USB_SAMPLE_RATE_96000_HZ; break;
+        default:  sample_rate=WM_USB_SAMPLE_RATE_32000_HZ; break;
+    }
+    return sample_rate;
+}
+
+static  uint8_t wm8731_audio_normal_mode_freq_to_sample_rate( AudioFreq_t audio_freq_hz) {
+    uint8_t sample_rate=WM_NORM_SAMPLE_RATE_32000_HZ;
+    switch(audio_freq_hz) {
+        case AUDIO_FREQ_8K:  sample_rate=WM_NORM_SAMPLE_RATE_8000_HZ; break;
+        case AUDIO_FREQ_32K: sample_rate=WM_NORM_SAMPLE_RATE_32000_HZ; break;
+        case AUDIO_FREQ_48K: sample_rate=WM_NORM_SAMPLE_RATE_48000_HZ; break;
+        case AUDIO_FREQ_96K: sample_rate=WM_NORM_SAMPLE_RATE_96000_HZ; break;
+        default:  sample_rate=WM_NORM_SAMPLE_RATE_32000_HZ; break;
+    }
+    return sample_rate;
+}
+
 const Wm8731Reg_t Wm8731RegMap[] = {
     {
         .reg_addr = 0x00,
@@ -198,6 +223,54 @@ bool wm8731_set_reg(uint8_t num, uint8_t reg_addr, uint8_t reg_val) {
                       reg_addr, reg_val);
         }
 #endif
+    }
+    return res;
+}
+
+
+uint8_t  wm8731_reg_get_dflt_val(const Wm8731RegAddr_t addr){
+    uint8_t reg_val = 0 ;
+    uint32_t i = 0 ;
+    uint32_t cnt = wm8731_get_config_cnt();
+    for(i=0; i<cnt; i++) {
+        if(addr==Wm8731RegisterConfiguration[i].reg_addr){
+            reg_val = Wm8731RegisterConfiguration[i].value.reg_val;
+            break;
+        }
+    }
+    return reg_val;
+}
+
+
+
+static uint8_t wm8731_audio_freq_to_sample_rate(Wm8731Mode_t mode,  AudioFreq_t audio_freq_hz){
+    uint8_t sample_rate=WM_NORM_SAMPLE_RATE_48000_HZ;
+    switch(mode){
+        case WM8731_MODE_NORMAL:{
+            sample_rate= wm8731_audio_normal_mode_freq_to_sample_rate(   audio_freq_hz);
+        } break;
+
+        case WM8731_MODE_USB:{
+            sample_rate= wm8731_audio_usb_mode_freq_to_sample_rate(   audio_freq_hz);
+        } break;
+
+        default:
+        {sample_rate=WM_NORM_SAMPLE_RATE_48000_HZ;}
+        break;
+    }
+    return sample_rate;
+}
+
+
+bool wm8731_sample_rate(const uint8_t num, const AudioFreq_t audio_freq_hz) {
+    bool res = false ;
+    Wm8731Handle_t* Node = Wm8731GetNode(num);
+    if(Node) {
+        Node->audio_freq_hz = audio_freq_hz;
+        Wm8731RegSamplingCtrl_t Reg;
+        Reg.reg_val = wm8731_reg_get_dflt_val(WM8731_REG_SRATE);
+        Reg.sr = wm8731_audio_freq_to_sample_rate(Node->mode, audio_freq_hz);
+        res = wm8731_set_reg(  num,   WM8731_REG_SRATE,   Reg.reg_val);
     }
     return res;
 }
@@ -512,6 +585,7 @@ static inline bool wm8731_init_common(const Wm8731Config_t* const Config, Wm8731
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->mode = Config->mode;
             Node->num = Config->num;
             Node->chip_addr = Config->chip_addr;
             Node->i2s_rx_num = Config->i2s_rx_num;
@@ -598,7 +672,7 @@ bool wm8731_init_one(uint8_t num) {
 #ifdef HAS_WM8731_VERIFY
                 LOG_INFO(WM8731, "VerifySound");
                 res = wm8731_play_1khz(num, (SampleType_t)WM8731_VERIFY_AMP, WM8731_VERIFY_DURATION_MS);
-#endif /**/
+#endif
                 res = true;
             }
         }
@@ -651,12 +725,12 @@ static bool wm8731_init_custom(void) {
 
 #ifdef HAS_I2C
     set_log_level(I2C, LOG_LEVEL_INFO);
-#endif /**/
+#endif
 
 #ifdef HAS_I2S
     set_log_level(I2S, LOG_LEVEL_INFO);
-#endif /**/
-    set_log_level(WM8731, LOG_LEVEL_INFO);
+#endif
+    //set_log_level(WM8731, LOG_LEVEL_INFO);
     return res;
 }
 
@@ -666,24 +740,24 @@ bool wm8731_proc_one(uint8_t num) {
     if(Node) {
         LOG_PARN(WM8731, "Proc:%u", num);
         uint32_t up_time = time_get_ms32();
-        switch((uint32_t)Node->state) {
-        case WM8731_STATE_PLAY: {
-            if(Node->play_off_time_stamp_ms < up_time) {
-                res = i2s_stop(Node->i2s_tx_num);
-                Node->state = WM8731_STATE_IDLE;
-                LOG_INFO(WM8731, "StopPlay");
-            }
-        } break;
-        case WM8731_STATE_RECORD: {
-            if(Node->rec_off_time_stamp_ms < up_time) {
-                res = i2s_stop(Node->i2s_rx_num);
-                Node->state = WM8731_STATE_IDLE;
-                LOG_INFO(WM8731, "StopRec");
-            }
-        } break;
-        default: {
+        switch( Node->state) {
+            case WM8731_STATE_PLAY: {
+                if(Node->play_off_time_stamp_ms < up_time) {
+                    res = i2s_stop(Node->i2s_tx_num);
+                    Node->state = WM8731_STATE_IDLE;
+                    LOG_INFO(WM8731, "StopPlay");
+                }
+            } break;
+            case WM8731_STATE_RECORD: {
+                if(Node->rec_off_time_stamp_ms < up_time) {
+                    res = i2s_stop(Node->i2s_rx_num);
+                    Node->state = WM8731_STATE_IDLE;
+                    LOG_INFO(WM8731, "StopRec");
+                }
+            } break;
+            default: {
 
-        } break;
+            } break;
         } // switch
     }
     return res;

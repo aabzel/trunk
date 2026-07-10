@@ -61,11 +61,12 @@ const Wm8731RegConfig_t Wm8731RegisterConfiguration[]={
     },
 
 
-    {.reg_addr=0x08,
+    // 0x08
+    {.reg_addr = WM8731_REG_SRATE,
 #ifdef HAS_WM8731_USB_MODE
      .value.SamplingCtrl.usb_normal = MODE_USB,
      .value.SamplingCtrl.bosr = USB_BASE_OVER_SAMPLE_RATE_250FS,
-     .value.SamplingCtrl.sr = WM_USB_SAMPLE_RATE_96000_HZ,
+     .value.SamplingCtrl.sr = WM_USB_SAMPLE_RATE_48000_HZ,
      .value.SamplingCtrl.clkidiv2 = CORE_CLK_MCLK,
      .value.SamplingCtrl.clkodiv2 = CLK_OUT_CORE_CLK,
 #endif /*HAS_WM8731_USB_MODE*/
@@ -89,7 +90,9 @@ const Wm8731Config_t Wm8731Config[] = {
         .num = 1,
         .name = "AudioCodec",
         .chip_addr = WM8731_7BIT_ADDRESS,
+        .mode = WM8731_MODE_USB,
         .dds_num = 1,
+        .audio_freq_hz = AUDIO_FREQ_48K,
         .i2c_num = 2,
         .i2s_tx_num = 2,
         .i2s_rx_num = 2,
@@ -108,7 +111,7 @@ Wm8731Handle_t Wm8731Instance[] = {
     }
 };
 
-uint32_t wm8731_get_config_cnt(void){
+uint32_t wm8731_get_config_cnt(void) {
     uint8_t cnt=0;
     cnt = ARRAY_SIZE(Wm8731RegisterConfiguration);
     return cnt;

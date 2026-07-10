@@ -10,9 +10,15 @@
 
 typedef enum {
     PWM_NUM_UNDEF = 0,
+
+#ifdef HAS_DRV8870
     PWM_NUM_DRV8870_CH1_IN1,
     PWM_NUM_DRV8870_CH1_IN2,
-    PWM_NUM_LASER_TX,
+#endif
+
+#ifdef HAS_HOMING_LASER
+    PWM_NUM_HOMING_LASER,
+#endif
     PWM_NUM_CNT,
 } PwmLegalNums_t;
 

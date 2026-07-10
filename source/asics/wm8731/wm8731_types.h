@@ -25,6 +25,8 @@ typedef struct {
     uint8_t chip_addr;                                                                    \
     uint8_t i2s_rx_num;                                                                   \
     uint8_t i2s_tx_num;                                                                   \
+    AudioFreq_t audio_freq_hz;                                                            \
+    Wm8731Mode_t mode;                                                                    \
     Wm8731RegConfig_t* RegArray;                                                          \
     uint32_t reg_cnt;                                                                     \
     uint8_t dds_num;                                                                      \

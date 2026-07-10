@@ -123,9 +123,9 @@ typedef enum {
 }DspAbSel_t;
 
 typedef enum {
-    MODE_NORMAL=0,
-    MODE_USB=1,
-    MODE_UNDEF=2,
+    WM8731_MODE_NORMAL = 0,
+    WM8731_MODE_USB = 1,
+    WM8731_MODE_UNDEF = 2,
 }Wm8731Mode_t;
 
 typedef enum {
@@ -210,11 +210,11 @@ typedef enum {
 
 /*Table 21 USB Mode Sample Rate Look-up Table*/
 typedef enum {
-    WM_USB_SAMPLE_RATE_8000_HZ=3,
-    WM_USB_SAMPLE_RATE_48000_HZ=0,
-    WM_USB_SAMPLE_RATE_32000_HZ=6,
-    WM_USB_SAMPLE_RATE_96000_HZ=7,
-    WM_USB_SAMPLE_RATE_88200_HZ=15,
+    WM_USB_SAMPLE_RATE_8000_HZ = 3,
+    WM_USB_SAMPLE_RATE_32000_HZ = 6,
+    WM_USB_SAMPLE_RATE_48000_HZ = 0,
+    WM_USB_SAMPLE_RATE_88200_HZ = 15,
+    WM_USB_SAMPLE_RATE_96000_HZ = 7,
     WM_USB_SAMPLE_RATE_UNDEF=200,
 }UsbSampRate_t;
 

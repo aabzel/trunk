@@ -8,6 +8,6 @@ ifneq ($(TEST_DWM3000_MK_INC),Y)
     #@echo $(error TEST_DWM3000_DIR=$(TEST_DWM3000_DIR))
     INCDIR += -I$(TEST_DWM3000_DIR)
 
-    OPT += -DHAS_TEST_DWM3000
+    MCAL_OPT += -DHAS_TEST_DWM3000
     SOURCES_C += $(TEST_DWM3000_DIR)/test_dwm3000.c
 endif
