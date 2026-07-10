@@ -1,0 +1,11 @@
+$(info CLI_CONFIG_MK_INC=$(CLI_CONFIG_MK_INC) )
+ifneq ($(CLI_CONFIG_MK_INC),Y)
+    CLI_CONFIG_MK_INC=Y
+
+    BOOTLOADER_COMMANDS=Y
+    CORTEX_M4_COMMANDS=Y
+
+    ifeq($(IWDG),Y)
+        IWDG_COMMANDS=Y
+    endif
+endif

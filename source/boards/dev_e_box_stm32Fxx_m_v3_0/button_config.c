@@ -2,9 +2,13 @@
 
 #ifndef HAS_BUTTON
 #error "Add HAS_BUTTON"
-#endif /*HAS_BUTTON*/
+#endif
 
 #include "data_utils.h"
+
+#ifdef HAS_REC_PLAY
+#include "rec_play_mcal.h"
+#endif
 
 #ifdef HAS_BOOTLOADER
 #include "bootloader.h"
@@ -24,34 +28,33 @@ static bool button1_proc(void) {
 #ifdef HAS_BOOTLOADER
     res = boot_launch_app(BOOT_CMD_LAUNCH_APP);
 #endif
-	return res;
+
+#ifdef HAS_REC_PLAY
+    char file_name[40]={0};
+    uint32_t up_time_ms = time_get_ms32();
+    snprintf(file_name, sizeof(file_name), "RbUt%u_10s.wav", up_time_ms);
+    res = rec_play_start(1,   file_name, 10.0);
+#endif
+    return res;
 }
 
 const ButtonConfig_t ButtonConfig[ ] = {
     {
-    		.num=1,
-    		.press_short_handler = button1_proc,
-    		.pad={.port=PORT_A, .pin=0,},
-			.active = GPIO_LVL_HI,
-			.name = "K1",
-			.valid = true,
+        .debug_led_num = 2,
+        .num = 1,
+        .proc_handler = NULL,
+        .press_long_handler = button1_proc,
+        .press_short_handler = button1_proc,
+        .pad={.port=PORT_A, .pin=0,},
+        .active = GPIO_LVL_HI,
+        .name = "K1",
+        .valid = true,
     },
 };
 
-ButtonHandle_t ButtonInstance[ ]={
-   {
-    .num=1,
-    .valid=true,},
+ButtonHandle_t ButtonInstance[ ] = {
+   {    .num=1,    .valid=true,},
 };
 
-uint32_t button_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(ButtonInstance);
-    cnt2 = ARRAY_SIZE(ButtonConfig);
-    if (cnt1==cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(Button,button)
+

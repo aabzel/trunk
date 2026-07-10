@@ -17,15 +17,21 @@
 const SdioConfig_t SECTION_CFG_DATA SdioConfig[] = {
     {
         .num = 1,
-        .bit_rate_hz = MHZ_2_HZ(21),
+        .valid = true,
+        .interrupt_on = true,
+        .name = "SdCard",
+        .bus_resolution = SDIO_BUS_RESOLUTION_4BIT,
+        .bit_rate_hz = MHZ_2_HZ(6.8),
         // 20MHz Write perf error timeOut
         // 10MHz Write perf error timeOut
         // 5MHz Write perf ok
-        // 25MHz Unstable write
-        .name = "SdCard",
-        .interrupt_on = true,
-        .move_mode = MOVE_MODE_DMA,
-        .valid = true,
+        // 25MHz Unstable write/ Mount error
+
+        /*SDIO1,PollReadBlock:0,Err:Err
+        0.536,+0,266,E,[SDIO],ErrorCode 0x20=RX_OVERRUN*/
+        //.move_mode = MOVE_MODE_POLLING, // FAT32 init error
+        //.move_mode = MOVE_MODE_INTERRUPT, //FAT32 does not works
+         .move_mode = MOVE_MODE_DMA, // FAT32 does not works
     },
 };
 

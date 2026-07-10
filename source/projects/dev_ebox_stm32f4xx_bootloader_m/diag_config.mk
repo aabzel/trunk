@@ -1,0 +1,8 @@
+
+$(info Add Diag)
+
+DIAG=Y
+LOG_DIAG=Y
+FLASH_DIAG=Y
+SYSTEM_DIAG=Y
+PARAM_DIAG=Y
