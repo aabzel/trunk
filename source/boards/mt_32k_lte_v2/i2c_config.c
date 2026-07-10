@@ -31,4 +31,7 @@ I2cHandle_t I2cInstance[]={
 #endif
 };
 
+
 COMPONENT_GET_CNT(I2c, i2c)
+
+

@@ -20,6 +20,25 @@
 COMPONENT_GET_NODE(I2c, i2c)
 COMPONENT_GET_CONFIG(I2c, i2c)
 
+_WEAK_FUN_
+bool i2c_init_common(const I2cConfig_t* const Config, I2cHandle_t* const Node) {
+    bool res = false;
+    if(Config) {
+        if(Node) {
+            Node->name = Config->name;
+            Node->own_addr = Config->own_addr;
+            Node->clock_speed = Config->clock_speed;
+            Node->interrupt_priority = Config->interrupt_priority;
+            Node->PadSda = Config->PadSda;
+            Node->PadScl = Config->PadScl;
+            Node->interrupt_on = Config->interrupt_on;
+            res = true;
+        }
+    }
+    return res;
+}
+
+_WEAK_FUN_
 bool i2c_is_valid_address(uint8_t addr) {
     bool res = false;
     if(addr <= 0x7F) {
@@ -28,16 +47,19 @@ bool i2c_is_valid_address(uint8_t addr) {
     return res;
 }
 
+_WEAK_FUN_
 uint8_t i2c_compose_read_address(uint8_t base_addr) {
     uint8_t read_address = (base_addr << 1) | 1;
     return read_address;
 }
 
+_WEAK_FUN_
 uint8_t i2c_compose_write_address(uint8_t base_addr) {
     uint8_t write_address = base_addr << 1;
     return write_address;
 }
 
+_WEAK_FUN_
 uint8_t i2c_make_bus_address(uint8_t base_addr, ConnectivitDir_t direction) {
     uint8_t bus_address = 0xFF;
     switch(direction) {
@@ -54,6 +76,7 @@ uint8_t i2c_make_bus_address(uint8_t base_addr, ConnectivitDir_t direction) {
     return bus_address;
 }
 
+_WEAK_FUN_
 uint32_t i2c_calc_transfer_time_us(uint32_t baudrate, uint32_t bytes) {
     uint32_t tx_time_us = 0;
     float bit_time = 1.0f / (float)baudrate;
@@ -64,6 +87,7 @@ uint32_t i2c_calc_transfer_time_us(uint32_t baudrate, uint32_t bytes) {
     return tx_time_us;
 }
 
+_WEAK_FUN_
 uint32_t i2c_calc_transfer_time_ms(uint32_t baudrate, uint32_t bytes) {
     uint32_t tx_time_us = 0;
     float bit_time = 1.0f / (float)baudrate;
@@ -75,6 +99,7 @@ uint32_t i2c_calc_transfer_time_ms(uint32_t baudrate, uint32_t bytes) {
 }
 
 #ifdef HAS_MCU
+_WEAK_FUN_
 bool i2c_calc_byte_rate(void) {
     bool res = false;
     uint8_t num = 0;
@@ -97,6 +122,7 @@ bool i2c_calc_byte_rate(void) {
 }
 #endif
 
+_WEAK_FUN_
 bool i2c_is_init(uint8_t num) {
     bool res = false;
     I2cHandle_t* Node = I2cGetNode(num);
@@ -106,6 +132,7 @@ bool i2c_is_init(uint8_t num) {
     return res;
 }
 
+_WEAK_FUN_
 bool i2c_is_allowed(uint8_t num) {
     bool res = false;
     bool res1 = false;
@@ -127,6 +154,7 @@ bool i2c_is_allowed(uint8_t num) {
     return res;
 }
 
+_WEAK_FUN_
 bool i2c_mcal_write_general(uint8_t num, uint8_t i2c_addr, const uint8_t* const array, uint32_t array_len) {
     bool res = false;
 #ifdef HAS_LOG
@@ -147,6 +175,7 @@ bool i2c_mcal_write_general(uint8_t num, uint8_t i2c_addr, const uint8_t* const 
     return res;
 }
 
+_WEAK_FUN_
 bool i2c_scan(uint8_t num) {
     bool res = false;
     uint32_t chip_addr = 0;
@@ -171,6 +200,7 @@ bool i2c_scan(uint8_t num) {
     return res;
 }
 
+_WEAK_FUN_
 bool I2cWaitRxDoneTimeOut(const I2cHandle_t* const Node, uint32_t time_out_ms, uint32_t* const real_time) {
     bool res = false;
     uint32_t diff = 0;
@@ -250,6 +280,7 @@ _WEAK_FUN_ bool i2c_mcal_reg_write(uint8_t num, uint8_t chip_addr, uint8_t reg_a
     return res;
 }
 
+_WEAK_FUN_
 bool i2c_mcal_reg_write_verify(uint8_t num, uint8_t chip_addr, uint8_t reg_addr, uint8_t set_value) {
     bool res = false;
     LOG_DEBUG(I2C, "I2C%u RegWv,Chip:0x%02x,Addr:0x%02x,Value:0x%02x", num, chip_addr, reg_addr, set_value);
@@ -268,6 +299,7 @@ bool i2c_mcal_reg_write_verify(uint8_t num, uint8_t chip_addr, uint8_t reg_addr,
     return res;
 }
 
+_WEAK_FUN_
 bool i2c_wait_ack_ll(I2cHandle_t* const Node, uint32_t time_out_ms) {
     bool res = false;
     if(Node) {
@@ -286,6 +318,7 @@ bool i2c_wait_ack_ll(I2cHandle_t* const Node, uint32_t time_out_ms) {
     return res;
 }
 
+_WEAK_FUN_
 bool i2c_wait_tx_done_ll(I2cHandle_t* const Node, uint32_t time_out_ms) {
     bool res = false;
     if(Node) {
@@ -304,6 +337,7 @@ bool i2c_wait_tx_done_ll(I2cHandle_t* const Node, uint32_t time_out_ms) {
     return res;
 }
 
+_WEAK_FUN_
 bool i2c_wait_rx_done_ll(I2cHandle_t* const Node, uint32_t time_out_ms) {
     bool res = false;
     if(Node) {
@@ -317,23 +351,6 @@ bool i2c_wait_rx_done_ll(I2cHandle_t* const Node, uint32_t time_out_ms) {
                 res = false;
                 break;
             }
-        }
-    }
-    return res;
-}
-
-bool i2c_init_common(const I2cConfig_t* const Config, I2cHandle_t* const Node) {
-    bool res = false;
-    if(Config) {
-        if(Node) {
-            Node->name = Config->name;
-            Node->own_addr = Config->own_addr;
-            Node->clock_speed = Config->clock_speed;
-            Node->interrupt_priority = Config->interrupt_priority;
-            Node->PadSda = Config->PadSda;
-            Node->PadScl = Config->PadScl;
-            Node->interrupt_on = Config->interrupt_on;
-            res = true;
         }
     }
     return res;

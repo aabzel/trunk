@@ -8,12 +8,15 @@ extern "C" {
 #include <stdbool.h>
 
 #include "test_hw_dep_check.h"
+#include "gpio_types.h"
 
 #ifndef HAS_TEST_I2C
 //#error "It is needed HAS_TEST_I2C option for that component"
 #endif
 
 bool test_i2c_types(void);
+bool test_i2c_idle(uint8_t num) ;
+bool test_i2c_pad(const Pad_t Pad);
 
 #ifdef HAS_I2C1
 bool test_i2c1_read(void);
@@ -26,11 +29,14 @@ bool test_i2c1_write(void);
 
 #ifdef HAS_I2C2
 bool test_i2c2_read(void);
+bool test_i2c2_idle(void);
 bool test_i2c2_write(void);
 
 
 #define TEST_SUIT_I2C2                                                                                                \
-    {"i2c2_write", test_i2c2_write},   {"i2c2_read", test_i2c2_read},
+    {"i2c2_idle", test_i2c2_idle}, \
+    {"i2c2_write", test_i2c2_write}, \
+    {"i2c2_read", test_i2c2_read},
 #else
 #define TEST_SUIT_I2C2
 #endif

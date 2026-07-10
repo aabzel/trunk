@@ -21,21 +21,14 @@ I2cHandle_t I2cInstance[]={
 #ifdef HAS_I2C1
     {.num=1, .valid=true, },
 #endif
+
 #ifdef HAS_I2C2
     {.num=2, .valid=true, },
 #endif
+
 #ifdef HAS_I2C3
     {.num=3,  .valid=true,},
 #endif
 };
 
-uint32_t i2c_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt_conf = ARRAY_SIZE(I2cConfig);
-    uint32_t cnt_ints = ARRAY_SIZE(I2cInstance);
-    if(cnt_conf == cnt_ints){
-        cnt = cnt_ints;
-    }
-    return cnt;
-}
-
+COMPONENT_GET_CNT(I2c, i2c)
