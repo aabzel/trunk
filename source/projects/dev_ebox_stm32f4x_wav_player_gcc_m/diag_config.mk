@@ -1,11 +1,15 @@
- 
 
 DIAG=Y
-ASICS_DIAG=Y
 NUM_DIAG=Y
-FLOAT_DIAG=Y
 BIT_DIAG=Y
 
+ifeq ($(FLOAT),Y)
+    FLOAT_DIAG=Y
+endif
+
+ifeq ($(ASICS),Y)
+    ASICS_DIAG=Y
+endif
 
 ifeq ($(CLOCK),Y)
     CLOCK_DIAG=Y
@@ -153,16 +157,13 @@ endif
         SCHEDULER_DIAG=Y
     endif
     
-    
 ifeq ($(WAV),Y)
     WAV_DIAG=Y
 endif
 
-
 ifeq ($(POSTPONE_FUN),Y)
     POSTPONE_FUN_DIAG=Y
 endif
-
 
 ifeq ($(WAV_PLAYER),Y)
     WAV_PLAYER_DIAG=Y

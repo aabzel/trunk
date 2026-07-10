@@ -7,6 +7,7 @@ ifneq ($(DASHBOARD_PRECONFIG),Y)
 
     DASHBOARD=Y
     TIME=Y
+    RUNNING_LINE=Y
     #I2C=Y
     #SSD1306=Y
 endif

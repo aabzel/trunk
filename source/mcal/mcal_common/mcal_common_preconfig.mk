@@ -26,6 +26,10 @@ ifneq ($(MCAL_COMMON_PRECONFIG_MK_INC),Y)
         include $(MCAL_COMMON_DIR)/dma/dma_preconfig.mk
     endif
 
+    ifeq ($(DMA_CHANNEL),Y)
+        include $(MCAL_COMMON_DIR)/dma_channel/dma_channel_preconfig.mk
+    endif
+
     ifeq ($(ERM),Y)
         include $(MCAL_COMMON_DIR)/erm/erm_preconfig.mk
     endif

@@ -1,0 +1,7 @@
+
+ifneq ($(FAT_FS_PRECONFIG_MK_INC),Y)
+    FAT_FS_PRECONFIG_MK_INC=Y
+    FAT_FS=Y
+    DISKIO=Y
+    STORAGE=Y
+endif

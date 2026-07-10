@@ -1,8 +1,12 @@
 ifneq ($(FLOAT_PRECONFIG_MK_INC),Y)
     FLOAT_PRECONFIG_MK_INC=Y
 
+    BIT_UTILS=Y
     FLOAT_UTILS=Y
     MATH=Y
-    BIT_UTILS=Y
     RATIONAL_NUM=Y
+
+    ifeq ($(FLOAT_DIAG),Y)
+        RATIONAL_NUM_DIAG=Y
+    endif
 endif

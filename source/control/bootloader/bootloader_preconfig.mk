@@ -46,7 +46,11 @@ ifneq ($(BOOTLOADER_PRECONFIG_INC),Y)
     #FLASH_FS_WRITE=Y
     #NVS_WRITE=Y
     #CLI=Y
-    #@echo $(error BOOTLOADER_COMMANDS=$(BOOTLOADER_COMMANDS))
+
+    ifeq ($(LED_MONO),Y)
+        LED_MONO_EXT=Y
+    endif
+
     ifeq ($(BOOTLOADER_COMMANDS),Y)
         include $(BOOTLOADER_DIR)/cli_bootloader_preconfig.mk
     endif

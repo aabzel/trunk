@@ -4,6 +4,7 @@ ifneq ($(AUTO_VERSION_PRECONFIG),Y)
     AUTO_VERSION=Y
     MINGW=Y
     FILE_PC=Y
+    FILE_API=Y
     PC=Y
     STORAGE=Y
 endif

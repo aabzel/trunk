@@ -10,6 +10,11 @@ ifneq ($(THIRD_PARTY_STORAGE_PRECONFIG_INC),Y)
         include $(THIRD_PARTY_STORAGE_DIR)/eeprom_emulation/eeprom_emulation_preconfig.mk
     endif
 
+    ifeq ($(DISKIO),Y)
+        # $(error DISKIO=$(DISKIO))
+        include $(THIRD_PARTY_STORAGE_DIR)/diskio/diskio_preconfig.mk
+    endif
+
     ifeq ($(FAT_FS),Y)
         # $(error FAT_FS=$(FAT_FS))
         include $(THIRD_PARTY_STORAGE_DIR)/fat_fs/fat_fs_preconfig.mk

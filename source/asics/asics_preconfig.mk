@@ -3,7 +3,7 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
     ASICS_PRECONFIG_MK_INC=Y
 
     ASICS_DIR = $(WORKSPACE_LOC)/asics
-    #@echo $(error ASICS_DIR=$(ASICS_DIR))
+    # $(error ASICS_DIR=$(ASICS_DIR))
 
 
     ifeq ($(AT24C02),Y)
@@ -12,6 +12,10 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
     
     ifeq ($(RS2058),Y)
         include $(ASICS_DIR)/rs2058/rs2058_preconfig.mk
+    endif
+
+    ifeq ($(ESP_01),Y)
+        include $(ASICS_DIR)/esp_01/esp_01_preconfig.mk
     endif
 
     ifeq ($(AD9833),Y)
@@ -31,21 +35,21 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
     endif
 
     ifeq ($(AT24C02),Y)
-        include $(ASICS_DIR)/at24cxx/at24cxx_preconfig.mk
+        include $(ASICS_DIR)/at24cx/at24cx_preconfig.mk
     endif
 
     ifeq ($(BH1750),Y)
-        #@echo $(error BH1750=$(BH1750))
+        # $(error BH1750=$(BH1750))
         include $(ASICS_DIR)/bh1750/bh1750_preconfig.mk
     endif
 
     ifeq ($(DECADRIVER),Y)
-        #@echo $(error DECADRIVER= $(DECADRIVER))
+        # $(error DECADRIVER= $(DECADRIVER))
         include $(ASICS_DIR)/decadriver/decadriver_preconfig.mk
     endif
 
     ifeq ($(DS3231),Y)
-        #@echo $(error DS3231= $(DS3231))
+        # $(error DS3231= $(DS3231))
         include $(ASICS_DIR)/ds3231/ds3231_preconfig.mk
     endif
 
@@ -77,6 +81,10 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
         include $(ASICS_DIR)/gm67/gm67_preconfig.mk
     endif
 
+    ifeq ($(LIS3DH),Y)
+        include $(ASICS_DIR)/lis3dh/lis3dh_preconfig.mk
+    endif
+
     ifeq ($(MAX9860),Y)
         include $(ASICS_DIR)/max9860/max9860_preconfig.mk
     endif
@@ -102,7 +110,7 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
     endif
 
     ifeq ($(SD_CARD),Y)
-        #@echo $(error SD_CARD=$(SD_CARD))
+        # $(error SD_CARD=$(SD_CARD))
         include $(ASICS_DIR)/sd_card/sd_card_preconfig.mk
     endif
     
@@ -120,6 +128,14 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
 
     ifeq ($(WM8731),Y)
         include $(ASICS_DIR)/wm8731/wm8731_preconfig.mk
+    endif
+
+    ifeq ($(WM8994),Y)
+        include $(ASICS_DIR)/wm8994/wm8994_preconfig.mk
+    endif
+
+    ifeq ($(UBLOX_NEO_6M),Y)
+        include $(ASICS_DIR)/ublox_neo_6m/ublox_neo_6m_preconfig.mk
     endif
 
     ifeq ($(ZED_F9P),Y)

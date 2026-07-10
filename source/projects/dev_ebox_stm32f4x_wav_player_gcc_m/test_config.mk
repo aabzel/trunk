@@ -3,7 +3,6 @@ ifneq ($(TEST_CONFIG_INC),Y)
 
 
     TEST_MEMORY=Y
-    TEST_IR_RECEIVER=Y
 
     ifeq ($(SUPER_CYCLE),Y)
         TEST_SUPER_CYCLE=Y

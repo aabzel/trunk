@@ -24,11 +24,11 @@ ifneq ($(MBR_PRECONFIG_INC),Y)
     CLI=N
     CRC8=N
     CRC=N
-    LOG=N
+ 
     UTILS_EXT=N
     #DEBUGGER=N
     ARRAY=N
  
     UART=N
-    CONNECTIVITY=N
+    #CONNECTIVITY=N
 endif

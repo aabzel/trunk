@@ -1,0 +1,8 @@
+ifneq ($(SOCKET_PRE_CFR_MK_INC),Y)
+    SOCKET_PRE_CFR_MK_INC=Y
+    $(info + SOCKET)
+
+    INTERFACES=Y
+    CONNECTIVITY=Y
+    SOCKET=Y
+endif

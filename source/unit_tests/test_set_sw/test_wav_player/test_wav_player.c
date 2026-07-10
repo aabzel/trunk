@@ -26,7 +26,7 @@ bool test_wav_player_deps(void) {
     WavPlayerHandle_t* Node = WavPlayerGetNode(1);
     ASSERT_NE(NULL, Node);
 
-    res =  test_i2s_dma_hald_write(Node->i2s_num  );
+    res =  test_i2s_dma_half_write(Node->i2s_num  );
     ASSERT_TRUE(res);
 
     res =  test_i2s_dma_done_write(Node->i2s_num  );

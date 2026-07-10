@@ -1,4 +1,3 @@
-
 ifneq ($(GENERIC_PRECONFIG_INC),Y)
     GENERIC_PRECONFIG_INC=Y
     FLASH=Y
@@ -11,6 +10,10 @@ ifneq ($(GENERIC_PRECONFIG_INC),Y)
     #HEALTH_MONITOR=Y
     CONTROL=Y
     CONTROL_COMMANDS=Y
+
+    ifeq ($(LED_MONO),Y)
+        LED_MONO_EXT=Y
+    endif
 endif
 
  

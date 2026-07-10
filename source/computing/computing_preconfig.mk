@@ -18,6 +18,11 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
         include $(COMPUTING_DIR)/calculator/calculator_preconfig.mk
     endif
 
+    ifeq ($(DDS),Y)
+        # $(error DDS=$(DDS))
+        include $(COMPUTING_DIR)/dds/dds_preconfig.mk
+    endif
+
     ifeq ($(CRC),Y)
         include $(COMPUTING_DIR)/crc/crc_preconfig.mk
     endif
@@ -34,11 +39,6 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
         include $(COMPUTING_DIR)/convertor/convertor_preconfig.mk
     endif
 
-    ifeq ($(DELTA_SIGMA),Y)
-        # $(error DELTA_SIGMA=$(DELTA_SIGMA))
-        include $(COMPUTING_DIR)/delta_sigma/delta_sigma_preconfig.mk
-    endif
-
     ifeq ($(DSP),Y)
         include $(COMPUTING_DIR)/dsp/dsp_preconfig.mk
     endif
@@ -52,12 +52,16 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
     endif
 
 	ifeq ($(LIMITER),Y)
-        #@echo $(error LIMITER=$(LIMITER))
+        #  $(error LIMITER=$(LIMITER))
         include $(COMPUTING_DIR)/limiter/limiter_preconfig.mk
     endif
 
+    ifeq ($(LOCAL_OSCILLATOR),Y)
+        include $(COMPUTING_DIR)/local_oscillator/local_oscillator_preconfig.mk
+    endif
+
     ifeq ($(MATH),Y)
-        #@echo $(error MATH=$(MATH))
+        #  $(error MATH=$(MATH))
         include $(COMPUTING_DIR)/math/math_preconfig.mk
     endif
 
@@ -90,11 +94,6 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
 
     ifeq ($(STATISTICS),Y)
         include $(COMPUTING_DIR)/statistics/statistics_preconfig.mk
-    endif
-
-    ifeq ($(DDS),Y)
-        # $(error DDS=$(DDS))
-        include $(COMPUTING_DIR)/dds/dds_preconfig.mk
     endif
 
     ifeq ($(TIMER_CALC),Y)

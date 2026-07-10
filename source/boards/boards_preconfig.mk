@@ -57,11 +57,6 @@ ifneq ($(BOARDS_PRECONFIG_MK_INC),Y)
         include $(BOARD_DIR)/nrf5340_adk/nrf5340_adk_preconfig.mk
     endif
 
-    ifeq ($(PCAN_PRO_X),Y)
-        # $(error PCAN_PRO_X=$(PCAN_PRO_X))
-        include $(BOARD_DIR)/pcan_pro_x/pcan_pro_x_preconfig.mk
-    endif
-
     ifeq ($(NRF5340_DK),Y)
         # $(error NRF5340_DK=$(NRF5340_DK))
         include $(BOARD_DIR)/nrf5340_dk/nrf5340_dk_preconfig.mk
@@ -107,9 +102,9 @@ ifneq ($(BOARDS_PRECONFIG_MK_INC),Y)
         include $(BOARD_DIR)/nucleo_l073rz/nucleo_l073rz_preconfig.mk
     endif
 
-    ifeq ($(SMARTPHONE_STATION),Y)
-        # $(error SMARTPHONE_STATION=$(SMARTPHONE_STATION))
-        include $(BOARD_DIR)/smartphone_station/smartphone_station_preconfig.mk
+    ifeq ($(STM32F746G_DISCO),Y)
+        # $(error STM32F746G_DISCO=$(STM32F746G_DISCO))
+        include $(BOARD_DIR)/stm32f746g_disco/stm32f746g_disco_preconfig.mk
     endif
 
     ifeq ($(BLACK_PILL_V2_0),Y)

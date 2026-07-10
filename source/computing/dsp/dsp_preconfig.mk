@@ -8,6 +8,11 @@ ifneq ($(DSP_PRECONFIG_MK_INC),Y)
         include $(DSP_DIR)/dft/dft_preconfig.mk
     endif
 
+    ifeq ($(MANCHESTER_DECODE),Y)
+        #  $(error SCHMITT_TRIGGER=$(SCHMITT_TRIGGER))
+        include $(DSP_DIR)/manchester_decode/manchester_decode_preconfig.mk
+    endif
+
     ifeq ($(SLIDING_INTEGRAL),Y)
         include $(DSP_DIR)/sliding_integral/sliding_integral_preconfig.mk
     endif

@@ -5,5 +5,5 @@ ifneq ($(EXT_INT_PRECONFIG_INC),Y)
 
     EXT_INT=Y
     GPIO=Y
-
+    INTERRUPT=Y
 endif

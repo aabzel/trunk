@@ -38,9 +38,9 @@ ifneq ($(MCAL_PRECONFIG_MK_INC),Y)
         include $(MCAL_DIR)/mcal_ehal/mcal_ehal_preconfig.mk
     endif
 
-    ifeq ($(MCAL_STM32),Y)
-        # $(error MCAL_STM32=$(MCAL_STM32))
-        include $(MCAL_DIR)/mcal_stm32f4/mcal_stm32f4_preconfig.mk
+    ifeq ($(MCAL_STM32_HAL),Y)
+        # $(error MCAL_STM32_HAL=$(MCAL_STM32_HAL))
+        include $(MCAL_DIR)/mcal_stm32_hal/mcal_stm32_hal_preconfig.mk
     endif
 
     ifeq ($(MCAL_YUNTU),Y)
