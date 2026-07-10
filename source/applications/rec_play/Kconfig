@@ -1,0 +1,4 @@
+
+config REC_PLAY
+    bool "Enable use of the REC_PLAY drivers"
+

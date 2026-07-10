@@ -1,5 +1,11 @@
 ifneq ($(SOUND_RECORDER_PRECONFIG_INC),Y)
     SOUND_RECORDER_PRECONFIG_INC=Y
     
+    WM8731=Y
+    FAT_FS=Y
+    DISK=Y
+    DMA=Y
+    I2S=Y
+    LED=Y
     SOUND_RECORDER=Y
 endif

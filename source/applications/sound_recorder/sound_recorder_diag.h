@@ -24,6 +24,7 @@ extern "C" {
 #error "+HAS_DIAG"
 #endif
 
+bool sound_recorder_stop_report(const SoundRecorderHandle_t* const Node);
 bool sound_recorder_diag(void);
 bool sound_recorder_diag_one(uint8_t num);
 bool sound_recorder_raw_reg_diag(uint8_t num);

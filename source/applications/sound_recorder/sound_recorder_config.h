@@ -22,7 +22,8 @@ extern "C" {
  1024UL*2UL  crackling on the left channel
  */
 #define REC_CHAN_CNT 2
-#define REC_MEM_SAM_CNT ( 1024UL*4UL)
+#define REC_MEM_SAM_CNT ( 4096UL)
+#define REC_MEM_HALF_SIZE (REC_MEM_SAM_CNT/2)
 #define REC_SAMPLE_SIZE 2UL
 #define REC_SIZE_OF (REC_SAMPLE_SIZE*REC_MEM_SAM_CNT)
 #define REC_FRAMES (REC_MEM_SAM_CNT/REC_CHAN_CNT)
@@ -32,7 +33,6 @@ extern "C" {
 
 /*REC_MEM_HALF_SIZE 4kByte*/
 /*125 samples*/
-#define REC_MEM_HALF_SIZE (REC_MEM_SAM_CNT/2)
 #define REC_PART_TIMEOUT_US (    (1000000UL*REC_MEM_HALF_SIZE)/SAMPLE_FREQ_HZ     )
 
 

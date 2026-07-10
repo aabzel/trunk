@@ -1,0 +1,11 @@
+ifneq ($(REC_PLAY_PRECONFIG_INC),Y)
+    REC_PLAY_PRECONFIG_INC=Y
+
+    WM8731=Y
+    I2S=Y
+    WAV=Y
+    SOUND_RECORDER=Y
+    WAV_PLAYER=Y
+    BUTTON=Y
+    REC_PLAY=Y
+endif

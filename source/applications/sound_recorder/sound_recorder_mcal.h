@@ -23,18 +23,20 @@ bool SoundRecorderIsValidConfig(const SoundRecorderConfig_t* const Config);
 const SoundRecorderInfo_t* SoundRecorderGetInfo(uint8_t num);
 #endif
 
-
 bool sound_recorder_mcal_init(void);
 bool sound_recorder_init_custom(void);
 bool sound_recorder_init_common(const SoundRecorderConfig_t* const Config, SoundRecorderHandle_t* const Node);
 bool sound_recorder_init_node(SoundRecorderHandle_t* const Node);
 bool sound_recorder_init_one(uint8_t num);
+bool sound_recorder_is_valid_num(uint8_t num);
 
 bool sound_recorder_proc_one(uint8_t num);
 bool sound_recorder_proc(void);
 
 /*setters*/
-bool  sound_recorder_test_start(const uint8_t num, float duration_s);
+bool sound_rec_fix_part(SoundRecorderHandle_t* Node, uint32_t sam_index) ;
+bool sound_recorder_fs_set(const uint8_t num, const uint32_t sample_freq_hz);
+bool sound_recorder_test_start(const uint8_t num, float duration_s);
 bool sound_recorder_start(const uint8_t num, const char* const file_name,  const float duration_s) ;
 bool sound_recorder_compose_wav_header(const SoundRecorderHandle_t* const Rec, WavHeader_t* const Header);
 
