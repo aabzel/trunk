@@ -14,7 +14,7 @@
 
 #ifdef HAS_SDIO
 #define GPIO_CONFIG_SDIO                                           \
-    {.Pad={ .port=PORT_C, .pin=12, },  .name="SD_CLK", .connector1="SD.5", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
+    {.Pad={ .port=PORT_C, .pin=12, },  .name="SD_CLK", .connector1="SD.5", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
     {.Pad={ .port=PORT_D, .pin=2,  },  .name="SD_CMD", .connector1="SD.3", .connector2="PD.5", .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
     {.Pad={ .port=PORT_C, .pin=8,  },  .name="SD_D0",  .connector1="SD.7", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
     {.Pad={ .port=PORT_C, .pin=9,  },  .name="SD_D1",  .connector1="SD.8", .connector2="",     .mode=GPIO_API_MODE_ALT1,      .pull=GPIO__PULL_UP, .speed=GPIO_SPEED_HIGH_SPEED, .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI,}, \
@@ -25,15 +25,32 @@
 #endif
 
 #ifdef HAS_I2S2
-    // {.Pad = {.port=PORT_B, .pin=15,}, .connector2="J3.35/PC3",   .mux = 5, .dir=GPIO_DIR_IN, .name="I2S2_SD",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },
 
-#define GPIO_CONFIG_I2S2                                                                                                                                                                                 \
+#ifdef HAS_I2S_FULL_DUPLEX
+#define GPIO_CONFIG_I2S2_FULL_DUPLEX             \
+        {                                        \
+         .Pad = { .port = PORT_C, .pin = 2,},    \
+         .connector2 = "J3.36/PC2",              \
+         .mux = 6,                               \
+         .dir = GPIO_DIR_IN,                     \
+         .name = "I2S2_SDEXT",                   \
+         .mode = GPIO_API_MODE_ALT1,             \
+         .pull = GPIO__PULL_DOWN,                \
+         .logic_level = GPIO_LVL_HI,             \
+        },
+
+#else
+#define GPIO_CONFIG_I2S2_FULL_DUPLEX
+#endif
+
+// {.Pad = {.port=PORT_B, .pin=15,}, .connector2="J3.35/PC3",   .mux = 5, .dir=GPIO_DIR_IN, .name="I2S2_SD",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },
+
+#define GPIO_CONFIG_I2S2       GPIO_CONFIG_I2S2_FULL_DUPLEX                                                                                                                                                                          \
     {.Pad=  { .port=PORT_A, .pin=8,}, .name="I2S2_TX_DMA",     .connector1="-", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,  .mux=0,  .logic_level=GPIO_LVL_LOW},    \
     {.Pad=  { .port=PORT_A, .pin=4,}, .name="I2S2_RX_DMA",     .connector1="-", .mode=GPIO_API_MODE_OUTPUT,  .pull=GPIO__PULL_AIR, .speed=GPIO_SPEED_HIGH_SPEED,  .mux=0,  .logic_level=GPIO_LVL_LOW},    \
-    {.Pad = { .port=PORT_C, .pin=2,},  .connector2="J3.36/PC2", .mux = 6, .dir=GPIO_DIR_IN,  .name="I2S2_SDEXT", .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },          \
     {.Pad = { .port=PORT_B, .pin=13,}, .connector2="J4.4/PB13", .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_CK",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_DOWN, .logic_level=GPIO_LVL_HI, },          \
-    {.Pad = { .port=PORT_B, .pin=12,}, .connector2="J3.11/PB12", .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_WS",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },         \
-    {.Pad = { .port=PORT_C, .pin=3,}, .connector2="J3.35/PC3",   .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_SD",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP, .logic_level=GPIO_LVL_HI,   },
+    {.Pad = { .port=PORT_B, .pin=12,}, .connector2="J3.11/PB12", .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_WS",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_DOWN, .logic_level=GPIO_LVL_HI,   },         \
+    {.Pad = { .port=PORT_C, .pin=3,}, .connector2="J3.35/PC3",   .mux = 5, .dir=GPIO_DIR_OUT, .name="I2S2_SD",    .mode = GPIO_API_MODE_ALT1, .pull=GPIO__PULL_DOWN, .logic_level=GPIO_LVL_HI,   },
 
 #else
 #define GPIO_CONFIG_I2S2
@@ -95,11 +112,11 @@
      .mux=GPIO_AF8_USART6,                                 \
      .logic_level=GPIO_LVL_HI},                            \
     {.Pad={ .port=PORT_C, .pin=7,  },  .name="USART6_RX",  \
-     .connector1="UEXT.4",.mode=GPIO_API_MODE_ALT1,        \
-     .pull=GPIO__PULL_AIR,                                 \
-     .speed=GPIO_SPEED_HIGH_SPEED,                         \
-     .mux=GPIO_AF8_USART6,                                 \
-     .logic_level=GPIO_LVL_HI,                             \
+     .connector1 = "UEXT.4",.mode = GPIO_API_MODE_ALT1,        \
+     .pull = GPIO__PULL_AIR,                                 \
+     .speed = GPIO_SPEED_HIGH_SPEED,                         \
+     .mux = GPIO_AF8_USART6,                                 \
+     .logic_level = GPIO_LVL_HI,                             \
     },
 
 #else

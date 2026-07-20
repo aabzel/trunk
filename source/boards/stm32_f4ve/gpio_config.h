@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 #include "gpio_types.h"
-//#include "sys_config.h"
 
 extern const GpioConfig_t GpioConfig[];
 

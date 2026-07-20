@@ -985,7 +985,7 @@ bool gpio_init_input(const Pad_t Pad) {
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = 0;
         HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
-        res = true;
+        res = gpio_pad_mux_set(Pad, 0);
     }
     return res;
 }
