@@ -214,6 +214,12 @@ bool i2s_is_valid_config(const I2sConfig_t* const Config) {
         bool l_res = true;
         res = true;
 
+        ifn(Config->pHandle) {
+            res = false;
+            LOG_ERROR(I2S, "I2S_%u,Err,pHandle", Config->num);
+        }
+
+
         l_res = audio_is_valid_frequency(Config->audio_frequency_hz);
         ifn(l_res) {
             res = false;
@@ -231,6 +237,8 @@ bool i2s_is_valid_config(const I2sConfig_t* const Config) {
             res = false;
             LOG_ERROR(I2S, "I2S_%u,Err,Dma", Config->num);
         }
+
+
 
         ifn(Config->mclk_out) {
             res = false;
@@ -475,7 +483,7 @@ bool i2s_init_common(const I2sConfig_t* const Config, I2sHandle_t* const Node) {
             Node->GpioSdIn = Config->GpioSdIn;
             //  Node->GpioMClk = Config->GpioMClk;
 #endif
-
+            Node->pHandle = Config->pHandle;
             Node->bus_role = Config->bus_role;
             Node->direction = Config->direction;
             Node->led_rx_num = Config->led_rx_num;
@@ -513,7 +521,7 @@ bool i2s_is_valid_num(uint8_t num) {
     if(Config) {
         I2sHandle_t* Node = I2sGetNode(num);
         if(Node) {
-            res = true;
+            res = Node->init_done;
         }
     }
 
@@ -804,4 +812,4 @@ bool i2s_play_tone(uint8_t num, uint8_t dac_num, float freq, SampleType_t amplit
 #endif
 
 COMPONENT_INIT_ANY_PATTERT_CNT(I2S, I2S, i2s, I2S_COUNT)
-COMPONENT_PROC_PATTERT(I2S, I2S, i2s)
+COMPONENT_PROC_PATTERT_CNT(I2S, I2S, i2s, I2S_COUNT)

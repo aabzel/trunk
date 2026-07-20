@@ -12,11 +12,13 @@ extern "C" {
 #include "i2s_full_duplex_diag.h"
 #include "i2s_full_duplex_isr.h"
 #include "dma_types.h"
+#include "dma_channel_types.h"
 
 /* API*/
 DmaChannelHandle_t* I2sNumToDmaChannel(uint32_t i2s_num);
 const I2sFullDuplexConfig_t* I2sFullDuplexGetConfig(uint8_t num);
 I2sFullDuplexHandle_t* I2sFullDuplexGetNode(uint8_t num);
+
 bool i2s_full_duplex_mcal_init(void);
 bool i2s_full_duplex_data_proc_ll(I2sFullDuplexHandle_t* Node, uint32_t part);
 bool i2s_full_duplex_proc_one(uint8_t num);

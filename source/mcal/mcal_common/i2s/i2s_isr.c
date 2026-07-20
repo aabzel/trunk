@@ -4,14 +4,42 @@
 
 #include "gpio_mcal.h"
 #include "i2s_mcal.h"
+#include "compiler_const.h"
+
+#ifdef HAS_SOUND_RECORDER
 #include "sound_recorder_isr.h"
+#endif
+
+
+_WEAK_FUN_
+bool I2xRxHalfCallbackCustom(I2sHandle_t* const Node) {
+    return true;
+}
+
+_WEAK_FUN_
+bool I2xRxDoneCallbackCustom(I2sHandle_t* const Node) {
+    return true;
+}
+
+
+_WEAK_FUN_
+bool I2xTxHalfCallbackCustom(I2sHandle_t* const Node) {
+    return true;
+}
+
+_WEAK_FUN_
+bool I2xTxDoneCallbackCustom(I2sHandle_t* const Node) {
+    return true;
+}
+
+
 
 bool I2sRxHalfCallback(I2sHandle_t* const Node) {
     bool res = false;
     if(Node) {
         Node->rx_half = true;
         Node->rx_half_cnt++;
-        gpio_logic_level_set(Node->PadDmaRx, GPIO_LVL_LOW);
+        gpio_logic_level_set(Node->PadDmaRx, GPIO_LVL_HI);
         I2xRxHalfCallbackCustom(Node);
         res = true;
     }
@@ -23,7 +51,7 @@ bool I2sRxDoneCallback(I2sHandle_t* const Node) {
     if(Node) {
         Node->rx_done = true;
         Node->rx_done_cnt++;
-        gpio_logic_level_set(Node->PadDmaRx, GPIO_LVL_HI);
+        gpio_logic_level_set(Node->PadDmaRx, GPIO_LVL_LOW);
         I2xRxDoneCallbackCustom(Node);
         res = true;
     }
@@ -45,6 +73,8 @@ bool I2sTxHalfCallback(I2sHandle_t* const Node) {
     if(Node) {
         Node->tx_half = true;
         Node->tx_half_cnt++;
+        gpio_logic_level_set(Node->PadDmaTx, GPIO_LVL_HI);
+        I2xTxHalfCallbackCustom( Node) ;
         res = true;
     }
     return res;
@@ -55,6 +85,8 @@ bool I2sTxDoneCallback(I2sHandle_t* const Node) {
     if(Node) {
         Node->tx_done = true;
         Node->tx_done_cnt++;
+        gpio_logic_level_set(Node->PadDmaTx, GPIO_LVL_LOW);
+        I2xTxDoneCallbackCustom( Node) ;
         res = true;
     }
     return res;

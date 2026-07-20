@@ -10,6 +10,7 @@
 #include "sys_config.h"
 #include "data_utils.h"
 #include "unit_test_check.h"
+
 #ifdef HAS_DDS
 #include "dds_drv.h"
 #include "dds_diag.h"
@@ -57,6 +58,8 @@ bool test_i2s_read_one(uint8_t num) {
 
     return res;
 }
+
+
 
 bool test_i2s_types(void) {
     LOG_INFO(I2S, "%s()", __FUNCTION__);
@@ -348,7 +351,7 @@ bool test_i2s0_read(void) {
 #ifdef HAS_I2S1
 bool test_i2s1_write(void) {
     LOG_INFO(I2S, "%s()", __FUNCTION__);
-    ASSERT_TRUE(test_i2s_write_one(1));
+    ASSERT_TRUE(test_i2s_write_one_word(1));
     return true;
 }
 bool test_i2s1_read(void) {
@@ -359,6 +362,13 @@ bool test_i2s1_read(void) {
 #endif /*HAS_I2S1*/
 
 #ifdef HAS_I2S2
+bool test_i2s2_clock(void) {
+    LOG_INFO(I2S, "%s()", __FUNCTION__);
+    uint32_t base_clock_hz = i2s_base_clock_get();
+    ASSERT_GR(0,base_clock_hz);
+    return true;
+}
+
 bool test_i2s2_write(void) {
     LOG_INFO(I2S, "%s()", __FUNCTION__);
     ASSERT_TRUE(test_i2s_write_one_qword(2));
@@ -381,12 +391,46 @@ bool test_i2s2_read(void) {
 #ifdef HAS_I2S3
 bool test_i2s3_write(void) {
     LOG_INFO(I2S, "%s()", __FUNCTION__);
-    ASSERT_TRUE(test_i2s_write_one(3));
+    ASSERT_TRUE(test_i2s_write_one_word(3));
     return true;
 }
 bool test_i2s3_read(void) {
     LOG_INFO(I2S, "%s()", __FUNCTION__);
-    ASSERT_FALSE(i2s_mcal_read(3, array_rx, I2S_TEST_BLOCK_SIZE));
+    ASSERT_FALSE(i2s_mcal_read(3, array_u16_tx, I2S_TEST_BLOCK_SIZE));
     return true;
 }
 #endif /*HAS_I2S3*/
+
+#ifdef HAS_I2S4
+
+bool test_i2s4_write(void) {
+    LOG_INFO(I2S, "%s()", __FUNCTION__);
+    ASSERT_TRUE(test_i2s_write_one_word(4));
+    return true;
+}
+
+bool test_i2s4_read(void) {
+    LOG_INFO(I2S, "%s()", __FUNCTION__);
+    ASSERT_FALSE(i2s_mcal_read(4, array_u16_tx, I2S_TEST_BLOCK_SIZE));
+    return true;
+}
+
+#endif /*HAS_I2S4*/
+
+
+#ifdef HAS_I2S5
+
+bool test_i2s5_write(void) {
+    LOG_INFO(I2S, "%s()", __FUNCTION__);
+    ASSERT_TRUE(test_i2s_write_one_word(5));
+    return true;
+}
+
+bool test_i2s5_read(void) {
+    LOG_INFO(I2S, "%s()", __FUNCTION__);
+    ASSERT_FALSE(i2s_mcal_read(5, array_u16_tx, I2S_TEST_BLOCK_SIZE));
+    return true;
+}
+
+#endif /*HAS_I2S3*/
+

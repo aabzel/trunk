@@ -3,12 +3,15 @@
 #include <math.h>
 
 #include "dma_config.h"
-#ifdef HAS_ECHO_EFFECT
-#include "echo_effect_isr.h"
-#endif
 #include "gpio_mcal.h"
 #include "i2s_dma_mcal.h"
 #include "i2s_full_duplex.h"
+#include "time_mcal.h"
+
+#ifdef HAS_ECHO_EFFECT
+#include "echo_effect_isr.h"
+#endif
+
 #ifdef HAS_FIR
 #include "fir.h"
 #endif
@@ -16,8 +19,10 @@
 #ifdef HAS_FIR_INT
 #include "fir_int.h"
 #endif
-#include "time_mcal.h"
+
+#ifdef HAS_TIMER
 #include "timer_mcal.h"
+#endif
 
 #define CHANNEL_INDEX_L (s * 2)
 #define CHANNEL_INDEX_R (s * 2 + 1)
@@ -113,12 +118,12 @@ static bool i2s_full_duplex_proc_tx_ll(I2sFullDuplexHandle_t* Node, I2sFullDuple
     case I2S_FULL_DUPLEX_INPUTS_TX_HALF: {
         Node->state = I2S_FULL_DUPLEX_STATE_TX;
         // res = i2s_dma_ctrl(  Node->i2s_rx_num, true);
-        res = i2s_api_read_dma(Node->i2s_rx_num, Node->Buffer, I2S_COMMON_BUFFER_CHANNELS_CNT, DMA_MODE_CIRCULAR);
+        res = i2s_mcal_read_dma(Node->i2s_rx_num, Node->Buffer, I2S_COMMON_BUFFER_CHANNELS_CNT, DMA_MODE_CIRCULAR);
         DmaChannelHandle_t* ChannelNode = NULL;
         ChannelNode = I2sNumToDmaChannel(Node->i2s_rx_num);
         if(ChannelNode) {
-            ChannelNode->CallBackHalf = DmaRxHalf;
-            ChannelNode->CallBackDone = DmaRxDone;
+            //ChannelNode->CallBackHalf = DmaRxHalf;
+            //ChannelNode->CallBackDone = DmaRxDone;
         }
 
     } break;
@@ -144,12 +149,12 @@ static bool i2s_full_duplex_proc_rx_ll(I2sFullDuplexHandle_t* Node, I2sFullDuple
     case I2S_FULL_DUPLEX_INPUTS_RX_HALF: {
         Node->state = I2S_FULL_DUPLEX_STATE_RX;
         // res = i2s_dma_ctrl(  Node->i2s_tx_num, true);
-        res = i2s_api_write_dma(Node->i2s_tx_num, Node->Buffer, I2S_COMMON_BUFFER_CHANNELS_CNT, DMA_MODE_CIRCULAR);
+        res = i2s_mcal_write_dma(Node->i2s_tx_num, Node->Buffer, I2S_COMMON_BUFFER_CHANNELS_CNT, DMA_MODE_CIRCULAR);
         DmaChannelHandle_t* ChannelNode = NULL;
         ChannelNode = I2sNumToDmaChannel(Node->i2s_tx_num);
         if(ChannelNode) {
-            ChannelNode->CallBackHalf = DmaTxHalf;
-            ChannelNode->CallBackDone = DmaTxDone;
+            //ChannelNode->CallBackHalf = DmaTxHalf;
+            //ChannelNode->CallBackDone = DmaTxDone;
         }
 
     } break;
@@ -167,6 +172,9 @@ static bool i2s_full_duplex_proc_rx_ll(I2sFullDuplexHandle_t* Node, I2sFullDuple
 
     return res;
 }
+
+
+#ifdef HAS_TIMER
 
 static uint8_t i2s_full_duplex_input_to_timer_percent(I2sFullDuplexInputs_t input) {
     uint8_t timer_percent = 0;
@@ -195,6 +203,7 @@ static uint8_t i2s_full_duplex_input_to_timer_percent(I2sFullDuplexInputs_t inpu
     }
     return timer_percent;
 }
+#endif
 
 static bool i2s_full_duplex_proc_rx_tx_ll(I2sFullDuplexHandle_t* Node, I2sFullDuplexInputs_t input) {
     bool res = false;
@@ -337,8 +346,11 @@ bool i2s_full_duplex_proc_input(uint8_t num, I2sFullDuplexInputs_t input) {
                 break;
             }
 #endif /*HAS_I2S_FULL_DUPLEX_DEBUG*/
+
+#ifdef HAS_TIMER
             uint8_t counter_percent = i2s_full_duplex_input_to_timer_percent(input);
             res = timer_counter_set_percent_u(Node->timer_num, counter_percent);
+#endif
 
             Node->input = input;
             Node->proc_cnt++;

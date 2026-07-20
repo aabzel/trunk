@@ -18,7 +18,7 @@
 #endif
 
 #ifndef HAS_TIMER
-#error "+HAS_TIMER"
+#warning "+HAS_TIMER"
 #endif
 
 #endif /* I2S_FULL_DUPLEX_DEP_H */

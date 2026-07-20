@@ -7,7 +7,7 @@
 
 const char*  I2sFullDuplexInputToStr(I2sFullDuplexInputs_t input);
 const char*  I2sFullDuplexStateToStr(I2sFullDuplexState_t state);
-const char* I2sFullDuplexToStr(const I2sFullDuplexConfig_t* const Config);
+const char* I2sFullDuplexConfigToStr(const I2sFullDuplexConfig_t* const Config);
 bool I2sFullDuplexDiagConfig(const I2sFullDuplexConfig_t* const Config);
 bool i2s_full_duplex_diag(void);
 

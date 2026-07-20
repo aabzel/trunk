@@ -1,0 +1,19 @@
+#ifdef HAS_I2S2
+I2S2->I2S
+#endif
+
+
+#ifdef HAS_I2S1
+I2S1->I2S
+#endif
+
+
+#ifdef HAS_I2S3
+I2S3->I2S
+#endif
+
+
+
+#ifdef HAS_I2S4
+I2S4->I2S
+#endif

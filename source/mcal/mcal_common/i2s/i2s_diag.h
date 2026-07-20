@@ -1,9 +1,7 @@
 #ifndef I2S_MCAL_DIAG_H
 #define I2S_MCAL_DIAG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "i2s_types.h"
 #include "i2s_custom_diag.h"
 
@@ -32,6 +30,7 @@ const char* I2sStandardToStr(I2sStandard_t standard);
 const char* I2sSampleModeToStr(DspSampleMode_t sample_mode) ;
 const char* I2sFsmDiagToStr(const I2sHandle_t* const Node );
 
+bool i2s_diag_clocks(void) ;
 bool i2s_rec_reverse_byte_order(uint8_t num);
 bool i2s_print_rx_ll(const I2sHandle_t* const Node );
 bool i2s_print_rx(uint8_t num);

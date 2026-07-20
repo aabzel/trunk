@@ -31,6 +31,26 @@ bool CallBackErrorI2s2Tx(void);
         .priority = DMA_PRIOR_VERY_HIGH,
 
 
+#ifdef HAS_I2S_FULL_DUPLEX
+/* I2S2_EXT_RX Init */
+#define DMA_CHANNEL_I2S2_RX                                 \
+    {                                                       \
+        DMA_CHANNEL_I2S_COMMON                              \
+        .DmaChPad = { .dma_num = 1, .stream = 3, .channel = 3,  .name = "I2S2_EXT_RX", },      \
+        .dir = DMA_MCAL_DIR_PERIPH_TO_MEMORY,               \
+        .per_inc = DMA_INC_OFF,                             \
+        .mem_inc = DMA_INC_ON,                              \
+        .name = "I2S2_EXT_RX",                              \
+        .num = DMA_CHANNEL_NUM_I2S2_RX,                     \
+        .base_addr_source = (uint32_t)  &(I2S2ext->DR) ,    \
+        .base_addr_destination = (uint32_t) fromArray,      \
+        .block_size = (uint32_t) DMA_MEMCPY_SIZE,           \
+        .CallBackHalf = CallBackHalfI2s2Rx,                 \
+        .CallBackDone = CallBackDoneI2s2Rx,                 \
+    },
+
+#else
+
 #define DMA_CHANNEL_I2S2_RX                                 \
     {                                                       \
         .DmaChPad = { .dma_num = 1, .stream=3, .channel = 0,  .name = "SPI2_RX/I2S2_RX", },      \
@@ -46,6 +66,13 @@ bool CallBackErrorI2s2Tx(void);
         .CallBackHalf = CallBackHalfI2s2Rx,                 \
         .CallBackDone = CallBackDoneI2s2Rx,                 \
     },
+
+#endif
+
+
+
+
+
 
 #define DMA_CHANNEL_I2S2_TX                    \
     {                                          \

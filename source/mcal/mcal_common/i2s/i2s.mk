@@ -11,13 +11,18 @@ ifneq ($(I2S_MCAL_MK_INC),Y)
     MCAL_OPT += -DHAS_I2S
     
     I2S_ISR=Y
+    
     ifeq ($(I2S_PROC),Y)
         MCAL_OPT += -DHAS_I2S_PROC
     endif
-    
-    
+
+    ifeq ($(I2S_FULL_DUPLEX),Y)
+        MCAL_OPT += -DHAS_I2S_FULL_DUPLEX
+    endif
+
     ifeq ($(I2S_DMA),Y)
         MCAL_OPT += -DHAS_I2S_DMA
+        SOURCES_C += $(I2S_MCAL_DIR)/i2s_dma_mcal.c
     endif
     
     ifeq ($(I2S_ISR),Y)
@@ -35,6 +40,7 @@ ifneq ($(I2S_MCAL_MK_INC),Y)
     endif
 
     SOURCES_C += $(I2S_MCAL_DIR)/i2s_general.c
+    
 
     ifeq ($(DIAG),Y)
         ifeq ($(I2S_DIAG),Y)

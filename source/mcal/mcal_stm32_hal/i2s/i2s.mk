@@ -19,6 +19,12 @@ ifneq ($(I2S_CUSTOM_MK_INC),Y)
         MCAL_OPT += -DHAS_I2S_GPIO
     endif
 
+    ifeq ($(I2S_FULL_DUPLEX),Y)
+        MCAL_OPT += -DSPI_I2S_FULLDUPLEX_SUPPORT
+        MCAL_OPT += -DHAS_I2S_FULL_DUPLEX
+        SOURCES_C += $(I2S_CUSTOM_DIR)/i2s_full_duplex.c
+    endif
+
     ifeq ($(I2S_DMA),Y)
         MCAL_OPT += -DHAS_I2S_DMA
         SOURCES_C += $(I2S_CUSTOM_DIR)/dma_channel_config_i2s.c
@@ -43,14 +49,25 @@ ifneq ($(I2S_CUSTOM_MK_INC),Y)
         MCAL_OPT += -DHAS_I2S3
     endif
 
+    ifeq ($(I2S4),Y)
+        $(info Add I2S4)
+        SOURCES_C += $(I2S_CUSTOM_DIR)/dma_channel_config_i2s4.c
+        MCAL_OPT += -DHAS_I2S4
+    endif
+
+    ifeq ($(I2S5),Y)
+        SOURCES_C += $(I2S_CUSTOM_DIR)/dma_channel_config_i2s5.c
+        MCAL_OPT += -DHAS_I2S5
+    endif
+
     ifeq ($(DIAG),Y)
-        MCAL_OPT += -DHAS_I2S_DIAG
+        MCAL_OPT += -DHAS_I2S_CUSTOM_DIAG
         SOURCES_DIAG_C += $(I2S_CUSTOM_DIR)/i2s_custom_diag.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(I2S_COMMANDS),Y)
-            MCAL_OPT += -DHAS_I2S_COMMANDS
+            MCAL_OPT += -DHAS_I2S_CUSTOM_COMMANDS
             SOURCES_C += $(I2S_CUSTOM_DIR)/i2s_custom_commands.c
         endif
     endif

@@ -2,6 +2,16 @@
 
 #include "stm32fx_hal.h"
 #include "connectivity_const.h"
+#include "i2s_custom_drv.h"
+
+SPI_TypeDef* I2sGetBaseAddr(uint8_t num) {
+    SPI_TypeDef *I2Sx = NULL;
+    const I2sInfo_t* Info = I2sGetInfo(num);
+    if(Info){
+        I2Sx = Info->I2Sx;
+    }
+    return I2Sx;
+}
 
 uint32_t I2sBus2Code(const ClockBus_t CurBus) {
     uint32_t periph_clk_code = 0;
@@ -23,6 +33,15 @@ uint32_t I2sBus2Code(const ClockBus_t CurBus) {
 
 int8_t get_i2s_index(SPI_TypeDef* I2Sx) {
     int8_t num = -1;
+    uint32_t i = 0;
+    uint32_t cnt = i2s_info_get_cnt( );
+    for(i=0;i<cnt;i++) {
+        if(I2Sx==I2sInfo[i].I2Sx) {
+            num = I2sInfo[i].num;
+        }
+    }
+
+#if 0
 #ifdef SPI1
     if(SPI1 == I2Sx) {
         num = 1;
@@ -41,14 +60,14 @@ int8_t get_i2s_index(SPI_TypeDef* I2Sx) {
     }
 #endif /*SPI2*/
 
-#ifdef SPI4
-    if(SPI4 == I2Sx) {
+#ifdef I2S2ext
+    if(I2S2ext == I2Sx) {
         num = 4;
     }
 #endif /*SPI4*/
 
-#ifdef SPI5
-    if(SPI5 == I2Sx) {
+#ifdef I2S2ext
+    if(I2S3ext == I2Sx) {
         num = 5;
     }
 #endif /*SPI5*/
@@ -58,53 +77,9 @@ int8_t get_i2s_index(SPI_TypeDef* I2Sx) {
         num = 6;
     }
 #endif /*SPI6*/
+#endif
 
     return num;
-}
-
-SPI_TypeDef* I2sGetBaseAddr(uint8_t num) {
-    SPI_TypeDef *I2Sx = NULL;
-    switch (num) {
-#ifdef SPI1
-    case 1:
-        I2Sx = SPI1;
-        break;
-#endif /*I2S1*/
-
-#ifdef SPI2
-    case 2:
-        I2Sx = SPI2;
-        break;
-#endif /*I2S2*/
-
-#ifdef SPI3
-    case 3:
-        I2Sx = SPI3;
-        break;
-#endif /*I2S3*/
-
-#ifdef SPI4
-    case 4:
-        I2Sx = SPI4;
-        break;
-#endif /*I2S4*/
-
-#ifdef SPI5
-    case 5:
-        I2Sx = SPI5;
-        break;
-#endif /*I2S5*/
-
-#ifdef SPI6
-    case 6:
-        I2Sx = SPI6;
-        break;
-#endif /*I2S6*/
-    default:
-        I2Sx = NULL;
-        break;
-    }
-    return I2Sx;
 }
 
 uint32_t I2sParseFullDuplexMode(const I2sFullDuplex_t full_duplex) {

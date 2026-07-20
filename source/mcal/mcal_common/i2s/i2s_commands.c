@@ -179,7 +179,8 @@ bool i2s_read_write_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = i2s_read_write(num, tx_sample);
+        res = false ;
+        //res = i2s_read_write(num, tx_sample);
         if(res) {
             LOG_INFO(I2S, LOG_OK);
         }
@@ -277,6 +278,7 @@ bool i2s_diag_command(int32_t argc, char* argv[]) {
     if(res) {
         res = i2s_diag_one(num);
         res = i2s_diag_all();
+        res = i2s_diag_clocks() ;
     } else {
         LOG_ERROR(I2S, "Usage: i2sd i2sNum");
         LOG_INFO(I2S, "i2sNum [0..%u]", I2S_COUNT);
@@ -848,6 +850,7 @@ bool i2s_bus_role_command(int32_t argc, char* argv[]) {
             res = i2s_dir_bus_role_set(num, (IfBusRole_t)bus_role);
 
         } break;
+        default:break;
         }
     } else {
         LOG_ERROR(I2S, "Usage: i2sbr I2sNum BusRole");
@@ -855,7 +858,7 @@ bool i2s_bus_role_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
-
+//i2sf 2 48000
 bool i2s_freq_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -877,6 +880,24 @@ bool i2s_freq_command(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(I2S, "Usage: i2sf I2sNum audioFrequencyHz");
         LOG_INFO(I2S, "I2sNum [0..%u]", I2S_COUNT);
+    }
+    return res;
+}
+
+
+bool i2s_reg_map_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 1;
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(I2S, res, "Num");
+    }
+
+    if(res) {
+        res = i2s_raw_reg_diag(num);
+        log_info_res(I2S, res, "RegMap");
+    } else {
+        LOG_ERROR(I2S, "Usage: i2srm num");
     }
     return res;
 }

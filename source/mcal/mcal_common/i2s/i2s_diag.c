@@ -365,10 +365,69 @@ bool i2s_diag_rx(void) {
     return res;
 }
 
+bool i2s_diag_clocks(void) {
+    bool res = false;
+
+    uint32_t base_clock_hz = i2s_base_clock_get();
+    LOG_INFO(I2S, "BaseClk:%u Hz", base_clock_hz);
+
+    static const table_col_t cols[] = {
+        {5, "No"},
+        {5, "num"},
+        {4, "Bit"},
+        {7, "BCLK,Freq"},
+        {7, "WS,Freq"},
+        {9, "TxSampleCnt"},
+        {9, "ToggleCnt"}, {9, "ItCnt"},
+
+          {8, "name"},
+    };
+    uint16_t cnt = 0;
+    table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+    uint8_t num = 0;
+    for(num = 0; num <= I2S_COUNT; num++) {
+        I2sHandle_t* Node = I2sGetNode(num);
+        if(Node) {
+            uint8_t sample_size_bit = i2s_sample_size_get(num) ;
+            uint32_t audio_frequency_hz = 0;
+            res = i2s_sample_freq_get(num, &audio_frequency_hz);
+            uint32_t bitclock = i2s_bitclock_get(num) ;
+            uint32_t err = i2s_err_total(&(Node->Err));
+            char line[200] = {0};
+            strcpy(line, TSEP);
+            snprintf(line, sizeof(line), "%s %1u   " TSEP, line, Node->num);
+            snprintf(line, sizeof(line), "%s %2u " TSEP, line, sample_size_bit);
+            snprintf(line, sizeof(line), "%s %5u " TSEP, line, bitclock);
+            snprintf(line, sizeof(line), "%s %5u " TSEP, line, audio_frequency_hz);
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->tx_sample_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->toggle_cnt));
+            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->it_cnt));
+            snprintf(line, sizeof(line), "%s %4u " TSEP, line, (unsigned int)err);
+            const I2sConfig_t* I2sConfNode = I2sGetConfig(num);
+            if(I2sConfNode) {
+                snprintf(line, sizeof(line), "%s %6s " TSEP, line, I2sConfNode->name);
+            }
+            cli_printf(TSEP " %3u ", cnt);
+            cli_printf("%s" CRLF, line);
+            cnt++;
+            res = true;
+        }
+    }
+
+    table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
+
+    return res;
+}
+
+
 bool i2s_diag_all(void) {
     bool res = false;
+
     static const table_col_t cols[] = {
-        {5, "No"},        {5, "num"},           {7, "WS,Freq"}, {9, "TxSampleCnt"}, {9, "ToggleCnt"}, {9, "ItCnt"},
+        {5, "No"},
+        {5, "num"},
+        {9, "TxSampleCnt"},
+
         {9, "StopCnt"},   {9, "StatusStopCnt"}, {6, "echo"},    {6, "loop"},        {6, "iir"},       {6, "Err"},
         {9, "rxHalfCnt"}, {9, "txHalfCnt"},     {9, "rxCnt"},   {9, "txCnt"},       {8, "name"},
     };
@@ -376,20 +435,13 @@ bool i2s_diag_all(void) {
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
     for(num = 0; num <= I2S_COUNT; num++) {
-
         I2sHandle_t* Node = I2sGetNode(num);
-        // TODO: get bittness
         if(Node) {
-            uint32_t audio_frequency_hz = 0;
-            res = i2s_sample_freq_get(num, &audio_frequency_hz);
             uint32_t err = i2s_err_total(&(Node->Err));
             char line[200] = {0};
             strcpy(line, TSEP);
             snprintf(line, sizeof(line), "%s %1u   " TSEP, line, Node->num);
-            snprintf(line, sizeof(line), "%s %5u " TSEP, line, audio_frequency_hz);
             snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->tx_sample_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->toggle_cnt));
-            snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->it_cnt));
             snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->total_stop_cnt));
             snprintf(line, sizeof(line), "%s %7s " TSEP, line, u32valToStr(Node->status_stop_cnt));
             snprintf(line, sizeof(line), "%s %3s  " TSEP, line, OnOffToStr(Node->echo));

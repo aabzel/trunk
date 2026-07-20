@@ -6,6 +6,7 @@
 
 #include "i2s_custom_types.h"
 #include "i2s_mcal.h"
+#include "i2s_custom_drv.h"
 #include "common_diag.h"
 #include "convert.h"
 #include "data_utils.h"
@@ -27,7 +28,7 @@
 #error "+HAS_I2S_COMMANDS"
 #endif /**/
 
-bool i2s_stm_read_sample_command(int32_t argc, char* argv[]) {
+bool i2s_custom_read_sample_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
     uint16_t size = 2;
@@ -54,7 +55,7 @@ bool i2s_stm_read_sample_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool i2s_stm_read_write_command(int32_t argc, char* argv[]) {
+bool i2s_custom_read_write_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint32_t tx_sample = 0x5555AAAA;
     uint8_t num = 2;
@@ -70,7 +71,7 @@ bool i2s_stm_read_write_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = i2s_read_write(num, tx_sample);
+       // res = i2s_read_write(num, tx_sample);
         if(res) {
             LOG_INFO(I2S, LOG_OK);
         }
@@ -80,7 +81,7 @@ bool i2s_stm_read_write_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool i2s_stm_write_command(int32_t argc, char* argv[]) {
+bool i2s_custom_write_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 2;
     uint16_t words = 0;
@@ -125,19 +126,7 @@ bool i2s_stm_write_command(int32_t argc, char* argv[]) {
 }
 
 
-
-
-bool i2s_stm_diag_sample_command(int32_t argc, char* argv[]) {
-    bool res = false;
-    if(0 == argc) {
-        res = i2s_diag_sample();
-    } else {
-        LOG_ERROR(I2S, "Usage: i2sa");
-    }
-    return res;
-}
-
-bool i2s_stm_diag_command(int32_t argc, char* argv[]) {
+bool i2s_custom_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
         res = i2s_custom_diag();
@@ -147,18 +136,30 @@ bool i2s_stm_diag_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool i2s_stm_diag_ll_command(int32_t argc, char* argv[]) {
+bool i2s_custom_diag_ll_command(int32_t argc, char* argv[]) {
     bool res = false;
-    if(0 == argc) {
-        // res = i2s_diag_low_level();
+    uint8_t num = 2 ;
+
+    if(0 <= argc) {
+        num = 2 ;
+        res = true;
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+
+    if(res) {
+        res = i2s_diag_low_level(num);
     } else {
-        LOG_ERROR(I2S, "Usage: i2sdl");
+        LOG_ERROR(I2S, "Usage: i2sdl Num");
     }
     return res;
 }
 
 #if 0
-bool i2s_stm_echo_command(int32_t argc, char* argv[]){
+bool i2s_custom_echo_command(int32_t argc, char* argv[]){
     bool res = false;
     uint8_t num = 0;
     bool status = false;
@@ -189,7 +190,7 @@ bool i2s_stm_echo_command(int32_t argc, char* argv[]){
 #endif
 
 #if 0
-bool i2s_stm_loopback_command(int32_t argc, char* argv[]){
+bool i2s_custom_loopback_command(int32_t argc, char* argv[]){
     bool res = false;
     uint8_t num = 0;
     bool status = false;
@@ -220,7 +221,7 @@ bool i2s_stm_loopback_command(int32_t argc, char* argv[]){
 #endif
 
 #define SET_COMMAND(FLAG, CMD_SHORT)                                                                                   \
-    bool i2s_stm_set_##FLAG##_command(int32_t argc, char* argv[]) {                                                        \
+    bool i2s_custom_set_##FLAG##_command(int32_t argc, char* argv[]) {                                                        \
         bool res = false;                                                                                              \
         uint8_t num = 0;                                                                                           \
         bool status = false;                                                                                           \
@@ -259,7 +260,7 @@ SET_COMMAND(play, "i2sp")
 // i2r 0 0xef 1  -- hang on
 // i2r 0 0xef 2  -- hang on
 
-bool i2s_stm_read_command(int32_t argc, char* argv[]) {
+bool i2s_custom_read_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(2 == argc) {
         res = true;
@@ -303,7 +304,7 @@ bool i2s_stm_read_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool i2s_stm_init_command(int32_t argc, char* argv[]) {
+bool i2s_custom_init_command(int32_t argc, char* argv[]) {
     uint8_t num = 0;
     bool res = false;
     if(1 <= argc) {
@@ -321,8 +322,78 @@ bool i2s_stm_init_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool i2s_stm_play_command(int32_t argc, char* argv[]) {
+
+bool i2s_prescaler_command(int32_t argc, char* argv[]) {
     bool res = false;
+    uint8_t num =2;
+
+    uint32_t I2SDIV ;  /*Bits 7:0 I2SDIV: I2S Linear prescaler   */
+    uint32_t ODD;      /*Bit 8 ODD: Odd factor for the prescaler */
+    uint32_t MCKOE ;   /*Bit 9 MCKOE: Master clock output enable*/
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &I2SDIV);
+    }
+
+    if(3 <= argc) {
+        res = try_str2uint32(argv[2], &ODD);
+    }
+
+    if(4 <= argc) {
+        res = try_str2uint32(argv[3],&MCKOE);
+    }
+
+    I2sReg_SPI_I2SPR_t I2SPR;
+    I2SPR.dword = 0;
+    I2SPR.I2SDIV = I2SDIV;
+    I2SPR.ODD = ODD;
+    I2SPR.MCKOE = MCKOE;
+
+    if(res) {
+        switch(argc) {
+            case 0:{
+                res = i2s_prescaler_get(  2 , &I2SPR);
+                I2sDiagReg_I2SPR(   I2SPR.dword);
+            } break;
+
+            case 1: {
+                I2sDiagReg_I2SPR(   I2SPR.dword);
+                res = i2s_prescaler_get(  num , &I2SPR);
+                I2sDiagReg_I2SPR(   I2SPR.dword);
+            }break;
+
+            case 2:{
+                I2sDiagReg_I2SPR(   I2SPR.dword);
+                res = i2s_prescaler_set(  num ,    I2SPR.I2SDIV,   0,   0);
+            } break;
+
+            case 3:{
+                I2sDiagReg_I2SPR(   I2SPR.dword);
+                res = i2s_prescaler_set(  num ,    I2SPR.I2SDIV,   I2SPR.ODD,   0);
+            } break;
+
+            case 4:{
+                I2sDiagReg_I2SPR(   I2SPR.dword);
+                res = i2s_prescaler_set(  num ,   I2SPR.I2SDIV,   I2SPR.ODD,   I2SPR.MCKOE);
+            } break;
+
+            default: res = false; break;
+        }
+
+    } else {
+        LOG_ERROR(I2S, "Usage: i2p num Div Odd MCLKo");
+    }
+    return res;
+}
+
+
+bool i2s_custom_play_command(int32_t argc, char* argv[]) {
+    bool res = false;
+#if 0
     uint8_t num = 0;
     uint8_t dac_num = 0;
     bool status = false;
@@ -356,11 +427,12 @@ bool i2s_stm_play_command(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(I2S, "Usage: i2spl I2sNum DacNum On");
     }
+#endif
     return res;
 }
 
 #define SET_DMA_COMMAND(FLAG_S, FLAG_C, CMD_SHORT)                                                                     \
-    bool i2s_stm_dma_##FLAG_S##_command(int32_t argc, char* argv[]) {                                                      \
+    bool i2s_custom_dma_##FLAG_S##_command(int32_t argc, char* argv[]) {                                                      \
         bool res = false;                                                                                              \
         uint8_t num = 0;                                                                                           \
         if(1 <= argc) {                                                                                                \
@@ -373,7 +445,7 @@ bool i2s_stm_play_command(int32_t argc, char* argv[]) {
             I2sHandle_t* Node = I2sGetNode(num);                                                                \
             if(Node) {                                                                                              \
                 HAL_StatusTypeDef ret;                                                                                 \
-                ret = HAL_I2S_DMA##FLAG_C(&Node->handle);                                                            \
+                ret = HAL_I2S_DMA##FLAG_C(Node->pHandle);                                                            \
                 if(HAL_OK == ret) {                                                                                    \
                     LOG_INFO(I2S, #FLAG_C LOG_OK);                                                                     \
                 } else {                                                                                               \

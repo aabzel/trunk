@@ -18,14 +18,14 @@
 
 #ifdef HAS_DMA
 #include "dma_mcal.h"
-#endif /*HAS_DMA*/
+#endif /**/
 
 #include "param_drv.h"
 
 #ifdef HAS_SW_DAC
 #include "sw_dac_config.h"
 #include "sw_dac_drv.h"
-#endif /*HAS_SW_DAC*/
+#endif /**/
 
 #include "hal_diag.h"
 #include "i2s_types.h"

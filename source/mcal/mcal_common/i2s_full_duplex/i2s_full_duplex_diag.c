@@ -8,7 +8,7 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-const char* I2sFullDuplexToStr(const I2sFullDuplexConfig_t* const Config) {
+const char* I2sFullDuplexConfigToStr(const I2sFullDuplexConfig_t* const Config) {
     static char line[120] = "";
     if(Config) {
         strncpy(line, "", sizeof(line) - 1);
@@ -24,7 +24,7 @@ const char* I2sFullDuplexToStr(const I2sFullDuplexConfig_t* const Config) {
 bool I2sFullDuplexDiagConfig(const I2sFullDuplexConfig_t* const Config) {
     bool res = false;
     if(Config) {
-        LOG_INFO(I2S, "%s", I2sFullDuplexToStr(Config));
+        LOG_INFO(I2S, "%s", I2sFullDuplexConfigToStr(Config));
         res = true;
     }
 
@@ -85,22 +85,22 @@ bool i2s_full_duplex_diag(void) {
     cnt = i2s_full_duplex_get_cnt();
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     uint8_t num = 0;
-    char text[200];
     for(num = 0; num <= cnt; num++) {
         I2sFullDuplexHandle_t* Node = I2sFullDuplexGetNode(num);
         if(Node) {
-            strcpy(text, TSEP);
-            snprintf(text, sizeof(text), "%s %3u " TSEP, text, Node->num);
-            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->proc_cnt);
-            snprintf(text, sizeof(text), "%s %6s " TSEP, text, I2sFullDuplexStateToStr(Node->state));
-            snprintf(text, sizeof(text), "%s %6s " TSEP, text, I2sFullDuplexInputToStr(Node->input));
-            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->rx_half_cnt);
-            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->rx_done_cnt);
-            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->tx_half_cnt);
-            snprintf(text, sizeof(text), "%s %7u " TSEP, text, Node->tx_done_cnt);
-            snprintf(text, sizeof(text), "%s %5u " TSEP, text, Node->start_cnt);
-            snprintf(text, sizeof(text), "%s %4u " TSEP, text, Node->stop_cnt);
-            cli_printf("%s" CRLF, text);
+            char temp[200];
+            strcpy(temp, TSEP);
+            snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, Node->num);
+            snprintf(temp, sizeof(temp), "%s %7u " TSEP, temp, Node->proc_cnt);
+            snprintf(temp, sizeof(temp), "%s %6s " TSEP, temp, I2sFullDuplexStateToStr(Node->state));
+            snprintf(temp, sizeof(temp), "%s %6s " TSEP, temp, I2sFullDuplexInputToStr(Node->input));
+            snprintf(temp, sizeof(temp), "%s %7u " TSEP, temp, Node->rx_half_cnt);
+            snprintf(temp, sizeof(temp), "%s %7u " TSEP, temp, Node->rx_done_cnt);
+            snprintf(temp, sizeof(temp), "%s %7u " TSEP, temp, Node->tx_half_cnt);
+            snprintf(temp, sizeof(temp), "%s %7u " TSEP, temp, Node->tx_done_cnt);
+            snprintf(temp, sizeof(temp), "%s %5u " TSEP, temp, Node->start_cnt);
+            snprintf(temp, sizeof(temp), "%s %4u " TSEP, temp, Node->stop_cnt);
+            cli_printf("%s" CRLF, temp);
 
             res = true;
         }

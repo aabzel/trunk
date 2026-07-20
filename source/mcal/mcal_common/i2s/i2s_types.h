@@ -158,10 +158,10 @@ typedef union {
 #define I2S_BASE_VARIABLES            \
     I2sMclkOut_t mclk_out;            \
     I2sStandard_t standard;           \
+    ConnectivitDir_t direction;       \
     I2sClockSource_t clock_source;    \
     DspSampleMode_t sample_mode;      \
     I2sFullDuplex_t full_duplex;      \
-    ConnectivitDir_t direction;       \
     IfBusRole_t bus_role;             \
     I2sDataFormat_t data_format;      \
     uint32_t audio_frequency_hz;
@@ -179,14 +179,17 @@ typedef union {
     I2S_COMMON_GPIO_VARIABLES         \
     I2S_BUFFER_VARIABLES              \
     I2sCpol_t  cpol;                  \
+    bool interrupt_on;                \
     uint8_t irq_priority;             \
     MoveMode_t move_mode;             \
+    bool need_init;                   \
     uint8_t num;                      \
     char *name;                       \
     bool valid;
 
 typedef struct {
     I2S_COMMON_VARIABLES
+    I2S_CONFIG_CUSTOM
     uint32_t sck_freq_hz;
     uint8_t int_num;
     I2sFlashFsParamsId_t ParamId;

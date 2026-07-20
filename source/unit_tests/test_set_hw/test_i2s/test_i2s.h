@@ -71,9 +71,11 @@ bool test_i2s1_write(void);
 bool test_i2s2_read(void);
 bool test_i2s2_write(void);
 bool test_i2s2_write_word(void);
+bool test_i2s2_clock(void) ;
 
-#define TEST_SUIT_I2S2                \
-    {"i2s2_write", test_i2s2_write},  \
+#define TEST_SUIT_I2S2                    \
+    {"i2s2_clock", test_i2s2_clock},      \
+    {"i2s2_write", test_i2s2_write},      \
     {"i2s2_write_word", test_i2s2_write_word},  \
     {"i2s2_read", test_i2s2_read},
 #else
