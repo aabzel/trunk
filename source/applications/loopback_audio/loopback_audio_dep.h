@@ -1,0 +1,9 @@
+#ifndef LOOPBACK_AUDIO_DEP_H
+#define LOOPBACK_AUDIO_DEP_H
+
+#ifndef HAS_LOOPBACK_AUDIO
+#error "+HAS_LOOPBACK_AUDIO"
+#endif
+
+#endif /* LOOPBACK_AUDIO_DEP_H */
+

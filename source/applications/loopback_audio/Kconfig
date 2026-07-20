@@ -1,0 +1,4 @@
+
+config LOOPBACK_AUDIO
+    bool "Enable use of the LOOPBACK_AUDIO drivers"
+
