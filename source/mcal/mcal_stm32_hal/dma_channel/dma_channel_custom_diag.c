@@ -9,8 +9,24 @@
 #include "dma_diag.h"
 #include "microcontroller.h"
 #include "num_to_str.h"
+#include "debugger.h"
 #include "dma_channel_custom.h"
 #include "table_utils.h"
+#include "mcal_types.h"
+
+const Reg32_t DmaStreamReg[] = {
+    { .offset = 0x00, .name = "DMA_SxCR",   .num = 1, .size = 4, .valid = true,  .access = ACCESS_READ_WRITE,    },
+    { .offset = 0x04, .name = "DMA_SxNDTR", .num = 2, .size = 4, .valid = true,  .access = ACCESS_READ_WRITE,    },
+    { .offset = 0x08, .name = "DMA_SxPAR",  .num = 3, .size = 4, .valid = true,  .access = ACCESS_READ_WRITE,    },
+    { .offset = 0x0C, .name = "DMA_SxM0AR", .num = 4, .size = 4, .valid = true,  .access = ACCESS_READ_WRITE,    },
+    { .offset = 0x10, .name = "DMA_SxM1AR", .num = 5, .size = 4, .valid = true,  .access = ACCESS_READ_WRITE,    },
+    { .offset = 0x14, .name = "DMA_SxFCR",  .num = 6, .size = 4, .valid = true,  .access = ACCESS_READ_WRITE,    },
+};
+
+uint32_t dma_stream_reg_cnt(void) {
+    uint32_t cnt = ARRAY_SIZE(DmaStreamReg);
+    return cnt;
+}
 
 uint8_t DmaStmDataSizeToBits(const DmaStm32Aligmant_t code) {
     uint8_t bit_num = 0;
@@ -103,8 +119,8 @@ bool dma_channel_diag_custom(void){
             DMA_Stream_TypeDef* DMA_STREAMx = dma_stream_num_2_prt(  dma_num,   stream_num);
             if(DMA_STREAMx){
                 DmaStreamConfReg_t CfgReg;
-                CfgReg.reg_val = DMA_STREAMx->CR;
-                char temp_str[220]={0};
+                CfgReg.dword = DMA_STREAMx->CR;
+                char temp_str[220] = {0};
                 strcpy(temp_str, TSEP);
                 snprintf(temp_str, sizeof(temp_str), "%s %17s  " TSEP, temp_str, dma_channel_to_str(  dma_num,   stream_num,   CfgReg.chsel) );
                 snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str, OnOffToStr(CfgReg.en));
@@ -117,7 +133,7 @@ bool dma_channel_diag_custom(void){
                 snprintf(temp_str, sizeof(temp_str), "%s %3s " TSEP, temp_str,  DmaStmIncrToStr(CfgReg.pinc));
                 snprintf(temp_str, sizeof(temp_str), "%s %6s " TSEP, temp_str, DmaStmMoveModeToStr(CfgReg.circ));
                 snprintf(temp_str, sizeof(temp_str), "%s %5s  " TSEP, temp_str, DmaStmPriorityLevelToStr(CfgReg.pl));
-                snprintf(temp_str, sizeof(temp_str), "%s %32s  " TSEP, temp_str, utoa_bin32(CfgReg.reg_val));
+                snprintf(temp_str, sizeof(temp_str), "%s %32s  " TSEP, temp_str, utoa_bin32(CfgReg.dword));
                 cli_printf("%s" CRLF, temp_str);
                 res = true;
             }
@@ -163,9 +179,16 @@ bool dma_channel_diag_low_level(char* key_word1, char* key_word2){
        }
        table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     }
-
     return res;
 }
 
-
-
+bool  dma_channel_reg_map(const DmaInfoChannel_t DmaPad) {
+    bool res = false ;
+    DMA_Stream_TypeDef* STREAMx= DmaChannelToDMAx(DmaPad.dma_num, DmaPad.stream);
+    if(STREAMx){
+        LOG_WARNING(DMA_CHANNEL,"%s, Regs",DmaInfoPadToStr(&DmaPad));
+        uint32_t reg_cnt= dma_stream_reg_cnt();
+        res = debug_raw_reg_diag(DMA_CHANNEL , (uint32_t) STREAMx,DmaStreamReg, reg_cnt );
+    }
+    return res;
+}

@@ -29,7 +29,6 @@ extern "C" {
 #endif
 
 bool dma_channel_diag(void);
-bool dma_channel_reg_map(const DmaInfoChannel_t DmaPad);
 //const char* DmaPadToStr(const DmaChannelPad_t DmaPad) ;
 const char* DmaInfoPadToStr(const DmaInfoChannel_t * const pDmaPad) ;
 const char* DmaChannnelNumToStr(uint8_t num);
@@ -40,7 +39,6 @@ const char* DmaChannelCtrlNodeToStr(const DmaChannelHandle_t* const Node);
 const char* DmaChannelConfigSrcToStr(const DmaChannelConfig_t* const Config);
 const char* DmaChannelIsrInfo(const DmaChannelHandle_t* const Node);
 const char* DmaChannelConfigDesToStr(const DmaChannelConfig_t* const Config);
-
 #ifdef __cplusplus
 }
 #endif

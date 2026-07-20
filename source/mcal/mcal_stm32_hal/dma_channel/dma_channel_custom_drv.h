@@ -16,7 +16,7 @@ extern "C" {
 #error "+HAS_DMA"
 #endif
 
-DMA_Stream_TypeDef* DmaChannelToDMAx(uint8_t dma_num, DmaChannel_t channel);
+DMA_Stream_TypeDef* DmaChannelToDMAx(uint8_t dma_num, DmaChannel_t stream);
 DMA_Stream_TypeDef* gma_stream_num_2_prt(uint8_t dma_num, uint8_t stream_num);
 DMA_TypeDef* DmaNum2Instance(uint8_t num);
 DMA_TypeDef* DmaNum2DMAx(uint8_t num);

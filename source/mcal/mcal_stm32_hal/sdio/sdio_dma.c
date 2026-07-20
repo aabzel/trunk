@@ -8,36 +8,7 @@
 #include "sdio_mcal.h"
 #include "dma_channel_config.h"
 
-static bool sd_card_busy_state(const HAL_SD_CardStateTypeDef state){
-    bool res = false;
-    switch(state){
-        case HAL_SD_CARD_RECEIVING: res = true; break;
-        case HAL_SD_CARD_PROGRAMMING:res = true;  break;
-        case HAL_SD_CARD_SENDING: res = true; break;
 
-        case HAL_SD_CARD_TRANSFER: res = false;break;
-        case HAL_SD_CARD_READY:res = false; break;
-        case HAL_SD_CARD_IDENTIFICATION:res = false; break;
-        case HAL_SD_CARD_STANDBY: res = false;break;
-        case HAL_SD_CARD_DISCONNECTED:res = false; break;
-        case HAL_SD_CARD_ERROR:res = false; break;
-        default:res = false; break;
-    }
-    return res;
-}
-
-static uint32_t sdio_wait_card_operation(SD_HandleTypeDef *  hsd){
-    HAL_SD_CardStateTypeDef state = HAL_SD_CARD_ERROR;
-    uint32_t  cnt = 0;
-    bool busy = true;
-    while(busy){
-        cnt++;
-        state = HAL_SD_GetCardState( hsd);
-        busy = sd_card_busy_state(state);
-    }
-
-    return cnt;
-}
 
 bool sdio_dma_init(SD_HandleTypeDef* sdHandle) {
     bool res2 = false;
@@ -72,6 +43,7 @@ bool sdio_write_sector_dma(uint8_t num, uint32_t block_num, uint32_t block_cnt, 
         sdio_wait_card_operation(&Node->Handle);
         ret = HAL_SD_WriteBlocks_DMA(&Node->Handle, (uint8_t*)TxData, block_num, block_cnt);
         if(HAL_OK == ret) {
+            //sdio_wait_card_operation(&Node->Handle);
             //res = true;
             res = SdioWaitTxDoneLl(Node, SDIO_TX_TIME_OUT_MS, num, block_num);
 #ifdef HAS_SDIO_DEBUG
@@ -109,6 +81,7 @@ bool sdio_read_sector_dma(uint8_t num, uint32_t block_num, uint32_t block_cnt, u
         sdio_wait_card_operation(&Node->Handle);
         ret = HAL_SD_ReadBlocks_DMA(&Node->Handle, RxData, block_num, block_cnt);
         if(HAL_OK == ret) {
+            //sdio_wait_card_operation(&Node->Handle);
             //res = true;
             res = SdioWaitRxDoneLl(Node, SDIO_RX_TIME_OUT_MS, num, block_num);
 #ifdef HAS_SDIO_DEBUG

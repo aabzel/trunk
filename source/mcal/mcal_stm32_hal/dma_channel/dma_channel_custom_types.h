@@ -15,7 +15,7 @@ extern "C" {
 
 #define  DMA_CHANNEL_CUSTOM_VARIABLES                   \
     DMA_HandleTypeDef dma_h; /*Each DMA channel needs its own DMA Handle (see cube MX code sample) */        \
-    DMA_Stream_TypeDef* DMA_STREAMx;                    \
+    volatile DMA_Stream_TypeDef* DMA_STREAMx;                    \
     IRQn_Type irq_n;
 
 #define DMA_STREAM_INT_STATUS_REG(NUM)                                \
@@ -28,7 +28,7 @@ extern "C" {
 
 
 typedef union {
-    uint32_t reg_val;
+    volatile uint32_t reg_val;
     struct{
         DMA_STREAM_INT_STATUS_REG(0)
         DMA_STREAM_INT_STATUS_REG(1)
@@ -52,31 +52,30 @@ typedef union {
     };
 }DmaHighIntStatusReg_t;
 
-
 #define DMA_STREAM_INT_CLEAR_STATUS_REG(NUM)     \
-       uint32_t cfeif##NUM  :1;/*stream x clear FIFO error interrupt flag*/ \
-       uint32_t res##NUM   :1; /**/ \
-       uint32_t cdmeif##NUM :1;/*stream x clear direct mode error interrupt flag*/ \
-       uint32_t cteif##NUM  :1;/*Stream x clear transfer error interrupt flag*/ \
-       uint32_t chtif##NUM  :1;/*stream x clear half transfer interrupt flag*/ \
-       uint32_t ctcif##NUM  :1;/*stream x clear transfer complete interrupt flag*/
+       volatile uint32_t cfeif##NUM  :1;/*stream x clear FIFO error interrupt flag*/ \
+       volatile uint32_t res##NUM   :1; /**/ \
+       volatile uint32_t cdmeif##NUM :1;/*stream x clear direct mode error interrupt flag*/ \
+       volatile uint32_t cteif##NUM  :1;/*Stream x clear transfer error interrupt flag*/ \
+       volatile uint32_t chtif##NUM  :1;/*stream x clear half transfer interrupt flag*/ \
+       volatile uint32_t ctcif##NUM  :1;/*stream x clear transfer complete interrupt flag*/
 
 
 
 typedef struct {
-    uint8_t feif :1;/*stream x FIFO error interrupt flag*/
-    uint8_t dmeif :1;/*stream x direct mode error interrupt flag*/
-    uint8_t teif  :1;/*stream x transfer error interrupt flag*/
-    uint8_t htif  :1;/*stream x half transfer interrupt flag*/
-    uint8_t tcif  :1;/*stream x transfer complete interrupt flag*/
+    volatile uint8_t feif :1;/*stream x FIFO error interrupt flag*/
+    volatile uint8_t dmeif :1;/*stream x direct mode error interrupt flag*/
+    volatile uint8_t teif  :1;/*stream x transfer error interrupt flag*/
+    volatile uint8_t htif  :1;/*stream x half transfer interrupt flag*/
+    volatile uint8_t tcif  :1;/*stream x transfer complete interrupt flag*/
 }DmaStreamIntStatusReg_t;
 
 typedef struct {
-       uint8_t cfeif  :1;/*stream x clear FIFO error interrupt flag*/
-       uint8_t cdmeif :1;/*stream x clear direct mode error interrupt flag*/
-       uint8_t cteif  :1;/*Stream x clear transfer error interrupt flag*/
-       uint8_t chtif  :1;/*stream x clear half transfer interrupt flag*/
-       uint8_t ctcif  :1;/*stream x clear transfer complete interrupt flag*/
+       volatile uint8_t cfeif  :1;/*stream x clear FIFO error interrupt flag*/
+       volatile uint8_t cdmeif :1;/*stream x clear direct mode error interrupt flag*/
+       volatile uint8_t cteif  :1;/*Stream x clear transfer error interrupt flag*/
+       volatile uint8_t chtif  :1;/*stream x clear half transfer interrupt flag*/
+       volatile uint8_t ctcif  :1;/*stream x clear transfer complete interrupt flag*/
 }DmaStreamClearIntReg_t;
 
 typedef union {
@@ -103,39 +102,57 @@ typedef union {
     };
 }DmaHighIntFlagClearReg_t;
 
+
+/*
+10.5.6 DMA stream x number of data register (DMA_SxNDTR) (x = 0..7)
+Address offset: 0x14 + 0x18 × stream number
+ */
+typedef union {
+    volatile uint32_t dword;
+    struct{
+        /* When the stream is enabled, this register is read-only,
+           indicating the remaining data items to be transmitted.
+           This register decrements after each DMA transfer.*/
+        volatile uint32_t NDT   :16; /*Bits 15:0NDT[15:0]: Number of data items to transfer*/
+
+        volatile uint32_t RES   :16; /*Bits 31:16Reserved, must be kept at reset value*/
+    };
+}DmaStreamRegNumOfData_t;
+
+
 /*
  DMA stream x configuration register (DMA_SxCR) (x = 0..7)
  */
 typedef union {
-    uint32_t reg_val;
+    volatile uint32_t dword;
     struct{
-        uint32_t en      :1; /*0   stream enable*/
-        uint32_t dmeie   :1; /*1   direct mode error interrupt enable*/
-        uint32_t teie    :1; /*2   transfer error interrupt enable*/
-        uint32_t htie    :1; /*3   half transfer interrupt enable*/
-        uint32_t tcie    :1; /*4   transfer complete interrupt enable*/
-        uint32_t pfctrl  :1; /*5   peripheral flow controller*/
-        uint32_t dir     :2; /*6-7 data transfer direction*/
-        uint32_t circ    :1; /*8   circular mode*/
-        uint32_t pinc    :1; /*peripheral increment mode*/
-        uint32_t minc    :1; /*memory increment mode*/
-        uint32_t psize   :2; /*peripheral data size*/
-        uint32_t msize   :2; /*memory data size*/
-        uint32_t pincos  :1; /*peripheral increment offset size*/
-        uint32_t pl      :2; /*17:16 priority level*/
-        uint32_t dbm     :1; /*double-buffer mode*/
-        uint32_t ct      :1; /*current target (only in double-buffer mode)*/
-        uint32_t res1    :1; /*res*/
-        uint32_t pburst  :2; /*peripheral burst transfer configuration*/
-        uint32_t mburst  :2; /*memory burst transfer configuration*/
-        uint32_t chsel   :4; /*channel selection*/
-        uint32_t res2    :3; /*res*/
+        volatile uint32_t en      :1; /*0   stream enable*/
+        volatile uint32_t dmeie   :1; /*1   direct mode error interrupt enable*/
+        volatile uint32_t teie    :1; /*2   transfer error interrupt enable*/
+        volatile uint32_t htie    :1; /*3   half transfer interrupt enable*/
+        volatile uint32_t tcie    :1; /*4   transfer complete interrupt enable*/
+        volatile uint32_t pfctrl  :1; /*5   peripheral flow controller*/
+        volatile uint32_t dir     :2; /*6-7 data transfer direction*/
+        volatile uint32_t circ    :1; /*8   circular mode*/
+        volatile uint32_t pinc    :1; /*peripheral increment mode*/
+        volatile uint32_t minc    :1; /*memory increment mode*/
+        volatile uint32_t psize   :2; /*peripheral data size*/
+        volatile uint32_t msize   :2; /*memory data size*/
+        volatile uint32_t pincos  :1; /*peripheral increment offset size*/
+        volatile uint32_t pl      :2; /*17:16 priority level*/
+        volatile uint32_t dbm     :1; /*double-buffer mode*/
+        volatile uint32_t ct      :1; /*current target (only in double-buffer mode)*/
+        volatile uint32_t res1    :1; /*res*/
+        volatile uint32_t pburst  :2; /*peripheral burst transfer configuration*/
+        volatile uint32_t mburst  :2; /*memory burst transfer configuration*/
+        volatile uint32_t chsel   :4; /*channel selection*/
+        volatile uint32_t res2    :3; /*res*/
     };
 }DmaStreamConfReg_t;
 
 typedef struct {
-    DMA_Stream_TypeDef* DMA_STREAMx;
-    DmaChannel_t channel;
+    volatile DMA_Stream_TypeDef* DMA_STREAMx;
+    DmaChannel_t channel; // for stm that is stream
     uint8_t dma_num;
     bool valid;
     IRQn_Type irq_n;

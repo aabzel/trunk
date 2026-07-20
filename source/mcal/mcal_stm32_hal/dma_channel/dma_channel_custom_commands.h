@@ -17,8 +17,10 @@ extern "C" {
 
 bool dma_channel_diag_ll_command(int32_t argc, char* argv[]);
 bool dma_channel_diag_custom_command(int32_t argc, char* argv[]);
+bool dma_channel_half_move_it_ctrl_command(int32_t argc, char* argv[]);
 
 #define DMA_CHANNEL_CUSTOM_COMMANDS                                                                     \
+    SHELL_CMD("dma_channel_half_move_it_ctrl", "dchmic", dma_channel_half_move_it_ctrl_command, "DmaChannelHalfMoveItCtrl"),   \
     SHELL_CMD("dma_channel_diag_ll", "dcdll", dma_channel_diag_ll_command, "DmaChannelDiagLowLevel"),   \
     SHELL_CMD("dma_channel_diag_custom", "dcdc", dma_channel_diag_custom_command, "DmaChannelDiag"),
 

@@ -77,16 +77,12 @@ const char* DmaPadToStr(const DmaChannelPad_t DmaPad) {
 #endif
 
 const char* DmaInfoPadToStr(const DmaInfoChannel_t* const pDmaPad) {
-    static char lText[80] = { 0 };
+    static char lText[20] = {0};
     strcpy(lText, "");
-    if(pDmaPad) {
-        snprintf(lText, sizeof(lText), "%sDMA%u_", lText, pDmaPad->dma_num);
-        snprintf(lText, sizeof(lText), "%sStream%u,", lText, pDmaPad->stream);
-        snprintf(lText, sizeof(lText), "%sCH_%u,", lText, pDmaPad->channel);
-        if(pDmaPad->name) {
-            snprintf(lText, sizeof(lText), "%s[%s]", lText, pDmaPad->name);
-        }
-    }
+    snprintf(lText, sizeof(lText), "%s[%s]", lText, pDmaPad->name);
+    snprintf(lText, sizeof(lText), "%sDMA%u_", lText, pDmaPad->dma_num);
+    snprintf(lText, sizeof(lText), "%sStream%u,", lText, pDmaPad->stream);
+    snprintf(lText, sizeof(lText), "%sCH_%u,", lText, pDmaPad->channel);
     return lText;
 }
 
@@ -190,12 +186,8 @@ bool dma_channel_diag(void) {
     bool res = false;
     uint16_t channel = 0;
     static const table_col_t cols[] = {
-        {5, "DMA"},  {5, "Strm"},    {5, "CH"},
-        {7, "CNT"},
-        {10, "Dir"},
-        {10, "TxHalf"},
+        {9, "Name"},    {5, "DMA"},  {5, "Strm"},    {5, "CH"},   {10, "Dir"}, {10, "TxHalf"},
         {10, "TxDone"}, {10, "Err"}, {10, "Global"}, {5, "init"}, {5, "Mux"},  {9, "Mux"},
-        {16, "Name"},
     };
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
@@ -211,14 +203,13 @@ bool dma_channel_diag(void) {
             if(Node) {
                 uint8_t mux = 0;
                 res = dma_channel_mux_get(DmaPad, &mux);
-                uint32_t cnt = dma_channel_cnt_get(DmaPad);
 
                 char log_line[120] = {0};
                 strcpy(log_line, TSEP);
+                snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, Node->DmaChPad.name);
                 snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->DmaChPad.dma_num);
                 snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->DmaChPad.stream);
                 snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->DmaChPad.channel);
-                snprintf(log_line, sizeof(log_line), "%s %5u " TSEP, log_line, cnt);
                 snprintf(log_line, sizeof(log_line), "%s %8s " TSEP, log_line, DmaDirToStr(Node->dir));
                 snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->half_cnt);
                 snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->done_cnt);
@@ -227,7 +218,6 @@ bool dma_channel_diag(void) {
                 snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->init);
                 snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, mux);
                 snprintf(log_line, sizeof(log_line), "%s %7s " TSEP, log_line, DmaChannelMuxToStr(mux));
-                snprintf(log_line, sizeof(log_line), "%s %14s " TSEP, log_line, Node->DmaChPad.name);
                 cli_printf("%s" CRLF, log_line);
                 res = true;
             }

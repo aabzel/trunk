@@ -11,6 +11,7 @@
 #include "dma_custom_types.h"
 #include "dma_custom_misc.h"
 #include "hal_diag.h"
+#include "time_mcal.h"
 #include "log.h"
 #include "stm32fx_hal.h"
 
@@ -210,6 +211,32 @@ DMA_Stream_TypeDef* DmaChannelToDMAx(uint8_t dma_num, DmaChannel_t channel) {
     return DMA_STREAMx;
 }
 
+static bool dma_channel_wait_disabled(DmaChannelHandle_t *Node) {
+    bool loop = true;
+    bool res = false;
+    uint32_t start_ms = time_get_ms32();
+    while(loop){
+        DmaStreamConfReg_t SxCR;
+        SxCR.dword = Node->DMA_STREAMx->CR;
+        if(0==SxCR.en) {
+            res = true;
+            loop = false;
+            break;
+        }
+        loop = time_wait_timeout(  start_ms, 50);
+    }
+    return res;
+}
+
+bool dma_channel_start_ll(DmaChannelHandle_t* Node) {
+    bool res = true;
+    DmaStreamConfReg_t SxCR;
+    SxCR.dword = Node->DMA_STREAMx->CR;
+    SxCR.en = 1;
+    Node->DMA_STREAMx->CR = SxCR.dword;
+    return res;
+}
+
 /*TODO make LUT*/
 static uint32_t DmaGetChannel(uint8_t channel) {
     uint32_t code = 0xFFFFFFFF;
@@ -386,6 +413,46 @@ bool dma_channel_mux_get(DmaInfoChannel_t DmaPad, uint8_t* const mux) {
     return true;
 }
 
+uint32_t dma_channel_cnt_get(DmaInfoChannel_t DmaPad){
+    uint32_t cnt = 0 ;
+    DmaChannelHandle_t* Node=DmaPadGetNodeItem(DmaPad);
+    if(Node){
+        cnt= __HAL_DMA_GET_COUNTER(&(Node->dma_h));
+    }
+    return cnt;
+}
+
+
+
+static bool dma_channel_stop_ll(DmaChannelHandle_t* Node) {
+    bool res = true;
+    DmaStreamConfReg_t SxCR;
+    SxCR.dword = Node->DMA_STREAMx->CR;
+    SxCR.en = 0;
+    Node->DMA_STREAMx->CR = SxCR.dword;
+
+    res = dma_channel_wait_disabled(Node) ;
+    return res;
+}
+
+bool dma_channel_restart(DmaInfoChannel_t DmaPad, uint16_t num_data_items_to_tx) {
+    bool res = true;
+    DmaChannelHandle_t *Node = DmaPadGetNodeItem(DmaPad);
+    if(Node) {
+        res = dma_channel_stop_ll(Node);
+        DmaStreamRegNumOfData_t SxNDTR;
+
+
+        SxNDTR.dword = Node->DMA_STREAMx->NDTR;
+        SxNDTR.NDT = num_data_items_to_tx;
+        Node->DMA_STREAMx->NDTR = SxNDTR.dword;
+        res = dma_channel_start_ll(Node);
+    }
+    return res;
+}
+
+
+
 
 bool dma_channel_priority_get(DmaInfoChannel_t DmaPad, uint8_t* priority) {
     bool res = false;
@@ -531,6 +598,21 @@ bool dma_channel_priority_set(DmaInfoChannel_t DmaPad, uint8_t priority) {
     return res;
 }
 
+/* num_data_reg - DMA stream x number of data register     */
+bool dma_channel_cnt_set(const DmaInfoChannel_t DmaPad,
+                         const uint32_t num_data_reg) {
+    bool res = false;
+    DmaChannelHandle_t* Node = DmaPadGetNodeItem(DmaPad);
+    if(Node) {
+        __HAL_DMA_DISABLE(&(Node->dma_h));
+        res = dma_channel_wait_disabled(Node) ;
+
+        __HAL_DMA_SET_COUNTER(&(Node->dma_h), num_data_reg);
+        __HAL_DMA_ENABLE(&(Node->dma_h)) ;
+        res = true;
+    }
+    return res;
+}
 
 bool dma_memcpy(void* const destination, const void* const source, uint32_t size) {
     bool res = false;
@@ -640,4 +722,26 @@ DMA_Stream_TypeDef* dma_stream_num_2_prt(const uint8_t dma_num,
     return DMA_STREAMx;
 }
 
+bool dma_channel_half_move_it_ctrl(const DmaInfoChannel_t DmaPad, const bool en) {
+    bool res = false ;
+    DMA_Stream_TypeDef* DMA_STREAMx=dma_stream_num_2_prt(DmaPad.dma_num, DmaPad.stream);
+    if(DMA_STREAMx){
+        DmaStreamConfReg_t CfgReg;
+         CfgReg.dword = DMA_STREAMx->CR;
+         CfgReg.htie = en ;
+         DMA_STREAMx->CR = CfgReg.dword;
+         res = true;
+    }
+    return res;
+}
 
+uint8_t dma_channel_half_move_it_get(const DmaInfoChannel_t DmaPad){
+    uint8_t on_off = 0xEE;
+    DMA_Stream_TypeDef* DMA_STREAMx = dma_stream_num_2_prt(DmaPad.dma_num, DmaPad.stream);
+    if(DMA_STREAMx) {
+        DmaStreamConfReg_t CfgReg;
+        CfgReg.dword = DMA_STREAMx->CR;
+        on_off = CfgReg.htie  ;
+    }
+    return on_off;
+}

@@ -12,29 +12,25 @@
 #error "+ HAS_DMA"
 #endif /*HAS_DMA*/
 
-const DmaConfig_t DmaConfig[]={
+const DmaConfig_t SECTION_CFG_DATA DmaConfig[]={
 #ifdef HAS_DMA1
-    {
-    		.num=1,    .dma_num=1,   .name="DMA1",     .valid=true,
-    },
-#endif /*HAS_DMA2*/
+    {            .num=1,    .dma_num=1,   .name="DMA1",     .valid=true,    },
+#endif /**/
 
 #ifdef HAS_DMA2
-    {
-    		.num=2,    .dma_num=2,   .name="DMA2",     .valid=true,
-    },
-#endif /*HAS_DMA2*/
+    {            .num=2,    .dma_num=2,   .name="DMA2",     .valid=true,    },
+#endif /**/
 
 };
 
 DmaHandle_t DmaInstance[]={
 #ifdef HAS_DMA1
-    {.num=1, .valid=true,},
-#endif /*HAS_DMA1*/
+    {.num = 1, .valid = true,},
+#endif /**/
 
 #ifdef HAS_DMA2
-    {.num=2, .valid=true,},
-#endif /*HAS_DMA2*/
+    {.num = 2, .valid = true,},
+#endif /**/
 };
 
 uint32_t dma_get_cnt(void){
@@ -110,14 +106,5 @@ volatile DmaChannelHandle_t DmaChannelInstance[]={
         {.valid=true, .num=DMA2_SDIO_RX,}
 };
 
-uint32_t dma_channel_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(DmaChannelInstance);
-    cnt2 = ARRAY_SIZE(DmaChannelConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(DmaChannel, dma_channel)
+

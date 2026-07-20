@@ -20,7 +20,6 @@ typedef union {
 
 #define DMA_STREAM           \
     char* name;              \
-    uint8_t priority;        \
     uint8_t dma_num;         \
     uint8_t stream;          \
     uint8_t channel;

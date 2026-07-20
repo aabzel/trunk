@@ -5,8 +5,11 @@
 #include "dma_channel_mcal.h"
 #include "dma_mcal.h"
 #include "log.h"
-#include "dma_custom_diag.h"
 
+bool dma_channel_reg_map_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    return res;
+}
 
 bool dma_channel_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -175,32 +178,5 @@ bool dma_channel_memory_read_command(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(DMA_CHANNEL, "Usage: dcmr Address Size");
     }
-    return res;
-}
-
-bool dma_channel_reg_map_command(int32_t argc, char* argv[]) {
-    bool res = false;
-    uint8_t dma_num = 0;
-    uint8_t stream = 0;
-
-    if(1 <= argc) {
-        res = try_str2uint8(argv[0], &dma_num);
-    }
-
-    if(2 <= argc) {
-        res = try_str2uint8(argv[1], &stream);
-    }
-
-    if(res){
-        DmaInfoChannel_t DmaPad = {
-            .dma_num = dma_num,
-            .stream = stream,
-        };
-        res = dma_channel_reg_map(DmaPad);
-    } else {
-        LOG_ERROR(DMA_CHANNEL, "Usage: dcrm DmaNum StreamNum");
-    }
-
-
     return res;
 }

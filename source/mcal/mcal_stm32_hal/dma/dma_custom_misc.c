@@ -16,7 +16,7 @@ uint32_t DmaGetMemDataAlignment(const DmaAligmant_t aligment_mem) {
         break;
     default:
         code = DMA_MDATAALIGN_BYTE;
-        LOG_ERROR(LG_DMA,"UndefAligmantCode!");
+        LOG_ERROR(LG_DMA, "UndefAligmantCode!");
         break;
     }
     return code;
@@ -35,7 +35,7 @@ uint32_t DmaDirToStm32DmaDir(const DmaDir_t dir) {
         code = DMA_MEMORY_TO_MEMORY;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefDirCode!");
+        LOG_ERROR(LG_DMA, "UndefDirCode!");
         code = DMA_MEMORY_TO_MEMORY;
         break;
     }
@@ -52,7 +52,7 @@ uint32_t DmaGetFiFoNode(const DmaFifo_t fifo) {
         code = DMA_FIFOMODE_ENABLE;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefFiFoCode!");
+        LOG_ERROR(LG_DMA, "UndefFiFoCode!");
         break;
     }
     return code;
@@ -74,7 +74,7 @@ uint32_t DmaGetPriority(const DmaPriority_t priority) {
         code = DMA_PRIORITY_VERY_HIGH;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefPriorityCode!");
+        LOG_ERROR(LG_DMA, "UndefPriorityCode!");
         break;
     }
     return code;
@@ -93,7 +93,7 @@ uint32_t DmaGetMode(const DmaMode_t mode) {
         code = DMA_PFCTRL;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefModeCode!");
+        LOG_ERROR(LG_DMA, "UndefModeCode!");
         code = DMA_NORMAL;
         break;
     }
@@ -116,7 +116,7 @@ uint32_t PeriphBurst2StmPeriphBurst(const DmaBurst_t periph_burst) {
         stm32_code = DMA_PBURST_INC16;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefPeriphBurstCode!");
+        LOG_ERROR(LG_DMA, "UndefPeriphBurstCode!");
         break;
     }
     return stm32_code;
@@ -138,7 +138,7 @@ uint32_t MemoryBurst2StmMemoryBurst(const uint8_t mem_burst) {
         stm32_code = DMA_MBURST_INC16;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefMemoryBurstCode!");
+        LOG_ERROR(LG_DMA, "UndefMemoryBurstCode!");
         break;
     }
     return stm32_code;
@@ -154,7 +154,7 @@ uint32_t DmaGetPeriphInc(const uint8_t per_inc) {
         code = DMA_PINC_ENABLE;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefPeriphIncCode!");
+        LOG_ERROR(LG_DMA, "UndefPeriphIncCode!");
         break;
     }
     return code;
@@ -170,7 +170,7 @@ uint32_t DmaGetMemInc(const uint8_t mem_inc) {
         code = DMA_MINC_ENABLE;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefMemIncCode!");
+        LOG_ERROR(LG_DMA, "UndefMemIncCode!");
         break;
     }
     return code;
@@ -189,7 +189,7 @@ uint32_t DmaGetPeriphDataAlignment(const DmaAligmant_t aligment_per) {
         code = DMA_PDATAALIGN_WORD;
         break;
     default:
-        LOG_ERROR(LG_DMA,"UndefDataAlignmentCode!");
+        LOG_ERROR(LG_DMA, "UndefDataAlignmentCode!");
         code = DMA_PDATAALIGN_BYTE;
         break;
     }
