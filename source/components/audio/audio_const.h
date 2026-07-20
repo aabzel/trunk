@@ -4,4 +4,22 @@
 #include "dsp_const.h"
 #include "audio_dep.h"
 
+typedef enum {
+    AUDIO_FREQ_UNDEF = 0,
+    AUDIO_FREQ_8K = 8000,
+    AUDIO_FREQ_11K = 11000,
+    AUDIO_FREQ_16K = 16000,
+    AUDIO_FREQ_22K = 22000,
+    AUDIO_FREQ_32K = 32000,
+    AUDIO_FREQ_41K = 41000,
+    AUDIO_FREQ_44K = 44100,
+    AUDIO_FREQ_48K = 48000,
+    AUDIO_FREQ_88K = 88200,
+    AUDIO_FREQ_96K = 96000,
+    AUDIO_FREQ_176K = 176400,
+    AUDIO_FREQ_192K = 192000,
+    AUDIO_FREQ_384K = 384000,
+    AUDIO_FREQ_768K = 768000,
+} AudioFreq_t;
+
 #endif /* AUDIO_CONST_H */

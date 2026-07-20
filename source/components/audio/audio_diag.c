@@ -21,17 +21,12 @@ bool audio_print_sample(const SampleType_t* const sample, size_t size) {
     return res;
 }
 
-const char* SampleMode2Str(SampleMode_t sample_mode) {
+const char* SampleMode2Str(DspSampleMode_t sample_mode) {
     const char* name = "";
     switch(sample_mode) {
-    case SAMPLE_MODE_MONO:
-        name = "Mono";
-        break;
-    case SAMPLE_MODE_STEREO:
-        name = "Stereo";
-        break;
-    default:
-        break;
+        case SAMPLE_MODE_MONO:        name = "Mono";        break;
+        case SAMPLE_MODE_STEREO:        name = "Stereo";        break;
+        default:        break;
     }
     return name;
 }
