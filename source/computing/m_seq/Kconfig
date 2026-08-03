@@ -1,0 +1,4 @@
+
+config M_SEQ
+    bool "Enable use of the M_SEQ drivers"
+

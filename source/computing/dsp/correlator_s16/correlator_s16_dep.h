@@ -1,0 +1,16 @@
+#ifndef CORRELATOR_S16_DEP_H
+#define CORRELATOR_S16_DEP_H
+
+#ifndef HAS_CIRCULAR_BUFFER
+#error "+HAS_CIRCULAR_BUFFER"
+#endif
+
+#ifndef HAS_COMPUTING
+#error "+HAS_COMPUTING"
+#endif
+
+#ifndef HAS_CORRELATOR_S16
+#error "+HAS_CORRELATOR_S16"
+#endif
+
+#endif /* CORRELATOR_S16_DEP_H */
