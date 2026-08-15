@@ -22,7 +22,7 @@ extern "C" {
  1024UL*2UL  crackling on the left channel
  */
 #define REC_CHAN_CNT 2
-#define REC_MEM_SAM_CNT ( 4096UL)
+//#define REC_MEM_SAM_CNT ( 4096UL)
 #define REC_MEM_HALF_SIZE (REC_MEM_SAM_CNT/2)
 #define REC_SAMPLE_SIZE 2UL
 #define REC_SIZE_OF (REC_SAMPLE_SIZE*REC_MEM_SAM_CNT)

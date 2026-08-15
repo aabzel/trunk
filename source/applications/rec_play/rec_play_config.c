@@ -4,12 +4,12 @@
 
 const RecPlayConfig_t RecPlayConfig[] = {
     {
+        .num = 1,
         .rec_num = 1,
         .wm8731_num = 1,
         .play_num = 1,
-        .num = 1,
         .valid = true,
-        .name = "REC_PLAY1",
+        .name = "RecPlay",
     },
 };
 

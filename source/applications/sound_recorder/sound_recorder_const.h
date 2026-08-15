@@ -21,6 +21,12 @@ typedef enum {
     SOUND_RECORDER_ACTION_SAVE_PART_2 ,
 }SoundRecorderAction_t;
 
+typedef enum {
+    SOUND_RECORDER_STATUS_UNDEF = 0,
+    SOUND_RECORDER_STATUS_NOPE ,
+    SOUND_RECORDER_STATUS_PART_1_SAVED,
+    SOUND_RECORDER_STATUS_PART_2_SAVED,
+}SoundRecorderLoadStatus_t;
 
 
 

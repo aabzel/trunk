@@ -97,30 +97,34 @@ bool sound_recorder_stop_report(const SoundRecorderHandle_t* const Node) {
         LOG_INFO(SOUND_RECORDER, "RecDuration:%u ms", Node->duration_ms);
         LOG_INFO(SOUND_RECORDER, "WrOkCnt:%u", Node->wr_ok_cnt);
 
-        if(FR_OK!=Node->fat_fs_err_code){
+        if(FR_OK!=Node->fat_fs_err_code) {
             LOG_ERROR(SOUND_RECORDER, "FatErrCode:%u=%s", Node->fat_fs_err_code, FatFsResToStr(Node->fat_fs_err_code));
         }
 
-        if(Node->error_cnt){
+        if(Node->error_cnt) {
             LOG_ERROR(SOUND_RECORDER, "WrErrorCnt:%u", Node->error_cnt);
         }
 
-        if(Node->long_write_error_cnt){
+        if(Node->long_write_error_cnt) {
             LOG_WARNING(SOUND_RECORDER, "longWriteErrorCnt:%u", Node->long_write_error_cnt);
         }
 
-        if(Node->error_size_cnt){
+        if(Node->long_save_error) {
+            LOG_ERROR(SOUND_RECORDER, "LongSaveErrorCnt:%u", Node->long_save_error);
+        }
+
+        if(Node->error_size_cnt) {
             LOG_ERROR(SOUND_RECORDER, "WrSzErrorCnt:%u", Node->error_size_cnt);
         }
 
         LOG_INFO(SOUND_RECORDER, "total_file_size:%u", Node->total_file_size);
 
-        if(Node->error_size_cnt){
+        if(Node->error_size_cnt) {
             LOG_ERROR(SOUND_RECORDER, "I2SerrCnt:%u", Node->i2s_error_cnt);
         }
 
-        LOG_INFO(SOUND_RECORDER, "rec_cnt:%u", Node->rec_cnt);
-        LOG_INFO(SOUND_RECORDER, "FileNAme:%s", Node->file_name);
+        LOG_INFO(SOUND_RECORDER, "Rec,SN:%u", Node->rec_cnt);
+        LOG_WARNING(SOUND_RECORDER, "RecStop:[%s]", Node->file_name);
         res = true;
     }
     return res;

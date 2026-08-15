@@ -19,7 +19,6 @@
 COMPONENT_GET_NODE(SlidingIntegral, sliding_integral)
 COMPONENT_GET_CONFIG(SlidingIntegral, sliding_integral)
 
-
 static bool sliding_integral_init_common(const SlidingIntegralConfig_t* const Config,
                                          SlidingIntegralHandle_t* const Node) {
     bool res = false;
@@ -36,7 +35,6 @@ static bool sliding_integral_init_common(const SlidingIntegralConfig_t* const Co
     }
     return res;
 }
-
 
 static bool sliding_integral_init_custom(void) {
     bool res = true;
@@ -93,9 +91,7 @@ static bool sliding_integral_is_valid_config(const SlidingIntegralConfig_t* cons
             LOG_ERROR(SLIDING_INTEGRAL, "XErr");
         }
 
-        ifn(Config->name) {
-            LOG_ERROR(SLIDING_INTEGRAL, "NameErr");
-        }
+        ifn(Config->name) { LOG_ERROR(SLIDING_INTEGRAL, "NameErr"); }
     }
 
     return res;
@@ -122,7 +118,7 @@ static bool sliding_integral_pull_ll(SlidingIntegralHandle_t* const Node, int32_
 /*Hi load */
 inline bool sliding_integral_proc_in_out_ll(SlidingIntegralHandle_t* Node, const int32_t x, int32_t* const y) {
     bool res = false;
-    if (y) {
+    if(y) {
         uint32_t old_index = circular_buffer_index_get(&Node->indexer);
         Node->sum -= Node->x[old_index];
         Node->sum += x;
@@ -136,15 +132,12 @@ inline bool sliding_integral_proc_in_out_ll(SlidingIntegralHandle_t* Node, const
     return res;
 }
 
-bool sliding_integral_proc_in_out_array(uint8_t num,
-                                        uint32_t size,
-                                        const int32_t* const x,
-                                        int32_t* const y) {
+bool sliding_integral_proc_in_out_array(uint8_t num, uint32_t size, const int32_t* const x, int32_t* const y) {
     bool res = false;
-    SlidingIntegralHandle_t *Node = SlidingIntegralGetNode(num);
-    if (Node) {
+    SlidingIntegralHandle_t* Node = SlidingIntegralGetNode(num);
+    if(Node) {
         uint32_t s = 0;
-        for (s = 0; s < size; s++) {
+        for(s = 0; s < size; s++) {
             res = sliding_integral_proc_in_out_ll(Node, x[s], &y[s]);
 #if 0
             uint32_t old_index = circular_buffer_index_get(&Node->indexer);
@@ -170,14 +163,14 @@ bool sliding_integral_proc_in_out(uint8_t num, int32_t x, int32_t* const y) {
 bool sliding_integral_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(SLIDING_INTEGRAL, "%u,Init", num);
-    const SlidingIntegralConfig_t *Config = SlidingIntegralGetConfig(num);
+    const SlidingIntegralConfig_t* Config = SlidingIntegralGetConfig(num);
     res = sliding_integral_is_valid_config(Config);
-    if (res) {
+    if(res) {
 #ifdef HAS_SLIDING_INTEGRAL_DIAG
         LOG_WARNING(SLIDING_INTEGRAL, "%s", SlidingIntegralConfigToStr(Config));
 #endif
-        SlidingIntegralHandle_t *Node = SlidingIntegralGetNode(num);
-        if (Node) {
+        SlidingIntegralHandle_t* Node = SlidingIntegralGetNode(num);
+        if(Node) {
             res = sliding_integral_init_common(Config, Node);
             res = sliding_integral_reset_one(num);
             Node->valid = true;
@@ -191,6 +184,5 @@ bool sliding_integral_init_one(uint8_t num) {
     }
     return res;
 }
-
 
 COMPONENT_INIT_PATTERT(SLIDING_INTEGRAL, SLIDING_INTEGRAL, sliding_integral)

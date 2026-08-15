@@ -8,13 +8,12 @@
 #include "i2s_types.h"
 #include "dds_const.h"
 
-    //uint8_t channel_cnt;
 
 #define SOUND_RECORDER_COMMON_VARIABLES                \
     char* name;                                        \
     uint32_t rx_sample_array_size;                     \
+    volatile SampleType_t* TxSampleArray;              \
     volatile SampleType_t* RxSampleArray;              \
-    volatile SampleType_t* FixRxSampleArray;           \
     FramePattern_t frame_pattern;                      \
     uint8_t sample_bitness;                            \
     uint32_t sample_freq_hz;                           \
@@ -31,19 +30,25 @@ typedef struct {
 typedef struct {
     SOUND_RECORDER_COMMON_VARIABLES
     bool init;
+    bool postponed_rec_start;
+    bool i2s_full_duplex;
+    bool rec;
     bool is_rec;
+    char file_name[100];
     uint32_t sample_cnt;
     uint32_t rec_cnt;
     uint32_t spin;
     volatile SoundRecorderState_t state;
     volatile SoundRecorderAction_t action;
+    volatile SoundRecorderLoadStatus_t status;
     volatile I2sHandle_t* I2s;
-    char file_name[100];
     uint32_t total_file_size;
     uint32_t cur_save_size;
     uint32_t start_rec_ms;
+    uint32_t long_save_error;
     uint32_t stop_rec_ms;
     uint32_t duration_ms;
+    uint32_t rec_need_duration_ms;
     uint32_t wr_ok_cnt;
     uint32_t long_write_error_cnt;
     uint32_t error_size_cnt;

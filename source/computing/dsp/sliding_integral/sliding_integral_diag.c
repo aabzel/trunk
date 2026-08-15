@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sliding_integral.h"
-#include "log.h"
 #include "circular_buffer_index.h"
+#include "log.h"
 #include "num_to_str.h"
+#include "sliding_integral.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
@@ -48,7 +48,8 @@ bool SlidingIntegralDiagConfig(const SlidingIntegralConfig_t* const Config) {
 #endif
 
 #ifdef HAS_PC
-bool sliding_integral_node_generate_graphviz(SlidingIntegralHandle_t* Node, FILE* FilePtr, int x, int y, char* lText, double val) {
+bool sliding_integral_node_generate_graphviz(SlidingIntegralHandle_t* Node, FILE* FilePtr, int x, int y, char* lText,
+                                             double val) {
     bool res = false;
     fprintf(FilePtr, "%s [label=%f][pos=\"%d,%d!\"]\n", lText, val, x, y);
     return res;
@@ -61,8 +62,7 @@ bool sliding_integral_diag(uint8_t num) {
     if(Node) {
         circular_buffer_index_diag(&Node->indexer);
 
-        static const table_col_t cols[] = {{5, "i"},    {5, "i+1"},    {8, "RawX"}, {8, "PhyIdx"},
-                                           {8, "X[i]"},   {8, "Mult"}};
+        static const table_col_t cols[] = {{5, "i"}, {5, "i+1"}, {8, "RawX"}, {8, "PhyIdx"}, {8, "X[i]"}, {8, "Mult"}};
         table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
         char log_line[150];
         double mult = 0.0;
@@ -161,7 +161,7 @@ bool sliding_integral_diag_mem(uint8_t num) {
 
 const char* SlidingIntegralNodeToStr(const SlidingIntegralHandle_t* const Node) {
     static char lText[300] = "?";
-        strcpy(lText, "");
+    strcpy(lText, "");
     if(Node) {
         snprintf(lText, sizeof(lText), "%sN:%u,", lText, Node->num);
         snprintf(lText, sizeof(lText), "%sInit:%u,", lText, Node->init);
@@ -175,7 +175,7 @@ const char* SlidingIntegralNodeToStr(const SlidingIntegralHandle_t* const Node) 
 
 const char* SlidingIntegralConfigToStr(const SlidingIntegralConfig_t* const Config) {
     static char lText[300] = "?";
-        strcpy(lText, "");
+    strcpy(lText, "");
     if(Config) {
         snprintf(lText, sizeof(lText), "%sN:%u,", lText, Config->num);
         snprintf(lText, sizeof(lText), "%sM:%u", lText, Config->size);

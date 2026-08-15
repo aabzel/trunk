@@ -9,9 +9,14 @@ ifneq ($(SOUND_RECORDER_MK_INC),Y)
     MCAL_OPT += -DHAS_SOUND_RECORDER
     MCAL_OPT += -DHAS_SOUND_RECORDER_PROC
 
-    SOURCES_C += $(SOUND_RECORDER_DIR)/sound_recorder_mcal.c
-    SOURCES_C += $(SOUND_RECORDER_DIR)/sound_recorder_isr.c
+    MCAL_OPT += -DREC_MEM_SAM_CNT=$(REC_MEM_SAM_CNT)
 
+    SOURCES_C += $(SOUND_RECORDER_DIR)/sound_recorder_mcal.c
+    
+    ifeq ($(SOUND_RECORDER_INTERRUPT),Y)
+        SOURCES_C += $(SOUND_RECORDER_DIR)/sound_recorder_isr.c
+    endif
+    
     # must be outside
     SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/sound_recorder_config.c
 
