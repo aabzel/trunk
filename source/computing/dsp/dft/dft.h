@@ -15,10 +15,14 @@ extern "C" {
 #include "dft_types.h"
 
 /*Discrete Fourier Transform*/
+uint32_t dft_freq_to_garmonic(const double freq_hz, const double sampling_period_s);
 
 /* double ft_find_freq(double complex* Spectrum, uint32_t len, double period_s); */
-bool dft_calc(const SampleType_t* const x_signal, uint32_t sample_cnt, double complex* const Spectrum, double sampling_period_s);
-void dft_calc_v2(complex double in[], complex double out[], int sample_cnt);
+bool dft_calc(const SampleType_t* const signal, uint32_t sample_cnt, double complex* const Spectrum,
+              double sampling_period_s, uint32_t max_garmonic_cnt);
+
+
+void dft_calc_v2(complex double in[], complex double out[], int sample_cnt, uint32_t max_garmonic_cnt);
 
 bool idft_calc(const double complex* const Spectrum, uint32_t number_of_harmonics,
                uint32_t sample_cnt, double complex* const x_signal);

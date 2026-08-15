@@ -5,11 +5,11 @@
 #include <string.h>
 
 #include "common_diag.h"
+#include "file_pc.h"
 #include "log.h"
 #include "num_to_str.h"
 #include "str_utils.h"
 #include "table_utils.h"
-#include "file_pc.h"
 #include "time_mcal.h"
 #include "utils_math.h"
 #include "vector_math.h"
@@ -28,33 +28,33 @@ bool complex_array_print(const double complex* const X, uint32_t len, double per
                 {5, "Num"},  {10, "FreqHz"}, {10, "PeriodS"}, {14, "Real"},   {14, "Image"},
                 {14, "Abs"}, {14, "ArgRad"}, {14, "ArgRad"},  {14, "ArgDeg"},
             };
-            char text[150] = {0};
+            char lText[150] = {0};
             table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
             uint32_t k = 0;
             double freq_hz = 0.0;
-            double period_s = 0.0;
-            (void)period_s;
+            //(void)period_s;
             for(k = 0; k < len; k++) {
                 freq_hz = ((double)k) / signal_duration_s;
-                period_s = 1.0 / freq_hz;
-                LOG_PARN(COMPLEX, "k=%u,CurFreq %8.2f Hz,Per:%8.2f s", k, freq_hz, period_s);
+                double cur_period_s = 0.0;
+                cur_period_s = 1.0 / freq_hz;
+                LOG_PARN(COMPLEX, "k=%u,CurFreq %8.2f Hz,Per:%8.2f s", k, freq_hz, cur_period_s);
                 if(freq_hz < half_sample_rate_hz) {
                     if(0.0 < freq_hz) {
-                        strcpy(text, TSEP);
-                        snprintf(text, sizeof(text), "%s %8.2f " TSEP, text, freq_hz);             // ok
-                        snprintf(text, sizeof(text), "%s %8s " TSEP, text, DoubleToStr(period_s)); // ok
-                        snprintf(text, sizeof(text), "%s %12s " TSEP, text,
-                                 str_limit(BigVal2Str(creal(X[k])), 12)); // ok
-                        snprintf(text, sizeof(text), "%s %12s " TSEP, text, str_limit(BigVal2Str(cimag(X[k])), 12));
-                        snprintf(text, sizeof(text), "%s %12s " TSEP, text, str_limit(BigVal2Str(cabs(X[k])), 12));
-                        snprintf(text, sizeof(text), "%s %12.4f " TSEP, text, carg(X[k]));
-                        snprintf(text, sizeof(text), "%s %12.4f " TSEP, text,
+                        strcpy(lText, TSEP);
+                        snprintf(lText, sizeof(lText), "%s %8.2f " TSEP, lText, freq_hz);                 // ok
+                        snprintf(lText, sizeof(lText), "%s %8s " TSEP, lText, DoubleToStr(cur_period_s)); // ok
+                        snprintf(lText, sizeof(lText), "%s %12s " TSEP, lText,
+                                 str_limit(BigValToStr(creal(X[k])), 12)); // ok
+                        snprintf(lText, sizeof(lText), "%s %12s " TSEP, lText, str_limit(BigValToStr(cimag(X[k])), 12));
+                        snprintf(lText, sizeof(lText), "%s %12s " TSEP, lText, str_limit(BigValToStr(cabs(X[k])), 12));
+                        snprintf(lText, sizeof(lText), "%s %12.4f " TSEP, lText, carg(X[k]));
+                        snprintf(lText, sizeof(lText), "%s %12.4f " TSEP, lText,
                                  vector_bearings(creal(X[k]), cimag(X[k])));
-                        snprintf(text, sizeof(text), "%s %12.4f " TSEP, text, RAD_2_DEG(carg(X[k])));
+                        snprintf(lText, sizeof(lText), "%s %12.4f " TSEP, lText, RAD_2_DEG(carg(X[k])));
 #if 0
 #endif
                         if(k < order) {
-                            cli_printf(TSEP " %3u %s" CRLF, k, text);
+                            cli_printf(TSEP " %3u %s" CRLF, k, lText);
                             res = true;
                         } else {
                             LOG_PARN(COMPLEX, "CurFreq %f Hz, 0.5*Fs %f Hz", freq_hz, (sample_rate_hz / 2.0));
@@ -69,7 +69,6 @@ bool complex_array_print(const double complex* const X, uint32_t len, double per
     }
     return res;
 }
-
 
 /*
  * sample_period_s -
@@ -88,19 +87,19 @@ bool complex_array_print_csv(const double complex* const X, uint32_t len, double
     for(k = 0; k < len; k++) {
         double freq_hz = ((double)k) / (sample_period_s * ((double)len));
         if(freq_hz < (sample_rate_hz / 2.0)) {
-            char text[220] = {0};
-            strcpy(text, "");
-            snprintf(text, sizeof(text), "%sN,%u,", text, k);
-            snprintf(text, sizeof(text), "%sFreqHz,%f,", text, freq_hz);
-            snprintf(text, sizeof(text), "%sPeriods,%f,", text, (1.0 / freq_hz));
-            snprintf(text, sizeof(text), "%sReal,%f,", text, creal(X[k]));
-            snprintf(text, sizeof(text), "%sImage,%f,", text, cimag(X[k]));
-            snprintf(text, sizeof(text), "%sAbs,%f,", text, cabs(X[k]));
-            snprintf(text, sizeof(text), "%sArgRad,%f,", text, carg(X[k]));
-            snprintf(text, sizeof(text), "%sArgRad,%f,", text, vector_bearings(creal(X[k]), cimag(X[k])));
-            snprintf(text, sizeof(text), "%sArgDeg,%f,", text, RAD_2_DEG(carg(X[k])));
+            char lText[220] = {0};
+            strcpy(lText, "");
+            snprintf(lText, sizeof(lText), "%sN,%u,", lText, k);
+            snprintf(lText, sizeof(lText), "%sFreqHz,%f,", lText, freq_hz);
+            snprintf(lText, sizeof(lText), "%sPeriods,%f,", lText, (1.0 / freq_hz));
+            snprintf(lText, sizeof(lText), "%sReal,%f,", lText, creal(X[k]));
+            snprintf(lText, sizeof(lText), "%sImage,%f,", lText, cimag(X[k]));
+            snprintf(lText, sizeof(lText), "%sAbs,%f,", lText, cabs(X[k]));
+            snprintf(lText, sizeof(lText), "%sArgRad,%f,", lText, carg(X[k]));
+            snprintf(lText, sizeof(lText), "%sArgRad,%f,", lText, vector_bearings(creal(X[k]), cimag(X[k])));
+            snprintf(lText, sizeof(lText), "%sArgDeg,%f,", lText, RAD_2_DEG(carg(X[k])));
             if(k < order) {
-                res = file_pc_print_line("ComplexArray.csv", text, strlen(text));
+                res = file_pc_print_line("ComplexArray.csv", lText, strlen(lText));
             }
         }
     }
@@ -108,12 +107,12 @@ bool complex_array_print_csv(const double complex* const X, uint32_t len, double
 }
 
 const char* ComplexToStr(double complex ComplexNumber) {
-    static char text[250] = "";
-    strcpy(text, "");
-    snprintf(text, sizeof(text), "%sRe:%s,", text, DoubleToStr(creal(ComplexNumber)));
-    snprintf(text, sizeof(text), "%sIm:%s,", text, DoubleToStr(cimag(ComplexNumber)));
-    snprintf(text, sizeof(text), "%sAbs:%s,", text, DoubleToStr(cabs(ComplexNumber)));
-    snprintf(text, sizeof(text), "%sArg:%s", text, DoubleToStr(carg(ComplexNumber)));
+    static char lText[250] = "";
+    strcpy(lText, "");
+    snprintf(lText, sizeof(lText), "%sRe:%s,", lText, DoubleToStr(creal(ComplexNumber)));
+    snprintf(lText, sizeof(lText), "%sIm:%s,", lText, DoubleToStr(cimag(ComplexNumber)));
+    snprintf(lText, sizeof(lText), "%sAbs:%s,", lText, DoubleToStr(cabs(ComplexNumber)));
+    snprintf(lText, sizeof(lText), "%sArg:%s", lText, DoubleToStr(carg(ComplexNumber)));
 
-    return text;
+    return lText;
 }
