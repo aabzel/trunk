@@ -145,7 +145,10 @@ bool serial_port_scan_ports(void) {
 bool serial_port_init_custom(void) {
     bool res = true;
     LOG_INFO(SERIAL_PORT, "Version:%u", SERIAL_PORT_VERSION);
-    res = serial_port_scan_ports();
+    log_level_t log_l = log_level_get(SERIAL_PORT);
+    if(log_l <= LOG_LEVEL_INFO) {
+        res = serial_port_scan();
+    }
     return res;
 }
 

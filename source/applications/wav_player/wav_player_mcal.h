@@ -33,10 +33,13 @@ bool wav_player_proc_one(uint8_t num);
 bool wav_player_proc(void);
 
 /*setters*/
+bool wav_player_sample_freq_set(const uint8_t num, const AudioFreq_t audio_freq_hz) ;
 bool wav_player_play_file(const uint8_t num, const char * const file_name);
 bool wav_player_stop(const uint8_t num);
+bool wav_player_set_temp_mem(const uint8_t num, const SampleType_t* const SampleArray,uint32_t const sample_array_size);
 
 /*getters*/
+bool wav_player_is_idle(const uint8_t num);
 
 #ifdef __cplusplus
 }

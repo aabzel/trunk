@@ -44,12 +44,37 @@ bool wav_player_diag(void) {
     return res;
 }
 
-
 bool wav_player_raw_reg_diag(uint8_t num) {
     bool res = false;
     WavPlayerHandle_t *Node = WavPlayerGetNode(num);
-    if(Node){
+    if(Node) {
         res = true;
     }
     return res;
 }
+
+bool WavPlayerPrintReport(const WavPlayerHandle_t* const Node) {
+    bool res = true;
+    if(Node->error_cnt) {
+        LOG_ERROR(WAV_PLAYER, "errorCnt:%u", Node->error_cnt);
+        res = false;
+    }
+
+    if(Node->slow_read_error) {
+        LOG_ERROR(WAV_PLAYER, "SlowReadError:%u", Node->slow_read_error);
+        res = false;
+    }
+
+    if(Node->read_error_cnt) {
+        LOG_ERROR(WAV_PLAYER, "readErrorCnt:%u", Node->read_error_cnt);
+        res = false;
+    }
+
+    if(Node->read_len_error_cnt) {
+        LOG_ERROR(WAV_PLAYER, "readLenErrorCnt:%u", Node->read_len_error_cnt);
+        res = false;
+    }
+    LOG_WARNING(WAV_PLAYER, "PlayStop:[%s]", Node->file_name);
+    return res;
+}
+

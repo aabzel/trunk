@@ -7,12 +7,12 @@
 #include "serial_port_const.h"
 #include "data_types.h"
 
-#define SERIAL_PORT_COMMON_VARIABLES                 \
-    char* name;                                      \
-    uint8_t num;                                     \
-    uint16_t com_port_num;                           \
-    uint32_t bit_rate;                               \
-    uint32_t byte_tx_pause_ms;                       \
+#define SERIAL_PORT_COMMON_VARIABLES   \
+    char* name;                        \
+    uint8_t num;                       \
+    uint16_t com_port_num;             \
+    uint32_t bit_rate;                 \
+    uint32_t byte_tx_pause_ms;         \
     bool valid;
 
 typedef struct {

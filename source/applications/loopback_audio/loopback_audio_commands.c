@@ -2,8 +2,8 @@
 
 #include "convert.h"
 #include "log.h"
-#include "test_loopback_audio.h"
 #include "loopback_audio_mcal.h"
+#include "test_loopback_audio.h"
 
 bool loopback_audio_reg_map_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -64,7 +64,6 @@ bool loopback_audio_init_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
 /*
  las 1 RbUt29786_10s.wav
  * */
@@ -77,9 +76,7 @@ bool loopback_audio_start_command(int32_t argc, char* argv[]) {
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
         log_info_res(LOOPBACK_AUDIO, res, "Num");
-
     }
-
 
     if(2 <= argc) {
         strncpy(PlayFile, argv[1], sizeof(PlayFile));
@@ -92,7 +89,7 @@ bool loopback_audio_start_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = loopback_audio_play_rec_file(num, PlayFile,RecFile);
+        res = loopback_audio_play_rec_file(num, PlayFile, RecFile);
         log_info_res(LOOPBACK_AUDIO, res, "PlayRec");
     } else {
         LOG_ERROR(LOOPBACK_AUDIO, "Usage: las num FileNamePlay FileNameRec");
@@ -100,8 +97,7 @@ bool loopback_audio_start_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-bool loopback_audio_play_start_command(int32_t argc, char* argv[]){
+bool loopback_audio_play_start_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 1;
     char PlayFile[300] = {0};
@@ -160,8 +156,7 @@ bool loopback_audio_rec_start_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-bool loopback_audio_play_rec_test_command(int32_t argc, char* argv[]){
+bool loopback_audio_play_rec_test_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 1;
     char PlayFileName[300] = {0};
@@ -177,7 +172,7 @@ bool loopback_audio_play_rec_test_command(int32_t argc, char* argv[]){
     }
 
     if(res) {
-        res = test_loopback_audio_rec_play_one(  num,  PlayFileName);
+        res = test_loopback_audio_rec_play_one(num, PlayFileName);
     } else {
         LOG_ERROR(LOOPBACK_AUDIO, "Usage: laprt num PlayFile");
     }
@@ -187,7 +182,7 @@ bool loopback_audio_play_rec_test_command(int32_t argc, char* argv[]){
 /*
  lart 1 4
  */
-bool loopback_audio_rec_test_command(int32_t argc, char* argv[]){
+bool loopback_audio_rec_test_command(int32_t argc, char* argv[]) {
     bool res = false;
     float duration_s = 3.0f;
     uint8_t num = 1;
@@ -203,7 +198,7 @@ bool loopback_audio_rec_test_command(int32_t argc, char* argv[]){
     }
 
     if(res) {
-        res = loopback_audio_rec_test(num,  duration_s);
+        res = loopback_audio_rec_test(num, duration_s);
         log_info_res(LOOPBACK_AUDIO, res, "RecTest");
     } else {
         LOG_ERROR(LOOPBACK_AUDIO, "Usage: lart num DurationS");

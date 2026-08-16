@@ -26,6 +26,7 @@ extern "C" {
 
 bool sw_component_diag(void);
 bool sw_component_diag_one(uint8_t num);
+bool sw_component_raw_reg_diag(uint8_t num);
 const char* SwComponentConfigToStr(const SwComponentConfig_t* const Config);
 const char* SwComponentNodeToStr(const SwComponentHandle_t* const Node);
 

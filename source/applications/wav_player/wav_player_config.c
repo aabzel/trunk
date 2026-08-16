@@ -1,9 +1,10 @@
 #include "wav_player_config.h"
 
+#include "wm8731_config.h"
 #include "data_utils.h"
 
 
-static SampleType_t PlaySampleArray[PLAYER_MEM_SIZE]={0};
+static volatile SampleType_t PlaySampleArray[PLAYER_MEM_SIZE]={0};
 
 const WavPlayerConfig_t WavPlayerConfig[] = {
     {

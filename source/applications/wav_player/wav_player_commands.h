@@ -14,7 +14,6 @@ extern "C" {
 #define WAV_PLAYER_CUSTOM_COMMANDS
 #endif
 
-
 #ifndef HAS_WAV_PLAYER
 #error "+ HAS_WAV_PLAYER"
 #endif

@@ -1,9 +1,7 @@
 #ifndef SOCKET_DRV_H
 #define SOCKET_DRV_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "socket_config.h"
 #include "socket_types.h"
 #ifdef HAS_SOCKET_DIAG
@@ -17,8 +15,10 @@ SocketHandle_t* SocketGetNode(uint8_t num);
 const SocketConfig_t* SocketGetConfig(uint8_t num);
 
 bool socket_init_one(uint8_t num);
-bool socket_proc_one(uint8_t num);
-bool socket_init(void);
+bool socket_init_custom(void);
+bool socket_mcal_init(void);
+
 bool socket_proc(void);
+bool socket_proc_one(uint8_t num);
 
 #endif /* SOCKET_DRV_H  */

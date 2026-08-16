@@ -11,6 +11,8 @@ ifneq ($(WAV_PLAYER_MK_INC),Y)
 
     SOURCES_C += $(WAV_PLAYER_DIR)/wav_player_mcal.c
 
+    MCAL_OPT += -DPLAYER_MEM_SIZE=$(PLAYER_MEM_SIZE)
+    
     ifeq ($(WAV_PLAYER_INTERRUPTS),Y)
         MCAL_OPT += -DHAS_WAV_PLAYER_INTERRUPTS
         SOURCES_C += $(WAV_PLAYER_DIR)/wav_player_isr.c

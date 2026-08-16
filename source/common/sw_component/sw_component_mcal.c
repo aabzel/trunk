@@ -4,6 +4,7 @@
 #include "compiler_const.h"
 #include "log.h"
 
+COMPONENT_IS_VALID(SwComponent, sw_component)
 COMPONENT_GET_NODE(SwComponent, sw_component)
 COMPONENT_GET_CONFIG(SwComponent, sw_component)
 
@@ -39,7 +40,7 @@ bool SwComponentIsValidConfig(const SwComponentConfig_t* const Config) {
 _WEAK_FUN_
 bool sw_component_init_custom(void) {
     bool res = false;
-    LOG_INFO(SW_COMPONENT, "Version:%s", SW_COMPONENT_VERSION);
+    LOG_INFO(SW_COMPONENT, "Version:%u", SW_COMPONENT_VERSION);
     return res;
 }
 
@@ -50,6 +51,16 @@ bool sw_component_proc_one(uint8_t num) {
     SwComponentHandle_t* Node = SwComponentGetNode(num);
     if(Node) {
         Node->spin++;
+    }
+    return res;
+}
+
+_WEAK_FUN_
+bool sw_component_is_valid_num(const uint8_t num) {
+    bool res = false;
+    SwComponentHandle_t *Node = SwComponentGetNode(num);
+    if(Node) {
+        res = Node->init;
     }
     return res;
 }
@@ -68,26 +79,33 @@ bool sw_component_init_common(const SwComponentConfig_t* const Config, SwCompone
 }
 
 _WEAK_FUN_
+bool sw_component_init_node(SwComponentHandle_t* const Node) {
+    bool res = false;
+    if (Node) {
+        Node->spin = 0;
+        Node->valid = true;
+        res = true;
+    }
+    return res;
+}
+
+_WEAK_FUN_
 bool sw_component_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(SW_COMPONENT, "SW_COMPONENT_%u", num);
-    const SwComponentConfig_t* Config = SwComponentGetConfig(num);
-    if(Config) {
-        res = SwComponentIsValidConfig(Config);
-        if(res) {
+    const SwComponentConfig_t *Config = SwComponentGetConfig(num);
+    res = SwComponentIsValidConfig(Config);
+    if(res) {
 #ifdef HAS_SW_COMPONENT_DIAG
-            LOG_WARNING(SW_COMPONENT, "%s", SwComponentConfigToStr(Config));
+        LOG_WARNING(SW_COMPONENT, "%s", SwComponentConfigToStr(Config));
 #endif
-            SwComponentHandle_t* Node = SwComponentGetNode(num);
-            if(Node) {
-                res = sw_component_init_common(Config, Node);
-                Node->valid = true;
-                Node->init = true;
-            } else {
-                LOG_ERROR(SW_COMPONENT, "NodeErr %u", num);
-            }
+        SwComponentHandle_t *Node = SwComponentGetNode(num);
+        if(Node) {
+            res = sw_component_init_common(Config, Node);
+            res = sw_component_init_node(Node);
+            Node->init = true;
         } else {
-            LOG_ERROR(SW_COMPONENT, "ConfigErr %u", num);
+            LOG_ERROR(SW_COMPONENT, "NodeErr %u", num);
         }
     } else {
         LOG_PARN(SW_COMPONENT, "ConfigErr %u", num);

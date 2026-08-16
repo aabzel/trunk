@@ -8,6 +8,7 @@ extern "C" {
 #include "std_includes.h"
 #include "sw_component_config.h"
 #include "sw_component_types.h"
+
 #ifdef HAS_SW_COMPONENT_DIAG
 #include "sw_component_diag.h"
 #endif
@@ -33,7 +34,8 @@ bool sw_component_proc(void);
 /*setters*/
 
 /*getters*/
-bool sw_component_raw_reg_diag(uint8_t i) ;
+bool sw_component_raw_reg_diag(uint8_t num);
+bool sw_component_is_valid_num(const uint8_t num);
 
 #ifdef __cplusplus
 }

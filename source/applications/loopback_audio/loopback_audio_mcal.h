@@ -39,6 +39,7 @@ bool loopback_audio_play_rec_file(uint8_t num, char* PlayFileName, char* RecFile
 bool loopback_audio_i2s_num_set(uint8_t num, uint8_t i2s_num) ;
 
 /*getters*/
+bool loopback_audio_is_idle(uint8_t num);
 bool loopback_audio_is_valid_num(uint8_t num);
 uint8_t loopback_audio_i2s_num_get(uint8_t num);
 

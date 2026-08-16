@@ -1,5 +1,6 @@
 #include "sw_component_diag.h"
 
+#include "sw_component_mcal.h"
 #include "common_diag.h"
 #include "diag_inc.h"
 #include "log.h"
@@ -23,12 +24,33 @@ const char* SwComponentNodeToStr(const SwComponentHandle_t* const Node) {
     return text;
 }
 
-bool sw_component_diag(void) {
+bool sw_component_diag_one(uint8_t num) {
     bool res = false;
+    const SwComponentConfig_t *Config = SwComponentGetConfig(num);
+    if(Config) {
+        LOG_INFO(SW_COMPONENT, "%s", SwComponentConfigToStr(Config));
+        SwComponentHandle_t *Node = SwComponentGetNode(num);
+        if(Node) {
+            LOG_INFO(SW_COMPONENT, "%s", SwComponentNodeToStr(Node));
+            res = true;
+        }
+    }
+
     return res;
 }
 
-bool sw_component_diag_one(uint8_t num) {
+bool sw_component_diag(void) {
     bool res = false;
+    res = sw_component_diag_one(1);
+    return res;
+}
+
+
+bool sw_component_raw_reg_diag(uint8_t num) {
+    bool res = false;
+    SwComponentHandle_t *Node = SwComponentGetNode(num);
+    if(Node){
+        res = true;
+    }
     return res;
 }

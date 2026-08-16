@@ -10,8 +10,16 @@ ifneq ($(SOCKET_MK_INC),Y)
     MCAL_OPT += -DHAS_SOCKET_PROC
 
     SOURCES_C += $(SOCKET_DIR)/socket_if.c
-    SOURCES_C += $(SOCKET_DIR)/socket_server.c
-    SOURCES_C += $(SOCKET_DIR)/socket_client.c
+
+    ifeq ($(SOCKET_SERVER),Y)
+        MCAL_OPT += -DHAS_SOCKET_SERVER
+        SOURCES_C += $(SOCKET_DIR)/socket_server.c
+    endif
+
+    ifeq ($(SOCKET_CLIENT),Y)
+        MCAL_OPT += -DHAS_SOCKET_CLIENT
+        SOURCES_C += $(SOCKET_DIR)/socket_client.c
+    endif
 
     LFLAGS += -lws2_32
 
@@ -19,7 +27,7 @@ ifneq ($(SOCKET_MK_INC),Y)
         ifeq ($(SOCKET_DIAG),Y)
             $(info +SOCKET_DIAG)
             MCAL_OPT += -DHAS_SOCKET_DIAG
-             SOURCES_C += $(SOCKET_DIR)/socket_diag.c
+            SOURCES_DIAG_C += $(SOCKET_DIR)/socket_diag.c
         endif
     endif
 

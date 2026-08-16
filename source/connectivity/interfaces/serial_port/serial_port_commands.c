@@ -8,27 +8,17 @@
 #include "serial_port.h"
 #include "serial_port_diag.h"
 
-bool serial_port_config_command(int32_t argc, char* argv[]){
-    bool res = false;
-    return res;
-}
-
 bool serial_port_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
-    uint8_t num = 0;
-    if(1 <= argc) {
-        res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(SERIAL_PORT, "ParseErr Num [1....8]");
-        }
+    if(0 <= argc) {
+        res = true;
     }
 
     if(res) {
-
-        res = serial_port_diag(num);
+        res = serial_port_diag();
         log_info_res(SERIAL_PORT, res, "Diag");
     } else {
-        LOG_ERROR(SERIAL_PORT, "Usage: spd Num");
+        LOG_ERROR(SERIAL_PORT, "Usage: spd");
     }
 
     return res;
@@ -98,13 +88,34 @@ bool serial_port_scan_command(int32_t argc, char* argv[]) {
     }
 
     if(0 == argc) {
-
-        res = serial_port_scan_ports();
+        res = serial_port_scan();
         log_info_res(SERIAL_PORT, res, "Scan");
     }
 
     if(!res) {
         LOG_ERROR(SERIAL_PORT, "Usage: spc Num");
+    }
+    return res;
+}
+
+bool serial_port_config_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t com_port_num = 2;
+    uint32_t bit_rate = 115200;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &com_port_num);
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &bit_rate);
+    }
+
+    if(res) {
+        res = serial_port_re_init_one(1, com_port_num, bit_rate, 0);
+        log_info_res(SERIAL_PORT, res, "ReInit");
+    } else {
+        LOG_ERROR(SERIAL_PORT, "Usage: spc COM BitRate");
     }
     return res;
 }

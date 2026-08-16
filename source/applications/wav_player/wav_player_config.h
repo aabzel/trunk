@@ -9,7 +9,7 @@ extern "C" {
 #include "wav_player_types.h"
 #include "wav_player_dep.h"
 
-#define PLAYER_MEM_SIZE 2048
+//#define PLAYER_MEM_SIZE 2048
 #define PLAYER_MEM_HALF_SIZE (PLAYER_MEM_SIZE/2)
 
 extern const WavPlayerConfig_t WavPlayerConfig[];

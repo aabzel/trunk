@@ -26,6 +26,7 @@ extern "C" {
 
 bool wav_player_diag(void);
 bool wav_player_diag_one(uint8_t num);
+bool WavPlayerPrintReport(const WavPlayerHandle_t* const Node);
 const char* WavPlayerConfigToStr(const WavPlayerConfig_t* const Config);
 const char* WavPlayerNodeToStr(const WavPlayerHandle_t* const Node);
 

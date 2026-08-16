@@ -4,18 +4,21 @@
 #include "log.h"
 #include "wav_player_mcal.h"
 
+/*
+ wav_player_play_file 1 RbUt29786_10s.wav
+ * */
 bool wav_player_play_file_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 1;
     char path[300] = {0};
 
     if(1 <= argc) {
-        res = try_str2uint8(argv[0], &num);
-        log_info_res(WAV_PLAYER, res, "Num");
+        res = strncpy(path, argv[0], sizeof(path));
     }
 
     if(2 <= argc) {
-        res = strncpy(path, argv[1], sizeof(path));
+        res = try_str2uint8(argv[1], &num);
+        log_info_res(WAV_PLAYER, res, "Num");
     }
 
     if(res) {

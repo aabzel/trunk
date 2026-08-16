@@ -24,18 +24,28 @@ typedef struct {
     WAV_PLAYER_COMMON_VARIABLES
 }WavPlayerConfig_t;
 
+#define WAV_PLAYER_PLAY_VARIABLES                                    \
+    char file_name[100];                                             \
+    WavHeader_t WavHeader ;                                          \
+    uint32_t slow_read_error;                                        \
+    uint32_t read_error_cnt;                                         \
+    uint32_t read_len_error_cnt;                                     \
+    uint32_t cur_read_size; /*current file read size in bytes*/      \
+    FIL FileToPlay;           /* [OUT] Pointer to the file object structure */                           \
+    uint32_t file_size; /*total wav file size in bytes*/
+
 typedef struct {
     WAV_PLAYER_COMMON_VARIABLES
+    WAV_PLAYER_PLAY_VARIABLES
+    bool play;
     bool init;
-    char file_name[100];
     I2sHandle_t* I2s;
-    WavPlayerState_t state;
-    WavHeader_t WavHeader ;
-    uint32_t file_size; /*total wav file size in bytes*/
-    uint32_t cur_read_size; /*current file read size in bytes*/
-    FIL FileToPlay;           /* [OUT] Pointer to the file object structure */
-    uint32_t read_error_cnt;
+    volatile WavPlayerState_t state;
+    volatile WavPlayerAction_t action;
+    volatile WavPlayerStatus_t status;
     uint32_t error_cnt;
+    uint32_t play_need_duration_ms;
+    uint32_t start_play_ms;
     uint32_t spin;
 }WavPlayerHandle_t;
 

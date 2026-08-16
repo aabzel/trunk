@@ -13,9 +13,7 @@ bool socket_diag_command(int32_t argc, char* argv[]){
     uint8_t num = 0;
     if(1<=argc){
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET, "ParseErr Num [1....8]");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Num");
     }
     return res;
 }
@@ -25,18 +23,12 @@ bool socket_init_command(int32_t argc, char* argv[]){
     uint8_t num = 0;
     if(1<=argc){
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET, "ParseErr Num [1....8]");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Num");
     }
 
     if(res) {
         res=socket_init_one(num);
-        if(res){
-        	LOG_INFO(LG_SOCKET, "InitOk");
-        } else {
-        	LOG_ERROR(LG_SOCKET, "InitErr");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Init");
     }
 
     return res;
@@ -44,14 +36,12 @@ bool socket_init_command(int32_t argc, char* argv[]){
 
 bool socket_server_send_command(int32_t argc, char* argv[]){
     bool res = false;
-    uint8_t array[256];
+    uint8_t array[256] = {0};
     size_t array_len = 0;
     uint8_t num = 0;
     if(1<=argc){
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET, "ParseErr Num");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Num");
     }
 
     if(2 <= argc) {
@@ -65,12 +55,8 @@ bool socket_server_send_command(int32_t argc, char* argv[]){
     }
 
     if(res) {
-        res = socket_server_send(  num , array, array_len) ;
-        if(res){
-        	LOG_INFO(LG_SOCKET, "ServerSendOk");
-        } else {
-        	LOG_ERROR(LG_SOCKET, "ServerSendErr");
-        }
+        res = socket_server_send(  num , (char*) array, array_len) ;
+        log_info_res(LG_SOCKET_CLIENT,res, "ServerSend");
     }else{
     	LOG_ERROR(LG_SOCKET, "Usage: sss Num Data");
     }
@@ -78,16 +64,15 @@ bool socket_server_send_command(int32_t argc, char* argv[]){
 }
 
 
+#ifdef HAS_SOCKET_CLIENT
 bool socket_client_send_command(int32_t argc, char* argv[]){
     bool res = false;
-    uint8_t array[256];
+    uint8_t array[256] = {0};
     size_t array_len = 0;
     uint8_t num = 0;
     if(1<=argc){
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET, "ParseErr Num");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Num");
     }
 
     if(2 <= argc) {
@@ -101,15 +86,12 @@ bool socket_client_send_command(int32_t argc, char* argv[]){
     }
 
     if(res) {
-        res = socket_client_send(  num , array,   array_len) ;
-        if(res){
-        	LOG_INFO(LG_SOCKET, "SendOk");
-        } else {
-        	LOG_ERROR(LG_SOCKET, "SendErr");
-        }
+        res = socket_client_send(  num , (char*) array,   array_len) ;
+        log_info_res(LG_SOCKET_CLIENT,res, "ClientSend");
     }
 	return res;
 }
+#endif
 
 
 bool socket_server_start_command(int32_t argc, char* argv[]){
@@ -118,65 +100,51 @@ bool socket_server_start_command(int32_t argc, char* argv[]){
     uint16_t port = 0;
     if(1<=argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET, "ParseErr Num");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Num");
     }
 
     if(2<=argc) {
         res = try_str2uint16(argv[1], &port);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET, "ParseErr Port");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Port");
     }
 
     if(res) {
        res=socket_server_start(num,port);
-       if(res) {
-       	LOG_INFO(LG_SOCKET_SERVER, "StartOk");
-       } else {
-       	LOG_ERROR(LG_SOCKET_SERVER, "StartErr");
-       }
+       log_info_res(LG_SOCKET_CLIENT,res, "ServerStart");
     }
 
     return res;
 }
 
+
+#ifdef HAS_SOCKET_CLIENT
 bool socket_client_start_command(int32_t argc, char* argv[]){
     bool res = false;
     uint8_t num = 0;
     uint16_t port = 0;
     Type32Union_t server_ip;
     server_ip.u32 = 0;
+
     if(1<=argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET_CLIENT, "ParseErr Num");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Num");
     }
 
     if(2<=argc) {
         res = try_str2ip_v4(argv[1], &server_ip.u8[0]);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET_CLIENT, "ParseErr IP");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "IpAddr");
     }
 
     if(3<=argc) {
         res = try_str2uint16(argv[1], &port);
-        if(false == res) {
-            LOG_ERROR(LG_SOCKET_CLIENT, "ParseErr Port");
-        }
+        log_info_res(LG_SOCKET_CLIENT,res, "Port");
     }
 
     if(res) {
        res = socket_client_start(num, server_ip.u32, port);
-       if(res) {
-           LOG_INFO(LG_SOCKET_CLIENT, "StartOk");
-       } else {
-           LOG_ERROR(LG_SOCKET_CLIENT, "StartErr");
-       }
+       log_info_res(LG_SOCKET_CLIENT,res, "ClientStart");
     }
     return res;
 }
+#endif
 
