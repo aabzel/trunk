@@ -208,11 +208,16 @@ bool correlator_s16_write_ref_signal(uint8_t num, const int16_t* const ref_signa
                 Node->size = size;
                 uint32_t i = 0;
                 for(i = 0; i < Node->size; i++) {
-                    Node->ReferenceSignal[i] = ref_signal[i];
+                    Node->ReferenceSignal[Node->size - i - 1] = ref_signal[i];
                 }
                 res = true;
+            }else {
+                LOG_ERROR(CORRELATOR_S16, "CORR_%u,ReferenceSignal,Error,Need:%u,MaxSize:%u", num,size,Node->max_size);
             }
+
             LOG_INFO(CORRELATOR_S16, "%s", CorrelatorS16NodeToStr(Node));
+        }else {
+            LOG_ERROR(CORRELATOR_S16, "CORR_%u,ReferenceSignal,Error", num);
         }
     } else {
         LOG_ERROR(CORRELATOR_S16, "%u,NodeErr", num);

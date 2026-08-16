@@ -25,6 +25,7 @@ bool quad_mix_4fs_proc_sample(uint8_t num,
                               int32_t sample);
 
 /*getter*/
+float calc_carrier_phase_err_approximate_rad(const float i_val, const  float q_val) ;
 float calc_carrier_phase_err_lut_rad(const int32_t i_val, const int32_t q_val);
 bool quad_mix_4fs_is_valid_iq(const QuadMix4fsHandle_t* const Node);
 bool is_valid_phase_err_rad(const float phase_error_rad);

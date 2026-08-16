@@ -1,8 +1,8 @@
 #include "quad_mix_4fs_commands.h"
 
 #include "convert.h"
-#include "quad_mix_4fs.h"
 #include "log.h"
+#include "quad_mix_4fs.h"
 
 bool quad_mix_4fs_init_command(int32_t argc, char* argv[]) {
     bool res = false;

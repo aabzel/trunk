@@ -2,7 +2,7 @@
 #define SCAN_DRIVER_H
 
 #include "std_includes.h"
-#include "scan_config.h"
+//#include "scan_config.h"
 #include "scan_types.h"
 #include "scan_diag.h"
 

@@ -1,0 +1,4 @@
+
+config MANCHESTER_DECODE
+    bool "Enable use of the MANCHESTER_DECODE drivers"
+

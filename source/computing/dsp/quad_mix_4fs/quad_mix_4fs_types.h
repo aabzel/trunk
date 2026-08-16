@@ -8,8 +8,11 @@ extern "C" {
 #include "std_includes.h"
 #include "quad_mix_4fs_const.h"
 #include "dsp_types.h"
-#include "gpio_types.h"
 #include "sliding_integral_types.h"
+
+#ifdef HAS_GPIO
+#include "gpio_types.h"
+#endif
 
 typedef struct {
     int32_t LocalOcs;
@@ -19,10 +22,17 @@ typedef struct {
 
 typedef int32_t QuadMix4fsSample_t;
 
+#ifdef HAS_GPIO
+#define QUAD_MIX_4FS_COMMON_GPIO_VARIABLE    Pad_t PadOkPhase;
+#else
+#define QUAD_MIX_4FS_COMMON_GPIO_VARIABLE
+#endif
+
+
 #define QUAD_MIX_4FS_COMMON_VARIABLE            \
+    QUAD_MIX_4FS_COMMON_GPIO_VARIABLE           \
     uint8_t filter_num_i;                       \
     uint8_t filter_num_q;                       \
-    Pad_t PadOkPhase;                           \
     uint32_t cut_off_freq_hz;                   \
     uint32_t filter_order;                      \
     uint32_t num;                               \

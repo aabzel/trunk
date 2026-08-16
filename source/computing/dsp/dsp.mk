@@ -1,8 +1,8 @@
-ifneq ($(DSP_MK_INC),Y)
-    DSP_MK_INC=Y
+ifneq ($(DSP__MK_INC),Y)
+    DSP__MK_INC=Y
 
     DSP_DIR = $(COMPUTING_DIR)/dsp
-    # $(error DSP_DIR= $(DSP_DIR))
+    #$(error DSP_DIR= $(DSP_DIR))
 
     MCAL_OPT += -DHAS_DSP
     INCDIR += -I$(DSP_DIR)
@@ -10,14 +10,35 @@ ifneq ($(DSP_MK_INC),Y)
 
     ifeq ($(PCM_U16),Y)
         MCAL_OPT += -DHAS_PCM_U16
+        MCAL_OPT += -DHAS_PCM_16_BIT
+    endif
+
+    ifeq ($(PCM_S16),Y)
+        MCAL_OPT += -DHAS_PCM_S16
+        MCAL_OPT += -DHAS_PCM_16_BIT
+    endif
+
+    ifeq ($(PCM_S32),Y)
+        MCAL_OPT += -DHAS_PCM_S32
+        MCAL_OPT += -DHAS_PCM_32_BIT
+    endif
+
+    ifeq ($(PCM_U32),Y)
+        MCAL_OPT += -DHAS_PCM_U32
+        MCAL_OPT += -DHAS_PCM_32_BIT
+    endif
+
+    ifeq ($(BARKER_CODE),Y)
+        #  $(error BARKER_CODE=$(BARKER_CODE))
+        include $(DSP_DIR)/barker_code/barker_code.mk
     endif
 
     ifeq ($(DECIMATOR),Y)
         include $(DSP_DIR)/decimator/decimator.mk
     endif
 
-    ifeq ($(HIST_FILTER),Y)
-        include $(DSP_DIR)/hist_filter/hist_filter.mk
+    ifeq ($(DELTA_SIGMA),Y)
+        include $(DSP_DIR)/delta_sigma/delta_sigma.mk
     endif
 
     ifeq ($(DFT),Y)
@@ -26,6 +47,14 @@ ifneq ($(DSP_MK_INC),Y)
 
     ifeq ($(CORRELATOR),Y)
         include $(DSP_DIR)/correlator/correlator.mk
+    endif
+
+    ifeq ($(CORRELATOR_S16),Y)
+        include $(DSP_DIR)/correlator_s16/correlator_s16.mk
+    endif
+
+    ifeq ($(CORRELATOR_NAIV_S16),Y)
+        include $(DSP_DIR)/correlator_naiv_s16/correlator_naiv_s16.mk
     endif
 
     ifeq ($(QUAD_MIX_4FS),Y)
@@ -88,15 +117,25 @@ ifneq ($(DSP_MK_INC),Y)
         include $(DSP_DIR)/fir_int/fir_int.mk
     endif
 
+    ifeq ($(HIST_FILTER),Y)
+        include $(DSP_DIR)/hist_filter/hist_filter.mk
+    endif
+
     ifeq ($(IIR),Y)
         #  $(error IIR=$(IIR))
         include $(DSP_DIR)/iir/iir.mk
     endif
 
+
     ifeq ($(CLI),Y)
         ifeq ($(DSP_COMMANDS),Y)
             MCAL_OPT += -DHAS_DSP_COMMANDS
         endif
+    endif
+
+    ifeq ($(MANCHESTER_DECODE),Y)
+        #  $(error SCHMITT_TRIGGER=$(SCHMITT_TRIGGER))
+        include $(DSP_DIR)/manchester_decode/manchester_decode.mk
     endif
 
     ifeq ($(SCHMITT_TRIGGER),Y)

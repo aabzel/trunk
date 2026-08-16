@@ -1,6 +1,7 @@
 #include "dsp.h"
 
 #include "log.h"
+
 #ifdef HAS_FIR
 #include "fir.h"
 #endif
@@ -8,8 +9,8 @@
 #ifdef HAS_IIR
 #include "iir.h"
 #endif
+
 /*
- *
  */
 uint32_t ft_find_freq(double complex* Spectrum, uint32_t len, double period_s, Spectr_t* const maxFreqInfo) {
     uint32_t i = 0;
@@ -20,6 +21,7 @@ uint32_t ft_find_freq(double complex* Spectrum, uint32_t len, double period_s, S
     Spectr_t CurMaxFreqInfo = {0};
 
     for(i = 0; i < len; i++) {
+        curFreqInfo.i = i;
         curFreqInfo.frequency_hz = ((double)i) / (period_s * ((double)len));
         if(curFreqInfo.frequency_hz < (freq_range / 2.0)) {
             curFreqInfo.amplitude = cabs(Spectrum[i]);
@@ -46,9 +48,14 @@ bool filter_proc_in_out(uint8_t num, DspFilterType_t filter_type, FilterSample_t
     switch(filter_type) {
     case DSP_FILTER_TYPE_FIR: {
 #ifdef HAS_FIR
-        res = fir_proc_in_out(num, x, y);
+        FirSample_t yy = 0;
+        res = fir_proc_in_out(num, (FirSample_t)x, &yy);
+        if(res) {
+            *y = (FilterSample_t)yy;
+        }
 #endif
     } break;
+
     case DSP_FILTER_TYPE_IIR: {
 #ifdef HAS_IIR
         res = iir_proc_in_out(num, (IirSample_t)x, (IirSample_t*)y);

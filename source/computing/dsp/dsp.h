@@ -1,5 +1,5 @@
-#ifndef DSP_H
-#define DSP_H
+#ifndef DSP_MCAL_H
+#define DSP_MCAL_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -8,14 +8,14 @@ extern "C" {
 #include <stdint.h>
 #include <complex.h>
 
-#ifdef HAS_AUDIO
-#include "audio_types.h"
-#endif
 #include "dsp_diag.h"
 #include "dsp_types.h"
 
-uint32_t ft_find_freq(double complex* Spectrum, uint32_t len, double period_s,
-                      Spectr_t* const max_garmonic);
+#ifdef HAS_AUDIO
+#include "audio_types.h"
+#endif
+
+uint32_t ft_find_freq(double complex* Spectrum, uint32_t len, double period_s, Spectr_t* const maxFreqInfo);
 
 bool filter_proc_in_out(uint8_t num, DspFilterType_t filter_type, FilterSample_t x, FilterSample_t *const y);
 
@@ -29,4 +29,4 @@ bool filter_synthesize(uint8_t num,
 }
 #endif
 
-#endif /* DSP_H */
+#endif /* DSP_MCAL_H */

@@ -9,9 +9,6 @@
 #include "array.h"
 #include "circular_buffer_index.h"
 #include "code_generator.h"
-#ifdef HAS_COMPLEX_DIAG
-#include "complex_diag.h"
-#endif
 #include "fir_diag.h"
 #include "float_utils.h"
 #include "log.h"
@@ -20,6 +17,11 @@
 #include "writer_config.h"
 #include "debug_info.h"
 #include "csv.h"
+
+#ifdef HAS_COMPLEX_DIAG
+#include "complex_diag.h"
+#endif
+
 #ifdef HAS_FILE_PC
 #include "file_pc.h"
 #endif
@@ -109,11 +111,9 @@ static bool fir_synthesize_moving_average_ll(FirHandle_t* Node) {
 }
 
 
-
-
-
-
-bool fir_synthesize(uint8_t num, uint32_t M, FirSample_t cutoff_frequency_hz, FirSample_t sampling_frequency_hz) {
+bool fir_synthesize(uint8_t num, uint32_t M,
+                    FirSample_t cutoff_frequency_hz,
+                    FirSample_t sampling_frequency_hz) {
     bool res = false;
     FirSample_t F_c = cutoff_frequency_hz / sampling_frequency_hz;
     LOG_INFO(FIR, "SynThesize,Num:%u,M:%u,Fcut:%f Hz,SampleFreq:%f Hz", num, M, cutoff_frequency_hz,
@@ -126,6 +126,7 @@ bool fir_synthesize(uint8_t num, uint32_t M, FirSample_t cutoff_frequency_hz, Fi
         case FIR_MODE_MOVE_AVARAGE: {
             res = fir_synthesize_moving_average_ll(Node);
         }break;
+
         case FIR_MODE_INTEGRATION: {
             uint32_t i = 0;
             for(i = 0; i < M; i++) {
@@ -133,9 +134,11 @@ bool fir_synthesize(uint8_t num, uint32_t M, FirSample_t cutoff_frequency_hz, Fi
             }
             res = true;
         }break;
+
         case FIR_MODE_CORRELATION: {
             res = true;
         }break;
+
         case FIR_MODE_CLASSIC: {
             if(M <= Node->max_size) {
                 Node->size = M;
@@ -171,7 +174,7 @@ bool fir_synthesize(uint8_t num, uint32_t M, FirSample_t cutoff_frequency_hz, Fi
 
 
     } else {
-        LOG_ERROR(FIR, "FIR%u NodeErr", num);
+        LOG_ERROR(FIR, "FIR%u,NodeErr", num);
     }
     return res;
 }
@@ -204,102 +207,75 @@ static bool fir_is_valid_config(const FirConfig_t* const Config) {
     bool res = false;
     if(Config) {
         res = true;
-    }
-
-    if(res) {
-        res = false;
-        if(Config->size <= Config->max_size) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "SizeErr");
+        ifn(Config->name) {
+            res = false;
+            LOG_ERROR(FIR, "Name,Err %u", Config->num);
         }
-    }
 
-    if(res) {
-        res = false;
-        if(2 < Config->size) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "MinSizeErr");
+        ifn(Config->file_name_out) {
+            res = false;
+            LOG_ERROR(FIR, "file_name_out,Err %s", Config->name);
         }
-    }
 
-    if(res) {
-        res = false;
-        if(Config->cut_off_freq_hz < (Config->sample_rate_hz/2.0)) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "CutOffTooBigErr %f Hz", Config->cut_off_freq_hz );
+        ifn(Config->file_name_in) {
+            LOG_ERROR(FIR, "inFileName,Err %s", Config->name);
+            res = false;
         }
-    }
 
-    if(res) {
-    	double cut_off_period_s = 1.0/Config->cut_off_freq_hz;
-    	double sample_per_s =  1.0/Config->sample_rate_hz;
-    	double duration_of_analysis_s = Config->size * sample_per_s;
-    	if(cut_off_period_s < duration_of_analysis_s) {
-    	    res = true;
-    	}else {
-            LOG_ERROR(FIR, "TooSmallOrderErr");
+        ifn(Config->size <= Config->max_size) {
+            res = false;
+            LOG_ERROR(FIR, "Size,Err,%s Size:%u,MaxSize:%u", Config->name, Config->size, Config->max_size);
         }
-    }
 
-    if(res) {
-        res = false;
-        if(0 < Config->mode) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "ModeErr");
+        ifn(2 < Config->size) {
+            res = false;
+            LOG_ERROR(FIR, "MinSize,Err %s", Config->name);
         }
-    }
 
-    if(res) {
-        res = false;
-        if(0 < Config->sample_rate_hz) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "SampeReteErr");
+        ifn(Config->cut_off_freq_hz < (Config->sample_rate_hz / 2.0)) {
+            res = false;
+            LOG_ERROR(FIR, "CutOffTooBig,Err %f Hz %s", Config->cut_off_freq_hz, Config->name);
         }
-    }
 
-    if(res) {
-        res = false;
-        if(Config->b) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "BErr");
+        if(FIR_MODE_CLASSIC == Config->mode) {
+            double cut_off_period_s = 1.0 / Config->cut_off_freq_hz;
+            double sample_per_s = 1.0 / Config->sample_rate_hz;
+            double duration_of_analysis_s = Config->size * sample_per_s;
+            ifn(cut_off_period_s < duration_of_analysis_s) {
+                LOG_ERROR(FIR, "TooSmallOrder,Err %s", Config->name);
+                res = false;
+            }
         }
-    }
 
-    if(res) {
-        res = false;
-        if(Config->x) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "XErr");
+        ifn(0 < Config->mode) {
+            res = false;
+            LOG_ERROR(FIR, "Mode,Err,%s", Config->name);
         }
-    }
 
-    if(res) {
-        res = false;
-        if(Config->valid) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "ValidErr");
+        ifn(0 < Config->sample_rate_hz) {
+            res = false;
+            LOG_ERROR(FIR, "SampeRete,Err %s", Config->name);
         }
-    }
 
-    if(res) {
-        res = false;
-        if(Config->name) {
-            res = true;
-        } else {
-            LOG_ERROR(FIR, "NameErr");
+        ifn(Config->b) {
+            res = false;
+            LOG_ERROR(FIR, "B,Err  %s", Config->name);
+        }
+
+        ifn(Config->x) {
+            res = false;
+            LOG_ERROR(FIR, "X,Err %s", Config->name);
+        }
+
+        ifn(Config->valid) {
+            res = false;
+            LOG_ERROR(FIR, "Valid,Err,%s", Config->name);
         }
     }
 
     return res;
 }
+
 
 static bool fir_init_common(const FirConfig_t* const Config, FirHandle_t* const Node) {
     bool res = false;
@@ -325,34 +301,27 @@ static bool fir_init_common(const FirConfig_t* const Config, FirHandle_t* const 
 bool fir_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(FIR, "%u,Init", num);
-    const FirConfig_t* Config = NULL;
+    const FirConfig_t *Config = NULL;
     Config = FirGetConfig(num);
-    if(Config) {
+    res = fir_is_valid_config(Config);
+    if(res) {
 #ifdef HAS_FIR_DIAG
         LOG_WARNING(FIR, "%s", FirConfigToStr(Config));
 #endif
-        res = fir_is_valid_config(Config);
-        if(res) {
-            FirHandle_t* Node = FirGetNode(num);
-            if(Node) {
-                LOG_INFO(FIR, "Spot,Node");
-                res = fir_init_common(Config, Node);
-                Node->valid = true;
-
-                res = circular_buffer_index_init(&Node->indexer, Config->size - 1);
-
-                res = fir_synthesize(num, Config->size, Config->cut_off_freq_hz, Config->sample_rate_hz);
-                if(res) {
-                    LOG_INFO(FIR, "SynthesizeOk");
-                } else {
-                    LOG_ERROR(FIR, "FIR%u,SynthesizeErr",num);
-                }
-
+        FirHandle_t *Node = FirGetNode(num);
+        if(Node) {
+            LOG_INFO(FIR, "Spot,Node");
+            res = fir_init_common(Config, Node);
+            Node->valid = true;
+            res = circular_buffer_index_init(&Node->indexer, Config->size - 1);
+            res = fir_synthesize(num, Config->size, Config->cut_off_freq_hz, Config->sample_rate_hz);
+            if(res) {
+                LOG_INFO(FIR, "SynthesizeOk");
             } else {
-                LOG_ERROR(FIR, "NodeErr");
+                LOG_ERROR(FIR, "FIR%u,SynthesizeErr", num);
             }
         } else {
-            LOG_ERROR(FIR, "AbsurdConfigErr");
+            LOG_ERROR(FIR, "NodeErr");
         }
     } else {
         LOG_ERROR(FIR, "ConfNodeErr");
@@ -536,6 +505,5 @@ bool fir_proc_file(uint8_t num, char* file_name, uint16_t column_x, uint16_t col
 }
 #endif
 
-
-
-COMPONENT_INIT_PATTERT(FIR, FIR, fir)
+COMPONENT_INIT_ANY_PATTERT_CNT(FIR, FIR, fir, FIR_MUN_CNT)
+//COMPONENT_INIT_ANY_PATTERT(FIR, FIR, fir)

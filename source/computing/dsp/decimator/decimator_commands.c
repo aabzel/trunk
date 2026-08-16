@@ -6,10 +6,10 @@
 #include "common_diag.h"
 #include "convert.h"
 #include "data_utils.h"
-#include "log.h"
 #include "decimator.h"
 #include "decimator_config.h"
 #include "decimator_diag.h"
+#include "log.h"
 
 #include "table_utils.h"
 #include "writer_config.h"
@@ -41,15 +41,14 @@ bool decimator_proc_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-    	int8_t sample_out = 0xEE;
+        int8_t sample_out = 0xEE;
         res = decimator_proc_val(num, val, &sample_out);
-        LOG_INFO(DECIMATOR, "N:%u,IN:%u,OUT:%u",num, val, sample_out);
+        LOG_INFO(DECIMATOR, "N:%u,IN:%u,OUT:%u", num, val, sample_out);
     } else {
         LOG_ERROR(DECIMATOR, "Usage: dep num val");
     }
     return res;
 }
-
 
 bool decimator_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -82,8 +81,7 @@ bool decimator_diag_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-bool decimator_set_command(int32_t argc, char* argv[]){
+bool decimator_set_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
     uint32_t samples_per_bit = 40;
@@ -95,8 +93,8 @@ bool decimator_set_command(int32_t argc, char* argv[]){
         res = try_str2uint32(argv[1], &samples_per_bit);
     }
 
-    if(res){
-        res = decimator_adjust(  num,   samples_per_bit);
+    if(res) {
+        res = decimator_adjust(num, samples_per_bit);
     }
 
     return res;

@@ -13,12 +13,22 @@ extern "C" {
 #include "delta_sigma_types.h"
 #include "delta_sigma_config.h"
 
+/*API*/
 DeltaSigmaHandle_t* DeltaSigmaGetNode(uint8_t num);
 const DeltaSigmaConfig_t* DeltaSigmaGetConfig(uint8_t num);
 
-/*private*/
-int8_t adc_1bit(double value, double comparator_middle) ;
 
+/*private*/
+int8_t adc_1bit(float value, float comparator_middle) ;
+
+/*setter*/
+bool delta_sigma_target_set(uint8_t num, float target);
+
+/*getter*/
+float delta_sigma_target_get(uint8_t num);
+
+float sign_v(float value);
+bool delta_sigma_isr_proc_one_ll(DeltaSigmaHandle_t* const Node);
 bool delta_sigma_isr_proc_one(uint8_t num);
 bool delta_sigma_init_one(uint8_t num);
 bool delta_sigma_mcal_init(void);

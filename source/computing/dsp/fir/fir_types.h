@@ -9,14 +9,17 @@ extern "C" {
 #include "fir_const.h"
 #include "circular_buffer_types.h"
 
+/*Fir sample can be wery bin in case of FIR_MODE_CORRELATION mode int32_t can overflow*/
+//typedef int32_t FirSample_t;
 typedef float FirSample_t;
 
 #define FIR_COMMON_VARIABLE                  \
     FirMode_t mode;                          \
-    float sample_rate_hz;                   \
+    char* name;                              \
+    float sample_rate_hz;                    \
     char* file_name_out;                     \
     char* file_name_in ;                     \
-    float cut_off_freq_hz;                  \
+    float cut_off_freq_hz;                   \
     uint32_t num;                            \
     uint32_t size;    /*config Order M*/     \
     uint32_t max_size;    /*max Order M*/    \
@@ -26,7 +29,6 @@ typedef float FirSample_t;
 
 typedef struct {
     FIR_COMMON_VARIABLE
-    char* name;
     /*Array of coefficients*/
 } FirConfig_t;
 

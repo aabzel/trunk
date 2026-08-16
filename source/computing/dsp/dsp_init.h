@@ -14,11 +14,25 @@
 #define SLIDING_INTEGRAL_INIT
 #endif
 
+#ifdef HAS_CORRELATOR_NAIV_S16
+#include "correlator_naiv_s16.h"
+#define CORRELATOR_NAIV_S16_INIT {.init_function = correlator_naiv_s16_mcal_init, .name="CorrelatorNaivS16",},
+#else
+#define CORRELATOR_NAIV_S16_INIT
+#endif
+
 #ifdef HAS_DECIMATOR
 #include "decimator.h"
 #define DECIMATOR_INIT {.init_function=decimator_mcal_init, .name="Decimator",},
 #else
 #define DECIMATOR_INIT
+#endif
+
+#ifdef HAS_CORRELATOR_S16
+#include "correlator_s16.h"
+#define CORRELATOR_S16_INIT {.init_function=correlator_s16_mcal_init, .name="CorrelatorS16",},
+#else
+#define CORRELATOR_S16_INIT
 #endif
 
 #ifdef HAS_DELTA_SIGMA
@@ -94,6 +108,13 @@
 #define PHASE_DETECTOR_INIT
 #endif
 
+#ifdef HAS_MANCHESTER_DECODE
+#include "manchester_decode_mcal.h"
+#define MANCHESTER_DECODE_INIT {.init_function=manchester_decode_mcal_init, .name="ManchesterDecode",},
+#else
+#define MANCHESTER_DECODE_INIT
+#endif
+
 #ifdef HAS_DC_CUT_FILTER
 #include "dc_cut_filter_mcal.h"
 #define DC_CUT_FILTER_INIT {.init_function=dc_cut_filter_mcal_init, .name="DcCutFilter",},
@@ -126,8 +147,10 @@
 #define DSP_INIT               \
     DECIMATOR_INIT             \
     DELTA_SIGMA_INIT           \
+    CORRELATOR_NAIV_S16_INIT   \
     SCHMITT_TRIGGER_INIT       \
     FOURIER_SERIES_INIT        \
+    CORRELATOR_S16_INIT        \
     FIR_INIT                   \
     HIST_FILTER_INIT           \
     DC_CUT_FILTER_INIT         \
@@ -137,6 +160,7 @@
     MEDIAN_FILTER_INIT         \
     MEDIAN_FILTER_FAST_INIT    \
     QUADRATURE_MIXER_INIT      \
+    MANCHESTER_DECODE_INIT     \
     PHASE_DETECTOR_INIT        \
     SCAN_INIT                  \
     ECHO_EFFECT_INIT

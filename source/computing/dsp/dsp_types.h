@@ -11,8 +11,16 @@ extern "C" {
 #include "bit_types.h"
 
 typedef struct {
+    uint32_t sample ;
+    int64_t correlation;
+    int64_t abs_correlation;
+    float correlation_log;
+} CorrelationInfo_t;
+
+typedef struct {
     double frequency_hz;
     double amplitude;
+    uint32_t i;
 }Spectr_t;
 
 typedef union {
@@ -21,10 +29,8 @@ typedef union {
     BitField24_t bits24;
 } Sample24bit_t;
 
-typedef float FilterSample_t;
 typedef int8_t Gain_t;
 
-typedef FilterSample_t DspSample_t;
 
 #ifdef HAS_PCM_DOUBLE
 typedef double SampleType_t;
@@ -39,12 +45,16 @@ typedef uint16_t SampleType_t;
 #endif
 
 #ifdef HAS_PCM_S16
+//typedef int32_t FilterSample_t;
 typedef int16_t SampleType_t;
 #endif
 
 #ifdef HAS_PCM_S32
 typedef int32_t SampleType_t;
 #endif
+
+typedef float FilterSample_t;
+typedef SampleType_t DspSample_t;
 
 #ifdef __cplusplus
 }

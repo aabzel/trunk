@@ -5,7 +5,7 @@ ifneq ($(DELTA_SIGMA_MK_INC),Y)
     DELTA_SIGMA_MK_INC=Y
 
     DELTA_SIGMA_DIR = $(DSP_DIR)/delta_sigma
-    #@echo $(error DELTA_SIGMA_DIR = $(DELTA_SIGMA_DIR))
+    # $(error DELTA_SIGMA_DIR = $(DELTA_SIGMA_DIR))
 
     MCAL_OPT += -DHAS_DELTA_SIGMA
 

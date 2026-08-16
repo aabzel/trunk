@@ -12,11 +12,11 @@ extern "C" {
 
 #ifndef HAS_SCAN
 #error "+HAS_SCAN"
-#endif  /*HAS_SCAN*/
+#endif  /**/
 
 #ifndef HAS_SCAN_COMMANDS
 #error "+HAS_SCAN_COMMANDS"
-#endif  /*HAS_SCAN_COMMANDS*/
+#endif  /**/
 
 bool scan_proc_command(int32_t argc, char* argv[]);
 bool scan_diag_command(int32_t argc, char* argv[]);

@@ -17,11 +17,14 @@
  * See https://ru.dsplib.org/content/dft/dft.html
  */
 
-void dft_calc_v2(complex double in[], complex double out[], int sample_cnt, uint32_t max_garmonic_cnt) {
-    double pi2_div_size = 2 * M_PI / sample_cnt;
+void dft_calc_v2(complex double in[],
+                 complex double out[],
+                 int sample_cnt,
+                 uint32_t max_garmonic_cnt) {
+    double pi2_div_size = (2.0 * M_PI) /((double) sample_cnt);
     for(int k = 0; k < max_garmonic_cnt; ++k) {
         complex double sum = 0;
-        double angle = pi2_div_size * k;
+        double angle = pi2_div_size * ((double)k);
         for(int n = 0; n < sample_cnt; ++n) {
             sum += in[n] * (cos(angle * n) - I * sin(angle * n));
         }
@@ -44,8 +47,11 @@ uint32_t dft_freq_to_garmonic(const double freq_hz, const double measure_interva
 
   It may take a very long time to calculate!
  */
-bool dft_calc(const SampleType_t* const signal, uint32_t sample_cnt, double complex* const Spectrum,
-              double sampling_period_s, uint32_t max_garmonic_cnt) {
+bool dft_calc(const SampleType_t* const signal,
+              uint32_t sample_cnt,
+              double complex* const Spectrum,
+              double sampling_period_s,
+              uint32_t max_garmonic_cnt) {
     bool res = false;
     uint32_t start_ms = time_get_ms32();
     double measure_interval_s = ((double)sample_cnt) * sampling_period_s;
@@ -63,14 +69,18 @@ bool dft_calc(const SampleType_t* const signal, uint32_t sample_cnt, double comp
                 Spectrum[k] = 0.0 + 0.0 * I;
                 uint32_t n = 0;
                 for(n = 0; n < sample_cnt; n++) {
-                    double signal_complex_n = ((double)signal[n])+0.0*I;
-                    Spectrum[k] += ((double)signal_complex_n) * (cos(TWO_PI_VAL * ((double)k * n) / ((double)sample_cnt)) -
-                                                                 sin(TWO_PI_VAL * ((double)k * n) / ((double)sample_cnt)) * I);
+                    double kn = ((double)k)*((double)n);
+                    double argument_red = (TWO_PI_VAL * kn )   / ((double)sample_cnt) ;
+                    double complex signal_complex_n = ((double)signal[n])+0.0 * I;
+                    double complex garm_exponent = cos(  argument_red   ) - sin(  argument_red   ) * I;
+                    Spectrum[k] += (signal_complex_n) * garm_exponent ;
                 }
                 // Spectrum[k] *= 1.0 / ( ( (double)sample_cnt )  * (measure_interval_s));
-
-                Spectrum[k] = 2.0 * Spectrum[k] / ((double)sample_cnt);
-                LOG_DEBUG(DFT, "%u,Freq:%f Hz,(%6.3f)+j*(%6.3f)", k, cur_freq_hz, creal(Spectrum[k]),
+                // Spectrum[k] = 2.0 * Spectrum[k] / ((double)sample_cnt); // Convolution does not work with that line
+                LOG_DEBUG(DFT, "%u,Freq:%f Hz,(%6.3f)+j*(%6.3f)",
+                          k,
+                          cur_freq_hz,
+                          creal(Spectrum[k]),
                           cimag(Spectrum[k]));
 
                 diag_progress_log(k, max_garmonic_cnt, 500, "Dft");
@@ -91,7 +101,9 @@ bool dft_calc(const SampleType_t* const signal, uint32_t sample_cnt, double comp
   the number of decomposition components;
   number_of_harmonics -  number of harmonics under consideration
  */
-bool idft_calc(const double complex* const Spectrum, uint32_t number_of_harmonics, uint32_t sample_cnt,
+bool idft_calc(const double complex* const Spectrum,
+               uint32_t number_of_harmonics,
+               uint32_t sample_cnt,
                double complex* const x_signal) {
     bool res = false;
     LOG_INFO(IDFT, "CalcIDFT,Signal:%u Sam,Harm:%u Harm", sample_cnt, number_of_harmonics);
@@ -111,7 +123,8 @@ bool idft_calc(const double complex* const Spectrum, uint32_t number_of_harmonic
             double complex signal_n = 0.0;
             uint32_t m = 0;
             for(m = 0; m < number_of_harmonics; m++) {
-                double phase_rad = (TWO_PI_VAL * ((double)(m * s))) / sample_cnt;
+                double ms = ((double)m)*((double)s);
+                double phase_rad = (TWO_PI_VAL * ms ) / sample_cnt;
                 double complex exponents = cos(phase_rad) + sin(phase_rad)*I;// ?
                 signal_n += (Spectrum[m] * exponents);
             }

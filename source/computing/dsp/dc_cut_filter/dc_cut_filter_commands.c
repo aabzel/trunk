@@ -1,9 +1,8 @@
 #include "dc_cut_filter_commands.h"
 
 #include "convert.h"
-#include "log.h"
 #include "dc_cut_filter_mcal.h"
-
+#include "log.h"
 
 bool dc_cut_filter_diag_command(int32_t argc, char* argv[]) {
     bool res = false;

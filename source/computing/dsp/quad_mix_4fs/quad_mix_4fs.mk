@@ -11,6 +11,11 @@ ifneq ($(QUAD_MIX_4FS_MK_INC),Y)
 
     SOURCES_C += $(QUAD_MIX_4FS_DIR)/quad_mix_4fs.c
 
+    ifeq ($(IQ_DIAG),Y)
+        MCAL_OPT += -DHAS_IQ_DIAG
+    endif
+
+
     ifeq ($(DIAG),Y)
         ifeq ($(QUAD_MIX_4FS_DIAG),Y)
             MCAL_OPT += -DHAS_QUAD_MIX_4FS_DIAG

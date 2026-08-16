@@ -17,6 +17,12 @@
 #error "+HAS_DSP_COMMANDS"
 #endif
 
+#ifdef HAS_MANCHESTER_DECODE_COMMANDS
+#include "manchester_decode_commands.h"
+#else
+#define MANCHESTER_DECODE_COMMANDS
+#endif
+
 #ifdef HAS_SLIDING_INTEGRAL_COMMANDS
 #include "sliding_integral_commands.h"
 #else
@@ -120,6 +126,7 @@
     HIST_FILTER_COMMANDS             \
     IIR_COMMANDS                     \
     MEDIAN_FILTER_COMMANDS           \
+    MANCHESTER_DECODE_COMMANDS       \
     MEDIAN_FILTER_FAST_COMMANDS      \
     PHASE_DETECTOR_COMMANDS          \
     QUADRATURE_MIXER_COMMANDS        \
