@@ -11,6 +11,7 @@
 
 #define DDS_MCAL_COMMON_VARIABLE   \
     uint32_t total_sample_cnt;     \
+    uint32_t periods_per_chip;     \
     uint32_t sample_cnt;           \
     SampleType_t* sample_array;    \
     uint8_t num;                   \
@@ -24,6 +25,7 @@
     SampleType_t amplitude;        \
     uint32_t sample_per_second;    \
     DdsMode_t dds_mode;            \
+    uint32_t m_seq_num;            \
     uint8_t sample_bitness;        \
     FramePattern_t frame_pattern;  \
     char* name;                    \
@@ -41,8 +43,9 @@ typedef struct {
     float tx_sample_d;
     DdsState_t state;
     uint64_t play_off_time_stamp_ms;
-    uint64_t duration_ms;
+    uint64_t play_duration_ms;
     bool init_done;
+    char file_name[80];
     bool proc_on;
 } DdsHandle_t;
 

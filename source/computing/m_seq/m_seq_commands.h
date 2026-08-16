@@ -23,8 +23,10 @@ bool m_seq_auto_correlation_command(int32_t argc, char* argv[]);
 bool m_seq_diag_command(int32_t argc, char* argv[]);
 bool m_seq_generate_command(int32_t argc, char* argv[]);
 bool m_seq_init_command(int32_t argc, char* argv[]);
+bool m_seq_find_first_feedback_command(int32_t argc, char* argv[]) ;
 
 #define M_SEQ_COMMANDS                                                     \
+        SHELL_CMD("m_seq_find_first_feedback", "msfff", m_seq_find_first_feedback_command, "MseqFindFirstFeedBack"),   \
         SHELL_CMD("m_seq_size", "mssz", m_seq_size_command, "MseqSize"),   \
         SHELL_CMD("m_seq_seed", "mss", m_seq_seed_command, "MseqSeed"),    \
         SHELL_CMD("m_seq_feedback", "msf", m_seq_feedback_command, "MseqFeedBack"),   \

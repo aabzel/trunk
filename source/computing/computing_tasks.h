@@ -5,13 +5,12 @@
 #error "+HAS_COMPUTING"
 #endif
 
-#ifdef HAS_GNSS_PROC
-#include "gnss_drv.h"
-#define GNSS_TASK {.name="Gnss", .period_us=GNSS_PERIOD_US, .limiter.function=gnss_proc,},
+#ifdef HAS_BPSK_4FS_PROC
+#include "bpsk_4fs_mcal.h"
+#define BPSK_4FS_TASK {.name="Bpsk4FS", .period_us=BPSK_4FS_PERIOD_US, .limiter.function=bpsk_4fs_proc,},
 #else
-#define GNSS_TASK
+#define BPSK_4FS_TASK
 #endif
-
 
 #ifdef HAS_DDS_PROC
 #include "dds_drv.h"
@@ -34,10 +33,27 @@
 #define DELTA_SIGMA_TASK
 #endif
 
+#ifdef HAS_BACK_COUNT_PROC
+#include "back_count_mcal.h"
+#define BACK_COUNT_TASK {.name="BackCount", .period_us = BACK_COUNT_PERIOD_US, .limiter.function = back_count_proc,},
+#else
+#define BACK_COUNT_TASK
+#endif
+
+
+#ifdef HAS_GNSS_PROC
+#include "gnss_drv.h"
+#define GNSS_TASK {.name="Gnss", .period_us=GNSS_PERIOD_US, .limiter.function=gnss_proc,},
+#else
+#define GNSS_TASK
+#endif
+
 #define COMPUTING_TASKS \
     PLL_SIM_TASK        \
+    BACK_COUNT_TASK     \
+    BPSK_4FS_TASK       \
     DDS_TASK            \
-    GNSS_TASK            \
+    GNSS_TASK           \
     DELTA_SIGMA_TASK
 
 

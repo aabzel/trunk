@@ -6,7 +6,13 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
-#include "float_types.h"
+
+typedef struct {
+    int32_t integer;
+    uint32_t fractional;
+    uint32_t accurancy; /*number of digits after the decimal point*/
+} FloatFixPoint_t;
+
 
 #ifdef __cplusplus
 }

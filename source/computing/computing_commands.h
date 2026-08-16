@@ -17,11 +17,24 @@
 #error "+HAS_COMPUTING_COMMANDS"
 #endif
 
+#ifdef HAS_BACK_COUNT_COMMANDS
+#include "back_count_commands.h"
+#else
+#define BACK_COUNT_COMMANDS
+#endif
+
 #ifdef HAS_ANALOG_FILTER_COMMANDS
 #include "analog_filter_commands.h"
 #else
 #define ANALOG_FILTER_COMMANDS
 #endif
+
+#ifdef HAS_BPSK_4FS_COMMANDS
+#include "BPSK_4FS_commands.h"
+#else
+#define BPSK_4FS_COMMANDS
+#endif
+
 
 #ifdef HAS_FOURIER_SERIES_COMMANDS
 #include "fourier_series_commands.h"
@@ -41,6 +54,13 @@
 #define CALCULATOR_COMMANDS
 #endif
 
+#ifdef HAS_M_SEQ_COMMANDS
+#include "m_seq_commands.h"
+#else
+#define M_SEQ_COMMANDS
+#endif
+
+
 #ifdef HAS_CONVERTOR_COMMANDS
 #include "convertor_commands.h"
 #else
@@ -59,10 +79,22 @@
 #define RLE_COMMANDS
 #endif
 
+#ifdef HAS_INTERVAL_COMMANDS
+#include "interval_commands.h"
+#else
+#define INTERVAL_COMMANDS
+#endif
+
 #ifdef HAS_SW_DAC_COMMANDS
 #include "sw_dac_commands.h"
 #else
 #define SW_DAC_COMMANDS
+#endif
+
+#ifdef HAS_RATIONAL_NUM_COMMANDS
+#include "rational_num_commands.h"
+#else
+#define RATIONAL_NUM_COMMANDS
 #endif
 
 #ifdef HAS_SOLUTIONS_COMMANDS
@@ -101,11 +133,18 @@
 #define STATISTICS_COMMANDS
 #endif
 
+#ifdef HAS_PLANETARIUM_COMMANDS
+#include "planetarium_commands.h"
+#else
+#define PLANETARIUM_COMMANDS
+#endif
+
 #ifdef HAS_VOLTAGE_DIVIDER_COMMANDS
 #include "voltage_divider_commands.h"
 #else
 #define VOLTAGE_DIVIDER_COMMANDS
 #endif
+
 #ifdef HAS_PLL_CALC_COMMANDS
 #include "pll_calc_commands.h"
 #else
@@ -123,7 +162,6 @@
 #else
 #define MATH_COMMANDS
 #endif
-
 
 #ifdef HAS_PLL_SIM_COMMANDS
 #include "pll_sim_commands.h"
@@ -149,6 +187,12 @@
 #define DSP_COMMANDS
 #endif
 
+#ifdef HAS_LOCAL_OSCILLATOR_COMMANDS
+#include "local_oscillator_commands.h"
+#else
+#define LOCAL_OSCILLATOR_COMMANDS
+#endif
+
 #ifdef HAS_MODULATOR_COMMANDS
 #include "modulator_commands.h"
 #else
@@ -164,16 +208,23 @@
 #define COMPUTING_COMMANDS      \
     ANALOG_FILTER_COMMANDS      \
     BASE64_COMMANDS             \
+    BPSK_4FS_COMMANDS           \
     CALCULATOR_COMMANDS         \
     CONVERTOR_COMMANDS          \
+    BACK_COUNT_COMMANDS         \
     DDS_COMMANDS                \
     DSP_COMMANDS                \
+    LOCAL_OSCILLATOR_COMMANDS   \
     MATH_COMMANDS               \
+    M_SEQ_COMMANDS              \
     MODULATOR_COMMANDS          \
     IEC16022_COMMANDS           \
+    PLANETARIUM_COMMANDS        \
     RLE_COMMANDS                \
     PLL_CALC_COMMANDS           \
     PLL_SIM_COMMANDS            \
+    INTERVAL_COMMANDS           \
+    RATIONAL_NUM_COMMANDS       \
     SOLVER_COMMANDS             \
     SOLUTIONS_COMMANDS          \
     STATISTICS_COMMANDS         \

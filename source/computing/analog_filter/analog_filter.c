@@ -30,19 +30,19 @@ double filter_lc_calc_f_cut_hz(double incuctance_henri, double capasity_farad) {
     return f_cut_hz;
 }
 
-double filter_lc_calc_resonant_frequency_hz(const double L_henri, const  double C_f){
+double filter_lc_calc_resonant_frequency_hz(const double L_henri, const double C_f) {
     double resonant_frequency_hz = 0.0;
-    double T = 2.0 * M_PI * sqrt(L_henri*C_f);
-    if(0.0<T){
-        resonant_frequency_hz =1.0/T;
+    double T = 2.0 * M_PI * sqrt(L_henri * C_f);
+    if(0.0 < T) {
+        resonant_frequency_hz = 1.0 / T;
         LOG_INFO(ANALOG_FILTER, "L:%f H,C:%f F,F0:%f Hz", L_henri, C_f, resonant_frequency_hz);
     }
     return resonant_frequency_hz;
 }
 
 double capasity_serial_connection_calc(const double c1_f, const double c2_f) {
-    double capasity=0.0;
-    capasity = (c1_f*c2_f)/(c1_f+c2_f);
+    double capasity = 0.0;
+    capasity = (c1_f * c2_f) / (c1_f + c2_f);
     LOG_INFO(ANALOG_FILTER, "C1:%f F,C2:%f F,->C:%f F", c1_f, c2_f, capasity);
     return capasity;
 }
@@ -53,7 +53,7 @@ double colpitts_oscillator_calc(double c1_f, double L_henri, double c2_f) {
         double C_f = capasity_serial_connection_calc(c1_f, c2_f);
         frequency_hz = filter_lc_calc_resonant_frequency_hz(L_henri, C_f);
         double atten = c1_f / c2_f;
-        LOG_INFO(ANALOG_FILTER, "C:%f F,F_0:%f Hz,Att:%f",C_f, frequency_hz, atten);
+        LOG_INFO(ANALOG_FILTER, "C:%f F,F_0:%f Hz,Att:%f", C_f, frequency_hz, atten);
     }
     return frequency_hz;
 }

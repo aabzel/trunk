@@ -16,21 +16,17 @@
 #include "flash_fs.h"
 #endif
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 #include "time_mcal.h"
 #include "utils_math.h"
 
-double gnss_calc_distance_m(GnssCoordinate_t dot1, GnssCoordinate_t dot2) {
-    double distance = 0.0f;
-    double dlong = (dot2.lambda - dot1.lambda) * D2R;
-    double dlat = (dot2.phi - dot1.phi) * D2R;
-    double a = pow(sin(dlat / 2.0), 2) + cos(dot1.phi * D2R) * cos(dot2.phi * D2R) * pow(sin(dlong / 2.0), 2);
+double gnss_calc_distance_m(GnssCoordinate_t* dot1, GnssCoordinate_t* dot2) {
+    double distance_m = 0.0f;
+    double dlong_rad = (dot2->lambda - dot1->lambda) * D2R;
+    double dlat_rad = (dot2->phi - dot1->phi) * D2R;
+    double a = pow(sin(dlat_rad / 2.0), 2) + cos(dot1->phi * D2R) * cos(dot2->phi * D2R) * pow(sin(dlong_rad / 2.0), 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    distance = 6367 * c * 1000.0;
-    return distance;
+    distance_m = 6367.0 * c * 1000.0;
+    return distance_m;
 }
 
 bool is_valid_phi(double phi_deg) {
@@ -43,21 +39,21 @@ bool is_valid_phi(double phi_deg) {
 
 bool gnss_is_valid_lambda(double lambda_deg) {
     bool res = false;
-    if(-180.0  <= lambda_deg) {
-        if(lambda_deg <= 180.0){
+    if(-180.0 <= lambda_deg) {
+        if(lambda_deg <= 180.0) {
             res = true;
         }
     }
     return res;
 }
 
-bool is_valid_gnss_coordinates(GnssCoordinate_t dot) {
+bool is_valid_gnss_coordinates(GnssCoordinate_t* Node) {
     bool res = false;
-    res = is_valid_phi(dot.phi);
+    res = is_valid_phi(Node->phi);
     if(res) {
-        res = gnss_is_valid_lambda(  dot.lambda) ;
+        res = gnss_is_valid_lambda(Node->lambda);
         GnssCoordinate_t valid_dot = {55.750964, 37.617135};
-        double distance = gnss_calc_distance_m(dot, valid_dot);
+        double distance = gnss_calc_distance_m(Node, &valid_dot);
         if(distance < 5057696.0) {
             res = true;
         } else {
@@ -79,7 +75,7 @@ double gnss_encoding_2_degrees(double in_ddmm_mmmmm) {
 
 GnssCoordinate_t encode_gnss_coordinates(GnssCoordinate_t dot_ddmm) {
     GnssCoordinate_t dot_dd = {0};
-    dot_dd.phi = gnss_encoding_2_degrees(dot_ddmm.phi);
+    dot_dd.phi    = gnss_encoding_2_degrees(dot_ddmm.phi);
     dot_dd.lambda = gnss_encoding_2_degrees(dot_ddmm.lambda);
     return dot_dd;
 }
@@ -190,7 +186,6 @@ int8_t sign(double value) {
 
     return sign_val;
 }
-
 
 #ifdef HAS_SDR
 /*

@@ -10,19 +10,19 @@
  * */
 bool timer_calc_artery_command(int32_t argc, char* argv[]) {
     bool res = false;
-    double freq_apb_hz = 100000000;
-    double freq_signal_hz = 1000;
+    float freq_apb_hz = 100000000;
+    float freq_signal_hz = 1000;
     uint8_t resolition_bit = 16;
 
     if(1 <= argc) {
-        res = try_str2number(argv[0], &freq_apb_hz);
+        res = try_str2float(argv[0], &freq_apb_hz);
         if(false == res) {
             LOG_ERROR(TIMER_CALC, "ParseErr [%s]", argv[0]);
         }
     }
 
     if(2 <= argc) {
-        res = try_str2number(argv[1], &freq_signal_hz);
+        res = try_str2float(argv[1], &freq_signal_hz);
         if(false == res) {
             LOG_ERROR(TIMER_CALC, "ParseErr [%s]", argv[1]);
         }
@@ -40,7 +40,7 @@ bool timer_calc_artery_command(int32_t argc, char* argv[]) {
         res = timer_calc_artery(freq_apb_hz, freq_signal_hz, resolition_bit, &TimerArtety);
         if(res) {
             LOG_INFO(TIMER_CALC, "%s", TimerArtetyToStr(&TimerArtety));
-            double tick_s = ((double)TimerArtety.prescaler) / freq_apb_hz;
+            float tick_s = ((float)TimerArtety.prescaler) / freq_apb_hz;
             LOG_INFO(TIMER_CALC, "TickTime:%s s", DoubleToStr(tick_s));
         } else {
             LOG_ERROR(TIMER_CALC, "NoValues");

@@ -14,6 +14,7 @@
 #include "param_drv.h"
 #endif
 
+#ifdef HAS_SDR
 bool gnss_data_command(int32_t argc, char* argv[]) {
     bool res = false;
     if(0 == argc) {
@@ -25,8 +26,12 @@ bool gnss_data_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+#endif
 
-bool gnss_set_location_command(int32_t argc, char* argv[]) {
+/*
+ gnss_true_loc
+*/
+bool gnss_true_location_command(int32_t argc, char* argv[]) {
     bool res = false;
     GnssCoordinate_t Coordinate = {0.0, 0.0};
     if(1 <= argc) {
@@ -38,11 +43,7 @@ bool gnss_set_location_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        LOG_INFO(GNSS, "Set [%s]", coordinate2str(&Coordinate));
-        res = false;
-#ifdef HAS_PARAM
-        res = param_set(PAR_ID_TRUE_LOCATION, (uint8_t*)&Coordinate);
-#endif
+        res = gnss_true_location_set(&Coordinate);
         if(res) {
             LOG_INFO(GNSS, "Set [%s] Ok", coordinate2str(&Coordinate));
         } else {
@@ -52,6 +53,7 @@ bool gnss_set_location_command(int32_t argc, char* argv[]) {
     return res;
 }
 
+#ifdef HAS_SDR
 bool gnss_doppler_command(int32_t argc, char* argv[]) {
     bool res = false;
     double velocity_mps = 0.0;
@@ -78,6 +80,9 @@ bool gnss_doppler_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+#endif
+
+#ifdef HAS_SDR
 
 /*
  * glo 9.548M 38.192M 1
@@ -138,7 +143,9 @@ bool gnss_generate_lo_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+#endif
 
+#ifdef HAS_SDR
 bool gnss_carr_pahse_err_command(int32_t argc, char* argv[]) {
     bool res = false;
     int32_t i_val = 0;
@@ -164,3 +171,4 @@ bool gnss_carr_pahse_err_command(int32_t argc, char* argv[]) {
 
     return res;
 }
+#endif

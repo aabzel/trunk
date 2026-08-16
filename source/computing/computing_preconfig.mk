@@ -51,7 +51,12 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
         include $(COMPUTING_DIR)/iec16022/iec16022_preconfig.mk
     endif
 
-	ifeq ($(LIMITER),Y)
+    ifeq ($(BACK_COUNT),Y)
+        # $(error BACK_COUNT=$(BACK_COUNT))
+        include $(COMPUTING_DIR)/back_count/back_count_preconfig.mk
+    endif
+
+    ifeq ($(LIMITER),Y)
         #  $(error LIMITER=$(LIMITER))
         include $(COMPUTING_DIR)/limiter/limiter_preconfig.mk
     endif
@@ -80,6 +85,10 @@ ifneq ($(COMPUTING_PRECONFIG_MK_INC),Y)
 
     ifeq ($(RLE),Y)
         include $(COMPUTING_DIR)/rle/rle_preconfig.mk
+    endif
+
+    ifeq ($(M_SEQ),Y)
+        include $(COMPUTING_DIR)/m_seq/m_seq_preconfig.mk
     endif
 
     ifeq ($(SHA256),Y)

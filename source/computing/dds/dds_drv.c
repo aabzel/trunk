@@ -1,23 +1,30 @@
 #include "dds_drv.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "array.h"
-#include "std_includes.h"
 #include "bit_utils.h"
 #include "byte_utils.h"
 #include "code_generator.h"
 #include "convert.h"
 #include "data_types.h"
+#include "log.h"
+#include "std_includes.h"
 #include "table_utils.h"
 #include "time_mcal.h"
-#include "log.h"
-#include "code_generator.h"
 #include "writer_config.h"
+
+#ifdef HAS_BARKER_CODE
+#include "barker_code.h"
+#endif
 //#include "utils_math.h"
+
+#ifdef HAS_M_SEQ
+#include "m_seq_mcal.h"
+#endif
 
 #ifdef HAS_FILE_PC
 #include "file_pc.h"
@@ -58,6 +65,51 @@
 COMPONENT_GET_NODE(Dds, dds)
 COMPONENT_GET_CONFIG(Dds, dds)
 
+static uint32_t dds_frame_pattern_to_sample_inc(FramePattern_t frame_pattern) {
+    uint32_t sample_inc = 0;
+    switch(frame_pattern) {
+    case CHANNEL_ONLY_RIGHT: {
+        sample_inc = 2;
+    } break;
+    case CHANNEL_ONLY_LEFT: {
+        sample_inc = 2;
+    } break;
+    case CHANNEL_BOTH: {
+        sample_inc = 2;
+    } break;
+    case CHANNEL_MONO: {
+        sample_inc = 1;
+    } break;
+    default:
+        sample_inc = 0;
+        break;
+    }
+    return sample_inc;
+}
+
+uint32_t DdsFramePatToNumChann(FramePattern_t frame_pattern) {
+    uint32_t channel_cnt = 0;
+    switch(frame_pattern) {
+    case CHANNEL_ONLY_RIGHT:
+        channel_cnt = 2;
+        break;
+    case CHANNEL_ONLY_LEFT:
+        channel_cnt = 2;
+        break;
+    case CHANNEL_BOTH:
+        channel_cnt = 2;
+        break;
+    case CHANNEL_MONO:
+        channel_cnt = 1;
+        break;
+    default: {
+        LOG_ERROR(DDS, "UndefFramePattern:%u", frame_pattern);
+        channel_cnt = 0;
+    } break;
+    }
+    return channel_cnt;
+}
+
 bool dds_is_init(uint8_t num) {
     bool res = false;
     DdsHandle_t* Dds = DdsGetNode(num);
@@ -67,12 +119,11 @@ bool dds_is_init(uint8_t num) {
     return res;
 }
 
-
 uint8_t i2s_num_to_dds_num(uint8_t i2s_num) {
     uint8_t dds_num = 1;
     uint32_t i = 0;
     uint32_t cnt = dds_get_cnt();
-    for (i = 0; i < cnt; i++) {
+    for(i = 0; i < cnt; i++) {
         if(INTERFACE_NAME_I2S == DdsInstance[i].player.interface_name) {
             if(i2s_num == DdsInstance[i].player.num) {
                 if(DdsInstance[i].valid) {
@@ -102,7 +153,7 @@ bool dds_proc_sample(uint8_t num, SampleType_t* out_dds_sample) {
         } break;
         case DDS_MODE_SIN: {
             (*out_dds_sample) = (SampleType_t)calc_sin_sample(cur_time_us, Node->frequency, Node->phase_ms,
-                                                              Node->amplitude, Node->offset);
+                                                              Node->amplitude, Node->offset,Node->signal_diration_s);
             res = true;
 
         } break;
@@ -136,19 +187,17 @@ static float DDS_is_valid_freq(float frequency) {
     return out_freq;
 }
 
-static bool dds_init_common(const DdsConfig_t* const Config,
-                            DdsHandle_t* const Node){
+static bool dds_init_common(const DdsConfig_t* const Config, DdsHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
-            Node->total_sample_cnt = Config->total_sample_cnt;
-            Node->sample_cnt = Config->sample_cnt;
             Node->amplitude = Config->amplitude;
             Node->dds_mode = Config->dds_mode;
             Node->duty_cycle = Config->duty_cycle;
             Node->frame_pattern = Config->frame_pattern;
             Node->frequency = DDS_is_valid_freq(Config->frequency);
             Node->frequency2 = DDS_is_valid_freq(Config->frequency2);
+            Node->m_seq_num = Config->m_seq_num;
             Node->name = Config->name;
             Node->offset = Config->offset;
             Node->phase_ms = Config->phase_ms;
@@ -158,31 +207,32 @@ static bool dds_init_common(const DdsConfig_t* const Config,
             Node->sample_per_second = Config->sample_per_second;
             Node->signal_diration_s = Config->signal_diration_s;
             Node->sample_array = Config->sample_array;
+            Node->total_sample_cnt = Config->total_sample_cnt;
             res = true;
         }
     }
     return res;
 }
 
-static bool  DdsIsValidConfig(const DdsConfig_t*const  Config){
+static bool DdsIsValidConfig(const DdsConfig_t* const Config) {
     bool res = false;
-    if(Config){
+    if(Config) {
         res = true;
     }
-    if(res){
-        if(NULL==Config->sample_array){
+    if(res) {
+        if(NULL == Config->sample_array) {
             res = false;
             LOG_ERROR(DDS, "DDS,SampleArrErr");
-        }else{
+        } else {
             res = true;
         }
     }
 
     if(res) {
-        if(0==Config->sample_cnt) {
+        if(0 == Config->sample_cnt) {
             res = false;
             LOG_ERROR(DDS, "DDS,ArraySizeErr");
-        }else{
+        } else {
             res = true;
         }
     }
@@ -190,53 +240,52 @@ static bool  DdsIsValidConfig(const DdsConfig_t*const  Config){
     if(res) {
         if(0 < Config->amplitude) {
             res = true;
-        }else{
+        } else {
             res = false;
             LOG_ERROR(DDS, "DDS,AmpErr");
         }
     }
 
-    if(res){
-        if(0<=Config->frequency){
+    if(res) {
+        if(0 <= Config->frequency) {
             res = true;
-        }else{
+        } else {
             res = false;
             LOG_ERROR(DDS, "DDS,FreqErr");
         }
     }
 
-    if(res){
-        if(0<=Config->frequency2){
+    if(res) {
+        if(0 <= Config->frequency2) {
             res = true;
-        }else{
+        } else {
             res = false;
             LOG_ERROR(DDS, "DDS,Freq2Err");
         }
     }
 
-    if(res){
-        if(0<Config->sample_bitness){
+    if(res) {
+        if(0 < Config->sample_bitness) {
             res = true;
-        }else{
+        } else {
             res = false;
             LOG_ERROR(DDS, "DDS,SampleSizeErr");
         }
     }
 
-    if(res){
-        if(0<Config->sample_per_second){
+    if(res) {
+        if(0 < Config->sample_per_second) {
             res = true;
-        }else{
+        } else {
             res = false;
             LOG_ERROR(DDS, "DDS,FpsErr");
         }
     }
 
-
-    if(res){
-        if(0<Config->signal_diration_s){
+    if(res) {
+        if(0 < Config->signal_diration_s) {
             res = true;
-        }else{
+        } else {
             res = false;
             LOG_ERROR(DDS, "DDS,SigDurErr");
         }
@@ -255,8 +304,7 @@ bool dds_set_sample(uint8_t num, SampleType_t sample) {
     return res;
 }
 
-bool dds_set_pwm(uint8_t num, float frequency, SampleType_t amplitude, float duty_cycle, float phase_ms,
-                 float offset) {
+bool dds_set_pwm(uint8_t num, float frequency, SampleType_t amplitude, float duty_cycle, float phase_ms, float offset) {
     bool res = false;
     DdsHandle_t* Node = DdsGetNode(num);
     if(Node) {
@@ -272,30 +320,15 @@ bool dds_set_pwm(uint8_t num, float frequency, SampleType_t amplitude, float dut
     return res;
 }
 
-
-uint32_t DdsFramePatToNumChann(FramePattern_t frame_pattern){
-    uint32_t channel_cnt = 0;
-    switch(frame_pattern) {
-        case CHANNEL_ONLY_RIGHT: channel_cnt = 2;break;
-        case CHANNEL_ONLY_LEFT:channel_cnt = 2; break;
-        case CHANNEL_BOTH: channel_cnt = 2;break;
-        case CHANNEL_MONO: channel_cnt = 1;break;
-        default:
-            channel_cnt = 0;
-            break;
-    }
-    return channel_cnt;
-}
-
-bool dds_shift_signal(uint8_t num, float phase_s){
+bool dds_shift_signal(uint8_t num, float phase_s) {
     bool res = false;
     DdsHandle_t* Node = DdsGetNode(num);
-    if (Node) {
-        float sample_dur_s = 1.0/((float)Node->sample_per_second);
-        int32_t offset_sam = phase_s/sample_dur_s;
-        LOG_INFO(DDS, "AddFront:%u Samples,Dur:%f s", offset_sam,sample_dur_s);
+    if(Node) {
+        float sample_dur_s = 1.0 / ((float)Node->sample_per_second);
+        int32_t offset_sam = phase_s / sample_dur_s;
+        LOG_INFO(DDS, "AddFront:%u Samples,Dur:%f s", offset_sam, sample_dur_s);
 #ifdef HAS_AUDIO
-        res = audio_add_front_zeros(Node->sample_array,Node->sample_cnt,offset_sam);
+        res = audio_add_front_zeros(Node->sample_array, Node->sample_cnt, offset_sam);
 #endif
     }
     return res;
@@ -308,7 +341,7 @@ bool dds_set_phase_ms(uint8_t num, float phase_ms) {
     if(Node) {
         Node->phase_ms = phase_ms;
         res = true;
-    }else {
+    } else {
         LOG_ERROR(DDS, "DDS%u,NodeErr", num);
     }
     return res;
@@ -316,31 +349,100 @@ bool dds_set_phase_ms(uint8_t num, float phase_ms) {
 
 bool dds_phase_set(uint8_t num, float phase_s) {
     bool res = false;
+    LOG_INFO(DDS, "DDS%u,Set,Phase:%f s", num, phase_s);
     float phase_ms = SEC_2_MSEC(phase_s);
-    res = dds_set_phase_ms(  num,   phase_ms);
+    res = dds_set_phase_ms(num, phase_ms);
     return res;
 }
 
-bool dds_set_chirp(uint8_t num,
-                   float chirp_duration_s,
-                   float frequency1,
-                   float frequency2) {
+bool dds_set_m_seq(uint8_t num, uint8_t m_seq_num, float amplitude, float carrier_frequency_hz,
+                   uint32_t periods_per_chip) {
     bool res = false;
-    LOG_WARNING(DDS, "Mode:Chirp,Freq1:%f Hz,Freq2:%f Hz,Duration:%f s", frequency1, frequency2, chirp_duration_s);
+    LOG_WARNING(DDS, "Mode:mSeq,Amp:%f,CarFreq:%f Hz,PerPerChip:%u,mSeq:%u", amplitude, carrier_frequency_hz,
+                periods_per_chip, m_seq_num);
 
     DdsHandle_t* Node = DdsGetNode(num);
     if(Node) {
+        Node->m_seq_num = m_seq_num;
+        Node->amplitude = (SampleType_t)amplitude;
+        Node->frequency = carrier_frequency_hz;
+        Node->periods_per_chip = periods_per_chip;
+        Node->signal_diration_s = m_seq_signal_duration(m_seq_num, carrier_frequency_hz, periods_per_chip);
+        float sample_time_s = 1.0f / ((float)Node->sample_per_second);
+        uint32_t sample_need = Node->signal_diration_s / sample_time_s;
+        LOG_INFO(DDS, "DDS%u,SampleNeed:%u Sam,Duration:%f s", num, sample_need, Node->signal_diration_s);
+
+        if(sample_need < Node->total_sample_cnt) {
+            res = true;
+            Node->dds_mode = DDS_MODE_M_SEQ;
+        } else {
+            LOG_ERROR(DDS, "DDS%u,TooLongSignalToGenerate,Err,Duration:%f s", num, Node->signal_diration_s);
+        }
+    } else {
+        LOG_ERROR(DDS, "DDS%u,NodeErr", num);
+    }
+
+    return res;
+}
+
+#ifdef HAS_BARKER_CODE
+bool dds_set_barker13(uint8_t num, float amplitude, float carrier_frequency_hz, uint32_t periods_per_chip) {
+    bool res = false;
+    LOG_WARNING(DDS, "Mode:Barker13,Amp:%f,CarFreq:%f Hz,PerPerChip:%u", amplitude, carrier_frequency_hz,
+                periods_per_chip);
+
+    DdsHandle_t* Node = DdsGetNode(num);
+    if(Node) {
+        Node->amplitude = (SampleType_t)amplitude;
+        Node->frequency = carrier_frequency_hz;
+        Node->periods_per_chip = periods_per_chip;
+        Node->signal_diration_s = barker13_signal_duration(carrier_frequency_hz, periods_per_chip);
+        float sample_time_s = 1.0f / ((float)Node->sample_per_second);
+        uint32_t sample_need = Node->signal_diration_s / sample_time_s;
+        LOG_INFO(DDS, "DDS%u,SampleNeed:%u Sam,Duration:%f s", num, sample_need, Node->signal_diration_s);
+
+        if(sample_need < Node->total_sample_cnt) {
+            res = true;
+            Node->dds_mode = DDS_MODE_BARKER_13;
+        } else {
+            LOG_ERROR(DDS, "DDS%u,TooLongSignalToGenerate,Err,Duration:%f s", num, Node->signal_diration_s);
+        }
+    } else {
+        LOG_ERROR(DDS, "DDS%u,NodeErr", num);
+    }
+    return res;
+}
+#endif
+
+bool dds_set_chirp(uint8_t num, float amplitude, float chirp_duration_s, float frequency1, float frequency2) {
+    bool res = false;
+    LOG_WARNING(DDS, "Mode:Chirp,Amp:%f,Freq1:%f Hz,Freq2:%f Hz,Duration:%f s", amplitude, frequency1, frequency2,
+                chirp_duration_s);
+
+    DdsHandle_t* Node = DdsGetNode(num);
+    if(Node) {
+        Node->amplitude = (SampleType_t)amplitude;
         Node->frequency = frequency1;
         Node->frequency2 = frequency2;
         Node->signal_diration_s = chirp_duration_s;
         Node->dds_mode = DDS_MODE_CHIRP;
         res = true;
-    }else {
+    } else {
         LOG_ERROR(DDS, "DDS%u,NodeErr", num);
     }
     return res;
 }
 
+float dds_signal_diration_get(uint8_t num) {
+    float signal_diration_s = 0.0;
+    DdsHandle_t* Node = DdsGetNode(num);
+    if(Node) {
+        signal_diration_s = Node->signal_diration_s;
+    } else {
+        LOG_ERROR(DDS, "DDS%u,NodeErr", num);
+    }
+    return signal_diration_s;
+}
 
 bool dds_set_sin(uint8_t num, float frequency, SampleType_t amplitude, float phase_ms, SampleType_t offset) {
     bool res = false;
@@ -387,104 +489,115 @@ bool dds_init(void) {
 }
 #endif
 
-int16_t dds_calc_sin_sample_s16(float t_s, DdsHandle_t* const Node){
+int16_t dds_calc_sin_sample_s16(float up_time_s, DdsHandle_t* const Node) {
     int16_t sample = 0;
     if(Node) {
-        if(0.0<t_s) {
-            uint64_t time_us = (uint64_t) SEC_2_USEC(t_s);
-            float sample_d = calc_sin_sample(time_us,
-                                             (float) Node->frequency,
-                                             (float) Node->phase_ms,
-                                             (float) Node->amplitude,
-                                             (float) Node->offset);
-            sample = (int16_t) sample_d;
+        if(0.0 < up_time_s) {
+            uint64_t time_us = (uint64_t)SEC_2_USEC(up_time_s);
+            float sample_d = calc_sin_sample(time_us, (float)Node->frequency, (float)Node->phase_ms,
+                                             (float)Node->amplitude, (float)Node->offset, Node->signal_diration_s);
+            sample = (int16_t)sample_d;
         }
     }
 
     return sample;
 }
 
-
-float  DdsPhaseMsToRad(float Fs, float phase_ms) {
+float DdsPhaseMsToRad(float Fs, float phase_ms) {
     float phase_rad = 0.0;
-    phase_rad = 4*M_PI*Fs*phase_ms/1000.0;
+    phase_rad = 4 * M_PI * Fs * phase_ms / 1000.0;
     return phase_rad;
 }
 
-int16_t dds_calc_sample_s16(float t_s, DdsHandle_t* const Node) {
+int16_t dds_calc_sample_s16(float up_time_s, DdsHandle_t* const Node) {
     int16_t sample = 0;
     if(Node) {
-        if(0.0<t_s) {
-            uint64_t time_us = (uint64_t) SEC_2_USEC(t_s);
+        if(0.0 < up_time_s) {
+            uint64_t time_us = (uint64_t)SEC_2_USEC(up_time_s);
             float sample_d = 0.0;
             switch(Node->dds_mode) {
-            case DDS_MODE_CHIRP: {
-              float phase_rad = DdsPhaseMsToRad(Node->sample_per_second, Node->phase_ms);
-                sample_d = calc_chirp_sample(time_us,
-                                           (float) Node->frequency2,
-                                           (float) Node->frequency,
-                                                    phase_rad,
-                                           (float) Node->amplitude,
-                                           (float) Node->signal_diration_s);
-            }break;
             case DDS_MODE_SIN: {
-                  sample_d = calc_sin_sample(time_us,
-                                             (float) Node->frequency,
-                                             (float) Node->phase_ms,
-                                             (float) Node->amplitude,
-                                             (float) Node->offset);
+                sample_d = calc_sin_sample(time_us, (float)Node->frequency, (float)Node->phase_ms,
+                                           (float)Node->amplitude, (float)Node->offset, Node->signal_diration_s);
 
-            }break;
-            default: {}break;
+            } break;
+
+            case DDS_MODE_M_SEQ: {
+                sample_d = m_seq_calc_sample(Node->m_seq_num, up_time_s, (float)Node->amplitude, (float)Node->frequency,
+                                             Node->periods_per_chip);
+            } break;
+
+#ifdef HAS_BARKER_CODE
+            case DDS_MODE_BARKER_13: {
+                sample_d = calc_barker13_sample(up_time_s, (float)Node->amplitude, (float)Node->frequency,
+                                                Node->periods_per_chip);
+            } break;
+#endif
+
+            case DDS_MODE_CHIRP: {
+                float phase_rad = DdsPhaseMsToRad(Node->sample_per_second, Node->phase_ms);
+                sample_d = calc_chirp_sample(up_time_s, (float)Node->frequency2, (float)Node->frequency, phase_rad,
+                                             (float)Node->amplitude, (float)Node->signal_diration_s);
+            } break;
+
+
+            default: {
+                sample = 0;
+            } break;
             }
-            sample = (int16_t) sample_d;
+            sample = (int16_t)sample_d;
         }
     }
 
     return sample;
 }
 
-
-bool dds_calc_one_sample(DdsHandle_t* Node,
-                         uint64_t cur_time_ns,
-                         SampleType_t* tx_sample) {
+bool dds_calc_one_sample(DdsHandle_t* Node, uint64_t cur_time_ns, SampleType_t* tx_sample) {
     bool res = false;
     Node->tx_sample_d = 0.0;
-    uint64_t time_us = cur_time_ns/1000;
+    uint64_t time_us = cur_time_ns / 1000;
+    float time_s = NSEC_2_SEC(cur_time_ns);
     Node->tx_sample = 0;
-    switch( Node->dds_mode) {
-        case DDS_MODE_CHIRP: {
-            Node->tx_sample_d = calc_chirp_sample(  time_us,
-                                       Node->frequency2,
-                                       Node->frequency,
-                                       0.0,
-                                       (float)  Node->amplitude,
-                                          Node->signal_diration_s);
-            res = true;
-        } break;
-        case DDS_MODE_SIN: {
-            Node->tx_sample_d = calc_sin_sample(time_us,
-                                                Node->frequency,
-                                                Node->phase_ms,
-                                                ((float)Node->amplitude),
-                                                ((float)Node->offset));
-            res = true;
-        } break;
+    switch(Node->dds_mode) {
+    case DDS_MODE_SIN: {
+        Node->tx_sample_d = calc_sin_sample(time_us, Node->frequency, Node->phase_ms, ((float)Node->amplitude),
+                                            ((float)Node->offset), (float)Node->signal_diration_s);
+        res = true;
+    } break;
 
-        case DDS_MODE_DTMF: {
-            Node->tx_sample_d = calc_dtmf_sample(time_us,
-                                                 Node->frequency,
-                                                 Node->frequency2,
-                                                 Node->phase_ms,
-                                                 ((float)Node->amplitude),
-                                                 ((float)Node->offset));
-            res = true;
-        } break;
-        default: break;
+    case DDS_MODE_M_SEQ: {
+        Node->tx_sample_d =
+            m_seq_calc_sample(Node->m_seq_num, time_s, (float)Node->amplitude, Node->frequency, Node->periods_per_chip);
+        res = true;
+    } break;
+
+#ifdef HAS_BARKER_CODE
+    case DDS_MODE_BARKER_13: {
+        Node->tx_sample_d =
+            calc_barker13_sample(time_s, (float)Node->amplitude, Node->frequency, Node->periods_per_chip);
+        res = true;
+    } break;
+#endif
+
+    case DDS_MODE_CHIRP: {
+        Node->tx_sample_d = calc_chirp_sample(time_s, Node->frequency2, Node->frequency, 0.0, (float)Node->amplitude,
+                                              Node->signal_diration_s);
+        res = true;
+    } break;
+
+    case DDS_MODE_DTMF: {
+#ifdef HAS_DTMF
+        Node->tx_sample_d = calc_dtmf_sample(time_us, Node->frequency, Node->frequency2, Node->phase_ms,
+                                             ((float)Node->amplitude), ((float)Node->offset));
+#endif
+        res = true;
+    } break;
+    default:
+        break;
     } // switch((uint8_t)Node->dds_mode)
     Node->tx_sample = (SampleType_t)Node->tx_sample_d;
-    //LOG_PARN(DDS, "%s", DdsSampleToStr(Node,s));
-    *tx_sample =Node->tx_sample;
+    // LOG_PARN(DDS, "%s", DdsSampleToStr(Node,s));
+    *tx_sample = Node->tx_sample;
 
     return res;
 }
@@ -520,34 +633,33 @@ bool dds_set_saw(uint8_t num, float frequency, SampleType_t amplitude, float pha
  i - I2S left channel
  s - sample serial number
  */
-static bool dds_save_sample(DdsHandle_t* Node,
-                            uint32_t i,
-                            uint32_t s,
-                            SampleType_t tx_sample){
+static bool dds_save_sample(DdsHandle_t* Node, uint32_t i, uint32_t s, SampleType_t tx_sample) {
     bool res = false;
 
     if(i < Node->total_sample_cnt) {
         switch(Node->frame_pattern) {
-            case CHANNEL_ONLY_RIGHT: {
-                Node->sample_array[i] = 0;
-                Node->sample_array[i + 1] = tx_sample;
-                res = true;
-            } break;
-            case CHANNEL_ONLY_LEFT: {
-                Node->sample_array[i] = tx_sample;
-                Node->sample_array[i + 1] = 0;
-                res = true;
-            } break;
-            case CHANNEL_BOTH: {
-                Node->sample_array[i] = tx_sample;
-                Node->sample_array[i + 1] = tx_sample;
-                res = true;res = true;
-            } break;
-            case CHANNEL_MONO: {
-                Node->sample_array[s] = tx_sample;
-                res = true;
-            } break;
-            default: break;
+        case CHANNEL_ONLY_RIGHT: {
+            Node->sample_array[i] = 0;
+            Node->sample_array[i + 1] = tx_sample;
+            res = true;
+        } break;
+        case CHANNEL_ONLY_LEFT: {
+            Node->sample_array[i] = tx_sample;
+            Node->sample_array[i + 1] = 0;
+            res = true;
+        } break;
+        case CHANNEL_BOTH: {
+            Node->sample_array[i] = tx_sample;
+            Node->sample_array[i + 1] = tx_sample;
+            res = true;
+            res = true;
+        } break;
+        case CHANNEL_MONO: {
+            Node->sample_array[s] = tx_sample;
+            res = true;
+        } break;
+        default:
+            break;
         }
     } else {
         LOG_ERROR(DDS, "StaticArrayOverflow:%u/%u", i, Node->sample_cnt);
@@ -614,23 +726,19 @@ bool dds_set_fps(uint8_t num, uint32_t fps) {
     return res;
 }
 
-
-static bool dds_calc_and_save_one_sample(DdsHandle_t* Node,
-                                         uint32_t cur_time_ns,
-                                         uint32_t i,
-                                         uint32_t s) {
+static bool dds_calc_and_save_one_sample(DdsHandle_t* Node, uint32_t cur_time_ns, uint32_t i, uint32_t s) {
     bool res = false;
-    if(s<Node->sample_cnt) {
+    if(s < Node->sample_cnt) {
         SampleType_t tx_sample = 0;
-        res = dds_calc_one_sample(Node, cur_time_ns,  &tx_sample);
+        res = dds_calc_one_sample(Node, cur_time_ns, &tx_sample);
         if(res) {
-            res = dds_save_sample(  Node, i,s, tx_sample);
+            res = dds_save_sample(Node, i, s, tx_sample);
         }
     }
     return res;
 }
 
-bool dds_player_set(uint8_t num,InterfaceType_t player) {
+bool dds_player_set(uint8_t num, InterfaceType_t player) {
     bool res = false;
     DdsHandle_t* Node = DdsGetNode(num);
     if(Node) {
@@ -672,19 +780,16 @@ bool dds_set_array(uint8_t num, uint32_t periods, uint32_t min_abs_period_ns) {
             LOG_ERROR(DDS, "NodeErr");
         }
     } else {
-        LOG_ERROR(DDS, "FreqErr %u Hz", Node->sample_per_second);
+        LOG_ERROR(DDS, "FreqErr:%u Hz", Node->sample_per_second);
     }
 
     if(res) {
-        LOG_INFO(DDS, "SamCnt:%u samples", Node->sample_cnt);
-        LOG_INFO(DDS, "SampleSize:%u byte", sizeof(SampleType_t));
+        LOG_INFO(DDS, "SamCnt:%u,samples,SampleSize:%u byte,SampleMode %s", Node->sample_cnt, sizeof(SampleType_t), DdsModeToStr(Node->dds_mode));
         uint32_t i = 0;
         uint32_t s = 0;
-        LOG_INFO(DDS, "SampleMode %s", DdsModeToStr(Node->dds_mode));
 
-        for(cur_time_ns = 0, i = 0, s = 0;
-            s < Node->sample_cnt;
-            cur_time_ns += sample_period_ns, i += 2, s++) {
+        for(cur_time_ns = 0, i = 0, s = 0; s < Node->sample_cnt;
+            cur_time_ns += sample_period_ns, i += dds_frame_pattern_to_sample_inc(Node->frame_pattern), s++) {
             res = dds_calc_and_save_one_sample(Node, cur_time_ns, i, s);
 #if 0
             if(false==res){
@@ -751,6 +856,47 @@ bool dds_frequency_set(uint8_t num, float frequency_hz) {
         res = true;
     }
     return res;
+}
+
+bool dds_sample_frequency_set(uint8_t num, float sample_frequency_hz) {
+    bool res = false;
+    LOG_INFO(DDS, "DDS%u,Set,Samplefrequency:%f Hz", num, sample_frequency_hz);
+    DdsHandle_t* Node = DdsGetNode(num);
+    if(Node) {
+        Node->sample_per_second = sample_frequency_hz;
+        res = true;
+    }
+    return res;
+}
+
+float dds_sample_frequency_get(const uint8_t num) {
+    float sample_frequency_hz = -1.0f;
+    DdsHandle_t* Node = DdsGetNode(num);
+    if(Node) {
+        sample_frequency_hz = Node->sample_per_second;
+    }
+    return sample_frequency_hz;
+}
+
+bool dds_signal_duration_set(uint8_t num, float signal_duration_s) {
+    bool res = false;
+    DdsHandle_t* Node = DdsGetNode(num);
+    if(Node) {
+        LOG_INFO(DDS, "DDS%u,Set,SignalDuration:%f s", num, signal_duration_s);
+        Node->signal_diration_s = signal_duration_s;
+        res = true;
+    }
+    return res;
+}
+
+float dds_signal_duration_get(uint8_t num) {
+    float signal_duration_s = 0;
+    DdsHandle_t* Node = DdsGetNode(num);
+    if(Node) {
+        signal_duration_s = Node->signal_diration_s;
+        LOG_DEBUG(DDS, "DDS_%u,Get,SignalDuration:%f s", num, signal_duration_s);
+    }
+    return signal_duration_s;
 }
 
 bool dds_rev_bytes(uint8_t num) {
@@ -864,21 +1010,23 @@ int16_t DdsPlayerToI2sNum(DdsPlayer_t player) {
 static bool dds_play_stop(DdsHandle_t* Node) {
     bool res = false;
     switch(Node->player.interface_name) {
-        case INTERFACE_NAME_WAV:
-        case INTERFACE_NAME_CSV:
-            Node->state = DDS_STATE_IDLE;
-            res = true;
-            break;
+    case INTERFACE_NAME_WAV:
+    case INTERFACE_NAME_CSV:
+        Node->state = DDS_STATE_IDLE;
+        res = true;
+        break;
 
-        case INTERFACE_NAME_I2S:{
-    #ifdef HAS_I2S
-                res = i2s_stop(Node->player.num);
-                if(res) {
-                    Node->state = DDS_STATE_IDLE;
-                }
-    #endif
-        }break;
-        default:            res = false;            break;
+    case INTERFACE_NAME_I2S: {
+#ifdef HAS_I2S
+        res = i2s_stop(Node->player.num);
+        if(res) {
+            Node->state = DDS_STATE_IDLE;
+        }
+#endif
+    } break;
+    default:
+        res = false;
+        break;
     }
     return res;
 }
@@ -915,9 +1063,6 @@ static DdsPlayer_t I2sNumToPlayer(uint8_t i2s_num) {
 }
 #endif
 
-
-
-
 bool dds_stop(uint8_t num) {
     bool res = false;
     LOG_INFO(DDS, "DDS%u,Stop", num);
@@ -930,8 +1075,8 @@ bool dds_stop(uint8_t num) {
 
 #ifdef HAS_I2S
 static bool dds_play_in_i2s_ll(DdsHandle_t* Node, uint8_t i2s_num) {
-    bool res = false ;
-    res = i2s_mcal_write(i2s_num, (uint16_t*)Node->sample_array, Node->sample_cnt*2);
+    bool res = false;
+    res = i2s_mcal_write(i2s_num, (uint16_t*)Node->sample_array, Node->sample_cnt * 2);
     if(res) {
         LOG_INFO(DDS, "I2s%u,Write,Ok", i2s_num);
     } else {
@@ -947,18 +1092,18 @@ static bool dds_play_in_csv_ll(DdsHandle_t* const Node) {
     uint32_t i = 0;
     LOG_INFO(DDS, "PlayInCsv");
     char csv_file[200] = {0};
-    snprintf(csv_file,sizeof(csv_file),"signal_%u.csv",Node->sample_cnt);
+    snprintf(csv_file, sizeof(csv_file), "signal_%u.csv", Node->sample_cnt);
     res = file_pc_delete(csv_file);
-    float sample_period_s = 1.0/((float)Node->sample_per_second);
-    uint32_t cnt = MIN(Node->sample_cnt,Node->sample_cnt);
-    for(i=0; i<cnt; i++) {
+    float sample_period_s = 1.0 / ((float)Node->sample_per_second);
+    uint32_t cnt = MIN(Node->sample_cnt, Node->sample_cnt);
+    for(i = 0; i < cnt; i++) {
         float up_time_s = ((float)i) * sample_period_s;
-        char lText[400]={0};
-        strcpy(lText,"");
-        snprintf(lText,sizeof(lText),"%s%.5f,",lText, up_time_s);
-        snprintf(lText,sizeof(lText),"%s%u,",lText, i);
-        snprintf(lText,sizeof(lText),"%s%d,",lText, Node->sample_array[i]);
-        snprintf(lText,sizeof(lText),"%s",lText);
+        char lText[400] = {0};
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%s%.5f,", lText, up_time_s);
+        snprintf(lText, sizeof(lText), "%s%u,", lText, i);
+        snprintf(lText, sizeof(lText), "%s%d,", lText, Node->sample_array[i]);
+        snprintf(lText, sizeof(lText), "%s", lText);
         res = file_pc_print_line(csv_file, lText, strlen(lText));
     }
     return res;
@@ -967,30 +1112,38 @@ static bool dds_play_in_csv_ll(DdsHandle_t* const Node) {
 
 #ifdef HAS_WAV
 static bool dds_play_in_wav_ll(DdsHandle_t* Node) {
-    bool res = false ;
+    bool res = false;
     LOG_INFO(DDS, "PlayInWav");
-    res = wav_generate(1, Node->num);
-    log_res(DDS,res,"WavGenerate");
+    res = wav_generate(1, Node->file_name, Node->num);
+    log_res(DDS, res, "WavGenerate");
     return res;
 }
 #endif
 
-static bool dds_play_ll(DdsHandle_t* Node){
-    bool res = false ;
+static bool dds_play_ll(DdsHandle_t* Node) {
+    bool res = false;
     LOG_INFO(DDS, "Play");
     switch(Node->player.interface_name) {
 #ifdef HAS_FILE_PC
-        case INTERFACE_NAME_CSV: res = dds_play_in_csv_ll(Node); break;
+    case INTERFACE_NAME_CSV:
+        res = dds_play_in_csv_ll(Node);
+        break;
 #endif
 
 #ifdef HAS_WAV
-        case INTERFACE_NAME_WAV: res = dds_play_in_wav_ll(Node); break;
+    case INTERFACE_NAME_WAV:
+        res = dds_play_in_wav_ll(Node);
+        break;
 #endif
 
 #ifdef HAS_I2S
-        case INTERFACE_NAME_I2S: res = dds_play_in_i2s_ll(Node,Node->player.num); break;
+    case INTERFACE_NAME_I2S:
+        res = dds_play_in_i2s_ll(Node, Node->player.num);
+        break;
 #endif
-        default:  LOG_ERROR(DDS, "UndefPlayerErr:%u",Node->player); break;
+    default:
+        LOG_ERROR(DDS, "UndefPlayerErr:%u", Node->player);
+        break;
     }
     return res;
 }
@@ -1006,7 +1159,7 @@ bool dds_play_con(uint8_t num) {
         if(res) {
             Node->state = DDS_STATE_PLAY;
             res = true;
-        }else {
+        } else {
             LOG_ERROR(DDS, "PlayErr");
         }
     } else {
@@ -1015,13 +1168,12 @@ bool dds_play_con(uint8_t num) {
     return res;
 }
 
-
 bool dds_play(uint8_t num, uint64_t duration_ms) {
     bool res = false;
     LOG_INFO(DDS, "DDS%u,Play,Duration:%llu ms", num, duration_ms);
     DdsHandle_t* Node = DdsGetNode(num);
     if(Node) {
-        Node->duration_ms = duration_ms;
+        Node->play_duration_ms = duration_ms;
         Node->proc_on = true;
         LOG_INFO(DDS, "Play:%s", DdsNodeToStr(Node));
         res = dds_play_ll(Node);
@@ -1030,7 +1182,7 @@ bool dds_play(uint8_t num, uint64_t duration_ms) {
             Node->play_off_time_stamp_ms = (uint64_t)up_time + duration_ms;
             Node->state = DDS_STATE_PLAY;
             res = true;
-        }else {
+        } else {
             LOG_ERROR(DDS, "PlayErr");
         }
     } else {
@@ -1075,14 +1227,15 @@ bool dds_proc_one(uint8_t num) {
         if(Node->proc_on) {
             uint64_t up_time = time_get_ms64();
             switch(Node->state) {
-                case DDS_STATE_PLAY: {
-                    if(Node->play_off_time_stamp_ms < up_time) {
-                        res = dds_stop(num);
-                        LOG_DEBUG(DDS, "PlayStop");
-                    }
+            case DDS_STATE_PLAY: {
+                if(Node->play_off_time_stamp_ms < up_time) {
+                    res = dds_stop(num);
+                    LOG_DEBUG(DDS, "PlayStop");
+                }
 
-                } break;
-                default: break;
+            } break;
+            default:
+                break;
             }
         }
     }
@@ -1095,22 +1248,22 @@ bool dds_init_one(uint8_t num) {
     if(Config) {
         res = DdsIsValidConfig(Config);
         if(res) {
-            LOG_WARNING(DDS, "%s",DdsConfigToStr(Config));
+            LOG_WARNING(DDS, "%s", DdsConfigToStr(Config));
             DdsHandle_t* Node = DdsGetNode(num);
             if(Node) {
-                res = dds_init_common(Config,Node);
+                res = dds_init_common(Config, Node);
                 LOG_WARNING(DDS, "DDS%u,Init,SampleSize:%u byte", num, sizeof(SampleType_t));
                 Node->init_done = true;
                 res = true;
-            }else{
+            } else {
                 LOG_ERROR(DDS, "DDS%u,NodeErr", num);
             }
-        }else{
+        } else {
             LOG_ERROR(DDS, "DDS%u,ConfigErr", num);
         }
     }
     return res;
 }
 
-COMPONENT_INIT_ANY_PATTERT_CNT(DDS, DDS, dds, DDS_CNT)
+COMPONENT_INIT_ANY_PATTERT_CNT(DDS, DDS, dds, DDS_NUM_CNT)
 COMPONENT_PROC_PATTERT(DDS, DDS, dds)

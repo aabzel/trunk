@@ -6,11 +6,11 @@
 
 #include "common_diag.h"
 #include "convert.h"
-#include "debug_info.h"
-#include "log.h"
 #include "dds_config.h"
 #include "dds_diag.h"
 #include "dds_drv.h"
+#include "debug_info.h"
+#include "log.h"
 
 #ifndef HAS_DDS
 #error "+ HAS_DDS"
@@ -20,7 +20,7 @@
 #error "+ HAS_DDS_COMMANDS"
 #endif
 
-bool cmd_dds_play(int32_t argc, char* argv[]){
+bool cmd_dds_play(int32_t argc, char* argv[]) {
     bool res = false;
     return res;
 }
@@ -102,7 +102,7 @@ bool cmd_dds_set_pwm(int32_t argc, char* argv[]) {
                  dacDutyCycle, dacPhase, dacVoltageOffset);
         if(res) {
             res = dds_set_pwm(num, dacFrequency, (SampleType_t)dac_amplitude, dacDutyCycle, dacPhase,
-                                 (SampleType_t)dacVoltageOffset);
+                              (SampleType_t)dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "Unable to set PWM signal on DAC [%u]", num);
             }
@@ -156,8 +156,7 @@ bool cmd_dds_set_saw(int32_t argc, char* argv[]) {
         if(res) {
             LOG_INFO(DDS, "Frequency: %f Amplitude: %f Phase: %f offset %f", dacFrequency, dac_amplitude, dacPhase,
                      dacVoltageOffset);
-            res = dds_set_saw(num, dacFrequency, (SampleType_t)dac_amplitude, dacPhase,
-                                 (SampleType_t)dacVoltageOffset);
+            res = dds_set_saw(num, dacFrequency, (SampleType_t)dac_amplitude, dacPhase, (SampleType_t)dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "Unable to adjust saw signal");
             }
@@ -212,8 +211,8 @@ bool cmd_dds_set_fence(int32_t argc, char* argv[]) {
         if(res) {
             LOG_INFO(DDS, "Frequency: %f Amplitude: %f Phase: %f offset %f", dacFrequency, dac_amplitude, dacPhase,
                      dacVoltageOffset);
-            res = dds_set_fence(num, dacFrequency, (SampleType_t)dac_amplitude, dacPhase,
-                                   (SampleType_t)dacVoltageOffset);
+            res =
+                dds_set_fence(num, dacFrequency, (SampleType_t)dac_amplitude, dacPhase, (SampleType_t)dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "Unable to adjust saw signal");
             }
@@ -269,8 +268,7 @@ bool cmd_dds_set_sin(int32_t argc, char* argv[]) {
         if(res) {
             LOG_INFO(DDS, "Frequency: %f Amplitude: %f Phase: %f offset %f", dacFrequency, dac_amplitude, dacPhase,
                      dacVoltageOffset);
-            res = dds_set_sin(num, dacFrequency, (SampleType_t)dac_amplitude, dacPhase,
-                                 (SampleType_t)dacVoltageOffset);
+            res = dds_set_sin(num, dacFrequency, (SampleType_t)dac_amplitude, dacPhase, (SampleType_t)dacVoltageOffset);
             if(false == res) {
                 LOG_ERROR(DDS, "Unable to adjust sin signal");
             }
@@ -350,7 +348,7 @@ bool cmd_dds_calc_static_tone(int32_t argc, char* argv[]) {
     return res;
 }
 
-//ddspt 1
+// ddspt 1
 bool cmd_dds_print_track(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 1U;
@@ -532,7 +530,7 @@ bool cmd_dds_freq(int32_t argc, char* argv[]) {
 
     LOG_INFO(DDS, "argc %d", argc);
     if(res) {
-       res = dds_frequency_set(num, frequency_hz);
+        res = dds_frequency_set(num, frequency_hz);
     } else {
         LOG_ERROR(DDS, "Usage: ddf DacNum Freq");
     }
@@ -540,85 +538,210 @@ bool cmd_dds_freq(int32_t argc, char* argv[]) {
     return res;
 }
 
+bool cmd_dds_sample_frequency(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0U;
+    float sample_frequency_hz = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+    if(2 <= argc) {
+        res = try_str2float(argv[1], &sample_frequency_hz);
+    }
+
+    if(res) {
+        switch(argc) {
+        case 1: {
+            sample_frequency_hz = dds_sample_frequency_get(num);
+            LOG_INFO(DDS, "DDS_%u,Get,SamFreq:%f Hz", num, sample_frequency_hz);
+        } break;
+
+        case 2: {
+            LOG_INFO(DDS, "DDS_%u,Set,SamFreq:%f Hz", num, sample_frequency_hz);
+            res = dds_sample_frequency_set(num, sample_frequency_hz);
+        } break;
+
+        default: {
+            res = false;
+        } break;
+        }
+    } else {
+        LOG_ERROR(DDS, "Usage: ddssfr Num SamFreqHz");
+    }
+
+    return res;
+}
 
 bool cmd_dds_set_chirp(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0U;
-    int32_t amplitude = 0;
+    float amplitude = 0;
     float frequency1 = 0;
     float frequency2 = 0;
     float chirp_duration_s = 0;
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(DDS, "ParseErr DacNum [%s]", argv[0]);
-        }
+        log_res(DDS, res, "DDSnum");
     }
+
     if(2 <= argc) {
-        res = try_str2int32(argv[1], (int32_t*)&amplitude);
-        if(false == res) {
-            LOG_ERROR(DDS, "ParseErr Pattern [%s]", argv[1]);
-        } else {
-            LOG_INFO(DDS, "ReadAmp %d", amplitude);
-        }
+        res = try_str2float(argv[1], &amplitude);
+        log_res(DDS, res, "amplitude");
     }
 
     if(res) {
         res = try_str2float(argv[2], &frequency1);
-        if(false == res) {
-            LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[2]);
-        }
+        log_res(DDS, res, "frequency1");
     }
 
     if(res) {
         res = try_str2float(argv[3], &frequency2);
-        if(false == res) {
-            LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[3]);
-        }
+        log_res(DDS, res, "frequency2");
     }
 
     if(res) {
         res = try_str2float(argv[4], &chirp_duration_s);
-        if(false == res) {
-            LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[4]);
-        }
+        log_res(DDS, res, "chirp_duration_s");
     }
 
     if(res) {
-        res = dds_set_chirp(num,chirp_duration_s,frequency1,frequency2);
-        log_res(DDS,res,"SetChirp");
+        res = dds_set_chirp(num, amplitude, chirp_duration_s, frequency1, frequency2);
+        log_res(DDS, res, "SetChirp");
     } else {
         LOG_ERROR(DDS, "Usage: ddschir Num Amp F1 F2 Dur");
     }
     return res;
 }
 
+#ifdef HAS_BARKER_CODE
+bool dds_set_barker13_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0U;
+    float amplitude = 400;
+    float carrier_frequency_hz = 2000;
+    uint32_t periods_per_chip = 3;
 
-bool cmd_dds_phase(int32_t argc, char* argv[]){
-    float phase_s=0.0;
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_res(DDS, res, "DDSnum");
+    }
+
+    if(2 <= argc) {
+        res = try_str2float(argv[1], &amplitude);
+        log_res(DDS, res, "amplitude");
+    }
+
+    if(3 <= argc) {
+        res = try_str2float(argv[2], &carrier_frequency_hz);
+        log_res(DDS, res, "frequency1");
+    }
+
+    if(4 <= argc) {
+        res = try_str2uint32(argv[3], &periods_per_chip);
+        log_res(DDS, res, "periodsPerChip");
+    }
+
+    if(res) {
+        if(4 == argc) {
+            res = dds_set_barker13(num, amplitude, carrier_frequency_hz, periods_per_chip);
+            log_res(DDS, res, "SetBarker13");
+        }
+    } else {
+        LOG_ERROR(DDS, "Usage: dds_set_barker13 Num Amp CarFreqHz PeriodPerChip");
+    }
+    return res;
+}
+#endif
+
+bool cmd_dds_phase(int32_t argc, char* argv[]) {
+    float phase_s = 0.0f;
     uint8_t num = 0U;
     bool res = false;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
-        if(false == res) {
-            LOG_ERROR(DDS, "ParseErr DacNum [%s]", argv[0]);
-        }
     }
 
     if(res) {
-        res = try_str2float(argv[2], &phase_s);
-        if(false == res) {
-            LOG_ERROR(DDS, "ParseErr frequency [%s]", argv[2]);
-        }
+        res = try_str2float(argv[1], &phase_s);
     }
 
     if(res) {
         res = dds_phase_set(num, phase_s);
-        log_res(DDS,res,"SetPhase");
+        log_res(DDS, res, "SetPhase");
     } else {
         LOG_ERROR(DDS, "Usage: ddp Num phase_s");
     }
 
+    return res;
+}
+
+bool dds_set_m_seq_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0U;
+    uint8_t m_seq_num = 0U;
+    float amplitude = 400;
+    float carrier_frequency_hz = 2000;
+    uint32_t periods_per_chip = 3;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_res(DDS, res, "DDSnum");
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint8(argv[1], &m_seq_num);
+        log_res(DDS, res, "mSeq");
+    }
+
+    if(3 <= argc) {
+        res = try_str2float(argv[2], &amplitude);
+        log_res(DDS, res, "amplitude");
+    }
+
+    if(4 <= argc) {
+        res = try_str2float(argv[3], &carrier_frequency_hz);
+        log_res(DDS, res, "frequency1");
+    }
+
+    if(5 <= argc) {
+        res = try_str2uint32(argv[4], &periods_per_chip);
+        log_res(DDS, res, "periodsPerChip");
+    }
+
+    if(res) {
+        if(5 == argc) {
+            res = dds_set_m_seq(num, m_seq_num, amplitude, carrier_frequency_hz, periods_per_chip);
+            log_res(DDS, res, "SetMseq");
+        }
+    } else {
+        LOG_ERROR(DDS, "Usage: ddms Num mSeqNum Amp CarFreqHz PeriodPerChip");
+    }
+    return res;
+}
+
+bool cmd_dds_signal_diration(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+    float signal_duration_s = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_res(DDS, res, "DDSnum");
+    }
+
+    if(2 <= argc) {
+        res = try_str2float(argv[1], &signal_duration_s);
+        log_res(DDS, res, "SignalDurationS");
+    }
+
+    if(res) {
+        res = dds_signal_duration_set(num, signal_duration_s);
+        log_res(DDS, res, "SetSignalDurationS");
+    } else {
+        LOG_ERROR(DDS, "Usage: ddsd Num signalDurationS");
+    }
     return res;
 }

@@ -12,6 +12,8 @@ extern "C" {
 
 const char* ComplexToStr(double complex ComplexNumber);
 bool complex_array_print(const double complex* const X, uint32_t len, double period_s, uint32_t order);
+bool complex_signal_save(const char* const file_name, const double complex* const iSignal, uint32_t size,
+                         double scale_x);
 
 bool complex_array_print_csv(const double complex* const X, uint32_t len, double period_s, uint32_t order);
 #ifdef __cplusplus

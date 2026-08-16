@@ -19,12 +19,12 @@ bool analog_filter_rc_f_cut_calc_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2number(argv[0], &resistance_om);
-        log_info_res(ANALOG_FILTER,res,"R");
+        log_info_res(ANALOG_FILTER, res, "R");
     }
 
     if(2 <= argc) {
         res = try_str2number(argv[1], &capasity_farad);
-        log_info_res(ANALOG_FILTER,res,"C");
+        log_info_res(ANALOG_FILTER, res, "C");
     }
 
     if(res) {
@@ -43,12 +43,12 @@ bool analog_filter_lc_calc_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2number(argv[0], &incuctance_henri);
-        log_info_res(ANALOG_FILTER,res,"L");
+        log_info_res(ANALOG_FILTER, res, "L");
     }
 
     if(2 <= argc) {
         res = try_str2number(argv[1], &capasity_farad);
-        log_info_res(ANALOG_FILTER,res,"C");
+        log_info_res(ANALOG_FILTER, res, "C");
     }
 
     if(res) {
@@ -66,7 +66,7 @@ bool analog_filter_cap_calc_command(int32_t argc, char* argv[]) {
     double capacity = 0.0;
     if(1 <= argc) {
         res = strcpy(lText, argv[0]);
-        log_info_res(ANALOG_FILTER,res,"Text");
+        log_info_res(ANALOG_FILTER, res, "Text");
     }
 
     if(res) {
@@ -82,8 +82,7 @@ bool analog_filter_cap_calc_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
-bool filter_lc_calc_resonant_frequency_hz_command(int32_t argc, char* argv[]){
+bool filter_lc_calc_resonant_frequency_hz_command(int32_t argc, char* argv[]) {
     bool res = false;
     double capasity_farad = 0.000;
 
@@ -109,7 +108,7 @@ bool filter_lc_calc_resonant_frequency_hz_command(int32_t argc, char* argv[]){
     return res;
 }
 
-bool analog_capasity_serial_connection_calc_command(int32_t argc, char* argv[]){
+bool analog_capasity_serial_connection_calc_command(int32_t argc, char* argv[]) {
     bool res = false;
     double capasity1_farad = 0.000;
     double capasity2_farad = 0.000;
@@ -128,15 +127,14 @@ bool analog_capasity_serial_connection_calc_command(int32_t argc, char* argv[]){
 
     if(res) {
         double capasity_farad = capasity_serial_connection_calc(capasity1_farad, capasity2_farad);
-        LOG_INFO(ANALOG_FILTER, "C1:%f F,C2:%f F,Cap:%f F",capasity1_farad,capasity2_farad, capasity_farad);
+        LOG_INFO(ANALOG_FILTER, "C1:%f F,C2:%f F,Cap:%f F", capasity1_farad, capasity2_farad, capasity_farad);
     } else {
         LOG_ERROR(ANALOG_FILTER, "Usage: sccc C1 C2");
     }
     return res;
 }
 
-
-bool filter_colpitts_oscillator_command(int32_t argc, char* argv[]){
+bool filter_colpitts_oscillator_command(int32_t argc, char* argv[]) {
     bool res = false;
     double capasity1_farad = 0.0001;
     double incuctance_henri = 0.000650;

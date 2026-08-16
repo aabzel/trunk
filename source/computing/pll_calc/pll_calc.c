@@ -6,7 +6,6 @@
 
 #include "data_utils.h"
 #include "log.h"
-#include "sys_config.h"
 #include "utils_math.h"
 
 bool pll_calc_artery_f413(int32_t freq_xtal_hz, int32_t need_freq_sys_hz, PllArtety_t* const PllArtety) {
@@ -297,6 +296,7 @@ bool pll_calc_stm32_config(const uint32_t freq_xtal_hz, const uint32_t in_need_f
                                         TempConfig.N = n;
                                         TempConfig.P = p_vals[p_i];
                                         TempConfig.Q = q;
+                                        TempConfig.best_core_freq_hz = pllp_out;
                                         bool cfg_valid = pll_stm32_is_valid_config(&TempConfig);
                                         if(cfg_valid) {
                                             int32_t cur_error_freq_hz = (need_freq_sys_hz - pllp_out);
@@ -304,6 +304,7 @@ bool pll_calc_stm32_config(const uint32_t freq_xtal_hz, const uint32_t in_need_f
                                             TempConfig.error_freq_hz = cur_error_freq_hz;
                                             if(cur_abs_error_freq_hz < min_abs_error_freq_hz) {
                                                 memcpy(Config, &TempConfig, sizeof(PllStm32Config_t));
+                                                Config->best_core_freq_hz = pllp_out;
 #ifdef HAS_PLL_CALC_DIAG
                                                 LOG_DEBUG(PLL_CALC, "ValidConfig,AbsErr:%d,%s", cur_abs_error_freq_hz,
                                                           PllStm32ConfigToStr(Config));

@@ -1,10 +1,16 @@
 #include "pll_calc_commands.h"
 
+
 #include "convert.h"
 #include "log.h"
 #include "num_to_str.h"
 #include "pll_calc.h"
 #include "pll_calc_diag.h"
+
+#ifdef HAS_CAN
+#include "can_mcal.h"
+#include "can_segments_stm32.h"
+#endif
 /*
  * plaf43x 8000000 100000000
  * plaf43x 8000000 288000000
@@ -84,7 +90,7 @@ bool pll_calc_artery_f413_command(int32_t argc, char* argv[]) {
 
 bool pll_calc_stm_command(int32_t argc, char* argv[]) {
     bool res = false;
-
+#ifdef HAS_CAN
     uint32_t xtal_freq_hz = 8000000;
     uint32_t sys_freq_hz = 100000000;
 
@@ -110,6 +116,7 @@ bool pll_calc_stm_command(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(PLL_CALC, "Usage: pls SysFreqHz XtalFreqHz");
     }
+#endif
 
     return res;
 }
@@ -180,5 +187,52 @@ bool pll_calc_fc7300_command(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(PLL_CALC, "Usage: plfc SysFreqHz XtalFreqHz");
     }
+    return res;
+}
+
+/*
+ scsc 24000000 100000
+ */
+bool stm32_can_segment_calc_command(int32_t argc, char* argv[]) {
+    bool res = false;
+#ifdef HAS_CAN
+    uint32_t bus_freq_hz = 24000000;
+    uint32_t bit_rate_hz = 100000;
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &bus_freq_hz);
+        log_info_res(CAN, res, "bus_freq_hz");
+        LOG_INFO(CAN, "sys_freq %u Hz", bus_freq_hz);
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &bit_rate_hz);
+        log_info_res(CAN, res, "bit_rate_hz");
+        LOG_INFO(CAN, "bit_rate:%u Hz", bit_rate_hz);
+    }
+
+    if(res) {
+        CanSegmentInfo_t Segment = {0};
+        switch(argc) {
+        case 1: {
+            res = bxcan_segment_info_calc_all(bus_freq_hz);
+        } break;
+        case 2: {
+            res = bxcan_segment_info_calc(bus_freq_hz, bit_rate_hz, &Segment);
+            LOG_INFO(CAN, "OK,%s", CanSegmentInfoToStr(&Segment));
+        } break;
+        default: {
+
+        } break;
+        }
+
+        if(res) {
+        } else {
+            LOG_ERROR(CAN, "NoSolution");
+        }
+    } else {
+        LOG_ERROR(CAN, "Usage: scsc bus_freq_hz bit_rate_hz");
+    }
+#endif
     return res;
 }

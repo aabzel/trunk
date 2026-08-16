@@ -177,3 +177,25 @@ bool m_seq_size_command(int32_t argc, char* argv[]) {
 
     return res;
 }
+
+
+bool m_seq_find_first_feedback_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(M_SEQ, res, "Num");
+    }
+
+    if(res) {
+        res = m_seq_find_first_feedback(num);
+        log_info_res(M_SEQ, res, "Num");
+    } else {
+        LOG_ERROR(M_SEQ, "Usage: msfff N ");
+    }
+
+    return res;
+}
+
+

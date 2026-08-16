@@ -8,6 +8,7 @@
 #include "file_pc.h"
 #include "log.h"
 #include "num_to_str.h"
+#include "file_mcal.h"
 #include "str_utils.h"
 #include "table_utils.h"
 #include "time_mcal.h"
@@ -115,4 +116,41 @@ const char* ComplexToStr(double complex ComplexNumber) {
     snprintf(lText, sizeof(lText), "%sArg:%s", lText, DoubleToStr(carg(ComplexNumber)));
 
     return lText;
+}
+
+
+
+bool complex_signal_save(const char* const file_name, const double complex* const iSignal, uint32_t size,
+                         double scale_x) {
+    bool res = false;
+    if(file_name) {
+        if(iSignal) {
+            if(size) {
+                res = true;
+            }
+        }
+    }
+
+    if(res) {
+        res = file_mcal_open_append(FILE_MCAL_WRITE, file_name);
+        if(res) {
+            uint32_t i = 0;
+            for(i = 0; i < size; i++) {
+                double x_val = ((double)i) * scale_x;
+                char temp[150] = {0}; // TODO split snprintf add log scale for abs
+                snprintf(temp, sizeof(temp), "x,%f",   x_val  );
+                snprintf(temp, sizeof(temp), "%s,real,%f", temp,  creal(iSignal[i])   );
+                snprintf(temp, sizeof(temp), "%s,image,%f", temp,  cimag(iSignal[i])   );
+                snprintf(temp, sizeof(temp), "%s,abs,%f", temp, cabs(iSignal[i])    );
+                snprintf(temp, sizeof(temp), "%s,arg,%f\n", temp, carg(iSignal[i])    );
+
+                uint32_t len = strlen(temp);
+                res = file_mcal_write_line(FILE_MCAL_WRITE, temp, len);
+            }
+            res = file_mcal_close(FILE_MCAL_WRITE);
+        } else {
+            LOG_ERROR(SONAR, "OpenError:[%s]", file_name);
+        }
+    }
+    return res;
 }

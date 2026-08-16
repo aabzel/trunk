@@ -4,6 +4,8 @@
 
 #include <math.h>
 
+#include "math_dep.h"
+
 #ifndef M_PI
 #define M_PI (3.14159)
 #endif
@@ -24,7 +26,19 @@ typedef enum {
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
+#define M_PI_F  ( (float)M_PI )
+
 #define M_2PI (M_PI*2.0)
+#define PI_DIV2 (M_PI_F / 2.0f)
+
+#ifndef M_2PI
+#define M_2PI (M_PI_F*2.0f)
+#endif
+
+#define D2R (M_PI / 180.0f)
+
+#define R2D (180.0f / M_PI)
 
 
 

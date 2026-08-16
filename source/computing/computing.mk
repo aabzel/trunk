@@ -17,6 +17,14 @@ ifneq ($(COMPUTING_MK_INC),Y)
         include $(COMPUTING_DIR)/rational_num/rational_num.mk
     endif
 
+    ifeq ($(BACK_COUNT),Y)
+        include $(COMPUTING_DIR)/back_count/back_count.mk
+    endif
+
+    ifeq ($(LOCAL_OSCILLATOR),Y)
+        include $(COMPUTING_DIR)/local_oscillator/local_oscillator.mk
+    endif
+
     ifeq ($(ANALOG_FILTER),Y)
         include $(COMPUTING_DIR)/analog_filter/analog_filter.mk
     endif
@@ -58,11 +66,6 @@ ifneq ($(COMPUTING_MK_INC),Y)
 
     ifeq ($(CONVERTOR),Y)
         include $(COMPUTING_DIR)/convertor/convertor.mk
-    endif
-
-    ifeq ($(DELTA_SIGMA),Y)
-        # $(error DELTA_SIGMA=$(DELTA_SIGMA))
-        include $(COMPUTING_DIR)/delta_sigma/delta_sigma.mk
     endif
 
     ifeq ($(DSP),Y)
@@ -115,6 +118,10 @@ ifneq ($(COMPUTING_MK_INC),Y)
 
     ifeq ($(STATISTICS),Y)
         include $(COMPUTING_DIR)/statistics/statistics.mk
+    endif
+
+    ifeq ($(M_SEQ),Y)
+        include $(COMPUTING_DIR)/m_seq/m_seq.mk
     endif
 
     ifeq ($(TIMER_CALC),Y)

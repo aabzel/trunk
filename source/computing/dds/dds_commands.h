@@ -34,11 +34,27 @@ bool cmd_dds_set_fence(int32_t argc, char* argv[]);
 bool cmd_dds_diag(int32_t argc, char* argv[]);
 bool cmd_dds_freq(int32_t argc, char* argv[]);
 bool cmd_dds_play(int32_t argc, char* argv[]);
+bool cmd_dds_signal_diration(int32_t argc, char* argv[]) ;
+bool dds_set_m_seq_command(int32_t argc, char* argv[]);
+bool cmd_dds_sample_frequency(int32_t argc, char* argv[]);
 
-#define DDS_COMMANDS                                                       \
-    SHELL_CMD("dds_phase", "ddp", cmd_dds_phase, "DdsPhase"),              \
+#ifdef HAS_BARKER_CODE
+bool dds_set_barker13_command(int32_t argc, char* argv[]) ;
+
+#define  DDS_BARKER_COMMANDS                                        \
+    SHELL_CMD("dds_set_barker13", "db13", dds_set_barker13_command, "DdsSetBarker13"),
+
+#else
+#define  DDS_BARKER_COMMANDS
+#endif
+
+#define DDS_COMMANDS    DDS_BARKER_COMMANDS                                                                                    \
+    SHELL_CMD("dds_set_m_seq", "ddms", dds_set_m_seq_command, "DdsSetMsequence"),                           \
+    SHELL_CMD("dds_sample_frequency", "ddssfr", cmd_dds_sample_frequency, "DdsPhase"),                      \
+    SHELL_CMD("dds_signal_diration", "ddsd", cmd_dds_signal_diration, "DdsSignalDuration"),                 \
+    SHELL_CMD("dds_phase", "ddp", cmd_dds_phase, "DdsPhase"),                                               \
     SHELL_CMD("dds_play", "ddl", cmd_dds_play, "DdsPlay"),                 \
-    SHELL_CMD("dds_freq", "ddf", cmd_dds_freq, "DdsFreq"),                                                        \
+    SHELL_CMD("dds_freq", "ddf", cmd_dds_freq, "DdsFreq"),                                                      \
     SHELL_CMD("dds_amp", "ddsa", cmd_dds_amp, "DdsAmp"),                                                        \
     SHELL_CMD("dds_fps", "ddsf", cmd_dds_fps, "DdsFps"),                                                        \
     SHELL_CMD("dds_pattern", "ddsp", cmd_dds_pattern, "DdsPattern"),                                            \

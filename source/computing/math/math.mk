@@ -1,7 +1,7 @@
-$(info MATH_MK_INC=$(MATH_MK_INC))
+$(info MATH_MISC_MK_INC=$(MATH_MISC_MK_INC))
 
-ifneq ($(MATH_MK_INC),Y)
-    MATH_MK_INC=Y
+ifneq ($(MATH_MISC_MK_INC),Y)
+    MATH_MISC_MK_INC=Y
 
     MATH_DIR = $(COMPUTING_DIR)/math
     # $(error MATH_DIR=$(MATH_DIR))
@@ -11,7 +11,7 @@ ifneq ($(MATH_MK_INC),Y)
     SOURCES_C += $(MATH_DIR)/utils_math.c
 
     ifeq ($(DIAG),Y)
-        SOURCES_C += $(MATH_DIR)/math_diag.c
+        SOURCES_DIAG_C += $(MATH_DIR)/math_diag.c
     endif
 
     ifeq ($(MATH_VECTOR),Y)

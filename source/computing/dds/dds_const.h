@@ -7,17 +7,18 @@
 #define DDS_PERIOD_US 1000
 
 typedef enum {
-    DDS_MODE_STATIC = 0U,
-    DDS_MODE_PWM = 1U,
-    DDS_MODE_SIN = 2U,
-    DDS_MODE_SAW = 3U,
-    DDS_MODE_FENCE = 4U,
-    DDS_MODE_PULSE_TRAIN = 5U,
-    DDS_MODE_CHIRP = 6U,
-    DDS_MODE_DTMF = 7U,
-    DDS_MODE_BPSK = 8U,
-
-    DDS_UNDEF = 8U
+    DDS_MODE_STATIC ,
+    DDS_MODE_PWM ,
+    DDS_MODE_SIN ,
+    DDS_MODE_SAW ,
+    DDS_MODE_FENCE ,
+    DDS_MODE_PULSE_TRAIN ,
+    DDS_MODE_CHIRP ,
+    DDS_MODE_BARKER_13 ,
+    DDS_MODE_DTMF ,
+    DDS_MODE_BPSK ,
+    DDS_MODE_M_SEQ ,
+    DDS_MODE_CNT
 } DdsMode_t;
 
 typedef enum {
@@ -28,6 +29,7 @@ typedef enum {
 } DdsState_t;
 
 #if 0
+#endif
 typedef enum {
     DDS_PLAYER_UNDEF = 0,
     DDS_PLAYER_DAC_CHANNEL1 ,
@@ -45,15 +47,14 @@ typedef enum {
     DDS_PLAYER_CSV_FILE  ,
 
 } DdsPlayer_t;
-#endif
 
 typedef enum {
-    CHANNEL_ONLY_RIGHT=1,
-    CHANNEL_ONLY_LEFT=2,
-    CHANNEL_BOTH=3,
-    CHANNEL_MONO=4,
+    CHANNEL_UNDEF = 0,
+    CHANNEL_ONLY_RIGHT = 1,
+    CHANNEL_ONLY_LEFT = 2,
+    CHANNEL_BOTH = 3,
+    CHANNEL_MONO = 4,
 
-    CHANNEL_UNDEF=0,
 }FramePattern_t;
 
 #endif /* DDS_CONST_H*/

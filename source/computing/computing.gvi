@@ -1,98 +1,3 @@
-#ifdef HAS_AES256_GENERAL
-    AES256 
-#endif
-
-#ifdef HAS_BASE16
-    BASE16 
-#endif
-
-#ifdef HAS_BASE64
-    BASE64
-#endif
-
-#ifdef HAS_CALENDAR
-   CALENDAR
-#endif
-
-#ifdef HAS_COMPLEX
- COMPLEX 
-#endif
-
-#ifdef HAS_CRC32
-    CRC32 
-#endif
-
-#ifdef HAS_CRC8
-    CRC8 
-#endif
-
-#ifdef HAS_CRC16
-    CRC16 
-#endif
-
-#ifdef HAS_CRC7
-    CRC7 
-#endif
-
-#ifdef HAS_CRYPTO
-    CRYPTO 
-#endif
-
-#ifdef HAS_DDS
-    DDS
-#endif
-
-#ifdef HAS_DFT
-    DFT 
-#endif
-
-#ifdef HAS_GNSS
-    GNSS
-#endif
-
-#ifdef HAS_LIMITER
-    LIMITER
-#endif
-
-#ifdef HAS_IEC16022
-    IEC16022
-#endif
-
-#ifdef HAS_INTERVAL
-    INTERVAL
-#endif
-
-#ifdef HAS_MATH
-    MATH
-#endif
-
-#ifdef HAS_MODULATOR
-    MODULATOR
-#endif
-
-#ifdef HAS_PLANETARIUM
-    PLANETARIUM 
-#endif
-
-#ifdef HAS_RLE
-    RLE
-#endif
-
-#ifdef HAS_SCHMITT_TRIGGER
-    SCHMITT_TRIGGER
-#endif
-
-#ifdef HAS_SHA256
-    SHA256
-#endif
-
-#ifdef HAS_SOLVER
-    SOLVER
-#endif
-
-#ifdef HAS_DDS
-    DDS
-#endif
 
 
 
@@ -108,6 +13,10 @@
 #include "base64.gvi"
 #endif
 
+#ifdef HAS_BACK_COUNT
+#include "back_count.gvi"
+#endif
+
 #ifdef HAS_CALENDAR
 #include "calendar.gvi"
 #endif
@@ -118,6 +27,10 @@
 
 #ifdef HAS_CRC
 #include "crc.gvi"
+#endif
+
+#ifdef HAS_PLL_CALC
+#include "pll_calc.gvi"
 #endif
 
 #ifdef HAS_LIMITER
@@ -176,7 +89,7 @@
 #include "solver.gvi"
 #endif
 
-#ifdef HAS_DDS
+#ifdef HAS_SW_DAC
 #include "sw_dac.gvi"
 #endif
 

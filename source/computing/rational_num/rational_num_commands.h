@@ -15,8 +15,13 @@ extern "C" {
 #error "+ HAS_RATIONAL_NUM_COMMANDS"
 #endif
 
+bool float_to_rational_number_command(int32_t argc, char* argv[]);
 
-#define RATIONAL_NUM_COMMANDS
+#define RATIONAL_NUM_COMMANDS                                                                \
+    SHELL_CMD("float_to_rational_number", "frn", float_to_rational_number_command, "FloatToRationalNumber"),
+
+
+
 
 #ifdef __cplusplus
 }

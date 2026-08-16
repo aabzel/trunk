@@ -18,9 +18,11 @@ extern "C" {
 bool math_sum4_d_command(int32_t argc, char* argv[]);
 bool math_sum4_command(int32_t argc, char* argv[]);
 bool math_sum3_command(int32_t argc, char* argv[]);
+bool math_div_n_m_command(int32_t argc, char* argv[]);
 bool math_vector_angle_command(int32_t argc, char* argv[]);
 
 #define MATH_COMMANDS                                                                   \
+    SHELL_CMD("math_div_nm", "div_nm", math_div_n_m_command, "MathDivNm"),                 \
     SHELL_CMD("math_sum4_dyn", "ms4d", math_sum4_d_command, "MathSum4Dynamic"),                 \
     SHELL_CMD("math_sum3", "ms3", math_sum3_command, "MathSum3"),                 \
     SHELL_CMD("math_sum4", "ms4", math_sum4_command, "MathSum4"),                 \

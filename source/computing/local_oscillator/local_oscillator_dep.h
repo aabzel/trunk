@@ -1,0 +1,14 @@
+#ifndef LOCAL_OSCILLATOR_DEP_H
+#define LOCAL_OSCILLATOR_DEP_H
+
+#ifndef HAS_LOCAL_OSCILLATOR
+#error "+HAS_LOCAL_OSCILLATOR"
+#endif
+
+#ifndef HAS_MATH
+#error "+HAS_MATH"
+#endif
+
+
+#endif /* LOCAL_OSCILLATOR_DEP_H */
+

@@ -28,7 +28,7 @@ bool complex_array_mux(const double complex* const Spectrum1,
 
 bool complex_array_conjugate( double complex* const inSpectrum, uint32_t size) {
     bool res = false;
-    LOG_WARNING(SYS, "conjugate,size:%u", size);
+    LOG_WARNING(SYS, "Conjugate,size:%u", size);
     if(inSpectrum) {
         if(size) {
             uint32_t i = 0;

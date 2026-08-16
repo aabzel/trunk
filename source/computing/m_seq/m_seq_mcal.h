@@ -32,6 +32,8 @@ bool m_seq_proc_one(uint8_t num);
 bool m_seq_proc(void);
 
 /*setters*/
+bool m_sec_to_signal(uint8_t* m_seq, int16_t* signal, uint32_t size) ;
+bool m_seq_find_first_feedback(uint8_t num) ;
 bool m_seq_calc_correlation_2( uint8_t* seq1, uint8_t* seq2, uint32_t size, char * CorrelationFileName) ;
 bool m_seq_reinit_one(uint8_t num, uint32_t shift_reg_num);
 bool m_seq_seed_set(uint8_t num, uint8_t offset, uint8_t value) ;
@@ -42,8 +44,14 @@ bool m_seq_calc_periodic_acf(uint8_t num,
                                                uint32_t shift_reg_num,
                                                char * CorrelationFileName) ;
 
+float m_seq_calc_sample(uint8_t num,
+                        float up_time_s,
+                        float amplitude,
+                        float frequency,
+                        uint32_t periods_per_chip);
 
 /*getters*/
+float m_seq_signal_duration(uint8_t num, float carrier_frequency_hz, uint32_t periods_per_chip);
 bool m_seq_generate(uint8_t num);
 int8_t m_seq_get_sample(uint8_t num);
 uint32_t m_seq_get_len(uint32_t shift_reg_num);

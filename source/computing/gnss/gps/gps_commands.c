@@ -48,7 +48,7 @@ bool gps_prn_samples_command(int32_t argc, char* argv[]){
         int8_t GeneratedPrnSample[ONE_PRN_SAMPLE_CNT]={0};
         memset(GeneratedPrnSample,0,sizeof(GeneratedPrnSample));
         GpsHandle_t* Node=GpsGetNode(1);
-        set_log_level(GPS,LOG_LEVEL_DEBUG);
+        log_level_set(GPS,LOG_LEVEL_DEBUG);
 
         res = gps_generate_prn_samples(prn, GeneratedPrnSample, Node->sample_per_chip);
         array_i8_print_dec(GeneratedPrnSample, ONE_PRN_SAMPLE_CNT);
@@ -62,7 +62,7 @@ bool gps_prn_samples_command(int32_t argc, char* argv[]){
         //array_u8_print(PrnCodeHex, sizeof(PrnCodeHex));
         //cli_printf(CRLF);
 
-        set_log_level(GPS,LOG_LEVEL_INFO);
+        log_level_set(GPS,LOG_LEVEL_INFO);
     }
 
     return res;

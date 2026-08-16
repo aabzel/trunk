@@ -77,6 +77,8 @@ typedef struct {
     uint32_t decoded_byte_cnt; /* number of bytes demodulated*/    \
     uint32_t bit_rx_cnt;                                           \
     uint8_t rx_byte;                                               \
+    uint32_t mc_bit_rx_cnt;                                        \
+    uint8_t mc_rx_byte;                                            \
     float time_s;                                                  \
     float s_feed_back;                                             \
     float s_feed_back_sin;                                         \

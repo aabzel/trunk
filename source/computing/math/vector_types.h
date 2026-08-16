@@ -9,14 +9,14 @@ extern "C" {
 #define M_PI 3.14159
 #endif
 
-#define EPSILONT  (0.00000000001)
+#define EPSILONT  (0.0000000000001)
 
 #define M_2_PI (6.28318)
 
 typedef struct  {
-    double x;
-    double y;
-    double z;
+    float x;
+    float y;
+    float z;
 } Dot_t;
 
 typedef struct  {
@@ -35,7 +35,7 @@ typedef struct  {
 
 typedef struct  {
     Dot_t start;
-    Vector_t vector;
+    VectorF_t vector;
 } Line_t;
 
 

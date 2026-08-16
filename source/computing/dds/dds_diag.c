@@ -17,6 +17,27 @@
 #include "writer_config.h"
 //#include "physics_const.h"
 
+const char* DdsModeToStr(DdsMode_t mode) {
+    const char* name = "?";
+    switch(mode) {
+        case DDS_MODE_M_SEQ:       name = "Mseq";        break;
+        case DDS_MODE_BARKER_13:   name = "BARKER_13";   break;
+        case DDS_MODE_STATIC:      name = "STATIC";      break;
+        case DDS_MODE_PWM:         name = "PWM";         break;
+        case DDS_MODE_SIN:         name = "SIN";         break;
+        case DDS_MODE_SAW:         name = "SAW";         break;
+        case DDS_MODE_FENCE:       name = "FENCE";       break;
+        case DDS_MODE_PULSE_TRAIN: name = "PULSES";      break;
+        case DDS_MODE_CHIRP:       name = "CHIRP";       break;
+        case DDS_MODE_BPSK:        name = "BPSK";        break;
+#ifdef HAS_DTMF
+        case DDS_MODE_DTMF:       name = "DTMF";         break;
+#endif
+        default:        name = "?";        break;
+    }
+    return name;
+}
+
 const char* SampleSize2Format(uint8_t sample_size) {
     const char* name = "0x08x";
     switch(sample_size) {
@@ -38,23 +59,6 @@ const char* FramePatternToStr(FramePattern_t frame_pattern) {
     return name;
 }
 
-const char* DdsModeToStr(DdsMode_t mode) {
-    const char* name = "?";
-    switch(mode) {
-        case DDS_MODE_STATIC:     name = "STATIC";        break;
-        case DDS_MODE_PWM:        name = "PWM";        break;
-        case DDS_MODE_SIN:        name = "SIN";        break;
-        case DDS_MODE_SAW:        name = "SAW";        break;
-        case DDS_MODE_FENCE:      name = "FENCE";        break;
-        case DDS_MODE_CHIRP:      name = "CHIRP";        break;
-        case DDS_MODE_BPSK:       name = "BPSK";        break;
-#ifdef HAS_DTMF
-        case DDS_MODE_DTMF:       name = "DTMF";        break;
-#endif
-        default:        name = "?";        break;
-    }
-    return name;
-}
 
 #if 0
 const char* DdsPlayerToStr(DdsPlayer_t player) {
@@ -110,7 +114,7 @@ bool dds_print_track_2byte(uint8_t dds_num) {
             }
 #endif
 
-            if(&Node->sample_array[i]) {
+            if(NULL != &Node->sample_array[i]) {
                 cli_printf(" 0x");
                 uint8_t sample_size = Node->sample_bitness / 8;
                 print_hex((uint8_t*)&Node->sample_array[i], sample_size);

@@ -5,19 +5,19 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
 #include <time.h>
 
+#include "std_includes.h"
 #include "gnss_utils.h"
 
 bool print_wgs84_coordinate(Wgs84Coordinate_t Wgs84Coordinate, bool one_line) ;
 bool print_coordinate(char* prefix, GnssCoordinate_t coordinate, bool one_line);
 bool print_velocity(GnssVelocity_t velocity);
-const char* SignalTypeToStr(SignalType_t sig_type); // SDR
-char* coordinate2str(void* value);
-const char* GnssCoordinateToStr(const GnssCoordinate_t* const coordinate);
 char* BearingDeg2Str(double value);
+char* coordinate2str(void* value);
+const char* SignalTypeToStr(SignalType_t sig_type); // SDR
+const char* GnssCoordinateDataToStr(const void* const data);
+const char* GnssCoordinateToStr(const GnssCoordinate_t* const coordinate);
 const char*  EscortInfoToStr(const GnssEscortInfo_t* const Node);
 const char* SdrCorrToStr(const SdrCorrRes_t* const Node);
 const char* SdrEplToStr(const SdrEPL_t* const Node);

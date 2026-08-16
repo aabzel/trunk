@@ -45,6 +45,7 @@ const char* PllStm32ConfigToStr(const PllStm32Config_t* const Config) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%sHSE:%6u Hz,", text, Config->xtall_freq_hz);
         snprintf(text, sizeof(text), "%sSYSCLK:%8u Hz:", text, Config->core_freq_hz);
+        snprintf(text, sizeof(text), "%sBestSYSCLK:%8u Hz:", text, Config->best_core_freq_hz);
         snprintf(text, sizeof(text), "%sM:%2u,", text, Config->M);
         snprintf(text, sizeof(text), "%sN:%3u,", text, Config->N);
         snprintf(text, sizeof(text), "%sP:%1u,", text, Config->P);
@@ -67,3 +68,4 @@ bool pll_calc_stm_all(const uint32_t xtal_freq_hz, const uint32_t sys_freq_hz_st
     }
     return out_res;
 }
+

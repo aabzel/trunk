@@ -11,6 +11,10 @@ extern "C" {
 #include "gps_const.h"
 #endif
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 typedef enum {
     SIGNAL_SIN = 1,
     SIGNAL_COS = 2,

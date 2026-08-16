@@ -1,0 +1,5 @@
+ifneq ($(BACK_COUNT_PRECONFIG_INC),Y)
+    BACK_COUNT_PRECONFIG_INC=Y
+    
+    BACK_COUNT=Y
+endif

@@ -7,7 +7,7 @@
 
 static float timer_calc_real_period_s(float bus_clock, uint32_t prescaler, uint32_t laod) {
     float calc_period_s = 0.0;
-    float cpu_period = 1.0 / ((float)bus_clock);
+    float cpu_period = 1.0f / ((float)bus_clock);
     calc_period_s = cpu_period * ((float)((prescaler + 1U) * ((float)laod)));
     return calc_period_s;
 }
@@ -35,7 +35,7 @@ static bool timer_calc_regs(float des_period_s, float bus_clock, uint32_t presca
                 }
                 if(res) {
                     calc_period_s = timer_calc_real_period_s(bus_clock, prescaler, (uint32_t)load);
-                    float err = bus_period_s * 10000.0;
+                    float err = bus_period_s * 10000.0f;
                     res = is_float_equal_absolute(calc_period_s, des_period_s, err);
                     if(false == res) {
                         LOG_DEBUG(TIMER_CALC, "PeriodsDifferent des [%f] calc [%f] s Err[%f]", des_period_s,
@@ -64,8 +64,8 @@ bool timer_calc_artery(float base_freq_hz, float freq_sinal_hz, uint8_t resoluti
              resolution_bit, period_max_val);
 
     uint32_t ok_cnt = 0;
-    float bus_period_s = 1.0 / base_freq_hz;
-    float des_period_s = 1.0 / freq_sinal_hz;
+    float bus_period_s = 1.0f / base_freq_hz;
+    float des_period_s = 1.0f / freq_sinal_hz;
     LOG_INFO(TIMER_CALC, "ClockPeriod:%s s", DoubleToStr(bus_period_s));
     LOG_INFO(TIMER_CALC, "IsrPeriod:%s s", DoubleToStr(des_period_s));
 

@@ -1,37 +1,34 @@
 #include "gnss_drv.h"
 
 #include <complex.h>
-#include <string.h>
 #include <math.h>
+#include <string.h>
 
 /*GNSS receiver invariant component*/
+#include "array.h"
+#include "code_generator.h"
 #include "gnss_utils.h"
-#ifdef HAS_CALENDAR
-#include "calendar.h"
-#endif
-
+#include "log.h"
+#include "time_diag.h"
+#include "time_mcal.h"
+#include "utils_math.h"
 #ifdef HAS_NMEA
 #include "nmea_protocol.h"
+#endif
+#ifdef HAS_CALENDAR
+#include "calendar.h"
 #endif
 
 #ifdef HAS_UBLOX
 #include "ublox_driver.h"
 #endif
-#include "log.h"
-#ifdef HAS_PARAM
-#include "param_drv.h"
+
+#ifdef HAS_STORE_FS
+#include "store_fs.h"
 #endif
-#include "array.h"
-#include "code_generator.h"
-#include "time_diag.h"
-#include "time_mcal.h"
-#include "utils_math.h"
 
 COMPONENT_GET_NODE(Gnss, gnss)
 COMPONENT_GET_CONFIG(Gnss, gnss)
-
-
-
 
 #ifdef HAS_SDR
 COMPONENT_GET_NODE(LocalOscillator, local_oscillator)
@@ -45,61 +42,61 @@ COMPONENT_GET_CONFIG(LocalOscillator, local_oscillator)
 #ifdef HAS_NMEA
 static bool gnss_update_from_nmea(uint8_t num) {
     bool res = true;
-    GnssHandle_t* Node=GnssGetNode(  num);
-    if(Node){
+    GnssHandle_t* Node = GnssGetNode(num);
+    if(Node) {
 
-      bool res_time = false;
-       bool res_dot = false;
+        bool res_time = false;
+        bool res_dot = false;
 
-    NmeaHandle_t* Nmea=NmeaGetNode(Node->nmea_num);
-    if(Nmea) {
-        res = is_valid_time_date(&Nmea->time_date);
-        if(res) {
-            if(Node->first_time) {
-                LOG_INFO(GNSS, "SpotValidTimeInNmea!");
-                print_time_date("NMEA:", &Nmea->time_date, true);
+        NmeaHandle_t* Nmea = NmeaGetNode(Node->nmea_num);
+        if(Nmea) {
+            res = is_valid_time_date(&Nmea->time_date);
+            if(res) {
+                if(Node->first_time) {
+                    LOG_INFO(GNSS, "SpotValidTimeInNmea!");
+                    print_time_date("NMEA:", &Nmea->time_date, true);
 #ifdef HAS_CALENDAR
-                calendar_settime(&Nmea->time_date);
+                    calendar_settime(&Nmea->time_date);
 #endif /*HAS_CALENDAR*/
-                Node->first_time = false;
-            }
-            memcpy(&Node->time_date, &Nmea->time_date, sizeof(struct tm));
-            res_time = true;
-        } else {
-            res_time = false;
+                    Node->first_time = false;
+                }
+                memcpy(&Node->time_date, &Nmea->time_date, sizeof(struct tm));
+                res_time = true;
+            } else {
+                res_time = false;
 #ifdef HAS_LOG
-            LOG_DEBUG(GNSS, "InvalNmeaTimeDate");
+                LOG_DEBUG(GNSS, "InvalNmeaTimeDate");
 #endif
-        }
+            }
 
-        if((0.0 < Nmea->height) && (Nmea->height < 15000.0)) {
-            Node->height_m = Nmea->height;
-        }
+            if((0.0 < Nmea->height) && (Nmea->height < 15000.0)) {
+                Node->height_m = Nmea->height;
+            }
 
-        res = is_valid_gnss_coordinates(Nmea->coordinate_dd);
-        if(res) {
-            if(Node->first_gnss) {
-                LOG_INFO(GNSS, "SpotValidGNSSDotInNmea!");
+            res = is_valid_gnss_coordinates(&Nmea->coordinate_dd);
+            if(res) {
+                if(Node->first_gnss) {
+                    LOG_INFO(GNSS, "SpotValidGNSSDotInNmea!");
 #ifdef HAS_GNSS_DIAG
-                print_coordinate("NMEA:", Nmea->coordinate_dd, true);
+                    print_coordinate("NMEA:", Nmea->coordinate_dd, true);
 #endif
-                Node->first_gnss = false;
-            }
-            Node->coordinate_cur = Nmea->coordinate_dd;
-            res_dot = true;
-        } else {
-            res_dot = false;
+                    Node->first_gnss = false;
+                }
+                Node->coordinate_cur = Nmea->coordinate_dd;
+                res_dot = true;
+            } else {
+                res_dot = false;
 #ifdef HAS_LOG
-            LOG_DEBUG(GNSS, "InvalNmeaGNSSDot");
+                LOG_DEBUG(GNSS, "InvalNmeaGNSSDot");
 #endif
-        }
+            }
 
-        if(res_dot && res_time) {
-            res = true;
-        } else {
-            res = false;
+            if(res_dot && res_time) {
+                res = true;
+            } else {
+                res = false;
+            }
         }
-    }
     }
     return res;
 }
@@ -107,11 +104,9 @@ static bool gnss_update_from_nmea(uint8_t num) {
 
 #ifdef HAS_UBLOX
 static bool gnss_update_from_ubx(uint8_t num) {
-        bool res_time = false;
-        GnssHandle_t *Node = GnssGetNode(num);
-        if(Node){
-
-
+    bool res_time = false;
+    GnssHandle_t* Node = GnssGetNode(num);
+    if(Node) {
 
         bool res_dot = false;
         bool res = true;
@@ -131,7 +126,7 @@ static bool gnss_update_from_ubx(uint8_t num) {
             res_time = false;
             LOG_DEBUG(GNSS, "InvalUbxTimeDateInUbx");
         }
-        res = is_valid_gnss_coordinates(NavInfo.coordinate);
+        res = is_valid_gnss_coordinates(&NavInfo.coordinate);
         if(res) {
             if(Node->first_gnss) {
                 LOG_INFO(GNSS, "SpotValidGNSSDataInUbx!");
@@ -155,63 +150,75 @@ static bool gnss_update_from_ubx(uint8_t num) {
         } else {
             res = false;
         }
-    } //if(Node)
+    } // if(Node)
     return res;
 }
 #endif
 
 bool gnss_proc_one(uint8_t num) {
     bool res = false;
-    GnssHandle_t *Node = GnssGetNode(num);
-    if (Node) {
+    GnssHandle_t* Node = GnssGetNode(num);
+    if(Node) {
         res = true;
         res = is_valid_time(&Node->time_date);
-        if (false == res) {
+        if(false == res) {
             LOG_DEBUG(GNSS, "InvalCurTime");
         }
 
-        res = is_valid_gnss_coordinates(Node->coordinate_cur);
-        if (res) {
+        res = is_valid_gnss_coordinates(&Node->coordinate_cur);
+        if(res) {
             Node->coordinate_last = Node->coordinate_cur;
         } else {
             LOG_DEBUG(GNSS, "InvalGnssCurCoordinate");
         }
 
 #ifdef HAS_NMEA
-    res = gnss_update_from_nmea(num);
+        res = gnss_update_from_nmea(num);
 #endif
 
 #ifdef HAS_UBLOX
-    if(false == res) {
-        res = gnss_update_from_ubx(num);
         if(false == res) {
-            LOG_DEBUG(GNSS, "LackGnssData");
+            res = gnss_update_from_ubx(num);
+            if(false == res) {
+                LOG_DEBUG(GNSS, "LackGnssData");
+            }
         }
-    }
 #endif
     }
 
     return res;
 }
 
+bool gnss_true_location_set(const GnssCoordinate_t* const Coordinate) {
+    bool res = false;
+    if(Coordinate) {
+        LOG_INFO(GNSS, "SetLocation:[%s]", coordinate2str(Coordinate));
+#ifdef HAS_STORE_FS
+        res = store_fs_set( PAR_ID_TRUE_LOCATION, Coordinate);
+#endif
+    }
+    return res;
+}
+
 bool gnss_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(GNSS, "Init:%u", num);
-    const GnssConfig_t *Config = GnssGetConfig(num);
-    if (Config) {
-        GnssHandle_t* Node=GnssGetNode( num);
-        if (Node) {
+    const GnssConfig_t* Config = GnssGetConfig(num);
+    if(Config) {
+        GnssHandle_t* Node = GnssGetNode(num);
+        if(Node) {
             Node->height_m = 0.0;
             Node->first_gnss = true;
             Node->first_time = true;
             Node->coordinate_cur.phi = 0.0;
             Node->coordinate_cur.lambda = 0.0;
 
-#ifdef HAS_PARAM
-            bool out_res = true;
-            (void) out_res;
-            GnssCoordinate_t dflt_coordinate_base = { 0, 0 };
-            LOAD_PARAM(GNSS, PAR_ID_TRUE_LOCATION, Node->coordinate_cur, dflt_coordinate_base);
+#ifdef HAS_STORE_FS
+            GnssCoordinate_t dflt_coordinate_base = {0, 0};
+            res = store_fs_get( PAR_ID_TRUE_LOCATION, &Node->coordinate_cur);
+            if(!res) {
+                res = store_fs_set( PAR_ID_TRUE_LOCATION, &dflt_coordinate_base);
+            }
 #endif
             res = true;
         }
@@ -356,7 +363,6 @@ bool sdr_generate_local_oscilator_signals(LocalOscillatorHandle_t* const Node) {
     return res;
 }
 
-
 bool local_oscillator_init_one(uint8_t num) {
     LOG_INFO(SDR, "INIT:%u", num);
     bool res = false;
@@ -379,12 +385,9 @@ bool local_oscillator_init_custom(void) { return true; }
 
 COMPONENT_INIT_PATTERT_CNT(SDR, SDR, local_oscillator, 32)
 
-
 #endif
 
-bool gnss_init_custom(void){
-	return true;
-}
+bool gnss_init_custom(void) { return true; }
 
 COMPONENT_INIT_PATTERT(GNSS, GNSS, gnss)
 COMPONENT_PROC_PATTERT(GNSS, GNSS, gnss)

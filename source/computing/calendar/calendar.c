@@ -148,12 +148,14 @@ uint32_t TimeDateToSeconds(const struct tm* const t) {
 }
 
 uint32_t calendar_settime(const struct tm* const date_time) {
-    bool res = false;
+    //uint32_t g_sec = 0;
+    //(void)g_sec;
 #ifdef HAS_RTC
     // print_time_date(date_time);
 #endif
 
 #ifdef HAS_DATE
+    bool res = false;
     res = is_valid_time_date(date_time);
     if(res) {
         LOG_DEBUG(LG_CAL, "ValidDdateTime");
@@ -184,6 +186,8 @@ bool calendar_init(void) {
         LOG_ERROR(LG_CAL, "TimeParseErr");
 #endif
     }
+
+#ifdef HAS_DATE
     res = date_parse(&date_time, __DATE__);
     if(res) {
         calendar_settime(&date_time);
@@ -192,5 +196,6 @@ bool calendar_init(void) {
         LOG_ERROR(LG_CAL, "DateParseErr");
 #endif
     }
+#endif
     return res;
 }

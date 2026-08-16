@@ -1,0 +1,4 @@
+
+config LOCAL_OSCILLATOR
+    bool "Enable use of the LOCAL_OSCILLATOR drivers"
+

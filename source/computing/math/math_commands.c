@@ -83,3 +83,37 @@ bool math_sum4_d_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+
+/*
+ *
+ * div_nm 2 3 100
+ * */
+bool math_div_n_m_command(int32_t argc, char* argv[]) {
+    bool res = false;
+
+    uint32_t n = 0;
+    uint32_t m = 0;
+    uint32_t lim = 0;
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[0], &n);
+        log_res(MATH, res, "sum");
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[1], &m);
+        log_res(MATH, res, "sum");
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint32(argv[2], &lim);
+        log_res(MATH, res, "sum");
+    }
+
+    if(res) {
+        res = math_div_n_m(n, m, lim);
+    } else {
+        LOG_ERROR(MATH, "Usage: div_nm n m total");
+    }
+    return res;
+}
