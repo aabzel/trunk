@@ -254,6 +254,42 @@ const char* ArrayU8ToBitStr(const uint8_t* const data, const uint32_t size) {
     return lText;
 }
 
+const char* ArrayS16ToStr(const int16_t* const data, const uint32_t size) {
+    static char lText[200] = {0};
+    memset(lText, 0, sizeof(lText));
+    if(data) {
+        if(size) {
+            uint32_t i = 0;
+            for(i = 0; i < size; i++) {
+                if(i == (size - 1)) {
+                    snprintf(lText, sizeof(lText), "%s%d", lText, (data[i]));
+                } else {
+                    snprintf(lText, sizeof(lText), "%s%d,", lText, (data[i]));
+                }
+            }
+        }
+    }
+    return lText;
+}
+
+const char* ArrayU8ToStr(const uint8_t* const data, uint32_t size) {
+    static char lText[200] = {0};
+    memset(lText, 0, sizeof(lText));
+    if(data) {
+        if(size) {
+            uint32_t i = 0;
+            for(i = 0; i < size; i++) {
+                if(i == (size - 1)) {
+                    snprintf(lText, sizeof(lText), "%s%u", lText, (data[i]));
+                } else {
+                    snprintf(lText, sizeof(lText), "%s%u,", lText, (data[i]));
+                }
+            }
+        }
+    }
+    return lText;
+}
+
 const char* ArrayI32ToStr(const int32_t* const data, const uint32_t size) {
     static char lText[200] = {0};
     memset(lText, 0, sizeof(lText));
@@ -358,7 +394,7 @@ bool array_print_hex(const uint8_t* const buff, const uint32_t size) {
             LOG_ERROR(ARRAY, "PrintErr");
         }
     }
-    //cli_printf(CRLF);
+    // cli_printf(CRLF);
     return res;
 }
 

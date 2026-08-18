@@ -1,12 +1,12 @@
 #ifndef ARRAY_COMMANDS_H
 #define ARRAY_COMMANDS_H
 
-#include <stdbool.h>
-#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "std_includes.h"
 
 bool array_print_command(int32_t argc, char* argv[]);
 

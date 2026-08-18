@@ -10,11 +10,14 @@
 #include "time_mcal.h"
 #include "unit_test_check.h"
 #include "utils_math.h"
-#include "test_fat_fs.h"
 #include "test_i2s.h"
 #include "test_dds.h"
 #include "test_wm8731.h"
 #include "test_sdio.h"
+
+#ifdef HAS_FAT_FS_TEST
+#include "test_fat_fs.h"
+#endif
 
 /*
  tr wav_player_proc
@@ -57,8 +60,10 @@ bool test_wav_player_deps(void) {
     res = test_sdio_read_dma();
     ASSERT_TRUE(res);
 
+#ifdef HAS_FAT_FS_TEST
     res = test_fat_fs_read();
     ASSERT_TRUE(res);
+#endif
 
     return res;
 }

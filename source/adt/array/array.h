@@ -30,7 +30,12 @@ extern "C" {
 #endif
 
 /*setters*/
+bool array_u8_shift_right(uint8_t* const arr, uint32_t size, uint32_t shift);
+bool array_u8_to_s16(uint8_t* m_seq, int16_t* signal, uint32_t size) ;
+bool array_u8_add_front(uint8_t* const arr, uint32_t size, int8_t value) ;
+bool array_s8_add_front(int8_t* const arr, uint32_t size, int8_t value);
 bool array_s8_add_front_zeros(int8_t* const SampleArray, uint32_t array_size,int32_t offset);
+bool array_s8_shift_right(int8_t* const arr, uint32_t size, uint32_t shift);
 bool array_s16_shift_right(int16_t* const arr, uint32_t size, uint32_t shift);
 bool array_s16_add_front_zeros(int16_t* const SampleArray, uint32_t array_size,int32_t offset);
 bool array_s16_add_front(int16_t* arr, uint32_t size, int16_t value) ;
@@ -45,6 +50,7 @@ bool array_u8_del_index(uint8_t* const data, uint32_t size, uint32_t index);
 bool array_u8_insert_first(uint8_t* const arr, uint32_t size, uint8_t value);
 bool array_u8_rand(uint8_t* const arr, uint32_t size, uint8_t min, uint8_t max);
 bool array_u16_rand(uint16_t* const arr, uint32_t size, uint16_t min, uint16_t max);
+bool array_s16_zero(int16_t* const arr, const uint32_t size) ;
 bool array_u8_sort(uint8_t* const arr, uint32_t size);
 bool array_u8_xor(const uint8_t* const arr1,const uint8_t* const arr2, uint8_t* const out, uint32_t size);
 bool array_add_front(uint8_t* arr, uint32_t size, uint8_t* prefix, uint32_t prefix_size);
@@ -55,8 +61,10 @@ bool array_incr_u32(uint32_t* arr, uint32_t size);
 bool array_cmp(const uint8_t* const arr1, const uint8_t* const arr2, uint32_t size);
 bool array_max_cont(const uint8_t* const arr, uint32_t size, uint8_t patt, uint32_t* max_cont_patt);
 bool array_max_double(double const* const data, uint32_t size, uint32_t* const index, double* const max_val);
-bool array_reverse_bytes(uint8_t* const in_out_array, uint32_t len);
 bool array_u32_max_cont(const uint32_t* const dword, const uint32_t size_dw, const uint32_t pattern, uint32_t* const max_cont_patt) ;
+bool array_reverse_s16(int16_t* const data, const uint32_t size) ;
+bool array_reverse_s32(int32_t* const data, const uint32_t size) ;
+bool array_reverse_bytes(uint8_t* const in_out_array, uint32_t len);
 bool array_reverse_float(float* const in_out_array, uint32_t len);
 bool array_u16_item_reverse_bytes(uint16_t* const in_out_array, uint32_t len);
 bool array_u32_item_reverse_bytes(uint32_t* const in_out_array, uint32_t len);

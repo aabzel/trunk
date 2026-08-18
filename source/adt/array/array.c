@@ -115,7 +115,7 @@ bool is_arr_pat(const uint8_t* const data, const uint32_t size, const uint8_t pa
     return res;
 }
 
-bool is_arr_pat2(const uint8_t* const data, const uint32_t size, const uint8_t patt, uint32_t * const diff_index) {
+bool is_arr_pat2(const uint8_t* const data, const uint32_t size, const uint8_t patt, uint32_t* const diff_index) {
     bool res = true;
     uint32_t i = 0;
     for(i = 0; i < size; i++) {
@@ -127,7 +127,6 @@ bool is_arr_pat2(const uint8_t* const data, const uint32_t size, const uint8_t p
     }
     return res;
 }
-
 
 #ifdef HAS_ARRAY_EXT
 bool array_pat_set(uint8_t* arr, uint32_t size, uint8_t patt) {
@@ -279,6 +278,20 @@ bool array_u8_rand(uint8_t* const arr, uint32_t size, uint8_t min, uint8_t max) 
             arr[i] = (uint8_t)(rand() % max) + 1;
         }
         res = true;
+    }
+    return res;
+}
+
+bool array_s16_zero(int16_t* const arr, const uint32_t size) {
+    bool res = false;
+    if(arr) {
+        if(size) {
+            uint32_t i = 0;
+            for(i = 0; i < size; i++) {
+                arr[i] = 0;
+            }
+            res = true;
+        }
     }
     return res;
 }
@@ -465,6 +478,55 @@ bool array_shift_right(uint8_t* arr, uint32_t size, uint32_t shift) {
     }
     return res;
 }
+
+bool array_u8_shift_right(uint8_t* const arr, uint32_t size, uint32_t shift) {
+    LOG_DEBUG(ARRAY, "%s(): Shift:%u", __FUNCTION__, shift);
+    bool res = false;
+    if(arr) {
+        if(size) {
+            if(shift < size) {
+                LOG_DEBUG(ARRAY, "ShiftNumbers:%u");
+                uint32_t i = 0;
+                for(i = (size - shift); shift <= i; i--) {
+                    LOG_DEBUG(ARRAY, "a[%u]=a[%u]", i, i - shift);
+                    arr[i] = arr[i - shift];
+                }
+                memset(arr, 0, shift);
+                res = true;
+            } else {
+                memset(arr, 0, size);
+                res = true;
+            }
+        }
+    }
+    return res;
+}
+
+// 1 2 3 4 5 6 7; 1
+// 0 1 2 3 4 5 6
+bool array_s8_shift_right(int8_t* const arr, uint32_t size, uint32_t shift) {
+    LOG_DEBUG(ARRAY, "%s(): Shift:%u", __FUNCTION__, shift);
+    bool res = false;
+    if(arr) {
+        if(size) {
+            if(shift < size) {
+                LOG_DEBUG(ARRAY, "ShiftNumbers:%u");
+                uint32_t i = 0;
+                for(i = (size - shift); shift <= i; i--) {
+                    LOG_DEBUG(ARRAY, "a[%u]=a[%u]", i, i - shift);
+                    arr[i] = arr[i - shift];
+                }
+                memset(arr, 0, shift);
+                res = true;
+            } else {
+                memset(arr, 0, size);
+                res = true;
+            }
+        }
+    }
+    return res;
+}
+
 // 1 2 3 4 5 6 7; 1
 // 0 1 2 3 4 5 6
 bool array_s16_shift_right(int16_t* const arr, uint32_t size, uint32_t shift) {
@@ -493,6 +555,33 @@ bool array_s16_shift_right(int16_t* const arr, uint32_t size, uint32_t shift) {
 #endif
 
 #ifdef HAS_ARRAY_EXT
+
+bool array_u8_add_front(uint8_t* const arr, uint32_t size, int8_t value) {
+    bool res = false;
+    if(arr) {
+        if(size) {
+            res = array_u8_shift_right(arr, size, 1); // -->
+            if(res) {
+                arr[0] = value;
+            }
+        }
+    }
+    return res;
+}
+
+bool array_s8_add_front(int8_t* const arr, uint32_t size, int8_t value) {
+    bool res = false;
+    if(arr) {
+        if(size) {
+            res = array_s8_shift_right(arr, size, 1); // -->
+            if(res) {
+                arr[0] = value;
+            }
+        }
+    }
+    return res;
+}
+
 bool array_add_front(uint8_t* arr, uint32_t size, uint8_t* prefix, uint32_t prefix_size) {
     LOG_DEBUG(ARRAY, "%s():", __FUNCTION__);
     bool res = false;
@@ -586,6 +675,35 @@ bool array_reverse_float(float* const in_out_array, uint32_t len) {
             res = swap_f(&in_out_array[i], &in_out_array[len - i - 1]) && res;
         }
     }
+    return res;
+}
+
+bool array_reverse_s16(int16_t* const data, const uint32_t size) {
+    bool res = false;
+    if(data) {
+        if(size) {
+            res = true;
+            uint32_t i = 0;
+            for(i = 0; i < size / 2; i++) {
+                res = swap_s16(&data[i], &data[size - i - 1]) && res;
+            }
+        }
+    }
+
+    return res;
+}
+
+bool array_reverse_s32(int32_t* const data, const uint32_t size) {
+    bool res = false;
+    if(data) {
+        if(size) {
+            res = true;
+            uint32_t i = 0;
+            for(i = 0; i < size / 2; i++) {
+                res = swap_s32(&data[i], &data[size - i - 1]) && res;
+            }
+        }
+    }
 
     return res;
 }
@@ -660,6 +778,22 @@ bool array_max_double(double const* const data, uint32_t size, uint32_t* const i
 
         *max_val = cur_max_val;
         *index = index_of_max;
+    }
+    return res;
+}
+
+bool array_u8_to_s16(uint8_t* u8_array, int16_t* s16_array, uint32_t size) {
+    bool res = false;
+    if(u8_array) {
+        if(s16_array) {
+            if(size) {
+                uint32_t i = 0;
+                for (i = 0; i < size; i++) {
+                    s16_array[i] =(int16_t) u8_array[i];
+                }
+                res = true;
+            }
+        }
     }
     return res;
 }

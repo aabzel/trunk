@@ -31,9 +31,10 @@ bool array_u8_print(const uint8_t* const array, uint32_t size);
 bool array_u8_print_dec(const uint8_t* const data, uint32_t size);
 const char* ArrayToStr(const uint8_t* const array, uint32_t size) ;
 const char* ArrayToAsciiStr(const uint8_t* const array, uint32_t size);
+const char* ArrayU8ToStr(const uint8_t* const array, uint32_t size) ;
 const char* ArrayU8ToBitStr(const uint8_t* const data, const uint32_t size);
+const char* ArrayS16ToStr(const int16_t* const data, const uint32_t size) ;
 const char* ArrayI32ToStr(const int32_t* const data, const uint32_t size);
-
 
 
 #ifdef __cplusplus
