@@ -7,7 +7,7 @@
 #define SONAR_PERIOD_US SEC_2_USEC(30)
 #define SONAR_DRIVER_VERSION 1U
 #define SONAR_TIMEOUT_MS 4000U
-#define SONAR_MAX_SPEC 500000U
+#define SONAR_MAX_SPEC 250000U
 #define SONAR_PLOT_CONVOLUTION_SCRIPT "plot_csv_file.py"
 
 typedef enum {

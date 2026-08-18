@@ -2,7 +2,10 @@
 
 #include <complex.h>
 #include <math.h>
+#include <stdlib.h>
 
+#include "float_diag.h"
+#include "time_mcal.h"
 #include "fft.h"
 #include "log.h"
 #include "std_includes.h"
@@ -30,7 +33,15 @@ static void fft_iteration(cplx buf[], cplx out[], int n, int step){
 }
 #endif
 
-bool fft_calc(const SampleType_t* const real_signal, uint32_t sample_cnt, double complex* const fft_out, double t_big) {
+
+
+/*
+ */
+bool fft_calc(const SampleType_t* const realSignal,
+              uint32_t sample_cnt,
+              double complex* const fft_out,
+              double sampling_period_s,
+              uint32_t max_garmonic_cnt) {
     bool res = false;
     LOG_INFO(FFT, "N:%u", sample_cnt);
     uint32_t calc_cnt = 0;
@@ -41,24 +52,67 @@ bool fft_calc(const SampleType_t* const real_signal, uint32_t sample_cnt, double
         calc_cnt = (uint32_t)pow(2.0, ceil(log2((double)sample_cnt)));
     }
     LOG_INFO(FFT, "N:%u,CalcN:%u", sample_cnt, calc_cnt);
-    if(calc_cnt < FFT_MAX_SIZE) {
-        double complex fft_in[FFT_MAX_SIZE] = {0};
+    uint32_t start_ms = time_get_ms32();
+
+
+    double complex* SignalComplex = (double complex*)malloc(sizeof(double complex) * sample_cnt);
+    if(SignalComplex) {
+        res = true;
+    } else {
+        res = false;
+        LOG_ERROR(SONAR, "MallocErr,Need:%u", sample_cnt);
+    }
+
+    if(res) {
         res = true;
         uint32_t i = 0;
         // PI = atan2(1, 1) * 4;
         for(i = 0; i < calc_cnt; i++) {
             if(i < sample_cnt) {
-                fft_in[i] = ((double)real_signal[i]) + 0.0 * I;
+                SignalComplex[i] = ((double)realSignal[i]) + 0.0 * I;
             } else {
-                fft_in[i] = 0.0 + 0.0 * I;
+                SignalComplex[i] = 0.0 + 0.0 * I;
             }
         }
 
-        FFT_CALC(fft_in, fft_out, calc_cnt);
+        FFT_CALC(SignalComplex, fft_out, calc_cnt);
+
+        uint32_t duration_ms = time_calc_duration_ms(start_ms);
+        LOG_INFO(FFT, "CalcDuration:%s s", FloatToStr( MSEC_2_SEC(duration_ms),3)   );
     } else {
         res = false;
         LOG_ERROR(FFT, "MemErr,Need:%u,Max:%u", calc_cnt, FFT_MAX_SIZE);
     }
 
+    return res;
+}
+
+
+
+/*
+  sample_cnt - the number of signal values ​​measured over the period, as well as
+  the number of decomposition components;
+  number_of_harmonics -  number of harmonics under consideration
+ */
+bool ifft_calc(const double complex* const Spectrum,
+               uint32_t number_of_harmonics,
+               uint32_t sample_cnt,
+               double complex* const x_signal) {
+    bool res = false;
+    LOG_INFO(IFFT, "CalcFFT,Signal:%u Sam,Harm:%u Harm", sample_cnt, number_of_harmonics);
+    if(Spectrum) {
+        if(x_signal) {
+            if(sample_cnt) {
+                res = true;
+            }
+        }
+    }
+
+    if(res) {
+        uint32_t start_ms = time_get_ms32();
+        IFFT_CALC(Spectrum, x_signal, sample_cnt);
+        uint32_t duration_ms = time_calc_duration_ms(start_ms);
+        LOG_INFO(IFFT, "CalcDuration:%s s", FloatToStr( MSEC_2_SEC(duration_ms),3)   );
+    }
     return res;
 }

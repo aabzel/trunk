@@ -8,14 +8,15 @@
 #include "log.h"
 #include "num_to_str.h"
 #include "std_includes.h"
+#include "float_diag.h"
 #include "time_mcal.h"
 
 #ifdef HAS_WATCHDOG
 #include "watchdog_mcal.h"
 #endif
 /*
- * See https://ru.dsplib.org/content/dft/dft.html
- */
+ See https://ru.dsplib.org/content/dft/dft.html
+*/
 
 void dft_calc_v2(complex double in[],
                  complex double out[],
@@ -133,7 +134,7 @@ bool idft_calc(const double complex* const Spectrum,
             res = true;
         }
         uint32_t duration_ms = time_calc_duration_ms(start_ms);
-        LOG_INFO(IDFT, "CalcDuration:%s s", DoubleToStr(MSEC_2_SEC(duration_ms)));
+        LOG_INFO(IDFT, "[IDFT],CalcDuration:%s s", FloatToStr(MSEC_2_SEC(duration_ms),3)   );
     }
     return res;
 }

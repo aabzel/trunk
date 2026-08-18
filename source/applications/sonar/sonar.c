@@ -12,8 +12,13 @@
 #include "dds_drv.h"
 #include "debug_info.h"
 #include "file_mcal.h"
+#include "float_diag.h"
 #include "log.h"
 #include "wav.h"
+
+#ifdef HAS_FFT
+#include "fft_mcal.h"
+#endif
 
 #ifdef HAS_PROBING_PULSE
 #include "probing_pulse_mcal.h"
@@ -484,36 +489,7 @@ static bool sonar_proc_sample(SonarHandle_t* const Node, int16_t sample, int64_t
 }
 #endif
 
-bool sonar_signal_save(const char* const file_name, const double complex* const iSignal, uint32_t size,
-                       double scale_x) {
-    bool res = false;
-    if(file_name) {
-        if(iSignal) {
-            if(size) {
-                res = true;
-            }
-        }
-    }
 
-    if(res) {
-        res = file_mcal_open_append(FILE_MCAL_WRITE, file_name);
-        if(res) {
-            uint32_t i = 0;
-            for(i = 0; i < size; i++) {
-                double x_val = ((double)i) * scale_x;
-                char temp[120] = {0}; // TODO split snprintf add log scale for abs
-                snprintf(temp, sizeof(temp), "x,%f,real,%f,image,%f,abs,%f,arg,%f\n", x_val, creal(iSignal[i]),
-                         cimag(iSignal[i]), cabs(iSignal[i]), carg(iSignal[i]));
-                uint32_t len = strlen(temp);
-                res = file_mcal_write_line(FILE_MCAL_WRITE, temp, len);
-            }
-            res = file_mcal_close(FILE_MCAL_WRITE);
-        } else {
-            LOG_ERROR(SONAR, "OpenError:[%s]", file_name);
-        }
-    }
-    return res;
-}
 
 #ifdef HAS_DFT
 double complex RecSpectrum[SONAR_MAX_SPEC] = {0};
@@ -535,16 +511,18 @@ static bool dsp_array_zero(SampleType_t* const Signal, const uint32_t size) {
 }
 
 static bool dsp_array_cpy(SampleType_t* const SignalDst,
-                          SampleType_t* const SignalSrc,
+                          const SampleType_t* const SignalSrc,
                           const uint32_t channels,
                           const uint32_t size) {
     bool res = false;
     if(SignalDst) {
         if(SignalSrc) {
+            LOG_INFO(SONAR, "CopySamples,Channels:%u,Size:%u Sam", channels,size);
             if(size) {
                 if(channels) {
                     uint32_t i = 0;
                     for (i = 0; i < size; i++) {
+                        LOG_DEBUG(SONAR,"S[%u]=WAV[%u]=%d=0x%04x", i,i * channels,SignalSrc[i * channels],SignalSrc[i * channels]);
                         SignalDst[i] = SignalSrc[i * channels];
                     }
                     res = true;
@@ -571,6 +549,7 @@ bool sonar_dft_convolution(const char* const pulse_file_name, const char* const 
                     res = false;
                     WavHandle_t* Rec = WavGetNode(1);
                     if(Rec) {
+                        uint32_t start_ms = time_get_ms32();
                         SampleType_t* signal_rec = NULL;
                         SampleType_t* signal_pulse_ptr = NULL;
 
@@ -579,14 +558,17 @@ bool sonar_dft_convolution(const char* const pulse_file_name, const char* const 
                         WavHandle_t* Pulse = WavGetNode(2);
                         if(Pulse) {
                             //max_sample_cnt = MAX(Rec->sample_cnt, Pulse->sample_cnt);
-                            max_sample_cnt = Rec->sample_cnt+ Pulse->sample_cnt-1;
-                            LOG_INFO(SONAR, "max_sample_cnt:%u", max_sample_cnt);
+                            max_sample_cnt = ( Rec->sample_cnt+ Pulse->sample_cnt-1);
+                            LOG_INFO(SONAR, "max_sample_cnt:%u sample", max_sample_cnt);
                             size_sig = max_sample_cnt * sizeof(SampleType_t);
+                            LOG_INFO(SONAR, "size_sig:%u Byte", size_sig);
                             signal_rec = (SampleType_t*)malloc(size_sig);
                             if(signal_rec) {
                                 signal_pulse_ptr = (SampleType_t*)malloc(size_sig);
                                 if(signal_pulse_ptr) {
                                     res = true;
+                                    dsp_array_zero(signal_rec,     max_sample_cnt) ;
+                                    dsp_array_zero(signal_pulse_ptr,     max_sample_cnt) ;
                                 }
                             }
                         }else {
@@ -599,27 +581,31 @@ bool sonar_dft_convolution(const char* const pulse_file_name, const char* const 
                         (void)sampling_period_s;
                         LOG_INFO(SONAR, "SamTime:%f s", sampling_period_s);
                         double measured_interval_s = ((double) max_sample_cnt) * sampling_period_s;
-                        uint32_t max_garmotic = dft_freq_to_garmonic( 48000, measured_interval_s);
+                        (void)measured_interval_s;
+                        //uint32_t max_garmotic = dft_freq_to_garmonic( 48000, measured_interval_s);
+                        uint32_t max_garmotic = max_sample_cnt;
                         LOG_INFO(SONAR, "maxGarmotic:%u", max_garmotic);
                         if(res) {
 
-                            dsp_array_zero( signal_rec,     max_sample_cnt) ;
-                            dsp_array_zero(signal_pulse_ptr,     max_sample_cnt) ;
 
-                            SampleType_t* RecSam = (SampleType_t*)Rec->data;
-                            SampleType_t* PulseSam = (SampleType_t*)Pulse->data;
+                            //SampleType_t* RecSam = (SampleType_t*)Rec->data;
+                            //SampleType_t* PulseSam = (SampleType_t*)Pulse->data;
+                            LOG_INFO(SONAR, "CopyPulse:");
+                            res = dsp_array_cpy( signal_pulse_ptr, (SampleType_t*)Pulse->data, Pulse->channels, Pulse->sample_cnt);
+                            log_res(SONAR,res,"SignalPulseFill");
 
-                            res = dsp_array_cpy( signal_rec, RecSam, Rec->channels, Rec->sample_cnt);
-                            res = dsp_array_cpy( signal_pulse_ptr, PulseSam, Pulse->channels, Pulse->sample_cnt);
-
+                            LOG_INFO(SONAR, "CopyRec:");
+                            res = dsp_array_cpy( signal_rec, (SampleType_t*)Rec->data, Rec->channels, Rec->sample_cnt);
+                            log_res(SONAR,res,"signalRecFill");
 
                             // Up ok
-
 #ifdef HAS_DFT
                             if(max_sample_cnt < SONAR_MAX_SPEC) {
                                 res = dft_calc(signal_rec, max_sample_cnt, RecSpectrum, sampling_period_s, max_garmotic);
+                                log_res(SONAR,res,"dft_calcRec");
                                 if(res) {
                                     res = dft_calc(signal_pulse_ptr, max_sample_cnt, PulseSpectrum, sampling_period_s, max_garmotic);
+                                    log_res(SONAR,res,"dft_calcPulse");
                                 }
                             } else {
                                 LOG_ERROR(SONAR, "MAX:%u,Need:%u", SONAR_MAX_SPEC, max_sample_cnt);
@@ -630,7 +616,9 @@ bool sonar_dft_convolution(const char* const pulse_file_name, const char* const 
 #ifdef HAS_DFT
                         if(res) {
                             res = complex_array_conjugate( PulseSpectrum,  max_garmotic);
+                            log_res(SONAR,res,"complex_array_conjugate");
                             res = complex_array_mux(RecSpectrum, PulseSpectrum, MuxSpectrum, max_garmotic);
+                            log_res(SONAR,res,"complex_array_mux");
                         }else {
                             LOG_ERROR(SONAR, "dft_calc,ERROR!");
                         }
@@ -651,8 +639,11 @@ bool sonar_dft_convolution(const char* const pulse_file_name, const char* const 
                         }
 #endif
 
+                        uint32_t duration_ms = time_calc_duration_ms(start_ms);
+                        LOG_INFO(SONAR, "DFT,Calc,Convolution,Duration:%s s", FloatToStr(MSEC_2_SEC(duration_ms),3)  );
+
                         if(res) {
-                            res = sonar_signal_save("convolutionDFT.csv", iSignal, max_sample_cnt, sampling_period_s);
+                            res = complex_signal_save("convolutionDFT.csv", iSignal, max_sample_cnt, sampling_period_s);
                         }
 #if 0 // next buggy code
 #endif
@@ -844,6 +835,10 @@ bool sonar_calc_correlation(uint32_t num, char* const file_name) {
 
                     LOG_NOTICE(SONAR, "SampleCnt:%u", WavHandle.sample_cnt);
 
+
+                    uint32_t start_ms = time_get_ms32();
+
+
                     for(cur_sample = 0; cur_sample < WavHandle.sample_cnt; cur_sample++) {
                         Cur.sample = cur_sample;
                         Cur.positive_correlation = 0;
@@ -882,6 +877,10 @@ bool sonar_calc_correlation(uint32_t num, char* const file_name) {
                                       real_read);
                         }
                     } //  for(cur_sample = 0; cur_sample < WavHandle.sample_cnt; cur_sample++) {
+                    uint32_t duration_ms = time_calc_duration_ms(start_ms);
+                    LOG_INFO(SONAR, "FIR,Calc,Convolution,Duration:%s s", FloatToStr(MSEC_2_SEC(duration_ms),3)  );
+
+
                     LOG_INFO(SONAR, CRLF "Best:%s", SonarBestCorrelationToStr(&BestCorrelation));
                     res = file_mcal_close(FILE_MCAL_WRITE);
                 } else {
@@ -983,6 +982,131 @@ bool sonar_chirp_calc_bandwith(float v_sound_mps,
     return res;
 }
 
+/*
+ */
+bool sonar_fft_convolution(const char* const pulse_file_name, const char* const rec_file_name) {
+    bool res = false;
+    if(rec_file_name) {
+        if(pulse_file_name) {
+            LOG_INFO(SONAR, "SampleSize:%u Byte", sizeof(SampleType_t));
+            LOG_INFO(SONAR, "CalcFFT:Rec[%s],Pulse:[%s]", rec_file_name,pulse_file_name);
+            res = wav_load(1, rec_file_name);
+            if(res) {
+                res = wav_load(2, pulse_file_name);
+                if(res) {
+                    res = false;
+                    WavHandle_t* Rec = WavGetNode(1);
+                    if(Rec) {
+                        uint32_t start_ms = time_get_ms32();
+                        SampleType_t* signal_rec = NULL;
+                        SampleType_t* signal_pulse_ptr = NULL;
+
+                        uint32_t size_sig = 0;
+                        uint32_t max_sample_cnt = 0;
+                        WavHandle_t* Pulse = WavGetNode(2);
+                        if(Pulse) {
+                            uint32_t init_sample_cnt=Rec->sample_cnt+ Pulse->sample_cnt-1;
+                            max_sample_cnt = next_power_of_2( init_sample_cnt);
+                            LOG_INFO(SONAR, "max_sample_cnt:%u sample",init_sample_cnt, max_sample_cnt);
+                            size_sig = max_sample_cnt * sizeof(SampleType_t);
+                            LOG_INFO(SONAR, "size_sig:%u Byte", size_sig);
+                            signal_rec = (SampleType_t*)malloc(size_sig);
+                            if(signal_rec) {
+                                signal_pulse_ptr = (SampleType_t*)malloc(size_sig);
+                                if(signal_pulse_ptr) {
+                                    res = true;
+                                    dsp_array_zero(signal_rec,     max_sample_cnt) ;
+                                    dsp_array_zero(signal_pulse_ptr,     max_sample_cnt) ;
+                                }
+                            }
+                        }else {
+                            LOG_ERROR(SONAR, "Wav2GetNode");
+                        }
+
+                        LOG_INFO(SONAR, "Fs:%u Hz", Pulse->sampling_frequency_hz);
+                        LOG_INFO(SONAR, "SONAR_MAX_SPEC:%u ", SONAR_MAX_SPEC);
+                        double sampling_period_s = 1.0 / ((double)Pulse->sampling_frequency_hz);
+                        (void)sampling_period_s;
+                        LOG_INFO(SONAR, "SamTime:%f s", sampling_period_s);
+                        double measured_interval_s = ((double) max_sample_cnt) * sampling_period_s;
+                        (void)measured_interval_s;
+                        //uint32_t max_garmotic = fft_freq_to_garmonic( 48000, measured_interval_s);
+                        uint32_t max_garmotic = max_sample_cnt;
+                        LOG_INFO(SONAR, "maxGarmotic:%u", max_garmotic);
+                        if(res) {
+                            LOG_INFO(SONAR, "CopyPulse:");
+                            res = dsp_array_cpy( signal_pulse_ptr, (SampleType_t*)Pulse->data, Pulse->channels, Pulse->sample_cnt);
+                            log_res(SONAR,res,"SignalPulseFill");
+
+                            LOG_INFO(SONAR, "CopyRec:");
+                            res = dsp_array_cpy( signal_rec, (SampleType_t*)Rec->data, Rec->channels, Rec->sample_cnt);
+                            log_res(SONAR,res,"signalRecFill");
+
+                            // Up ok
+#ifdef HAS_FFT
+                            if(max_sample_cnt < SONAR_MAX_SPEC) {
+                                res = fft_calc(signal_rec, max_sample_cnt, RecSpectrum, sampling_period_s, max_garmotic);
+                                log_res(SONAR,res,"fft_calcRec");
+                                if(res) {
+                                    res = fft_calc(signal_pulse_ptr, max_sample_cnt, PulseSpectrum, sampling_period_s, max_garmotic);
+                                    log_res(SONAR,res,"fft_calcPulse");
+                                }
+                            } else {
+                                LOG_ERROR(SONAR, "MAX:%u,Need:%u", SONAR_MAX_SPEC, max_sample_cnt);
+                            }
+#endif
+                        }
+                        // untested code \/
+#ifdef HAS_FFT
+                        if(res) {
+                            res = complex_array_conjugate( PulseSpectrum,  max_garmotic);
+                            log_res(SONAR,res,"complex_array_conjugate");
+                            res = complex_array_mux(RecSpectrum, PulseSpectrum, MuxSpectrum, max_garmotic);
+                            log_res(SONAR,res,"complex_array_mux");
+                        }else {
+                            LOG_ERROR(SONAR, "fft_calc,ERROR!");
+                        }
+#endif
+
+                        double complex* iSignal = (double complex*)malloc(sizeof(double complex) * max_sample_cnt);
+                        if(iSignal) {
+                            res = true;
+                        } else {
+                            res = false;
+                            LOG_ERROR(SONAR, "MallocErr,Need:%u", max_sample_cnt);
+                        }
+#ifdef HAS_FFT
+                        if(res) {
+                            if(iSignal) {
+                                res = ifft_calc(MuxSpectrum, max_garmotic, max_sample_cnt, iSignal);
+                            }
+                        }
+#endif
+
+                        uint32_t duration_ms = time_calc_duration_ms(start_ms);
+                        LOG_INFO(SONAR, "FFT,Calc,Convolution,Duration:%s s", FloatToStr(MSEC_2_SEC(duration_ms),3)  );
+                        if(res) {
+                            res = complex_signal_save("convolutionFFT.csv", iSignal, max_sample_cnt, sampling_period_s);
+                        }
+#if 0 // next buggy code
+#endif
+                    }else {
+                        LOG_ERROR(SONAR, "WavGetNode");
+                    }
+                } else {
+                    LOG_ERROR(SONAR, "Wav2PulseLoad");
+                }
+            }else {
+                LOG_ERROR(SONAR, "Wav1RecLoad");
+            }
+        }else {
+            LOG_ERROR(SONAR, "PulseFileName");
+        }
+    } else {
+        LOG_ERROR(SONAR, "RecFileName");
+    }
+    return res;
+}
 
 COMPONENT_INIT_PATTERT(SONAR, SONAR, sonar)
 COMPONENT_PROC_PATTERT(SONAR, SONAR, sonar)

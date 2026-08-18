@@ -495,3 +495,31 @@ bool sonar_dft_convolution_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+
+/*
+ sonar_fft_convolution rx/OneRecording_30ms_31.wav tx/1Chirp_30ms_F44100Hz_Hamming.wav
+ sonar_fft_convolution rx/OneRecording_30ms_31.wav tx/1Chirp_30ms_F44100Hz_Hamming.wav
+ */
+bool sonar_fft_convolution_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    char pulse_file_name[120] = {0};
+    char rec_file_name[120] = {0};
+    if(2 <= argc) {
+        LOG_INFO(SONAR, "0:[%s]", argv[0]);
+        LOG_INFO(SONAR, "1:[%s]", argv[1]);
+        strcpy(pulse_file_name, argv[0]);
+        strcpy(rec_file_name, argv[1]);
+        res = true;
+    }
+
+    if(res) {
+        res = false;
+        res = sonar_fft_convolution(pulse_file_name, rec_file_name);
+        log_res(SONAR, res, "FftConvolution");
+    }else {
+        LOG_ERROR(SONAR, "Usage: sfftco Rec Pulse");
+    }
+    return res;
+}
+
+

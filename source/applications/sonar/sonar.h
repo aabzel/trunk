@@ -73,6 +73,7 @@ bool sonar_config_correlator_barker13(uint32_t num,
 
 bool sonar_signal_save(const char* const file_name, const double complex* const iSignal, uint32_t size, double scale_x);
 bool sonar_dft_convolution(const char* const pulse_file_name, const char* const rec_file_name);
+bool sonar_fft_convolution(const char* const pulse_file_name, const char* const rec_file_name);
 
 
 #endif /* SONAR_DRV_H */

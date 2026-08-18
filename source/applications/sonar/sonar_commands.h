@@ -14,6 +14,7 @@ bool cmd_sonar_zonding_signal(int32_t argc, char* argv[]);
 bool cmd_sonar_correlation(int32_t argc, char* argv[]);
 bool sonar_config_command(int32_t argc, char* argv[]);
 bool sonar_dft_convolution_command(int32_t argc, char* argv[]);
+bool sonar_fft_convolution_command(int32_t argc, char* argv[]);
 bool sonar_chirp_to_wav_command(int32_t argc, char* argv[]);
 bool sonar_chirp_correlation_command(int32_t argc, char* argv[]);
 bool sonar_plot_convolution_command(int32_t argc, char* argv[]);
@@ -46,7 +47,8 @@ bool sonar_calc_corr_barker_rec_command(int32_t argc, char* argv[]);
     SHELL_CMD("sonar_config", "scfg", sonar_config_command, "SonarConfigCmd"),                                \
     SHELL_CMD("sonar_chirp_to_wav", "scw", sonar_chirp_to_wav_command, "SonarChirpToWav"),                    \
     SHELL_CMD("sonar_plot_convolution", "spc", sonar_plot_convolution_command, "SonarPlotConvolution"),       \
-    SHELL_CMD("sonar_dft_convolution", "sdftco", sonar_dft_convolution_command, "SonarConvolution"),                      \
+    SHELL_CMD("sonar_fft_convolution", "sfftco", sonar_fft_convolution_command, "SonarFFTconvolution"),                      \
+    SHELL_CMD("sonar_dft_convolution", "sdftco", sonar_dft_convolution_command, "SonarDFTconvolution"),                      \
     SHELL_CMD("sonar_calc_correlation", "scc", sonar_chirp_correlation_command, "SonarChirpCorrelation"),
 
 #define SONAR_COMMANDS                                                                         \
