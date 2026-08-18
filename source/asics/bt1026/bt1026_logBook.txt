@@ -1,0 +1,30 @@
+bts AT+I2SCFG
+ll bt1026 debug
+
+i2sne
+
+Включить канал
+fdcp 3 1
+words
+
+Отключить канал
+fdcp 3 0
+
+btps 0 128
+
+
+i2sl 0 256 0
+btp
+
+nrfx i2s full duplex
+https://devzone.nordicsemi.com/f/nordic-q-a/83185/nrfx-i2s-using-the-same-buffer-for-rx-and-tx-in-full-duplex-mode
+
+
+
+AT+I2SCFG
+
++I2SCFG=67=0x43    b0100_0011
+
+OK
+
+

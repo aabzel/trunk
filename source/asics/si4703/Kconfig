@@ -1,0 +1,4 @@
+
+config SI4703
+    bool "Enable use of the SI4703 drivers"
+

@@ -1,0 +1,4 @@
+
+config TPA2013D1
+    bool "Enable use of the TPA2013D1 drivers"
+

@@ -1,0 +1,4 @@
+
+config RS2058
+    bool "Enable use of the RS2058 drivers"
+

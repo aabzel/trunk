@@ -1,0 +1,4 @@
+
+config HW_CODEC_MAX9860
+    bool "Enable use of the Max9860 drivers"
+

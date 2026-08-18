@@ -1,0 +1,1 @@
+python plot_record.py rec1.csv

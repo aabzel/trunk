@@ -1,0 +1,54 @@
+dwdi
+
+ll DECA debug
+Перейти в режим приема
+drs
+dtb 0x5656
+dtb HelloDw1000
+dtb HelloDw1001
+dtb Hello__
+dwdi
+
+Отправить Ping по UWB
+tbp 10 0x51
+
+Отправить Pong по UWB
+tbp 10 0x90
+
+ll tbfp debug
+ll tbfp parn
+
+спешный TX может быть только из idle 
+
+
+SFD
+dw1000 не задерживается в состоянии приема. При включении приема трансивар сразу же спрыгивает в IDLE по timeout.
+
+
+
+rpt drs 4000 10
+
+
+Ublox NEO-6m
+
+
+
+ if(SYS_STATUS_RXPHE ==(SYS_STATUS_RXPHE & sys_status_reg)){
+     LOG_WARNING(DECA,"cccccc 0x%08x",sys_status_reg);
+ }
+ if(SYS_STATUS_RXFCE ==( SYS_STATUS_RXFCE& sys_status_reg)){
+     LOG_WARNING(DECA,"cccccc 0x%08x",sys_status_reg);
+ }
+ if(SYS_STATUS_RXRFSL ==(SYS_STATUS_RXRFSL & sys_status_reg)){
+     LOG_WARNING(DECA,"cccccc 0x%08x",sys_status_reg);
+ }
+ if(SYS_STATUS_RXSFDTO  ==(SYS_STATUS_RXSFDTO & sys_status_reg)){
+     LOG_WARNING(DECA,"cccccc 0x%08x",sys_status_reg);
+ }
+ if(SYS_STATUS_AFFREJ ==(SYS_STATUS_AFFREJ & sys_status_reg)){
+     LOG_WARNING(DECA,"cccccc 0x%08x",sys_status_reg);
+ }
+ if(SYS_STATUS_LDEERR==( SYS_STATUS_LDEERR& sys_status_reg)){
+     LOG_WARNING(DECA,"cccccc 0x%08x",sys_status_reg);
+ }
+								

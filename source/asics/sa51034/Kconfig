@@ -1,0 +1,4 @@
+
+config HW_AMP_SA51034
+    bool "Enable use of the SA51034 driver"
+

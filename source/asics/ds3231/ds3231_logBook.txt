@@ -1,0 +1,67 @@
+dst 1 -125
+
+dst 1 127
+
+i2w 1 0xD0 0x04
+
+i2r 1 0xd1 1
+
+dsr 0
+0x06
+
+dsr 1
+
+dsr 1
+39.665:I [??] Addr 0x01 Val: 0x36
+:::;;;
+Установить  время
+dsst 1 02:24:00
+
+
+dsst 1 01:08:00
+
+dsst 1 22:23:00
+dsst 1 23:32:00
+
+
+dssd 1 May_31_2023
+dsd
+
+h ds3231
+
+ll adc error
+ll SYS error
+ll PhotoResistor error
+
+
+
+dsd
+
+h ds3231
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |      dsd |          ds3231_diag | Ds3231 diag
+|   2 |      dsu |           ds3231_run | Ds3231Run
+|   3 |      dss | ds3231_set_time_date | Ds3231SetTimeDate
+|   4 |     dsst |      ds3231_set_time | Ds3231SetTime
+|   5 |     dssd |      ds3231_set_date | Ds3231SetDate
+|   6 |      dsm |           ds3231_map | Ds3231 Map
+|   7 |      dsi |          ds3231_init | Ds3231Init
+|   8 |      dsr |          ds3231_read | Ds3231GetReg
+|   9 |      dsw |         ds3231_write | Ds3231SetReg
++-----+----------+----------------------+-------------+
+
+tsr ds32+
+
+
+dsd
+dsu 1 0
+dsu 1 1
+dsd
+
+
+
+http://microsin.net/adminstuff/hardware/ds3231-extremely-accurate-rtc.html
+tsr ds3231_config

@@ -1,0 +1,94 @@
+чем шире полоса тем быстрее передаетс€ пакет
+
+ ак проверить зан€та ли данна€ полоса в нанный момент времени?
+
+
+tx 
+
+
+Ќаписать диагностику SPI
+LoRa
+
+
+ѕочему — €зык не имете типа unit24_t?
+Why C language does not have 3 byte unit24_t type (3==sizeof(unit24_t))?
+
+Why do you pointer has 48 bit val (7:36) not a 64 bit val ?
+
+0x10
+
+gs 11 0
+gl LoRaCS
+sw 0 0x17
+sr 0 19
+0xa2000002000000699883
+0xa2 00 00 02000000699883222d3b90ad4baea943
+gs 11 1
+gl LoRaCS
+
+
+
+gs 11 0
+sw 0 0x14
+sr 0 19
+0x00 00 aa 00 00 
+  6b c8 8c e6 0b 033a00000000000000
+gs 11 1
+
+
+
+
+gs 11 0
+sw 0 0x13
+sr 0 8
+0x00 00 aa 00 00 
+  6b c8 8c e6 0b 033a00000000000000
+gs 11 1
+
+https://forum.lora-developers.semtech.com/t/sx1262-failure-to-execute-command/269
+https://os.mbed.com/teams/Semtech/code/SX126xLib/file/1e2345700991/sx126x.h
+https://os.mbed.com/teams/Semtech/code/SX126xLib/file/1e2345700991/sx126x.cpp
+https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.c
+https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.c
+https://github.com/socky886/stm32l476_sx126x_gcc/blob/master/Drivers/sx126x/sx126x_driver.c
+https://www.hackster.io/131385/fun-with-lora-2c2bb4
+https://github.com/ThisIsIoT/IoT-Keystone
+https://github.com/LYH1885/SX1262-RF-Module/tree/master/HARDWARE/SX1262
+https://github.com/LYH1885/SX1262-RF-Module/blob/master/HARDWARE/SX1262/sx1262.c
+https://github.com/LYH1885/SX1262-RF-Module/blob/master/HARDWARE/SX1262/sx1262.h
+https://github.com/Forest-Rain/lora-radio-driver/blob/master/lora-radio/sx126x/sx126x.c
+https://www.kickstarter.com/projects/amin-mehdi-mansouri/axon-wifi-messaging-platform-made-for-iot?ref=discovery_category&term=lora
+https://www.kickstarter.com/projects/688158475/marvin-the-lora-development-board?ref=discovery_category&term=lora
+
+
+
+
+sxo 0x1E 0x00 256
+sxo 0x0E 0x00112233445566778899 0 
+
+
+
+d200000000000000
+0007001700277f00
+LAUNCHXL-CC26X2R1
+rpt sxt_0x55aa 2000 200
+rpt sxt_0x55aa55aa 2000 200
+
+
+
+
+rpt sxt_ping 2000 400
+
+
+
+Debug with SDR
+https://4ham.ru/obzor-rtl-sdr/
+https://radio23.ru/scaners/sdr/-rtl-sdr-100khz-1-7-ghz
+https://www.rtl-sdr.com/big-list-rtl-sdr-supported-software/
+
+
+
+
+
+
+

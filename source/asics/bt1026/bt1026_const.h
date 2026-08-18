@@ -1,0 +1,42 @@
+#ifndef BT1026_CONST_H
+#define BT1026_CONST_H
+
+#include "time_mcal.h"
+#include "bt1026_dep.h"
+
+#define BT1026_DRIVER_VERSION 4
+
+#define BT1026_PERIOD_US  MSEC_2_USEC(200)
+#define BT1026_MAX_LINE_SZ 100
+#define BT1026_LINK_CHECK_PERIOD_US SEC_2_USEC(3)
+#define BT1026_DIAG_PERIOD_US SEC_2_USEC(6)
+#define BT1026_CHECK_PERIOD_US SEC_2_USEC(5)
+
+#define BT1026_I2S_NUM 0
+#define BT1026_LINK_TIMEOUT_MS 5000
+
+#ifndef HAS_BT1026
+#error "+HAS_BT1026"
+#endif
+
+typedef enum {
+    BT1026_I2SMODE_MASTER = 0,
+    BT1026_I2SMODE_SLAVE  = 1,
+    BT1026_I2SMODE_UNDEF =2,
+}Bt1026I2sBusRole_t ;
+
+typedef enum {
+    RES_16_BIT=0,
+    RES_24_BIT=1,
+    RES_32_BIT=2,
+    RES_UNDEF=4,
+}BT1026Resolution_t;
+
+typedef enum {
+    BT_SAMPLE_RATE_48000_HZ=0,
+	BT_SAMPLE_RATE_44100_HZ=1,
+	BT_SAMPLE_RATE_UNDEF=2,
+}BT1026SampleRate_t;
+
+
+#endif /* BT1026_CONST_H */

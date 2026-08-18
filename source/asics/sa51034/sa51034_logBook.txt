@@ -1,0 +1,34 @@
+
+
+7.597-->h sa
+argc 1
+AvailableCommands:Key1:sa
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |       sp |         sa51034_ping | Sa51034Ping
+|   2 |      srm |          sa51034_map | Sa51034RegMap
+|   3 |       sf |    sa51034_frequency | Sa51034Freq
+|   4 |       sg |         sa51034_gain | Sa51034Gain
+|   5 |      nrh |         sa51034_hazy | Sa51034RegHazy
+|   6 |       nr |         sa51034_read | Sa51034RegRead
+|   7 |       nw |        sa51034_write | Sa51034RegWrite
+|   8 |      ndl |      sa51034_diag_ll | Sa51034DiagLowLevel
+|   9 |      ndh |  sa51034_diag_hi_lev | Sa51034DiagHiLevel
+|  10 |       ni |         sa51034_init | Sa51034Init
++-----+----------+----------------------+-------------+
+
+nrm 1
+
+sa51034_read 1
+sa51034_read 2
+sa51034_read 3
+
+ll sa51034 parn
+
+StatusAndLoadDiagnostic
+
+ll sa51034 info
+
+

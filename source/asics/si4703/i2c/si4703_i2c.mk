@@ -1,0 +1,13 @@
+ifneq ($(SI4703_I2C_MK_INC),Y)
+    SI4703_I2C_MK_INC=Y
+
+    SI4703_I2C_DIR = $(SI4703_DIR)/i2c
+    # $(error SI4703_I2C_DIR=$(SI4703_I2C_DIR))
+
+    INCDIR += -I$(SI4703_I2C_DIR)
+
+    MCAL_OPT += -DHAS_SI4703_I2C
+    SOURCES_C += $(SI4703_I2C_DIR)/si4703_i2c.c
+
+
+endif

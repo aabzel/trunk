@@ -1,0 +1,35 @@
+
+
+
+3:8-->h ad98
+argc 1
+AvailableCommands:Key1:ad98
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |      ado |      ad9833_set_form | Ad9833SetForm
+|   2 |      adf |      ad9833_set_freq | Ad9833SetFreq
+|   3 |      adp |     ad9833_set_phase | Ad9833SetPhase
+|   4 |      add |          ad9833_diag | Ad9833SetSignal
+|   5 |      adi |          ad9833_init | Ad9833Init
++-----+----------+----------------------+-------------+
+
+adf 1 1 2000
+adf 1 0 10
+adf 1 0 100
+adf 1 0 1000
+adf 1 0 10000
+adf 1 0 100000
+adf 1 0 1000000
+adf 1 0 10000000
+adf 1 0 4000
+ 
+Заставить испускать синус
+ado 1 2
+
+Заставить испускать пилу
+ado 1 3
+
+Заставить испускать меандр
+ado 1 1

@@ -1,0 +1,24 @@
+https://eclipse-embed-cdt.github.io/debug/jlink/
+https://mcuoneclipse.com/2019/09/22/eclipse-jtag-debugging-the-esp32-with-a-segger-j-link/
+https://bitknitting.wordpress.com/2015/07/11/using-eclipse-to-program-the-nrf51822/
+https://karibe.co.ke/2014/03/debugging-arm-freescale-microcontrollers-with-j-link-gdb-server-and-gnu-arm-toolchain-gdb-with-semihosting-in-linux/
+https://dev.px4.io/v1.10_noredirect/en/debug/eclipse_jlink.html
+https://mcuoneclipse.com/2022/07/16/getting-started-raspberry-pi-pico-rp2040-with-eclipse-and-j-link/
+https://habr.com/ru/post/215483/
+https://habr.com/ru/company/rainbow/blog/251053/
+https://habr.com/ru/post/578830/
+
+
+https://eclipse-embed-cdt.github.io/debug/jlink/ 
+https://mcuoneclipse.com/2019/09/22/eclipse-jtag-debugging-the-esp32-with-a-segger-j-link/ 
+https://bitknitting.wordpress.com/2015/07/11/using-eclipse-to-program-the-nrf51822/ 
+https://karibe.co.ke/2014/03/debugging-arm-freescale-microcontrollers-with-j-link-gdb-server-and-gnu-arm-toolchain-gdb-with-semihosting-in-linux/
+
+https://habr.com/ru/post/673522/https://habr.com/ru/post/694708/https://habr.com/ru/post/694408/https://habr.com/ru/post/681280/
+
+
+
+
+Building CC26xx makefile project 
+
+Makefile Template  CC26xx 

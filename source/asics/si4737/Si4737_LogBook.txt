@@ -1,0 +1,240 @@
+Последний оставшийся I2C3 выходит на разьем CN12 на котором нет PLD вилки.
+
+Припаяна ли перемычка SB115? Нет
+
+
+придется использовать I2C1 от аудиокодека WM
+
+
+h i2c
+
+
+Available commands:Key1:i2c
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |     i2cd |           i2c_diag | I2C diag
+|   2 |    i2cdl |        i2c_diag_ll | I2CDiagLowLevel
+|   4 |     i2cc |          i2c_check | I2C check addr
+|   5 |     i2cs |           i2c_scan | I2C scan
+|   6 |     i2cw |          i2c_write | I2C write hex str
+|   7 |     i2ci |           i2c_init | I2C init
+|   8 |     i2cr |           i2c_read | I2C read
++-----+----------+--------------------+-------------+
+
+Power Up
+i2cw 1  0x63 0x01
+i2cw 1  0x11 0x01
+
+i2cr 1 0xc6 3
+i2cr 1 0x11 3
+
+i2cs 1
+i2cs 2
+i2cs 3
+
+0xc6 0xc7
+i2cs 1
+6.006:I [I2C] InterfaceNum 1
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| -- | x0 | x1 | x2 | x3 | x4 | x5 | x6 | x7 | x8 | x9 | xA | xB | xC | xD | xE | xF |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| 0x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 1x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 2x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 3x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 4x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 5x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 6x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 7x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 8x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| 9x | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| ax | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| bx | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| cx | -- | -- | -- | -- | -- | -- | c6 | c7 | -- | -- | -- | -- | -- | -- | -- | -- |
+| dx | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| ex | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| fx | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
++----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+
+
+Чип SI4737 не отвечает по I2C. 
+Сканирование шины I2C ничего не показывает. Никто не выставляет бит ACK.
+
+
+Предположение
+Может I2C регистры потому не отвечают что нет частоты тактирования на проводе RCLK.
+
+31.13
+
+gs e 0 0
+gl rst
+
+gs e 0 1
+
+i2cs 2
+
+i2cd
+
+sir 0x1401
+ i2cr 1 0x63 4
+ i2cr 1 0xc7 4
+  i2cr 1 0xc6 4
+11000110
+sim
+sim
+
+Отобразить все тесты посвященные чипу Si4737
+tsa si47
+
+апустить все тесты посвященные чипу Si4737
+tsr si47+
+
+ll Si4737 debug
+ll Si4737 info
+
+не прочитать property
+
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+   1 |      siv |     si4737_set_vol | Si4737SetRxVol
+|   3 |      sis |     si4737_rf_seek | Si4737RfSeek
+|   4 |     sirf | si4737_set_rf_freq | Si4737SetRfFreq
+|   5 |      sim |         si4737_map | Si4737PropMap
+|   6 |      sir |    si4737_prop_get | Si4737PropRead
+|   7 |      sid |        si4737_diag | Si4737Diag
+|   8 |     sidl |     si4737_diag_ll | Si4737DiagLowLvl
+|   9 |      siw |    si4737_prop_set | Si4737PropSet
+|  10 |      sii |        si4737_init | Si4737Init
+|  11 |      sit |       si4737_reset | Si4737Reset
++-----+----------+--------------------+-------------+
+siv 20
+powerup
+sgr
+sirf  97.6 
+sirf  97.8
+
+
+sirf  100.1 
+sirf  99.2
+
+
+sirf  90.3
+sirf  91.2
+sirf  87.5
+sim 0x0001
+siw 0x0001 0x07C7
+  0b0000011111000111
+  
+  
+siw  0x4001 0x3
+siw  0x4001 0x0
+
+https://github.com/tyoshid/libopenstm32l0x2/blob/0f132037c5db9de7104755278bf80de56f9d2c35/examples/stm32/l0/l0x2/stm32l052k8t/usb_radio/si4737.h
+https://github.com/tyoshid/libopenstm32l0x2/blob/0f132037c5db9de7104755278bf80de56f9d2c35/examples/stm32/l0/l0x2/stm32l052k8t/usb_radio/si4737.c
+
+
+https://github.com/tyoshid/libopenstm32l0x2/blob/0f132037c5db9de7104755278bf80de56f9d2c35/examples/stm32/l0/l0x2/stm32l052k8t/usb_radio/si4737.h
+https://github.com/tyoshid/libopenstm32l0x2/blob/0f132037c5db9de7104755278bf80de56f9d2c35/examples/stm32/l0/l0x2/stm32l052k8t/usb_radio/si4737.c
+
+
+26:26-->1589.660:W [Si4737] TuneDone
+1589.666:I [Si4737] CurFreq 104.2 Mhz
+1605.267:W [Si4737] RdsInt
+1605.272:W [RDS] RxNewBlockA
+1605.287:W [RDS] RdsRx
+1605.291:W [RDS] RdsSyncFound
+1605.295:W [RDS] RdsFiFoCnt 1
+1605.299:W [RDS] RdsNewBlkA
+1605.302:I [RDS] CountryCode 7 Russia
+1605.307:I [RDS] ProgAreaCov 9 Regional
+1605.312:I [RDS] ProgRefNum 31
+1605.316:I [RDS] App 4
+1605.319:I [RDS] Traffic Program 1
+1605.323:I [RDS] ProgramType 2 CurrentAffairs
+1605.328:I [RDS] MessageGr 0 A
+1605.333:I [RDS] GroupType 12 ?
+1605.674:W [Si4737] RdsInt
+1605.679:W [RDS] RxNewBlockB
+1605.683:W [RDS] RdsSync
+1605.687:W [RDS] RdsNewBlkB
+1605.691:I [RDS] CountryCode 7 Russia
+1605.696:I [RDS] ProgAreaCov 9 Regional
+1605.700:I [RDS] ProgRefNum 31
+1605.704:I [RDS] App 10
+1605.708:I [RDS] Traffic Program 0
+1605.712:I [RDS] ProgramType 7 Culture
+1605.717:I [RDS] MessageGr 0 A
+1605.721:I [RDS] GroupType 13 ?
+1606.081:W [Si4737] RdsInt
+1606.086:W [RDS] RdsRx
+1606.090:W [RDS] RdsSync
+1606.094:W [RDS] RdsRx
+1606.098:W [RDS] RdsFiFoCnt 1
+1606.102:I [RDS] CountryCode 11 ?
+1606.106:I [RDS] ProgAreaCov 15 Regional
+1606.111:I [RDS] ProgRefNum 76
+1606.115:I [RDS] App 31
+1606.118:I [RDS] Traffic Program 1
+1606.123:I [RDS] ProgramType 23 Leisure
+1606.127:I [RDS] MessageGr 1 B
+1606.132:I [RDS] GroupType 9 ?
+
+5089.087:I [RDS] CountryCode 3 Tyrkey
+5089.092:I [RDS] ProgAreaCov 12 Regional
+5089.097:I [RDS] ProgRefNum 237
+5089.101:I [RDS] App 0
+5089.104:I [RDS] Traffic Program 0
+5089.109:I [RDS] ProgramType 0 Undef
+5089.113:I [RDS] MessageGr 0 A
+5089.117:I [RDS] GroupType 0 TuningSwitching
+
+
+5198.259:I [RDS] CountryCode 12 ?
+5198.264:I [RDS] ProgAreaCov 1 International
+5198.269:I [RDS] ProgRefNum 82
+5198.273:I [RDS] App 23
+5198.276:I [RDS] Traffic Program 0
+5198.281:I [RDS] ProgramType 15 OtherMusic
+5198.285:I [RDS] MessageGr 1 B
+5198.290:I [RDS] GroupType 7 ?
+
+
+5240.259:I [RDS] CountryCode 7 Russia
+5240.264:I [RDS] ProgAreaCov 2 National
+5240.268:I [RDS] ProgRefNum 132
+5240.273:I [RDS] App 19
+5240.276:I [RDS] Traffic Program 1
+5240.280:I [RDS] ProgramType 16 Weather
+5240.285:I [RDS] MessageGr 1 B
+5240.289:I [RDS] GroupType 5 ?
+
+5050.895:I [RDS] CountryCode 5 ?
+5050.899:I [RDS] ProgAreaCov 12 Regional
+5050.904:I [RDS] ProgRefNum 249
+5050.908:I [RDS] App 0
+5050.912:I [RDS] Traffic Program 1
+5050.916:I [RDS] ProgramType 12 EasyListening
+5050.921:I [RDS] MessageGr 1 B
+5050.925:I [RDS] GroupType 9 ?
+
+
+5198.858:I [RDS] CountryCode 15 Belarus
+5198.863:I [RDS] ProgAreaCov 11 Regional
+5198.868:I [RDS] ProgRefNum 253
+5198.872:I [RDS] App 27
+5198.875:I [RDS] Traffic Program 1
+5198.879:I [RDS] ProgramType 0 Undef
+5198.884:I [RDS] MessageGr 0 A
+5198.888:I [RDS] GroupType 0 TuningSwitching
+
+5051.493:I [RDS] CountryCode 2 ?
+5051.498:I [RDS] ProgAreaCov 5 Regional
+5051.502:I [RDS] ProgRefNum 6
+5051.506:I [RDS] App 13
+5051.510:I [RDS] Traffic Program 0
+5051.514:I [RDS] ProgramType 31 Alarm
+5051.519:I [RDS] MessageGr 0 A
+5051.523:I [RDS] GroupType 5 ?

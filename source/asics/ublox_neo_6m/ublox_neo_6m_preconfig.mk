@@ -1,0 +1,11 @@
+ifneq ($(UBLOX_NEO_6M_PRECONFIG_MK),Y)
+    UBLOX_NEO_6M_PRECONFIG_MK=Y
+
+    UBLOX_NEO_6M=Y
+    NMEA=Y
+    GNSS=Y
+    CSV=Y
+    DATE=Y
+    TIME=Y
+    RTC=Y
+endif

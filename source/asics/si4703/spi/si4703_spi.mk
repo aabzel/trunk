@@ -1,0 +1,11 @@
+ifneq ($(SI4703_SPI_MK_INC),Y)
+    SI4703_SPI_MK_INC=Y
+
+    SI4703_SPI_DIR = $(SI4703_DIR)/spi
+    # $(error SI4703_SPI_DIR=$(SI4703_SPI_DIR))
+
+    INCDIR += -I$(SI4703_SPI_DIR)
+
+    MCAL_OPT += -DHAS_SI4703_SPI
+    SOURCES_C += $(SI4703_SPI_DIR)/si4703_spi.c
+endif

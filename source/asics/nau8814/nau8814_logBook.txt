@@ -1,0 +1,47 @@
+Play 1kHz Amp 16000
+no 16000 9999999
+no 16000 999
+no 16000 9999
+
+nrm 1
+ll nau8814 parn
+
+calc pll
+tcr 0 0;hmr;ll nau8814 debug;ncp 5000000 48000 512
+
+
+ll nau8814 info
+
+
+
+tsa nau8814
+
+
+
+tsr nau8814+
+
+np 
+
+ 
+
++-----+----------+----------------------+-------------+
+| Num | Acronym  |     CommandName      | Description |
++-----+----------+----------------------+-------------+
+|   1 |       no |     nau8814_play1kHz | Nau8814Play1kHz
+|   2 |       np |         nau8814_play | Nau8814Play
+|   3 |       ng |     nau8814_dac_gain | Nau8814DacGain
+|   4 |      npi | nau8814_play_infinite | Nau8814PlayInfinite
+|   5 |      nap |         nau8814_ping | Nau8814Ping
+|   6 |      nrm |          nau8814_map | Nau8814RegMap
+|   7 |      nrh |         nau8814_hazy | Nau8814RegHazy
+|   8 |      nrr |         nau8814_read | Nau8814RegRead
+|   9 |      nrw |        nau8814_write | Nau8814RegWrite
+|  10 |      ndl |      nau8814_diag_ll | Nau8814DiagLowLevel
+|  11 |      ndh |  nau8814_diag_hi_lev | Nau8814DiagHiLevel
+|  12 |       ni |         nau8814_init | Nau8814Init
+|  13 |       nt |        nau8814_reset | Nau8814Reset
++-----+----------+----------------------+-------------+
+
+
+
+nau8814_play 

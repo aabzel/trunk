@@ -1,0 +1,4 @@
+
+config HW_CODEC_NAU8814
+    bool "Enable use of the NAU8814 driver"
+

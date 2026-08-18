@@ -1,0 +1,53 @@
+message(STATUS "DECADRIVER_CMK_INC=${DECADRIVER_CMK_INC}")
+if( NOT (DECADRIVER_CMK_INC STREQUAL Y))
+    set(DECADRIVER_CMK_INC Y)
+
+    message(STATUS "+ DecaDriver")
+
+    set(DECADRIVER_DIR ${ASICS_DIR}/decadriver)
+    message(STATUS "DECADRIVER_DIR=${DECADRIVER_DIR}")
+    message(STATUS "DECADRIVER_DIAG=[${DECADRIVER_DIAG}]")
+    message(STATUS "DECADRIVER_COMMANDS=[${DECADRIVER_COMMANDS}]")
+
+    add_compile_definitions(HAS_DECADRIVER)
+    target_compile_definitions(app PUBLIC HAS_DECADRIVER)
+    target_compile_definitions(app PUBLIC HAS_DECADRIVER_PROC)
+    target_compile_definitions(app PUBLIC HAS_DW1000)
+    target_compile_definitions(app PUBLIC HAS_UWB)
+
+    if (DECADRIVER_VERIFY STREQUAL Y)
+        message(STATUS "+DECADRIVER_VERIFY")
+        target_compile_definitions(app PUBLIC HAS_DECADRIVER_VERIFY)
+    endif()
+
+    if (DECADRIVER_TX STREQUAL Y)
+        message(STATUS "+DECADRIVER_TX")
+        target_compile_definitions(app PUBLIC HAS_DECADRIVER_TX)
+    endif()
+
+    target_include_directories(app PUBLIC ${DECADRIVER_DIR})
+    target_sources(app PRIVATE ${DECADRIVER_DIR}/decadriver.c)
+    target_sources(app PRIVATE ${DECADRIVER_DIR}/decadriver_callback.c)
+    target_sources(app PRIVATE ${DECADRIVER_DIR}/decadriver_low_level.c)
+
+    if(DECA_POLL_CONNECTED STREQUAL Y)
+        message(STATUS "+DECA_POLL_CONNECTED")
+        target_compile_definitions(app PUBLIC HAS_DECA_POLL_CONNECTED)
+    endif()
+
+    if(DIAG STREQUAL Y)
+        if(DECADRIVER_DIAG STREQUAL Y)
+            message(STATUS "+DECADRIVER_DIAG")
+            target_compile_definitions(app PUBLIC HAS_DECADRIVER_DIAG)
+            target_sources(app PRIVATE ${DECADRIVER_DIR}/decadriver_diag.c)
+        endif()
+    endif()
+
+    if(CLI STREQUAL Y)
+        if(DECADRIVER_COMMANDS STREQUAL Y)
+            message(STATUS "+DECADRIVER_COMMANDS")
+            target_compile_definitions(app PUBLIC HAS_DECADRIVER_COMMANDS)
+            target_sources(app PRIVATE ${DECADRIVER_DIR}/decadriver_commands.c)
+        endif()
+    endif()
+endif()

@@ -1,0 +1,15 @@
+ifneq ($(MAX98357_PRECONFIG_MK_INC),Y)
+    MAX98357_PRECONFIG_MK_INC=Y
+
+    MAX98357_DIR = $(ASICS_DIR)/max98357
+    #@echo $(error MAX98357_DIR=$(MAX98357_DIR))
+
+    MAX98357=Y
+    SW_DAC=Y
+    COMPUTING=Y
+    ASICS=Y
+    I2S=Y
+    I2S_MASTER=Y
+    GPIO=Y
+
+endif

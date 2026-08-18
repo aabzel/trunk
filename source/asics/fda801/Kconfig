@@ -1,0 +1,4 @@
+
+config HW_CODEC_FDA801
+    bool "Enable use of the Fda801 drivers"
+

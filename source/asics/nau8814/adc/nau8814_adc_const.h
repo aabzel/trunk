@@ -1,0 +1,5 @@
+#ifndef NAU8814_ADC_CONST_H
+#define NAU8814_ADC_CONST_H
+
+
+#endif /* NAU8814_ADC_CONST_H */

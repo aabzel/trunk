@@ -1,0 +1,205 @@
+https://learn.sparkfun.com/tutorials/understanding-the-bc127-bluetooth-module/all
+
+ll uart debug
+bcs help
+us 2 0x0D
+ui 2 9600
+
+-vm /opt/jdk1.8.0_191/jre/bin
+rpt bcs_help 1000 99
+
+gl usart rx
+gl usart rx
++-----+-----+-----+-------+-----+-----------+------+------+------+------+------------+---------+
+| No  |gpioP|gpioP| level |dirr |    out    |speed | pull |AltFn | ItCn |    name    |   con   |
++-----+-----+-----+-------+-----+-----------+------+------+------+------+------------+---------+
+|   0 |  D  |  9  |   H   | Alt |  PushPull | High |  Air |  AF7 |    0 |  USART3_RX | CN11.69 |
+|   1 |  D  |  6  |   L   | Alt |  PushPull | Fast |  Air |  AF7 |    0 |  USART2_RX |   CN9.4 |
++-----+-----+-----+-------+-----+-----------+------+------+------+------+------------+---------+
+ 
+ 
+ 
+ps 64 1
+ps 69  2
+ 
+h gpio pull
+ 
+gp D 6 1
+
+
+ÐºÐ°Ðº Ñ€Ð°Ñ�Ð¿Ð°Ñ€Ñ�Ð¸Ñ‚ÑŒ Ð½Ð°Ñ�Ñ‚Ñ€Ð¾Ð¹ÐºÐ¸ i2s?
+bcs GET_AUDIO
+bcs GET AUDIO
+bcs SET AUDIO 0 1
+bcs SET AUDIO_DIGITAL=0 32000 64 100000 ON
+ll bc127 debug
+bcs GET AUDIO_DIGITAL
+bcd 
+
+bcs GET DISCOVERABLE
+bcs GET AUTOCONN
+bcs SET AUTOCONN=1
+
+bcs AUDIO
+bcs AUDIO_DIGITAL
+bcs DISCOVERABLE 2
+bcs DISCOVERABLE=2
+bcs GET REMOTE_ADDR
+bcs SET DISCOVERABLE=2
+bcs VERSION
+bcs PENDING
+bcs STATUS
+bcs DISCOVERABLE ON
+
+bcs SET AUDIO=1 1
+bcs SET AUDIO_DIGITAL=0 32000 64 100200
+
+
+i2sdl
+
+Ð’ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ Ð�ÑƒÐ´Ð¸Ð¾ Ñ‚Ñ€Ð°Ñ„Ð¸ÐºÐ° Ð´Ð»Ñ� bc127
+gl i2s1
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+| No  | pad  | level |dirr |    out    |speed | pull |AltFn | ItCn |    name    | connect |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+|   0 | PA15 |   L   | Alt |  PushPull |  Low |  Air |  AF5 |    0 |    I2S1_WS |   CN7.9 |
+|   1 |  PB3 |   L   | Alt |  PushPull |  Low |  Air |  AF5 |    0 |    I2S1_CK |  CN7.15 |
+|   2 |  PB5 |   L   | Alt |  PushPull |  Low |  Air |  AF5 |    0 |    I2S1_SD |  CN7.13 |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+
+
+i2srw 1 0x5555aaaa
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   2 |    i2sdp |      i2s_dma_pause | I2sDmaPause
+|   3 |    i2sds |       i2s_dma_stop | I2sDmaStop
+|   4 |    i2sdr |     i2s_dma_resume | I2sDmaResume
+|   6 |    i2spl |           i2s_play | I2sSetPlay
+|   7 |   i2sdac |            i2s_dac | I2sSetDac
+|   8 |     i2se |           i2s_echo | I2sEcho
+|   9 |     i2sl |           i2s_loop | I2sLoopBack
+|  11 |    i2sdl |        i2s_diag_ll | I2sDiagLowLevel
+|  12 |    i2srw |           i2s_TxRx | I2sReadWrite
+|  13 |     i2sw |          i2s_write | I2sWriteHexStr
+|  14 |     i2si |           i2s_init | I2sInit
+|  15 |     i2sr |           i2s_read | I2sRead
+|  16 |     i2ss |     i2c_start_stop | I2C start stop
++-----+----------+--------------------+-------------+
+
+
+
+как зайти в pairing mode?
+
+bcs PENDING
+PAIR_PENDING
+bcs PAIR_PENDING
+bcs ADVERTISING ON
+bcs VOLUME 10
+bcs SCAN 5
+ADVERTISING
+bcs NAME
+bcs CONFIG
+bcs LIST
+bcs VOLUME UP
+bcs SET ABS_VOL=1
+bcs VOLUME DOWN
+bcs VOLUME UP
+bcs VOLUME HFP
+bcs VOLUME HFP=6
+ 
+ERROR 0x0013 
+
+
+.047:D [FDA801] Ch3 Play
+3635.555:D [FDA801] Ch3 Play
+3635.997:D [FDA801] Ch3 Play
+3636.506:D [FDA801] Ch3 Play
+bcs VOLUME 3637.014:D [FDA801] Ch3 Play
+H3637.036:E [HMON] InitError
+FP=6
+3637.109:W [BC127] argc:2
+3637.113:D [BC127] Send: [VOLUME HFP=6] 13 byte
+3637.133:I [BC127] Send:13 byteOk!
+3637.137-->3637.523:D [FDA801] Ch3 Play
+
+ERROR 0x0013Parse[ERROR 0x0013] Len:12
+
+bcs ABS_VOL 11 93
+bcs VOLUME 10 UP
+bcs VOLUME 10 2
+bcs VOLUME 10 8
+bcs VOLUME 13 5
+bcs VOLUME 13
+bcs VOLUME 20 UP
+ОК
+
+bcs VOLUME 1 DOWN
+
+
+bcs VOLUME
+01 ANLG 4 
+10 A2DP 2
+13 HFP 5 
+20 A2DP F 
+23 HFP A
+
+ 
+bcs VOLUME 10 1
+bcs VOLUME 13 1
+bcs VOLUME 20 1
+bcs VOLUME A2DP 6
+bcs VOLUME 20 16
+
+bcs VOLUME 10 UP
+bcs VOLUME 20 UP
+bcs VOLUME 20 DOWN
+
+
+cs LIST
+608.788:W [BC127] argc:1
+608.791:D [BC127] Send: [LIST] 5 byte
+608.800:I [BC127] Send:5 byteOk!
+608.804-->608.835:E [HMON] InitError
+608.936:D [FDA801] Ch3 Play
+
+LIST EC8C9A6130DD HFP A2DP AVRCP BLE SPP
+
+Parse[LIST EC8C9A6130DD HFP A2DP AVRCP BLE SPP] Len:40
+
+LIST 001A7DDA7113 HFP A2DPParse[LIST 001A7DDA7113 HFP A2DP] Len:26
+
+LIST 989C5710D845 HFP A2DP AVRCPParse[LIST 989C5710D845 HFP A2DP AVRCP] Len:32
+
+LIST 4490BB7EDB76 HFP A2DP AVRCPParse[LIST 4490BB7EDB76 HFP A2DP AVRCP] Len:32
+
+LIST AE1D460000D8 HFP A2DP AVRCPParse[LIST AE1D460000D8 HFP A2DP AVRCP] Len:32
+
+LIST C8D7B00AA1A4 HFP A2DP AVRCP BLE SPPParse[LIST C8D7B00AA1A4 HFP A2DP AVRCP BLE SPP] Len:40
+
+LIST 6C006BC01A9C HFP A2DP AVRCPParse[LIST 6C006BC01A9C HFP A2DP AVRCP] Len:32
+bsv 14
+bgv
+bcs VOLUME
+VOLUME 
+ll bc127
+01 ANLG A 
+10 A2DP 8 
+13 HFP A 
+20 A2DP F 
+23 HFP A 
+OK
+
+
+
+
+
+
+
+
+
+
+
+
+
+

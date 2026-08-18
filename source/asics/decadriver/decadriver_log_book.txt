@@ -1,0 +1,8 @@
+drs
+
+dtb hi
+dtb hello
+dw1000_diag
+
+Показать какие прерывания активированы
+dwrr SYS_MASK 

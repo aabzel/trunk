@@ -1,0 +1,10 @@
+ifneq ($(SA51034_PRECONFIG_INC),Y)
+    SA51034_PRECONFIG_INC=Y
+
+    SA51034_DIR = $(ASICS_DIR)/sa51034
+
+    SA51034=Y
+    I2C=Y
+    GPIO=Y
+
+endif
