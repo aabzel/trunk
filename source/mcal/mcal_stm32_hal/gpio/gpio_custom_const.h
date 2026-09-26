@@ -29,6 +29,7 @@ typedef enum {
     PORT_UNDEF = 9,
 } Port_t;
 
+#if 0
 /*see 7.4.4 GPIO port pull-up/pull-down register (GPIOx_PUPDR)*/
 typedef enum {
     STM32_PULL_AIR = GPIO_NOPULL,
@@ -38,6 +39,7 @@ typedef enum {
 
     STM32_PULL_UNDEF = 4,
 } GpioStm32Pull_t;
+#endif
 
 typedef enum {
     SPEED_LOW_SPEED = 0,

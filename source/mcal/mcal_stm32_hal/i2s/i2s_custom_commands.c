@@ -87,7 +87,7 @@ bool i2s_custom_write_command(int32_t argc, char* argv[]) {
     uint16_t words = 0;
     if(3 == argc) {
         res = true;
-        static uint8_t array[256];
+        /*static*/ uint8_t array[256];
         memset(array, 0xFF, sizeof(array));
         uint32_t array_len = 0;
         res = try_str2uint8(argv[0], &num);
@@ -221,12 +221,12 @@ bool i2s_custom_loopback_command(int32_t argc, char* argv[]){
 #endif
 
 #define SET_COMMAND(FLAG, CMD_SHORT)                                                                                   \
-    bool i2s_custom_set_##FLAG##_command(int32_t argc, char* argv[]) {                                                        \
+    bool i2s_custom_set_##FLAG##_command(int32_t argc, char* argv[]) {                                                 \
         bool res = false;                                                                                              \
-        uint8_t num = 0;                                                                                           \
+        uint8_t num = 0;                                                                                               \
         bool status = false;                                                                                           \
         if(1 <= argc) {                                                                                                \
-            res = try_str2uint8(argv[0], &num);                                                                    \
+            res = try_str2uint8(argv[0], &num);                                                                        \
             if(false == res) {                                                                                         \
                 LOG_ERROR(I2S, "ParseErr I2Snum [1....5]");                                                            \
             }                                                                                                          \
@@ -238,15 +238,15 @@ bool i2s_custom_loopback_command(int32_t argc, char* argv[]){
             }                                                                                                          \
         }                                                                                                              \
         if(res) {                                                                                                      \
-            I2sHandle_t* Node = I2sGetNode(num);                                                                \
-            if(Node) {                                                                                              \
-                Node->FLAG = status;                                                                                \
+            I2sHandle_t* Node = I2sGetNode(num);                                                                       \
+            if(Node) {                                                                                                 \
+                Node->FLAG = status;                                                                                   \
                 LOG_INFO(I2S, "Ok!");                                                                                  \
             } else {                                                                                                   \
                 LOG_ERROR(I2S, "NodeGetErr");                                                                          \
             }                                                                                                          \
         } else {                                                                                                       \
-            LOG_ERROR(I2S, CMD_SHORT " num status");                                                               \
+            LOG_ERROR(I2S, CMD_SHORT " num status");                                                                   \
         }                                                                                                              \
         return res;                                                                                                    \
     }
@@ -327,9 +327,9 @@ bool i2s_prescaler_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num =2;
 
-    uint32_t I2SDIV ;  /*Bits 7:0 I2SDIV: I2S Linear prescaler   */
-    uint32_t ODD;      /*Bit 8 ODD: Odd factor for the prescaler */
-    uint32_t MCKOE ;   /*Bit 9 MCKOE: Master clock output enable*/
+    uint32_t I2SDIV=0 ;  /*Bits 7:0 I2SDIV: I2S Linear prescaler   */
+    uint32_t ODD=0;      /*Bit 8 ODD: Odd factor for the prescaler */
+    uint32_t MCKOE=0 ;   /*Bit 9 MCKOE: Master clock output enable*/
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
@@ -432,30 +432,30 @@ bool i2s_custom_play_command(int32_t argc, char* argv[]) {
 }
 
 #define SET_DMA_COMMAND(FLAG_S, FLAG_C, CMD_SHORT)                                                                     \
-    bool i2s_custom_dma_##FLAG_S##_command(int32_t argc, char* argv[]) {                                                      \
+    bool i2s_custom_dma_##FLAG_S##_command(int32_t argc, char* argv[]) {                                               \
         bool res = false;                                                                                              \
-        uint8_t num = 0;                                                                                           \
+        uint8_t num = 0;                                                                                               \
         if(1 <= argc) {                                                                                                \
-            res = try_str2uint8(argv[0], &num);                                                                    \
+            res = try_str2uint8(argv[0], &num);                                                                        \
             if(false == res) {                                                                                         \
                 LOG_ERROR(I2S, "ParseErr I2Snum [1....5]");                                                            \
             }                                                                                                          \
         }                                                                                                              \
         if(res) {                                                                                                      \
-            I2sHandle_t* Node = I2sGetNode(num);                                                                \
-            if(Node) {                                                                                              \
+            I2sHandle_t* Node = I2sGetNode(num);                                                                       \
+            if(Node) {                                                                                                 \
                 HAL_StatusTypeDef ret;                                                                                 \
-                ret = HAL_I2S_DMA##FLAG_C(Node->pHandle);                                                            \
+                ret = HAL_I2S_DMA##FLAG_C(Node->pHandle);                                                              \
                 if(HAL_OK == ret) {                                                                                    \
                     LOG_INFO(I2S, #FLAG_C LOG_OK);                                                                     \
                 } else {                                                                                               \
-                    LOG_ERROR(I2S, "Dma" #FLAG_C " %s", HalStatusToStr(ret));                                           \
+                    LOG_ERROR(I2S, "Dma" #FLAG_C " %s", HalStatusToStr(ret));                                          \
                 }                                                                                                      \
             } else {                                                                                                   \
                 LOG_ERROR(I2S, "NodeGetErr");                                                                          \
             }                                                                                                          \
         } else {                                                                                                       \
-            LOG_ERROR(I2S, CMD_SHORT " num");                                                                      \
+            LOG_ERROR(I2S, CMD_SHORT " num");                                                                          \
         }                                                                                                              \
         return res;                                                                                                    \
     }

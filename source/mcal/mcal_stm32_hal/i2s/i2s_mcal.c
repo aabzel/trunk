@@ -238,7 +238,8 @@ When the master clock is generated (MCKOE in the SPI_I2SPR register is set):
 FS = I2SxCLK / [(16*2)*((2*I2SDIV)+ODD)*8)] when the channel frame is 16-bit wide
 FS = I2SxCLK / [(32*2)*((2*I2SDIV)+ODD)*4)] when the channel frame is 32-bit wide
 */
-static uint32_t i2s_sample_freq_master_clock_on_get_ll(const I2sInfo_t* const Info,  const I2sReg_SPI_I2SPR_t* const pI2SPR){
+static uint32_t i2s_sample_freq_master_clock_on_get_ll(const I2sInfo_t* const Info,
+                                                       const I2sReg_SPI_I2SPR_t* const pI2SPR){
     uint32_t sampling_frequency_hz = 0 ;
 
     uint32_t i2sx_clk_hz = 0 ;
@@ -247,22 +248,24 @@ static uint32_t i2s_sample_freq_master_clock_on_get_ll(const I2sInfo_t* const In
     I2sReg_SPI_I2SCFGR_t I2SCFGR;
     I2SCFGR.dword = Info->I2Sx->I2SCFGR;
 
-    uint32_t sample_bit_size=i2s_data_len_to_frame_size( I2SCFGR.DATLEN);
-
+    uint32_t sample_bit_size = i2s_data_len_to_frame_size( I2SCFGR.DATLEN);
+    uint32_t divider = 1;
     switch(I2SCFGR.DATLEN) {
         case I2S_DAT_LEN16_BIT:{
             // FS = I2SxCLK / [   (16*2)*{(2*I2SDIV)+ODD)*8}   ]     when the channel frame is 16-bit wide
-            sampling_frequency_hz = i2sx_clk_hz/   (     ((sample_bit_size*2)*(  (2*pI2SPR->I2SDIV) + pI2SPR->ODD    )*8    )    ) ;
+            divider =         (sample_bit_size*2)*(  (2*pI2SPR->I2SDIV) + pI2SPR->ODD    )*8         ;
         } break;
 
         case I2S_DAT_LEN24_BIT:
         case I2S_DAT_LEN32_BIT:{
             //  FS = I2SxCLK / [      (32*2)*((2*I2SDIV)+ODD)*4)     ] when the channel frame is 32-bit wide
-            sampling_frequency_hz = i2sx_clk_hz/   (     ((sample_bit_size*2)*(  (2*pI2SPR->I2SDIV) + pI2SPR->ODD    )*4    )    ) ;
+            divider =         (sample_bit_size*2)*(  (2*pI2SPR->I2SDIV) + pI2SPR->ODD    )*4         ;
         } break;
 
         default:   break;
     }
+
+    sampling_frequency_hz = i2sx_clk_hz/   divider ;
 
 
     return sampling_frequency_hz;
@@ -278,7 +281,8 @@ static uint32_t i2s_sample_freq_master_clock_off_get_ll(I2sInfo_t* Info,  I2sReg
     uint32_t sample_bit_size = i2s_data_len_to_frame_size(I2SCFGR.DATLEN);
     // FS = I2SxCLK / [(16*2)*((2*I2SDIV)+ODD))] when the channel frame is 16-bit wide
     // FS = I2SxCLK / [(32*2)*((2*I2SDIV)+ODD))] when the channel frame is 32-bit wide
-    sampling_frequency_hz = bus_freq_hz / ( (sample_bit_size*2)*((2*pI2SPR->I2SDIV) + pI2SPR->ODD) ) ;
+    uint32_t divider = (sample_bit_size*2)*(    (2*pI2SPR->I2SDIV) + pI2SPR->ODD   );
+    sampling_frequency_hz = bus_freq_hz / divider;
 
     return sampling_frequency_hz;
 }
@@ -310,11 +314,11 @@ bool i2s_sample_freq_get(uint8_t num, uint32_t* const audio_frequency_hz) {
             I2SPR.dword = Info->I2Sx->I2SPR;
             switch (I2SPR.MCKOE) {
                 case SPI_I2SPR_MCKOE_DISABLED: {
-                    res = i2s_sample_freq_master_clock_on_get(Info, audio_frequency_hz);
+                    res = i2s_sample_freq_master_clock_off_get(Info, audio_frequency_hz);
                 } break;
 
                 case SPI_I2SPR_MCKOE_ENABLED: {
-                    res = i2s_sample_freq_master_clock_off_get(Info, audio_frequency_hz);
+                    res = i2s_sample_freq_master_clock_on_get(Info, audio_frequency_hz);
                 } break;
 
                 default: res = false; break;
@@ -334,7 +338,7 @@ int32_t i2s_get_sample_rate(uint8_t num) {
     bool res = i2s_sample_freq_get(num, &fps_frequency_hz);
     if(res) {
         audio_frequency_hz = (int32_t) fps_frequency_hz;
-        LOG_ERROR(I2S, "GetFps");
+        LOG_DEBUG(I2S, "Get,Fps:%u Hz",audio_frequency_hz);
     }
     return audio_frequency_hz;
 }
@@ -366,7 +370,7 @@ bool i2s_load_params(I2sConfig_t* Config) {
         periph_clk_code = I2sBus2Code(cur_clock_bus);
         LOG_INFO(I2S, "%u Init Bus:%s Clock", num, ClockBusToStr(cur_clock_bus));
         uint32_t freq_hz = HAL_RCCEx_GetPeriphCLKFreq(periph_clk_code);
-        LOG_WARNING(I2S, "%u InitClock %s ClockBefore %fMHz", num, BusToStr(cur_clock_bus), HZ_2_MHZ(freq_hz));
+        LOG_NOTICE(I2S, "%u InitClock %s ClockBefore %fMHz", num, BusToStr(cur_clock_bus), HZ_2_MHZ(freq_hz));
 #endif
 
 bool i2s_clock_init(const uint8_t num) {
@@ -756,7 +760,7 @@ bool i2s_play_static_tx(uint8_t num, uint8_t dac_num, bool status) {
             if(Node->play) {
                 HAL_I2S_StateTypeDef state = HAL_I2S_GetState(Node->pHandle);
                 if(HAL_I2S_STATE_READY != state) {
-                    LOG_WARNING(I2S, "DmaState:%s DmaStop", HalI2sStateToStr(state));
+                    LOG_NOTICE(I2S, "DmaState:%s DmaStop", HalI2sStateToStr(state));
                     i2s_dma_stop(num);
                 }
 
@@ -808,7 +812,7 @@ bool i2s_play_tx(uint8_t num, uint8_t dac_num, bool status) {
                 if(Node->play) {
                     HAL_I2S_StateTypeDef state = HAL_I2S_GetState(Node->pHandle);
                     if(HAL_I2S_STATE_READY != state) {
-                        LOG_WARNING(I2S, "DmaState:%s DmaStop", HalI2sStateToStr(state));
+                        LOG_NOTICE(I2S, "DmaState:%s DmaStop", HalI2sStateToStr(state));
                         i2s_dma_stop(num);
                     }
 
@@ -1029,7 +1033,7 @@ bool i2s_gpio_set_read(const uint8_t num) {
         res = gpio_init_input(Node->GpioMClk.Pad);
         res = gpio_pad_mux_set(Node->GpioMClk.Pad,0);
 #endif
-        res = gpio_init_input(Node->GpioSdOut.Pad);
+        res = gpio_init_input(Node->GpioSdOut.Pad,GPIO__PULL_AIR);
         res = gpio_pad_mux_set(Node->GpioSdOut.Pad,0);
 
     }
@@ -1062,9 +1066,8 @@ bool i2s_ctrl(uint8_t num, bool en ) {
 bool i2s_prescaler_set(uint8_t num , uint8_t i2s_div, bool odd, bool master_clk_out) {
     bool res = false;
     enter_critical();
-    i2s_ctrl(num, false );
-
-    LOG_INFO(I2S,"I2S_%u,SetPrescaler,DIV:%u,ODD:%u,MCLK:%u",num,i2s_div,odd,master_clk_out);
+    i2s_ctrl(num, false);
+    LOG_NOTICE(I2S,"I2S_%u,Set,Prescaler,DIV:%u,ODD:%u,MCLK:%u",num,i2s_div,odd,master_clk_out);
     const I2sInfo_t* Info = I2sGetInfo(num);
     if(Info){
         I2sReg_SPI_I2SPR_t I2SPR;
@@ -1094,7 +1097,7 @@ bool i2s_gpio_set_write(const uint8_t num){
 #ifdef HAS_I2S_MCL
         res = gpio_init_input(Node->GpioMClk.Pad);
 #endif
-        res = gpio_init_input(Node->GpioSdIn.Pad);
+        res = gpio_init_input(Node->GpioSdIn.Pad, GPIO__PULL_DOWN);
         res = gpio_pad_mux_set(Node->GpioSdIn.Pad,0);
     }
     return res;
@@ -1122,7 +1125,7 @@ static bool i2s_init_one_ll(const I2sConfig_t* const Config, I2sHandle_t* const 
     res = i2s_is_valid_config(Config);
     if (res) {
         if (Config->need_init) {
-            LOG_INFO(I2S, "I2S_%u init", Config->num);
+            LOG_DEBUG(I2S, "I2S_%u,init", Config->num);
             if (Node) {
                 const I2sInfo_t *Info = I2sGetInfo(Config->num);
                 if (Info) {
@@ -1152,7 +1155,7 @@ static bool i2s_init_one_ll(const I2sConfig_t* const Config, I2sHandle_t* const 
                             res = i2s_dma_init(Config->num);
     #endif
                             //res = i2s_vefify_one(Config->num);
-                            LOG_INFO(I2S, "I2S%u initOk", Config->num);
+                            LOG_DEBUG(I2S, "I2S%u,init,Ok", Config->num);
                         } else {
                             Node->error_cnt++;
                             LOG_ERROR(I2S, "%u initErr", Config->num);
@@ -1182,20 +1185,17 @@ static uint32_t i2s_spi_i2spr_to_audio_frequency_hz(I2sInfo_t* Info, I2sReg_SPI_
 
     switch (pI2SPR->MCKOE) {
         case SPI_I2SPR_MCKOE_DISABLED: {
-            audio_frequency_hz = i2s_sample_freq_master_clock_on_get_ll(Info, pI2SPR);
-        } break;
-
-        case SPI_I2SPR_MCKOE_ENABLED: {
             audio_frequency_hz = i2s_sample_freq_master_clock_off_get_ll(Info, pI2SPR);
         } break;
 
-        default:
+        case SPI_I2SPR_MCKOE_ENABLED: {
+            audio_frequency_hz = i2s_sample_freq_master_clock_on_get_ll(Info, pI2SPR);
+        } break;
 
+        default:
             break;
     }
-
     return audio_frequency_hz;
-
 }
 
 bool i2s_audio_frequency_set_fast(const uint8_t num, const uint32_t audio_frequency_hz) {
@@ -1203,9 +1203,7 @@ bool i2s_audio_frequency_set_fast(const uint8_t num, const uint32_t audio_freque
     bool res = false;
     const I2sInfo_t *Info = I2sGetInfo(num);
     if(Info) {
-        LOG_INFO(I2S, "I2S_%u,Set,AudioFreq:%u Hz", num, audio_frequency_hz);
-
-
+        LOG_WARNING(I2S, "I2S%u,Set,AudioFreq:%u Hz", num, audio_frequency_hz);
         I2sPrescalerInfo_t BestPrescaler;
         BestPrescaler.abs_error = INT_MAX;
 
@@ -1230,16 +1228,14 @@ bool i2s_audio_frequency_set_fast(const uint8_t num, const uint32_t audio_freque
         }
 
         if(spot_solution) {
-            I2sDiagReg_I2SPR(BestPrescaler.I2SPR.dword);
+            //I2sDiagReg_I2SPR(BestPrescaler.I2SPR.dword);
             res = i2s_prescaler_set(  num , BestPrescaler.I2SPR.I2SDIV, BestPrescaler.I2SPR.ODD, BestPrescaler.I2SPR.MCKOE);
         }
-
-
     }
     return res;
 }
 
-bool i2s_audio_frequency_set(const uint8_t num, const uint32_t audio_frequency_hz) {
+bool i2s_audio_frequency_set_slow(const uint8_t num, const uint32_t audio_frequency_hz) {
     bool res = false;
     I2sHandle_t *Node = I2sGetNode(num);
     if(Node) {
@@ -1248,6 +1244,12 @@ bool i2s_audio_frequency_set(const uint8_t num, const uint32_t audio_frequency_h
         Node->audio_frequency_hz = audio_frequency_hz;
         res = i2s_init_one_ll(&Node->NewConfig, Node);
     }
+    return res;
+}
+
+bool i2s_audio_frequency_set(const uint8_t num, const uint32_t audio_frequency_hz) {
+    bool res = false;
+    res = i2s_audio_frequency_set_fast(num, audio_frequency_hz);
     return res;
 }
 
@@ -1319,14 +1321,13 @@ static uint32_t i2s_bus_role_and_dir_to_i2scfg(IfBusRole_t bus_role ,   const If
     return i2s_cfg;
 }
 
-
 bool i2s_audio_set_data_dirrection(const uint8_t num,
-                                    const IfOperation_t operation) {
+                                   const IfOperation_t operation) {
     bool res = false;
     I2sHandle_t* Node = I2sGetNode(  num);
     if (Node) {
         Node->direction = operation_to_connectivit_dir(operation);
-        LOG_INFO(I2S, "I2S_%u,Set,Operation:%s", num, IfOperationToStr(operation));
+        LOG_NOTICE(I2S, "I2S_%u,Set,Operation:%s", num, IfOperationToStr(operation));
         I2sReg_SPI_I2SCFGR_t I2SCFGR;
         I2SCFGR.dword = Node->I2Sx->I2SCFGR;
         I2SCFGR.I2SCFG = i2s_bus_role_and_dir_to_i2scfg(Node->bus_role , operation);
@@ -1335,7 +1336,6 @@ bool i2s_audio_set_data_dirrection(const uint8_t num,
     }
     return res;
 }
-
 
 bool i2s_proc_status(I2sHandle_t* Node ){
     bool res = true;
@@ -1365,10 +1365,9 @@ bool i2s_proc_one(uint8_t num) {
     return res;
 }
 
-
 bool i2s_init_one(const uint8_t num) {
     bool res = false;
-    LOG_INFO(I2S, "I2S_%u,Init", num);
+    LOG_DEBUG(I2S, "I2S_%u,Init", num);
     const I2sConfig_t *Config = I2sGetConfig(num);
     if(Config) {
         I2sHandle_t* Node = I2sGetNode(num);
@@ -1379,4 +1378,3 @@ bool i2s_init_one(const uint8_t num) {
     }
     return res;
 }
-

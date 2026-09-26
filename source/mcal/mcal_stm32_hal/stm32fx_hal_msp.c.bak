@@ -15,6 +15,9 @@ uint32_t HAL_GetTick(void) {
     static uint32_t local_cnt = 0;
     local_cnt++;
     uint32_t up_time_ms = 0;
+#ifdef HAS_DWT
+    up_time_ms = dwt_get_time_ms32(1);
+#endif
 
 #ifdef HAS_SYSTICK
     bool res = systick_is_run();
@@ -25,9 +28,6 @@ uint32_t HAL_GetTick(void) {
     }
 #endif
 
-#ifdef HAS_DWT
-    up_time_ms = dwt_get_time_ms32(DWT_NUM_CORE0);
-#endif
     return up_time_ms;
 }
 

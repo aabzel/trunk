@@ -394,9 +394,9 @@ void SPI1_IRQHandler(void) {
 #if defined(HAS_I2S1)
 
 #ifdef HAS_I2S1
-    I2sHandle_t* Node = I2sGetNode(1);
-    if(Node) {
-        HAL_I2S_IRQHandler(Node->pHandle);
+    I2sHandle_t* I2sNode = I2sGetNode(1);
+    if(I2sNode) {
+        HAL_I2S_IRQHandler(&I2sNode->handle);
     }
 #endif /*HAS_I2S1*/
 #endif
@@ -410,9 +410,9 @@ void SPI2_IRQHandler(void) {
 #if defined(HAS_I2S2)
 
 #ifdef HAS_I2S2
-    I2sHandle_t* Node = I2sGetNode(2);
-    if(Node) {
-        HAL_I2S_IRQHandler(Node->pHandle);
+    I2sHandle_t* I2sNode = I2sGetNode(2);
+    if(I2sNode) {
+        HAL_I2S_IRQHandler(&I2sNode->handle);
     }
 #endif /*HAS_I2S2*/
 #endif
@@ -425,9 +425,9 @@ void SPI3_IRQHandler(void) {
 
 #if defined(HAS_I2S3)
 #ifdef HAS_I2S3
-    I2sHandle_t* Node = I2sGetNode(3);
-    if(Node) {
-        HAL_I2S_IRQHandler(Node->pHandle);
+    I2sHandle_t* I2sNode = I2sGetNode(3);
+    if(I2sNode) {
+        HAL_I2S_IRQHandler(&I2sNode->handle);
     }
 #endif /*HAS_I2S3*/
 #endif
@@ -441,9 +441,9 @@ void SPI4_IRQHandler(void) {
 #if defined(HAS_I2S4)
 
 #ifdef HAS_I2S4
-    I2sHandle_t* Node = I2sGetNode(4);
-    if(Node) {
-        HAL_I2S_IRQHandler(Node->pHandle);
+    I2sHandle_t* I2sNode = I2sGetNode(4);
+    if(I2sNode) {
+        HAL_I2S_IRQHandler(&I2sNode->handle);
     }
 #endif
 #endif
@@ -461,9 +461,9 @@ void SPI5_IRQHandler(void) {
 #if defined(HAS_I2S5)
 
 #ifdef HAS_I2S5
-    I2sHandle_t* Node = I2sGetNode(5);
-    if(Node) {
-        HAL_I2S_IRQHandler(Node->pHandle);
+    I2sHandle_t* I2sNode = I2sGetNode(5);
+    if(I2sNode) {
+        HAL_I2S_IRQHandler(&I2sNode->handle);
     }
 #endif
 #endif

@@ -22,6 +22,49 @@
 #include "log.h"
 #endif
 
+static uint32_t GpioPullToStm32Pull(const GpioPullMode_t pull_code) {
+    uint32_t stm32_pull_code = GPIO_NOPULL;
+    switch(pull_code) {
+    case GPIO__PULL_AIR:
+        stm32_pull_code = GPIO_NOPULL;
+        break;
+    case GPIO__PULL_UP:
+        stm32_pull_code = GPIO_PULLUP;
+        break;
+    case GPIO__PULL_DOWN:
+        stm32_pull_code = GPIO_PULLDOWN;
+        break;
+    case GPIO__PULL_UNDEF:
+        stm32_pull_code = GPIO_NOPULL;
+        break;
+    default:
+        break;
+    }
+    return stm32_pull_code;
+}
+
+static GpioPullMode_t GpioStm32PullToGeneralPull(uint32_t stm32_pull_code) {
+    GpioPullMode_t general_pull_code = GPIO__PULL_UNDEF;
+    switch(stm32_pull_code) {
+    case GPIO_NOPULL:
+        general_pull_code = GPIO__PULL_AIR;
+        break;
+    case GPIO_PULLUP:
+        general_pull_code = GPIO__PULL_UP;
+        break;
+    case GPIO_PULLDOWN:
+        general_pull_code = GPIO__PULL_DOWN;
+        break;
+
+    default:
+#ifdef HAS_LOG
+        LOG_ERROR(GPIO, "UndefSTMPullMode %u", stm32_pull_code);
+#endif
+        break;
+    }
+    return general_pull_code;
+}
+
 static GpioDir_t GpioStmDirToDir(GpioStm32Mode_t mode) {
     GpioDir_t dirr = GPIO_DIR_UNDEF;
     switch((uint8_t)mode) {
@@ -195,29 +238,7 @@ const GpioPortInfo_t* GpioGetPortInfo(const GpioPort_t port) {
     return Info;
 }
 
-static GpioPullMode_t GpioStm32Pull2GeneralPull(GpioStm32Pull_t stm32_pull_code) {
-    GpioPullMode_t general_pull_code = GPIO__PULL_UNDEF;
-    switch(stm32_pull_code) {
-    case STM32_PULL_AIR:
-        general_pull_code = GPIO__PULL_AIR;
-        break;
-    case STM32_PULL_UP:
-        general_pull_code = GPIO__PULL_UP;
-        break;
-    case STM32_PULL_DOWN:
-        general_pull_code = GPIO__PULL_DOWN;
-        break;
-    case STM32_PULL_UNDEF:
-        general_pull_code = GPIO__PULL_UNDEF;
-        break;
-    default:
-#ifdef HAS_LOG
-        LOG_ERROR(GPIO, "UndefSTMPullMode %u", stm32_pull_code);
-#endif
-        break;
-    }
-    return general_pull_code;
-}
+
 
 static GpioStm32Mode_t gpio_stm_mode_get(Pad_t pad) {
     GpioStm32Mode_t stm_mode = GP_STM32_MODE_UNDEF;
@@ -347,26 +368,10 @@ static GpioApiMode_t GpioStmModeToMode(GpioStm32Mode_t stm_mode) {
     return mode;
 }
 
-static GpioStm32Pull_t GpioPull2Stm32Pull(GpioPullMode_t pull_code) {
-    GpioStm32Pull_t stm32_pull_code = STM32_PULL_UNDEF;
-    switch(pull_code) {
-    case GPIO__PULL_AIR:
-        stm32_pull_code = STM32_PULL_AIR;
-        break;
-    case GPIO__PULL_UP:
-        stm32_pull_code = STM32_PULL_UP;
-        break;
-    case GPIO__PULL_DOWN:
-        stm32_pull_code = STM32_PULL_DOWN;
-        break;
-    case GPIO__PULL_UNDEF:
-        stm32_pull_code = STM32_PULL_UNDEF;
-        break;
-    default:
-        break;
-    }
-    return stm32_pull_code;
-}
+
+
+
+
 
 GpioDir_t gpio_dir_get(Pad_t Pad) {
     GpioDir_t dir = GPIO_DIR_UNDEF;
@@ -448,6 +453,43 @@ static uint32_t GpioModeToStm32Mode(GpioApiMode_t mode) {
     } // switch(mode)
     return stm_mode;
 }
+
+
+/*
+  tx_pin: 0....15
+  bit_value : 0 or 1
+*/
+uint32_t  pin_val_to_bsrr(const uint8_t tx_pin, const uint8_t bit_value) {
+    uint32_t gpiox_bsrr = 0;
+    uint32_t bit_to_set= tx_pin;
+    if(0==bit_value) {
+        //bit_value 0
+        bit_to_set = tx_pin+16;
+    }
+    SET_BIT_NUM(gpiox_bsrr, bit_to_set);
+    return gpiox_bsrr;
+}
+
+
+bool gpio_sample_to_bsrr(uint8_t tx_pin,
+                         const uint8_t* const bit_value,
+                         uint32_t* const bsrr,
+                         const uint32_t size) {
+    bool res = false;
+    if (bit_value) {
+        if (bsrr) {
+            if (size) {
+                uint32_t i = 0;
+                for (i = 0; i < size; i++) {
+                    bsrr[i] = pin_val_to_bsrr(tx_pin, bit_value[i]);
+                }
+                res = true;
+            }
+        }
+    }
+    return res;
+}
+
 
 GPIO_TypeDef* GpioPortToPortPtr(const GpioPort_t port) {
     GPIO_TypeDef* GPIOx = NULL;
@@ -807,7 +849,7 @@ GpioPullMode_t gpio_pull_get(Pad_t pad) {
 #ifdef HAS_LOG
         LOG_DEBUG(GPIO, "STMPullCode 0x%x", code);
 #endif
-        mode = GpioStm32Pull2GeneralPull((GpioStm32Pull_t)code);
+        mode = GpioStm32PullToGeneralPull(code);
 #ifdef HAS_LOG
         LOG_DEBUG(GPIO, "mode 0x%x", mode);
 #endif
@@ -825,7 +867,7 @@ bool gpio_pull_set(Pad_t pad, GpioPullMode_t pull_mode) {
 #ifdef HAS_GPIO_DIAG
     LOG_DEBUG(GPIO, "Set Pad %s, Pull %s", GpioPadToStr(pad), GpioPullToStr(pull_mode));
 #endif
-    GpioStm32Pull_t stm_pull_mode = GpioPull2Stm32Pull(pull_mode);
+    uint32_t stm_pull_mode = GpioPullToStm32Pull(pull_mode);
     volatile GPIO_TypeDef* GPIOx = GpioPortToPortPtr(pad.port);
     if(GPIOx) {
         uint32_t reg_mode = GPIOx->PUPDR;
@@ -905,7 +947,7 @@ bool gpio_config_one(Pad_t pad, uint32_t Mode, uint32_t Pull, uint32_t Speed, ui
     GPIO_TypeDef* GPIOx = GpioPortToPortPtr(pad.port);
     if(GPIOx) {
 #ifdef HAS_GPIO_DIAG
-        LOG_WARNING(GPIO, "InitPad %s", GpioPadToStr(pad));
+        LOG_NOTICE(GPIO, "InitPad,%s", GpioPadToStr(pad));
 #endif
         /*Configure GPIO pin Output Level */
         uint32_t pin_mask = PinNum2PinMask(pad.pin);
@@ -953,7 +995,7 @@ bool gpio_dir_set(Pad_t Pad, GpioDir_t dir) {
 bool gpio_init_out_pad(const Pad_t Pad) {
     bool res = false;
 #ifdef HAS_GPIO_DIAG
-    LOG_INFO(GPIO, "Init,%s,ADC", GpioPadToStr(Pad));
+    LOG_NOTICE(GPIO, "Init,%s,ADC", GpioPadToStr(Pad));
 #endif
     GPIO_TypeDef* GPIOx = GpioPortToPortPtr(Pad.port);
     if(GPIOx) {
@@ -970,10 +1012,10 @@ bool gpio_init_out_pad(const Pad_t Pad) {
     return res;
 }
 
-bool gpio_init_input(const Pad_t Pad) {
+bool gpio_init_input(const Pad_t Pad,const GpioPullMode_t pull_code) {
     bool res = false;
 #ifdef HAS_GPIO_DIAG
-    LOG_INFO(GPIO, "Init,%s,IN", GpioPadToStr(Pad));
+    LOG_NOTICE(GPIO, "Init,%s,IN", GpioPadToStr(Pad));
 #endif
     GPIO_TypeDef* GPIOx = GpioPortToPortPtr(Pad.port);
     if(GPIOx) {
@@ -981,7 +1023,7 @@ bool gpio_init_input(const Pad_t Pad) {
         uint32_t pin_mask = PinNum2PinMask(Pad.pin);
         GPIO_InitStruct.Pin = pin_mask;
         GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Pull = GpioPullToStm32Pull(pull_code); //GPIO_NOPULL
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = 0;
         HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
@@ -993,7 +1035,7 @@ bool gpio_init_input(const Pad_t Pad) {
 bool gpio_init_adc_pad(const Pad_t Pad) {
     bool res = false;
 #ifdef HAS_GPIO_DIAG
-    LOG_INFO(GPIO, "Init,%s,ADC", GpioPadToStr(Pad));
+    LOG_NOTICE(GPIO, "Init,%s,ADC", GpioPadToStr(Pad));
 #endif
     GPIO_TypeDef* GPIOx = GpioPortToPortPtr(Pad.port);
     if(GPIOx) {
@@ -1013,7 +1055,7 @@ bool gpio_init_adc_pad(const Pad_t Pad) {
 bool gpio_init_ext_int(const Pad_t Pad) {
     bool res = false;
 #ifdef HAS_GPIO_DIAG
-    LOG_INFO(GPIO, "Init,%s,ExtInt", GpioPadToStr(Pad));
+    LOG_NOTICE(GPIO, "Init,%s,ExtInt", GpioPadToStr(Pad));
 #endif
     GPIO_TypeDef* GPIOx = GpioPortToPortPtr(Pad.port);
     if(GPIOx) {
@@ -1021,7 +1063,7 @@ bool gpio_init_ext_int(const Pad_t Pad) {
         uint32_t pin_mask = PinNum2PinMask(Pad.pin);
         GPIO_InitStruct.Pin = pin_mask;
         GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
-        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = 0;
         HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
@@ -1038,7 +1080,7 @@ bool gpio_deinit_pad(const Pad_t Pad) {
         uint32_t pin_mask = PinNum2PinMask(Pad.pin);
         GPIO_InitStruct.Pin = pin_mask;
         GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-        GPIO_InitStruct.Pull = STM32_PULL_UP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
         GPIO_InitStruct.Alternate = 0;
         HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
@@ -1047,11 +1089,12 @@ bool gpio_deinit_pad(const Pad_t Pad) {
     return res;
 }
 
+
 bool gpio_init_one(const GpioConfig_t* const Config) {
     bool res = false;
     if(Config) {
 #ifdef HAS_GPIO_DIAG
-        LOG_WARNING(GPIO, "%s", GpioConfigToStr(Config));
+        LOG_NOTICE(GPIO, "%s", GpioConfigToStr(Config));
 #endif
         res = gpio_is_valid_pad(Config->Pad);
 #ifdef HAS_DEBUGGER
@@ -1076,7 +1119,7 @@ bool gpio_init_one(const GpioConfig_t* const Config) {
                         GPIO_InitTypeDef GPIO_InitStruct = {0};
                         GPIO_InitStruct.Pin = pin_mask;
                         GPIO_InitStruct.Mode = GpioModeToStm32Mode(Config->mode);
-                        GPIO_InitStruct.Pull = GpioPull2Stm32Pull(Config->pull);
+                        GPIO_InitStruct.Pull = GpioPullToStm32Pull(Config->pull);
                         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH; // Config->speed;
                         GPIO_InitStruct.Alternate = Config->mux;
                         HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);

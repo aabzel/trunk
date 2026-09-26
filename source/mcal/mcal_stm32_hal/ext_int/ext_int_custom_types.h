@@ -9,7 +9,7 @@ extern "C" {
 #include "microcontroller_types.h"
 #include "clock_const.h"
 #include "stm32fx_hal.h"
-#include "stm32fx_hal_exti.h"
+//#include "stm32fx_hal_exti.h"
 
 #define EXT_INT_CUSTOM_VARIABLES    \
                  EXTI_HandleTypeDef h_exti;

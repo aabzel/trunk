@@ -101,7 +101,7 @@ bool clock_frequency_get(const ClockBus_t clock_name, uint32_t* const frequency_
     bool res = false;
     if(frequency_hz) {
         *frequency_hz = clock_freq_get(clock_name);
-        res = true;
+        res = false;
     }
     return res;
 }

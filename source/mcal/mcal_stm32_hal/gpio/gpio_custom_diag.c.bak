@@ -10,17 +10,8 @@
 #include "gpio_mcal.h"
 
 const Reg32_t GpioReg[] = {
-    { .num = 1, .offset = 0, .size = 4,  .valid = true, .name = "GPIOx_MODER",},
-    { .num = 2, .offset = 4, .size = 4,  .valid = true, .name = "GPIOx_OTYPER",},
-    { .num = 2, .offset = 8, .size = 4,  .valid = true, .name = "GPIOx_OSPEEDR",},
-    { .num = 2, .offset = 0xC, .size = 4,  .valid = true, .name = "GPIOx_PUPDR",},
-    { .num = 2, .offset = 0x10, .size = 4,  .valid = true, .name = "GPIOx_IDR",},
-    { .num = 2, .offset = 0x14, .size = 4,  .valid = true, .name = "GPIOx_ODR",},
-    { .num = 2, .offset = 0x18, .size = 4,  .valid = true, .name = "GPIOx_BSRR",},
-    { .num = 2, .offset = 0x1C, .size = 4,  .valid = true, .name = "GPIOx_LCKR",},
-    { .num = 2, .offset = 0x20, .size = 4,  .valid = true, .name = "GPIOx_AFRL",},
-    { .num = 2, .offset = 0x24, .size = 4,  .valid = true, .name = "GPIOx_AFRH",},
         // TODO Add STM32 GPIO registers offsets and names
+    { .num = 1, .offset = 0, .size = 4,  .valid = true, .name = "?",},
 };
 
 uint32_t gpio_reg_cnt(void) {
@@ -113,6 +104,7 @@ const char* GpioStmPullToStr(const uint8_t code) {
     }
     return name;
 }
+
 
 Port_t PortLetter2PortNum(char port) {
     Port_t port_num = PORT_UNDEF;

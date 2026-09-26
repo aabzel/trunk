@@ -15,6 +15,12 @@ ifneq ($(GPIO_DRV_MK_INC),Y)
         SOURCES_C += $(GPIO_DIR)/gpio_custom_isr.c
     endif
 
+    ifeq ($(GPIO_DMA),Y) 
+        #$(error GPIO_DMA=$(GPIO_DMA))
+        #SOURCES_C += $(GPIO_DIR)/dma_channel_config_gpio.c
+        #SOURCES_C += $(GPIO_DIR)/dma_channel_config_gpioa.c
+    endif
+         
     ifeq ($(CLI),Y)
         ifeq ($(GPIO_COMMANDS),Y)
             MCAL_OPT += -DHAS_GPIO_COMMANDS

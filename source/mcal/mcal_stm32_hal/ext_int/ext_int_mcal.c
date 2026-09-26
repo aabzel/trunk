@@ -278,6 +278,9 @@ static uint32_t ExtIntGpioPortToGPIOSel(const uint8_t port) {
 
 bool ext_int_init_one(uint8_t num) {
     bool res = false;
+    uint32_t cnt=ext_int_get_cnt();
+    LOG_INFO(EXT_INT, "InitStart...:%u/%u", num,cnt);
+
     const ExtIntConfig_t* Config = ExtIntGetConfig(num);
     res = ExtIntIsValidConfig(Config);
     if(res) {
