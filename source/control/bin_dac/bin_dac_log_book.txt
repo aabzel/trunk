@@ -1,0 +1,5 @@
+
+
+Архитектура Хорошо Поддерживаемого Программного Компонента
+Well-Supported Software Component Architecture
+https://habr.com/ru/articles/683762/

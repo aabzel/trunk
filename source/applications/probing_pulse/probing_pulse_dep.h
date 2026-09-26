@@ -1,0 +1,9 @@
+#ifndef PROBING_PULSE_DEP_H
+#define PROBING_PULSE_DEP_H
+
+#ifndef HAS_PROBING_PULSE
+#error "+HAS_PROBING_PULSE"
+#endif
+
+#endif /* PROBING_PULSE_DEP_H */
+

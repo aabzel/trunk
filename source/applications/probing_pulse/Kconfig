@@ -1,0 +1,4 @@
+
+config PROBING_PULSE
+    bool "Enable use of the PROBING_PULSE drivers"
+

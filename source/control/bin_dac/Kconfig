@@ -1,0 +1,4 @@
+
+config BIN_DAC
+    bool "Enable use of the BIN_DAC drivers"
+
