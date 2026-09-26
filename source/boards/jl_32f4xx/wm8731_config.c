@@ -1,0 +1,137 @@
+#include "wm8731_config.h"
+
+#ifdef HAS_I2C
+//#include "i2c_mcal.h"
+#endif
+
+#include "dds_config.h"
+#include "wm8731_const.h"
+#include "data_utils.h"
+
+#if !defined(HAS_WM8731_I2S_MASTER) && !defined(HAS_WM8731_I2S_SLAVE)
+#error "some WM8731 I2S role must be defined!"
+#endif
+
+
+const Wm8731RegConfig_t Wm8731RegisterConfiguration[]={
+    {.reg_addr = 0x00, 
+     .value.LeftLineInCtrl.linvol=31,
+     .value.LeftLineInCtrl.lin_mute = MUTE_ON},
+
+    {.reg_addr = 0x01, 
+     .value.RightLineInCtrl.rinvol=31,
+     .value.RightLineInCtrl.rin_mute = MUTE_ON,},
+
+    {.reg_addr = 0x02, .value.LeftHeadOutCtrl.lhpvol= WM8731_OUTPUT_VOLUME_P6_DB,
+                     .value.LeftHeadOutCtrl.lzcen = 0,},
+
+    {.reg_addr = 0x03, .value.RightHeadOutCtrl.rhpvol= WM8731_OUTPUT_VOLUME_P6_DB,
+                     .value.RightHeadOutCtrl.rzcen = 0,},
+
+    {.reg_addr = 0x04, .value.AnalogAudioPathCtrl ={.mic_boost = MIC_IN_BOOST_ON,
+                                                  .side_tone = SIDE_TONE_OFF,
+                                                  .dac_sel = DAC_SEL_ON,
+                                                  .by_pass = BYPASS_SW_OFF,
+                                                  .mute_mic = MUTE_OFF,
+                                                  .insel = ADC_IN_SEL_MIC,
+                                                  .sideatt=0,},
+    },
+
+    {   .reg_addr = WM8731_REG_APDIGI,
+                     .value.DigitalAudioPathCtrl.hpor = DC_OFFSET_CLEAR, // set DC_OFFSET_CLEAR!
+                     .value.DigitalAudioPathCtrl.adchpd = ADC_HI_PASS_FILT_OFF,
+                     .value.DigitalAudioPathCtrl.dacmute = DAC_SW_MUTE_OFF,
+                     .value.DigitalAudioPathCtrl.deemp = DE_EMPH_OFF,
+    },
+
+
+
+
+
+    {.reg_addr = 0x06, .value.PowerDownCtrl.lineinpd=0,/**/
+                     .value.PowerDownCtrl.micpd=0,   /**/
+                     .value.PowerDownCtrl.adcpd=0,   /**/
+                     .value.PowerDownCtrl.dacpd=0,   /**/
+                     .value.PowerDownCtrl.outpd=0,   /**/
+                     .value.PowerDownCtrl.oscpd=0,   /**/
+                     .value.PowerDownCtrl.clkoutpd=0,/**/
+                     .value.PowerDownCtrl.poweroff=0,/**/   },
+
+    {.reg_addr = 0x07, .value.DigitalAudioIfCtrl.format = FMT_I2S,
+                     .value.DigitalAudioIfCtrl.iwl = AUD_BIT_16,
+                     .value.DigitalAudioIfCtrl.lrp = I2S_DAC_PHASE_RIGHT_CH_DAC_DACLRC_HI,
+                     .value.DigitalAudioIfCtrl.lrswap = DAC_LR_CLK_RIGHT,
+                     .value.DigitalAudioIfCtrl.bclkinv = BIT_CLOCK_NORMAL,
+#ifdef HAS_WM8731_I2S_MASTER
+#error erere
+                     .value.DigitalAudioIfCtrl.ms = BUS_MODE_MASTER,
+#endif
+#ifdef HAS_WM8731_I2S_SLAVE
+                     .value.DigitalAudioIfCtrl.ms = BUS_MODE_SLAVE,
+#endif
+    },
+
+
+    // 0x08
+    {.reg_addr = WM8731_REG_SRATE,
+#ifdef HAS_WM8731_USB_MODE
+     .value.SamplingCtrl.usb_normal = WM8731_MODE_USB,
+     .value.SamplingCtrl.bosr = USB_BASE_OVER_SAMPLE_RATE_250FS,
+     .value.SamplingCtrl.sr = WM_USB_SAMPLE_RATE_48000_HZ,
+     .value.SamplingCtrl.clkidiv2 = CORE_CLK_MCLK,
+     .value.SamplingCtrl.clkodiv2 = CLK_OUT_CORE_CLK,
+#endif /*HAS_WM8731_USB_MODE*/
+
+#ifdef HAS_WM8731_NORMAL_MODE
+     .value.SamplingCtrl.usb_normal = WM8731_MODE_NORMAL,
+     .value.SamplingCtrl.bosr = NORM_BASE_OVER_SAMPLE_RATE_256FS,
+     .value.SamplingCtrl.sr = WM_NORM_SAMPLE_RATE_48000_HZ,
+     .value.SamplingCtrl.clkidiv2 = CORE_CLK_MCLK,
+     .value.SamplingCtrl.clkodiv2 = CLK_OUT_CORE_CLK,
+#endif /*HAS_WM8731_NORMAL_MODE*/
+    },
+
+    {.reg_addr = 0x09, .value.ActiveCtrl.active=1,},
+
+    /*    {.reg_addr = 0x0F, .ResetCtrl.reset= 0xFF,},*/
+};
+
+const Wm8731Config_t Wm8731Config[] = {
+    {
+        .num = 1,
+        .name = "AudioCodec",
+        .chip_addr = WM8731_7BIT_ADDRESS,
+        .mode = WM8731_MODE_USB,
+        .dds_num = DDS_NUM_SIN,
+        .audio_freq_hz = AUDIO_FREQ_48K,
+        .i2c_num = 2,
+        .i2s_tx_num = 2,
+        .i2s_rx_num = 2,
+        .output_volume = 0,
+        .left = 0,
+        .right = 0,
+        .RegArray = Wm8731RegisterConfiguration,
+        .reg_cnt = ARRAY_SIZE(Wm8731RegisterConfiguration),
+        .valid = true,
+    },
+};
+
+Wm8731Handle_t Wm8731Instance[] = {
+    {
+        .num = 1,
+        .valid = true,
+    }
+};
+
+uint32_t wm8731_get_config_cnt(void) {
+    uint8_t cnt=0;
+    cnt = ARRAY_SIZE(Wm8731RegisterConfiguration);
+    return cnt;
+}
+
+
+uint32_t wm8731_get_cnt(void) {
+    uint8_t cnt = 0;
+    cnt = ARRAY_SIZE(Wm8731Config);
+    return cnt;
+}
