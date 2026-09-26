@@ -1,0 +1,6 @@
+ifneq ($(JUMPER_CODE_PRECONFIG_INC),Y)
+    JUMPER_CODE_PRECONFIG_INC=Y
+    
+    JUMPER_CODE=Y
+    GPIO=Y
+endif

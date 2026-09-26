@@ -8,7 +8,10 @@ ifneq ($(HEALTH_MONITOR_MK_INC),Y)
     INCDIR += -I$(HEALTH_MONITOR_DIR)
 
     MCAL_OPT += -DHAS_HEALTH_MONITOR
-    MCAL_OPT += -DHAS_HEALTH_MONITOR_PROC
+    
+    ifeq ($(HEALTH_MONITOR_PROC),Y)
+        MCAL_OPT += -DHAS_HEALTH_MONITOR_PROC
+    endif
     
     SOURCES_C += $(HEALTH_MONITOR_DIR)/health_monitor.c
 

@@ -12,10 +12,17 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
         include $(SENSITIVITY_DIR)/button_fsm/button.mk
     endif
 
+    ifeq ($(BIN_ADC),Y)
+        include $(SENSITIVITY_DIR)/bin_adc/bin_adc.mk
+    endif
+
     ifeq ($(INCREMENTAL_ENCODER),Y)
         include $(SENSITIVITY_DIR)/incremental_encoder/incremental_encoder.mk
     endif
 
+    ifeq ($(DCF77),Y)
+        include $(SENSITIVITY_DIR)/dcf77/dcf77.mk
+    endif
 
     ifeq ($(CROSS_DETECT),Y)
         include $(SENSITIVITY_DIR)/cross_detect/cross_detect.mk
@@ -53,6 +60,10 @@ ifneq ($(SENSITIVITY_MK_INC),Y)
     ifeq ($(LOAD_DETECT),Y)
         # $(error LOAD_DETECT= $(LOAD_DETECT))
         include $(SENSITIVITY_DIR)/load_detect/load_detect.mk
+    endif
+
+    ifeq ($(JUMPER_CODE),Y)
+        include $(SENSITIVITY_DIR)/jumper_code/jumper_code.mk
     endif
 
     ifeq ($(IR_RECEIVER),Y)

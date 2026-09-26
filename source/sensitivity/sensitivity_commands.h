@@ -27,6 +27,12 @@ extern "C" {
 #define BUTTON_COMMANDS
 #endif
 
+#ifdef HAS_BIN_ADC_COMMANDS
+#include "bin_adc_commands.h"
+#else
+#define BIN_ADC_COMMANDS
+#endif
+
 #ifdef HAS_INCREMENTAL_ENCODER_COMMANDS
 #include "incremental_encoder_commands.h"
 #else
@@ -88,10 +94,22 @@ extern "C" {
 #define HW_VERSION_COMMANDS
 #endif
 
+#ifdef HAS_DCF77_COMMANDS
+#include "dcf77_commands.h"
+#else
+#define DCF77_COMMANDS
+#endif
+
 #ifdef HAS_TIME_COMMANDS
 #include "time_commands.h"
 #else
 #define TIME_COMMANDS
+#endif
+
+#ifdef HAS_JUMPER_CODE_COMMANDS
+#include "jumper_code_commands.h"
+#else
+#define JUMPER_CODE_COMMANDS
 #endif
 
 #ifdef HAS_IR_RECEIVER_COMMANDS
@@ -101,18 +119,22 @@ extern "C" {
 #endif
 
 
-#define SENSITIVITY_COMMANDS    \
-    BUTTON_COMMANDS             \
-    DISTANCE_COMMANDS           \
-    IR_RECEIVER_COMMANDS        \
-    CROSS_DETECT_COMMANDS       \
-    GAME_PAD_PS2_COMMANDS       \
-    GNSS_COMMANDS               \
-    HEALTH_MONITOR_COMMANDS     \
-    HW_VERSION_COMMANDS         \
-    LOAD_DETECT_COMMANDS        \
-    LIGHT_NAVIGATOR_COMMANDS    \
-    PDM_COMMANDS                \
+#define SENSITIVITY_COMMANDS       \
+    BUTTON_COMMANDS                \
+    DISTANCE_COMMANDS              \
+    DCF77_COMMANDS                 \
+    BIN_ADC_COMMANDS               \
+    IR_RECEIVER_COMMANDS           \
+    INCREMENTAL_ENCODER_COMMANDS   \
+    CROSS_DETECT_COMMANDS          \
+    JUMPER_CODE_COMMANDS           \
+    GAME_PAD_PS2_COMMANDS          \
+    GNSS_COMMANDS                  \
+    HEALTH_MONITOR_COMMANDS        \
+    HW_VERSION_COMMANDS            \
+    LOAD_DETECT_COMMANDS           \
+    LIGHT_NAVIGATOR_COMMANDS       \
+    PDM_COMMANDS                   \
     TIME_COMMANDS
 
 #ifdef __cplusplus

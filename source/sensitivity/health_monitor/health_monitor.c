@@ -56,7 +56,7 @@
 #include "sx1262_drv.h"
 #endif
 
-#include "sys_config.h"
+//#include "sys_config.h"
 
 #ifdef HAS_UBLOX
 #include "ublox_driver.h"
@@ -253,7 +253,7 @@ bool health_monotor_create_tirtos_task(void) {
 
 bool health_monotor_init(void) {
     bool res = true;
-    set_log_level(HMON, LOG_LEVEL_NOTICE);
+    log_level_set(HMON, LOG_LEVEL_NOTICE);
     LOG_WARNING(HMON, "healthMonitorInit");
     /*DO NOT zero HealthMon structure in here!*/
 #if defined(HAS_RTCM3) && defined(HAS_TBFP)

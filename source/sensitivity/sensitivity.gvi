@@ -1,4 +1,7 @@
 
+#ifdef HAS_INCREMENTAL_ENCODER
+#include "incremental_encoder.gvi"
+#endif
 
 #ifdef HAS_IR_RECEIVER
 #include "ir_receiver.gvi"
@@ -7,5 +10,10 @@
 #ifdef HAS_BUTTON
 #include "button.gvi"
 #endif
+
+#ifdef HAS_BIN_ADC
+#include "bin_adc.gvi"
+#endif
+
 
 #include "time.gvi"

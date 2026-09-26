@@ -8,16 +8,25 @@ ifneq ($(SENSITIVITY_PRECONFIG_MK_INC),Y)
 
     INCDIR += -I$(SENSITIVITY_DIR)
 
-    ifeq ($(DCF77),Y)
-        include $(SENSITIVITY_DIR)/dcf77/dcf77_preconfig.mk
-    endif
-
-    ifeq ($(INCREMENTAL_ENCODER),Y)
-        include $(SENSITIVITY_DIR)/incremental_encoder/incremental_encoder_preconfig.mk
+    ifeq ($(BIN_ADC),Y)
+        include $(SENSITIVITY_DIR)/bin_adc/bin_adc_preconfig.mk
     endif
 
     ifeq ($(CROSS_DETECT),Y)
         include $(SENSITIVITY_DIR)/cross_detect/cross_detect_preconfig.mk
+    endif
+
+    ifeq ($(DCF77),Y)
+        include $(SENSITIVITY_DIR)/dcf77/dcf77_preconfig.mk
+    endif
+
+    ifeq ($(DISTANCE),Y)
+        # $(error DISTANCE=$(DISTANCE))
+        include $(SENSITIVITY_DIR)/distance/distance_preconfig.mk
+    endif
+
+    ifeq ($(INCREMENTAL_ENCODER),Y)
+        include $(SENSITIVITY_DIR)/incremental_encoder/incremental_encoder_preconfig.mk
     endif
 
     ifeq ($(FM_TUNER),Y)
@@ -30,11 +39,6 @@ ifneq ($(SENSITIVITY_PRECONFIG_MK_INC),Y)
 
     ifeq ($(KEYBOARD),Y)
         include $(SENSITIVITY_DIR)/keyboard/keyboard_preconfig.mk
-    endif
-
-    ifeq ($(DISTANCE),Y)
-        # $(error DISTANCE=$(DISTANCE))
-        include $(SENSITIVITY_DIR)/distance/distance_preconfig.mk
     endif
     
     ifeq ($(LIGHT_SENSOR),Y)
@@ -54,6 +58,10 @@ ifneq ($(SENSITIVITY_PRECONFIG_MK_INC),Y)
         include $(SENSITIVITY_DIR)/load_detect/load_detect_preconfig.mk
     endif
 
+    ifeq ($(JUMPER_CODE),Y)
+        include $(SENSITIVITY_DIR)/jumper_code/jumper_code_preconfig.mk
+    endif
+
     ifeq ($(IR_RECEIVER),Y)
         include $(SENSITIVITY_DIR)/ir_receiver/ir_receiver_preconfig.mk
     endif
@@ -66,7 +74,4 @@ ifneq ($(SENSITIVITY_PRECONFIG_MK_INC),Y)
         # $(error TIME=$(TIME))
         include $(SENSITIVITY_DIR)/time/time_preconfig.mk
     endif
-
-
-        
 endif

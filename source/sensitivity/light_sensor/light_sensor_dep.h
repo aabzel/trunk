@@ -1,9 +1,13 @@
-#ifndef LIGHT_SENSOR_MONO_DEP_H
-#define LIGHT_SENSOR_MONO_DEP_H
+#ifndef LIGHT_SENSOR_DEP_H
+#define LIGHT_SENSOR_DEP_H
 
 #ifndef HAS_LIGHT_SENSOR
 #error "+HAS_LIGHT_SENSOR"
 #endif
 
+#ifndef HAS_MICROCONTROLLER
+#error "+ HAS_MICROCONTROLLER"
+#endif
 
-#endif /* LIGHT_SENSOR_MONO_DEP_H  */
+
+#endif /* LIGHT_SENSOR_DEP_H  */

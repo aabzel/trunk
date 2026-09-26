@@ -1,11 +1,10 @@
 #ifndef TIME_CONST_H
 #define TIME_CONST_H
 
-
 #include <stdint.h>
 
 #define START_YEAR 1900
-#define TIME_POLL_PERIOD_US 100000000
+#define TIME_POLL_PERIOD_US 200000000
 
 #include "time_dep.h"
 

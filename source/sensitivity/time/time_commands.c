@@ -11,7 +11,7 @@
 bool time_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
     res = time_diag();
-#ifdef HAS_RTC
+#ifdef HAS_MINGW
     struct tm time_date;
     res = time_get_cur_utc(&time_date);
     if(res) {

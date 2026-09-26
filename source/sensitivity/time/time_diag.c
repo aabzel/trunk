@@ -13,7 +13,7 @@
 #include "writer_config.h"
 #include "shared_array.h"
 
-#ifdef HAS_FLOAT_UTILS
+#ifdef HAS_FLOAT
 #include "float_diag.h"
 #include "float_utils.h"
 #endif
@@ -26,22 +26,21 @@
 const char* TimeSrcToStr(const TimeSource_t time_source) {
     const char* name = "?";
     switch(time_source) {
-        case TIME_SRC_ZEPHYR_CLOCK:  name = "ZEPHYR_CLOCK";        break;
-        case TIME_SRC_PCAN_TIMESTAMP:  name = "PCanTimeStamp";        break;
-        case TIME_SRC_SYSTICK:    name = "SYSTICK";        break;
         case TIME_SCR1_TIMER:     name = "SCR1_TIMER";        break;
-        case TIME_SRC_RISC_V:     name = "RISC_V";        break;
-        case TIME_SRC_WIN_CLOCK:  name = "WIN_CLOCK";        break;
-        case TIME_SRC_SW_INCR:    name = "SW_INCR";        break;
-        case TIME_SRC_RTC:        name = "RTC";        break;
         case TIME_SRC_DWT:        name = "DWT";        break;
-        case TIME_SRC_TIMER5:     name = "TIMER5";        break;
-        case TIME_SRC_TIMER4:     name = "TIMER4";        break;
-        case TIME_SRC_TIMER3:     name = "TIMER3";        break;
         case TIME_SRC_HAL_TICK:   name = "HAL_TICK";        break;
+        case TIME_SRC_PCAN_TIMESTAMP:  name = "PCanTimeStamp";        break;
+        case TIME_SRC_RISC_V:     name = "RISC_V";        break;
+        case TIME_SRC_RTC:        name = "RTC";        break;
+        case TIME_SRC_SW_INCR:    name = "SW_INCR";        break;
+        case TIME_SRC_SYSTICK:    name = "SYSTICK";        break;
         case TIME_SRC_TIMER2:     name = "TIMER2";        break;
-        default: {
-        } break;
+        case TIME_SRC_TIMER3:     name = "TIMER3";        break;
+        case TIME_SRC_TIMER4:     name = "TIMER4";        break;
+        case TIME_SRC_TIMER5:     name = "TIMER5";        break;
+        case TIME_SRC_WIN_CLOCK:  name = "WIN_CLOCK";        break;
+        case TIME_SRC_ZEPHYR_CLOCK:  name = "ZEPHYR_CLOCK";        break;
+        default: {  name = "?";  } break;
     }
     return name;
 }
@@ -326,17 +325,17 @@ bool time_diag(void) {
 #endif
             uint32_t up_time_ms = time_get_ms(i);
             uint64_t up_time_us = time_one_get_us(i);
-            char logLine[150] = {0};
-            strcpy(logLine, TSEP);
-            snprintf(logLine, sizeof(logLine), "%s %3u " TSEP, logLine, i);
-            snprintf(logLine, sizeof(logLine), "%s %16s " TSEP, logLine, TimeSrcToStr(Node->time_source));
+            char temp[150] = {0};
+            strcpy(temp, TSEP);
+            snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, i);
+            snprintf(temp, sizeof(temp), "%s %16s " TSEP, temp, TimeSrcToStr(Node->time_source));
 #ifdef HAS_FLOAT_DIAG
-            snprintf(logLine, sizeof(logLine), "%s %7s " TSEP, logLine, FloatToStr(up_time_s, 3));
+            snprintf(temp, sizeof(temp), "%s %7s " TSEP, temp, FloatToStr(up_time_s, 3));
 #endif
-            snprintf(logLine, sizeof(logLine), "%s %8u " TSEP, logLine, up_time_ms);
-            snprintf(logLine, sizeof(logLine), "%s %llu "  TSEP, logLine, up_time_us);
+            snprintf(temp, sizeof(temp), "%s %8u " TSEP, temp, up_time_ms);
+            snprintf(temp, sizeof(temp), "%s %llu "  TSEP, temp, up_time_us);
 
-            cli_printf("%s" CRLF, logLine);
+            cli_printf("%s" CRLF, temp);
             res = true;
         }
     }

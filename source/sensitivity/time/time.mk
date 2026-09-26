@@ -17,8 +17,13 @@ ifneq ($(TIME_GENERAL_MK_INC),Y)
         MCAL_OPT += -DHAS_TIME_EXT
     endif
 
+    ifeq ($(TIME_DATE_EXT),Y)
+        MCAL_OPT += -DHAS_TIME_DATE_EXT
+    endif
+
     ifeq ($(DATE),Y)
         MCAL_OPT += -DHAS_DATE
+        SOURCES_DIAG_C += $(TIME_GENERAL_DIR)/date_mcal.c
     endif
 
     SOURCES_C += $(TIME_GENERAL_DIR)/time_mcal.c

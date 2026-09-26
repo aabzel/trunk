@@ -22,19 +22,34 @@ extern "C" {
 #define TIME_INIT
 #endif
 
+#ifdef HAS_BIN_ADC
+#include "bin_adc_mcal.h"
+#define BIN_ADC_INIT {.init_function=bin_adc_mcal_init, .name="BinAdc",},
+#else
+#define BIN_ADC_INIT
+#endif
+
 #ifdef HAS_BUTTON
-#include "button_drv.h"
+#include "button_mcal.h"
 #define BUTTON_INIT {.init_function=button_mcal_init, .name="Button",},
 #else
 #define BUTTON_INIT
 #endif
 
 #ifdef HAS_CROSS_DETECT
-#include "cross_detect_drv.h"
+#include "cross_detect_mcal.h"
 #define CROSS_DETECT_INIT {.init_function=cross_detect_mcal_init, .name="CrossDetect",},
 #else
 #define CROSS_DETECT_INIT
 #endif
+
+#ifdef HAS_JUMPER_CODE
+#include "jumper_code_mcal.h"
+#define JUMPER_CODE_INIT {.init_function=jumper_code_mcal_init, .name="JumperCode",},
+#else
+#define JUMPER_CODE_INIT
+#endif
+
 
 #ifdef HAS_GAME_PAD_PS2
 #include "game_pad_ps2.h"
@@ -43,9 +58,15 @@ extern "C" {
 #define GAME_PAD_PS2_INIT
 #endif
 
+#ifdef HAS_DCF77
+#include "dcf77_mcal.h"
+#define DCF77_INIT {.init_function=dcf77_mcal_init, .name="Dcf77",},
+#else
+#define DCF77_INIT
+#endif
 
 #ifdef HAS_DISTANCE
-#include "distance_drv.h"
+#include "distance_mcal.h"
 #define DISTANCE_INIT {.init_function=distance_mcal_init, .name="Distance",},
 #else
 #define DISTANCE_INIT
@@ -59,7 +80,7 @@ extern "C" {
 #endif
 
 #ifdef HAS_LOAD_DETECT
-#include "load_detect_drv.h"
+#include "load_detect_mcal.h"
 #define LOAD_DETECT_INIT {.init_function=load_detect_mcal_init, .name="LoadDetect",},
 #else
 #define LOAD_DETECT_INIT
@@ -81,7 +102,7 @@ extern "C" {
 
 
 #ifdef HAS_HW_VERSION
-#include "hw_version_drv.h"
+#include "hw_version_mcal.h"
 #define HW_VERSION_INIT {.init_function=hw_version_mcal_init, .name="HwInit",},
 #else
 #define HW_VERSION_INIT
@@ -95,15 +116,19 @@ extern "C" {
 #endif
 
 /*order matters!*/
-#define SENSITIVITY_SW_INIT  \
-     HEALTH_MONOTOR_INIT     \
-     BUTTON_INIT             \
-     DISTANCE_INIT           \
-     GAME_PAD_PS2_INIT       \
-     HW_VERSION_INIT         \
-     PHOTORESISTOR_INIT      \
-     CROSS_DETECT_INIT       \
-     IR_RECEIVER_INIT        \
+#define SENSITIVITY_SW_INIT    \
+     BIN_ADC_INIT              \
+     HEALTH_MONOTOR_INIT       \
+     BUTTON_INIT               \
+     DISTANCE_INIT             \
+     GAME_PAD_PS2_INIT         \
+     DCF77_INIT                \
+     HW_VERSION_INIT           \
+     INCREMENTAL_ENCODER_INIT  \
+     PHOTORESISTOR_INIT        \
+     CROSS_DETECT_INIT         \
+     JUMPER_CODE_INIT          \
+     IR_RECEIVER_INIT          \
      LOAD_DETECT_INIT
 
 

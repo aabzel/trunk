@@ -9,7 +9,7 @@ extern "C" {
 #include <stdint.h>
 
 #ifdef HAS_CLOCK
-#include "clock.h" //TODO DEL
+//#include "clock.h" //TODO DEL
 #endif /*HAS_CLOCK*/
 
 #ifndef HAS_HEALTH_MONITOR
