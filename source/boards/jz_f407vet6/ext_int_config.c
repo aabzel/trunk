@@ -6,6 +6,11 @@
 static ExtIntEvent_t EventMemA[100]={0};
 static ExtIntEvent_t EventMemB[100]={0};
 static ExtIntEvent_t IrSensor[100]={0};
+static ExtIntEvent_t MemDcf77[120]={0};
+
+static bool ExtIntCallBack(void) {
+    return true;
+}
 
 /*constant compile-time known settings*/
 const ExtIntConfig_t ExtIntConfig[] = {
@@ -14,9 +19,9 @@ const ExtIntConfig_t ExtIntConfig[] = {
       .Pad = {.port=PORT_E, .pin=0,},
       .edge = PIN_INT_EDGE_BOTH,
       .valid = true,
-      .CallBackFalling = NULL,
-      .CallBackRising = NULL,
-      .irq_priority = 0,
+      .CallBackFalling = ExtIntCallBack,
+      .CallBackRising = ExtIntCallBack,
+      .irq_priority = 1,
       .EventMem = EventMemA,
       .event_mem_size = ARRAY_SIZE(EventMemA),
     },
@@ -26,9 +31,9 @@ const ExtIntConfig_t ExtIntConfig[] = {
         .Pad = {.port=PORT_E, .pin=1,},
         .edge = PIN_INT_EDGE_BOTH,
         .valid = true,
-        .irq_priority = 0,
-        .CallBackRising = NULL,
-        .CallBackFalling = NULL,
+        .irq_priority = 1,
+        .CallBackRising = ExtIntCallBack,
+        .CallBackFalling = ExtIntCallBack,
         .EventMem = EventMemB,
         .event_mem_size = ARRAY_SIZE(EventMemB),
     },
@@ -38,16 +43,26 @@ const ExtIntConfig_t ExtIntConfig[] = {
       .edge = PIN_INT_EDGE_BOTH,
       .valid = true,
       .irq_priority = 1,
-      .CallBackRising = NULL,
-      .CallBackFalling = NULL,
+      .CallBackRising = ExtIntCallBack,
+      .CallBackFalling = ExtIntCallBack,
       .EventMem = IrSensor,
       .event_mem_size = ARRAY_SIZE(IrSensor),
+    },
+    { .num = 5,
+      .name = "DCF77",
+      .Pad = {.port=PORT_E, .pin=5,},
+      .edge = PIN_INT_EDGE_BOTH,
+      .CallBackRising = ExtIntCallBack,
+      .CallBackFalling = ExtIntCallBack,
+      .valid = true,
+      .irq_priority = 1,
+      .EventMem = MemDcf77,
+      .event_mem_size = ARRAY_SIZE(MemDcf77),
     },
 #if 0
     { .num = 2, .name = "--",  .Pad = {.port=PORT_UNDEF, .pin=15}, .edge = PIN_INT_EDGE_NONE, .valid = true, .irq_priority = 2,       },
     { .num = 3, .name = "--",  .Pad = {.port=PORT_UNDEF, .pin=15}, .edge = PIN_INT_EDGE_NONE, .valid = true, .irq_priority = 2,       },
     { .num = 4, .name = "--",  .Pad = {.port=PORT_UNDEF, .pin=15}, .edge = PIN_INT_EDGE_NONE, .valid = true, .irq_priority = 2,       },
-    { .num = 5, .name = "--",  .Pad = {.port=PORT_UNDEF, .pin=15}, .edge = PIN_INT_EDGE_NONE, .valid = true, .irq_priority = 2,       },
     { .num = 7, .name = "--",  .Pad = {.port=PORT_UNDEF, .pin=15}, .edge = PIN_INT_EDGE_NONE, .valid = true, .irq_priority = 2,       },
     { .num = 8, .name = "--",  .Pad = {.port=PORT_UNDEF, .pin=15}, .edge = PIN_INT_EDGE_NONE, .valid = true, .irq_priority = 2,       },
     { .num = 9, .name = "--",  .Pad = {.port=PORT_UNDEF, .pin=15}, .edge = PIN_INT_EDGE_NONE, .valid = true, .irq_priority = 2,       },
@@ -63,6 +78,7 @@ const ExtIntConfig_t ExtIntConfig[] = {
 ExtIntHandle_t ExtIntInstance[] = {
     {.num = 0, .valid = true,},
     {.num = 1, .valid = true,},
+    {.num = 5, .valid = true,},
     {.num = 6, .valid = true,},
 #if 0
     {.num = 2, .valid = true,},
@@ -82,6 +98,4 @@ ExtIntHandle_t ExtIntInstance[] = {
 };
 
 COMPONENT_GET_CNT(ExtInt, ext_int)
-
-
 

@@ -1,9 +1,7 @@
 #ifndef SD_CARD_CONFIG_H
 #define SD_CARD_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "sd_card_types.h"
 
 #ifndef HAS_SD_CARD

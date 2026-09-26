@@ -190,4 +190,3 @@ IsoTpHandle_t IsoTpInstance[] = {
 };
 
 COMPONENT_GET_CNT(IsoTp, iso_tp)
-

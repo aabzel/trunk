@@ -1,9 +1,7 @@
 #ifndef MIC2026_CONFIG_H
 #define MIC2026_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "mic2026_types.h"
 
 #ifndef HAS_MIC2026

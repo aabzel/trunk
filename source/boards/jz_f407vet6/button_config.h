@@ -1,7 +1,6 @@
 #ifndef BUTTON_CONFIG_H
 #define BUTTON_CONFIG_H
 
-
 #include "std_includes.h"
 #include "button_types.h"
 

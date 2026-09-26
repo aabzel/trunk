@@ -10,10 +10,8 @@ const Esp01Config_t Esp01Config[] = {
      .num = 1,
      .rx_array_size = ARRAY_SIZE(RxArray),
      .RxArray = RxArray,
-
      .tx_array_size = ARRAY_SIZE(TxArray),
      .TxArray = TxArray,
-
      .name = "ESP_01",
      .uart_num = 2,
      .valid = true,

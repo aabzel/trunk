@@ -32,4 +32,3 @@ LogHandle_t LogInstance[] = {
 };
 
 COMPONENT_GET_CNT(Log, log)
-

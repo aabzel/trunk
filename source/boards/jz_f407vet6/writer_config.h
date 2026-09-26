@@ -31,7 +31,7 @@ typedef enum {
     WRITER_NUM_CNT  ,
 }WriterLegalNum_t;
 
-extern WriterHandle_t dbg_o;
+extern WriterHandle_t* pDBGo ;
 
 extern WriterHandle_t *curWriterPtr;
 extern const WriterConfig_t WriterConfig[6];

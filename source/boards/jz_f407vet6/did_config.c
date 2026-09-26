@@ -13,7 +13,7 @@
     DID_CONGID_READ_ONLY     \
     DID_CONGID_READ_WRITE
 
-const DidConfig_t DidConfig[] = {
+const DidConfig_t SECTION_CFG_DATA DidConfig[] = {
     DID_CONGID_ALL
 };
 

@@ -28,7 +28,6 @@ const Ltr390Register_t Ltr390Register[]={
     },
 };
 
-
 uint32_t ltr390_reg_get_cnt(void){
     uint8_t cnt = 0;
     cnt = ARRAY_SIZE(Ltr390Register);

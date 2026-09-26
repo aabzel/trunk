@@ -4,7 +4,6 @@
 #include "std_includes.h"
 #include "nmea_types.h"
 
-
 extern const NmeaConfig_t NmeaConfig[];
 extern NmeaHandle_t NmeaInstance[];
 

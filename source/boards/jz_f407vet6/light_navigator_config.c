@@ -40,4 +40,3 @@ LightNavigatorHandle_t LightNavigatorInstance[] = {
 };
 
 COMPONENT_GET_CNT(LedMono, light_navigator)
-

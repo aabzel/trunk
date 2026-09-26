@@ -12,7 +12,7 @@ static char WindowText2[10] = "";
 static char WindowText3[10] = "";
 static char WindowText4[10] = "";
 
-const RunningLineConfig_t RunningLineConfig[] = {
+const RunningLineConfig_t SECTION_CFG_DATA RunningLineConfig[] = {
     {
         .num = 1,
         .valid = true,

@@ -13,6 +13,14 @@ ifneq ($(JZ_F407VET6_MK_INC),Y)
         MCAL_OPT += -DHAS_BOARD_PROC
     endif
 
+    ifeq ($(USB_HS),Y)
+        MCAL_OPT += -DUSB_MODULE_ID=DEVICE_HS
+    endif
+
+    ifeq ($(USB_FS),Y)
+        MCAL_OPT += -DUSB_MODULE_ID=DEVICE_FS
+    endif
+
     MICROCONTROLLER=Y
 
     INCDIR += -I$(BOARD_CFG_DIR)
@@ -311,13 +319,17 @@ ifneq ($(JZ_F407VET6_MK_INC),Y)
         MCAL_OPT += -DTBFP_MAX_PAYLOAD=20
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c
     endif
+
+    ifeq ($(W25Q16BV),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/w25q16bv_config.c
+    endif
     
     ifeq ($(WRITER),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/writer_config.c
     endif
 
-    ifeq ($(W25Q16BV),Y)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/w25q16bv_config.c
+    ifeq ($(WM8731),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/wm8731_config.c
     endif
 
     ifeq ($(BOARD_SELECTED),Y)

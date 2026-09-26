@@ -6,7 +6,7 @@
 
 #ifndef HAS_CRYP
 #error "Add HAS_CRYP"
-#endif /*HAS_CRYP*/
+#endif /**/
 
 #define CRYP_SW_NUM 1
 

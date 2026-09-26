@@ -1,4 +1,3 @@
-
 #ifndef TBFP_CONFIG_H
 #define TBFP_CONFIG_H
 
@@ -12,7 +11,7 @@
 //#define TBFP_MAX_PAYLOAD (256)
 
 extern const TbfpConfig_t TbfpConfig[];
-extern TbfpProtocol_t TbfpInstance[];
+extern TbfpHandle_t TbfpInstance[];
 
 uint32_t tbfp_get_cnt(void);
 

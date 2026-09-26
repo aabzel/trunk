@@ -21,12 +21,4 @@ BuzzerHandle_t BuzzerInstance[] = {
     },
 };
 
-uint32_t buzzer_get_cnt(void) {
-    uint8_t cnt1 = 0;
-    uint8_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(BuzzerConfig);
-    cnt2 = ARRAY_SIZE(BuzzerInstance);
-    if(cnt2 == cnt1) {
-    }
-    return cnt1;
-}
+COMPONENT_GET_CNT(Buzzer, buzzer)

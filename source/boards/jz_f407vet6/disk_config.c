@@ -8,8 +8,10 @@ const DiskConfig_t DiskConfig[] = {
         .num = 0,
         .valid = true,
         .block_size = 512,
-        .inter_face = IF_SDIO,
-        .if_num = 1,
+        .inter_face = {
+                          .interface_name = INTERFACE_NAME_SDIO,
+                          .num = 1,
+                      },
         .name = "SDIO1",
     },
 };

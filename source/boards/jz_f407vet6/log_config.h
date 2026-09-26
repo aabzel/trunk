@@ -10,4 +10,4 @@ extern LogHandle_t LogInstance[];
 
 uint32_t log_get_cnt(void);
 
-#endif /* LOG_CONFIG_H */
+#endif

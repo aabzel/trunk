@@ -23,7 +23,9 @@
 #include "segger_rtt_mcal.h"
 #endif
 
-#ifdef HAS_UART
+WriterHandle_t* pDBGo = &WriterInstance[WRITER_NUM_UART2];
+
+#if 0
 static uint8_t DbgOutData[DBG_TX_ARRAY_SIZE] = {0};
 
 WriterHandle_t dbg_o = {
@@ -44,7 +46,7 @@ WriterHandle_t dbg_o = {
 #endif
 
 #ifdef HAS_UART
-WriterHandle_t* curWriterPtr = &dbg_o;
+WriterHandle_t* curWriterPtr = &WriterInstance[WRITER_NUM_UART2];
 #else
 
 #ifdef HAS_SWD
@@ -204,9 +206,6 @@ WriterHandle_t WriterInstance[6] = {
 #ifdef HAS_ESP_01
     { .num = WRITER_NUM_ESP_01, .valid = true, },
 #endif
-
 };
 
 COMPONENT_GET_CNT(Writer, writer)
-
-

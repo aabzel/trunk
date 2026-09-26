@@ -8,8 +8,14 @@ extern "C" {
 #include "dds_type.h"
 
 typedef enum {
-     DDS_DAC_TEST = 1,
-}DacTypes_t;
+     DDS_NUM_CHIRP ,
+     DDS_NUM_SIN,
+     DDS_NUM_DAC_TEST ,
+     DDS_NUM_WAV_CH1 ,
+     DDS_NUM_WAV_CH2 ,
+     DDS_NUM_CNT,
+}DdsLegalNums_t;
+
 
 extern const DdsConfig_t DdsConfig[];
 extern DdsHandle_t DdsInstance[];

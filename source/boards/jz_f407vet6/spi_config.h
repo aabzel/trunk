@@ -1,5 +1,5 @@
-#ifndef SPI_CONFIG_GENERAL_H
-#define SPI_CONFIG_GENERAL_H
+#ifndef SPI_CONFIG_H
+#define SPI_CONFIG_H
 
 #include "std_includes.h"
 #include "spi_types.h"

@@ -14,5 +14,3 @@ RtcHandle_t RtcInstance[] = {
 };
 
 COMPONENT_GET_CNT(Rtc, rtc)
-
-

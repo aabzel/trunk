@@ -3,7 +3,7 @@
 #include "timer_config.h"
 #include "data_utils.h"
 
-const DeltaSigmaConfig_t DeltaSigmaConfig[] = {
+const DeltaSigmaConfig_t SECTION_CFG_DATA DeltaSigmaConfig[] = {
     {
       .num = 1,
       .timer_num = TIMER_NUM_DELTA_SIGMA,

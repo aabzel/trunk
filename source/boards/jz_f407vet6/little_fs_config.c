@@ -150,7 +150,6 @@ const LittleFsConfig_t SECTION_CFG_DATA LittleFsConfig[] = {
 
 LittleFsHandle_t LittleFsInstance[] = { { .num = 1, .valid = true, }, };
 
-
 COMPONENT_GET_CNT(LittleFs, little_fs)
 
 

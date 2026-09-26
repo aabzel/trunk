@@ -8,6 +8,7 @@ static const CliCmdInfo_t CliCommands[] = {CLI_COMMANDS COMMANDS_END};
 const CliConfig_t SECTION_CFG_DATA CliConfig[] = {
     {
         .num = 1,
+        .rtc_num = 1,
         .valid = true,
         .CommandArray = (CliCmdInfo_t*) CliCommands,
         .cmd_cnt = ARRAY_SIZE(CliCommands),
@@ -25,8 +26,8 @@ CliHandle_t CliInstance[] = {
 };
 
 uint32_t cli_get_command_cnt(void) {
-	uint32_t cnt = ARRAY_SIZE(CliCommands);
-	return cnt;
+    uint32_t cnt = ARRAY_SIZE(CliCommands);
+    return cnt;
 }
 
 COMPONENT_GET_CNT(Cli, cli)
