@@ -1,0 +1,5 @@
+#ifndef CAN_X86_CUSTOM_CONST_H
+#define CAN_X86_CUSTOM_CONST_H
+
+
+#endif /* CAN_X86_CUSTOM_CONST_H  */

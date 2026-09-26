@@ -320,7 +320,6 @@ bool gpio_diag(char* key_word1, char* key_word2) {
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     GpioLogicLevel_t logic_level = GPIO_LVL_UNDEF;
     uint8_t i = 0;
-    char temp[150];
     uint16_t gpio_cnt = gpio_get_cnt();
     for(i = 0; i < gpio_cnt; i++) {
         if(GPIO_PORT_UNDEF != GpioConfig[i].Pad.port) {
@@ -329,6 +328,7 @@ bool gpio_diag(char* key_word1, char* key_word2) {
 #ifdef HAS_GPIO_NRFX
             nrf_gpio_pin_mcusel_t mcu_sel = nrf_gpio_pin_mcu_select_get(GpioConfig[i].Pad);
 #endif
+            char temp[150];
             strcpy(temp, TSEP);
             logic_level = GPIO_LVL_UNDEF;
             gpio_get_state(GpioConfig[i].Pad, &logic_level);
@@ -447,7 +447,6 @@ const char* GpioConfigToStr(const GpioConfig_t* const Config) {
     if(Config) {
         strcpy(text, "");
         snprintf(text, sizeof(text), "%s%s,", text, GpioPadToStr(Config->Pad));
-        snprintf(text, sizeof(text), "%sDrvSel:%s,", text, GpioDriveSelectToStr(Config->drive_select));
         snprintf(text, sizeof(text), "%s%s,", text, Config->name);
         snprintf(text, sizeof(text), "%sDir:%s,", text, GpioDirToStr(Config->dir));
         snprintf(text, sizeof(text), "%sMode:%s,", text, GpioModeToStr(Config->mode));
@@ -456,6 +455,7 @@ const char* GpioConfigToStr(const GpioConfig_t* const Config) {
         snprintf(text, sizeof(text), "%sPull:%s,", text, GpioPullToStr(Config->pull));
         snprintf(text, sizeof(text), "%sSpeed:%s,", text, GpioSpeedToStr(Config->speed));
         snprintf(text, sizeof(text), "%sPin:%u,", text, Config->mcu_pin);
+        snprintf(text, sizeof(text), "%sDrvSel:%s,", text, GpioDriveSelectToStr(Config->drive_select));
     }
     return text;
 }

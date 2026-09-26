@@ -1,0 +1,60 @@
+
+    #ifdef HAS_ADC
+        #include "mcal_x86x/adc/adc.gvi"
+    #endif
+
+    #ifdef HAS_CLOCK
+        #include "mcal_x86x/clock/clock.gvi"
+    #endif
+
+    #ifdef HAS_FLASH
+        #include "mcal_x86x/flash/flash.gvi"
+    #endif
+
+    #ifdef HAS_GPIO
+        #include "mcal_x86x/gpio/gpio.gvi"
+    #endif
+
+    #ifdef HAS_I2C
+        #include "mcal_x86x/i2c/i2c.gvi"
+    #endif
+
+    #ifdef HAS_IPC
+        #include "mcal_x86x/ipc/ipc.gvi"
+    #endif
+
+    #ifdef HAS_NVS
+        #include "mcal_x86x/nvs/nvs.gvi"
+    #endif
+
+    #ifdef HAS_PWM
+        #include "mcal_x86x/pwm/pwm.gvi"
+    #endif
+
+    #ifdef HAS_RTC
+        #include "mcal_x86x/rtc/rtc.gvi"
+    #endif
+
+    #ifdef HAS_SPI
+        #include "mcal_x86x/spi/spi.gvi"
+    #endif
+
+    #ifdef HAS_TRNG
+        #include "mcal_x86x/trng/trng.gvi"
+    #endif
+
+    #ifdef HAS_SYSTICK
+        #include "mcal_x86x/systick/systick.gvi"
+    #endif
+
+    #ifdef HAS_TIMER
+        #include "mcal_x86x/timer/timer.gvi"
+    #endif
+    
+    #ifdef HAS_QSPI
+        #include "mcal_x86x/qspi/qspi.gvi"
+    #endif
+
+    #ifdef HAS_UART
+        #include "mcal_x86x/uart/uart.gvi"
+    #endif

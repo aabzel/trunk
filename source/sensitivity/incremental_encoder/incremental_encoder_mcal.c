@@ -5,9 +5,15 @@
 #include "compiler_const.h"
 #include "core_driver.h"
 #include "gpio_mcal.h"
-#include "iqueue.h"
 #include "lib_iqueue.h"
 #include "log.h"
+#include "storage.h"
+#include "float_diag.h"
+#include "running_line.h"
+
+#ifdef HAS_IQUEUE
+#include "iqueue.h"
+#endif
 
 COMPONENT_IS_VALID(IncrementalEncoder, incremental_encoder)
 COMPONENT_GET_NODE(IncrementalEncoder, incremental_encoder)
@@ -81,6 +87,15 @@ bool IncrementalEncoderIsValidConfig(const IncrementalEncoderConfig_t* const Con
         }
     }
     return res;
+}
+
+float incremental_encoder_get_value(const uint8_t num) {
+    float cnt = 0;
+    IncrementalEncoderHandle_t* Node = IncrementalEncoderGetNode(num);
+    if(Node) {
+        cnt = Node->value;
+    }
+    return cnt;
 }
 
 int32_t incremental_encoder_get_counter(const uint8_t num) {
@@ -318,16 +333,51 @@ bool incremental_encoder_init_common(const IncrementalEncoderConfig_t* const Con
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->divider = Config->divider;
             Node->name = Config->name;
             Node->PadA = Config->PadA;
+            Node->PadB = Config->PadB;
+            Node->Units = Config->Units;
+            Node->Scale = Config->Scale;
+            Node->physical_quantity = Config->physical_quantity;
             Node->limit_up = Config->limit_up;
             Node->limit_down = Config->limit_down;
-            Node->PadB = Config->PadB;
             Node->EventMem = Config->EventMem;
             Node->event_mem_size = Config->event_mem_size;
             Node->cnt_pre_revolution = Config->cnt_pre_revolution;
             res = true;
         }
+    }
+    return res;
+}
+
+bool incremental_encoder_show_proc_one(uint8_t num){
+    bool res = false;
+    LOG_PARN(INCREMENTAL_ENCODER, "INCREMENTAL_ENCODER_%u,Proc", num);
+    IncrementalEncoderHandle_t* Node = IncrementalEncoderGetNode(num);
+    if(Node) {
+        char temp[80] = {0};
+        snprintf(temp,sizeof(temp),"[%s]",FloatToStr(Node->value,3));
+        running_line_set_text(  1, temp);
+        snprintf(temp,sizeof(temp),"[%f]",(Node->value));
+        running_line_set_text(  2, temp);
+    }
+    return res;
+}
+
+bool incremental_encoder_show_proc(void) {
+    bool res = false;
+    uint32_t cnt = incremental_encoder_get_cnt();
+    uint32_t num = 0;
+    uint32_t ok = 0;
+    for(num = 0; num <= cnt; num++) {     /**/
+        res = incremental_encoder_show_proc_one(num);
+        ok= ok_cnt_update(ok, res);
+    }
+    if(ok) {
+        res = true;
+    } else {
+        res = false;
     }
     return res;
 }
@@ -348,22 +398,26 @@ bool incremental_encoder_proc_one(uint8_t num) {
         res = iqueue_ret_res(ret);
         if(res) {
             if(0 < size) {
-                IncrementalEncoderEvent_t Event = {0};
-                enter_critical();
-                ret = iqueue_dequeue((iqueue_t*)&Node->iQueue, (void*)&Event);
-                exit_critical();
-                res = iqueue_ret_res(ret);
-                if(res) {
-                    Node->input = Event.input;
-                    Node->new_state = Event.state;
-                    if(Node->new_state != Node->prev_state) {
-                        LOG_PARN(INCREMENTAL_ENCODER, "INCREMENTAL_ENCODER_%u:NewState:%u->%u", num, Node->prev_state,
-                                 Node->new_state);
+                uint32_t i = 0 ;
+                for(i=0;i<size;i++) {
+                    IncrementalEncoderEvent_t Event = {0};
+                    enter_critical();
+                    ret = iqueue_dequeue((iqueue_t*)&Node->iQueue, (void*)&Event);
+                    exit_critical();
+                    res = iqueue_ret_res(ret);
+                    if(res) {
+                        Node->input = Event.input;
+                        Node->new_state = Event.state;
+                        if(Node->new_state != Node->prev_state) {
+                            LOG_PARN(INCREMENTAL_ENCODER, "INCREMENTAL_ENCODER_%u:NewState:%u->%u", num, Node->prev_state,
+                                     Node->new_state);
+                        }
+                        res = incremental_encoder_proc_input(Node);
+                        LOG_DEBUG(INCREMENTAL_ENCODER, "%s", IncrementalEncoderEventToStr(&Event, Node));
+                        Node->prev_state = Node->new_state;
+                        Node->prev_event_time_us = Event.timestamp_us;
+                        Node->value = (((float)Node->cnt)/((float)Node->divider))* storage_scale_to_factor(Node->Scale);
                     }
-                    res = incremental_encoder_proc_input(Node);
-                    LOG_DEBUG(INCREMENTAL_ENCODER, "%s", IncrementalEncoderEventToStr(&Event, Node));
-                    Node->prev_state = Node->new_state;
-                    Node->prev_event_time_us = Event.timestamp_us;
                 }
             }
         }
@@ -388,6 +442,9 @@ bool incremental_encoder_init_one(uint8_t num) {
             res = incremental_encoder_init_common(Config, Node);
             gpio_init_ext_int(Config->PadA);
             gpio_init_ext_int(Config->PadB);
+
+            res= gpio_pull_set(Config->PadA, GPIO__PULL_UP );
+            res= gpio_pull_set(Config->PadB, GPIO__PULL_UP );
             res = incremental_encoder_set_0(num);
             Node->spin = 0;
             Node->valid = true;

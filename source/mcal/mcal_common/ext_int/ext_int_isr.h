@@ -5,16 +5,17 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #include "ext_int_types.h"
+
 #ifdef HAS_EXT_INT_CUSTOM
 #include "ext_int_custom_isr.h"
 #endif
 
-bool ExtIntRisingCallBack(ExtIntHandle_t* const Node);
-bool ExtIntFallingCallBack(ExtIntHandle_t* const Node);
+PinIntDrop_t ExtIntEdgeToDrop(const PinIntEdge_t edge_effective);
+bool ext_int_irq_handler(const uint8_t pin_num, const uint32_t timestamp_us);
+//bool ExtIntRisingCallBack(ExtIntHandle_t* const Node);
+//bool ExtIntFallingCallBack(ExtIntHandle_t* const Node);
+//bool ext_int_proc_egde(ExtIntHandle_t* Node) ;
 
 #ifdef __cplusplus
 }

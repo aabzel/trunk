@@ -16,7 +16,7 @@ extern "C" {
 
 #ifdef HAS_SYSTICK_CUSTOM
 #include "systick_custom.h"
-#endif /**/
+#endif
 
 SysTickHandle_t* SysTickGetNode(uint8_t num) ;
 const SysTickConfig_t* SysTickGetConfig(uint8_t num) ;
@@ -31,13 +31,14 @@ bool systick_start(void);
 bool systick_stop(void);
 bool systick_ctrl(bool on_off);
 bool systick_clksrc_set(const SysTickClkSrc_t clksrc);
+
 /*getters*/
+uint64_t systick_cnt_get(uint8_t num);
 bool systick_is_run(void);
 uint32_t systick_get_load(void);
 uint32_t systick_get_ms(void);
-uint32_t systick_cnt_get(void);
 uint32_t systick_get_base_freq(void);
-uint64_t systick_get_us(void);
+uint64_t systick_get_us(uint8_t num);
 SysTickClkSrc_t systick_source_get(void);
 
 

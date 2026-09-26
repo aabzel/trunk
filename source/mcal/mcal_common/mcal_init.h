@@ -13,17 +13,26 @@
 #define ACC_INIT
 #endif
 
-
 #ifdef HAS_DWT
 #include "dwt_mcal.h"
 #else
 #define DWT_INIT
 #endif
 
+#ifdef HAS_ADC_CHANNEL
+#include "adc_channel_mcal.h"
+#define ADC_CHANNEL_INIT                            \
+        {                                           \
+            .init_function = adc_channel_mcal_init, \
+            .name = "AdcChannels",                  \
+        },
+#else
+#define ADC_CHANNEL_INIT
+#endif
+
 #ifdef HAS_ADC
 #include "adc_mcal.h"
-#define ADC_INIT {.init_function=adc_mcal_init, .name="ADC",}, \
-                 {.init_function=adc_channel_mcal_init, .name="AdcChannels",},
+#define ADC_INIT {.init_function=adc_mcal_init, .name="ADC",},
 #else
 #define ADC_INIT
 #endif
@@ -155,7 +164,7 @@
 #define I2S_INIT
 #endif
 
-#ifdef HAS_I2S_FULL_DUPLEX
+#ifdef HAS_I2S_FULL__DUPLEX
 #include "i2s_full_duplex.h"
 #define I2S_FULL_DUPLEX_INIT {.init_function=i2s_full_duplex_mcal_init, .name="I2sFullDuplex",},
 #else
@@ -189,21 +198,21 @@
 #define PWM_INIT {.init_function=pwm_mcal_init, .name="Pwm",},
 #else
 #define PWM_INIT
-#endif /**/
+#endif
 
 #ifdef HAS_EXT_INT
 #include "ext_int_mcal.h"
 #define EXT_INT_INIT { .init_function=ext_int_mcal_init, .name="ExtInt",},
 #else
 #define EXT_INT_INIT
-#endif /**/
+#endif
 
 #ifdef HAS_TIMER
 #include "timer_mcal.h"
 #define TIMER_INIT  {.init_function=timer_mcal_init,  .name= "Timer",},
 #else
 #define TIMER_INIT
-#endif /**/
+#endif
 
 #ifdef HAS_INTERRUPT
 #include "interrupt_mcal.h"
@@ -224,7 +233,7 @@
 #define MPU_INIT {.init_function=mpu_mcal_init, .name="MNU",},
 #else
 #define MPU_INIT
-#endif /**/
+#endif
 
 #ifdef HAS_MICROCONTROLLER
 #include "microcontroller_init.h"
@@ -402,20 +411,26 @@
 #define IPC_INIT
 #endif
 
-
-#ifdef HAS_HW_DAC
+#ifdef HAS_DAC
 #include "dac_mcal.h"
-#define HW_DAC_INIT {.init_function=dac_init, .name="DAC",},
+#define HW_DAC_INIT {.init_function=dac_mcal_init, .name="HwDAC",},
 #else
 #define HW_DAC_INIT
-#endif /*HAS_HW_DAC*/
+#endif
+
+#ifdef HAS_DAC_CHANNEL
+#include "dac_channel_mcal.h"
+#define DAC_CHANNEL_INIT {.init_function=dac_channel_mcal_init, .name="DacCh",},
+#else
+#define DAC_CHANNEL_INIT
+#endif
 
 #ifdef HAS_RNG
 #include "rng_mcal.h"
 #define RNG_INIT {.init_function=rng_init, .name="RNG",},
 #else
 #define RNG_INIT
-#endif /*HAS_RNG*/
+#endif /**/
 
 #ifdef HAS_UART
 #include "uart_mcal.h"
@@ -435,6 +450,7 @@
 /*Order matters*/
 #define MCAL_INIT_CONTROL      \
     HW_DAC_INIT                \
+    DAC_CHANNEL_INIT                \
     WATCHDOG_INIT              \
     MPU_INIT                   \
     PWM_INIT
@@ -463,17 +479,15 @@
 #define MCAL_INIT_SENSITIVITY         \
     EXT_INT_INIT                      \
     RTC_INIT                          \
-    ADC_INIT                          \
     INPUT_CAPTURE_INIT                \
     LOCKSTEP_INIT                     \
+    ADC_INIT                          \
+    ADC_CHANNEL_INIT                  \
     PDM_INIT
 
-//    GPIO_INIT
 /*  Order matters!  */
 #define MCAL_INIT         \
     INTERRUPT_INIT        \
-    CLOCK_INIT            \
-    DWT_INIT              \
     SYSTICK_INIT          \
     POWER_INIT            \
     IOMUX_INIT            \

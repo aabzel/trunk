@@ -119,6 +119,11 @@ _WEAK_FUN_ bool interrupt_init_custom(void) {
     return res;
 }
 
+_WEAK_FUN_ uint32_t interrupt_get_cnt(void) {
+    uint32_t res = 0;
+    return res;
+}
+
 _WEAK_FUN_ bool interrupt_mcal_init(void) {
     bool res = true;
     uint32_t i = 0;

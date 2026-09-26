@@ -11,6 +11,7 @@ extern "C" {
 #include "none_blocking_pause.h"
 #include "time_config.h"
 #include "time_types.h"
+
 #ifdef HAS_TIME_DIAG
 #include "time_diag.h"
 #endif
@@ -31,18 +32,19 @@ extern uint32_t g_up_time_ms;
 #define MIN_2_HOUR(MIN) (((float)(MIN)) / 60.0f)
 #define MSEC_2_HOUR(MSEC) (((float)(MSEC) / 3600000.0f))
 #define MSEC_2_MIN(MSEC) (((float)(MSEC)) / (1000.0f * 60.0f))
-#define MSEC_2_SEC(MSEC) (((float)(MSEC)) / 1000.0f)
+#define MSEC_2_SEC(MSEC) (    (    (float)(MSEC)    ) / 1000.0f    )
 #define MSEC_2_USEC(MSEC) ((MSEC)*1000U)
 #define NSEC_2_SEC(NSEC) (((float)(NSEC)) / 1000000000.0f)
 #define NSEC_2_USEC_U(NSEC) ((NSEC) / 1000UL)
 #define USEC_2_MSEC_U(USEC) ((USEC) / 1000.0f)
-#define MSEC_2_NSEC(SEC) ((float)(1000000.0f * ((float)SEC)))
+#define MSEC_2_NSEC(MSEC) ((float)(1000000.0f * ((float)MSEC)))
 #define SEC_2_DAYS(SEC) ((((float)(SEC))) / (24.0f * 3600.0f))
 #define SEC_2_HOUR(SEC) (((float)(SEC)) / (3600.0f))
 #define SEC_2_MIN(SEC) (((float)(SEC)) / (60.0f))
 #define SEC_2_MSEC(SEC) ((((float)(SEC)) * 1000.0f))
-#define SEC_2_MSEC_U(SEC) (     (uint32_t) (    ((float)SEC) * 1000.0f    )       )
-#define SEC_2_USEC(SEC) ((1000000UL * (SEC)))
+
+
+#define SEC_2_USEC(SEC) ( (float)    (  1000000.0f * (  (float) SEC  )  )     )
 #define SEC_2_NSEC(SEC) ((float)(1000000000.0f * ((float)(SEC))))
 #define USEC_2_MSEC(USEC) (((float)(USEC)) / 1000.0f)
 #define USEC_2_SEC(USEC) (((float)(USEC)) / 1000000.0f)
@@ -50,6 +52,9 @@ extern uint32_t g_up_time_ms;
 #define USEC_2_HOUR(USEC) (((float)(USEC)) / 3600000000.0f)
 #define MIN_2_DAYS(MIN) (((float)(MIN)) / (1440.0f))
 #define MSEC_2_DAYS(MSEC) (((float)(MSEC)) / 86400000.0f)
+
+#define SEC_2_MSEC_U32(SEC) time_sec_to_msec_u32(SEC)
+#define SEC_2_MSEC_U(SEC)   time_sec_to_msec_u32(SEC)
 
 extern uint32_t start_time_ms;
 
@@ -70,6 +75,8 @@ bool is_valid_time_date(const struct tm* const date_time);
 bool time_uptime_2_time_date(uint32_t up_time, struct tm* const date_time);
 
 /*getters*/
+uint32_t time_sec_to_msec_u32(const float sec);
+uint32_t time_get_us32_one(uint8_t num);
 uint32_t time_get_ms(uint8_t num);
 bool time_get_cur_utc(struct tm* const time);
 bool time_get_time_str(char* str, uint32_t size);
@@ -79,6 +86,7 @@ uint64_t time_get_us(void);
 uint64_t time_one_get_us(uint8_t num);
 uint32_t time_get_ms32(void);
 float time_get_s(uint8_t num);
+uint32_t time_get_us32(void);
 float hour_to_min(const float  hours) ;
 struct tm* time_get_time(void);
 
@@ -114,7 +122,8 @@ float sec_to_msec(float  seconds) ;//((((float)(SEC)) * 1000.0))
 int calc_total_day_cnt(const struct tm* const date_time);
 int32_t time_date_cmp(const struct tm* const date_time1, const struct tm* const date_time2);
 
-bool time_wait_timeout(uint32_t start_ms, uint32_t timeout_ms);
+bool time_wait_timeout(uint32_t start_ms,
+                       uint32_t timeout_ms);
 
 #ifdef HAS_PARSE_DURATION
 uint32_t time_duration_parse(const char* const diration_str);

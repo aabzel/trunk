@@ -32,6 +32,9 @@ bool incremental_encoder_init_common(const IncrementalEncoderConfig_t* const Con
 bool incremental_encoder_init_node(IncrementalEncoderHandle_t* const Node);
 bool incremental_encoder_init_one(uint8_t num);
 
+bool incremental_encoder_show_proc(void);
+bool incremental_encoder_show_proc_one(uint8_t num);
+
 bool incremental_encoder_proc_one(uint8_t num);
 bool incremental_encoder_proc(void);
 
@@ -40,10 +43,11 @@ bool incremental_encoder_set_0(uint8_t num);
 bool incremental_encoder_set_counter(uint8_t num, int32_t counter);
 
 /*getters*/
-IncrementalEncoderState_t incremental_encoder_read_state( IncrementalEncoderHandle_t *Node );
-int32_t incremental_encoder_get_counter_limited(const uint8_t num);
+float incremental_encoder_get_value(const uint8_t num);
 int32_t incremental_encoder_get_counter(const uint8_t num);
 float  incremental_encoder_get_revolutions(const uint8_t num);
+int32_t incremental_encoder_get_counter_limited(const uint8_t num);
+IncrementalEncoderState_t incremental_encoder_read_state( IncrementalEncoderHandle_t *Node );
 
 #ifdef __cplusplus
 }

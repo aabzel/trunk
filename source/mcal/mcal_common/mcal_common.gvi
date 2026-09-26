@@ -2,6 +2,10 @@
     #include "mcal_common/adc/adc.gvi"
 #endif
 
+#ifdef HAS_CAN
+    #include "mcal_common/can/can.gvi"
+#endif
+
 #ifdef HAS_CRYP
     #include "mcal_common/cryp/cryp.gvi"
 #endif
@@ -45,7 +49,6 @@
 #ifdef HAS_LOCKSTEP
     #include "mcal_common/lockstep/lockstep.gvi"
 #endif
-
 
 #ifdef HAS_MAILBOX
     #include "mcal_common/mailbox/mailbox.gvi"

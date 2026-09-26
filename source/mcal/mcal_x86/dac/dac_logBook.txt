@@ -1,0 +1,53 @@
+
+
+
+dacd
+dacdl
+dac_scan 1
+dac_scan 2
+294.5-->h dac
++-----+----------+--------------------+-------------+
+| num |  short   |    long command    | Description |
++-----+----------+--------------------+-------------+
+|   1 |     dacd |           dac_diag | DAC diag
+|   2 |    dacss |     dac_start_stop | DacStartStop
+|   3 |     dacc |          dac_check | DAC check addr
+|   4 |     dacs |           dac_scan | DAC scan
+|   5 |     dacw |          dac_write | DAC write hex str
+|   6 |     daci |           dac_init | DAC init
+|   7 |     dacr |           dac_read | DAC read
++-----+----------+--------------------+-------------+
+
+dacw 2 0x6F 0x55
+gl dac2
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+| No  | pad  | level |dirr |    out    |speed | pull |AltFn | ItCn |    name    | connect |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+|   0 | PB10 |   L   | Alt | OpenDrain | Fast |  Air |  AF4 |    0 |   DAC2_SCL | CN10.32 |
+|   1 | PB11 |   H   | Alt | OpenDrain | Fast |   Up |  AF4 |    0 |   DAC2_SDA | CN10.34 |
++-----+------+-------+-----+-----------+------+------+------+------+------------+---------+
+
+
+gp B 10 1
+gp B 11 1
+
+
+cld GPIOB
+84.190:W [CLK] AHB1    GPIOB  On
+
+cld Dac2
+66.787:W [CLK] APB1     DAC2  On
+
+Осциллогаф не показывает dac пакетов. Провода продключены. Об этом свидетельствуют поддятки напряжения.
+Отправка выдает ошибку.
+
+Даже сигнал Start не отображается.
+dacss 2 0
+Как будто Dac2 контроллер не подключен п пинам PB10  PB11
+
+
+Надо подключать диагностику dac
+
+
+
+

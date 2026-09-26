@@ -35,11 +35,18 @@ const SchedulerConfig_t* SchedulerGetConfig(uint8_t num);
 uint32_t scheduler_get_task_cnt(const uint8_t num);
 
 //bool measure_scheduler_interval(uint16_t scheduler_id, uint64_t interval_us, SchedulerFunc_t scheduler_func, uint64_t loop_start_time_us);
+
 /*setters*/
 uint64_t scheduler_all_run_time_us(const uint8_t num);
-bool scheduler_task_period_set(const uint8_t num, const uint32_t task_num, const uint32_t task_period_us);
+bool scheduler_task_ctrl(uint8_t num, uint16_t task_num, bool scheduler_state);
+bool scheduler_ctrl(uint8_t num, uint16_t task_num, bool scheduler_state);
+bool scheduler_task_period_set(const uint8_t num,
+                               const uint32_t task_num, const uint32_t task_period_us);
 
 /*getters*/
-bool scheduler_task_period_get(const uint8_t num, const uint32_t task_num, uint32_t* const task_period_us) ;
+SchedulerTaskHandle_t* SchedulerGetTaskNode(const uint8_t num, const uint8_t task_num);
+SchedulerTaskHandle_t* SchedulerTaskIndexToTaskNode(const uint8_t num, const uint8_t task_num);
+bool scheduler_task_period_get(const uint8_t num,
+                               const uint32_t task_num, uint32_t* const task_period_us) ;
 
 #endif /* SCHEDULER_MCAL_H */

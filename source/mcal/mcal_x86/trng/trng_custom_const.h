@@ -1,0 +1,5 @@
+#ifndef TRNG_X86_CUSTOM_CONST_H
+#define TRNG_X86_CUSTOM_CONST_H
+
+
+#endif /* TRNG_X86_CUSTOM_CONST_H  */

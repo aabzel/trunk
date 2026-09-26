@@ -34,7 +34,7 @@ bool gpio_clock_init(void);
 bool gpio_init_custom(void);
 bool gpio_init_pad(const Pad_t Pad);
 bool gpio_init_one(const GpioConfig_t* const Config);
-bool gpio_init_input(const Pad_t Pad);
+bool gpio_init_input(const Pad_t Pad,const GpioPullMode_t pull_code) ;
 bool gpio_init_out(const Pad_t Pad);
 bool gpio_init_out_pad(const Pad_t Pad);
 bool gpio_mcal_init(void); //gpio_init-busy name
@@ -50,8 +50,8 @@ uint32_t num_exint_line(uint8_t num);
 bool gpio_pad_mux_set(const Pad_t Pad,const uint8_t mux);
 bool gpio_pin_mux_set(GpioPort_t port, uint8_t pin, uint8_t mux);
 bool gpio_dir_set(Pad_t Pad, GpioDir_t dir);
-bool gpio_mode_set(const Pad_t Pad, const GpioApiMode_t mode);
 bool gpio_pull_set(Pad_t Pad, GpioPullMode_t pull_code);
+bool gpio_mode_set(const Pad_t Pad, const GpioApiMode_t mode);
 bool gpio_logic_level_set(Pad_t Pad, GpioLogicLevel_t logic_level);
 bool gpio_set_state_verify(Pad_t Pad, GpioLogicLevel_t logic_level);
 bool gpio_toggle(const Pad_t Pad);
@@ -60,6 +60,11 @@ bool gpio_toggle(const Pad_t Pad);
 #endif /*HAS_MULTICORE*/
 
 /*Get*/
+uint32_t  pin_val_to_bsrr(const uint8_t tx_pin, const uint8_t bit_value);
+bool gpio_sample_to_bsrr(uint8_t tx_pin,
+                         const uint8_t* const bit_value,
+                         uint32_t* const bsrr,
+                         const uint32_t size);
 uint8_t gpio_port_cnt_get(void);
 GpioApiMode_t gpio_pin_mux_to_mode(const uint8_t mux);
 bool GpioIsValidConfig(const GpioConfig_t* const Config);

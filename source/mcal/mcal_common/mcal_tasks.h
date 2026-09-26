@@ -11,12 +11,19 @@
 
 #ifdef HAS_ADC_PROC
 #include "adc_mcal.h"
-#define ADC_TASKS                                                                            \
-    {.name="ADC", .period_us=ADC_POLL_PERIOD_US, .limiter.function=adc_proc,},               \
+#define ADC_TASK                                                                            \
+    {.name="ADC", .period_us=ADC_POLL_PERIOD_US, .limiter.function=adc_proc,},
+#else
+#define ADC_TASK
+#endif
+
+#ifdef HAS_ADC_CHANNEL_PROC
+#include "adc_channel_mcal.h"
+#define ADC_CHANNEL_TASK                                                                            \
     {.name="AdcChan", .period_us=ADC_CHANNEL_PERIOD_US, .limiter.function=adc_channel_proc,},
 #else
-#define ADC_TASKS
-#endif /**/
+#define ADC_CHANNEL_TASK
+#endif
 
 #ifdef HAS_GPIO_PROC
 #include "gpio_mcal.h"
@@ -78,7 +85,7 @@
 
 #define UART_TASKS                \
           UART_HEARTBEAT_TASK     \
-          {.name="UART", .period_us=UART_POLL_PERIOD_US, .limiter.function=uart_proc,},
+          {.name="UART", .period_us = UART_POLL_PERIOD_US, .limiter.function = uart_proc,},
 #else
 #define UART_TASKS
 #endif
@@ -196,7 +203,26 @@
 #define I2S_TASKS
 #endif
 
-#ifdef HAS_I2S_FULL_DUPLEX_PROC
+#ifdef HAS_DAC_PROC
+#include "dac_mcal.h"
+#define DAC_TASK                                                                            \
+    {.name="Dac", .period_us=DAC_POLL_PERIOD_US, .limiter.function=dac_proc,},
+#else
+#define DAC_TASK
+#endif
+
+
+
+#ifdef HAS_DAC_CHANNEL_PROC
+#include "dac_channel_mcal.h"
+#define DAC_CHANNEL_TASK                                                                            \
+    {.name="DacChannel", .period_us=DAC_CHANNEL_POLL_PERIOD_US, .limiter.function=dac_channel_proc,},
+#else
+#define DAC_CHANNEL_TASK
+#endif
+
+
+#ifdef HAS_I2S_FULL_DUPLEX__PROC
 #include "i2s_full_duplex.h"
 #define I2S_FULL_DUPLEX_TASKS                         \
     {.name="I2sFullDuplex",                           \
@@ -271,14 +297,20 @@
 
 #ifdef HAS_EXT_INT_PROC
 #include "ext_int_mcal.h"
-#define EXT_INT_TASK                                                                            \
-    {.name = "ExtInt", .period_us = EXT_INT_POLL_PERIOD_US, .limiter.function = ext_int_proc,},
+#define EXT_INT_TASK                       \
+    {                                      \
+      .num = TASK_EXT_INT,                 \
+      .name = "ExtInt",                    \
+      .period_us = EXT_INT_POLL_PERIOD_US, \
+      .limiter.function = ext_int_proc,    \
+    },
 #else
 #define EXT_INT_TASK
 #endif
 
 #define MCAL_SENSITIVITY_TASKS          \
-    ADC_TASKS                           \
+    ADC_TASK                            \
+    ADC_CHANNEL_TASK                    \
     EXT_INT_TASK                        \
     TIMER_TASKS                         \
     WATCHDOG_TASK                       \
@@ -305,7 +337,9 @@
     CRYP_TASKS
 
 #define MCAL_CONTROL_TASKS           \
-    DMA_TASK                        \
+    DMA_TASK                         \
+    DAC_TASK                         \
+    DAC_CHANNEL_TASK                 \
     GPIO_TASK
 
 #define MCAL_TASKS                  \

@@ -17,8 +17,10 @@ typedef struct {
 }IncrementalEncoderEvent_t;
 
 #define INCREMENTAL_ENCODER_COMMON_VARIABLES          \
+    bool is_invert;                                   \
     char* name;                                       \
     IncrementalEncoderEvent_t* EventMem;              \
+    int32_t divider;                                  \
     int32_t limit_up;                                 \
     int32_t limit_down;                               \
     uint32_t event_mem_size;                          \
@@ -39,6 +41,7 @@ typedef struct {
 typedef struct {
     INCREMENTAL_ENCODER_COMMON_VARIABLES
     bool init;
+    float value;
     uint32_t spin;
     uint32_t error_cnt;
     uint32_t prev_event_time_us;

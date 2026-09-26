@@ -5,7 +5,7 @@
 #include "diag_inc.h"
 #include "gpio_mcal.h"
 #include "log.h"
-
+#include "storage.h"
 
 const char* IncrementalEncoderInputToStr(const IncrementalEncoderInput_t input ){
     const char* name = "?";
@@ -40,6 +40,7 @@ const char* IncrementalEncoderConfigToStr(const IncrementalEncoderConfig_t* cons
         snprintf(text, sizeof(text), "%sEvMem:%p,", text, Config->EventMem);
         snprintf(text, sizeof(text), "%sCntPerRev:%u,", text, Config->cnt_pre_revolution);
         snprintf(text, sizeof(text), "%sEvCnt:%u,", text, Config->event_mem_size);
+        snprintf(text, sizeof(text), "%sDiv:%u,", text, Config->divider);
         snprintf(text, sizeof(text), "%s%s,", text, Config->name);
     }
     return text;
@@ -59,6 +60,7 @@ const char* IncrementalEncoderEventToStr(const IncrementalEncoderEvent_t* const 
         snprintf(text, sizeof(text), "%s%s],", text, IncrementalEncoderStateToStr(Event->state));
         //snprintf(text, sizeof(text), "%sIn:%u=", text, Event->input);
         snprintf(text, sizeof(text), "%sCNT:%d,", text, Node->cnt);
+        snprintf(text, sizeof(text), "%sValue:%f,", text, Node->value);
         snprintf(text, sizeof(text), "%sREV:%5.2f,", text, revolutions);
         snprintf(text, sizeof(text), "%sNewLoState:%s,", text, IncrementalEncoderStateToStr(Node->logic_state));
         snprintf(text, sizeof(text), "%sError:%u,", text, Node->error_cnt);
@@ -71,6 +73,7 @@ const char* IncrementalEncoderMainToStr(const IncrementalEncoderHandle_t* const 
     if(Node) {
         float revolutions= incremental_encoder_get_revolutions(Node->num);
         snprintf(text, sizeof(text), "%sCNT:%d,", text, Node->cnt);
+        snprintf(text, sizeof(text), "%sValue:%f,", text, Node->value);
         snprintf(text, sizeof(text), "%srState:%s,", text, IncrementalEncoderStateToStr(Node->new_state));
         snprintf(text, sizeof(text), "%slState:%u,", text, Node->logic_state);
         snprintf(text, sizeof(text), "%sREV:%5.2f,", text, revolutions);
@@ -82,9 +85,10 @@ const char* IncrementalEncoderMainToStr(const IncrementalEncoderHandle_t* const 
 
 
 
-const char* IncrementalEncoderNodeToStr(const IncrementalEncoderHandle_t* const Node) {
+const char* IncrementalEncoderNodeToStr( IncrementalEncoderHandle_t* const Node) {
     strcpy(text, "");
     if(Node) {
+
 #if 0
         GpioLogicLevel_t lla = gpio_get_state_short(Node->PadA);
         GpioLogicLevel_t llb = gpio_get_state_short(Node->PadB);
@@ -96,6 +100,7 @@ const char* IncrementalEncoderNodeToStr(const IncrementalEncoderHandle_t* const 
         snprintf(text, sizeof(text), "%sNewLoState:%s,", text, IncrementalEncoderStateToStr(Node->logic_state));
         snprintf(text, sizeof(text), "%sNewReState:%s,", text,IncrementalEncoderStateToStr( Node->new_state));
         snprintf(text, sizeof(text), "%sCNT:%d,", text, Node->cnt);
+        snprintf(text, sizeof(text), "%sValue:%f,", text, Node->value);
         snprintf(text, sizeof(text), "%sCntLim:%d,", text, Node->cnt_limited);
         snprintf(text, sizeof(text), "%sRev:%d,", text, Node->revolutions);
         snprintf(text, sizeof(text), "%sSpin:%u,", text, Node->spin);

@@ -74,12 +74,26 @@ bool scheduler_task_period_set(const uint8_t num, const uint32_t task_num, const
     return res;
 }
 
-SchedulerTaskHandle_t* SchedulerNunToTaskNode(const uint8_t num, const uint8_t task_num) {
+SchedulerTaskHandle_t* SchedulerTaskIndexToTaskNode(const uint8_t num, const uint8_t task_num) {
     SchedulerTaskHandle_t* TaskHandle = NULL;
     SchedulerHandle_t* Node = SchedulerGetNode(num);
     if(Node) {
         if(task_num < Node->task_array_cnt) {
             TaskHandle = &(Node->TaskArray[task_num]);
+        }
+    }
+    return TaskHandle;
+}
+
+SchedulerTaskHandle_t* SchedulerGetTaskNode(const uint8_t num, const uint8_t task_num) {
+    SchedulerTaskHandle_t* TaskHandle = NULL;
+    SchedulerHandle_t* Node = SchedulerGetNode(num);
+    if(Node) {
+        uint32_t i = 0;
+        for(i = 0; i < Node->task_array_cnt; i++) {
+            if(task_num == Node->TaskArray[task_num].num) {
+                TaskHandle = &(Node->TaskArray[task_num]);
+            }
         }
     }
     return TaskHandle;
@@ -187,6 +201,7 @@ static bool scheduler_init_one(const uint8_t num) {
                 if(res) {
                     Node->TaskArray[t].limiter.on_off = true;
                     Node->TaskArray[t].init = true;
+                    Node->TaskArray[t].on = true;
 #ifdef HAS_LIMITER
                     res = limiter_init(&Node->TaskArray[t].limiter, Node->TaskArray[t].period_us);
 #endif
@@ -234,6 +249,28 @@ static bool scheduler_init_custom(void) {
 #ifdef HAS_LOG
     LOG_WARNING(SCHEDULER, "InitCustom");
 #endif
+    return res;
+}
+
+bool scheduler_ctrl(uint8_t num, uint16_t task_num, bool scheduler_state) {
+    bool res = false;
+    SchedulerTaskHandle_t* Task = SchedulerTaskIndexToTaskNode(num, task_num);
+    if(Task) {
+        Task->limiter.on_off = scheduler_state;
+        LOG_INFO(SCHEDULER, "%s", SchedulerTaskToStr(Task));
+    }
+
+    return res;
+}
+
+bool scheduler_task_ctrl(uint8_t num, uint16_t task_num, bool scheduler_state) {
+    bool res = false;
+    SchedulerTaskHandle_t* Task = SchedulerGetTaskNode(num, task_num);
+    if(Task) {
+        Task->limiter.on_off = scheduler_state;
+        LOG_INFO(SCHEDULER, "%s", SchedulerTaskToStr(Task));
+    }
+
     return res;
 }
 

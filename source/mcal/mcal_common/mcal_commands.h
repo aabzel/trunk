@@ -29,6 +29,13 @@
 #define ADC_COMMANDS
 #endif
 
+#ifdef HAS_ADC_CHANNEL_COMMANDS
+#include "adc_channel_commands.h"
+#else
+#define ADC_CHANNEL_COMMANDS
+#endif
+
+
 #ifdef HAS_BOOT_MANAGER_COMMANDS
 #include "boot_manager_commands.h"
 #else
@@ -83,7 +90,7 @@
 #define I2S_COMMANDS
 #endif
 
-#ifdef HAS_I2S_FULL_DUPLEX_COMMANDS
+#ifdef HAS_I2S_FULL_DUPLEX__COMMANDS
 #include "i2s_full_duplex_commands.h"
 #else
 #define I2S_FULL_DUPLEX_COMMANDS
@@ -185,6 +192,12 @@
 #define EIM_COMMANDS
 #endif
 
+#ifdef HAS_DAC_CHANNEL_COMMANDS
+#include "dac_channel_commands.h"
+#else
+#define DAC_CHANNEL_COMMANDS
+#endif
+
 #ifdef HAS_FCSMU_COMMANDS
 #include "fcsmu_commands.h"
 #else
@@ -257,6 +270,7 @@
     BOOT_MANAGER_COMMANDS             \
     DMA_COMMANDS                      \
     DMA_CHANNEL_COMMANDS              \
+    DAC_CHANNEL_COMMANDS              \
     CLOCK_OUT_COMMANDS                \
     EIM_COMMANDS                      \
     GPIO_COMMANDS                     \
@@ -287,6 +301,7 @@
 
 #define MCAL_SENSITIVITY_COMMANDS \
     ADC_COMMANDS                  \
+    ADC_CHANNEL_COMMANDS          \
     INPUT_CAPTURE_COMMANDS        \
     RTC_COMMANDS                  \
     TIMER_COMMANDS                \

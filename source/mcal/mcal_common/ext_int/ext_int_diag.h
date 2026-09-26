@@ -9,14 +9,16 @@ extern "C" {
 #error "+HAS_EXT_INT"
 #endif
 
-#include <stdint.h>
-
 #include "ext_int_types.h"
 
-const char* ExtIntEdgeToStr(PinIntEdge_t code);
 bool ext_int_diag(void);
 bool ExtIntDiagConfig(const ExtIntConfig_t* const Config);
+const char* ExtIntEventToStr1(const ExtIntEvent_t* const pEvent) ;
+const char* ExtIntEdgeToStr(const PinIntEdge_t code);
+const char* ExtIntEventToStr(const ExtIntEvent_t *const Event, ExtIntHandle_t *pNode);
+const char* ExtIntEventToStr1(const ExtIntEvent_t* const pEvent);
 const char* ExtIntConfigToStr(const ExtIntConfig_t* const Config);
+const char* ExtIntDropToStr(const PinIntDrop_t drop);
 const char* ExtIntNodeToStr(const ExtIntHandle_t* const Node);
 
 #ifdef __cplusplus

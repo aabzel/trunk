@@ -62,7 +62,7 @@
 
 #ifdef HAS_RTC
 #include "rtc_mcal.h"
-#endif /*HAS_RTC*/
+#endif /**/
 
 #ifdef HAS_GNSS
 #include "gnss_drv.h"
@@ -77,6 +77,7 @@
 #endif
 
 #ifdef HAS_CLOCK
+#include "clock_custom.h"
 #include "clock_mcal.h"
 #endif
 
@@ -104,13 +105,6 @@
 COMPONENT_GET_NODE(Time, time)
 
 COMPONENT_GET_CONFIG(Time, time)
-
-#ifdef HAS_TIME_EXT
-uint32_t calc_days_in_year(const struct tm* const date) {
-    /*TODO*/
-    return 365;
-}
-#endif
 
 #ifdef HAS_TIME_EXT
 // UTC hour in hhmmss format
@@ -190,150 +184,6 @@ struct tm* time_get_time(void) {
 }
 #endif
 
-#ifdef HAS_DATE
-
-/* date in ddmmaa format */
-bool parse_date_from_val(uint32_t packed_date, struct tm* tm_stamp) {
-    bool res = false;
-    if(tm_stamp) {
-        res = true;
-        tm_stamp->tm_mday = extract_digit(packed_date, 5) * 10 + extract_digit(packed_date, 4);
-        if(32 <= tm_stamp->tm_mday) {
-            res = false;
-        }
-        if(true == res) {
-            tm_stamp->tm_mon =
-                extract_digit(packed_date, 3) * 10 + extract_digit(packed_date, 2) - 1; /*Ublox count from 1*/
-            if(13 <= tm_stamp->tm_mon) {
-                res = false;
-            }
-        }
-
-        if(true == res) {
-            tm_stamp->tm_year = extract_digit(packed_date, 1) * 10 + extract_digit(packed_date, 0);
-            tm_stamp->tm_year += 2000;
-        }
-    }
-    return res;
-}
-
-#endif
-
-#ifdef HAS_DATE
-bool is_time_date_equal_soft(const struct tm* const date_time1, const struct tm* const date_time2, uint32_t sec_error,
-                             int32_t* real_error) {
-    bool res = false;
-
-    int32_t diff = time_date_cmp(date_time1, date_time2);
-    if(abs(diff) < sec_error) {
-        res = true;
-    } else {
-        res = false;
-    }
-    if(real_error) {
-        *real_error = diff;
-    }
-    return res;
-}
-#endif
-
-#ifdef HAS_DATE
-bool is_time_date_equal(struct tm* date_time1, struct tm* date_time2) {
-    bool res = true;
-    if(res) {
-        if(date_time1->tm_year == date_time2->tm_year) {
-            res = true;
-        } else {
-#ifdef HAS_LOG
-            LOG_DEBUG(TIME, "WrongYear %u %u", date_time1->tm_year, date_time2->tm_year);
-#endif
-            res = false;
-        }
-    }
-
-    if(res) {
-        if(date_time1->tm_mon == date_time2->tm_mon) {
-            res = true;
-        } else {
-#ifdef HAS_LOG
-            LOG_DEBUG(TIME, "WrongMon %u %u", date_time1->tm_mon, date_time2->tm_mon);
-#endif
-            res = false;
-        }
-    }
-    if(res) {
-        if(date_time1->tm_mday == date_time2->tm_mday) {
-            res = true;
-        } else {
-            LOG_DEBUG(TIME, "WrongDay %u %u", date_time1->tm_mday, date_time2->tm_mday);
-            res = false;
-        }
-    }
-
-    if(res) {
-        if(date_time1->tm_hour == date_time2->tm_hour) {
-            res = true;
-        } else {
-            LOG_DEBUG(TIME, "WrongHour %u %u", date_time1->tm_hour, date_time2->tm_hour);
-            res = false;
-        }
-    }
-
-    if(res) {
-        if(date_time1->tm_min == date_time2->tm_min) {
-            res = true;
-        } else {
-            LOG_DEBUG(TIME, "WrongMin %u %u", date_time1->tm_min, date_time2->tm_min);
-            res = false;
-        }
-    }
-
-    if(res) {
-        if(date_time1->tm_sec == date_time2->tm_sec) {
-            res = true;
-        } else {
-            LOG_DEBUG(TIME, "WrongSec %u %u", date_time1->tm_sec, date_time2->tm_sec);
-            res = false;
-        }
-    }
-
-    return res;
-}
-#endif
-
-#ifdef HAS_DATE
-bool is_valid_date(const struct tm* const date_time) {
-    bool res = true;
-    if(res) {
-        /*TODO Rewise*/
-        if((0 <= date_time->tm_year) && (date_time->tm_year < 2250)) {
-            res = true;
-        } else {
-            LOG_DEBUG(TIME, "WrongYear %u", date_time->tm_year);
-            res = false;
-        }
-    }
-    if(res) {
-        if((0 <= date_time->tm_mon) && (date_time->tm_mon <= 11)) {
-            res = true;
-        } else {
-            LOG_DEBUG(TIME, "WrongMon %u", date_time->tm_mon);
-            res = false;
-        }
-    }
-    if(res) {
-        if((1 <= date_time->tm_mday) && (date_time->tm_mday <= 31)) {
-            res = true;
-        } else {
-            LOG_DEBUG(TIME, "WrongDay %u", date_time->tm_mday);
-            res = false;
-        }
-    }
-
-    return res;
-}
-#endif
-
 #ifdef HAS_TIME
 bool is_valid_time(const struct tm* const date_time) {
     bool res = true;
@@ -374,20 +224,6 @@ bool is_valid_time(const struct tm* const date_time) {
 }
 #endif
 
-#ifdef HAS_DATE
-bool is_valid_time_date(const struct tm* const date_time) {
-    bool res = true;
-
-    res = is_valid_date(date_time);
-
-    if(res) {
-        res = is_valid_time(date_time);
-    }
-
-    return res;
-}
-#endif
-
 #ifdef HAS_TIME_EXT
 bool time_get_time_str(char* out_str, uint32_t size) {
     bool res = false;
@@ -410,80 +246,6 @@ bool time_get_time_str(char* out_str, uint32_t size) {
 #endif /*HAS_CLOCK*/
 #endif /*HAS_CALENDAR*/
         res = true;
-    }
-    return res;
-}
-#endif
-
-#ifdef HAS_DATE
-/*000000000011111111112222*/
-/*012345678901234567890123*/
-/*Tue Dec  7 15:34:46 2021*/
-bool time_data_parse(struct tm* date_time, char* str) {
-    bool res = false;
-    if(date_time && str) {
-#ifdef HAS_RTC
-        LOG_INFO(LG_RTC, "init time by [%s]", str);
-#endif
-        uint32_t cnt = 0;
-        res = try_strl2int32(&str[17], 2, (int32_t*)&date_time->tm_sec);
-        if(res) {
-            cnt++;
-        } else {
-#ifdef HAS_X86_64
-            LOG_ERROR(TIME, " ErrParse sec [%s]", &str[17]);
-#endif
-        }
-
-        res = try_strl2int32(&str[14], 2, (int32_t*)&date_time->tm_min);
-        if(res) {
-            cnt++;
-        } else {
-#ifdef HAS_X86_64
-            LOG_ERROR(TIME, " ErrParse min [%s]", &str[14]);
-#endif
-        }
-
-        res = try_strl2int32(&str[11], 2, (int32_t*)&date_time->tm_hour);
-        if(res) {
-            cnt++;
-        } else {
-#ifdef HAS_X86_64
-            LOG_ERROR(TIME, " ErrParse hour [%s]", &str[11]);
-#endif
-        }
-
-        res = try_strl2month(&str[4], (int32_t*)&date_time->tm_mon);
-        if(res) {
-            cnt++;
-        } else {
-#ifdef HAS_X86_64
-            LOG_ERROR(TIME, " ErrParse mon [%s]", &str[4]);
-#endif
-        }
-
-        res = try_strl2int32(&str[8], 2, (int32_t*)&date_time->tm_mday);
-        if(res) {
-            cnt++;
-        } else {
-#ifdef HAS_X86_64
-            LOG_ERROR(TIME, " ErrParse mday [%s]", &str[8]);
-#endif
-        }
-        res = try_strl2int32(&str[20], 4, (int32_t*)&date_time->tm_year);
-        if(res) {
-            cnt++;
-        } else {
-#ifdef HAS_X86_64
-            LOG_ERROR(TIME, " ErrParse year [%s]", &str[20]);
-#endif
-        }
-
-        if(6 == cnt) {
-            res = true;
-        } else {
-            res = false;
-        }
     }
     return res;
 }
@@ -556,129 +318,13 @@ bool time_date_set_default(struct tm* const date_time) {
 }
 
 #ifdef HAS_DATE
-// 14.05.2025
-bool date_parse_rus(struct tm* const date_time, const char* const str) {
-    bool res = false;
-    if(date_time) {
-        if(str) {
-            LOG_DEBUG(TIME, "ParseDateFrom:[%s]", str);
-            // time_date_set_default(date_time);
-
-            char token[20] = {0};
-            uint32_t cnt = 0;
-            uint32_t cnt_token = csv_cnt(str, '.');
-            LOG_DEBUG(TIME, "cnt_token:%u", cnt_token);
-            if(1 <= cnt_token) {
-                res = csv_parse_text(str, '.', 0, token, sizeof(token));
-                res = try_str2int32(token, (int32_t*)&date_time->tm_mday);
-                if(res) {
-                    cnt++;
-                    LOG_DEBUG(TIME, "ParseMonDay:%u", date_time->tm_mday);
-                } else {
-                    LOG_ERROR(TIME, "ErrParseMonDay:[%s]", token);
-                }
-            }
-
-            if(2 <= cnt_token) {
-                res = csv_parse_text(str, '.', 1, token, sizeof(token));
-                res = try_str2int32(token, (int32_t*)&date_time->tm_mon);
-                if(res) {
-                    cnt++;
-                    date_time->tm_mon = date_time->tm_mon - 1;
-                    LOG_DEBUG(TIME, "ParseMon:%d", date_time->tm_mon);
-                } else {
-                    LOG_ERROR(TIME, "ErrParseMon:[%s]", token);
-                }
-            }
-
-            if(3 <= cnt_token) {
-                res = csv_parse_text(str, '.', 2, token, sizeof(token));
-                res = try_str2int32(token, (int32_t*)&date_time->tm_year);
-                if(res) {
-                    LOG_DEBUG(TIME, "ParseYear:%d", date_time->tm_year);
-                    cnt++;
-                } else {
-                    LOG_ERROR(TIME, "ErrParse year [%s]", token);
-                }
-            }
-
-            if(cnt) {
-                res = true;
-            } else {
-                res = false;
-            }
-        }
-    }
-    return res;
-}
 
 // Dec 21 2021
 // Jan 10 2022
-bool date_parse(struct tm* const date_time, const char* const str) {
-    bool res = false;
-    if(date_time && str) {
-#ifdef HAS_RTC
-        LOG_INFO(LG_RTC, "init time by [%s]", str);
-#endif
-        uint32_t cnt = 0;
 
-        res = try_strl2month(&str[0], (int32_t*)&date_time->tm_mon);
-        if(res) {
-            cnt++;
-            LOG_DEBUG(TIME, "Parse mon %d", date_time->tm_mon);
-        } else {
-            LOG_ERROR(TIME, "ErrParse mon [%s]", &str[0]);
-        }
-
-        res = try_strl2int32(&str[4], 2, (int32_t*)&date_time->tm_mday);
-        if(res) {
-            cnt++;
-            LOG_DEBUG(TIME, "Parse mday %u", date_time->tm_mday);
-        } else {
-            LOG_ERROR(TIME, "ErrParse mday [%s]", &str[4]);
-        }
-
-        res = try_strl2int32(&str[7], 4, (int32_t*)&date_time->tm_year);
-        if(res) {
-            LOG_DEBUG(TIME, "Parse year %d", date_time->tm_year);
-            cnt++;
-        } else {
-            LOG_ERROR(TIME, "ErrParse year [%s]", &str[7]);
-        }
-
-        if(3 == cnt) {
-            res = true;
-        } else {
-            res = false;
-        }
-    }
-    return res;
-}
 #endif
 
 #ifdef HAS_DATE
-int32_t time_date_cmp(const struct tm* const date_time1, const struct tm* const date_time2) {
-    int32_t diff_sec = INT_MAX;
-    log_level_t ll = log_level_get(TIME);
-
-    if(LOG_LEVEL_DEBUG == ll) {
-        print_time_date("Time1", date_time1, true);
-        print_time_date("Time2", date_time2, true);
-    }
-
-    time_t time_stamp1 = mktime((struct tm*)date_time1);
-    time_t time_stamp2 = mktime((struct tm*)date_time2);
-    if((0 < time_stamp1) && (0 < time_stamp2)) {
-        LOG_DEBUG(TIME, "1:%u 2:%u", time_stamp1, time_stamp2);
-        float sec = difftime(time_stamp2, time_stamp1);
-        diff_sec = (int32_t)sec;
-    } else {
-        print_time_date("Time1", date_time1, true);
-        print_time_date("Time2", date_time2, true);
-        LOG_ERROR(TIME, "Time1:%d Time2:%d", time_stamp1, time_stamp2);
-    }
-    return diff_sec;
-}
 
 #endif
 
@@ -720,7 +366,7 @@ bool time_init_one(uint8_t num) {
             } // switch
         }
 #ifdef HAS_LOG
-        //   set_log_level(TIME, LOG_LEVEL_INFO);
+        //   log_level_set(TIME, LOG_LEVEL_INFO);
 #endif
     }
     return res;
@@ -783,7 +429,7 @@ uint32_t time_get_ms(uint8_t num) {
 
 #ifdef HAS_DWT
         case TIME_SRC_DWT: {
-            time_ms = dwt_get_time_ms32(1);
+            time_ms = dwt_get_time_ms32(DWT_NUM_CORE0);
         } break;
 #endif
 
@@ -791,7 +437,7 @@ uint32_t time_get_ms(uint8_t num) {
         case TIME_SRC_WIN_CLOCK: {
             time_ms = pc_clock_get_ms();
         } break;
-#endif /*HAS_PC*/
+#endif
 
 #ifdef HAS_ZEPHYR
         case TIME_SRC_ZEPHYR_CLOCK: {
@@ -892,7 +538,7 @@ uint64_t time_one_get_us(uint8_t num) {
 
 #ifdef HAS_DWT
         case TIME_SRC_DWT: {
-            time_us = dwt_get_time_us64(1);
+            time_us = dwt_get_time_us64(DWT_NUM_CORE0);
         } break;
 #endif
 
@@ -903,7 +549,7 @@ uint64_t time_one_get_us(uint8_t num) {
         } break;
         case TIME_SRC_SYSTICK: {
 #ifdef HAS_SYSTICK
-            time_us = systick_get_us();
+            time_us = systick_get_us(1);
 #endif
         } break;
         case TIME_SRC_SW_INCR: {
@@ -964,6 +610,20 @@ uint64_t time_one_get_us(uint8_t num) {
 
 uint64_t time_get_us(void) {
     uint64_t time_us = time_one_get_us(TIME_MAIN_NUM);
+    return time_us;
+}
+
+/* Can measure from 0....4294s */
+uint32_t time_get_us32_one(uint8_t num) {
+    Type64Union_t un64;
+    un64.u64 = time_one_get_us(num);
+    uint32_t time_us = un64.u32[0];
+    return time_us;
+}
+
+/* Can measure from 0....4294s */
+uint32_t time_get_us32(void) {
+    uint32_t time_us = time_get_us32_one(TIME_US_MAIN_NUM);
     return time_us;
 }
 
@@ -1268,7 +928,7 @@ bool time_proc_one(uint8_t num) {
 
 #ifdef HAS_STORE_FS
         uint32_t max_up_time_ms = 0;
-        res = store_fs_get(1, PAR_ID_MAX_UP_TIME, (void*)&max_up_time_ms);
+        res = store_fs_get(PAR_ID_MAX_UP_TIME, (void*)&max_up_time_ms);
         if(res) {
 #ifdef HAS_TIME_DIAG
             LOG_DEBUG(TIME, "LastUpTime: %s", MsToStr(max_up_time_ms));
@@ -1280,7 +940,7 @@ bool time_proc_one(uint8_t num) {
         }
 
         if(max_up_time_ms < up_time_ms) {
-            res = store_fs_set(1, PAR_ID_MAX_UP_TIME, &up_time_ms);
+            res = store_fs_set(PAR_ID_MAX_UP_TIME, &up_time_ms);
             if(res) {
 #ifdef HAS_LOG
                 LOG_DEBUG(TIME, "SaveMaxUpTime %u ms", up_time_ms);
@@ -1316,26 +976,19 @@ float usec_to_sec(uint64_t usec) {
 }
 #endif
 
-#ifdef HAS_CALENDAR
-int32_t time_calc_diff(struct tm* date_time1, struct tm* date_time2) {
-    int32_t diff_s = 0;
-    if(date_time1) {
-        if(date_time2) {
-            int32_t start = (int32_t)TimeDateToSeconds(date_time1);
-            int32_t end = (int32_t)TimeDateToSeconds(date_time2);
-            diff_s = end - start;
-        }
-    }
-    return diff_s;
-}
-#endif
-
 float hour_to_min(const float hours) {
     float min = hours * 60.0f;
     return min;
 }
 
-COMPONENT_INIT_PATTERT(TIME, TIME, time)
+uint32_t time_sec_to_msec_u32(const float sec) {
+    uint32_t msec_u32 = 0 ;
+    float msec_f = ceilf(sec*1000.0f) ;
+    msec_u32 = (uint32_t) msec_f;
+    return msec_u32;
+}
+
+COMPONENT_INIT_ANY_PATTERT_CNT(TIME, TIME, time, TIME_NUM_CNT)
 
 #ifdef HAS_TIME_EXT
 COMPONENT_PROC_PATTERT(TIME, TIME, time)

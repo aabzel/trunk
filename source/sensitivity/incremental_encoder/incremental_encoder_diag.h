@@ -29,7 +29,7 @@ const char* IncrementalEncoderStateToStr(const IncrementalEncoderState_t state);
 bool incremental_encoder_diag_one(uint8_t num);
 const char* IncrementalEncoderInputToStr(const IncrementalEncoderInput_t input );
 const char* IncrementalEncoderConfigToStr(const IncrementalEncoderConfig_t* const Config);
-const char* IncrementalEncoderNodeToStr(const IncrementalEncoderHandle_t* const Node);
+const char* IncrementalEncoderNodeToStr( IncrementalEncoderHandle_t* const Node);
 const char* IncrementalEncoderMainToStr(const IncrementalEncoderHandle_t* const Node);
 const char* IncrementalEncoderEventToStr(const IncrementalEncoderEvent_t* const Event,
                                          IncrementalEncoderHandle_t *Node);

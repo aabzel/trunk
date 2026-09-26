@@ -23,7 +23,7 @@ ifneq ($(MCAL_MK_INC),Y)
         # $(error EHAL_MCAL=$(EHAL_MCAL))
         include $(MCAL_DIR)/ehal_mcal/ehal_mcal.mk
     endif
-    
+
     ifeq ($(MCAL_AT32),Y)
         # $(error MCAL_AT32=$(MCAL_AT32))
         include $(MCAL_DIR)/mcal_at32f4/mcal_at32f4.mk
@@ -38,18 +38,8 @@ ifneq ($(MCAL_MK_INC),Y)
         include $(MCAL_DIR)/mcal_cc26x2/mcal_cc26x2.mk
     endif
 
-    ifeq ($(MCAL_EHAL),Y)
-        # $(error MCAL_EHAL=$(MCAL_EHAL))
-        include $(MCAL_DIR)/mcal_ehal/mcal_ehal.mk
-    endif
-
     ifeq ($(MCAL_ESP32),Y) 
         include $(MCAL_DIR)/mcal_esp32/mcal_esp32.mk
-    endif
-
-    ifeq ($(MCAL_FC7300X),Y)
-        # $(error MCAL_FC7300X=$(MCAL_FC7300X))
-        include $(MCAL_DIR)/mcal_fc7300x/mcal_fc7300x.mk
     endif
 
     ifeq ($(MCAL_MIK32),Y)
@@ -57,24 +47,23 @@ ifneq ($(MCAL_MK_INC),Y)
         include $(MCAL_DIR)/mcal_mik32/mcal_mik32.mk
     endif
 
-    ifeq ($(MCAL_FLAGSHIP),Y)
-        # $(error MCAL_FLAGSHIP=$(MCAL_FLAGSHIP))
-        include $(MCAL_DIR)/mcal_flagship/mcal_flagship.mk
-    endif
-
     ifeq ($(MCAL_NRF5340),Y)
         # $(error MCAL_NRF5340=$(MCAL_NRF5340))
         include $(MCAL_DIR)/mcal_nrf5340/mcal_nrf5340.mk
     endif
 
-    ifeq ($(MCAL_YUNTU),Y)
-        # $(error MCAL_YUNTU=$(MCAL_YUNTU))
-        include $(MCAL_DIR)/mcal_yuntu/mcal_yuntu.mk
+    ifeq ($(STM32_HAL),Y)
+        # $(error STM32_HAL=$(STM32_HAL))
+        #include $(MCAL_DIR)/mcal_stm32_hal/mcal_stm32_hal.mk
     endif
-    
-    ifeq ($(MCAL_STM32),Y)
-        # $(error MCAL_STM32=$(MCAL_STM32))
-        include $(MCAL_DIR)/mcal_stm32f4/mcal_stm32f4.mk
+
+    ifeq ($(MCAL_STM32_HAL),Y)
+        # $(error STM32_HAL=$(STM32_HAL))
+        include $(MCAL_DIR)/mcal_stm32_hal/mcal_stm32_hal.mk
+    endif
+
+    ifeq ($(MCAL_STM32F7),Y)
+        #include $(MCAL_DIR)/mcal_stm32f7/mcal_stm32f7.mk
     endif
 
 endif

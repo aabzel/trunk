@@ -1,0 +1,8 @@
+
+#ifdef HAS_FAT_FS
+    FAT_FS->FILE_MCAL
+#endif
+
+#ifdef HAS_PC
+    FILE_PC->FILE_MCAL
+#endif

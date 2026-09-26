@@ -21,6 +21,10 @@
 #include "cryp_mcal.h"
 #endif
 
+#ifdef HAS_DAC
+#include "dac_mcal.h"
+#endif
+
 #ifdef HAS_DMA
 #include "dma_mcal.h"
 #endif

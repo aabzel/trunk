@@ -40,7 +40,15 @@ bool SwComponentIsValidConfig(const SwComponentConfig_t* const Config) {
 _WEAK_FUN_
 bool sw_component_init_custom(void) {
     bool res = false;
+    uint32_t cnt = sw_component_get_cnt();
     LOG_INFO(SW_COMPONENT, "Version:%u", SW_COMPONENT_VERSION);
+    LOG_INFO(SW_COMPONENT, "CNT:%u", cnt);
+    if(cnt) {
+        res = true;
+    } else {
+        LOG_ERROR(SW_COMPONENT, "NoConfig!");
+        res = false;
+    }
     return res;
 }
 
@@ -92,7 +100,8 @@ bool sw_component_init_node(SwComponentHandle_t* const Node) {
 _WEAK_FUN_
 bool sw_component_init_one(uint8_t num) {
     bool res = false;
-    LOG_WARNING(SW_COMPONENT, "SW_COMPONENT_%u", num);
+    uint32_t cnt = sw_component_get_cnt();
+    LOG_WARNING(SW_COMPONENT, "SW_COMPONENT_%u/%u", num, cnt);
     const SwComponentConfig_t *Config = SwComponentGetConfig(num);
     res = SwComponentIsValidConfig(Config);
     if(res) {

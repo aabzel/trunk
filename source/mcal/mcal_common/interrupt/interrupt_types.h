@@ -23,6 +23,7 @@ typedef struct {
     uint32_t priority;
     bool on_off;
     bool valid;
+    const char* name; // comment
 } InterruptConfig_t;
 
 #ifdef __cplusplus

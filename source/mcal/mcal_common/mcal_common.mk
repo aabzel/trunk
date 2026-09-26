@@ -9,7 +9,8 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
     MCAL_OPT += -DHAS_MCAL
     MCAL_OPT += -DHAS_MCAL_COMMANDS
 
-    ifeq ($(DIAG),Y)
+    ifeq ($(MCAL_DIAG),Y)
+        MCAL_OPT += -DHAS_MCAL_DIAG
         SOURCES_C += $(MCAL_COMMON_DIR)/mcal_diag.c
     endif
 
@@ -21,6 +22,10 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
         include $(MCAL_COMMON_DIR)/adc/adc.mk
     endif
 
+    ifeq ($(ADC_CHANNEL),Y)
+        include $(MCAL_COMMON_DIR)/adc_channel/adc_channel.mk
+    endif
+    
     ifeq ($(LOCKSTEP),Y)
         #  $(error LOCKSTEP=$(LOCKSTEP))
         include $(MCAL_COMMON_DIR)/lockstep/lockstep.mk
@@ -65,21 +70,15 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
         include $(MCAL_COMMON_DIR)/clock/clock.mk
     endif
 
-    ifeq ($(POWER),Y)
-        #  $(error POWER=$(POWER))
-        include $(MCAL_COMMON_DIR)/power/power.mk
-    endif
-
-    ifeq ($(PIN),Y)
-        #  $(error PIN=$(PIN))
-        include $(MCAL_COMMON_DIR)/pin/pin.mk
-    endif
-
     ifeq ($(DAC),Y)
         #  $(error DAC=$(DAC))
         include $(MCAL_COMMON_DIR)/dac/dac.mk
     endif
-    
+
+    ifeq ($(DAC_CHANNEL),Y)
+        include $(MCAL_COMMON_DIR)/dac_channel/dac_channel.mk
+    endif
+
     ifeq ($(DMA),Y)
         include $(MCAL_COMMON_DIR)/dma/dma.mk
     endif
@@ -126,7 +125,7 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
     
     ifeq ($(I2S_FULL_DUPLEX),Y)
         #  $(error I2S_FULL_DUPLEX=$(I2S_FULL_DUPLEX))
-        include $(MCAL_COMMON_DIR)/i2s_full_duplex/i2s_full_duplex.mk
+        # include $(MCAL_COMMON_DIR)/i2s_full_duplex/i2s_full_duplex.mk
     endif
 
     ifeq ($(INPUT_CAPTURE),Y)
@@ -165,12 +164,14 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
         include $(MCAL_COMMON_DIR)/pwm/pwm.mk
     endif
 
-    ifeq ($(QSPI),Y)
-        include $(MCAL_COMMON_DIR)/qspi/qspi.mk
+    ifeq ($(POWER),Y)
+        #  $(error POWER=$(POWER))
+        include $(MCAL_COMMON_DIR)/power/power.mk
     endif
 
-    ifeq ($(SPIFI),Y)
-        include $(MCAL_COMMON_DIR)/spifi/spifi.mk
+    ifeq ($(PIN),Y)
+        #  $(error PIN=$(PIN))
+        include $(MCAL_COMMON_DIR)/pin/pin.mk
     endif
 
     ifeq ($(SWD),Y)
@@ -201,6 +202,14 @@ ifneq ($(MCAL_COMMON_MK_INC),Y)
     ifeq ($(UART),Y) 
         #  $(error UART=$(UART))
         include $(MCAL_COMMON_DIR)/uart/uart.mk
+    endif
+
+    ifeq ($(QSPI),Y)
+        include $(MCAL_COMMON_DIR)/qspi/qspi.mk
+    endif
+
+    ifeq ($(SPIFI),Y)
+        include $(MCAL_COMMON_DIR)/spifi/spifi.mk
     endif
 
     ifeq ($(TRG),Y)
