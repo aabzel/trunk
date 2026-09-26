@@ -1,0 +1,12 @@
+ifneq ($(SW_UART_PRECONFIG_INC),Y)
+    SW_UART_PRECONFIG_INC=Y
+    
+    EXT_INT_EVENT_FIFO=Y
+    TIMER=Y
+    GPIO_DAC=Y
+    #EXT_INT=Y
+    FIFO_INDEX=Y
+    FIFO_CHAR=Y
+    SW_UART=Y
+    GPIO=Y
+endif

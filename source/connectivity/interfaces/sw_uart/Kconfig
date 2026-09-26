@@ -1,0 +1,4 @@
+
+config SW_UART
+    bool "Enable use of the SW_UART drivers"
+
