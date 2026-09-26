@@ -1,0 +1,9 @@
+ifneq ($(STM32F4X_MK_INC),Y)
+    STM32F4X_MK_INC=Y
+    STM32F4X_DIR = $(ST_DIR)/STM32F4x
+    # $(error STM32F4X_DIR=$(STM32F4X_DIR))
+    INCDIR += -I$(STM32F4X_DIR)/Include
+    MCAL_OPT += -DHAS_STM32F4X
+endif
+
+    

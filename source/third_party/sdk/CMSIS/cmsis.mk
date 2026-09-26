@@ -10,7 +10,6 @@ ifneq ($(CMSIS_MK_INC),Y)
     INCDIR += -I$(CMSIS_DIR)/Include
     INCDIR += -I$(CMSIS_DIR)/Core/Include
     INCDIR += -I$(CMSIS_DIR)/DSP/Include
-    ifeq ($(STM32),Y)
-        INCDIR += -I$(CMSIS_DIR)/Device/ST/STM32F4xx/Include
-    endif
+    
+    include $(CMSIS_DIR)/Device/Device.mk
 endif
