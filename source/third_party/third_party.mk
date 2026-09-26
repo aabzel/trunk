@@ -11,6 +11,7 @@ ifneq ($(THIRD_PARTY_MK_INC),Y)
         include $(THIRD_PARTY_DIR)/sdk/sdk.mk
     endif
 
+    # $(error VENDOR_SDK=$(VENDOR_SDK))
     ifeq ($(COMPUTING),Y)
         # $(error COMPUTING=$(COMPUTING))
         include $(THIRD_PARTY_DIR)/computing/computing.mk

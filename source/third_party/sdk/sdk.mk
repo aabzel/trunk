@@ -62,27 +62,32 @@ ifneq ($(VENDOR_SDK_MK_INC),Y)
         include $(VENDOR_SDK_DIR)/simplelink_cc13x2_26x2_sdk/simplelink_cc13x2_26x2_sdk.mk
     endif
 
-    ifeq ($(STM32F4XX_HAL_DRIVER),Y)
+
+    ifeq ($(STM32F7XX_HAL_DRIVER),Y)
         #$(error STM32F4XX_HAL_DRIVER=$(STM32F4XX_HAL_DRIVER))
-        include $(VENDOR_SDK_DIR)/STM32F4xx_HAL_Driver/stm32f4xx_hal_driver.mk
+        include $(VENDOR_SDK_DIR)/STM32F7xx_HAL_Driver/STM32F7xx_HAL_Driver.mk
     endif
 
     ifeq ($(STM32F4XX_HAL_DRIVER_RI),Y)
         #$(error STM32F4XX_HAL_DRIVER_RI=$(STM32F4XX_HAL_DRIVER_RI))
         include $(VENDOR_SDK_DIR)/STM32F4xx_HAL_Driver_RI/stm32f4xx_hal_driver.mk
+    else
+       ifeq ($(STM32F4XX_HAL_DRIVER),Y)
+           #$(error STM32F4XX_HAL_DRIVER=$(STM32F4XX_HAL_DRIVER))
+           include $(VENDOR_SDK_DIR)/STM32F4xx_HAL_Driver/stm32f4xx_hal_driver.mk
+       endif
     endif
 
     ifeq ($(STM32),Y)
         ifeq ($(USB_DEVICE_RI),Y)
-            # $(error USB_DEVICE=$(USB_DEVICE))
-            #include $(VENDOR_SDK_DIR)/STM32_USB_Device_Library_V1/STM32_USB_Device_Library.mk
-            #include $(VENDOR_SDK_DIR)/STM32_USB_Device_Library/STM32_USB_Device_Library.mk
+            USB_DEVICE=N
+            # $(error USB_DEVICE_RI=$(USB_DEVICE_RI))
             include $(VENDOR_SDK_DIR)/STM32_USB_Device_Library_RI/STM32_USB_Device_Library.mk
         endif
 
         ifeq ($(USB_DEVICE),Y)
+            USB_DEVICE_RI=Y
             # $(error USB_DEVICE=$(USB_DEVICE))
-           #include $(VENDOR_SDK_DIR)/STM32_USB_Device_Library_V1/STM32_USB_Device_Library.mk
             include $(VENDOR_SDK_DIR)/STM32_USB_Device_Library/STM32_USB_Device_Library.mk
         endif
 

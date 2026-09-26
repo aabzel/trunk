@@ -12,6 +12,7 @@ ifneq ($(FAT_FS_MK_INC),Y)
     
     #SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/diskio.c
     #SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/option/unicode.c
-    SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/option/ccsbcs.c
+    #SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/option/ccsbcs.c
     SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/ff.c
+    SOURCES_THIRD_PARTY_C += $(FAT_FS_DIR)/src/ffunicode.c
 endif

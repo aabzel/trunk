@@ -4,8 +4,7 @@ ifneq ($(STM32F4XX_HAL_DRIVER_MK_INC),Y)
     STM32F4X_HAL_DRIVER_DIR = $(SDK_DIR)/STM32F4xx_HAL_Driver
     STM32F4X_HAL_DRIVER_DIR := $(subst /cygdrive/c/,C:/, $(STM32F4X_HAL_DRIVER_DIR))
     # $(error STM32F4X_HAL_DRIVER_DIR=$(STM32F4X_HAL_DRIVER_DIR))
-    
-     
+
     STM32F4XX_HAL_DRIVER=Y
     MCAL_OPT += -DHAS_STM32F4XX_HAL_DRIVER
     MCAL_OPT += -DUSE_HAL_DRIVER
@@ -29,19 +28,16 @@ ifneq ($(STM32F4XX_HAL_DRIVER_MK_INC),Y)
         SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_adc.c
         SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_adc_ex.c
     endif
-
+    
     ifeq ($(CAN),Y)
         MCAL_OPT += -DHAL_CAN_MODULE_ENABLED
         SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/Src/stm32f4xx_hal_can.c
     endif
-    
-    ifeq ($(RCC),Y)
-        MCAL_OPT += -DHAL_RCC_MODULE_ENABLED
-        SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_rcc.c
-        ifeq ($(HAL_RCC_EX),Y)
-            # $(error HAL_RCC_EX=$(HAL_RCC_EX))
-            SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_rcc_ex.c
-        endif
+
+    ifeq ($(DAC),Y)
+        MCAL_OPT += -DHAL_DAC_MODULE_ENABLED
+        SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_dac.c
+        SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_dac_ex.c
     endif
 
     ifeq ($(IWDG),Y)
@@ -83,6 +79,7 @@ ifneq ($(STM32F4XX_HAL_DRIVER_MK_INC),Y)
     endif
 
     ifeq ($(SDIO),Y)
+        # $(error SDIO=$(SDIO))
         MCAL_OPT += -DHAL_SD_MODULE_ENABLED
         SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_sd.c
         SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_ll_sdmmc.c
@@ -99,16 +96,29 @@ ifneq ($(STM32F4XX_HAL_DRIVER_MK_INC),Y)
         endif
     endif
 
+    ifeq ($(RCC),Y)
+        MCAL_OPT += -DHAL_RCC_MODULE_ENABLED
+        SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_rcc.c
+        ifeq ($(HAL_RCC_EX),Y)
+            # $(error HAL_RCC_EX=$(HAL_RCC_EX))
+            SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_rcc_ex.c
+        endif
+    endif
+
     ifeq ($(RTC),Y)
         MCAL_OPT += -DHAL_RTC_MODULE_ENABLED
         SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_rtc.c
-        SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_rcc_ex.c
     endif
 
     ifeq ($(UART),Y)
         HAL_DMA=Y
         MCAL_OPT += -DHAL_UART_MODULE_ENABLED
         SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_uart.c
+    endif
+
+    ifeq ($(EXT_INT),Y)
+        MCAL_OPT += -DHAL_EXTI_MODULE_ENABLED
+        SOURCES_THIRD_PARTY_C += $(STM32F4X_HAL_DRIVER_DIR)/stm32f4xx_hal_exti.c
     endif
 
     ifeq ($(HAL_USB),Y)
@@ -127,6 +137,7 @@ ifneq ($(STM32F4XX_HAL_DRIVER_MK_INC),Y)
     endif
 
     ifeq ($(TIMER),Y)
+        # $(error TIMER=$(TIMER))
         ifeq ($(HAL_TIM_PWM),Y)
             MCAL_OPT += -DHAS_HAL_TIM_PWM
             MCAL_OPT += -DHAS_HAL_TIM_OC
