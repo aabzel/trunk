@@ -14,18 +14,18 @@
 #define UART_COUNT 4
 #define UART_MAX_NUM 14
 #define USB_COUNT 2
+#define ETH_COUNT 1
 
 //sensitivity
+#define CAM_COUNT 1
 #define ADC_COUNT 3
 #define ADC_CHANNELS_COUNT 24
+#define EXT_INT_COUNT 16
 #define LSI_FREQ 32000
 #define TIMER_COUNT 14
 #define TIMER_MAX_NUM (TIMER_COUNT+1)
 #define TRNG_COUNT 1
 
-#define AHB1_CLOCK_HZ SYS_FREQ
-#define APB1_CLOCK_HZ (AHB1_CLOCK_HZ/4)
-#define APB2_CLOCK_HZ (AHB1_CLOCK_HZ/2)
 #define CPU_MAX_HZ 168000000
 #define DAC_COUNT 2
 #define DMA_COUNT 2

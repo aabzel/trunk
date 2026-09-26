@@ -24,10 +24,6 @@ ifneq ($(STM32f407ZG_MK_INC),Y)
 
     INCDIR += -I$(MCU_CUSTOM_DIR)
 
-    ifeq ($(MBR),Y)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/mbr_config.c
-    endif
-
     ifeq ($(BOOT),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/boot_config.c
     endif
@@ -69,43 +65,19 @@ ifneq ($(STM32f407ZG_MK_INC),Y)
     ifeq ($(DMA_CHANNEL),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config.c
     endif
-    
+
     ifeq ($(MBR),Y)
         FIRMWARE_TYPE_SELECTED=Y
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/mbr_config.c
-        MCAL_OPT +=-DBOOT_START_ADDRESS=0x08000000
-        MCAL_OPT +=-DAPP_START_ADDRESS=0x08000000
         ifeq ($(MBR_ADVANCED),Y)
-            ifeq ($(GCC),Y)
-                LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_mbr_advanced.ld
-            endif
-            
-            ifeq ($(IAR),Y)
-                LDSCRIPT = $(MCU_CUSTOM_DIR)/stm32f407xx_flash.icf
-            endif
+            LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_mbr_advanced.ld
         else
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_mbr.ld
-            #$(error MBR=$(MBR))
-            ifeq ($(GCC),Y)
-                LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_mbr.ld
-            endif
-
-            ifeq ($(IAR),Y)
-                LDSCRIPT = $(MCU_CUSTOM_DIR)/stm32f407xx_flash.icf
-            endif
         endif
     endif
 
-    ifeq ($(FLASH_FS),Y)
-        #  $(error FLASH_FS=$(FLASH_FS))
-        $(info Add config FLASH_FS)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/flash_fs_config.c
-    endif
-
-    ifeq ($(FLASH),Y)
-        $(info Config Flash)
-        #  $(error FLASH=$(FLASH))
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/flash_config.c
+    ifeq ($(MPU),Y)
+        $(info Add config MPU)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/mpu_config.c
     endif
 
     ifeq ($(GENERIC),Y)
@@ -124,25 +96,33 @@ ifneq ($(STM32f407ZG_MK_INC),Y)
         endif
     endif
 
-
-    ifeq ($(MPU),Y)
-        $(info Add config MPU)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/mpu_config.c
-    endif
-
     SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/system_stm32f4xx.c
 
     ifeq ($(GPIO),Y)
         SOURCES_C += $(MCU_CUSTOM_DIR)/stm32f407zg.c
     endif
 
+    ifeq ($(SDIO),Y)
+        $(info Config SDIO)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/sdio_config.c
+    endif
+
     ifeq ($(INTERRUPT),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/interrupt_config.c
+    endif
+
+    ifeq ($(SYSTICK),Y)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/systick_config.c
     endif
 
     ifeq ($(NVS),Y)
         $(info Add config NVS)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/nvs_config.c
+    endif
+
+    ifeq ($(SCHEDULER),Y)
+        $(info Add config SCHEDULER)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/scheduler_config.c
     endif
 
     ifeq ($(PARAM),Y)
@@ -151,22 +131,16 @@ ifneq ($(STM32f407ZG_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/param_config.c
     endif
 
-    ifeq ($(SDIO),Y)
-        $(info Config SDIO)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/sdio_config.c
+    ifeq ($(FLASH),Y)
+        $(info Config Flash)
+        #  $(error FLASH=$(FLASH))
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/flash_config.c
     endif
 
-    ifeq ($(SYSTICK),Y)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/systick_config.c
-    endif
-
-    ifeq ($(SCHEDULER),Y)
-        $(info Add config SCHEDULER)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/scheduler_config.c
-    endif
-
-    ifeq ($(DIAG),Y)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/stm32f407zg_diag.c
+    ifeq ($(FLASH_FS),Y)
+        #  $(error FLASH_FS=$(FLASH_FS))
+        $(info Add config FLASH_FS)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/flash_fs_config.c
     endif
 
     ifeq ($(SUPER_CYCLE),Y)
@@ -178,6 +152,10 @@ ifneq ($(STM32f407ZG_MK_INC),Y)
         $ (info Config WATCHDOG)
         # $(error WATCHDOG=$(WATCHDOG))
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/watchdog_config.c
+    endif
+
+    ifeq ($(DIAG),Y)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/stm32f407zg_diag.c
     endif
 
     ifeq ($(STORE_FS),Y)

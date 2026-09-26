@@ -33,22 +33,12 @@
  ******************************************************************************
  */
 
-/** @addtogroup CMSIS
- * @{
- */
-
-/** @addtogroup stm32f4xx_system
- * @{
- */
-
-/** @addtogroup STM32F4xx_System_Private_Includes
- * @{
- */
-
+#include "std_includes.h"
 #include "stm32f4xx.h"
+#include "data_utils.h"
 
 #if !defined(HSE_VALUE)
-#define HSE_VALUE ((uint32_t)25000000) /*!< Default value of the External oscillator in Hz */
+#define HSE_VALUE ((uint32_t)8000000) /*!< Default value of the External oscillator in Hz */
 #endif                                 /* HSE_VALUE */
 
 #if !defined(HSI_VALUE)
@@ -77,7 +67,11 @@
     defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx) || defined(STM32F439xx) ||                    \
     defined(STM32F469xx) || defined(STM32F479xx) || defined(STM32F412Zx) || defined(STM32F412Vx)
 /* #define DATA_IN_ExtSRAM */
-#endif /* STM32F40xxx || STM32F41xxx || STM32F42xxx || STM32F43xxx || STM32F469xx || STM32F479xx ||\ \ \ STM32F412Zx \                                                                                                                     \
+#endif /* STM32F40xxx || STM32F41xxx || STM32F42xxx || STM32F43xxx || STM32F469xx || STM32F479xx ||\ \ \ STM32F412Zx \ \
+          \                                                                                                            \
+          \ \                                                                                                                     \
+          \ \ \                                                                                                                     \
+          \ \ \ \                                                                                                                     \
           || STM32F412Vx */
 
 #if defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx) || defined(STM32F439xx) ||                    \
@@ -130,20 +124,42 @@ const uint8_t APBPrescTable[8] = {0, 0, 0, 0, 1, 2, 3, 4};
 static void SystemInit_ExtMemCtl(void);
 #endif /* DATA_IN_ExtSRAM || DATA_IN_ExtSDRAM */
 
-/**
- * @}
+/*
+    copy array of dwords from pSrc to pDestination
+    pSrc->pDestination
  */
+#if 0
+static void data_copy(uint32_t* pDestination, uint32_t* pTail, uint32_t* pSrc) {
+    while(pDestination < pTail) {
+        *pDestination = *pSrc;
+        pDestination++;
+        pSrc++;
+    }
+}
+#endif
 
-/** @addtogroup STM32F4xx_System_Private_Functions
- * @{
- */
 
-/**
- * @brief  Setup the microcontroller system
+#if 0
+extern void RamFunctionsBinaryCodeStart;
+extern void RamFuncStart;
+extern void RamFuncEnd;
+
+void load_ram_functions_binary(void) {
+    data_copy((uint32_t*)RamFuncStart, (uint32_t*)RamFuncEnd, (uint32_t*)RamFunctionsBinaryCodeStart);
+}
+#endif
+
+
+extern uint8_t _sidata;
+extern uint8_t _sdata;
+extern uint8_t _edata;
+
+void load_ram_data_binary(void) { data_copy((uint32_t*)&_sdata, (uint32_t*)&_edata, (uint32_t*)&_sidata); }
+
+/*
+ *         Setup the microcontroller system
  *         Initialize the FPU setting, vector table location and External memory
  *         configuration.
- * @param  None
- * @retval None
  */
 void SystemInit(void) {
 /* FPU settings ------------------------------------------------------------*/
@@ -692,7 +708,11 @@ void SystemInit_ExtMemCtl(void) {
 #endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx || STM32F412Zx || STM32F412Vx */
 
 #endif /* DATA_IN_ExtSRAM */
-#endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx || STM32F427xx || STM32F437xx ||\ \ \ STM32F429xx \                                                                                                                     \
+#endif /* STM32F405xx || STM32F415xx || STM32F407xx || STM32F417xx || STM32F427xx || STM32F437xx ||\ \ \ STM32F429xx \ \
+          \                                                                                                            \
+          \ \                                                                                                                     \
+          \ \ \                                                                                                                     \
+          \ \ \ \                                                                                                                     \
           || STM32F439xx || STM32F469xx || STM32F479xx || STM32F412Zx || STM32F412Vx  */
     (void)(tmp);
 }

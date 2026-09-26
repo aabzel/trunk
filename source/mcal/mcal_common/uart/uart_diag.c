@@ -5,6 +5,7 @@
 #include "diag_inc.h"
 #include "mcal_diag.h"
 #include "uart_mcal.h"
+
 #ifdef HAS_GPIO_DIAG
 #include "gpio_diag.h"
 #endif
@@ -71,8 +72,15 @@ bool uart_raw_reg_diag(uint8_t num) {
 
 bool uart_diag(void) {
     bool res = false;
-    const table_col_t cols[] = {{5, "Num"}, {10, "baudRate"}, {10, "name"},    {9, "rx"},
-                                {9, "tx"},  {9, "ByteTxUs"},  {9, "TxTimeOut"}};
+    const table_col_t cols[] = {{5, "Num"},
+            {10, "baudRate"},
+            {10, "name"},
+            {9, "rx"},
+            {9, "tx"},
+            {9, "ByteTxUs"},
+            {9, "TxTimeOut"},
+            {6, "LaRx"},
+    };
     uint8_t num = 0;
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     for(num = 0; num < UART_COUNT; num++) {
@@ -89,7 +97,8 @@ bool uart_diag(void) {
             snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, Node->tx_cnt);
             snprintf(temp_str, sizeof(temp_str), "%s  %7u  " TSEP, temp_str, Node->real_byte_tx_time_us);
             snprintf(temp_str, sizeof(temp_str), "%s  %7u " TSEP, temp_str, Node->tx_time_out_cnt);
-            snprintf(temp_str, sizeof(temp_str), "%s" CRLF, temp_str);
+            snprintf(temp_str, sizeof(temp_str), "%s 0x%02x " TSEP, temp_str, Node->rx_byte);
+            snprintf(temp_str, sizeof(temp_str), "%s" , temp_str);
             cli_printf("%s" CRLF, temp_str);
         }
     }

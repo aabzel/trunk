@@ -37,7 +37,6 @@ bool bit_fifo_peek(const BitFifoHandle_t *const Node, uint8_t *const bit);
 int32_t bit_fifo_get_count(const BitFifoHandle_t *const Node);
 
 
-
 bool bit_fifo_push_array(BitFifoHandle_t* const Node, uint8_t* const inArr,const  uint32_t arrLen);
 
 bool bit_fifo_pull_array(const BitFifoHandle_t* const Node, uint8_t* const outArr,

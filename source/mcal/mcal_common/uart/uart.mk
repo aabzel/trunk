@@ -57,6 +57,7 @@ ifneq ($(UART_COMMON_MCAL_MK_INC),Y)
     endif
 
     ifeq ($(UART_COMMANDS),Y)
+        # $(error UART_COMMANDS=$(UART_COMMANDS))
         MCAL_OPT += -DHAS_UART_COMMANDS
         SOURCES_C += $(UART_MCAL_DIR)/uart_commands.c
     endif

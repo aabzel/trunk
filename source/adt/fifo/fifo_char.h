@@ -29,8 +29,8 @@ uint32_t fifo_get_size(FifoChar_t* const instance);
 uint32_t fifo_get_spare(FifoChar_t* const instance);
 
 bool fifo_clean(FifoChar_t* instance);
-bool fifo_free(FifoChar_t* fifo, uint32_t size);
 bool fifo_reset(FifoChar_t* const instance);
+bool fifo_free(FifoChar_t* fifo, uint32_t size);
 bool fifo_init(FifoChar_t* const instance, uint8_t* const inArray, uint32_t capacity);
 bool fifo_push(FifoChar_t* const instance, uint8_t inChar);
 bool fifo_pull(FifoChar_t* const instance, uint8_t* const outChar);

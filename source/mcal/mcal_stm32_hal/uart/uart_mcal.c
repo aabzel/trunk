@@ -12,6 +12,7 @@
 #include "interrupt_mcal.h"
 #include "log.h"
 #include "std_includes.h"
+#include "fifo_char.h"
 #include "stm32fx_hal.h"
 #include "time_mcal.h"
 #include "uart_custom_types.h"
@@ -285,8 +286,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uart_handle) {
     if(USART2 == uart_handle->Instance) {
         __HAL_RCC_USART2_CLK_ENABLE();
 
-        HAL_NVIC_SetPriority(USART2_IRQn, 3, 3);
-        HAL_NVIC_EnableIRQ(USART2_IRQn);
+        //HAL_NVIC_SetPriority(USART2_IRQn, 3, 3);
+        //HAL_NVIC_EnableIRQ(USART2_IRQn);
     }
 #endif
 
@@ -294,8 +295,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uart_handle) {
     if(USART3 == uart_handle->Instance) {
         __HAL_RCC_USART3_CLK_ENABLE();
 
-        HAL_NVIC_SetPriority(USART3_IRQn, 3, 3);
-        HAL_NVIC_EnableIRQ(USART3_IRQn);
+        //HAL_NVIC_SetPriority(USART3_IRQn, 3, 3);
+        //HAL_NVIC_EnableIRQ(USART3_IRQn);
     }
 #endif
 
@@ -539,6 +540,19 @@ bool uart_proc_one(uint8_t num) {
             res = interrupt_is_active(Info->irq_n);
             if(!res) {
                 res = interrupt_control(Info->irq_n, true);
+            }
+        }
+
+        uint32_t count = fifo_get_count(&Node->RxFifo);
+        if(count) {
+            LOG_DEBUG(UART, "UART%u,RxSize:%u", num,count);
+            uint32_t i = 0;
+            for(i=0; i < count; i++){
+                uint8_t rx_byte = 0 ;
+                res = fifo_pull(&Node->RxFifo, &rx_byte);
+                if(res) {
+                    LOG_DEBUG(UART, "UART%u,Rx,0x%02x=[%c]", num, rx_byte, rx_byte);
+                }
             }
         }
     }

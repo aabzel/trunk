@@ -3,13 +3,14 @@
 #include "clock_utils.h"
 
 /*constant compile-time known settings in Flash*/
-const WatchDogConfig_t WatchDogConfig = {
+const WatchDogConfig_t SECTION_CFG_DATA WatchDogConfig = {
     .on = true,
     .valid = true,
-    .timeout_ms = 15000,
+    .timeout_s = 15.0f,
     .base_address = IWDG_BASE, // 0x40003000 - 0x4000 33FF Watchdog timer (WDT)
-    .base_freq_hz = 40000,      // LICK Figure 4-1 AT32F435/437 clock tree
+    .base_freq_hz = 40000,
     .bitness = 12,              // downcounter
+    // 0x40003000 - 0x4000 33FF Watchdog timer (WDT)
 };
 
 WatchDogHandle_t WatchDogInstance = {

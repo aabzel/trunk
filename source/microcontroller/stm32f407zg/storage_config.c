@@ -1,13 +1,13 @@
 #include "storage_config.h"
 
 #include <inttypes.h>
-#include "std_includes.h"
 #include <stdio.h>
 #include <string.h>
 
 #include "boot_driver.h"
 #include "common_diag.h"
 #include "data_utils.h"
+#include "std_includes.h"
 #include "storage_diag.h"
 #include "storage_types.h"
 
@@ -15,10 +15,6 @@
 #include "clock_params.h"
 #else
 #define PARAMS_CLOCK
-#endif
-
-#ifndef HAS_FLASH_FS
-//#error "Storages need FLASH_FS"
 #endif
 
 #ifdef HAS_FLASH_FS
@@ -69,7 +65,7 @@
 #include "flash_fs_params.h"
 #else
 #define PARAMS_FLASH_FS
-#endif /**/
+#endif 
 
 #ifdef HAS_GNSS
 #include "gnss_params.h"
@@ -102,7 +98,7 @@
     PARAMS_FLASH_FS                                                                                                    \
     PARAMS_GNSS                                                                                                        \
     PARAMS_GENERIC                                                                                                     \
-    PARAMS_IWDG                                                                                                        \
+    PARAMS_WATCHDOG                                                                                                    \
     PARAMS_KEEPASS                                                                                                     \
     PARAMS_PASTILDA                                                                                                    \
     PARAMS_SDIO                                                                                                        \
@@ -112,15 +108,15 @@
 /*TODO: Sort by index for bin search in future*/
 const StorageItem_t SECTION_CFG_DATA StorageArray[] = {
     STORAGE_ARRAY_ALL
-    //  {.facility = BOOT, .id = PAR_ID_BOOT_CMD, .len = 1, .type = TYPE_UINT8, .name = "BootCmd"}, /*num*/
-    //  {.facility = BOOT, .id = PAR_ID_REBOOT_CNT, .len = 2, .type = TYPE_UINT16, .name = "ReBootCnt"},   /*num*/
-    {.facility = SYS,
+    {
+     .facility = SYS,
      .id = PAR_ID_SERIAL_NUM,
      .len = 4,
      .type = TYPE_UINT32,
      .parser = U32ToStr,
      .default_value = "1",
-     .name = "SerialNum"}, /**/
+     .name = "SerialNum"
+     },
 };
 
 uint32_t storage_get_cnt(void) {

@@ -111,9 +111,9 @@ typedef struct {
 //volatile bool rx_done;
 
 #define UART_COMMON_VARIABLES_RX          \
+    volatile uint8_t rx_byte;             \
     volatile uint32_t rx_bytes;  /* Total rx byte */   \
     volatile uint32_t rx_time_out_cnt;    \
-    volatile uint8_t rx_byte;             \
     volatile uint8_t rx_data[4];          \
     volatile uint32_t rx_cnt;             \
     volatile FifoChar_t RxFifo;           \

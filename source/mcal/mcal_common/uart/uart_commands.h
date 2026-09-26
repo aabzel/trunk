@@ -32,7 +32,7 @@ bool uart_init_command(int32_t argc, char* argv[]);
 bool uart_diag_command(int32_t argc, char* argv[]);
 bool uart_dma_send_command(int32_t argc, char* argv[]);
 
-#define UART_COMMANDS    \
+#define UART_COMMANDS                                             \
         UART_CUSTOM_COMMANDS                                                                  \
         SHELL_CMD("uart_baud", "ub", uart_set_baudrate_command, "UartSetBaud"),            \
         SHELL_CMD("uart_send", "us", uart_send_command, "UartSend"),              \

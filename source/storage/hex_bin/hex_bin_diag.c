@@ -11,7 +11,7 @@
 #include "macro_utils.h"
 #include "utils_math.h"
 
-const char* HexRecType2Str(HexRecType_t rec_type) {
+const char* HexRecTypeToStr(HexRecType_t rec_type) {
     const char* name = "?";
     switch((uint8_t)rec_type) {
     case HEX_REC_TYPE_DATA_RECORD:
@@ -39,7 +39,7 @@ const char* HexRecType2Str(HexRecType_t rec_type) {
     return name;
 }
 
-const char* HexFrame2Str(const HexFrame_t* const Frame) {
+const char* HexFrameToStr(const HexFrame_t* const Frame) {
     static char name[80] = {0};
     if(Frame) {
         snprintf(name, sizeof(name), "Len:%u,Offset:0x%04x,Type:%u,Crc:0x%02x", Frame->rec_len, Frame->load_offset,
@@ -48,7 +48,7 @@ const char* HexFrame2Str(const HexFrame_t* const Frame) {
     return name;
 }
 
-const char* Data2Str(const uint8_t* const data, uint8_t size) {
+const char* DataToStr(const uint8_t* const data, uint8_t size) {
     static char name[514] = {0};
     if(data) {
         if(size) {
@@ -61,7 +61,7 @@ const char* Data2Str(const uint8_t* const data, uint8_t size) {
     return name;
 }
 
-const char* HexNode2Str(const HexBinHandle_t* const Node) {
+const char* HexNodeToStr(const HexBinHandle_t* const Node) {
     static char name[200] = {0};
     if(Node) {
         snprintf(name, sizeof(name), " ");
@@ -86,7 +86,6 @@ bool HexNodeDiag(const HexBinHandle_t* const Node) {
     return res;
 }
 
-#if 0
 const char* NodeToProgressStr(const HexBinHandle_t* const Node) {
     static char name[200] = {0};
     if(Node) {
@@ -97,4 +96,3 @@ const char* NodeToProgressStr(const HexBinHandle_t* const Node) {
     }
     return name;
 }
-#endif

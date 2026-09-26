@@ -51,6 +51,7 @@ bool uart_dma_send_wait_ll(UartHandle_t* const Node, const uint8_t* const data, 
 bool uart_dma_send_wait(uint8_t num, const uint8_t* const data, uint32_t len);
 bool uart_dma_send(const uint8_t num, const uint8_t* const data, const uint32_t size);
 #endif
+uint8_t uart_last_rx_reset(uint8_t num);
 bool uart_veryfy_one(uint8_t num);
 bool uart_set_baudrate(uint8_t num, uint32_t baudrate); //TODO uart_baudrate_set
 bool uart_wait_send(uint8_t num, const uint8_t* const data, uint32_t len);
@@ -67,6 +68,7 @@ bool uart_wait_send_ll(UartHandle_t* Node, const uint8_t* const data, uint32_t l
 bool uart_writer(const uint8_t num);
 
 /*getters*/
+uint8_t uart_last_rx_get(uint8_t num);
 uint32_t uart_get_cfg_baudrate(uint8_t num);
 uint32_t uart_baud_rate_get_ll(uint8_t num, uint16_t* mantissa, uint16_t* fraction, uint8_t* over_sampling);
 uint32_t UartGetBaseClock(const uint8_t num);

@@ -70,4 +70,3 @@ MpuHandle_t MpuInstance[] = {
 
 
 COMPONENT_GET_CNT(Mpu, mpu)
-

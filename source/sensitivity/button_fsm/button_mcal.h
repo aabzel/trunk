@@ -4,7 +4,6 @@
 #include "std_includes.h"
 #include "button_config.h"
 #include "button_types.h"
-//#include "sys_config.h"
 
 #ifdef HAS_BUTTON_DIAG
 #include "button_diag.h"
@@ -12,7 +11,7 @@
 
 #ifdef HAS_FREE_RTOS
 void button_thread(void* arg);
-#endif /*HAS_FREE_RTOS*/
+#endif /**/
 
 /*API*/
 ButtonHandle_t* ButtonGetNode(uint8_t num);

@@ -44,6 +44,10 @@ defined in linker script */
 .word  _sbss
 /* end address for the .bss section. defined in linker script */
 .word  _ebss
+
+.word  _siccmram
+.word  _sccmram
+.word  _eccmram
 /* stack used for SystemInit_ExtMemCtl; always internal RAM used */
 
 /**
@@ -59,7 +63,7 @@ defined in linker script */
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler:  
-  ldr   sp, =_estack     /* set stack pointer */
+  ldr   sp, =_estack     /*Load register with word, set stack pointer */
 
 /* Copy the data segment initializers from flash to SRAM */  
   movs  r1, #0
@@ -72,30 +76,38 @@ CopyDataInit:
   adds  r1, r1, #4
     
 LoopCopyDataInit:
-  ldr  r0, =_sdata
-  ldr  r3, =_edata
-  adds  r2, r0, r1
-  cmp  r2, r3
-  bcc  CopyDataInit
-  ldr  r2, =_sbss
-  b  LoopFillZerobss
+  ldr  r0, =_sdata   /* Load register with word*/
+  ldr  r3, =_edata   /* Load register with word*/
+  adds  r2, r0, r1   /* ADDS <Rd>,<Rn>,<Rm>*/
+  cmp  r2, r3        /* Compare (immediate) subtracts an immediate value from a register value. It updates the condition flags based on the result, and discards the result.  */
+  bcc  CopyDataInit  /* branch if carry clear */
+
+  /* MY CHANGES BELOW */
+  /*end change */
+
+
+  ldr  r2, =_sbss    /* Load register with word*/
+  b  LoopFillZerobss /* Branch to target address*/
 /* Zero fill the bss segment. */  
 FillZerobss:
   movs  r3, #0
   str  r3, [r2], #4
     
 LoopFillZerobss:
-  ldr  r3, = _ebss
-  cmp  r2, r3
-  bcc  FillZerobss
+    ldr  r3, = _ebss
+    cmp  r2, r3
+    bcc  FillZerobss
 
-/* Call the clock system intitialization function.*/
-  bl  SystemInit   
-/* Call static constructors */
+    //bl  load_ram_data_binary
+    //bl  load_ram_functions_binary
+    /* Call the clock system intitialization function.*/
+    bl  SystemInit
+    /* Call static constructors */
     bl __libc_init_array
-/* Call the application's entry point.*/
-  bl  main
-  bx  lr    
+    /* Call the application's entry point.*/
+    bl  main
+    bx  lr
+
 .size  Reset_Handler, .-Reset_Handler
 
 /**
@@ -258,7 +270,7 @@ g_pfnVectors:
 
    .weak      SysTick_Handler
    .thumb_set SysTick_Handler,Default_Handler              
-  
+
    .weak      WWDG_IRQHandler                   
    .thumb_set WWDG_IRQHandler,Default_Handler      
                   
@@ -501,5 +513,3 @@ g_pfnVectors:
 
    .weak      FPU_IRQHandler                  
    .thumb_set FPU_IRQHandler,Default_Handler  
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -76,6 +76,23 @@ static const ButtonState_t TransferLookUpTable[3][3] = {
     [BUTTON_STATE_PRESSED_PROCESSED][BUTTON_IN_TIME_OUT] = BUTTON_STATE_PRESSED_PROCESSED,
 };
 
+static GpioPullMode_t ButtonActiveToPull(GpioLogicLevel_t active) {
+    GpioPullMode_t button_pull = GPIO__PULL_UNDEF;
+    switch(active) {
+    case GPIO_LVL_LOW: {
+        button_pull = GPIO__PULL_UP;
+    } break;
+
+    case GPIO_LVL_HI: {
+        button_pull = GPIO__PULL_DOWN;
+    } break;
+    default:
+        break;
+    }
+
+    return button_pull;
+}
+
 static bool button_action_nop(ButtonHandle_t* Node) {
     bool res = true;
     return res;
@@ -191,17 +208,21 @@ static bool button_get_input_ll(ButtonHandle_t* const Node) {
     res = gpio_get_state(Node->pad, &logic_level);
     if(res) {
 #ifdef HAS_GPIO_DIAG
-        LOG_DEBUG(BUTTON, "Read %s %s", GpioPadToStr(Node->pad), GpioLevelToStr(logic_level));
+        LOG_PARN(BUTTON, "Read %s %s", GpioPadToStr(Node->pad), GpioLevelToStr(logic_level));
 #endif
         res = false;
         if(logic_level == Node->active) {
+            if(Node->prev_logic_level!=logic_level){
+                Node->start_ms = time_get_ms32();
+            }
 #ifdef HAS_GPIO_DIAG
-            LOG_DEBUG(BUTTON, "Pressed %s %s", GpioPadToStr(Node->pad), GpioLevelToStr(logic_level));
+            LOG_PARN(BUTTON, "Pressed %s %s", GpioPadToStr(Node->pad), GpioLevelToStr(logic_level));
 #endif
             Node->input = BUTTON_IN_ACTIVE;
             res = true;
-            Node->time_ms += (uint32_t)USEC_2_MSEC(BUTTON_POLL_PERIOD_US);
-            if(BUTTON_LONG_PRESS_TIMEOUT_MS < Node->time_ms) {
+            // Node->time_ms += (uint32_t)USEC_2_MSEC(BUTTON_POLL_PERIOD_US);
+            uint32_t diff_ms = Node->start_ms - time_get_ms32();
+            if(BUTTON_LONG_PRESS_TIMEOUT_MS < diff_ms) {
                 Node->input = BUTTON_IN_TIME_OUT;
                 res = true;
             }
@@ -209,13 +230,14 @@ static bool button_get_input_ll(ButtonHandle_t* const Node) {
             Node->input = BUTTON_IN_PASSIVE;
             res = true;
         }
+        Node->prev_logic_level = logic_level;
     } else {
 #ifdef HAS_BUTTON_DIAG
         LOG_ERROR(BUTTON, "GpioGetErr %s %s", GpioPadToStr(Node->pad), ButtonInputToStr(Node->input));
 #endif
     }
 #ifdef HAS_BUTTON_DIAG
-    LOG_DEBUG(BUTTON, "Pad:%s Input %s", GpioPadToStr(Node->pad), ButtonInputToStr(Node->input));
+    LOG_PARN(BUTTON, "Pad:%s Input %s", GpioPadToStr(Node->pad), ButtonInputToStr(Node->input));
 #endif
     return res;
 }
@@ -236,7 +258,8 @@ static bool button_proc_one(uint8_t num) {
             }
 
             if(Node->proc_handler) {
-                /*some buttons has back light. Here a handler for it*/
+                /*some buttons has back light.
+                  Here a handler for it*/
                 res = Node->proc_handler();
             }
             ButtonActionHandler_t ActionHandler = ActionLookUpTable[Node->state][Node->input];
@@ -246,27 +269,11 @@ static bool button_proc_one(uint8_t num) {
             LOG_ERROR(BUTTON, "%BTNu GetErr", num);
         }
     } else {
-        LOG_DEBUG(BUTTON, "BTN_%u NodeErr", num);
+        LOG_PARN(BUTTON, "BTN_%u NodeErr", num);
     }
     return res;
 }
 
-static GpioPullMode_t ButtonActiveToPull(GpioLogicLevel_t active) {
-    GpioPullMode_t button_pull = GPIO__PULL_UNDEF;
-    switch(active) {
-    case GPIO_LVL_LOW: {
-        button_pull = GPIO__PULL_UP;
-    } break;
-
-    case GPIO_LVL_HI: {
-        button_pull = GPIO__PULL_DOWN;
-    } break;
-    default:
-        break;
-    }
-
-    return button_pull;
-}
 
 static bool button_init_custom(void) {
     bool res = true;

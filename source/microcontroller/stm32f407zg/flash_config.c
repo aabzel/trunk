@@ -2,7 +2,7 @@
 
 #ifndef HAS_FLASH
 #error "Add HAS_FLASH"
-#endif /*HAS_FLASH*/
+#endif
 
 #include "data_utils.h"
 #include "flash_types.h"
@@ -11,7 +11,7 @@
 
 FlashHandle_t FlashInstance = {0};
 
-const FlashSectorConfig_t FlashSectorConfig[] = {
+const MemoryConfig_t SECTION_CFG_DATA FlashSectorConfig[] = {
     {
         .sector = 0,
         .start = 0x08000000,
@@ -86,20 +86,51 @@ const FlashSectorConfig_t FlashSectorConfig[] = {
     },
 };
 
-const FlashConfig_t FlashConfig = {
+const FlashConfig_t SECTION_CFG_DATA FlashConfig = {
     .boot_start = BOOT_START_ADDRESS,
     .app_start = APP_START_ADDRESS,
     .start = ROM_START,
     .PageArray = FlashSectorConfig,
+    .interrupt_on = false,
     .page_cnt = ARRAY_SIZE(FlashSectorConfig),
     .size = ROM_SIZE,
     .page_size = 0,
     .is_equal_sectors = false,
 };
 
- 
 uint32_t flash_get_sector_cnt(void) {
     uint32_t cnt = 0;
     cnt = ARRAY_SIZE(FlashSectorConfig);
+    return cnt;
+}
+
+const MemoryConfig_t RamSectorConfig[] = {
+    {
+        .sector = 0,
+        .start = 0x10000000,
+        .size = 64 * K_BYTES,
+        .content = MEM_CONTENT_CCMRAM,
+        .name = "CCMRAM",
+    },
+    {
+        .sector = 1,
+        .start = 0x20000000,
+        .size = 128 * K_BYTES,
+        .content = MEM_CONTENT_SRAM,
+        .name = "SRAM",
+    },
+    {
+        .sector = 2,
+        .start = 0x40024000,
+        .size = 4 * K_BYTES,
+        .content = MEM_CONTENT_BKPSRAM,
+        .name = "BKPSRAM",
+    },
+};
+
+
+uint32_t ram_get_sector_cnt(void) {
+    uint32_t cnt = 0;
+    cnt = ARRAY_SIZE(RamSectorConfig);
     return cnt;
 }

@@ -301,6 +301,8 @@ bool uart_init_common(const UartConfig_t* const Config, UartHandle_t* const Node
             Node->stop_bit_cnt = Config->stop_bit_cnt;
             Node->word_len_bit = Config->word_len_bit;
 
+
+
 #ifdef HAS_UART_DMA
             const UartInfo_t* Info = UartGetInfo(Config->num);
             if(Info) {
@@ -309,6 +311,7 @@ bool uart_init_common(const UartConfig_t* const Config, UartHandle_t* const Node
                 Node->dma = Config->dma;
             }
 #endif
+            res = fifo_init(&Node->RxFifo,Node->RxFifoArray, Node->rx_buff_size);
             res = true;
         }
     }
@@ -604,7 +607,7 @@ bool uart_proc_one(uint8_t num) {
     bool res = false;
     UartHandle_t* Node = UartGetNode(num);
     if(Node) {
-        uint32_t cnt = fifo_get_size(&Node->RxFifo);
+        uint32_t cnt = fifo_get_count(&Node->RxFifo);
         if(cnt) {
             uint32_t out_len = 0;
             uint8_t outArr[100] = {0};
@@ -800,6 +803,24 @@ bool uart_send_wait(uint8_t num, const uint8_t* const data, uint32_t size) {
     return res;
 }
 #endif
+
+uint8_t uart_last_rx_reset(uint8_t num) {
+    uint8_t last_rx = 0xFF;
+    UartHandle_t *Node = UartGetNode(num);
+    if (Node) {
+        Node->rx_byte = 0x00;
+    }
+    return last_rx;
+}
+
+uint8_t uart_last_rx_get(uint8_t num) {
+    uint8_t last_rx = 0xFF;
+    UartHandle_t *Node = UartGetNode(num);
+    if (Node) {
+        last_rx = Node->rx_byte;
+    }
+    return last_rx;
+}
 
 #ifdef HAS_UART_EXT
 _WEAK_FUN_

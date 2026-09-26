@@ -1,19 +1,11 @@
-#ifndef BOOT_CFG_H
-#define BOOT_CFG_H
-
-
-#ifdef HAS_BOOTLOADER
-#define FLASH_PAGE_BOOT_CNT APP_PAGE_START
-#endif
+#ifndef BOOT_CONFIG_H
+#define BOOT_CONFIG_H
 
 #include "boot_types.h"
 
-extern BootConfig_t BootConfig;
+extern const BootConfig_t BootConfig[];
+extern BootHandle_t BootInstance[] ;
 
-#ifdef HAS_FLASH_NVS
-#define APP_PAGE_CNT (FLASH_PAGE_CNT-FLASH_PAGE_BOOT_CNT-NVS_SIZE_PAGES-1)
-#endif /*HAS_FLASH_NVS*/
+uint32_t boot_get_cnt(void);
 
-
-
-#endif /* BOOT_CFG_H */
+#endif /* BOOT_CONFIG_H */

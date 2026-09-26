@@ -27,8 +27,14 @@ SchedulerHandle_t SchedulerInstance[] = {
         .TaskArray = SchedulerTaskSet1,
         .task_array_cnt = ARRAY_SIZE(SchedulerTaskSet1),
     },
-
 };
+
+
+uint32_t scheduler_task_get_cnt(void) {
+    uint32_t cnt = 0;
+    cnt = ARRAY_SIZE(SchedulerTaskSet1);
+    return cnt;
+}
 
 uint32_t scheduler_get_cnt(void) {
     uint32_t cnt = 0;

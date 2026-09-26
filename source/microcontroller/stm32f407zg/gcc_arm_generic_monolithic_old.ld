@@ -11,10 +11,10 @@
 ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
-_estack = ORIGIN(CCMRAM) + LENGTH(CCMRAM);    /* end of CCMRAM */
+_estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of CCMRAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size  = 20K;      /* required amount of heap  */
-_Min_Stack_Size = 20K;      /* required amount of stack */
+_Min_Heap_Size  = 4K;      /* required amount of heap  */
+_Min_Stack_Size = 15K;      /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
@@ -195,7 +195,7 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
     __Core0_StackTop = . ;
-  } >CCMRAM
+  } >RAM
 
 
   /* Remove information from the standard libraries */

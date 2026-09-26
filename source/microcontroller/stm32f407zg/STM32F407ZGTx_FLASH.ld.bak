@@ -189,12 +189,8 @@ SECTIONS
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
-    
-    __Core0_StackLimit = .;
-    
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
-    __Core0_StackTop = . ;
   } >RAM
 
   
@@ -205,7 +201,6 @@ SECTIONS
     libc.a ( * )
     libm.a ( * )
     libgcc.a ( * )
-    libnosys.a ( * )
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }

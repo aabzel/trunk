@@ -28,6 +28,8 @@ typedef struct {
 typedef struct {
     bool init;
     bool long_pressed;
+    uint32_t start_ms;
+    GpioLogicLevel_t prev_logic_level;
     uint32_t time_ms;
     ButtonState_t state;
     ButtonInput_t input;
