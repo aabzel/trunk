@@ -14,12 +14,6 @@
 #define BLE_INIT
 #endif
 
-#ifdef HAS_RF
-#define RF_INIT   {.init_function=rf_init, .name="RF",},
-#else
-#define RF_INIT
-#endif
-
 #ifdef HAS_RS232
 #include "rs232_mcal.h"
 #define RS232_INIT {.init_function=rs232_mcal_init, .name="RS232",},
@@ -47,6 +41,12 @@
     RS232_INIT                  \
     RS485_INIT
 
+#ifdef HAS_RF
+#define RF_INIT   {.init_function=rf_init, .name="RF",},
+#else
+#define RF_INIT
+#endif
+
 #ifdef HAS_DTMF
 #include "dtmf_drv.h"
 #define DTMF_INIT   {.init_function=dtmf_init, .name="DTMF",},
@@ -72,24 +72,24 @@
 
 #ifdef HAS_SOCKET
 #include "socket_if.h"
-#define SOCKET_INIT {.init_function=socket_init, .name="Socket",},
+#define SOCKET_INIT {.init_function=socket_mcal_init, .name="Socket",},
 #else
 #define SOCKET_INIT
 #endif
 
 /*Order matters*/
 #define HW_WIRELESS_INTERFACES_INIT \
-    SW_UART_INIT                    \
     DTMF_INIT                       \
     RF_INIT                         \
     LORA_INIT                       \
-    WIFI_INIT                       \
-    BLE_INIT
+    BLE_INIT                        \
+    WIFI_INIT
 
 /*Order matters*/
 #define INTERFACES_INIT             \
     SERIAL_PORT_INIT                \
     HW_WIRE_INTERFACES_INIT         \
+    SW_UART_INIT                    \
     HW_WIRELESS_INTERFACES_INIT     \
     SOCKET_INIT
 

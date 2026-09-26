@@ -1,10 +1,7 @@
-
 #ifndef SSD1306_CONFIG_H
 #define SSD1306_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "ssd1306_types.h"
 
 extern const Ssd1306Config_t Ssd1306Config[];

@@ -1,11 +1,16 @@
 #include "physics_utils.h"
 
-#ifdef HAS_CLOCK
-#include "clock_utils.h"
-#endif
 #include "log.h"
 #include "physics_const.h"
 #include "time_mcal.h"
+
+#ifdef HAS_CLOCK
+#include "clock_utils.h"
+#endif
+
+float physics_v_sound_m_pes_sec = V_SOUND_M_PES_SEC_DFLT;
+//TODO c ≈ 331.45 + 0.6 * T
+//где T — температура в градусах Цельсия
 
 #ifndef SEC_TO_TIMER_PERIOD
 #define SEC_TO_TIMER_PERIOD(SEC_S, TIMER_CLOCK_HZ) (((double)(SEC_S)) * ((double)(TIMER_CLOCK_HZ)))
@@ -63,6 +68,12 @@ bool physics_doppler_radio_freq_calc(double velocity_mps, double freq_tx_hz, dou
 }
 #endif
 
+float value_to_centi(const float value){
+    float value_centi = 0.0f;
+    value_centi = value*100.0f;
+    return value_centi;
+}
+
 float physics_periodS_to_freqHz(const float period_s) {
     float freq_hz = 0.0f;
     freq_hz = 1.0f / period_s;
@@ -78,4 +89,10 @@ double physics_lc_loop_calc_inductance(const double f0_freq_hz, const double cap
     LOG_INFO(SYS, CRLF "Freq:%f Hz," CRLF "C:%f F," CRLF "L:%f H," CRLF "R_crit=%f Om", f0_freq_hz, cap_f,
              inductance_hr, r_crit);
     return inductance_hr;
+}
+
+bool physics_mcal_init(void) {
+    physics_v_sound_m_pes_sec = V_SOUND_M_PES_SEC_DFLT;
+    LOG_INFO(PHYSICS, "SoundSpeed:%f [m/s]", physics_v_sound_m_pes_sec);
+    return true;
 }

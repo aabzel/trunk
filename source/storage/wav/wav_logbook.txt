@@ -1,0 +1,91 @@
+
+
+
+Напиши Си функцию для вставки в WAV файл N нулевых семплов, чтобы сместить в враво исходный звуковой сигнал.
+При этом с конца тоже надо удалить N семплов.
+
+У функции должен быть вот такой прототип:
+
+bool wav_shift_right_sample(const char* const file_name, const uint32_t samples);
+
+У функции должен быть только один return.
+Если функция больше 55 строк , то надо декомпозировать wav_shift_right_sample на 
+набор отдельных функций, каждая из которых не превышает 55 строк.
+Нельзя полностью загружать файл в память.
+Данная функция потом должна будет работать в условиях 96k Byte RAM памяти.
+
+
+bool wav_shift_right_sample(const char* const file_name, uint32_t samples) {
+    bool res = false;
+    LOG_WARNING(WAV, "ShiftRight,File:[%s],Offset:%u Sam", file_name, samples);
+    FILE *pFileOld ;
+    char new_file_name[80]={0};
+    snprintf(new_file_name,sizeof(new_file_name),"out_shift.wav");
+    pFileOld = fopen(file_name, "r");
+    if(pFileOld) {
+        LOG_INFO(WAV, "OpenFile:[%s] Ok", file_name);
+        uint32_t real_read = 0;
+        WavHeader_t OldHeader = { 0 };
+        real_read = fread((void*)OldHeader.buff, 1, sizeof(WavHeader_t), pFileOld);
+        if(real_read==sizeof(WavHeader_t)) {
+            res = wav_is_valid_header(&OldHeader);
+            if(res) {
+                LOG_INFO(WAV, "ReadHeader:%s,Ok", file_name);
+                uint32_t bytes_per_frame = WavHeaderToFrameSize(&OldHeader);
+                uint32_t zero_mem_size = samples * bytes_per_frame;
+                LOG_INFO(WAV, "zero_mem_size:%u Byte", zero_mem_size);
+
+                FILE *pFileNew ;
+                pFileNew = fopen(new_file_name, "wb");
+                if(pFileNew) {
+                    LOG_INFO(WAV, "OpenNew [%s] Ok", new_file_name);
+                    WavHeader_t NewHeader = { 0 };
+                    memcpy(NewHeader.buff, OldHeader.buff, sizeof(WavHeader_t));
+                    size_t write_cnt = fwrite((void*) NewHeader.buff, 1, sizeof(WavHeader_t), pFileNew);
+                    if(sizeof(WavHeader_t)==write_cnt) {
+                        log_info_res(WAV, res, "WriteNewHeader");
+
+                        log_level_set(FILE_MCAL, LOG_LEVEL_INFO);
+                        uint32_t i = 0;
+                        for (i = 0; i < zero_mem_size;) {
+                            uint8_t data[32] = { 0 };
+                            memset(data, 0, sizeof(data));
+                            write_cnt = fwrite((void*) data, 1, sizeof(data), pFileNew);
+                            if(write_cnt==sizeof(data)) {
+                                i += sizeof(data);
+                            }
+                        }
+
+                        log_level_set(FILE_MCAL, LOG_LEVEL_DEBUG);
+
+                        uint32_t rest = OldHeader.subchunk2Size - zero_mem_size;
+                        LOG_INFO(WAV, "rest:%u Byte", rest);
+                        for (i = 0; i < rest;) {
+                            uint8_t data[32] = { 0 };
+                            memset(data, 0, sizeof(data));
+                            uint32_t read_size = 0;
+                            real_read = fread((void*)data, 1, sizeof(data), pFileOld);
+                            if(real_read==sizeof(data)) {
+                                write_cnt = fwrite((void*) data, 1, read_size, pFileNew);
+                                LOG_DEBUG(WAV, "Written:%u Byte", read_size);
+                                if(write_cnt==read_size) {
+                                    i += read_size;
+                                } else {
+                                    break;
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+
+                    fclose(pFileNew);
+                    pFileNew = NULL;
+                }
+            }
+        }
+        fclose(pFileOld);
+        pFileOld = NULL;
+    }
+    return res;
+}

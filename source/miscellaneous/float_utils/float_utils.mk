@@ -13,6 +13,7 @@ ifneq ($(FLOAT_GENERAL_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(FLOAT_DIAG),Y)
+            RATIONAL_NUM_DIAG=Y
             MCAL_OPT += -DHAS_FLOAT_DIAG
             SOURCES_C += $(FLOAT_MCAL_DIR)/float_diag.c
         endif

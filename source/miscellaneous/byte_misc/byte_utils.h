@@ -16,6 +16,9 @@ extern "C" {
 
 const char* ByteNameToStr(const  uint8_t code, const  char* token);
 bool reverse_byte_order_array(uint8_t* const in_out_array, uint32_t len);
+bool is_byte_odd(const uint8_t val) ;
+bool is_byte_in_range(const uint8_t min_val, const uint8_t cur, const uint8_t max_val) ;
+bool fetch_big_endian_word(const uint8_t* const data, const uint32_t size, uint16_t* const word);
 int32_t reverse_byte_order_int24(const int32_t in3byteVal);
 uint16_t reverse_byte_order_uint16(const uint16_t in2byteVal);
 uint32_t reverse_byte_order_uint24(const uint32_t in3byteVal);

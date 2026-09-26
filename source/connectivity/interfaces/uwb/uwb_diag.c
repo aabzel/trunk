@@ -4,7 +4,7 @@
 
 #include "uwb_if.h"
 
-const char* UwbDistance2Str(double dist) {
+const char* UwbDistanceToStr(double dist) {
     static char text[20] = "NoData";
     bool res = false;
     res = uwb_is_vaild_distance(dist);
@@ -16,7 +16,7 @@ const char* UwbDistance2Str(double dist) {
     return text;
 }
 
-const char* UwbRole2Str(UwbRole_t role) {
+const char* UwbRoleToStr(UwbRole_t role) {
     const char* name = "?";
     switch((uint8_t)role) {
     case UWB_ROLE_ANCOR:

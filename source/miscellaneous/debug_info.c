@@ -68,7 +68,7 @@
 #endif
 
 #ifdef HAS_MICROCONTROLLER
-#include "sys_config.h"
+//#include "sys_config.h"
 
 #ifdef HAS_BOOT
 //#include "boot_cfg.h"
@@ -150,19 +150,28 @@ static bool print_prog_type(void) {
 
 void print_sysinfo(void) {
 #ifdef HAS_CORTEX_M
-    LOG_NOTICE(SYS, "Reset handler: 0x%x ", *((uint32_t*)0x00000004));
-    LOG_NOTICE(SYS, "top-of-stack: %x ", *((uint32_t*)0x00000000));
-    LOG_NOTICE(SYS, "boot memory start: %x ", *((uint32_t*)0x00000004));
+    LOG_NOTICE(SYS, "Reset handler:0x%x", *((uint32_t*)0x00000004));
+    LOG_NOTICE(SYS, "top-of-stack:%x", *((uint32_t*)0x00000000));
+    LOG_NOTICE(SYS, "boot memory start:%x", *((uint32_t*)0x00000004));
 #endif
     // cli_printf("addr of SystemInit() 0x%p" CRLF, SystemInit);
     LOG_NOTICE(SYS, "addr of main() 0x%p", main);
 #ifdef HAS_NORTOS
 #endif
 
-#ifdef HAS_MICROCONTROLLER
+#ifdef RAM_SIZE
     LOG_NOTICE(SYS, "RAM: %u Byte", RAM_SIZE);
+#endif
+
+#ifdef ROM_SIZE
     LOG_NOTICE(SYS, "Flash: %u Byte", ROM_SIZE);
-    LOG_NOTICE(SYS, "RAM addr:   0x%08x....0x%08x ", RAM_START, RAM_END);
+#endif
+
+#ifdef RAM_START
+    LOG_NOTICE(SYS, "RAM addr: 0x%08x....0x%08x ", RAM_START, RAM_END);
+#endif
+
+#ifdef ROM_START
     LOG_NOTICE(SYS, "Flash addr: 0x%08x....0x%08x ", ROM_START, ROM_END);
 #endif
 }
@@ -253,16 +262,16 @@ static bool print_hw_version(void) {
 
 #ifdef HAS_DEV_ID
     snprintf(lText, sizeof(lText), "%sSerial:0x%llu,", lText, get_device_serial());
-#endif /*HAS_DEV_ID*/
+#endif /**/
 
 #ifdef HAS_MAC
     uint64_t ble_mac = get_ble_mac();
     LOG_WARNING(SYS, "MAC:0x%llu", ble_mac);
-#endif /*HAS_MAC*/
+#endif /**/
 
 #ifdef HAS_DEV_ID
     uint32_t cpi_id = cpu_get_id();
-#endif /*HAS_DEV_ID*/
+#endif /**/
     LOG_WARNING(SYS, "%s", lText);
     return res;
 }
@@ -318,6 +327,10 @@ static bool print_sw_version(void) {
     snprintf(lText, sizeof(lText), "%sGitSha:0x%x,", lText, GIT_SHA);
 #endif
 
+#ifdef VERSION_GENERATION
+    snprintf(lText, sizeof(lText), "%sVersion:%u,", lText, VERSION_GENERATION);
+#endif
+
 #ifdef SUCCESSFUL_BUILD_COUNTER
     snprintf(lText, sizeof(lText), "%sOkBuildCnt:%u,", lText, SUCCESSFUL_BUILD_COUNTER);
 #endif
@@ -359,7 +372,7 @@ bool print_version(void) {
 
     print_prog_type();
 
-    LOG_INFO(SYS, "main() Addr:0x%08p", main);
+    LOG_INFO(SYS, "main(),Addr:0x%08p", main);
 #if 0
     res = check_main();
     if(res) {

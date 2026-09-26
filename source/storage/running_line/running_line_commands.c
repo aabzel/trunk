@@ -43,7 +43,7 @@ bool cmd_running_line_diag(int32_t argc, char* argv[]) {
 bool cmd_running_line_set_text(int32_t argc, char* argv[]) {
     bool res = false;
 
-    char text[20] = "";
+    char temp[20] = "";
     uint8_t num = 0;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &num);
@@ -53,13 +53,13 @@ bool cmd_running_line_set_text(int32_t argc, char* argv[]) {
     }
 
     if(2 <= argc) {
-        strncpy(text, argv[1], sizeof(text));
+        strncpy(temp, argv[1], sizeof(temp));
         res = true;
     }
 
     if(res) {
         if(2 == argc) {
-            res = running_line_set_text(num, text);
+            res = running_line_set_text(num, temp);
         }
     } else {
         LOG_ERROR(RUNNING_LINE, "Usage: rlsp Num prefix");

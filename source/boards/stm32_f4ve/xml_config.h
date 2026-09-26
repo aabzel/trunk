@@ -1,4 +1,3 @@
-
 #ifndef XML_CONFIG_H
 #define XML_CONFIG_H
 
@@ -34,7 +33,6 @@ void HandleTagEnd(void *cookie, const char *tag_end);
 void HandleParameter(void *cookie, const char *parameter);
 void HandleContent(void *cookie, const char *content);
 void HandleAttribute(void *cookie, const char *attribute);
-
 
 #ifdef __cplusplus
 };

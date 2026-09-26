@@ -1,21 +1,17 @@
 #ifndef WAV_DIAG_H
 #define WAV_DIAG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "wav_types.h"
+#include "std_includes.h"
 
-bool WavHeaderToFileName(const WavHeader_t* const Header, char* const file_name, uint32_t size);
-
-const char* WavHandleToStr(const WavHandle_t* const Handle);
+bool WavHeaderToFileName(const WavHeader_t* const Node, char* const file_name, uint32_t size);
 const char* WavHeaderToStr(const WavHeader_t* const Header);
 const char* WavNodeToStr(const WavHandle_t* const Node);
-
+const char* WavInfoToStr(const WavInfo_t* const Info);
 
 #ifdef __cplusplus
 }

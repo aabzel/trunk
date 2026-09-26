@@ -10,19 +10,19 @@ extern "C" {
 
 #ifndef HAS_LOG
 #error "+HAS_LOG"
-#endif /*HAS_LOG*/
+#endif /**/
 
 #ifndef HAS_LITTLE_FS
 #error "+HAS_LITTLE_FS"
-#endif /*HAS_LITTLE_FS*/
+#endif /**/
 
 #ifndef HAS_LITTLE_FS_DIAG
 #error "+HAS_LITTLE_FS_DIAG"
-#endif /*HAS_DIAG_LITTLE_FS*/
+#endif /**/
 
 #ifndef HAS_DIAG
 #error "+HAS_DIAG"
-#endif /*HAS_DIAG*/
+#endif /**/
 
 bool little_fs_diag(uint8_t num);
 bool little_fs_cat(uint8_t num, const char* const path);

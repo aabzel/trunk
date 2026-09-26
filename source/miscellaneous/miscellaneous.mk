@@ -1,5 +1,5 @@
-ifneq ($(UTILS_MK_INC),Y)
-    UTILS_MK_INC=Y
+ifneq ($(MISCELLANEOUS_MK_INC),Y)
+    MISCELLANEOUS_MK_INC=Y
 
     MISCELLANEOUS_DIR = $(WORKSPACE_LOC)/miscellaneous
     # $(error MISCELLANEOUS_DIR= $(MISCELLANEOUS_DIR))
@@ -10,11 +10,15 @@ ifneq ($(UTILS_MK_INC),Y)
     MCAL_OPT += -DHAS_MISCELLANEOUS
     MCAL_OPT += -DHAS_MISC
 
+    ifeq ($(ANALOG_MISC),Y)
+        include $(MISCELLANEOUS_DIR)/analog_misc/analog_misc.mk
+    endif
+
     ifeq ($(BIT_UTILS),Y)
         include $(MISCELLANEOUS_DIR)/bit_utils/bit_utils.mk
     endif
 
-    ifeq ($(UTILS_EXT),Y)
+    ifeq ($(BYTE_MISC),Y)
         include $(MISCELLANEOUS_DIR)/byte_misc/byte_misc.mk
     endif
 

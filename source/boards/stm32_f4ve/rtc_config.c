@@ -19,11 +19,6 @@ RtcHandle_t RtcInstance[]={
     }
 };
 
+COMPONENT_GET_CNT(Rtc, rtc)
 
-
-uint32_t rtc_get_cnt(void){
-    uint8_t cnt=0;
-    cnt = ARRAY_SIZE(RtcConfig);
-    return cnt;
-}
 

@@ -1,9 +1,7 @@
 #ifndef CRYP_CONFIG_GEN_H
 #define CRYP_CONFIG_GEN_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "cryp_types.h"
 
 #ifndef HAS_CRYP

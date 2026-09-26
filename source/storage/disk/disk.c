@@ -119,19 +119,20 @@ bool disk_init_one(uint8_t num) {
     Time in DWORD
  */
 DWORD get_fattime(void) {
-    struct tm* stm = NULL;
-    time_t t;
-    t = time(0);
-    stm = localtime(&t);
+    //struct tm* stm = NULL;
+    //time_t t;
+    //t = time(0); // Hang on
+    //stm = localtime(&t);
 
     FatFsTime_t FatFsTime = {0};
-
+#if 0
     FatFsTime.second = stm->tm_sec / 2;    /*Second / 2 (0..29, e.g. 25 for 50)*/
     FatFsTime.minute = stm->tm_min;        /*Minute (0..59)*/
     FatFsTime.hour = stm->tm_hour;         /*Hour (0..23)*/
     FatFsTime.day_of_month = stm->tm_mday; /*Day of the month (1..31)*/
     FatFsTime.month = stm->tm_mon + 1;     /*Month (1..12)*/
     FatFsTime.year = stm->tm_year - 80;    /*Year origin from the 1980 (0..127, e.g. 37 for 2017) */
+#endif
     return ((DWORD)FatFsTime.dword);
 }
 

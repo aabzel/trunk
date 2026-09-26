@@ -7,6 +7,16 @@
 #include "little_fs_config.h"
 #include "log.h"
 
+
+int little_fs_res_to_ret(const bool res) {
+    int ret = LFS_ERR_OK;
+    if(false == res) {
+        ret = LFS_ERR_IO;
+    }
+    return ret;
+}
+
+
 COMPONENT_GET_NODE(LittleFs, little_fs)
 COMPONENT_GET_CONFIG(LittleFs, little_fs)
 
@@ -174,7 +184,7 @@ bool little_fs_read(uint8_t num, const char* const path, uint8_t* const data, ui
     res = little_fs_open(num, path, flags);
     if(res) {
         res = little_fs_read_ll(num, data, size, len);
-        res = little_fs_close(num) && res;
+        res = little_fs_close(num,path) && res;
     }
     return res;
 }
@@ -194,6 +204,9 @@ bool little_fs_open(const uint8_t num, const char* path, const int32_t flags) {
             ret = lfs_file_open(&Node->lfs, &Node->file, path, flags);
 #endif
             res = LittleFsRetToRes(ret);
+            if(!res) {
+                LOG_ERROR(LITTLE_FS, "LITTLE_FS_%u,OpenError,File:[%s],Flag:%d", num, path,flags);
+            }
         }
     }
     return res;
@@ -207,31 +220,40 @@ bool little_fs_remove(const uint8_t num, const char* const path) {
         if(Node) {
             int ret = lfs_remove(&Node->lfs, path);
             res = LittleFsRetToRes(ret);
+            if(!res) {
+                LOG_ERROR(LITTLE_FS, "%u,ReMoveError,File:[%s]", num, path);
+            }
         }
     }
     return res;
 }
 
-bool little_fs_close(const uint8_t num) {
+bool little_fs_close(const uint8_t num, const char* const path) {
     bool res = false;
-    LOG_DEBUG(LITTLE_FS, "Close:%u", num);
+    LOG_DEBUG(LITTLE_FS, "Close:%u,File:[%s]", num,path);
     LittleFsHandle_t* Node = LittleFsGetNode(num);
     if(Node) {
         int ret = 0;
-        ret = lfs_file_close(&Node->lfs, &Node->file);
+        ret = lfs_file_close(&Node->lfs,(lfs_file_t *) &Node->file);
         res = LittleFsRetToRes(ret);
+        if(!res) {
+            LOG_ERROR(LITTLE_FS, "%u,Close,Error,File:[%s]", num, path);
+        }
     }
     return res;
 }
 
 bool little_fs_write_ll(uint8_t num, const uint8_t* const data, uint32_t size) {
     bool res = false;
-    LOG_DEBUG(LITTLE_FS, "%u,%s,%s", num, ArrayToStr(data, size), data);
+    LOG_DEBUG(LITTLE_FS, "LITTLE_FS_%u,Write,Data:%s=%s", num, ArrayToStr(data, size), data);
     LittleFsHandle_t* Node = LittleFsGetNode(num);
     if(Node) {
         int ret = 0;
         ret = lfs_file_rewind(&Node->lfs, &Node->file);
         res = LittleFsRetToRes(ret);
+        if(!res) {
+            LOG_ERROR(LITTLE_FS, "%u,rewind,Err", num);
+        }
 
         lfs_ssize_t ssize = 0;
         ssize = lfs_file_write(&Node->lfs, &Node->file, data, size);
@@ -249,7 +271,7 @@ bool little_fs_write(uint8_t num, const char* path, const uint8_t* const data, u
     res = little_fs_open(num, path, flags);
     if(res) {
         res = little_fs_write_ll(num, data, size);
-        res = little_fs_close(num);
+        res = little_fs_close(num, path);
     }
     return res;
 }
@@ -262,14 +284,14 @@ bool little_fs_delete(uint8_t num, const char* path) {
     return res;
 }
 
-static bool little_fs_write_end(uint8_t num, const char* path, const uint8_t* const data, uint32_t size) {
+bool little_fs_write_end(uint8_t num, const char* path, const uint8_t* const data, uint32_t size) {
     bool res = false;
     LOG_DEBUG(LITTLE_FS, "%u,WriteToEnd,File:[%s],WrSize:%u", num, path, size);
     int32_t flags = LFS_O_CREAT | LFS_O_RDWR | LFS_O_APPEND;
     res = little_fs_open(num, path, flags);
     if(res) {
         res = little_fs_write_ll(num, data, size);
-        res = little_fs_close(num);
+        res = little_fs_close(num, path);
     }
     return res;
 }
@@ -293,6 +315,24 @@ bool little_fs_write_line(uint8_t num, const char* path, char* const data) {
     return res;
 }
 
+bool little_fs_format(uint8_t num) {
+    bool res = false;
+    const LittleFsConfig_t *Config = LittleFsGetConfig(num);
+    if(Config) {
+        LittleFsHandle_t *Node = LittleFsGetNode(num);
+        if(Node) {
+            LOG_WARNING(LITTLE_FS, "Format,%u", num);
+            int err;
+            err = lfs_format(&Node->lfs, &Config->cfg);
+            res = LittleFsRetToRes(err);
+            if(!res){
+                LOG_ERROR(LITTLE_FS, "%u,Format,Error", num);
+            }
+        }
+    }
+    return res;
+}
+
 bool little_fs_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(LITTLE_FS, "LITTLE_FS%u", num);
@@ -309,6 +349,7 @@ bool little_fs_init_one(uint8_t num) {
                 Node->cfg = Config->cfg;
                 Node->base_address = Config->base_address;
                 Node->file_config = Config->file_config;
+                Node->nand_num = Config->nand_num;
                 Node->name = Config->name;
                 Node->num = Config->num;
                 Node->valid = true;
@@ -321,9 +362,7 @@ bool little_fs_init_one(uint8_t num) {
                 // reformat if we can't mount the filesystem
                 // this should only happen on the first boot
                 if(err < 0) {
-                    LOG_WARNING(LITTLE_FS, "Format,%u", num);
-                    err = lfs_format(&Node->lfs, &Config->cfg);
-                    res = LittleFsRetToRes(err);
+                    res = little_fs_format(num);
 
                     LOG_INFO(LITTLE_FS, "Mount,%u", num);
                     err = lfs_mount(&Node->lfs, &Config->cfg);

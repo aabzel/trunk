@@ -11,23 +11,6 @@ uint8_t swap_nibbles(uint8_t const data) {
     return val;
 }
 
-uint64_t reverse_byte_order_uint64(const uint64_t in4byteVal) {
-    uint64_t out_val = in4byteVal;
-    out_val = (out_val & 0x00000000FFFFFFFF) << 32 | (out_val & 0xFFFFFFFF00000000) >> 32;
-    out_val = (out_val & 0x0000FFFF0000FFFF) << 16 | (out_val & 0xFFFF0000FFFF0000) >> 16;
-    out_val = (out_val & 0x00FF00FF00FF00FF) << 8 | (out_val & 0xFF00FF00FF00FF00) >> 8;
-    return out_val;
-}
-
-uint32_t reverse_byte_order_uint32(const uint32_t in4byteVal) {
-    uint32_t retval;
-    retval = in4byteVal & 0xFF;
-    retval = (retval << 8) | ((in4byteVal >> 8) & 0xFF);
-    retval = (retval << 8) | ((in4byteVal >> 16) & 0xFF);
-    retval = (retval << 8) | ((in4byteVal >> 24) & 0xFF);
-    return retval;
-}
-
 uint32_t reverse_byte_order_uint24(const uint32_t in3byteVal) {
     Type32Union_t u32val_in = {0}, u32val_out = {0};
 
@@ -53,12 +36,6 @@ int32_t reverse_byte_order_int24(const int32_t in3byteVal) {
     return u32val_out.s32;
 }
 
-uint16_t reverse_byte_order_uint16(const uint16_t in2byteVal) {
-    uint16_t swapped = 0;
-    swapped = (in2byteVal >> 8) | (in2byteVal << 8);
-    return swapped;
-}
-
 bool reverse_byte_order_array(uint8_t* const in_out_array, uint32_t len) {
     bool res = false;
     if(in_out_array) {
@@ -72,20 +49,6 @@ bool reverse_byte_order_array(uint8_t* const in_out_array, uint32_t len) {
     }
 
     return res;
-}
-
-uint16_t copy_and_rev16(const uint8_t* const array) {
-    uint16_t value16b = 0;
-    memcpy(&value16b, array, 2);
-    value16b = reverse_byte_order_uint16(value16b);
-    return value16b;
-}
-
-uint32_t copy_and_rev32(const uint8_t* const array) {
-    uint32_t value32b = 0;
-    memcpy(&value32b, array, 4);
-    value32b = reverse_byte_order_uint32(value32b);
-    return value32b;
 }
 
 uint64_t copy_and_rev64(const uint8_t* const array) {
@@ -103,4 +66,46 @@ uint32_t reverse_half_word_order_uint32(const uint32_t word) {
     un32_out.u16[0] = un32_in.u16[1];
     un32_out.u16[1] = un32_in.u16[0];
     return un32_out.u32;
+}
+
+#if 0
+const char* ByteNameToStr(const uint8_t code, const char* token) {
+    char* name = "_";
+    if(code) {
+        name = token;
+    }
+    return name;
+}
+#endif
+
+bool fetch_big_endian_word(const uint8_t* const data, const uint32_t size, uint16_t* const word) {
+    bool res = false;
+    if(word) {
+        if(2 <= size) {
+            uint16_t w_value = 0;
+            memcpy(&w_value, data, 2);
+            *word = reverse_byte_order_uint16(w_value);
+            res = true;
+        }
+    }
+    return res;
+}
+
+bool is_byte_in_range(const uint8_t min_val, const uint8_t cur, const uint8_t max_val) {
+    bool res = false;
+    if(min_val <= cur) {
+        if(cur <= max_val) {
+            res = true;
+        }
+    }
+    return res;
+}
+
+/*
+ is val : 1 3 5 7 9
+ */
+bool is_byte_odd(const uint8_t val) {
+    bool res = false;
+    res = (1 == (1 & val));
+    return res;
 }

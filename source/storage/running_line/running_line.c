@@ -11,56 +11,56 @@ COMPONENT_GET_NODE(RunningLine, running_line)
 COMPONENT_GET_CONFIG(RunningLine, running_line)
 
 const char* running_line_get_text(uint8_t num) {
-    char* text = "";
-    RunningLineHandle_t* Node = RunningLineGetNode(num);
+    char *name = "";
+    RunningLineHandle_t *Node = RunningLineGetNode(num);
     if(Node) {
         if(Node->WindowText) {
-            text = Node->WindowText;
+            name = Node->WindowText;
         }
     }
-    return text;
+    return name;
 }
 
 bool running_line_build_linked_list_ll(RunningLineHandle_t* Node) {
     bool res = false;
     if(Node) {
         Node->len = strlen(Node->Text);
-            LOG_DEBUG(RUNNING_LINE, "[%s],len:%u", Node->Text, Node->len);
-            //Node->i_start = 0;
-            // len = 5
-            //        Hello
-            // cur_i  01234
-            // next_i 12340
-            uint32_t i = 0;
-            Node->Symbol[Node->len - 1].next_i = 0;
-            for(i = 0; i < Node->size; i++) {
-                Node->Symbol[i].letter = Node->Text[i];
-                // Node->Symbol[i].cur_i = i;
-                if(i < (Node->len - 1)) {
-                    Node->Symbol[i].next_i = i + 1;
-                    res = true;
-                }
+        LOG_DEBUG(RUNNING_LINE, "[%s],len:%u", Node->Text, Node->len);
+        //Node->i_start = 0;
+        // len = 5
+        //        Hello
+        // cur_i  01234
+        // next_i 12340
+        uint32_t i = 0;
+        Node->Symbol[Node->len - 1].next_i = 0;
+        for (i = 0; i < Node->size; i++) {
+            Node->Symbol[i].letter = Node->Text[i];
+            // Node->Symbol[i].cur_i = i;
+            if(i < (Node->len - 1)) {
+                Node->Symbol[i].next_i = i + 1;
+                res = true;
             }
+        }
 
     }
     return res;
 }
 
-bool running_line_set_text(uint8_t num, const char* const text) {
+bool running_line_set_text(uint8_t num, const char* const in_text) {
     bool res = false;
-    RunningLineHandle_t* Node = RunningLineGetNode(num);
+    RunningLineHandle_t *Node = RunningLineGetNode(num);
     if(Node) {
         if(Node->Text) {
-            if(text) {
-                size_t len=strlen(text);
-                if(len < Node->size){
+            if(in_text) {
+                size_t len = strlen(in_text);
+                if(len < Node->size) {
                 } else {
-                    LOG_ERROR(RUNNING_LINE,"%u,NoMem,Need:%u,max%u",num,len,Node->size);
-                    len=Node->size-1;
+                    LOG_ERROR(RUNNING_LINE, "%u,NoMem,Need:%u,max%u", num, len, Node->size);
+                    len = Node->size - 1;
                     res = false;
                 }
-                memset(Node->Text,0, Node->size);
-                memcpy(Node->Text, text,len);
+                memset(Node->Text, 0, Node->size);
+                memcpy(Node->Text, in_text, len);
                 res = running_line_build_linked_list_ll(Node);
             }
         }
@@ -101,9 +101,9 @@ static bool running_line_is_valid_config(const RunningLineConfig_t* const Config
                 if(Config->duration_ms) {
                     if(Config->WindowText) {
                         if(Config->window_size) {
-                        	  if(Config->Symbol) {
-                                 res = true;
-                        	  }
+                            if(Config->Symbol) {
+                                res = true;
+                            }
                         }
                     }
                 }
@@ -163,23 +163,22 @@ static bool running_line_init_common(const RunningLineConfig_t* const Config, Ru
 bool running_line_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(RUNNING_LINE, "Init %u", num);
-    const RunningLineConfig_t* Config = RunningLineGetConfig(num);
-    if(Config) {
+    const RunningLineConfig_t *Config = RunningLineGetConfig(num);
+    res = running_line_is_valid_config(Config);
+    if (res) {
 #if HAS_RUNNING_LINE_DIAG
         LOG_WARNING(RUNNING_LINE, "%s", RunningLineConfigToStr(Config));
 #endif
-        res = running_line_is_valid_config(Config);
-        if(res) {
-            RunningLineHandle_t* Node = RunningLineGetNode(num);
-            if(Node) {
-                res = running_line_init_common(Config, Node);
-                res = running_line_build_linked_list_ll(Node);
-                uint32_t up_time_ms = time_get_ms32();
-                Node->next_update_time_ms = up_time_ms + Node->duration_ms;
-                LOG_INFO(RUNNING_LINE, "%u,InitOk", num);
-                res = true;
-            }
+        RunningLineHandle_t *Node = RunningLineGetNode(num);
+        if (Node) {
+            res = running_line_init_common(Config, Node);
+            res = running_line_build_linked_list_ll(Node);
+            uint32_t up_time_ms = time_get_ms32();
+            Node->next_update_time_ms = up_time_ms + Node->duration_ms;
+            LOG_INFO(RUNNING_LINE, "%u,InitOk", num);
+            res = true;
         }
+
     }
 
     return res;

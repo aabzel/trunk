@@ -16,9 +16,9 @@ typedef struct {
     uint8_t num;                                          \
     bool valid;                                           \
     char* Text; /* data to show */                        \
+    RunningLineChar_t* Symbol;                            \
     uint32_t size;   /* line length */                    \
     char* WindowText;                                     \
-    RunningLineChar_t* Symbol;                            \
     uint32_t window_size;   /* visible window length */   \
     uint32_t duration_ms; /* duration of one position (period) */
 

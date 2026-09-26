@@ -35,7 +35,7 @@ bool serial_port_scan_ports(void) ;
 uint8_t serial_port_com_to_num(const uint8_t com_port_num);
 uint8_t serial_num_to_port_com(const uint8_t num);
 bool serial_port_scan(void);
-bool serial_port_check(uint8_t num);
+bool serial_port_check(const uint8_t com_port_num);
 
 
 /*setters*/

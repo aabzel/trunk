@@ -18,6 +18,16 @@
 #include "crc_types.h"
 #endif
 
+typedef struct{
+    uint32_t channels ;
+    uint32_t sample_size;
+    uint32_t sample_cnt;
+    uint32_t sampling_frequency_hz;
+    bool valid;
+    uint32_t data_size;
+    float duration_s ;
+    float sample_time_s ;
+}WavInfo_t;
 
 typedef struct {
     int16_t left;  /**/
@@ -25,10 +35,11 @@ typedef struct {
 }__attribute__((packed)) WavSample16_t;
 
 /* 44 byte
-   Little-Endian*/
+   Little-Endian Do Not changr order*/
 typedef union {
     uint8_t buff[44];
     struct {
+        /* Do not change order! */
         uint32_t chunkId;                /* contain letters    RIFF*/
         uint32_t chunkSize;              /* Chunk size this header size*/
         uint32_t format;                 /* WAVE 0x57415645*/
@@ -43,17 +54,20 @@ typedef union {
         uint16_t bitsPerSample;          /* Significant bits per sample, The number of bits in a sample. The so-called "depth" or precision of sound. 8 bit, 16 bit, etc.*/
 
         uint32_t subchunk2Id;/*Chunk ID: data*/
-        uint32_t subchunk2Size;/*Chunk Data Size: Size of the audio data*/
+        uint32_t subchunk2Size;/*Chunk Data Size: Size of the audio data (little-endian )*/
     } __attribute__((packed));
 } __attribute__((packed)) WavHeader_t;
 
 
 #define WAV_COMMON_VARIABLES            \
-    char * file_name;                   \
-    char * name;                        \
+    char* file_name_dflt;               \
+    char* name;                         \
     uint32_t channels ;                 \
+    uint32_t block_align;               \
     uint32_t sample_cnt ;               \
+    uint8_t bits_per_sample;            \
     uint32_t sampling_frequency_hz;     \
+    uint8_t file_num;                   \
     uint8_t num;                        \
     bool valid;
 
@@ -61,16 +75,20 @@ typedef struct{
     WAV_COMMON_VARIABLES
 }WavConfig_t;
 
-
-
 typedef struct{
     WAV_COMMON_VARIABLES
     bool init;
+    int32_t real_file_size;
     uint32_t data_size;
-    double sample_time_s ;
-    double duration_s ;
-    uint8_t*  data;
+    uint32_t real_data_size;
+    int32_t data_diff_size;
+    float sample_time_s ;
+    float duration_s ;
+    uint8_t*  data; //little-endian
+    char fileName[150];
 }WavHandle_t;
+
+
 
 
 #endif /* WAV_TYPES_H */

@@ -1,17 +1,15 @@
 #ifndef LED_MONO_CONFIG_H
 #define LED_MONO_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "led_mono_types.h"
 
 #ifndef HAS_LED
 #error "Add HAS_LED"
-#endif /*HAS_LED*/
+#endif
 
-#define LED_GREEN_ID 1
-#define LED_HEARTBEAT_ID 1
+#define LED_ID_GREEN 1
+#define LED_ID_HEARTBEAT 1
 
 extern const LedMonoConfig_t LedMonoConfig[];
 extern LedMonoHandle_t LedMonoInstance[];

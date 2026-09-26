@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-#include "word_utils.h"
 #include "dword_utils.h"
+#include "word_utils.h"
 
 #ifndef MAX
 #define MAX(n, m) (((n) < (m)) ? (m) : (n))
@@ -21,7 +21,6 @@ uint64_t max64u(uint64_t max64u_x1, uint64_t max64u_x2) {
     return (((max64u_x1) > (max64u_x2)) ? (max64u_x1) : (max64u_x2));
 }
 
-
 uint64_t reverse_byte_order_uint64(const uint64_t in4byteVal) {
     uint64_t out_val = in4byteVal;
     out_val = (out_val & 0x00000000FFFFFFFF) << 32 | (out_val & 0xFFFFFFFF00000000) >> 32;
@@ -33,42 +32,36 @@ uint64_t reverse_byte_order_uint64(const uint64_t in4byteVal) {
 uint64_t unsigned_big_endian_to_u64(const uint8_t* const memory, const uint32_t param_size) {
     uint64_t value_u64 = 0;
     if(memory) {
-        switch (param_size) {
+        switch(param_size) {
         case 1: {
             uint8_t byte = 0;
             memcpy(&byte, memory, 1);
-            value_u64 = (uint64_t) byte;
-        }
-            break;
+            value_u64 = (uint64_t)byte;
+        } break;
 
         case 2: {
             uint16_t word = 0;
             memcpy(&word, memory, 2);
-            value_u64 = (uint64_t) reverse_byte_order_uint16(word);
-        }
-            break;
+            value_u64 = (uint64_t)reverse_byte_order_uint16(word);
+        } break;
 
         case 4: {
             uint32_t dword = 0;
             memcpy(&dword, memory, 4);
-            value_u64 = (uint64_t) reverse_byte_order_uint32(dword);
-        }
-            break;
+            value_u64 = (uint64_t)reverse_byte_order_uint32(dword);
+        } break;
 
         case 8: {
             uint64_t qword = 0;
             memcpy(&qword, memory, 8);
-            value_u64 = (uint64_t) reverse_byte_order_uint64(qword);
-        }
-            break;
+            value_u64 = (uint64_t)reverse_byte_order_uint64(qword);
+        } break;
         default:
             break;
         }
-
     }
     return value_u64;
 }
-
 
 bool data_u64_init(U64Value_t* const Node) {
     bool res = false;
@@ -81,7 +74,6 @@ bool data_u64_init(U64Value_t* const Node) {
     return res;
 }
 
-
 bool data_u64_update(U64Value_t* const Node, const uint64_t val) {
     bool res = false;
     if(Node) {
@@ -93,9 +85,7 @@ bool data_u64_update(U64Value_t* const Node, const uint64_t val) {
     return res;
 }
 
-bool fetch_big_endian_qword(const uint8_t* const data,
-                            const uint32_t size,
-                            uint64_t* const qword) {
+bool fetch_big_endian_qword(const uint8_t* const data, const uint32_t size, uint64_t* const qword) {
     bool res = false;
     if(qword) {
         if(8 <= size) {

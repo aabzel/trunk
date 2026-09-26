@@ -1,12 +1,11 @@
 #ifndef BIT_CONST_H
 #define BIT_CONST_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "std_includes.h"
 
 #define BIT_31 (1U << 31)
 #define BIT_30 (1U << 30)

@@ -11,9 +11,11 @@ extern "C" {
 #error "only for CLI"
 #endif
 
+bool bit_need_command(int32_t argc, char* argv[]);
 bool bit_diff_command(int32_t argc, char* argv[]);
 
-#define BIT_COMMANDS                                                                          \
+#define BIT_COMMANDS                                                    \
+        SHELL_CMD("bit_need", "bin", bit_need_command, "BitNeed"),      \
         SHELL_CMD("bit_diff", "bid", bit_diff_command, "BitDiff"),
 
 #ifdef __cplusplus

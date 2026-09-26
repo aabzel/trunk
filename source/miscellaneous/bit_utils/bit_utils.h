@@ -15,13 +15,13 @@ extern "C" {
 #define CHECK_BIT_NUM(VAL, BIT) ((1U << (BIT)) == ((VAL) & (1U << (BIT))))
 #define IS_BIT_RESET(VAL, BIT) (0 == ((VAL) & (1 << (BIT))))
 
-
+uint8_t bit_u8_ctrl(const uint8_t in_val, const uint8_t bit_num, const uint8_t bit_val) ;
 bool bit_get_u8(uint8_t byte, uint8_t bit_num);
 uint8_t bit_not(const uint8_t byte);
 //(1 & ((VAL) >> (BIT)))
 uint32_t calc_bitness(const uint32_t value) ;
 int32_t parse_n_bit_signed(uint32_t value, uint8_t bittness);
-uint32_t bit_ctrl(const uint32_t in_val, const uint8_t bit_num, const uint8_t bit_val);
+uint32_t bit_u32_ctrl(const uint32_t in_val, const uint8_t bit_num, const uint8_t bit_val);
 uint32_t calc_bitness_u64(const uint64_t value);
 uint64_t generate_64bit_mask(uint8_t bit_len);
 uint8_t generate_8bit_mask(uint8_t bit_len);
@@ -36,12 +36,18 @@ uint8_t extract_subval_from_8bit(uint8_t inVal, uint8_t maxBit, uint8_t minBit);
 uint64_t generate_64bit_left_mask(uint8_t bitlen);
 uint64_t extract_subval_from_64bit(uint64_t inVal, uint8_t maxBit, uint8_t minBit);
 
+uint32_t next_power_of_2(const uint32_t size);
+uint32_t next_power_of_two(const uint32_t a);
+uint32_t calc_bitness_slow(const uint32_t value);
 uint32_t insert_subval_in_32bit(uint32_t orig_val, uint32_t sub_val, uint8_t max_bit, uint8_t min_bit);
 uint8_t bit_summ16(uint16_t data);
 uint8_t count_set_bits(uint32_t const inVal32bit);
+uint8_t count_set_bits_u16(uint16_t const inVal16bit) ;
 bool bit32_control_proc(uint32_t* address_val, char cmd, uint8_t bit);
 bool is_parity_odd(uint32_t const inVal);
-
+int max_no_branch(int x, int y);
+int min_no_branch(int x, int y);
+uint32_t reverse_bits_static(uint32_t v);
 uint8_t get_bit_from_32bit(uint32_t in_val, uint8_t bit_num);
 uint16_t invert_bits16(uint16_t val);
 

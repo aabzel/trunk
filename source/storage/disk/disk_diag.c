@@ -2,6 +2,7 @@
 
 #include "common_diag.h"
 #include "diag_inc.h"
+#include "diskio.h"
 #include "log.h"
 
 const char* DiskCmdToStr(uint8_t cmd) {

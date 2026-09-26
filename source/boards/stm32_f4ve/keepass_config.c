@@ -1,7 +1,6 @@
 #include "keepass_config.h"
 
 #include "keepass_types.h"
-
 #include "cryp_config.h"
 
 const KeePassConfig_t KeePassConfig = {

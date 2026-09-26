@@ -18,7 +18,7 @@ ifneq ($(BIT_GENERAL_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(BIT_COMMANDS),Y)
-            #@echo $(error BIT_COMMANDS=$(BIT_COMMANDS))
+            # $(error BIT_COMMANDS=$(BIT_COMMANDS))
             $(info Add BIT commands)
             MCAL_OPT += -DHAS_BIT_COMMANDS
             SOURCES_C += $(BIT_MCAL_DIR)/bit_commands.c

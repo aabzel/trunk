@@ -23,7 +23,6 @@ const char* OffSetToStr(uint32_t offset);
 const char* ProgressRealToStr(float cur, float total) ;
 const char* ProgressFloatToStr(float cur, float total) ;
 const char* ProgressToStr(uint32_t cur, uint32_t total);
-float diag_progress_log(uint32_t cur, uint32_t total, uint32_t parts);
 bool print_progress(uint32_t cur, uint32_t total);
 bool explore_stack_dir(void);
 bool is_little_endian(void);

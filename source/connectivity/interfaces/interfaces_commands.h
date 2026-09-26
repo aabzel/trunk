@@ -102,11 +102,10 @@
     RS232_COMMANDS                    \
     RS485_COMMANDS                    \
     SERIAL_PORT_COMMANDS               
-    
+
 #define INTERFACES_COMMANDS              \
     INTERFACE_WIRELESS_COMMANDS          \
     INTERFACE_WIRED_COMMANDS             \
-    DTMF_COMMANDS                        \
     SOCKET_COMMANDS                      
 
 #endif /* INTERFACES_COMMANDS_H */

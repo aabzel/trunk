@@ -13,11 +13,5 @@ typedef union {
     };
 } FloatUnion_t;
 
-typedef struct {
-    int32_t integer;
-    uint32_t fractional;
-    uint32_t accurancy; /*number of digits after the decimal point*/
-} FloatFixPoint_t;
-
 
 #endif /* FLOAT_TYPES_H */

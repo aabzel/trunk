@@ -36,18 +36,19 @@ const char* SerialPortConfigToStr(const SerialPortConfig_t* const Config) {
 
 bool serial_port_scan(void) {
     bool res = false;
+    LOG_INFO(SERIAL_PORT,"Scan:%u", SERIAL_PORT_MAX_CNT);
     const table_col_t cols[] = {
         {6, "COM"},
         {6, "Exist"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    uint32_t i = 0;
-    for(i = 0; i < SERIAL_PORT_MAX_CNT; i++) {
-        bool exist = serial_port_check(i);
+    uint32_t com_num = 0;
+    for(com_num = 0; com_num < SERIAL_PORT_MAX_CNT; com_num++) {
+        bool exist = serial_port_check(com_num);
         if(exist) {
             char temp[20] = {0};
             strcpy(temp, TSEP);
-            snprintf(temp, sizeof(temp), "%s COM%u " TSEP, temp, i);
+            snprintf(temp, sizeof(temp), "%s COM%u " TSEP, temp, com_num);
             snprintf(temp, sizeof(temp), "%s %4s " TSEP, temp, OnOffToStr(exist));
             cli_printf("%s" CRLF, temp);
             res = true;

@@ -227,7 +227,7 @@ bool little_fs_cat(uint8_t num, const char* const path) {
                     loop = false;
                 }
             }
-            res = little_fs_close(num);
+            res = little_fs_close(num,path);
         }
     }
     return res;

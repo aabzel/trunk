@@ -32,18 +32,14 @@ const SchmittTriggerConfig_t SchmittTriggerConfig[] = {
         .down_call_back = schmitt_trigger1_proc_down,
         .hysteresis = 0.001,
         .units = UNITS_UVI,
-        .switching_value = 0.006, /*105lx (too long day  48 50 52 54 56-60 62 63 65 67 70 75 80<x < 143 436)*/
-        .name = "LTR390", //BH1750
+        .switching_value = 0.006,
+        .name = "LTR390",
         .valid = true,
     },
 };
 
-
 SchmittTriggerHandle_t SchmittTriggerInstance[] = {
-    {
-        .num = 1,
-        .valid = true,
-    },
+    {        .num = 1,        .valid = true,    },
 };
 
 uint32_t schmitt_trigger_get_cnt(void) {

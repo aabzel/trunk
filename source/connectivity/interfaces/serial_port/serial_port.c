@@ -84,13 +84,13 @@ uint8_t serial_num_to_port_com(const uint8_t num) {
     return port_com;
 }
 
-bool serial_port_check(uint8_t num) {
+bool serial_port_check(const uint8_t com_num) {
     bool res = false;
-    SerialPortHandle_t* Node = SerialPortGetNode(num);
+    LOG_PARN(SERIAL_PORT, "Check,COM%u...", com_num);
+    SerialPortHandle_t* Node = SerialPortGetNode(1);
     if(Node) {
-
         if(Node->hComm) {
-            LOG_WARNING(SERIAL_PORT, "Close,hComm:0x%p", Node->hComm);
+            LOG_DEBUG(SERIAL_PORT, "Close,hComm:0x%p", Node->hComm);
             BOOL ret = 0;
             (void)ret;
             ret = CloseHandle(Node->hComm);
@@ -98,15 +98,15 @@ bool serial_port_check(uint8_t num) {
         }
 
         char ComPortName[80] = {0};
-        snprintf(ComPortName, sizeof(ComPortName), "COM%u", num);
+        snprintf(ComPortName, sizeof(ComPortName), "COM%u", com_num);
         LOG_PARN(SERIAL_PORT, "TryOpen:%s...", ComPortName);
         Node->hComm = CreateFile(ComPortName,
-                                 GENERIC_READ,  // Read
-                                 0,             // No Sharing
-                                 NULL,          // No Security
-                                 OPEN_EXISTING, // Open existing port only
-                                 0,             // Non Overlapped I/O
-                                 NULL);         // Null for Comm Devices
+                                 GENERIC_READ | GENERIC_WRITE, // Read
+                                 0,                            // No Sharing
+                                 NULL,                         // No Security
+                                 OPEN_EXISTING,                // Open existing port only
+                                 0,                            // Non Overlapped I/O
+                                 NULL);                        // Null for Comm Devices
         if(INVALID_HANDLE_VALUE == Node->hComm) {
             LOG_PARN(SERIAL_PORT, "%s,OpenErr", ComPortName);
             res = false;
@@ -149,6 +149,7 @@ bool serial_port_init_custom(void) {
     if(log_l <= LOG_LEVEL_INFO) {
         res = serial_port_scan();
     }
+    res = serial_port_scan_ports();
     return res;
 }
 
@@ -339,7 +340,7 @@ bool serial_port_close(uint8_t com_port_num) {
 bool serial_port_re_init_one(const uint8_t num, const uint8_t com_port_num, const uint32_t bit_rate,
                              const uint32_t byte_tx_pause_ms) {
     bool res = false;
-    LOG_WARNING(SERIAL_PORT, "Init:%u,COM%u,BitRate:%u bit/s", num, com_port_num, bit_rate);
+    LOG_WARNING(SERIAL_PORT, "ReInit:%u,COM%u,BitRate:%u bit/s", num, com_port_num, bit_rate);
     SerialPortHandle_t* Node = SerialPortGetNode(num);
     if(Node) {
         Node->com_port_num = com_port_num;

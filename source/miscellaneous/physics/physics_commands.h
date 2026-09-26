@@ -9,15 +9,17 @@ extern "C" {
 
 #ifndef HAS_PHYSICS
 #error "+ HAS_PHYSICS"
-#endif /**/
+#endif
 
 #ifndef HAS_PHYSICS_COMMANDS
 #error "+ HAS_PHYSICS_COMMANDS"
-#endif /**/
+#endif
 
 bool phy_lc_loop_calc_l_command(int32_t argc, char* argv[]);
+bool phy_sound_speed_command(int32_t argc, char* argv[]);
 
 #define PHYSICS_COMMANDS                                                                   \
+    SHELL_CMD("phy_sound_speed", "pss", phy_sound_speed_command, "PhySoundSpeed"),         \
     SHELL_CMD("phy_lc_loop_calc_l", "plcl", phy_lc_loop_calc_l_command, "PhyLCloopCalcL"),
 
 #ifdef __cplusplus

@@ -9,7 +9,9 @@
   */
 bool bit_diff(uint32_t val_a, uint32_t val_b) {
     bool res = false;
+#ifdef HAS_LOG_TIME_STAMP
     log_level_time_stamp(false);
+#endif
     LOG_INFO(SYS, "A:0x%x B:0x%x Different bits:", val_a, val_b);
     LOG_INFO(SYS, "A:%s", utoa_bin32(val_a));
     LOG_INFO(SYS, "B:%s", utoa_bin32(val_b));
@@ -32,8 +34,10 @@ bool bit_diff(uint32_t val_a, uint32_t val_b) {
             res = true;
         }
     }
+#ifdef HAS_LOG_TIME_STAMP
     cli_printf(CRLF);
     log_level_time_stamp(true);
+#endif
     return res;
 }
 

@@ -5,31 +5,30 @@
 
 static const CliCmdInfo_t CliCommands[] = {CLI_COMMANDS COMMANDS_END};
 
-const CliConfig_t CliConfig[] = {
+const CliConfig_t SECTION_CFG_DATA CliConfig[] = {
     {
         .num = 1,
+        .rtc_num = 1,
+        .name = "shell",
         .valid = true,
-        .CommandArray = CliCommands,
+        .CommandArray = (CliCmdInfo_t*) CliCommands,
         .cmd_cnt = ARRAY_SIZE(CliCommands),
 #ifdef HAS_LED
         .feedback_led = 2,
 #endif
-    }
+    },
 };
 
-CliHandle_t CliInstance[] = {{
-    .num = 1,
-    .valid = true,
-}};
+CliHandle_t CliInstance[] = {
+    {
+        .num = 1,
+        .valid = true,
+    },
+};
 
-uint32_t cli_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(CliInstance);
-    cnt2 = ARRAY_SIZE(CliConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
+uint32_t cli_get_command_cnt(void) {
+	uint32_t cnt = ARRAY_SIZE(CliCommands);
+	return cnt;
 }
+
+COMPONENT_GET_CNT(Cli, cli)

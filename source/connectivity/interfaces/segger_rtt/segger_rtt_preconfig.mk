@@ -1,0 +1,5 @@
+ifneq ($(SEGGER_RTT_PRECONFIG_INC),Y)
+    SEGGER_RTT_PRECONFIG_INC=Y
+    
+    SEGGER_RTT=Y
+endif

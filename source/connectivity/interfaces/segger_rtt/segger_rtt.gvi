@@ -1,0 +1,5 @@
+SWD->SEGGER_RTT
+
+#ifdef HAS_CLI
+    SEGGER_RTT->CLI
+#endif

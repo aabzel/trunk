@@ -1,0 +1,4 @@
+
+config SEGGER_RTT
+    bool "Enable use of the SEGGER_RTT drivers"
+

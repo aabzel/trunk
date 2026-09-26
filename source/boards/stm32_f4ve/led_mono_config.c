@@ -2,29 +2,50 @@
 
 #ifndef HAS_LED
 #error "Add HAS_LED"
-#endif /*HAS_LED*/
+#endif 
 
 #include "data_utils.h"
 #include "gpio_custom_const.h"
 
 const LedMonoConfig_t LedMonoConfig[] = {
-       { .num=1, .period_ms=5000, .phase_ms = 0, .duty = 10, .pad = {.port=PORT_A, .pin=6}, .name = "D2/RED", .mode = LED_MODE_PWM, .active = GPIO_LVL_LOW, .valid=true,},
-       { .num=2, .period_ms=5000, .phase_ms = 0, .duty = 10, .pad = {.port=PORT_A, .pin=7}, .name = "D3/Green", .mode = LED_MODE_PWM, .active = GPIO_LVL_LOW, .valid=true,},
+       { .num = 1,
+         .period_ms = 1000,
+         .phase_ms = 0,
+         .duty = 50,
+         .pad = {.port = PORT_A, .pin = 6,},
+         .name = "D1/LED 1",
+         .color = COLOR_RED,
+         .group = 1,
+         .mode = LED_MCAL_MODE_PWM,
+         .led_phy = LED_PHY_GPIO,
+         .ctrl_mode = CONTROL_MODE_GPIO,
+         .active = GPIO_LVL_LOW, .valid = true,},
+
+       { .num = 2,
+         .period_ms = 1000,
+         .phase_ms = 500,
+         .group = 1,
+         .duty = 50,
+         .pad = { .port = PORT_A, .pin = 7,},
+         .name = "D3/LED 2",
+         .mode = LED_MCAL_MODE_PWM,
+         .color = COLOR_RED,
+         .ctrl_mode = CONTROL_MODE_GPIO,
+         .led_phy = LED_PHY_GPIO,
+         .active = GPIO_LVL_LOW,
+         .valid = true,},
 };
 
-LedMonoHandle_t LedMonoInstance[]={
-     {.num=1, .valid=true, .active=GPIO_LVL_LOW,},
-     {.num=2, .valid=true, .active=GPIO_LVL_LOW,},
+
+
+
+LedMonoHandle_t LedMonoInstance[] = {
+     {.num = 1, .valid = true, .active = GPIO_LVL_LOW,},
+     {.num = 2, .valid = true, .active = GPIO_LVL_LOW,},
 };
 
-uint32_t led_mono_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(LedMonoInstance); 
-    cnt2 = ARRAY_SIZE(LedMonoConfig); 
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+
+COMPONENT_GET_CNT(LedMono, led_mono)
+
+
+

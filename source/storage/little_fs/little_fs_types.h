@@ -17,6 +17,7 @@
     struct lfs_config cfg;                             \
     char* name;                                        \
     uint8_t num;                                       \
+    uint8_t nand_num;                                  \
     bool valid;
 
 typedef struct {
@@ -27,7 +28,6 @@ typedef struct {
     LITTLE_FS_CONNON_VARIABLES
     LITTLE_FS_CUSTOM_VARIABLES
     bool init;
-
     lfs_t lfs;
     lfs_file_t file;
     uint32_t spin;

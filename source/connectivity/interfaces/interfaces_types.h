@@ -16,6 +16,7 @@ typedef union {
         uint16_t interface_name:11; /* see enum InterfaceName_t for variants */
     };
 } InterfaceType_t;
+// { .interface_name=INTERFACE_NAME_XXX, .num=1, },
 
 typedef struct {
     uint32_t byte_rx; // bytes

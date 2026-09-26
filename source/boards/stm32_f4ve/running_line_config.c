@@ -84,14 +84,5 @@ RunningLineHandle_t RunningLineInstance[] = {
     },
 };
 
-uint32_t running_line_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(RunningLineInstance);
-    cnt2 = ARRAY_SIZE(RunningLineConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+
+COMPONENT_GET_CNT(RunningLine, running_line)

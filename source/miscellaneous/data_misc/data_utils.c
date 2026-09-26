@@ -13,15 +13,9 @@
 #include "array.h"
 #endif
 
-bool is_range_uint32(const uint32_t in_val, const uint32_t min, const uint32_t max) {
-    bool res = false;
-    if(min <= in_val) {
-        if(in_val <= max) {
-            res = true;
-        }
-    }
-    return res;
-}
+#ifdef HAS_WORD_UTILS
+#include "word_utils.h"
+#endif
 
 #ifdef HAS_DATA_UTILS_EXT
 uint8_t uint16_to_uint8_limiter(uint16_t in_val) {
@@ -81,34 +75,6 @@ double limit_value_double(double min_val, double max_val, double in_value) {
 #endif
 
 #ifdef HAS_DATA_UTILS_EXT
-/*100, 7 -> 7*/
-/*5, 7 -> 5*/
-uint32_t uint32_limiter(uint32_t in_val, uint32_t max) {
-    uint32_t out_val = in_val;
-    if(max < in_val) {
-        out_val = max;
-    } else {
-        out_val = in_val;
-    }
-    return out_val;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
-int32_t int32_range_limiter(int32_t in_val, int32_t min, int32_t max) {
-    int32_t out_val = in_val;
-    if(in_val < min) {
-        out_val = min;
-    } else if(max < in_val) {
-        out_val = max;
-    } else {
-        out_val = in_val;
-    }
-    return out_val;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
 uint8_t max8u(uint8_t max8u_x1, uint8_t max8u_x2) { return (((max8u_x1) > (max8u_x2)) ? (max8u_x1) : (max8u_x2)); }
 
 uint8_t min8u(uint8_t min8u_x1, uint8_t min8u_x2) { return (((min8u_x1) < (min8u_x2)) ? (min8u_x1) : (min8u_x2)); }
@@ -121,22 +87,6 @@ uint16_t min16u(uint16_t min16u_x1, uint16_t min16u_x2) {
     return (((min16u_x1) < (min16u_x2)) ? (min16u_x1) : (min16u_x2));
 }
 
-uint32_t max32u(uint32_t max32u_x1, uint32_t max32u_x2) {
-    return (((max32u_x1) > (max32u_x2)) ? (max32u_x1) : (max32u_x2));
-}
-
-uint64_t max64u(uint64_t max64u_x1, uint64_t max64u_x2) {
-    return (((max64u_x1) > (max64u_x2)) ? (max64u_x1) : (max64u_x2));
-}
-
-uint32_t min32u(uint32_t min32u_x1, uint32_t min32u_x2) {
-    return (((min32u_x1) < (min32u_x2)) ? (min32u_x1) : (min32u_x2));
-}
-
-uint64_t min64u(uint64_t min64u_x1, uint64_t min64u_x2) {
-    return (((min64u_x1) < (min64u_x2)) ? (min64u_x1) : (min64u_x2));
-}
-
 int8_t max8(int8_t max8_x1, int8_t max8_x2) { return (((max8_x1) > (max8_x2)) ? (max8_x1) : (max8_x2)); }
 
 int8_t min8(int8_t min8_x1, int8_t min8_x2) { return (((min8_x1) < (min8_x2)) ? (min8_x1) : (min8_x2)); }
@@ -144,10 +94,6 @@ int8_t min8(int8_t min8_x1, int8_t min8_x2) { return (((min8_x1) < (min8_x2)) ? 
 int16_t max16(int16_t max16_x1, int16_t max16_x2) { return (((max16_x1) > (max16_x2)) ? (max16_x1) : (max16_x2)); }
 
 int16_t min16(int16_t min16_x1, int16_t min16_x2) { return (((min16_x1) < (min16_x2)) ? (min16_x1) : (min16_x2)); }
-
-int32_t max32(int32_t max32_x1, int32_t max32_x2) { return (((max32_x1) > (max32_x2)) ? (max32_x1) : (max32_x2)); }
-
-int32_t min32(int32_t min32_x1, int32_t min32_x2) { return (((min32_x1) < (min32_x2)) ? (min32_x1) : (min32_x2)); }
 #endif
 
 #ifdef HAS_DATA_UTILS_EXT
@@ -190,6 +136,29 @@ bool swap_f(float* const u8_x, float* const u8_y) {
 #endif
 
 #ifdef HAS_DATA_UTILS_EXT
+
+bool swap_s32(int32_t* s32_x, int32_t* s32_y) {
+    bool res = false;
+    if(s32_x && s32_y) {
+        int32_t temp = *s32_x;
+        *s32_x = *s32_y;
+        *s32_y = temp;
+        res = true;
+    }
+    return res;
+}
+
+bool swap_s16(int16_t* s16_x, int16_t* s16_y) {
+    bool res = false;
+    if(s16_x && s16_y) {
+        int16_t temp = *s16_x;
+        *s16_x = *s16_y;
+        *s16_y = temp;
+        res = true;
+    }
+    return res;
+}
+
 bool swap_16(uint16_t* u16_x, uint16_t* u16_y) {
     bool res = false;
     if(u16_x && u16_y) {
@@ -221,26 +190,6 @@ const char* get_spaces_str(uint32_t spaces_length) {
 float ms2Hz(uint16_t ms) {
     float hz = (1.0f * 1000.0f) / ((float)ms);
     return hz;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
-/*from right to left from decimal*/
-uint8_t extract_digit(uint32_t in_num, uint8_t digit_index) {
-    uint8_t i = 0;
-    uint8_t digit = 0;
-    uint8_t out_digit = 0;
-    uint32_t num = in_num;
-    while(0 < num) {
-        digit = num % 10;
-        if(digit_index == i) {
-            out_digit = digit;
-            break;
-        }
-        num = num / 10;
-        i++;
-    }
-    return out_digit;
 }
 #endif
 
@@ -310,9 +259,16 @@ bool is_around_int_val(int32_t center, int32_t value, uint32_t delta) {
 #endif
 
 #ifdef HAS_DATA_UTILS_EXT
-bool toggle_bool(bool on_off_in) {
+bool toggle_bool(bool val_in) {
     bool on_off_out = false;
-    switch(on_off_in) {
+    if(val_in) {
+        on_off_out = false;
+    } else {
+        on_off_out = true;
+    }
+
+#if 0
+    switch(val_in) {
     case true:
         on_off_out = false;
         break;
@@ -323,6 +279,7 @@ bool toggle_bool(bool on_off_in) {
         on_off_out = false;
         break;
     }
+#endif
     return on_off_out;
 }
 #endif
@@ -347,97 +304,6 @@ bool float_val_reset(FloatValue_t* const Node) {
         Node->cur = 0.0;
         Node->max = FLT_MIN;
         Node->min = FLT_MAX;
-        res = true;
-    }
-    return res;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
-bool data_u32_init(U32Value_t* const Node) {
-    bool res = false;
-    if(Node) {
-        Node->cur = 0;
-        Node->max = 0;
-        Node->min = 0xFFFFFFFF;
-        res = true;
-    }
-    return res;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
-bool data_u64_init(U64Value_t* const Node) {
-    bool res = false;
-    if(Node) {
-        Node->cur = 0;
-        Node->max = 0;
-        Node->min = 0xFFFFffffFFFFffff;
-        res = true;
-    }
-    return res;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
-/* 1 - 1
- * 12 - 2
- * 123 - 3*/
-uint32_t rank_dec(const uint32_t de) {
-    uint32_t r = 0;
-    uint32_t t = de;
-    while(t) {
-        t /= 10;
-        r++;
-    }
-    return r;
-}
-
-/*
-  invert decimal digits in a number
-  1234 -> 4321
-  1222 -> 2221
-  1234567899 -> 9987654321
-  */
-uint64_t invert_dec(const uint32_t value) {
-    uint64_t inv = 0;
-    LOG_INFO(SYS, "InvertDec:0x%08X=%u", value, value);
-    uint32_t i = 0;
-    uint32_t t = value;
-    uint32_t rank = rank_dec(value);
-    while(t) {
-        uint32_t digit = t % 10;
-        t /= 10;
-        uint32_t exp = rank - i - 1;
-        uint64_t scale = ((uint64_t)digit) * ipow(10, exp);
-        inv += (uint64_t)scale;
-        i++;
-    }
-    LOG_INFO(SYS, "InvertedDec:%llu", inv);
-    return inv;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
-bool data_u64_update(U64Value_t* const Node, uint64_t val) {
-    bool res = false;
-    if(Node) {
-        Node->cur = val;
-        Node->max = DATA_MAX(Node->max, val);
-        Node->min = DATA_MIN(Node->min, val);
-        res = true;
-    }
-    return res;
-}
-#endif
-
-#ifdef HAS_DATA_UTILS_EXT
-bool swap_u32_xor(uint32_t* const a, uint32_t* const b) {
-    bool res = false;
-    if(a != b) {
-        *a = *a ^ *b; // a = a XOR b = c
-        *b = *a ^ *b; // b = (a XOR b) XOR b = a
-        *a = *a ^ *b; // a = (a XOR b) XOR a = b
         res = true;
     }
     return res;

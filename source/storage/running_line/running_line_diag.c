@@ -8,28 +8,28 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-static char text[250] = "";
+static char lText[250] = "";
 
 const char* RunningLineConfigToStr(const RunningLineConfig_t* const Config) {
     if(Config) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sN:%u,", text, Config->num);
-        snprintf(text, sizeof(text), "%sText:%p,", text, Config->Text);
-        snprintf(text, sizeof(text), "%sSize:%u,", text, Config->size);
-        snprintf(text, sizeof(text), "%sPeriod:%u ms,", text, Config->duration_ms);
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%sN:%u,", lText, Config->num);
+        snprintf(lText, sizeof(lText), "%sText:%p,", lText, Config->Text);
+        snprintf(lText, sizeof(lText), "%sSize:%u,", lText, Config->size);
+        snprintf(lText, sizeof(lText), "%sPeriod:%u ms,", lText, Config->duration_ms);
     }
-    return text;
+    return lText;
 }
 
 const char* RunningLineNodeToStr(const RunningLineHandle_t* const Node) {
     if(Node) {
-        strcpy(text, "");
-        snprintf(text, sizeof(text), "%sN:%u,", text, Node->num);
-        snprintf(text, sizeof(text), "%sText:[%s],", text, running_line_get_text(Node->num));
-        snprintf(text, sizeof(text), "%sLen:%u,", text, Node->size - Node->i_start);
-        snprintf(text, sizeof(text), "%sPeriod:%u ms,", text, Node->duration_ms);
+        strcpy(lText, "");
+        snprintf(lText, sizeof(lText), "%sN:%u,", lText, Node->num);
+        snprintf(lText, sizeof(lText), "%sText:[%s],", lText, running_line_get_text(Node->num));
+        snprintf(lText, sizeof(lText), "%sLen:%u,", lText, Node->size - Node->i_start);
+        snprintf(lText, sizeof(lText), "%sPeriod:%u ms,", lText, Node->duration_ms);
     }
-    return text;
+    return lText;
 }
 
 bool running_line_diag(void) {
@@ -39,13 +39,13 @@ bool running_line_diag(void) {
         {5, "No"}, {6, "Start"}, {6, "size"}, {6, "len"}, {6, "Period"}, {8, "next"}, {16, "Line"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    char line[350] = "";
     uint16_t i = 0;
     uint32_t cnt = running_line_get_cnt();
     for(i = 0; i <= cnt; i++) {
         RunningLineHandle_t* Node = RunningLineGetNode(i);
         if(Node) {
             uint32_t len = strlen(running_line_get_text(Node->num));
+            char line[350] = "";
             strcpy(line, TSEP);
             snprintf(line, sizeof(line), "%s %3u " TSEP, line, Node->num);
             snprintf(line, sizeof(line), "%s %4u " TSEP, line, Node->i_start);

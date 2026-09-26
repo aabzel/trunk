@@ -5,9 +5,16 @@ ifneq ($(BYTE_GENERAL_MK_INC),Y)
     # $(error BYTE_MCAL_DIR=$(BYTE_MCAL_DIR))
 
     INCDIR += -I$(BYTE_MCAL_DIR)
+
     MCAL_OPT += -DHAS_BYTE_MICS
 
     SOURCES_C += $(BYTE_MCAL_DIR)/byte_utils.c
+
+    MCAL_OPT += -DHAS_WORD_UTILS
+    SOURCES_C += $(BYTE_MCAL_DIR)/word_utils.c
+
+    SOURCES_C += $(BYTE_MCAL_DIR)/dword_utils.c
+    SOURCES_C += $(BYTE_MCAL_DIR)/qword_utils.c
 
     ifeq ($(DIAG),Y)
         #ifeq ($(BYTE_DIAG),Y)

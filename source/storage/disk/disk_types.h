@@ -4,9 +4,10 @@
 #include "std_includes.h"
 #include "disk_const.h"
 #include "interfaces_types.h"
+#include "ff.h"
 
 #ifdef HAS_FAT_FS
-#include "integer.h"
+//#include "integer.h"
 /* Status of Disk Functions */
 typedef BYTE DSTATUS;
 #endif

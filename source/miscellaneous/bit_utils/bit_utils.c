@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "std_includes.h"
+#include "utils_math.h"
 
 #ifdef HAS_DATA_MISC
 #include "data_types.h"
@@ -200,6 +201,16 @@ uint8_t count_set_bits(uint32_t const inVal32bit) {
     return sum;
 }
 
+uint8_t count_set_bits_u16(uint16_t const inVal16bit) {
+    uint8_t sum = 0;
+    uint16_t val16bit = inVal16bit;
+    while(0u != val16bit) {
+        sum++;
+        val16bit &= (val16bit - 1u);
+    }
+    return sum;
+}
+
 // Return sum of bits in "data"
 uint8_t bit_summ16(uint16_t data) {
     uint8_t cnt = 0;
@@ -329,17 +340,15 @@ uint32_t swap_bits_u32(uint32_t in_val) {
 }
 
 uint32_t swap_bits_u32_f(uint32_t num32b) {
-    uint32_t reverseNum = 0u;
+    uint32_t reverse_num = 0u;
     uint32_t i;
-    uint32_t is_i_bit_set;
-
     for(i = 0u; i <= 31; i++) {
-        is_i_bit_set = (num32b & (1 << i));
+        uint32_t is_i_bit_set = (num32b & (1 << i));
         if(is_i_bit_set) {
-            reverseNum |= (1 << (31 - i));
+            reverse_num |= (1 << (31 - i));
         }
     }
-    return reverseNum;
+    return reverse_num;
 }
 
 uint64_t swap_bits_u64(uint64_t in_val) {
@@ -373,7 +382,7 @@ uint64_t swap_bits_u64_v2(uint64_t in_val) {
 
 #endif
 
-bool is_valid_bit_mask_u8(char* in_mask) {
+bool is_valid_bit_mask_u8(char* const in_mask) {
     bool out_res = true;
     //  LOG_DEBUG(SYS,"IsValidMask[%s]",in_mask);
     size_t len = strlen(in_mask);
@@ -470,10 +479,28 @@ uint8_t adjust_bits_u8(uint8_t orig, char* in_mask) {
 /*
   returns the minimum number of bits required to encode the given number
  */
-uint32_t calc_bitness(const uint32_t value) {
+uint32_t calc_bitness_slow(const uint32_t value) {
     uint32_t bitness = 0;
-    bitness = (uint32_t)ceil(log((double)value) / log(2.0));
+    bitness = (uint32_t)ceilf(logf((float)value) / logf(2.0f));
     return bitness;
+}
+
+/* calc_the_most_significant_bit
+   returns the minimum number of bits required to encode the given number
+ */
+uint32_t calc_bitness(const uint32_t data) {
+    uint32_t msb = 1;
+    if(data) {
+        int8_t i = 0;
+        for(i = 31; 0 <= i; i--) {
+            if((data >> i) & 1) {
+                msb = (uint32_t)i;
+                break;
+            }
+        }
+    }
+    msb++;
+    return msb;
 }
 
 /*TODO test it*/
@@ -493,7 +520,7 @@ uint32_t calc_bitness_u64(const uint64_t value) {
     return bitness;
 }
 
-uint32_t bit_ctrl(const uint32_t in_val, const uint8_t bit_num, const uint8_t bit_val) {
+uint32_t bit_u32_ctrl(const uint32_t in_val, const uint8_t bit_num, const uint8_t bit_val) {
     uint32_t out_val = in_val;
     if(bit_num <= 31) {
         switch(bit_val) {
@@ -509,3 +536,65 @@ uint32_t bit_ctrl(const uint32_t in_val, const uint8_t bit_num, const uint8_t bi
     }
     return out_val;
 }
+
+/*https://habr.com/ru/companies/timeweb/articles/971528/
+ * TODO Test it
+ * */
+uint32_t next_power_of_two(const uint32_t a) {
+    uint32_t x = a;
+    x--;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    return x + 1;
+}
+
+/*
+ 3->4
+ 5->8
+ 9->16
+ */
+uint32_t next_power_of_2(const uint32_t size) {
+    uint32_t p2size = 0;
+    bool res = is_power_of_two(size);
+    if(res) {
+        p2size = size;
+    } else {
+        uint32_t bitness = calc_bitness(size);
+        p2size = int_pow_fast(2, bitness);
+    }
+    LOG_INFO(SYS, "Size:%u->NextPowTo:%u", size, p2size);
+    return p2size;
+}
+
+uint32_t reverse_bits_static(uint32_t v) {
+    v = ((v >> 1) & 0x55555555) | ((v & 0x55555555) << 1);
+    v = ((v >> 2) & 0x33333333) | ((v & 0x33333333) << 2);
+    v = ((v >> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4);
+    v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8);
+    v = (v >> 16) | (v << 16);
+    return v;
+}
+
+uint8_t bit_u8_ctrl(const uint8_t in_val, const uint8_t bit_num, const uint8_t bit_val) {
+    uint8_t out_val = in_val;
+    if(bit_num <= 7) {
+        switch(bit_val) {
+        case 0:
+            RESET_BIT_NUM(out_val, bit_num);
+            break;
+        case 1:
+            SET_BIT_NUM(out_val, bit_num);
+            break;
+        default:
+            break;
+        }
+    }
+    return out_val;
+}
+
+int min_no_branch(int x, int y) { return y ^ ((x ^ y) & -(x < y)); }
+
+int max_no_branch(int x, int y) { return x ^ ((x ^ y) & -(x < y)); }

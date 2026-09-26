@@ -1,11 +1,6 @@
 #ifndef INTERFACES_TASKS_H
 #define INTERFACES_TASKS_H
 
-#ifdef HAS_BLUETOOTH_PROC
-#define BLUETOOTH_TASK {.name="BlueTooth", .period_us=BLUETOOTH_PERIOD_US, .limiter.function=bluetooth_process,},
-#else
-#define BLUETOOTH_TASK
-#endif
 
 #ifdef HAS_CAN_HEARTBEAT_PROC
 #include "can_mcal.h"
@@ -23,14 +18,24 @@
 #define SW_UART_TASK
 #endif
 
-
+#ifdef HAS_CAN_HEALTH_MONITOR_PROC
+#include "can_mcal.h"
+#define CAN_HEALTH_MONITOR_TASK                                \
+    {                                                          \
+     .name = "CanHm",                                          \
+     .period_us = CAN_HEALTH_MONITOR_PERIOD_US,                \
+     .limiter.function = can_health_monitor_proc,              \
+     },
+#else
+#define CAN_HEALTH_MONITOR_TASK
+#endif
 
 #ifdef HAS_CAN_PROC
 #include "can_mcal.h"
-#define CAN_TASKS                                     \
-    CAN_HEARTBEAT_TASK                                \
-    {.name="CanHm", .period_us = CAN_HEALTH_MONITOR_PERIOD_US, .limiter.function = can_health_monitor_proc,}, \
-    {.name="CAN", .period_us = CAN_PERIOD_US, .limiter.function = can_proc,},
+#define CAN_TASKS                                        \
+    CAN_HEARTBEAT_TASK                                   \
+    CAN_HEALTH_MONITOR_TASK                              \
+    {.name = "CAN", .period_us = CAN_PERIOD_US, .limiter.function = can_proc,},
 
 #else
 #define CAN_TASKS
@@ -153,7 +158,7 @@
 
 #ifdef HAS_SOCKET_PROC
 #include "socket_if.h"
-#define SOCKET_TASK  { .name="Socket", .period_us = SOCKET_PERIOD_US, .limiter.function = socket_proc,},
+#define SOCKET_TASK { .name="Socket", .period_us = SOCKET_PERIOD_US, .limiter.function = socket_proc,},
 #else
 #define SOCKET_TASK
 #endif
@@ -161,7 +166,6 @@
 #define USB_TASKS USB_HOST_TASK
 
 #define CONNECTIVITY_WIRELESS_TASKS    \
-    BLUETOOTH_TASK                     \
     LORA_TASK                          \
     WIFI_TASK                          \
     RF_TASKS                           \
@@ -169,6 +173,7 @@
 
 #define CONNECTIVITY_WIRE_TASKS  \
     CAN_TASKS                    \
+    RF_TASK                      \
     ONE_WIRE_TASK                \
     SEGGER_RTT_TASK              \
     QSPI_TASK                    \

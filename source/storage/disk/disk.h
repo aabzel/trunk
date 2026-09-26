@@ -8,9 +8,12 @@ extern "C" {
 #include "std_includes.h"
 #include "disk_config.h"
 #include "disk_types.h"
+#include "diskio.h"
+
 #ifdef HAS_FAT_FS
-#include "integer.h"
+//#include "integer.h"
 #endif
+
 #ifdef HAS_DISK_DIAG
 #include "disk_diag.h"
 #endif
@@ -25,7 +28,7 @@ bool DiskIsValidConfig(const DiskConfig_t* const Config);
 const DiskInfo_t* DiskGetInfo(uint8_t num);
 #endif
 
-DSTATUS disk_initialize(BYTE pdrv);
+//DSTATUS disk_initialize(BYTE pdrv);
 bool disk_mcal_init(void);
 bool disk_init_custom(void);
 bool disk_init_one(uint8_t num);
@@ -39,14 +42,14 @@ DRESULT disk_res_to_ret(const bool res);
 DRESULT disk_ret_to_res(const DRESULT ret);
 
 /*setters*/
-DRESULT disk_write(BYTE pdrv, const BYTE* buff, DWORD sector, UINT count);
-DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void* buff);
+//DRESULT disk_write(BYTE pdrv, const BYTE* buff, DWORD sector, UINT count);
+//DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void* buff);
 
 /*getters*/
 bool disk_raw_reg_diag(uint8_t i) ;
-DSTATUS disk_status(BYTE pdrv);
-DRESULT disk_read(BYTE pdrv, BYTE* buff, DWORD sector, UINT count);
-DWORD get_fattime(void);
+//DSTATUS disk_status(BYTE pdrv);
+//DRESULT disk_read(BYTE pdrv, BYTE* buff, DWORD sector, UINT count);
+//DWORD get_fattime(void);
 
 
 #ifdef __cplusplus

@@ -11,6 +11,7 @@ ifneq ($(INTERFACE_MK_INC),Y)
     MCAL_OPT += -DHAS_INTERFACES
 
     SOURCES_C +=${INTERFACES_DIR}/interface_drv.c
+    SOURCES_C += $(INTERFACES_DIR)/if_config.c
 
     ifeq ($(INTERFACE_PROC),Y)
         MCAL_OPT += -DHAS_INTERFACE_PROC

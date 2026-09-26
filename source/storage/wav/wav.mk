@@ -2,7 +2,7 @@ ifneq ($(WAV_MK_INC),Y)
     WAV_MK_INC=Y
 
     WAV_DIR = $(STORAGE_DIR)/wav
-    #@ echo $(error WAV_DIR = $(WAV_DIR))
+    # $(error WAV_DIR = $(WAV_DIR))
 
     MCAL_OPT += -DHAS_WAV
 

@@ -24,11 +24,17 @@ bool little_fs_open_command(int32_t argc, char* argv[]);
 bool little_fs_read_ll_command(int32_t argc, char* argv[]);
 bool little_fs_read_command(int32_t argc, char* argv[]);
 bool little_fs_write_command(int32_t argc, char* argv[]);
+bool little_fs_write_end_command(int32_t argc, char* argv[]);
 bool little_fs_write_ll_command(int32_t argc, char* argv[]);
 bool little_fs_list_command(int32_t argc, char* argv[]);
+bool little_fs_format_command(int32_t argc, char* argv[]);
+bool little_fs_cat_command(int32_t argc, char* argv[]);
 
 #define LITTLE_FS_COMMANDS                                                                                    \
+        SHELL_CMD("little_fs_write_end", "lfwe", little_fs_write_end_command, "LittleWriteEnd"),                           \
+        SHELL_CMD("little_fs_cat", "lfc", little_fs_cat_command, "LittleFsCat"),                           \
         SHELL_CMD("little_fs_remove", "lfrm", little_fs_remove_command, "LittleFsRemove"),                    \
+        SHELL_CMD("little_fs_format", "lffrm", little_fs_format_command, "LittleFsFormat"),                    \
         SHELL_CMD("little_fs_ls", "lfl", little_fs_list_command, "LittleFsList"),                    \
         SHELL_CMD("little_fs_file_info", "lffi", little_fs_file_info_command, "LittleFsFileInfo"),            \
         SHELL_CMD("little_fs_open", "lfo", little_fs_open_command, "LittleFsDiag"),                           \
