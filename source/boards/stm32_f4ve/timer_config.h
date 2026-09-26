@@ -1,21 +1,17 @@
 #ifndef TIM_CONFIG_GENERAL_H
 #define TIM_CONFIG_GENERAL_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "timer_types.h"
 
-#ifndef HAS_TIMER
-#error "Add HAS_TIMER"
-#endif /*HAS_TIMER*/
-
-#define TIMER_RTC_NUM 1
-#define TIMER_US_TICK_NUM 2
-#define TIMER_STACK_NUM 3
-#define TIMER_MS_TICK_NUM 5
-#define TIMER_US_PERIOD_MS 4000U
-//#define TIMER_MS_PERIOD_MS 4000000U
+typedef enum {
+    TIMER_NUM_LO_BASE = 8,
+    TIMER_NUM_ADC1_TRIG = 2,
+    TIMER_NUM_LASER = 3,
+    TIMER_NUM_LO = 4,
+    TIMER_NUM_LASER3 = 9,
+    TIMER_NUM_MS = 5,
+} TimerLegalNums_t;
 
 extern const TimerConfig_t TimerConfig[];
 extern TimerHandle_t TimerInstance[];

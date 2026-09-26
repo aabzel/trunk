@@ -4,15 +4,27 @@
 //#include "time_mcal.h"
 #include "dma_channel_dep.h"
 
-#define DMA_CHANNEL_VERSION 3
+#define DMA_CHANNEL_VERSION 4
 #define DMA_CHANNEL_PERIOD_US 500000
 #define DMA_CHANNEL_TRANSFER_TIMEOUT_MS 3000
 
-typedef enum{
+
+
+
+typedef enum {
    //DMA_CHANNEL_NUM_UNDEF = 0,
 
    DMA_CHANNEL_NUM_MEMCPY1 ,
    DMA_CHANNEL_NUM_MEMCPY2 ,
+
+#ifdef HAS_GPIO
+   DMA_CHANNEL_NUM_GPIOA_RX,
+   DMA_CHANNEL_NUM_GPIOA_TX,
+   DMA_CHANNEL_NUM_GPIOB,
+   DMA_CHANNEL_NUM_GPIOC,
+   DMA_CHANNEL_NUM_GPIOD,
+   DMA_CHANNEL_NUM_GPIOE,
+#endif
 
 #ifdef HAS_ADC1
    DMA_CHANNEL_NUM_ADC1 ,
@@ -24,6 +36,11 @@ typedef enum{
 
 #ifdef HAS_ADC3
    DMA_CHANNEL_NUM_ADC3,
+#endif
+
+#ifdef HAS_SDIO
+   DMA_CHANNEL_NUM_SDIO_RX ,
+   DMA_CHANNEL_NUM_SDIO_TX ,
 #endif
 
 #ifdef HAS_SPI1
@@ -46,14 +63,19 @@ typedef enum{
    DMA_CHANNEL_NUM_SPI3_RX ,
 #endif
 
+
+#ifdef HAS_UART_DMA
+
 #ifdef HAS_UART1
    DMA_CHANNEL_NUM_UART1_TX ,
    DMA_CHANNEL_NUM_UART1_RX ,
 #endif
 
-#ifdef HAS_SDIO
-   DMA_CHANNEL_NUM_SDIO_RX ,
-   DMA_CHANNEL_NUM_SDIO_TX ,
+#ifdef HAS_UART2
+   DMA_CHANNEL_NUM_UART2_TX ,
+   DMA_CHANNEL_NUM_UART2_RX ,
+#endif
+
 #endif
 
    DMA_CHANNEL_NUM_CNT

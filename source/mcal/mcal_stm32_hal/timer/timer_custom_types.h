@@ -73,6 +73,23 @@ typedef union {
 }TimerRegCR1_t;
 
 
+/* TIM1 and TIM8 slave mode control register (TIMx_SMCR) */
+typedef union {
+    volatile uint32_t dword;  /*  */
+    struct {
+        volatile uint32_t SMS      : 3;  /*  Bits 2:0  SMS: Slave mode selection              */
+        volatile uint32_t RES0     : 1;  /*  Bit 3     Reserved                               */
+        volatile uint32_t TS       : 3;  /*  Bits 6:4  TS: Trigger selection                   */
+        volatile uint32_t MSM      : 1;  /*  Bit 7     MSM: Master/slave mode                  */
+        volatile uint32_t ETF      : 4;  /*  Bits 11:8 ETF: External trigger filter            */
+        volatile uint32_t ETPS     : 2;  /*  Bits 13:12 ETPS: External trigger prescaler       */
+        volatile uint32_t ECE      : 1;  /*  Bit 14    ECE: External clock enable              */
+        volatile uint32_t ETP      : 1;  /*  Bit 15    ETP: External trigger polarity          */
+        volatile uint32_t RES1     : 16; /*  Bits 31:16 Reserved                               */
+    } ;
+} TimerRegSMCR_t;
+
+
 
 /**
  * @brief Union for TIMx_CCER (Capture/Compare Enable Register)

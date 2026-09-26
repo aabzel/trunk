@@ -29,6 +29,7 @@ typedef struct {
 typedef bool (*DmaIsrHandler_t)(void);
 
 #define DMA_CHANNEL_CALLBACKS                           \
+    DmaIsrHandler_t CallBackError;                      \
     DmaIsrHandler_t CallBackHalf;                       \
     DmaIsrHandler_t CallBackDone;
 

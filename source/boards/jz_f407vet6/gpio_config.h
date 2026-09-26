@@ -1,7 +1,7 @@
 #ifndef GPIO_CONFIG_H
 #define GPIO_CONFIG_H
 
-#include <stdint.h>
+#include "std_includes.h"
 
 #include "gpio_types.h"
 #include "stm32f4xx_hal.h"

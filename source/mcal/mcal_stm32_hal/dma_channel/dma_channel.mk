@@ -9,6 +9,12 @@ ifneq ($(DMA_CHANNEL_CUSTOM_MK_INC),Y)
 
     SOURCES_C += $(DMA_DIR)/dma_channel_mcal.c
     SOURCES_C += $(DMA_DIR)/dma_channel_custom_bindings.c
+    SOURCES_C += $(DMA_DIR)/dma_channel_config_memcpy.c
+
+    ifeq ($(DMA_CHANNEL_INTERRUPT),Y)
+        MCAL_OPT += -DHAS_DMA_CHANNEL_CUSTOM_INTERRUPT
+        SOURCES_C += $(DMA_DIR)/dma_channel_custom_isr.c
+    endif
 
     ifeq ($(DMA_CHANNEL_DIAG),Y)
         SOURCES_C += $(DMA_CHANNEL_DIR)/dma_channel_custom_diag.c

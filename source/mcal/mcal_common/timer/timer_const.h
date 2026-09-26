@@ -16,10 +16,10 @@ typedef enum {
 } TimerPolarity_t;
 
 typedef enum {
+    TIMER_ROLE_UNDEF = 0,
     TIMER_ROLE_MASTER = 1,
     TIMER_ROLE_SLAVE = 2,
     TIMER_ROLE_SINGLE  = 3,
-    TIMER_ROLE_UNDEF = 0,
 } TimerRole_t;
 
 

@@ -134,7 +134,7 @@ bool i2s_dma_pause(uint8_t num) {
         ret = HAL_I2S_DMAPause(Node->pHandle);
         if(HAL_OK == ret) {
             res = true;
-            LOG_INFO(I2S, "DmaPause" LOG_OK);
+            LOG_DEBUG(I2S, "DmaPause" LOG_OK);
         } else {
             LOG_ERROR(I2S, "DmaPause %s", HalStatusToStr(ret));
         }
@@ -152,7 +152,7 @@ bool i2s_dma_stop(uint8_t num) {
         HAL_I2S_DMAStop(Node->pHandle);
         if(HAL_OK == ret) {
             res = true;
-            LOG_INFO(I2S, "DmaStop" LOG_OK);
+            LOG_DEBUG(I2S, "DmaStop" LOG_OK);
         } else {
             LOG_ERROR(I2S, "I2S_%u,DmaStop:%u=%s",num,ret, HalStatusToStr(ret));
         }

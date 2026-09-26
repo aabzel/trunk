@@ -4,9 +4,6 @@
 #include <stdint.h>
 
 
-/*
- { .dma_num=dma_num, .channel=channel, }
- */
 #if 0
 typedef union {
     uint8_t byte;
@@ -15,6 +12,9 @@ typedef union {
         uint8_t stream:6; // 0,[1...7]...63
     };
 }DmaChannelPad_t;
+/*
+ { .dma_num=dma_num, .channel=channel, }
+ */
 #endif
 
 

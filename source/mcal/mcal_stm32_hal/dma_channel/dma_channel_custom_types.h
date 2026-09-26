@@ -150,6 +150,25 @@ typedef union {
     };
 }DmaStreamConfReg_t;
 
+
+/*
+ DMA stream x FIFO control register (DMA_SxFCR) (x = 0..7)
+ Address offset: 0x24 + 0x24 * stream number
+ Reset value: 0x0000 0021
+ */
+typedef union {
+    volatile uint32_t dword;
+    struct{
+        volatile uint32_t fth     :2; /*Bits 1:0 FTH[1:0]: FIFO threshold selection*/
+        volatile uint32_t dmdis   :1; /*Bit 2 DMDIS: Direct mode disable*/
+        volatile uint32_t fs      :3; /*Bits 5:3 FS[2:0]: FIFO status*/
+        volatile uint32_t res1    :1; /*Bit 6Reserved, must be kept at reset value.*/
+        volatile uint32_t feie    :1; /*Bit 7 FEIE: FIFO error interrupt enable*/
+        volatile uint32_t res2    :24;/*Bits 31:8Reserved, must be kept at reset value.*/
+    };
+}DmaStreamFifoСontrolReg_t;
+
+
 typedef struct {
     volatile DMA_Stream_TypeDef* DMA_STREAMx;
     DmaChannel_t channel; // for stm that is stream

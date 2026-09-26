@@ -2,15 +2,17 @@
 
 #ifndef HAS_TIMER
 #error "Add HAS_TIMER"
-#endif /*HAS_TIMER*/
+#endif
 
 #include "data_utils.h"
+#include "time_mcal.h"
 
 const TimerConfig_t TimerConfig[] = {
-       {.num=TIMER_RTC_NUM , .valid=true,  /*.bitness=16,*/ .cnt_period_ns = 1000000, .dir=CNT_DIR_UP, .interrupt_on=true,   .on_off=true, .period_ms = 1000,                       .name="s"},
-       {.num=TIMER_US_TICK_NUM , .valid=true, /*.bitness=32,*/ .cnt_period_ns = 1000, .dir=CNT_DIR_UP, .interrupt_on=true,   .on_off=true,  .period_ms = TIMER_US_PERIOD_MS,    .name="us"},
-       {.num=TIMER_STACK_NUM , .valid=true,   /*.bitness=16,*/ .cnt_period_ns = 1000, .dir=CNT_DIR_UP, .interrupt_on=true,   .on_off=true,  .period_ms = 1, .name="stack"},
-       {.num=TIMER_MS_TICK_NUM , .valid=true, /*.bitness=32,*/ .cnt_period_ns = 1000, .dir=CNT_DIR_UP, .interrupt_on=true,  .on_off=true,  .period_ms = 1, .name="ms"},
+       {.num=TIMER_RTC_NUM,      .valid=true,  /*.bitness=16,*/  .cnt_period_ns = 1000000, .dir=TIMER_CNT_DIR_UP, .interrupt_on=true,   .on_off=true,  .period_s = MSEC_2_SEC(1000),                       .name="s"},
+       {.num=TIMER_US_TICK_NUM , .valid=true, /*.bitness=32,*/   .cnt_period_ns = 1000,    .dir=TIMER_CNT_DIR_UP, .interrupt_on=true,   .on_off=true,  .period_s = MSEC_2_SEC(TIMER_US_PERIOD_MS),
+               .name="us"},
+       {.num=TIMER_STACK_NUM ,   .valid=true,   /*.bitness=16,*/ .cnt_period_ns = 1000,    .dir=TIMER_CNT_DIR_UP, .interrupt_on=true,   .on_off=true,  .period_s = MSEC_2_SEC(1), .name="stack"},
+       {.num=TIMER_MS_TICK_NUM , .valid=true, /*.bitness=32,*/   .cnt_period_ns = 1000,    .dir=TIMER_CNT_DIR_UP, .interrupt_on=true,   .on_off=true,  .period_s = MSEC_2_SEC(1), .name="ms"},
 };
 
 TimerHandle_t TimerInstance[]={

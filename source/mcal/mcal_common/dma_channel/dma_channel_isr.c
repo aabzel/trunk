@@ -2,7 +2,7 @@
 
 #include "dma_channel_mcal.h"
 
-static bool DmaChannelHalfIsrLL(DmaChannelHandle_t* const Node) {
+bool DmaChannelHalfIsrLL(DmaChannelHandle_t* const Node) {
     bool res = false;
     if(Node) {
         Node->half = true;
@@ -17,7 +17,14 @@ static bool DmaChannelHalfIsrLL(DmaChannelHandle_t* const Node) {
     return res;
 }
 
-static bool DmaChannelDoneIsrLL(DmaChannelHandle_t* const Node) {
+bool DmaChannelM1FullTxIsrLL(DmaChannelHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+    }
+    return res;
+}
+
+bool DmaChannelDoneIsrLL(DmaChannelHandle_t* const Node) {
     bool res = false;
     if(Node) {
         Node->done = true;
@@ -32,7 +39,7 @@ static bool DmaChannelDoneIsrLL(DmaChannelHandle_t* const Node) {
     return res;
 }
 
-static bool DmaChannelErrorIsrLL(DmaChannelHandle_t* const Node) {
+bool DmaChannelErrorIsrLL(DmaChannelHandle_t* const Node) {
     bool res = false;
     if(Node) {
         Node->error_done = true;
@@ -40,9 +47,30 @@ static bool DmaChannelErrorIsrLL(DmaChannelHandle_t* const Node) {
         Node->busy = false;
         Node->processed = false;
         res = true;
-        // if(Node->CallBackError) {
-        //     res = Node->CallBackError();
-        // }
+        if(Node->CallBackError) {
+             res = Node->CallBackError();
+        }
+    }
+    return res;
+}
+
+bool DmaChannelAllIsrLL(DmaChannelHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+    }
+    return res;
+}
+
+bool DmaChannelAbortIsrLL(DmaChannelHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
+    }
+    return res;
+}
+
+bool DmaChannelM1HalfTxIsrLL(DmaChannelHandle_t* const Node) {
+    bool res = false;
+    if(Node) {
     }
     return res;
 }

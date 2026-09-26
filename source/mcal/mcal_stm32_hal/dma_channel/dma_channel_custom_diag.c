@@ -94,6 +94,7 @@ const char* dma_channel_to_str(uint8_t dma_num, uint8_t stream_num, uint32_t cha
 
 }
 
+// dma_channel_diag_custom
 bool dma_channel_diag_custom(void){
     bool res = false;
     static const table_col_t cols[] = {
@@ -192,3 +193,91 @@ bool  dma_channel_reg_map(const DmaInfoChannel_t DmaPad) {
     }
     return res;
 }
+
+static bool DmaStreamRegNumOfDataRegDiag(const uint8_t dma_num, const uint8_t stream_num, const DmaStreamRegNumOfData_t* const Reg) {
+    bool res = false;
+    if(Reg) {
+        LOG_WARNING(DMA_CHANNEL, "number of data reg (DMA_SxNDTR), DMA%u_Stream%u,Reg:0x%08x", dma_num, stream_num, Reg->dword);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,NDT:%u", dma_num, stream_num, Reg->NDT);
+        res = true;
+    }
+    return res;
+}
+
+
+static bool DmaStreamFifoСontrolRegDiag(const uint8_t dma_num, const uint8_t stream_num, const DmaStreamFifoСontrolReg_t* const Reg) {
+    bool res = false;
+    if(Reg) {
+        LOG_WARNING(DMA_CHANNEL, "FIFO control register (DMA_SxFCR), DMA%u_Stream%u,Reg:0x%08x", dma_num, stream_num, Reg->dword);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,fth:%u", dma_num, stream_num, Reg->fth);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,dmdis:%u", dma_num, stream_num, Reg->dmdis);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,fs:%u", dma_num, stream_num, Reg->fs);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,feie:%u", dma_num, stream_num, Reg->feie);
+        res = true;
+    }
+    return res;
+}
+
+static bool DmaStreamConfRegDiag(const uint8_t dma_num, const uint8_t stream_num, const DmaStreamConfReg_t* const Reg) {
+    bool res = false;
+    if(Reg) {
+        LOG_WARNING(DMA_CHANNEL, "ConfigReg (DMA_SxCR) DMA%u_Stream%u,Reg:0x%08x", dma_num, stream_num, Reg->dword);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,en:%u", dma_num, stream_num, Reg->en);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,dmeie:%u", dma_num, stream_num, Reg->dmeie);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,teie:%u", dma_num, stream_num, Reg->teie);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,htie:%u", dma_num, stream_num, Reg->htie);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,tcie:%u", dma_num, stream_num, Reg->tcie);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,pfctrl:%u", dma_num, stream_num, Reg->pfctrl);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,dir:%u", dma_num, stream_num, Reg->dir);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,circ:%u", dma_num, stream_num, Reg->circ);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,pinc:%u", dma_num, stream_num, Reg->pinc);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,minc:%u", dma_num, stream_num, Reg->minc);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,psize:%u", dma_num, stream_num, Reg->psize);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,msize:%u", dma_num, stream_num, Reg->msize);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,pincos:%u", dma_num, stream_num, Reg->pincos);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,pl:%u", dma_num, stream_num, Reg->pl);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,dbm:%u", dma_num, stream_num, Reg->dbm);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,ct:%u", dma_num, stream_num, Reg->ct);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,pburst:%u", dma_num, stream_num, Reg->pburst);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,mburst:%u", dma_num, stream_num, Reg->mburst);
+        LOG_INFO(DMA_CHANNEL, "DMA%u_Stream%u,chsel:%u", dma_num, stream_num, Reg->chsel);
+        res = true;
+    }
+    return res;
+}
+
+// dma_channel_diag_custom
+bool dma_channel_stream_diag(const uint8_t dma_num, const uint8_t stream_num) {
+    bool res = false;
+    DMA_Stream_TypeDef *DMA_STREAMx = dma_stream_num_2_prt(dma_num, stream_num);
+    if(DMA_STREAMx) {
+        DmaStreamConfReg_t CfgReg;
+        /* DMA stream x configuration register  */
+        CfgReg.dword = DMA_STREAMx->CR;
+        DmaStreamConfRegDiag(dma_num,stream_num,&CfgReg);
+
+        DmaStreamFifoСontrolReg_t FifoСontrol;
+        /* DMA stream x FIFO control register   */
+        FifoСontrol.dword=DMA_STREAMx->FCR;
+        DmaStreamFifoСontrolRegDiag(dma_num,stream_num,&FifoСontrol);
+
+        DmaStreamRegNumOfData_t NumOfData;
+        /* DMA stream x number of data register */
+        NumOfData.dword = DMA_STREAMx->NDTR;
+        DmaStreamRegNumOfDataRegDiag(dma_num, stream_num, &NumOfData);
+
+        /* DMA stream x peripheral address register */
+        LOG_WARNING(DMA_CHANNEL,"DMA%u_Stream%u,PAR:0x%08x",dma_num,stream_num,DMA_STREAMx->PAR);
+
+        /* DMA stream x memory 0 address register   */
+        LOG_WARNING(DMA_CHANNEL,"DMA%u_Stream%u,M0AR:0x%08x",dma_num,stream_num,DMA_STREAMx->M0AR);
+
+        /* DMA stream x memory 1 address register   */
+        LOG_WARNING(DMA_CHANNEL,"DMA%u_Stream%u,M1AR:0x%08x",dma_num,stream_num,DMA_STREAMx->M1AR);
+        res = true;
+    }
+
+    return res;
+}
+
+

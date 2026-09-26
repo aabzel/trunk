@@ -15,7 +15,7 @@ typedef enum {
 } TimerLegalNums_t;
 
 extern const TimerConfig_t TimerConfig[];
-extern TimerHandle_t TimerInstance[15];
+extern TimerHandle_t TimerInstance[];
 
 uint32_t timer_get_cnt(void);
 

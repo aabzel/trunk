@@ -12,18 +12,6 @@ extern "C" {
 #include "dma_channel_config_adc.h"
 #endif
 
-typedef enum{
-   DMA_CHANNEL_NUM_UNDEF = 0,
-#ifdef HAS_ADC
-   DMA_CHANNEL_NUM_ADC1 ,
-#endif
-   DMA_CHANNEL_NUM_SDIO_RX ,
-   DMA_CHANNEL_NUM_SDIO_TX ,
-   DMA_CHANNEL_NUM_MEMCPY1 ,
-   DMA_CHANNEL_NUM_MEMCPY2 ,
-   DMA_CHANNEL_NUM_CNT
-}DmaChannelLegalNums_t;
-
 extern const DmaChannelConfig_t DmaChannelConfig[];
 extern volatile DmaChannelHandle_t DmaChannelInstance[];
 

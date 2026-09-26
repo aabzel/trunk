@@ -10,6 +10,10 @@ extern "C" {
 
 #define I2S_DMA_MEMCPY_SIZE 128
 
+extern uint8_t I2s2toArray[I2S_DMA_MEMCPY_SIZE];
+extern uint8_t I2s2fromArray[I2S_DMA_MEMCPY_SIZE];
+
+
 bool CallBackDoneI2s2Rx(void);
 bool CallBackDoneI2s2Tx(void);
 bool CallBackHalfI2s2Rx(void);
@@ -43,8 +47,8 @@ bool CallBackErrorI2s2Tx(void);
         .name = "I2S2_EXT_RX",                              \
         .num = DMA_CHANNEL_NUM_I2S2_RX,                     \
         .base_addr_source = (uint32_t)  &(I2S2ext->DR) ,    \
-        .base_addr_destination = (uint32_t) fromArray,      \
-        .block_size = (uint32_t) DMA_MEMCPY_SIZE,           \
+        .base_addr_destination = (uint32_t) I2s2fromArray,  \
+        .block_size = (uint32_t) I2S_DMA_MEMCPY_SIZE,       \
         .CallBackHalf = CallBackHalfI2s2Rx,                 \
         .CallBackDone = CallBackDoneI2s2Rx,                 \
     },
@@ -62,7 +66,7 @@ bool CallBackErrorI2s2Tx(void);
         .num = DMA_CHANNEL_NUM_I2S2_RX,                     \
         .base_addr_source = (uint32_t) fromArray,           \
         .base_addr_destination = (uint32_t) &(I2S2ext->DR), \
-        .block_size = (uint32_t) DMA_MEMCPY_SIZE,           \
+        .block_size = (uint32_t) I2S_DMA_MEMCPY_SIZE,       \
         .CallBackHalf = CallBackHalfI2s2Rx,                 \
         .CallBackDone = CallBackDoneI2s2Rx,                 \
     },
@@ -86,7 +90,7 @@ bool CallBackErrorI2s2Tx(void);
  .CallBackHalf= CallBackHalfI2s2Tx,            \
  .CallBackDone= CallBackDoneI2s2Tx,            \
  .base_addr_source = (uint32_t)&(SPI2->DR),    \
- .base_addr_destination =(uint32_t) toArray,   \
+ .base_addr_destination =(uint32_t)  I2s2toArray,   \
     },
 
 #define DMA_CHANNEL_I2S2 \

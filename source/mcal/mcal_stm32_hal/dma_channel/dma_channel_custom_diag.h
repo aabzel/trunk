@@ -11,6 +11,7 @@ extern "C" {
 
 extern const Reg32_t DmaStreamReg[];
 
+bool dma_channel_stream_diag( const uint8_t dma_num ,  const    uint8_t stream_num );
 bool dma_channel_diag_custom(void);
 bool dma_channel_reg_map(const DmaInfoChannel_t DmaPad);
 bool dma_channel_diag_low_level(char* key_word1, char* key_word2);

@@ -39,6 +39,7 @@ bool dma_channel_init_custom(void) ;
 bool dma_channel_init_one_ll(const DmaChannelConfig_t* const Config);
 bool dma_channel_init_common(const DmaChannelConfig_t* const Config,
                              DmaChannelHandle_t* const Node);
+bool dma_channel_init_node(DmaChannelHandle_t* const Node);
 
 DmaChannelHandle_t * DmaChannelGetNodeItem(uint8_t dma_num, DmaChannel_t channel);
 
@@ -47,6 +48,8 @@ bool dma_channel_proc(void);
 
 
 /*setters*/
+bool dma_channel_source_address_set(const DmaInfoChannel_t DmaPad, const uint32_t source_address);
+bool dma_channel_destination_address_set(const DmaInfoChannel_t DmaPad, const uint32_t dist_address);
 bool dma_channel_half_move_it_ctrl(const DmaInfoChannel_t DmaPad, const bool en) ;
 bool dma_channel_restart(DmaInfoChannel_t DmaPad, uint16_t num_data_items_to_tx);
 //bool dma_channel_restart(DmaInfoChannel_t DmaPad);
@@ -68,13 +71,15 @@ bool dma_channel_cnt_set(const DmaInfoChannel_t DmaPad, const uint32_t num_data_
 bool dma_channel_control(DmaChannelHandle_t* const Channel, const void* const complete_data) ;
 bool dma_channel_mux_set(DmaInfoChannel_t DmaPad, uint8_t dma_mux);
 bool dma_channel_priority_set(DmaInfoChannel_t DmaPad, uint8_t priority);
-bool dma_channel_start(DmaInfoChannel_t DmaPad);
+bool dma_channel_start(const  DmaInfoChannel_t DmaPad);
 bool dma_channel_start_ll(DmaChannelHandle_t* Node) ;
 bool dma_channel_stop(DmaInfoChannel_t DmaPad);
 
 /*getters*/
 uint8_t dma_channel_half_move_it_get(const DmaInfoChannel_t DmaPad);
 uint32_t dma_channel_spare_get_cnt(void);
+bool dma_stream_is_uniq(const DmaInfoChannel_t * const DmaChPad) ;
+bool dma_channel_is_done(const DmaInfoChannel_t DmaPad) ;
 bool dma_channel_is_valid_num(uint8_t num);
 bool dma_mux_set(uint8_t dma_num, DmaChannel_t channel, uint8_t dmamux);
 bool dma_channel_priority_get(DmaInfoChannel_t DmaPad, uint8_t* priority);

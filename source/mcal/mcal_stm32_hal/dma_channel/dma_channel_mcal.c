@@ -12,8 +12,10 @@
 #include "dma_custom_misc.h"
 #include "hal_diag.h"
 #include "time_mcal.h"
+#include "hal_mcal.h"
 #include "log.h"
 #include "stm32fx_hal.h"
+#include "dma_channel_custom_isr.h"
 
 /*
   Table 42. DMA1 request mapping
@@ -60,6 +62,19 @@ const DmaInfoChannel_t DmaSpareChannels[]={
 uint32_t dma_channel_spare_get_cnt(void) {
     uint32_t cnt = ARRAY_SIZE(DmaSpareChannels);
     return cnt;
+}
+
+DmaChannelHandle_t* DmaChannelHandleToNode(const DMA_HandleTypeDef * const h_dma) {
+    DmaChannelHandle_t* Node = NULL;
+    uint32_t cnt=dma_channel_get_cnt();
+    uint32_t i=0;
+    for(i=0;i<cnt;i++){
+        if(h_dma==&DmaChannelInstance[i].dma_h){
+            Node = &DmaChannelInstance[i];
+            break;
+        }
+    }
+    return Node;
 }
 
 #define DMA_INT_PRIORITY 0
@@ -186,6 +201,20 @@ uint32_t dma_channel_spare_get_cnt(void) {
 
 static const DmaChannelInfo_t DmaChannelInfo[] = { DMA_CHANNEL_INFO };
 
+static bool dma_channel_init_call_backs(DmaChannelHandle_t* const Node) {
+    bool res = true;
+    HAL_StatusTypeDef ret = HAL_ERROR;
+    ret = HAL_DMA_RegisterCallback(&Node->dma_h, HAL_DMA_XFER_CPLT_CB_ID, DmaChannelTxDone);
+    ret = HAL_DMA_RegisterCallback(&Node->dma_h, HAL_DMA_XFER_HALFCPLT_CB_ID, DmaChannelTxHalf);
+    ret = HAL_DMA_RegisterCallback(&Node->dma_h, HAL_DMA_XFER_ERROR_CB_ID, DmaChannelError);
+    ret = HAL_DMA_RegisterCallback(&Node->dma_h, HAL_DMA_XFER_ABORT_CB_ID, DmaChannelAbort);
+    ret = HAL_DMA_RegisterCallback(&Node->dma_h, HAL_DMA_XFER_ALL_CB_ID, DmaChannelAll);
+    ret = HAL_DMA_RegisterCallback(&Node->dma_h, HAL_DMA_XFER_M1HALFCPLT_CB_ID, DmaChannelM1HalfTx);
+    ret = HAL_DMA_RegisterCallback(&Node->dma_h, HAL_DMA_XFER_M1CPLT_CB_ID, DmaChannelM1FullTx);
+    res = HAL_retToRes(ret);
+    return res;
+}
+
 const DmaChannelInfo_t* DmaChannelGetInfo(uint8_t num, DmaChannel_t stream) {
     uint32_t cnt = ARRAY_SIZE(DmaChannelInfo);
     uint32_t i = 0;
@@ -228,14 +257,33 @@ static bool dma_channel_wait_disabled(DmaChannelHandle_t *Node) {
     return res;
 }
 
-bool dma_channel_start_ll(DmaChannelHandle_t* Node) {
+#if 0
+bool dma_channel_start2_ll(DmaChannelHandle_t* Node) {
     bool res = true;
+    Node->done = false;
     DmaStreamConfReg_t SxCR;
     SxCR.dword = Node->DMA_STREAMx->CR;
     SxCR.en = 1;
     Node->DMA_STREAMx->CR = SxCR.dword;
     return res;
 }
+#endif
+
+bool dma_channel_start_ll(DmaChannelHandle_t* Node) {
+    bool res = true;
+    Node->done = false;
+    HAL_StatusTypeDef ret = HAL_ERROR;
+    res = dma_channel_init_call_backs(Node);
+    ret = HAL_DMA_Start_IT(&Node->dma_h, Node->base_addr_source, Node->base_addr_destination, Node->block_size);
+    res = HAL_retToRes(ret);
+    return res;
+}
+
+#define  DMA_CHANNEL_CUSTOM_VARIABLES                   \
+    DMA_HandleTypeDef dma_h; /*Each DMA channel needs its own DMA Handle (see cube MX code sample) */        \
+    volatile DMA_Stream_TypeDef* DMA_STREAMx;                    \
+    IRQn_Type irq_n;
+
 
 /*TODO make LUT*/
 static uint32_t DmaGetChannel(uint8_t channel) {
@@ -481,17 +529,20 @@ bool dma_channel_init_stm_init(const DmaChannelConfig_t* const ChannelConfig, DM
 
 bool dma_channel_init_one(uint8_t num) {
     bool res = false;
-    LOG_WARNING(DMA_CHANNEL, "N:%u=%s", num, DmaChannnelNumToStr(num));
+    char * name = DmaChannnelNumToStr(num);
+    uint32_t cnt = dma_channel_get_cnt();
+    LOG_NOTICE(DMA_CHANNEL, "DMA_CHANNEL_%u/%u=[%s]", num, cnt, name);
     const DmaChannelConfig_t *ChannelConfig = DmaChannelGetConfig(num);
     if(ChannelConfig) {
         DmaChannelHandle_t *DmaChNode = DmaChannelGetNode(num);
         if(DmaChNode) {
             res = dma_channel_init_common(ChannelConfig, DmaChNode);
+            res = dma_channel_init_node(DmaChNode);
         }
 
         uint8_t dma_num = ChannelConfig->DmaChPad.dma_num;
         uint8_t stream_num = ChannelConfig->DmaChPad.stream;
-        LOG_WARNING(LG_DMA, "%u,DMA%u,Stream_%u,Init", num, dma_num, stream_num);
+        LOG_NOTICE(DMA_CHANNEL, "%u,DMA%u,Stream_%u,Init", num, dma_num, stream_num);
         DMA_Stream_TypeDef *DMAx = NULL;
         DMAx = DmaChannelToDMAx(dma_num, stream_num);
         if(DMAx) {
@@ -509,7 +560,7 @@ bool dma_channel_init_one(uint8_t num) {
                         // Node->dma_h.XferAbortCallback=;
                         HAL_StatusTypeDef ret = HAL_DMA_Init(&DmaChNode->dma_h);
                         if(HAL_OK == ret) {
-                            LOG_INFO(LG_DMA, "Init Id:%u Dma:%u Stream:%u " LOG_OK, num, dma_num, stream_num);
+                            LOG_DEBUG(DMA_CHANNEL, "Init,Id:%u,Dma%u_Stream%u" LOG_OK, num, dma_num, stream_num);
                             res = true;
 #ifdef HAS_ADC
                             //AdcHandle_t* Adc = AdcGetNode(1);
@@ -520,7 +571,7 @@ bool dma_channel_init_one(uint8_t num) {
 #endif
                             // res = dma_start(dma_num, ChannelConfig->base_addr_source, ChannelConfig->base_addr_destination, ChannelConfig->move_size);
                         } else {
-                            LOG_ERROR(LG_DMA, "%u Stream %u InitErr %s", dma_num, stream_num, HalStatusToStr(ret));
+                            LOG_ERROR(DMA_CHANNEL, "%u Stream %u InitErr %s", dma_num, stream_num, HalStatusToStr(ret));
                             res = false;
                         }
                     }
@@ -528,17 +579,16 @@ bool dma_channel_init_one(uint8_t num) {
             }
 
         } else {
-            LOG_ERROR(LG_DMA, "InstErr");
+            LOG_ERROR(DMA_CHANNEL, "InstErr");
         }
     } else {
-        LOG_ERROR(LG_DMA, "ConfigErr");
+        LOG_ERROR(DMA_CHANNEL, "DMA_CH_NUM_%u,ConfigErr",num);
     }
     return res;
 }
 
-bool dma_channel_init_interrupts(void) {
-#if 0
-    LOG_WARNING(LG_DMA, "DMA1 ISR init");
+static bool dma1_channel_init_all_interrupts(void) {
+    LOG_WARNING(DMA_CHANNEL, "DMA1 ISR init");
     HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, DMA_INT_PRIORITY, DMA_INT_PRIORITY);
     HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
 
@@ -562,10 +612,12 @@ bool dma_channel_init_interrupts(void) {
 
     HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, DMA_INT_PRIORITY, DMA_INT_PRIORITY);
     HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
-#endif /*HAS_DMA1*/
 
-#if 0
-    LOG_WARNING(LG_DMA, "DMA2 ISR init");
+    return true;
+}
+
+static bool dma2_channel_init_all_interrupts(void) {
+    LOG_WARNING(DMA_CHANNEL, "DMA2 ISR init");
     HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, DMA_INT_PRIORITY, DMA_INT_PRIORITY);
     HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
@@ -589,8 +641,16 @@ bool dma_channel_init_interrupts(void) {
 
     HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, DMA_INT_PRIORITY, DMA_INT_PRIORITY);
     HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
-#endif /*HAS_DMA2*/
+
     return true;
+}
+
+
+bool dma_channel_init_all_interrupts(void) {
+    bool res = false;
+    res = dma1_channel_init_all_interrupts();
+    res = dma2_channel_init_all_interrupts() && res;
+    return res;
 }
 
 bool dma_channel_priority_set(DmaInfoChannel_t DmaPad, uint8_t priority) {
@@ -604,12 +664,70 @@ bool dma_channel_cnt_set(const DmaInfoChannel_t DmaPad,
     bool res = false;
     DmaChannelHandle_t* Node = DmaPadGetNodeItem(DmaPad);
     if(Node) {
-        __HAL_DMA_DISABLE(&(Node->dma_h));
-        res = dma_channel_wait_disabled(Node) ;
+        Node->block_size = num_data_reg;
+        if(num_data_reg) {
+            __HAL_DMA_DISABLE(&(Node->dma_h));
+            res = dma_channel_wait_disabled(Node) ;
 
-        __HAL_DMA_SET_COUNTER(&(Node->dma_h), num_data_reg);
-        __HAL_DMA_ENABLE(&(Node->dma_h)) ;
-        res = true;
+            __HAL_DMA_SET_COUNTER(&(Node->dma_h), num_data_reg);
+            __HAL_DMA_ENABLE(&(Node->dma_h)) ;
+            res = true;
+        }
+    }
+    return res;
+}
+
+bool dma_channel_source_address_set(const DmaInfoChannel_t DmaPad, const uint32_t source_address) {
+    bool res = false;
+    DmaChannelHandle_t* Node = DmaPadGetNodeItem(DmaPad);
+    if(Node) {
+        Node->base_addr_source = source_address;
+        switch(Node->dir) {
+            case DMA_MCAL_DIR_PERIPH_TO_MEMORY: {
+                Node->dma_h.Instance->PAR = source_address;
+                res = true;
+            } break;
+            case DMA_MCAL_DIR_MEMORY_TO_PERIPH: {
+                Node->dma_h.Instance->M0AR = source_address;
+                res = true;
+            } break;
+            case DMA_MCAL_DIR_MEMORY_TO_MEMORY: {
+                Node->dma_h.Instance->PAR = source_address;
+                res = true;
+            } break;
+            default:{
+                res = false;
+            } break;
+        }
+    }
+    return res;
+}
+
+/*
+ Table 44. Source and destination address
+ */
+bool dma_channel_destination_address_set(const DmaInfoChannel_t DmaPad, const uint32_t dist_address) {
+    bool res = false;
+    DmaChannelHandle_t* Node = DmaPadGetNodeItem(DmaPad);
+    if(Node) {
+        Node->base_addr_destination = dist_address;
+        switch(Node->dir) {
+            case DMA_MCAL_DIR_PERIPH_TO_MEMORY: {
+                Node->dma_h.Instance->M0AR = dist_address;
+                res = true;
+            } break;
+            case DMA_MCAL_DIR_MEMORY_TO_PERIPH: {
+                Node->dma_h.Instance->PAR = dist_address;
+                res = true;
+            } break;
+            case DMA_MCAL_DIR_MEMORY_TO_MEMORY: {
+                Node->dma_h.Instance->M0AR = dist_address;
+                res = true;
+            } break;
+            default:{
+                res = false;
+            } break;
+        }
     }
     return res;
 }
@@ -723,14 +841,14 @@ DMA_Stream_TypeDef* dma_stream_num_2_prt(const uint8_t dma_num,
 }
 
 bool dma_channel_half_move_it_ctrl(const DmaInfoChannel_t DmaPad, const bool en) {
-    bool res = false ;
-    DMA_Stream_TypeDef* DMA_STREAMx=dma_stream_num_2_prt(DmaPad.dma_num, DmaPad.stream);
-    if(DMA_STREAMx){
+    bool res = false;
+    DMA_Stream_TypeDef *DMA_STREAMx = dma_stream_num_2_prt(DmaPad.dma_num, DmaPad.stream);
+    if(DMA_STREAMx) {
         DmaStreamConfReg_t CfgReg;
-         CfgReg.dword = DMA_STREAMx->CR;
-         CfgReg.htie = en ;
-         DMA_STREAMx->CR = CfgReg.dword;
-         res = true;
+        CfgReg.dword = DMA_STREAMx->CR;
+        CfgReg.htie = en;
+        DMA_STREAMx->CR = CfgReg.dword;
+        res = true;
     }
     return res;
 }

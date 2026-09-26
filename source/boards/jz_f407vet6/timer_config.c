@@ -15,7 +15,9 @@
 #include "laser_sight_mcal.h"
 #endif
 
+#ifdef HAS_DELTA_SIGMA
 #include "delta_sigma.h"
+#endif
 
 #ifdef HAS_TIMER1
 static bool timer1_comparator(void) {
@@ -25,7 +27,9 @@ static bool timer1_comparator(void) {
 
 static bool timer1_overflov(void) {
     bool res = false;
+#ifdef HAS_DELTA_SIGMA
     res = delta_sigma_isr_proc_one_ll( (DeltaSigmaHandle_t*) &DeltaSigmaInstance[0] ) ;
+#endif
     return res;
 
 }
@@ -49,7 +53,7 @@ static bool timer2_overflov(void) {
 #ifdef HAS_TIMER3
 static bool LaserTxNextBit(void){
     bool res = false;
-#ifdef HAS_LASER_SIGHT
+#ifdef HAS_LASER_MODULATED
     LaserSightHandle_t* Node=LaserSightGetNode(1);
     if(Node) {
         if(0==    (    Node->carr_period_overflow%(Node->carrier_periods_per_chirp)   )   ){
@@ -241,5 +245,3 @@ TimerHandle_t TimerInstance[15] = {
 };
 
 COMPONENT_GET_CNT(Timer, timer)
-
-

@@ -48,6 +48,33 @@ static TimerPolarity_t Stm32TimerPolarityToTimerPolarity(const Stm32TimerPolarit
     return polarity;
 }
 
+/*
+ * Bit 7 MSM: Master/slave mode
+ * */
+static uint32_t Stm32TimerRoleToMSM( const TimerRole_t role){
+    uint32_t msm=0;
+
+    switch(role) {
+    case TIMER_ROLE_SINGLE:
+    case TIMER_ROLE_MASTER:
+        msm = 0; //0: No action
+        break;
+    case TIMER_ROLE_SLAVE:
+        /*1: The effect of an event on the trigger input (TRGI) is delayed to allow a perfect
+synchronization between the current timer and its slaves (through TRGO). It is useful if we
+want to synchronize several timers on a single external event.*/
+        msm = 1;
+        break;
+    default:
+        msm = TIMER_POLARITY_UNDEF;
+        break;
+    }
+
+    return msm;
+}
+
+
+
 static uint32_t TimerSlaveInModeToStm32SlaveInTrigMode(const TimerSlaveInTrigger_t slave_input_trigger) {
     uint32_t InputTrigger = TIM_TS_NONE;
     switch(slave_input_trigger) {
@@ -873,6 +900,8 @@ bool timer_ctrl(uint8_t num, bool on_off) {
         ret = HAL_TIM_Base_Stop(&Node->Handle);
         if(on_off) {
             ret = HAL_TIM_Base_Start_IT(&Node->Handle);
+            /* Enable the TIM Update DMA request */
+            //__HAL_TIM_ENABLE_DMA(&Node->Handle, TIM_DMA_UPDATE);
             // ret = HAL_TIM_Base_Start(&Node->Handle);
             // HAL_StatusTypeDef HAL_TIM_Base_Start_IT(TIM_HandleTypeDef *htim);
         } else {
@@ -1139,6 +1168,7 @@ bool timer_polarity_get(uint8_t num, TimerOutChannel_t channel, TimerPolarity_t*
     return res;
 }
 
+
 bool timer_compare_set(uint8_t num, TimerOutChannel_t channel, uint32_t compare_value) {
     bool res = false;
     TimerInfo_t* Info = TimerGetInfo(num);
@@ -1305,6 +1335,20 @@ static uint32_t TimerMasterOutputTriggerToStmMasterOutTg(const TimerMasterOutTri
     return MasterOutputTrigger;
 };
 
+bool timer_role_set(const uint8_t num, const TimerRole_t role){
+    bool res = false;
+    TimerInfo_t* Info=TimerGetInfo(num) ;
+    if(Info){
+        TimerRegSMCR_t SMCR;
+        SMCR.dword=Info->TIMx->SMCR;
+
+        SMCR.MSM = Stm32TimerRoleToMSM(role);
+        Info->TIMx->SMCR =   SMCR.dword;
+        res = true;
+    }
+    return res;
+}
+
 static bool timer_init_role_master(TimerHandle_t* Node) {
     bool res = false;
     TIM_MasterConfigTypeDef MasterConfig = {0};
@@ -1316,12 +1360,14 @@ static bool timer_init_role_master(TimerHandle_t* Node) {
     HAL_StatusTypeDef ret = HAL_ERROR;
     ret = HAL_TIMEx_MasterConfigSynchronization(&Node->Handle, &MasterConfig);
     res = HAL_retToRes(ret);
+    __HAL_TIM_ENABLE_DMA(&Node->Handle, TIM_DMA_UPDATE);
     if(!res) {
         res = false;
 #ifdef HAS_LOG
         LOG_ERROR(TIMER, "%u SetSyncErr", Node->num);
 #endif
     }
+    timer_role_set(Node->num,   TIMER_ROLE_MASTER  );
     return res;
 }
 

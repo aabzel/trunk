@@ -1,109 +1,98 @@
-#include "dma_config.h"
-
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
+#include "dma_channel_config.h"
 
 #include "data_utils.h"
-#include "stm32f4xx_hal.h"
-#include "hal_diag.h"
 
-#ifndef HAS_DMA
-#error "+ HAS_DMA"
-#endif /*HAS_DMA*/
+#ifdef HAS_MEMCPY_DMA
+#include "dma_channel_config_memcpy.h"
+#else
+#define DMA_CHANNEL_MEMCPY
+#endif
 
-const DmaConfig_t SECTION_CFG_DATA DmaConfig[]={
-#ifdef HAS_DMA1
-    {            .num=1,    .dma_num=1,   .name="DMA1",     .valid=true,    },
-#endif /**/
+#ifdef HAS_ADC_DMA
+#include "dma_channel_config_adc.h"
+#else
+#define DMA_CHANNEL_ADC
+#endif
 
-#ifdef HAS_DMA2
-    {            .num=2,    .dma_num=2,   .name="DMA2",     .valid=true,    },
-#endif /**/
+#ifdef HAS_SPI_DMA
+#include "dma_channel_config_spi.h"
+#else
+#define DMA_CHANNEL_SPI
+#endif
 
+#ifdef HAS_I2S_DMA
+#include "dma_channel_config_i2s.h"
+#else
+#define DMA_CHANNEL_I2S
+#endif
+
+#ifdef HAS_UART_DMA
+#include "dma_channel_config_uart.h"
+#else
+#define DMA_CHANNEL_UART
+#endif
+
+#ifdef HAS_SDIO_DMA
+#include "dma_channel_config_sdio.h"
+#else
+#define DMA_CHANNEL_SDIO
+#endif
+
+#ifdef HAS_GPIO_DMA
+#include "dma_channel_config_gpio.h"
+#else
+#define DMA_CHANNEL_GPIO
+#endif
+
+
+#define DMA_CHANNEL_ALL  \
+    DMA_CHANNEL_MEMCPY   \
+    DMA_CHANNEL_ADC      \
+    DMA_CHANNEL_GPIO     \
+    DMA_CHANNEL_I2S      \
+    DMA_CHANNEL_SDIO     \
+    DMA_CHANNEL_SPI      \
+    DMA_CHANNEL_UART
+
+const DmaChannelConfig_t SECTION_CFG_DATA DmaChannelConfig[] = {
+    DMA_CHANNEL_ALL
 };
 
-DmaHandle_t DmaInstance[]={
-#ifdef HAS_DMA1
-    {.num = 1, .valid = true,},
-#endif /**/
+volatile DmaChannelHandle_t DmaChannelInstance[] = {
 
-#ifdef HAS_DMA2
-    {.num = 2, .valid = true,},
-#endif /**/
-};
-
-uint32_t dma_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(DmaInstance); 
-    cnt2 = ARRAY_SIZE(DmaConfig); 
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    assert_param(2==cnt);
-    return cnt;
-}
-
-static uint16_t DmaSdioMem[16]={0};
-
-const DmaChannelConfig_t DmaChannelConfig[] ={
-        {
-                .num=DMA2_SDIO_RX,
-                .CallBackHalf=NULL,
-                .CallBackDone=NULL,
-                .memory_burst=DMA_BURST_INC4,
-                .periph_burst=DMA_BURST_INC4,
-                .name="SDIO_RX",
-                .channel=DMA_CHAN_4,
-                .dir=DMA_MCAL_DIR_PERIPH_TO_MEMORY,
-                .mem_inc=DMA_INC_ON,
-                .per_inc=DMA_INC_OFF,
-                .aligment_per=DMA_ALIG_WORD,
-                .aligment_mem=DMA_ALIG_WORD,
-                .dma_num=2,
-                .fifo=DMA_FIFO_ON,
-                .valid=true,
-                .priority=DMA_PRIOR_LOW,
-                .mode=DMA_MODE_NORMAL,
-                .memory_base_addr=(uint32_t)DmaSdioMem,        /* base addrress for memory */
-                .buffer_size=ARRAY_SIZE(DmaSdioMem),  /*counter to transfer (0~0xFFFF)    */
-
-                //.peripheral_base_addr=SDIO->,    /* base addrress for peripheral */
-                .mux=0,
-        },
-        {
-                .valid=true,
-                .CallBackHalf=NULL,
-                .CallBackDone=NULL,
-                .num=DMA2_SDIO_TX,
-                .name="SDIO_TX",
-                .channel=DMA_CHAN_4,
-                .dir=DMA_MCAL_DIR_MEMORY_TO_PERIPH,
-                .mem_inc=DMA_INC_ON,
-                .per_inc=DMA_INC_OFF,
-                .aligment_mem=DMA_ALIG_WORD,
-                .aligment_per=DMA_ALIG_WORD,
-                .dma_num=2,
-                .fifo=DMA_FIFO_ON,
-                .memory_burst=DMA_BURST_INC4,
-                .periph_burst=DMA_BURST_INC4,
-                .priority=DMA_PRIOR_LOW,
-                .mode=DMA_MODE_NORMAL,
-                .buffer_size=ARRAY_SIZE(DmaSdioMem),  /*counter to transfer (0~0xFFFF)    */
-                .memory_base_addr= (uint32_t)DmaSdioMem,        /* base addrress for memory */
-
-                //.peripheral_base_addr=SDIO,    /* base addrress for peripheral */
-                .mux=0,
-        },
-};
+#ifdef HAS_GPIO_DMA
+    { .num = DMA_CHANNEL_NUM_GPIOA_TX,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_GPIOA_RX,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_GPIOB,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_GPIOC,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_GPIOD,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_GPIOE,  .valid = true,    },
+#endif
 
 
+#ifdef HAS_ADC_DMA
+    { .num = DMA_CHANNEL_NUM_ADC1,  .valid = true,    },
+#endif
 
-volatile DmaChannelHandle_t DmaChannelInstance[]={
-        {.valid=true, .num=DMA2_SDIO_TX,},
-        {.valid=true, .num=DMA2_SDIO_RX,}
+#ifdef HAS_I2S_DMA
+    { .num = DMA_CHANNEL_NUM_I2S2_TX,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_I2S2_RX,  .valid = true,    },
+#endif
+
+#ifdef HAS_SPI_DMA
+    { .num = DMA_CHANNEL_NUM_SPI3_TX,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_SPI3_RX,  .valid = true,    },
+#endif
+
+#ifdef HAS_SDIO_DMA
+    { .num = DMA_CHANNEL_NUM_SDIO_RX,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_SDIO_TX,  .valid = true,    },
+#endif
+
+#ifdef HAS_MEMCPY_DMA
+    { .num = DMA_CHANNEL_NUM_MEMCPY1,  .valid = true,    },
+    { .num = DMA_CHANNEL_NUM_MEMCPY2,  .valid = true,    },
+#endif
 };
 
 COMPONENT_GET_CNT(DmaChannel, dma_channel)

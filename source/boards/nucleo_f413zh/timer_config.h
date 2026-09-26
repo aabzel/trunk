@@ -8,7 +8,7 @@
 
 #ifndef HAS_TIMER
 #error "Add HAS_TIMER"
-#endif /*HAS_TIMER*/
+#endif
 
 #define TIMER_RTC_NUM 1
 #define TIMER_US_TICK_NUM 2

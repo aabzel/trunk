@@ -3,10 +3,9 @@
 #include "array_diag.h"
 #include "convert.h"
 #include "dma_channel_mcal.h"
+#include "dma_custom_diag.h"
 #include "dma_mcal.h"
 #include "log.h"
-#include "dma_custom_diag.h"
-
 
 bool dma_channel_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -191,7 +190,7 @@ bool dma_channel_reg_map_command(int32_t argc, char* argv[]) {
         res = try_str2uint8(argv[1], &stream);
     }
 
-    if(res){
+    if(res) {
         DmaInfoChannel_t DmaPad = {
             .dma_num = dma_num,
             .stream = stream,
@@ -200,7 +199,6 @@ bool dma_channel_reg_map_command(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(DMA_CHANNEL, "Usage: dcrm DmaNum StreamNum");
     }
-
 
     return res;
 }

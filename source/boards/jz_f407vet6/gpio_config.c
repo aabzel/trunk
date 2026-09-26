@@ -243,7 +243,7 @@ const GpioConfig_t GpioConfig[] = {
 #endif
 
 #ifdef HAS_SDIO
-    {.Pad = {.port=PORT_C, .pin=12,}, .name="SD_CLK", .connector1="SD.5",, .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI},
+    {.Pad = {.port=PORT_C, .pin=12,}, .name="SD_CLK", .connector1="SD.5", .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_AIR,  .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI},
     {.Pad = {.port=PORT_D, .pin=2, }, .name="SD_CMD", .connector1="SD.3", .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI},
     {.Pad = {.port=PORT_C, .pin=8, }, .name="SD_D0", .connector1="SD.7",  .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI},
     {.Pad = {.port=PORT_C, .pin=9, }, .name="SD_D1", .connector1="SD.8",  .mode=GPIO_API_MODE_ALT1, .pull=GPIO__PULL_UP,  .mux=GPIO_AF12_SDIO, .logic_level=GPIO_LVL_HI},

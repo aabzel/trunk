@@ -11,53 +11,38 @@
 const char* DmaChannnelNumToStr(uint8_t num) {
     const char* name = "?";
     switch(num) {
-    case DMA_CHANNEL_NUM_MEMCPY1:
-        name = "MEMCPY1";
-        break;
-    case DMA_CHANNEL_NUM_MEMCPY2:
-        name = "MEMCPY2";
-        break;
+    case DMA_CHANNEL_NUM_CNT: {
+                              name = "CNT";
+                              } break;
+
+    case DMA_CHANNEL_NUM_MEMCPY1:        name = "MEMCPY1";        break;
+    case DMA_CHANNEL_NUM_MEMCPY2:        name = "MEMCPY2";        break;
 
 #ifdef HAS_ADC1
-    case DMA_CHANNEL_NUM_ADC1:
-        name = "ADC1";
-        break;
+    case DMA_CHANNEL_NUM_ADC1:        name = "ADC1";        break;
 #endif
 
 #ifdef HAS_I2S2
-    case DMA_CHANNEL_NUM_I2S2_TX:
-        name = "I2S2_TX";
-        break;
-    case DMA_CHANNEL_NUM_I2S2_RX:
-        name = "I2S2_RX";
-        break;
+    case DMA_CHANNEL_NUM_I2S2_TX:        name = "I2S2_TX";        break;
+    case DMA_CHANNEL_NUM_I2S2_RX:        name = "I2S2_RX";        break;
 #endif
 
 #ifdef HAS_SPI3
-    case DMA_CHANNEL_NUM_SPI3_TX:
-        name = "SPI3_TX";
-        break;
-    case DMA_CHANNEL_NUM_SPI3_RX:
-        name = "SPI3_RX";
-        break;
+    case DMA_CHANNEL_NUM_SPI3_TX:        name = "SPI3_TX";        break;
+    case DMA_CHANNEL_NUM_SPI3_RX:        name = "SPI3_RX";        break;
 #endif
+
+#ifdef HAS_UART_DMA
 
 #ifdef HAS_UART1
-    case DMA_CHANNEL_NUM_UART1_RX:
-        name = "UART1_RX";
-        break;
-    case DMA_CHANNEL_NUM_UART1_TX:
-        name = "UART1_TX";
-        break;
+    case DMA_CHANNEL_NUM_UART1_RX:        name = "UART1_RX";        break;
+    case DMA_CHANNEL_NUM_UART1_TX:        name = "UART1_TX";        break;
+#endif
 #endif
 
-#ifdef HAS_SDIO
-    case DMA_CHANNEL_NUM_SDIO_RX:
-        name = "SDIO_RX";
-        break;
-    case DMA_CHANNEL_NUM_SDIO_TX:
-        name = "SDIO_TX";
-        break;
+#ifdef HAS_SDIO_DMA
+    case DMA_CHANNEL_NUM_SDIO_RX:        name = "SDIO_RX";        break;
+    case DMA_CHANNEL_NUM_SDIO_TX:        name = "SDIO_TX";        break;
 #endif
     default:
         name = "?";
@@ -77,7 +62,7 @@ const char* DmaPadToStr(const DmaChannelPad_t DmaPad) {
 #endif
 
 const char* DmaInfoPadToStr(const DmaInfoChannel_t* const pDmaPad) {
-    static char lText[80] = { 0 };
+    static char lText[80] = {0};
     strcpy(lText, "");
     if(pDmaPad) {
         snprintf(lText, sizeof(lText), "%sDMA%u_", lText, pDmaPad->dma_num);
@@ -190,12 +175,8 @@ bool dma_channel_diag(void) {
     bool res = false;
     uint16_t channel = 0;
     static const table_col_t cols[] = {
-        {5, "DMA"},  {5, "Strm"},    {5, "CH"},
-        {7, "CNT"},
-        {10, "Dir"},
-        {10, "TxHalf"},
-        {10, "TxDone"}, {10, "Err"}, {10, "Global"}, {5, "init"}, {5, "Mux"},  {9, "Mux"},
-        {16, "Name"},
+        {5, "DMA"},  {5, "Strm"},    {5, "CH"},   {7, "CNT"}, {10, "Dir"}, {10, "TxHalf"}, {10, "TxDone"},
+        {10, "Err"}, {10, "Global"}, {5, "init"}, {5, "Mux"}, {9, "Mux"},  {16, "Name"},
     };
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));

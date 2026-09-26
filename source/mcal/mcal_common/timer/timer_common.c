@@ -232,7 +232,7 @@ bool timer_period_set_s(uint8_t num, float period_s) {
     if(Node) {
         float tick_s = timer_tick_get_s(num);
         uint32_t period = (uint32_t)(period_s / tick_s);
-        LOG_DEBUG(TIMER, "TIMER%u,Set,Period:%f s,Tick:%f s,Period:%u", num, period_s, tick_s, period);
+        LOG_INFO(TIMER, "TIMER%u,Set,Period:%f s,Tick:%f s,Period:%u", num, period_s, tick_s, period);
         res = timer_period_set_ll(Node, period);
         if(res) {
 #ifdef HAS_LOG
@@ -418,10 +418,10 @@ uint32_t timer_calc_prescaler(uint32_t bus_clock_hz, uint32_t des_tick_per_ns, u
         if(!prescaler) {
             prescaler = 1;
         }
-    }else{
+    } else {
 #ifdef HAS_LOG
-            LOG_ERROR(TIMER, "busC"
-                    "lockZero");
+        LOG_ERROR(TIMER, "busC"
+                         "lockZero");
 #endif
     }
     return prescaler;
@@ -652,5 +652,4 @@ bool timer_init_common(const TimerConfig_t* const Config, TimerHandle_t* const N
     return res;
 }
 
-
-COMPONENT_INIT_PATTERT_CNT(TIMER, TIMER, timer, TIMER_MAX_NUM)
+COMPONENT_INIT_ANY_PATTERT_CNT(TIMER, TIMER, timer, TIMER_MAX_NUM)

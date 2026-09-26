@@ -1,9 +1,7 @@
 #ifndef TIM_CONFIG_GENERAL_H
 #define TIM_CONFIG_GENERAL_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "timer_types.h"
 
 #define TIMER_RTC_NUM 1

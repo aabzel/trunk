@@ -15,6 +15,7 @@ bool dma_channel_diag_custom_command(int32_t argc, char* argv[]){
 
 bool dma_channel_diag_ll_command(int32_t argc, char* argv[]){
     bool res = dma_channel_diag_low_level("","");
+
     return res;
 }
 
@@ -69,7 +70,26 @@ bool dma_channel_half_move_it_ctrl_command(int32_t argc, char* argv[]){
         LOG_ERROR(DMA_CHANNEL, "Usage: dchmic DmaNum Channel OnOff");
     }
     return res;
-
 }
 
+bool dma_channel_diag_regs_command(int32_t argc, char* argv[]){
+    bool res = false ;
+    uint8_t dma_num = 0;
+    uint8_t stream_num = 0;
 
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &dma_num);
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint8(argv[1], &stream_num);
+    }
+
+    if(res) {
+        res = dma_channel_stream_diag(dma_num, stream_num) ;
+        log_info_res(DMA_CHANNEL, res, "ShowRegVals");
+    }else {
+        LOG_ERROR(DMA_CHANNEL, "Usage: dsdrv DmaNum Channel");
+    }
+    return res;
+}

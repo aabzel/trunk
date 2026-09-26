@@ -6,6 +6,7 @@
 #include "timer_types.h"
 #include "timer_isr.h"
 #include "clock_const.h"
+
 #ifdef HAS_TIMER_CUSTOM
 #include "timer_custom.h"
 #endif
@@ -43,6 +44,7 @@ bool timer_period_set_ll(TimerHandle_t* const Node, const uint32_t period);
 bool timer_period_set(uint8_t num, uint32_t value);
 bool timer_period_set_s(uint8_t num, float period_s);
 bool timer_ctrl(uint8_t num, bool on_off);
+bool timer_role_set(const uint8_t num, const TimerRole_t role);
 bool timer_frequency_set(uint8_t num, float frequency_hz);
 
 /*Getters-------------------------------------*/
@@ -52,11 +54,11 @@ uint32_t timer_counter_get_us(const uint8_t num);
 uint8_t timer_bitness_get(uint8_t num);
 uint32_t TimerGetCntFreq(uint32_t cnt_period_us);
 const TimerChannelInfo_t* TimerChannelGetInfo(uint8_t num, TimerOutChannel_t channel);
+bool timer_is_valid(uint8_t num);
 bool timer_channel_is_valid(const TimerChannel_t tim_ch);
 bool timer_out_channel_pad_get(uint8_t num, TimerOutChannel_t channel, Pad_t* const Pad) ;
 bool timer_channel_is_work(const uint8_t num, const TimerOutChannel_t channel);
 bool timer_get_status(uint8_t num);
-bool timer_is_valid(uint8_t num);
 bool timer_is_valid_channel( const uint8_t num, const uint8_t channel);
 bool timer_polarity_get(uint8_t num, TimerOutChannel_t channel, TimerPolarity_t * const polarity);
 /*freq period*/

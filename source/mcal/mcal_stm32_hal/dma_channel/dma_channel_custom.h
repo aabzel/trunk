@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_inc.h"
 #include "dma_mcal.h"
 #include "dma_custom_types.h"
 #include "stm32fx_hal.h"
@@ -16,6 +14,7 @@ extern "C" {
 #error "+HAS_DMA"
 #endif
 
+DmaChannelHandle_t* DmaChannelHandleToNode(const DMA_HandleTypeDef * const h_dma);
 DMA_Stream_TypeDef* DmaChannelToDMAx(uint8_t dma_num, DmaChannel_t channel);
 DMA_Stream_TypeDef* dma_stream_num_2_prt(uint8_t dma_num, uint8_t stream_num);
 DmaStreamIntStatusReg_t DmaGetStream(uint8_t dma_num, uint8_t stream_num);

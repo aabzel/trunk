@@ -4,9 +4,6 @@ ifneq ($(SOFTWARE_TIMER_MK_LOG),Y)
     SOFTWARE_TIMER_MK_LOG=Y
     SOFTWARE_TIMER_DIR = $(COMPONENTS_DIR)/software_timer
     #@echo $(error SOFTWARE_TIMER_DIR= $(SOFTWARE_TIMER_DIR))
-    #@echo $(error CFLAGS= $(CFLAGS))
-    mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
-    $(info Build  $(mkfile_path) )
 
     INCDIR += -I$(SOFTWARE_TIMER_DIR)
 

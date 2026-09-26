@@ -1,8 +1,6 @@
 #include "dma_channel_config.h"
 
 #include "data_utils.h"
-//#include "microcontroller_const.h"
-//#include "dma_const.h"
 #include "dma_channel_config_memcpy.h"
 
 #ifdef HAS_ADC_DMA
@@ -71,10 +69,6 @@ volatile DmaChannelHandle_t DmaChannelInstance[] = {
     { .num = DMA_CHANNEL_NUM_SDIO_RX,  .valid = true,    },
     { .num = DMA_CHANNEL_NUM_SDIO_TX,  .valid = true,    },
 #endif
-
-
 };
 
 COMPONENT_GET_CNT(DmaChannel, dma_channel)
-
-
