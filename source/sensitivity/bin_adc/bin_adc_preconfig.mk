@@ -1,0 +1,9 @@
+ifneq ($(BIN_ADC_PRECONFIG_INC),Y)
+    BIN_ADC_PRECONFIG_INC=Y
+    
+    BIN_ADC=Y
+    GPIO=Y
+    TIMER=Y
+    DMA=Y
+    DMA_CHANNEL=Y
+endif

@@ -1,0 +1,4 @@
+
+config BIN_ADC
+    bool "Enable use of the BIN_ADC drivers"
+
