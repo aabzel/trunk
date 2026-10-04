@@ -6,14 +6,19 @@
 #include "string_reader_const.h"
 #include "sys_constants.h"
 #include "fifo_char.h"
+
 #ifdef HAS_INTERFACES
 #include "interfaces_types.h"
 #endif
 
 typedef bool (*handle_string_f)(uint8_t num, char* s);
 
+#define STRING_READER_FIFO_VARIABLES    \
+    uint32_t fifo_heap_size;            \
+    uint8_t * fifo_heap;
+
 #define STRING_READER_COMMON_VARIABLES      \
-    uint32_t fifo_heap_size;                \
+    STRING_READER_FIFO_VARIABLES            \
     int32_t string_size;                    \
     InterfaceType_t interface_if;           \
     handle_string_f callback;               \
@@ -24,7 +29,6 @@ typedef bool (*handle_string_f)(uint8_t num, char* s);
     bool valid;                             \
     bool echo;                              \
     char * name;                            \
-    uint8_t * fifo_heap;                    \
     uint8_t * string;   /*command itself*/  \
     uint8_t feedback_led;
 

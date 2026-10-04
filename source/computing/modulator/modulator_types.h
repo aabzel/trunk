@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 
-#include "audio_types.h"
+#include "dsp_types.h"
 #include "modulator_const.h"
 
 typedef struct  {

@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
-#include "audio_types.h"
+#include "dsp_types.h"
 #include "bpsk_types.h"
 #include "bpsk_config.h"
 #include "bpsk_diag.h"
@@ -15,10 +15,10 @@ BpskHandle_t* BpskGetNode(uint8_t num);
 const BpskConfig_t* BpskGetConfig(uint8_t num);
 
 #ifdef HAS_BPSK_PHASE_ERROR_ASIN
-double bpsk_calc_phase_error_asin(BpskHandle_t* const Node);
+float bpsk_calc_phase_error_asin(BpskHandle_t* const Node);
 #endif
 
-double bpsk_calc_phase_error_atan(BpskHandle_t* const Node);
+float bpsk_calc_phase_error_atan(BpskHandle_t* const Node);
 
 bool bpsk_decode_wav(uint8_t num, const char* const file_name);
 

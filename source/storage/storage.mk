@@ -46,8 +46,8 @@ ifneq ($(STORAGE_MK_INC),Y)
         include $(STORAGE_DIR)/nor_flash_off_chip/nor_flash_off_chip.mk
     endif
 
-    ifeq ($(FILE_API),Y)
-        include $(STORAGE_DIR)/file_api/file_api.mk
+    ifeq ($(FILE_MCAL),Y)
+        include $(STORAGE_DIR)/file_mcal/file_mcal.mk
     endif
 
     ifeq ($(FAT_FS),Y)
@@ -87,6 +87,10 @@ ifneq ($(STORAGE_MK_INC),Y)
 
     ifeq ($(SW_SD_CARD),Y)
         include $(STORAGE_DIR)/sw_sd_card/sw_sd_card.mk
+    endif
+
+    ifeq ($(PNG),Y)
+        include $(STORAGE_DIR)/png/png.mk
     endif
 
     ifeq ($(XML),Y)

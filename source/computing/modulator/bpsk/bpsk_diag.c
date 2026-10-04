@@ -26,8 +26,8 @@ const char* BpskConfigToStr(const  BpskConfig_t* const Config){
         snprintf(text, sizeof(text), "%sRate:%u Bit/s,", text, Config->bit_rate);
         snprintf(text, sizeof(text), "%sAmp:%u PCM,", text, Config->amplitude);
         snprintf(text, sizeof(text), "%sBitOrder:%s,", text, IfBitOrderToStr(Config->bit_order));
-        snprintf(text, sizeof(text), "%sFsam:%sHz,", text, DoubleToStr((double)Config->sampling_frequency_hz));
-        snprintf(text, sizeof(text), "%sFcar:%sHz", text, DoubleToStr((double)Config->carrier_frequency_hz));
+        snprintf(text, sizeof(text), "%sFsam:%sHz,", text, DoubleToStr((float)Config->sampling_frequency_hz));
+        snprintf(text, sizeof(text), "%sFcar:%sHz", text, DoubleToStr((float)Config->carrier_frequency_hz));
     }
     return text;
 }
@@ -50,8 +50,8 @@ const char* BpskNodeToStr(const BpskHandle_t* const Node){
         snprintf(text, sizeof(text), "%sFirOrder:%u,", text, Node->filter_order);
         snprintf(text, sizeof(text), "%sAmp:%u PCM,", text, Node->amplitude);
         snprintf(text, sizeof(text), "%sBitOrder:%s,", text, IfBitOrderToStr(Node->bit_order));
-        snprintf(text, sizeof(text), "%sFsam:%sHz,", text, DoubleToStr((double)Node->sampling_frequency_hz));
-        snprintf(text, sizeof(text), "%sFcar:%sHz", text, DoubleToStr((double)Node->carrier_frequency_hz));
+        snprintf(text, sizeof(text), "%sFsam:%sHz,", text, DoubleToStr((float)Node->sampling_frequency_hz));
+        snprintf(text, sizeof(text), "%sFcar:%sHz", text, DoubleToStr((float)Node->carrier_frequency_hz));
     }
     return text;
 }
@@ -62,7 +62,7 @@ bool bpsk_print_samples(BpskHandle_t* Node) {
     if(Node){
         static const table_col_t cols[] = {
                          {5, "No"}, {12, "UpTime"},  {12, "SampleDec"},  };
-        double up_time_s = 0.0;
+        float up_time_s = 0.0;
         LOG_INFO(BPSK, "SampleCnt: %u", Node->sample_cnt);
         table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
@@ -70,7 +70,7 @@ bool bpsk_print_samples(BpskHandle_t* Node) {
         for(s = 0; s < Node->sample_cnt; s++) {
             cli_printf(TSEP);
             cli_printf(" %3u " TSEP, s + 1);
-            up_time_s = ((double)(s + 1))/((double)Node->sampling_frequency_hz);
+            up_time_s = ((float)(s + 1))/((float)Node->sampling_frequency_hz);
             cli_printf(" %10.8f " TSEP, up_time_s);
             cli_printf(" %10d " TSEP, Node->samples[s]);
             cli_printf(" 0x%08x " TSEP, Node->samples[s]);

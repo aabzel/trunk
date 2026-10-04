@@ -1,7 +1,7 @@
 ifneq ($(SECURITY_MK_INC),Y)
     SECURITY_MK_INC=Y
 
-    OPT += -DHAS_SECURITY
+    MCAL_OPT += -DHAS_SECURITY
     SECURITY_DIR = $(WORKSPACE_LOC)/security
     #@echo $(error SECURITY_DIR= $(SECURITY_DIR))
 

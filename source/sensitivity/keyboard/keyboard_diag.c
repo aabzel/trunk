@@ -4,7 +4,7 @@
 
 #include "keyboard.h"
 
-const char* KeyBoard2Str(const KeyBoard_t* const KeyNode) {
+const char* KeyBoardToStr(const KeyBoard_t* const KeyNode) {
     static char name[80] = "Err";
     if(KeyNode) {
         uint8_t key = KeyCode2Char(KeyNode);

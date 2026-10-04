@@ -6,16 +6,21 @@
 #include "dma_config.h"
 #include "dma_mcal.h"
 #include "dma_types.h"
+#include "gpio_mcal.h"
+#include "i2s_dma_mcal.h"
+#include "i2s_mcal.h"
+#include "i2s_dma_mcal.h"
+#include "log.h"
+#include "num_to_str.h"
+
 #ifdef HAS_ECHO_EFFECT
 #include "echo_effect.h"
 #include "echo_effect_isr.h"
 #endif
-#include "gpio_mcal.h"
-#include "i2s_dma_mcal.h"
-#include "i2s_mcal.h"
-#include "log.h"
-#include "num_to_str.h"
+
+#ifdef HAS_TIMER
 #include "timer_mcal.h"
+#endif
 
 COMPONENT_GET_NODE(I2sFullDuplex, i2s_full_duplex)
 COMPONENT_GET_CONFIG(I2sFullDuplex, i2s_full_duplex)
@@ -24,7 +29,7 @@ DmaChannelHandle_t* I2sNumToDmaChannel(uint32_t i2s_num) {
     DmaChannelHandle_t* ChannelNode = NULL;
     I2sHandle_t* Node = I2sGetNode(i2s_num);
     if(Node) {
-        ChannelNode = DmaPadGetNodeItem(Node->Dma);
+        //ChannelNode = DmaPadGetNodeItem(Node->Dma);
     }
     return ChannelNode;
 }
@@ -36,7 +41,7 @@ bool i2s_full_duplex_start_ll(I2sFullDuplexHandle_t* Node) {
 #ifdef HAS_ECHO_EFFECT
         res = echo_effect_reset(Node->echo_effect_num);
 #endif
-        res = i2s_api_write_dma(Node->i2s_tx_num, Node->Buffer, I2S_COMMON_BUFFER_CHANNELS_CNT, DMA_MODE_CIRCULAR);
+        res = i2s_mcal_write_dma(Node->i2s_tx_num, Node->Buffer, I2S_COMMON_BUFFER_CHANNELS_CNT, DMA_MODE_CIRCULAR);
         if(res) {
             Node->start_cnt++;
             Node->state = I2S_FULL_DUPLEX_STATE_TX;
@@ -45,13 +50,15 @@ bool i2s_full_duplex_start_ll(I2sFullDuplexHandle_t* Node) {
         DmaChannelHandle_t* ChannelNode = NULL;
         ChannelNode = I2sNumToDmaChannel(Node->i2s_tx_num);
         if(ChannelNode) {
-            ChannelNode->CallBackHalf = DmaTxHalf;
-            ChannelNode->CallBackDone = DmaTxDone;
+            //ChannelNode->CallBackHalf = DmaTxHalf;
+            //ChannelNode->CallBackDone = DmaTxDone;
         }
 
+#ifdef HAS_TIMER
         if(res) {
             res = timer_ctrl(Node->timer_num, true);
         }
+#endif
     }
     return res;
 }
@@ -73,9 +80,11 @@ bool i2s_full_duplex_stop_ll(I2sFullDuplexHandle_t* Node) {
         res = i2s_dma_ctrl(Node->i2s_tx_num, false);
         if(res) {
             res = i2s_dma_ctrl(Node->i2s_rx_num, false);
+#ifdef HAS_TIMER
             if(res) {
                 res = timer_ctrl(Node->timer_num, false);
             }
+#endif
         }
     }
     return res;
@@ -121,7 +130,7 @@ bool i2s_full_duplex_init_one(uint8_t num) {
     bool res = false;
     const I2sFullDuplexConfig_t* Config = I2sFullDuplexGetConfig(num);
     if(Config) {
-        LOG_WARNING(I2S_FULL_DUPLEX, "%s", I2sFullDuplexToStr(Config));
+        LOG_WARNING(I2S_FULL_DUPLEX, "%s", I2sFullDuplexConfigToStr(Config));
         I2sFullDuplexHandle_t* Node = I2sFullDuplexGetNode(num);
         if(Node) {
             Node->DebugPadRx = Config->DebugPadRx;
@@ -146,12 +155,13 @@ bool i2s_full_duplex_init_one(uint8_t num) {
             if(res) {
                 res = i2s_full_duplex_stop(num);
             }
-
+#ifdef HAS_TIMER
             if(res) {
                 double period_s = ((double)I2S_COMMON_BUFFER_SAMPLE_CNT) / 48000.0;
                 LOG_INFO(I2S_FULL_DUPLEX, "TimerPeriod:%s s", DoubleToStr(period_s));
                 res = timer_period_set_s(Node->timer_num, period_s);
             }
+#endif
         }
     }
     return res;

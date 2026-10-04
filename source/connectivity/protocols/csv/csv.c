@@ -2,12 +2,19 @@
 
 #ifdef HAS_PC
 #include <stdio.h>
+#include <stdlib.h>
 #endif
 #include <string.h>
 
+#include "common_diag.h"
 #include "convert.h"
 #include "csv_diag.h"
 #include "log.h"
+#include "str_utils.h"
+
+/*
+ https://paulfertser.info/polnyy_spravochnik_po_c_gerbert_shildt/13/fopen.htm
+ */
 
 bool csv_proc_fetch_value(CsvFsm_t* Node, uint32_t cur_index) {
     bool res = false;
@@ -357,10 +364,10 @@ bool csv_fetch_text(const char* const in_text, uint32_t size, char separator, ui
                 LOG_DEBUG(CSV, "StartValueIndex:%d", Item.start_value_index);
                 res = true;
                 if(0 <= Item.start_value_index) {
-                    if(Item.start_value_index <= size) {
+                    if(Item.start_value_index < size) {
                         *offset = Item.start_value_index;
-                        LOG_DEBUG(CSV, "SpotSubStr:Text[%u]=[%s]", Item.start_value_index,
-                                  in_text + Item.start_value_index);
+                        LOG_DEBUG(CSV, "SpotSubVal [%s]", in_text + Item.start_value_index);
+                        LOG_DEBUG(CSV, "Spot!");
                     }
                 } else {
                     LOG_ERROR(CSV, "fetch_doneErr");
@@ -441,7 +448,7 @@ bool csv_parse_int16(const char* const in_text, char separator, uint32_t index, 
   size - out size
   out_text - out storage
  */
-bool csv_parse_text(const char* const in_text, const char separator, const uint32_t index, char* const out_text,
+bool csv_parse_text(const char* const in_text, char separator, uint32_t index, char* const out_text,
                     uint32_t out_size) {
     bool res = false;
     if(in_text && out_text) {
@@ -461,6 +468,30 @@ bool csv_parse_text(const char* const in_text, const char separator, const uint3
         if(Item.fetch_done) {
             if(0 == Item.error_cnt) {
                 res = true;
+            }
+        }
+    }
+    return res;
+}
+
+bool csv_parse_float(const char* const in_text, uint32_t index, float* const value) {
+    bool res = false;
+    if(in_text) {
+        uint32_t len = strlen(in_text);
+        LOG_DEBUG(CSV, "Text:[%s],Size:%u byte,Index:%u", in_text, len, index);
+        if(value) {
+            char local_data[60] = {0};
+            res = csv_parse_text(in_text, ',', index, local_data, sizeof(local_data));
+            LOG_DEBUG(CSV, "TryParseFloatIn[%s]", local_data);
+            res = false;
+#ifdef HAS_STR2_FLOAT
+            res = try_str2float(local_data, value);
+#endif
+            if(res) {
+                LOG_DEBUG(CSV, "ParseDoubleOk[%s]->%f", local_data, *value);
+            } else {
+                LOG_ERROR(CSV, "ParseFloatErr [%s]->%f", local_data, *value);
+                LOG_ERROR(CSV, "i:%u,Text[%s]", index, in_text);
             }
         }
     }
@@ -551,6 +582,38 @@ bool csv_save_two_double(char* file_name, uint32_t size, double* x, double* y) {
     return res;
 }
 
+bool csv_save_two_int32(char* file_name, uint32_t size, int32_t* x, int32_t* y) {
+    bool res = false;
+    LOG_DEBUG(CSV, "Save,File[%s],Size:%u", file_name, size);
+    FILE* file_prt = NULL;
+    file_prt = fopen(file_name, "w");
+    if(file_prt) {
+        LOG_INFO(CSV, "File,[%s],OpenOk", file_name);
+        uint32_t t = 0;
+        uint32_t ok = 0;
+        int ret;
+        for(t = 0; t < size; t++) {
+            ret = fprintf(file_prt, "%u,%d,%d\n", t, x[t], y[t]);
+            if(0 < ret) {
+                ok++;
+            }
+        }
+        fclose(file_prt);
+        if(ok == size) {
+            res = true;
+
+        } else {
+            res = false;
+        }
+    } else {
+        LOG_ERROR(CSV, "File,[%s],OpenErr", file_name);
+    }
+    return res;
+}
+
+#endif
+
+#ifdef HAS_PC
 bool csv_save_two_float_int_end(char* file_name, uint32_t t, const float xf, const int32_t yd) {
     bool res = false;
     LOG_DEBUG(CSV, "Save,File[%s],i:%u,%f,%d", t, file_name, xf, yd);
@@ -577,7 +640,9 @@ bool csv_save_two_float_int_end(char* file_name, uint32_t t, const float xf, con
     }
     return res;
 }
+#endif
 
+#ifdef HAS_PC
 bool csv_save_two_float_int(char* file_name, uint32_t size, const float* const xf, const int32_t* const yd) {
     bool res = false;
     LOG_DEBUG(CSV, "Save,File[%s],Size:%u", file_name, size);
@@ -621,3 +686,45 @@ bool csv_parse_last_text(const char* const in_text, char separator, char* const 
     }
     return res;
 }
+
+bool csv_load_float_array(const char* const file_name, const uint32_t colomn, float* const x, uint32_t sam_cnt) {
+    bool res = false;
+    FILE* file_prt = NULL;
+    LOG_DEBUG(CSV, "In[%s],Cpl:%u,Cnt:%u Sam", file_name, colomn, sam_cnt);
+    file_prt = fopen(file_name, "r");
+    if(file_prt) {
+        uint32_t i = 0;
+        for(i = 0; i < sam_cnt; i++) {
+            char buff[500] = {0};
+            char* ptr = fgets(buff, sizeof(buff), file_prt);
+            if(ptr) {
+                str_del_char_inplace(buff, 0x0A);
+                str_del_char_inplace(buff, 0x0D);
+                uint32_t len = strlen(buff);
+                LOG_DEBUG(CSV, "Read,%u,len:%u,line:[%s]", i, len, buff);
+                res = csv_parse_float(buff, colomn, &x[i]);
+                diag_progress_log(i, sam_cnt, 10, "LoadFloats");
+            }
+        }
+        fclose(file_prt);
+    }
+    return res;
+}
+
+#ifdef HAS_PC
+float* csv_load_array_float(const char* const file_name, const uint32_t colomn, const uint32_t sam_cnt) {
+    LOG_INFO(SYS, "File:%s,Colomn:%u,Samples:%u", file_name, colomn, sam_cnt);
+    float* fldata = (float*)malloc(sam_cnt * sizeof(float));
+    if(fldata) {
+        bool res = csv_load_float_array(file_name, colomn, fldata, sam_cnt);
+        if(!res) {
+            free(fldata);
+            fldata = NULL;
+        }
+    }else{
+        LOG_ERROR(SYS, "MallocError:%u", sam_cnt * sizeof(float));
+        fldata = NULL;
+    }
+    return fldata;
+}
+#endif

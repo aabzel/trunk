@@ -6,7 +6,7 @@ ifneq ($(CRYP_MCAL_MK_INC),Y)
     $(info Build  $(mkfile_path))
     $(info Add Cryp)
 
-    OPT += -DHAS_CRYP
+    MCAL_OPT += -DHAS_CRYP
     CRYP_MCAL_DIR = $(MCAL_COMMON_DIR)/cryp
     #@echo $(error CRYP_MCAL_DIR=[$(CRYP_MCAL_DIR)])
 
@@ -17,7 +17,7 @@ ifneq ($(CRYP_MCAL_MK_INC),Y)
     ifeq ($(DIAG),Y)
         ifeq ($(CRYP_DIAG),Y)
             $(info Add Cryp Diag)
-            OPT += -DHAS_CRYP_DIAG
+            MCAL_OPT += -DHAS_CRYP_DIAG
             SOURCES_C += $(CRYP_MCAL_DIR)/cryp_diag.c
         endif
     endif
@@ -25,7 +25,7 @@ ifneq ($(CRYP_MCAL_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(CRYP_COMMANDS),Y)
             $(info Add Cryp commands)
-            OPT += -DHAS_CRYP_COMMANDS
+            MCAL_OPT += -DHAS_CRYP_COMMANDS
             SOURCES_C += $(CRYP_MCAL_DIR)/cryp_commands.c
         endif
     endif

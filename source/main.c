@@ -14,7 +14,7 @@
 #endif
 
 #ifdef USE_HAL_DRIVER
-#include "stm32f4xx_hal.h"
+#include "stm32fx_hal.h"
 #endif
 
 #ifdef HAS_SYSTEM
@@ -36,11 +36,11 @@
 
 #ifdef HAS_NORTOS
 /*mandatory space NoRTOS.h needs stdint.h*/
-#include "sys_config.h"
+//#include "sys_config.h"
 #endif
 
 #ifdef HAS_CLOCK
-#include "clock.h" //TODO DEL
+//#include "clock.h" //TODO DEL
 #endif
 
 #include "common_functions.h"
@@ -99,11 +99,11 @@ int main(void)
 
 #ifdef HAS_SYS_INIT
     res = system_mcal_init();
-    res = try_init(res, 0, "SYS");
+    res = try_init(res, 0, 0, "SYS");
 #endif
 
 #ifdef HAS_COMMON_DIAG
-    LOG_INFO(HMON, "init:%s", ResToStr(res));
+    LOG_INFO(SYS, "init:%s", ResToStr(res));
 #endif
 
 #ifdef HAS_HEALTH_MONITOR
@@ -111,9 +111,7 @@ int main(void)
 #endif
 
 #ifdef HAS_STREAM
-    LOG_DEBUG(SYS, "ProgramLaunched!");
-    // print_version();
-    // print_sys_info();
+    LOG_INFO(SYS, "ProgramLaunched!");
 #endif
 
 #ifdef HAS_BOOTLOADER
@@ -125,29 +123,30 @@ int main(void)
 #endif
 
 #ifdef HAS_PC
-    LOG_DEBUG(SYS, "argc %u", argc);
+    LOG_INFO(SYS, "argc %u", argc);
     if(2 <= argc) {
         uint32_t i = 0;
 
         for(i = 0; i < argc; i++) {
-            LOG_DEBUG(SYS, "Arg%u [%s]", i, argv[i]);
+            LOG_INFO(SYS, "Arg%u [%s]", i, argv[i]);
         }
 
         LOG_DEBUG(SYS, "FetchCLICommand...");
-        char cmd_line[1000] = {0};
+        char cmd_line[10000] = {0};
+        memset(cmd_line,0,sizeof(cmd_line));
         LOG_DEBUG(SYS, "Arg1 [%s]", argv[1]);
         strcpy(cmd_line, argv[1]);
         for(i = 2; i < argc; i++) {
-            LOG_DEBUG(SYS, "Arg%u [%s]", i, argv[i]);
+            LOG_DEBUG(SYS, "Arg%u[%s]", i, argv[i]);
             snprintf(cmd_line, sizeof(cmd_line), "%s %s", cmd_line, argv[i]);
         }
 
-        LOG_DEBUG(SYS, "TryCmd [%s]...", cmd_line);
+        LOG_DEBUG(SYS, "TryCmd[%s]...", cmd_line);
         res = cli_process_cmd(1, cmd_line);
         if(res) {
             LOG_DEBUG(SYS, "Cmd:[%s],Ok", cmd_line);
         } else {
-            LOG_ERROR(SYS, "Cmd [%s] Err", cmd_line);
+            LOG_ERROR(SYS, "Cmd:[%s],Err", cmd_line);
         }
         return 0;
     }

@@ -46,6 +46,13 @@ extern "C" {
 #define LITTLE_FS_INIT
 #endif
 
+#ifdef HAS_FILE_MCAL
+#include "file_mcal.h"
+#define FILE_MCAL_INIT   {.init_function = file_mcal_mcal_init, .name="FileMcal",},
+#else
+#define FILE_MCAL_INIT
+#endif
+
 #ifdef HAS_MX25R6435F
 #include "mx25r6435f_drv.h"
 #define MX25R6435F_INIT   {.init_function=mx25r6435f_init, .name="MX25R6435F",},
@@ -97,7 +104,7 @@ extern "C" {
 
 #ifdef HAS_SD_CARD
 #include "sd_card_drv.h"
-#define SD_CARD_INIT   {.init_function=sd_card_init, .name="SdCard",},
+#define SD_CARD_INIT   {.init_function=sd_card_mcal_init, .name="SdCard",},
 #else
 #define SD_CARD_INIT
 #endif
@@ -164,6 +171,7 @@ extern "C" {
 
 /*Order Matters!*/
 #define STORAGE_SW_INIT   \
+    FILE_MCAL_INIT        \
     NVS_INIT              \
     NOR_FLASH_INIT        \
     FLASH_FS_INIT         \

@@ -7,31 +7,48 @@
 #include "log.h"
 #include "shared_array.h"
 
-const char* CsvInputToStr(const CsvInput_t input) {
-    const char* name = "?";
-    switch(input) {
-        case CSV_INPUT_NOT_SEP:        name = "Letter";        break;
-        case CSV_INPUT_SEP:        name = "Sep";        break;
-        case CSV_INPUT_END:        name = "End";        break;
-        default:        name = "?";        break;
-    }
-    return name;
-}
-
 const char* CsvStateToStr(const CsvState_t state) {
     const char* name = "?";
     switch(state) {
-        case CSV_STATE_INIT:        name = "Init";        break;
-        case CSV_STATE_ACCUMULATE:        name = "Acc";        break;
-        case CSV_STATE_SEP:        name = "LastSep";        break;
-        case CSV_STATE_END:        name = "End";        break;
-        default:        name = "?";        break;
+    case CSV_STATE_INIT:
+        name = "Init";
+        break;
+    case CSV_STATE_ACCUMULATE:
+        name = "Acc";
+        break;
+    case CSV_STATE_SEP:
+        name = "LastSep";
+        break;
+    case CSV_STATE_END:
+        name = "End";
+        break;
+    default:
+        name = "?";
+        break;
     }
     return name;
 }
 
+const char* CsvInputToStr(const CsvInput_t input) {
+    const char* name = "?";
+    switch(input) {
+    case CSV_INPUT_NOT_SEP:
+        name = "Letter";
+        break;
+    case CSV_INPUT_SEP:
+        name = "Sep";
+        break;
+    case CSV_INPUT_END:
+        name = "End";
+        break;
+    default:
+        name = "?";
+        break;
+    }
+    return name;
+}
 
-const char* CsvNodeToStr(const CsvFsm_t* const Node) {
+const char* CsvNodeToStr(CsvFsm_t* const Node) {
     if(Node) {
         strcpy(text, "Proc:");
         snprintf(text, sizeof(text), "%sSep:[%c],", text, Node->separator);

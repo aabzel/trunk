@@ -24,16 +24,28 @@ typedef enum {
 
 #ifdef HAS_AT32F435ZM
 #include "at32f435zm_const.h"
+
 #ifdef HAS_EHAL
 #include "at32f435zm_ehal.h"
 #endif
 #endif
 
 #ifdef HAS_AT32F437ZM
+
 #include "at32f437zm_const.h"
+
 #ifdef HAS_EHAL
 #include "at32f437zm_ehal.h"
 #endif
+
+#endif
+
+#ifdef HAS_ATMEGA328PB
+#include "atmega328pb_const.h"
+#endif
+
+#ifdef HAS_DUMMY_MCU
+#include "dummy_mcu_const.h"
 #endif
 
 #ifdef HAS_STM32F407X
@@ -44,8 +56,16 @@ typedef enum {
 #include <stm32f401xe.h>
 #endif
 
+#ifdef HAS_STM32F446RE
+#include <stm32f446re.h>
+#endif
+
 #ifdef HAS_STM32F407ZG
 #include "stm32f407zg_const.h"
+#endif
+
+#ifdef HAS_STM32F413ZG
+#include "stm32f413zg_const.h"
 #endif
 
 #ifdef HAS_STM32F407VE
@@ -60,6 +80,10 @@ typedef enum {
 #include "stm32f407vg_const.h"
 #endif
 
+#ifdef HAS_STM32F746NG
+#include "stm32f746ng_const.h"
+#endif
+
 #ifdef HAS_YTM32B1ME05G0MLQ
 #include "ytm32b1me05g0mlq_const.h"
 #endif
@@ -71,15 +95,11 @@ typedef enum {
 #include "FC7300F8MDT_flash_common_feature.h"
 #include "FC7300F8MDT_core_common_feature.h"
 #include "FC7300F8MDT_dmamux_common_feature.h"
-#endif /**/
+#endif
 
 #endif
 
-#ifdef HAS_DUMMY_MCU
-#include "dummy_mcu_const.h"
-#endif
-
-#ifdef HAS_PC
+#ifdef HAS_X86
 #include "cpu_x86.h"
 #endif
 

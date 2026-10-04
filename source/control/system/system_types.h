@@ -18,19 +18,20 @@ typedef struct{
     char *name;
 }ProgTypeInfo_t;
 
-
 typedef bool (*InitFunction_t)(void);
 
 typedef struct{
     InitFunction_t init_function;
-#ifdef HAS_LOG
     char *name;
+#ifdef HAS_LOG
 #endif
 }SystemInitInstance_t;
 
 typedef struct{
     bool init;
     bool init_finish;
+    char InitOrder[1600] ;
+    char InitError[150] ;
 #ifdef HAS_GPIO
     Pad_t DebugPad;
 #endif

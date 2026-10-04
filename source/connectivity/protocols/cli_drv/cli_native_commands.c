@@ -349,3 +349,8 @@ bool cli_diag_command(int32_t argc, char* argv[]) {
 
     return true;
 }
+
+bool cli_init_command(int32_t argc, char* argv[]) {
+    bool res = cli_mcal_init();
+    return res;
+}

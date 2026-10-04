@@ -5,9 +5,7 @@
 extern "C" {
 #endif
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "unit_test.h"
 
 #ifndef HAS_UNIT_TEST
@@ -22,6 +20,25 @@ extern "C" {
 #include "test_calibration_data.h"
 #else
 #define TEST_SUIT_CALIBRATION_DATA
+#endif
+
+#ifdef HAS_TEST_DC_CUT_FILTER
+#include "test_dc_cut_filter.h"
+#else
+#define TEST_SUIT_DC_CUT_FILTER
+#endif
+
+#ifdef HAS_TEST_WAV_PLAYER
+#include "test_wav_player.h"
+#else
+#define TEST_SUIT_WAV_PLAYER
+#endif
+
+
+#ifdef HAS_TEST_HASH_TABLE
+#include "test_hash_table.h"
+#else
+#define TEST_SUIT_HASH_TABLE
 #endif
 
 #ifdef HAS_TEST_ALLOCATOR
@@ -48,6 +65,13 @@ extern "C" {
 #else
 #define TEST_SUIT_CONVERT
 #endif
+
+#ifdef HAS_TEST_M_SEQ
+#include "test_m_seq.h"
+#else
+#define TEST_SUIT_M_SEQ
+#endif
+
 
 #ifdef HAS_TEST_CLI
 #include "test_cli.h"
@@ -115,6 +139,18 @@ extern "C" {
 #define TEST_SUIT_RTCM3_PROTO
 #endif
 
+#ifdef HAS_TEST_SUIT_SLCAN
+#include "test_slcan.h"
+#else
+#define TEST_SUIT_SLCAN
+#endif
+
+#ifdef HAS_TEST_SUIT_MANCHESTER_DECODE
+#include "test_manchester_decode.h"
+#else
+#define TEST_SUIT_MANCHESTER_DECODE
+#endif
+
 #ifdef HAS_TEST_SUIT_AUTO_VERSION
 #include "test_auto_version.h"
 #else
@@ -127,16 +163,25 @@ extern "C" {
 #define TEST_SUIT_GNSS
 #endif
 
+#ifdef HAS_TEST_SUIT_MISC
+#include "test_misc.h"
+#else
+#define TEST_SUIT_MISC
+#endif
+
+
+
+
+#ifdef HAS_TEST_SUIT_TICKET_SET_OPT
+#include "test_ticket_set_opt.h"
+#else
+#define TEST_SUIT_TICKET_SET_OPT
+#endif
+
 #ifdef HAS_TEST_SUIT_TBFP
 #include "test_tbfp.h"
 #else
 #define TEST_SUIT_TBFP
-#endif
-
-#ifdef HAS_TEST_SUIT_FW_LOADER
-#include "test_fw_loader.h"
-#else
-#define TEST_SUIT_FW_LOADER
 #endif
 
 #ifdef HAS_TEST_SUIT_TBFP_RTCM
@@ -144,6 +189,20 @@ extern "C" {
 #else
 #define TEST_SUIT_TBFP_RTCM_STACK
 #endif
+
+#ifdef HAS_TEST_SUIT_MEDIAN_FILTER
+#include "test_median_filter.h"
+#else
+#define TEST_SUIT_MEDIAN_FILTER
+#endif
+
+#ifdef HAS_TEST_SUIT_MEDIAN_FILTER_FAST
+#include "test_median_filter_fast.h"
+#else
+#define TEST_SUIT_MEDIAN_FILTER_FAST
+#endif
+
+
 
 #ifdef HAS_TEST_SUIT_PHYSICS
 #include "test_physics.h"
@@ -179,10 +238,34 @@ extern "C" {
 #define TEST_SUIT_SYSTEM_SW
 #endif
 
+#ifdef HAS_TEST_SUIT_SLIDING_INTEGRAL
+#include "test_sliding_integral.h"
+#else
+#define TEST_SUIT_SLIDING_INTEGRAL
+#endif
+
+#ifdef HAS_TEST_LITTLE_FS
+#include "test_little_fs.h"
+#else
+#define TEST_SUIT_LITTLE_FS
+#endif
+
+#ifdef HAS_TEST_SOUND_RECORDER
+#include "test_sound_recorder.h"
+#else
+#define TEST_SUIT_SOUND_RECORDER
+#endif
+
 #ifdef HAS_TEST_SUIT_MEMORY
 #include "test_memory.h"
 #else
 #define TEST_SUIT_MEMORY
+#endif
+
+#ifdef HAS_TEST_SUIT_XPRINTF
+#include "test_xprintf.h"
+#else
+#define TEST_SUIT_XPRINTF
 #endif
 
 #ifdef HAS_TEST_SUIT_PLANETARIUM
@@ -210,7 +293,7 @@ extern "C" {
 #endif
 
 #ifdef HAS_TEST_SUIT_FLOAT
-#include "float_utils_test.h"
+#include "float_test.h"
 #else
 #define TEST_SUIT_UTILS_FLOAT
 #endif
@@ -279,6 +362,12 @@ extern "C" {
 #define TEST_SUIT_SALSA20
 #endif
 
+#ifdef HAS_TEST_SUIT_STORE_FS
+#include "test_store_fs.h"
+#else
+#define TEST_SUIT_STORE_FS
+#endif
+
 #ifdef HAS_TEST_SUIT_SOLVER
 #include "test_solver.h"
 #else
@@ -295,6 +384,12 @@ extern "C" {
 #include "test_dft.h"
 #else
 #define TEST_SUIT_DFT
+#endif
+
+#ifdef HAS_TEST_SUIT_IQUEUE
+#include "test_iqueue.h"
+#else
+#define TEST_SUIT_IQUEUE
 #endif
 
 #ifdef HAS_TEST_SUIT_HASHSET
@@ -315,6 +410,18 @@ extern "C" {
 #define TEST_SUIT_BASE16
 #endif
 
+#ifdef HAS_TEST_SUIT_MAX_HEAP
+#include "test_max_heap.h"
+#else
+#define TEST_SUIT_MAX_HEAP
+#endif
+
+#ifdef HAS_TEST_SUIT_MIN_HEAP
+#include "test_min_heap.h"
+#else
+#define TEST_SUIT_MIN_HEAP
+#endif
+
 #ifdef HAS_TEST_SUIT_BASE64
 #include "test_base64.h"
 #else
@@ -327,6 +434,11 @@ extern "C" {
 #define TEST_SUIT_ISO_TP
 #endif
 
+#ifdef HAS_TEST_SUIT_CORRELATOR_S16
+#include "test_correlator_s16.h"
+#else
+#define TEST_SUIT_CORRELATOR_S16
+#endif
 
 #ifdef HAS_TEST_SUIT_BT1026
 #include "test_bt1026.h"
@@ -352,6 +464,12 @@ extern "C" {
 #define TEST_SUIT_FONT
 #endif
 
+#ifdef HAS_TEST_SUIT_BIT_FIFO
+#include "test_bit_fifo.h"
+#else
+#define TEST_SUIT_BIT_FIFO
+#endif
+
 #ifdef HAS_TEST_SUIT_DS_TWR
 #include "test_ds_twr.h"
 #else
@@ -364,10 +482,22 @@ extern "C" {
 #define TEST_SUIT_RLE
 #endif
 
+#ifdef HAS_TEST_SUIT_HIST_FILTER
+#include "test_hist_filter.h"
+#else
+#define TEST_SUIT_HIST_FILTER
+#endif
+
 #ifdef HAS_TEST_SUIT_IIR
 #include "test_iir.h"
 #else
 #define TEST_SUIT_IIR
+#endif
+
+#ifdef HAS_TEST_SUIT_INTERVAL
+#include "test_interval.h"
+#else
+#define TEST_SUIT_INTERVAL
 #endif
 
 #ifdef HAS_TEST_SUIT_FIR
@@ -376,10 +506,34 @@ extern "C" {
 #define TEST_SUIT_FIR
 #endif
 
+#ifdef HAS_TEST_SUIT_ESP_01
+#include "test_esp_01.h"
+#else
+#define TEST_SUIT_ESP_01
+#endif
+
+#ifdef HAS_TEST_SUIT_LOOPBACK_AUDIO
+#include "test_loopback_audio.h"
+#else
+#define TEST_SUIT_LOOPBACK_AUDIO
+#endif
+
+#ifdef HAS_TEST_SUIT_BPSK_4FS
+#include "test_bpsk_4fs.h"
+#else
+#define TEST_SUIT_BPSK_4FS
+#endif
+
 #ifdef HAS_TEST_SUIT_CIRCULAR_BUFFER
 #include "test_circular_buffer_indexer.h"
 #else
 #define TEST_SUIT_CIRCULAR_BUFFER
+#endif
+
+#ifdef HAS_TEST_SUIT_RATIONAL_NUM
+#include "test_rational_num.h"
+#else
+#define TEST_SUIT_RATIONAL_NUM
 #endif
 
 #ifdef HAS_TEST_SUIT_DECAWAVE_PROTO
@@ -392,6 +546,12 @@ extern "C" {
 #include "test_decawave_native.h"
 #else
 #define TEST_SUIT_DECAWAVE_NATIVE
+#endif
+
+#ifdef HAS_TEST_TUNER_PRO
+#include "test_tuner_pro.h"
+#else
+#define TEST_SUIT_TUNER_PRO
 #endif
 
 #ifdef HAS_TEST_SUIT_PROTOCOL
@@ -424,10 +584,16 @@ extern "C" {
 #define TEST_SUIT_DDS
 #endif
 
-#ifdef HAS_TEST_SUIT_UDS
-#include "test_uds.h"
+#ifdef HAS_TEST_SUIT_UDS_SERVER
+#include "test_uds_server.h"
 #else
-#define TEST_SUIT_UDS
+#define TEST_SUIT_UDS_SERVER
+#endif
+
+#ifdef HAS_TEST_SUIT_UDS_CLIENT
+#include "test_uds_client.h"
+#else
+#define TEST_SUIT_UDS_CLIENT
 #endif
 
 #ifdef HAS_TEST_SUIT_SOCKET
@@ -442,7 +608,7 @@ extern "C" {
 #define TEST_SUIT_PYRAMID_ACCEL_CALIB
 #endif
 
-
+bool test_null_ptr(void);
 bool test_sprintf_minus(void);
 bool test_general(void);
 bool test_c_types(void);
@@ -487,108 +653,155 @@ bool test_struct_size(void) ;
 
 #define TEST_TYPE_CONVERT TEST_TYPE_CONVERT_FLOAT {"dbl_u16", test_double_to_uint16},
 
+
+
+#define TEST_SUIT_SW_ADT                                              \
+    TEST_SUIT_SET                                                     \
+    TEST_SUIT_LIFO_ARRAY                                              \
+    TEST_SUIT_LIFO_INDEXER                                            \
+    TEST_SUIT_FIFO_CHAR                                               \
+    TEST_SUIT_SLIDING_INTEGRAL                                        \
+    TEST_SUIT_HASH_TABLE                                              \
+    TEST_SUIT_HASHSET                                                 \
+    TEST_SUIT_HEX_BIN                                                 \
+    TEST_SUIT_FIFO_INDEXER                                            \
+    TEST_SUIT_FIFO_ARRAY                                              \
+    TEST_SUIT_MAX_HEAP                                                \
+    TEST_SUIT_MIN_HEAP                                                \
+    TEST_SUIT_ARRAY
+
+
+#define TEST_SUIT_SW_PROTOCOL \
+    TEST_SUIT_DECAWAVE_PROTO                                          \
+    TEST_SUIT_CSV                                                     \
+    TEST_SUIT_DECAWAVE_NATIVE                                         \
+    TEST_SUIT_DS_TWR                                                  \
+    TEST_SUIT_UDS_SERVER                                              \
+    TEST_SUIT_RTCM3_PATH                                              \
+    TEST_SUIT_RDS                                                     \
+    TEST_SUIT_RTCM3_PROTO                                             \
+    TEST_SUIT_TBFP_RTCM_STACK                                         \
+    TEST_SUIT_TBFP                                                    \
+    TEST_SUIT_BASE16                                                  \
+    TEST_SUIT_BASE64                                                  \
+    TEST_SUIT_PROTOCOL
+
+
+#define TEST_SUIT_SW_COMPUTING                                       \
+    {"struct_size", test_struct_size},                               \
+    {"null_ptr", test_null_ptr},                                     \
+    {"array_init", test_array_init},                                 \
+    {"bit_fields", test_bit_fields},                                 \
+    {"swap_xor", test_swap_xor},                                     \
+    {"bit_shift", test_bit_shift},                                   \
+    {"int_overflow", test_int_overflow},                             \
+    {"endian", test_endian},                                         \
+    {"64bit_mult", test_64bit_mult},                                 \
+    TEST_SUIT_STRING_UTILS                                           \
+    TEST_SUIT_BPSK                                                   \
+    TEST_SUIT_CALCULATOR                                             \
+    TEST_SUIT_CALENDAR                                               \
+    TEST_SUIT_MANCHESTER_DECODE                                      \
+    TEST_SUIT_CIRCULAR_BUFFER                                        \
+    TEST_SUIT_CONVERT                                                \
+    TEST_SUIT_DC_CUT_FILTER                                          \
+    TEST_SUIT_RATIONAL_NUM                                           \
+    TEST_SUIT_CRC                                                    \
+    TEST_SUIT_HIST_FILTER                                            \
+    TEST_SUIT_MEDIAN_FILTER                                          \
+    TEST_SUIT_MEDIAN_FILTER_FAST                                     \
+    TEST_SUIT_DFT                                                    \
+    TEST_SUIT_FFT                                                    \
+    TEST_SUIT_DDS                                                    \
+    TEST_SUIT_CORRELATOR_S16                                         \
+    TEST_SUIT_FIR                                                    \
+    TEST_SUIT_GNSS                                                   \
+    TEST_SUIT_IIR                                                    \
+    TEST_SUIT_M_SEQ                                                  \
+    TEST_SUIT_INTERVAL                                               \
+    TEST_SUIT_LC3                                                    \
+    TEST_SUIT_MATH                                                   \
+    TEST_SUIT_MODULATOR                                              \
+    TEST_SUIT_PLANETARIUM                                            \
+    TEST_SUIT_PYRAMID_ACCEL_CALIB                                    \
+    TEST_SUIT_PHYSICS                                                \
+    TEST_SUIT_SCHMITT_TRIGGER                                        \
+    TEST_SUIT_RLE                                                    \
+    TEST_TYPE_CONVERT                                                \
+    TEST_SUIT_SOLVER                                                 \
+    TEST_SUIT_SOUND_LOCALIZATION                                     \
+    TEST_SUIT_TICKET_SET_OPT                                         \
+    TEST_SUIT_UTILS_BIT                                              \
+    TEST_SUIT_UTILS_BYTE                                             \
+    TEST_SUIT_UTILS_DATA                                             \
+    TEST_SUIT_UTILS_FLOAT                                            \
+    TEST_SUIT_UTILS_TIME
+
+#define TEST_SUIT_SW_SECURITY                                         \
+    TEST_SUIT_AES256                                                  \
+    TEST_SUIT_PASTILDA                                                \
+    TEST_SUIT_SALSA20                                                 \
+    TEST_SUIT_SHA256
+
+#define TEST_SUIT_SW_CONNECTIVITY                                     \
+    TEST_SUIT_BT1026                                                  \
+    TEST_SUIT_BPSK_4FS                                                \
+    TEST_SUIT_LOOPBACK_AUDIO                                          \
+    TEST_SUIT_CLI                                                     \
+    TEST_SUIT_ESP_01                                                  \
+    TEST_SUIT_ISO_TP                                                  \
+    TEST_SUIT_NMEA_PROTO                                              \
+    TEST_SUIT_SLCAN                                                   \
+    TEST_SUIT_SOCKET                                                  \
+    TEST_SUIT_UBLOX_PROTO
+
+#define TEST_SUIT_SW_STORAGE                                          \
+    TEST_SUIT_ALLOCATOR                                               \
+    TEST_SUIT_FAT_FS                                                  \
+    TEST_SUIT_FONT                                                    \
+    TEST_SUIT_KEEPASS                                                 \
+    TEST_SUIT_LITTLE_FS                                               \
+    TEST_SUIT_MEMORY                                                  \
+    TEST_SUIT_SW_NVRAM                                                \
+    TEST_SUIT_STORE_FS                                                \
+    TEST_SUIT_TUNER_PRO                                               \
+    TEST_SUIT_WAV
+
 #define TEST_SUIT_SW                                                  \
-    {"struct_size", test_struct_size},                                  \
-    {"array_init", test_array_init},                                  \
-    {"bit_fields", test_bit_fields},                                  \
-    {"swap_xor", test_swap_xor},                                  \
+    TEST_SUIT_SW_ADT                                                  \
+    TEST_SUIT_SW_STORAGE                                              \
+    TEST_SUIT_SW_SECURITY                                             \
+    TEST_SUIT_SW_COMPUTING                                            \
+    TEST_SUIT_SW_CONNECTIVITY                                         \
+    TEST_SUIT_SW_PROTOCOL                                             \
+    TEST_SUIT_SOUND_RECORDER                                          \
+    TEST_SUIT_WAV_PLAYER                                              \
     {"c_types", test_c_types},                                        \
     {"memset", test_memset},                                          \
-    {"snprintf", test_snprintf},                                          \
+    {"snprintf", test_snprintf},                                      \
     {"memcpy", test_memcpy},                                          \
-    {"bit_shift", test_bit_shift},                                        \
-    {"int_overflow", test_int_overflow},                                        \
     {"sprintf_minus", test_sprintf_minus},                            \
-    {"endian", test_endian},                                          \
-    {"snprintf_d", test_snprintf_d},                                            \
-    {"snprintf_f", test_snprintf_f},                                            \
-    {"sprintf_u64", test_sprintf_u64},                              \
-    {"snprintf_small_double", test_snprintf_small_double},                  \
+    {"snprintf_d", test_snprintf_d},                                  \
+    {"snprintf_f", test_snprintf_f},                                  \
+    {"sprintf_u64", test_sprintf_u64},                                \
+    {"snprintf_small_double", test_snprintf_small_double},            \
     {"sprintf_long", test_sprintf_long},                              \
     {"struct_copy", test_struct_copy},                                \
     {"visibility", test_visibility},                                  \
     {"uspec_behavior", test_uspec_behavior},                          \
     {"pointers", test_pointers},                                      \
     {"array", test_array},                                            \
-    {"64bit_mult", test_64bit_mult},                                  \
     {"utoa_bin8", test_utoa_bin8},                                    \
     {"type_transform", test_type_transformation},                     \
     { "general", test_general},                                       \
-    TEST_SUIT_EXTRA                                                   \
-    TEST_SUIT_AES256                                                  \
-    TEST_SUIT_ALLOCATOR                                               \
-    TEST_SUIT_LIBC                                                    \
-    TEST_SUIT_ARRAY                                                   \
     TEST_SUIT_AUTO_VERSION                                            \
-    TEST_SUIT_BASE16                                                  \
-    TEST_SUIT_BASE64                                                  \
-    TEST_SUIT_BPSK                                                    \
-    TEST_SUIT_PROTOCOL                                                \
-    TEST_SUIT_BT1026                                                  \
-    TEST_SUIT_CALENDAR                                                \
-    TEST_SUIT_CALCULATOR                                              \
-    TEST_SUIT_CIRCULAR_BUFFER                                         \
-    TEST_SUIT_CLI                                                     \
-    TEST_SUIT_CONVERT                                                 \
-    TEST_SUIT_CRC                                                     \
     TEST_SUIT_CROSS_DETECT                                            \
-    TEST_SUIT_CSV                                                     \
-    TEST_SUIT_DECAWAVE_PROTO                                          \
-    TEST_SUIT_DECAWAVE_NATIVE                                         \
-    TEST_SUIT_DFT                                                     \
-    TEST_SUIT_FFT                                                     \
-    TEST_SUIT_DDS                                                     \
-    TEST_SUIT_DS_TWR                                                  \
-    TEST_SUIT_FAT_FS                                                  \
-    TEST_SUIT_FIFO_ARRAY                                              \
-    TEST_SUIT_FIFO_CHAR                                               \
-    TEST_SUIT_FIFO_INDEXER                                            \
-    TEST_SUIT_GNSS                                                    \
-    TEST_SUIT_FIR                                                     \
-    TEST_SUIT_FONT                                                    \
-    TEST_SUIT_HASHSET                                                 \
-    TEST_SUIT_HEX_BIN                                                 \
-    TEST_SUIT_ISO_TP                                                  \
-    TEST_SUIT_IIR                                                     \
-    TEST_SUIT_KEEPASS                                                 \
+    TEST_SUIT_EXTRA                                                   \
     TEST_SUIT_KEYBOARD                                                \
-    TEST_SUIT_LC3                                                     \
-    TEST_SUIT_LIFO_ARRAY                                              \
-    TEST_SUIT_LIFO_INDEXER                                            \
-    TEST_SUIT_MATH                                                    \
-    TEST_SUIT_MEMORY                                                  \
-    TEST_SUIT_MODULATOR                                               \
-    TEST_SUIT_NMEA_PROTO                                              \
-    TEST_SUIT_PASTILDA                                                \
-    TEST_SUIT_PHYSICS                                                 \
-    TEST_SUIT_PLANETARIUM                                             \
-    TEST_SUIT_PYRAMID_ACCEL_CALIB                                     \
-    TEST_SUIT_RDS                                                     \
-    TEST_SUIT_RLE                                                     \
-    TEST_SUIT_RTCM3_PATH                                              \
-    TEST_SUIT_RTCM3_PROTO                                             \
-    TEST_SUIT_SALSA20                                                 \
-    TEST_SUIT_SCHMITT_TRIGGER                                         \
-    TEST_SUIT_SET                                                     \
-    TEST_SUIT_SHA256                                                  \
-    TEST_SUIT_SOCKET                                                  \
-    TEST_SUIT_SOLVER                                                  \
-    TEST_SUIT_SOUND_LOCALIZATION                                      \
-    TEST_SUIT_STRING_UTILS                                            \
-    TEST_SUIT_SW_NVRAM                                                \
-    TEST_SUIT_SYSTEM_SW                                               \
-    TEST_SUIT_FW_LOADER                                               \
-    TEST_SUIT_TBFP                                                    \
-    TEST_SUIT_TBFP_RTCM_STACK                                         \
-    TEST_SUIT_UTILS_BIT                                               \
-    TEST_SUIT_UTILS_BYTE                                              \
-    TEST_SUIT_UTILS_DATA                                              \
-    TEST_SUIT_UTILS_FLOAT                                             \
-    TEST_SUIT_UTILS_TIME                                              \
-    TEST_SUIT_UDS                                                     \
-    TEST_SUIT_WAV                                                 \
-    TEST_TYPE_CONVERT                                                 \
-    TEST_SUIT_UBLOX_PROTO
+    TEST_SUIT_LIBC                                                    \
+    TEST_SUIT_MISC                                                    \
+    TEST_SUIT_XPRINTF                                                 \
+    TEST_SUIT_SYSTEM_SW
 
 #ifdef __cplusplus
 }

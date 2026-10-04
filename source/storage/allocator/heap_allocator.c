@@ -154,7 +154,7 @@ bool h_free(void* addr) {
 bool h_init(void) {
     bool res = false;
     LOG_INFO(HEAP, "Init");
-    res = set_log_level(HEAP, LOG_LEVEL_DEBUG);
+    res = log_level_set(HEAP, LOG_LEVEL_DEBUG);
     return res;
 }
 

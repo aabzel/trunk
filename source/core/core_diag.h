@@ -20,24 +20,6 @@ extern "C" {
 #include "cortex_m7_diag.h"
 #endif
 
-#ifdef HAS_CORTEX_M4
-#ifdef HAS_CORTEX_M33
-#error  "Core contradiction!"
-#endif
-#endif
-
-#ifdef HAS_CORTEX_M7
-#ifdef HAS_CORTEX_M33
-#error  "Core contradiction!"
-#endif
-#endif
-
-#ifdef HAS_CORTEX_M4
-#ifdef HAS_CORTEX_M7
-#error  "Core contradiction!"
-#endif
-#endif
-
 const char* CortexFpuTypeToStr(const CortexFpu_t fpu_type) ;
 const char* CoreConfigToStr(const CoreConfig_t* const Config);
 const char* CoreNodeToStr(const CoreHandle_t* const Node);

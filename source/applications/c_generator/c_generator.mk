@@ -4,7 +4,7 @@ ifneq ($(C_GENERATOR_MK_INC),Y)
     C_GENERATOR_DIR = $(APPLICATIONS_DIR)/c_generator
     #@ echo $(error C_GENERATOR_DIR = $(C_GENERATOR_DIR))
     #@ echo $(error CFLAGS = $(CFLAGS)) 
-    OPT += -DHAS_C_GENERATOR
+    MCAL_OPT += -DHAS_C_GENERATOR
 
 
     INCDIR += -I$(C_GENERATOR_DIR)
@@ -18,7 +18,7 @@ ifneq ($(C_GENERATOR_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(C_GENERATOR_COMMANDS),Y)
-            OPT += -DHAS_C_GENERATOR_COMMANDS
+            MCAL_OPT += -DHAS_C_GENERATOR_COMMANDS
             SOURCES_C += $(C_GENERATOR_DIR)/c_generator_commands.c
         endif
     endif

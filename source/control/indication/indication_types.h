@@ -19,10 +19,10 @@
 #endif
 
 typedef struct {
-	BuildType_t fw_type;
-	double freq;
-	uint8_t duty;
-	Color_t color;
-}Intication_t;
+    BuildType_t fw_type;
+    float freq;
+    uint8_t duty;
+    Color_t color;
+} Intication_t;
 
 #endif /* INDICATION_TYPES_H  */

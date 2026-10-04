@@ -13,7 +13,7 @@ if( NOT (ASICS_CMAKE_INC STREQUAL Y))
     target_sources(app PRIVATE ${ASICS_DIR}/asics_drv.c)
 
     if (AT24CXX STREQUAL Y)
-        include(${ASICS_DIR}/at24cxx/at24cxx.cmake)
+        include(${ASICS_DIR}/at24cx/at24cx.cmake)
     endif()
 
     if (BC127 STREQUAL Y)

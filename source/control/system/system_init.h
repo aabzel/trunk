@@ -38,6 +38,7 @@
 #endif
 
 #ifdef HAS_MICROCONTROLLER
+#include "microcontroller_init.h"
 #include "hw_init.h"
 #else
 #define HW_INIT
@@ -46,15 +47,21 @@
 #ifdef HAS_MCAL
 #include "mcal_init.h"
 #else
+#define GPIO_INIT
 #define MCAL_INIT
 #endif
 
+#ifdef HAS_COMPUTING
+#include "computing_init.h"
+#else
+#define COMPUTING_INIT
+#endif
 
 #ifdef HAS_MICROCONTROLLER
 #include "board_config.h"
 
 #ifdef HAS_LOG
-#define BOARD_INIT_NAME .name = "Board",
+#define BOARD_INIT_NAME .name = "PCB",
 #else
 #define BOARD_INIT_NAME
 #endif
@@ -62,7 +69,7 @@
 #define BOARD_INIT                                     \
     {                                                  \
         .init_function = board_init,                   \
-		BOARD_INIT_NAME                                \
+        BOARD_INIT_NAME                                \
     },
 
 #else
@@ -259,7 +266,7 @@
 #define HAL_INIT_NAME
 #endif
 
-#define HAL_INIT {.init_function=hal_init, HAL_INIT_NAME},
+#define HAL_INIT {.init_function = hal_init, HAL_INIT_NAME},
 #else
 #define HAL_INIT
 #endif
@@ -276,6 +283,20 @@
 #else
 #define SYSREM_PREINIT_NANE
 #endif
+
+#ifdef HAS_LOG
+#define SYSREM_UNIQ_NANE .name = "AllInitUniq",
+#else
+#define SYSREM_UNIQ_NANE
+#endif
+
+#ifdef HAS_SYSTEM
+#include "system.h"
+#define IS_ALL_INIT_UNIQ {.init_function=system_init_array_uniq, SYSREM_UNIQ_NANE},
+#else
+#define IS_ALL_INIT_UNIQ
+#endif
+
 
 #if defined(HAS_SYSTEM) && defined(HAS_LOG)
 #include "system.h"
@@ -322,15 +343,14 @@
 #include "sw_init.h"
 
 #define PRE_INIT                                                                \
-    SOFTWARE_TIMER_INIT                                                         \
-    SW_DAC_INIT
+    SOFTWARE_TIMER_INIT
 
 
 /*Order matters!*/
 #define INIT_FUNCTIONS                                                         \
     GPIO_INIT                                                                  \
     START_PAUSE_INIT                                                           \
-    SYSREM_PREINIT                                                                   \
+    SYSREM_PREINIT                                                             \
     FPU_INIT                                                                   \
     CORE_INIT                                                                  \
     SYS_TICK_HAL_SUSPEND_INIT                                                  \
@@ -343,21 +363,21 @@
     TIME_MCAL_INIT                                                             \
     WIN_COLOR_INIT                                                             \
     WRITER_INIT                                                                \
-    LITTLE_FS_INIT                                                             \
-    STORE_FS_INIT                                                              \
     MCAL_INIT                                                                  \
     PRE_INIT                                                                   \
     HW_INIT                                                                    \
-    INTERFACES_INIT                                                            \
+    COMPUTING_INIT                                                             \
+    ASICS_INIT                                                                 \
+    LITTLE_FS_INIT                                                             \
     PROTOCOLS_INIT                                                             \
     CONTROL_INIT                                                               \
     STORAGE_HW_INIT                                                            \
     STORAGE_SW_INIT                                                            \
-    ASICS_INIT                                                                 \
     SW_INIT                                                                    \
+    INTERFACES_INIT                                                            \
     SOCKET_INIT                                                                \
     UNIT_TEST_INIT                                                             \
-    ASICS_INIT                                                                 \
+    MICROCONTROLLER_INIT                                                       \
     BOARD_INIT                                                                 \
     THIRD_PARTY_INIT                                                           \
     GAMES_INIT                                                                 \
@@ -367,7 +387,8 @@
     SYSTEM_INFO                                                                \
     SUPER_CYCLE_INIT                                                           \
     VERSION_INFO                                                               \
-    LOG_ENABLE
+    LOG_ENABLE                                                                 \
+    FILE_CLI_INIT
 
 
 #endif /* SYSTEM_INIT_H  */

@@ -5,7 +5,6 @@
     #include "connectivity/interfaces/interfaces.gvi"
 #endif
 
-
 #ifdef HAS_PROTOCOL
     #include "connectivity/protocols/protocols.gvi"
 #endif

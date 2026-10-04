@@ -7,7 +7,7 @@
 #include "log.h"
 #include "writer_config.h"
 #include "time_mcal.h"
-#include "writer_generic.h"
+//#include "writer_generic.h"
 #include "nmea_protocol.h"
 #include "time_diag.h"
 #include "gnss_diag.h"
@@ -60,24 +60,24 @@ bool nmea_data(uint8_t num) {
         res = true;
         print_time_date("NMEA:", &Node->rmc.time_date, true);
         LOG_INFO(NMEA, "RTK StartCnt:%d", Node->rtk_start_cnt);
-    LOG_INFO(NMEA,"PosMode: %u %s", Node->pos_mode,
+        LOG_INFO(NMEA,"PosMode: %u %s", Node->pos_mode,
               NmeaPosModeToStd(Node->pos_mode));
-    LOG_INFO(NMEA,"RTKFixedDuration:%u ms=%f s=%f min",
+        LOG_INFO(NMEA,"RTKFixedDuration:%u ms=%f s=%f min",
               Node->cur_rtk_fixed_duration,
               MSEC_2_SEC(Node->cur_rtk_fixed_duration),
               MSEC_2_MIN(Node->cur_rtk_fixed_duration));
-    LOG_INFO(NMEA,"RTKFixedMaxDuration:%u ms=%f s=%f min",
+        LOG_INFO(NMEA,"RTKFixedMaxDuration:%u ms=%f s=%f min",
               Node->rtk_fixed_max_duration_ms,
               MSEC_2_SEC(Node->rtk_fixed_max_duration_ms),
               MSEC_2_MIN(Node->rtk_fixed_max_duration_ms));
         LOG_INFO(NMEA, "RCM");
         print_coordinate("NMEA:", Node->rmc.coordinate_ddmm, true);
-        Node->rmc.coordinate_dd = encode_gnss_coordinates(Node->rmc.coordinate_ddmm);
+      //  Node->rmc.coordinate_dd = encode_gnss_coordinates(Node->rmc.coordinate_ddmm);
         print_coordinate("NMEA:", Node->rmc.coordinate_dd, true);
 
         LOG_INFO(NMEA, "GGA");
         print_coordinate("NMEA:", Node->gga.coordinate_ddmm, true);
-        Node->gga.coordinate_dd = encode_gnss_coordinates(Node->gga.coordinate_ddmm);
+       // Node->gga.coordinate_dd = encode_gnss_coordinates(Node->gga.coordinate_ddmm);
         print_coordinate("NMEA:", Node->gga.coordinate_dd, true);
 
         LOG_INFO(NMEA, "speed_knots:%f", Node->rmc.speed_knots);
@@ -91,31 +91,31 @@ bool nmea_data(uint8_t num) {
 }
 
 const char* NmeaNodeMainToStr(const NmeaHandle_t *const Node){
-    static char text[100]={0};
+    static char temp[100]={0};
     if(Node) {
-        strcpy(text,"");
-        snprintf(text, sizeof(text), "%s,Cor:%s", text, GnssCoordinateToStr(&Node->coordinate_dd));
-        snprintf(text, sizeof(text), "%s,%s", text, TimeDate2StrShort(&Node->rmc.time_date));
+        strcpy(temp,"");
+        snprintf(temp, sizeof(temp), "%s,Cor:%s", temp, GnssCoordinateToStr(&Node->coordinate_dd));
+        snprintf(temp, sizeof(temp), "%s,%s", temp, TimeDateToStrShort(&Node->rmc.time_date));
     }
-    return text;
+    return temp;
 }
 
 
 const char* NmeaNodeToStr(const NmeaHandle_t *const Node){
-    static char text[300]={0};
+    static char temp[300]={0};
     if(Node) {
-        strcpy(text,"");
-        snprintf(text, sizeof(text), "%s,%s", text, TimeDate2StrShort(&Node->rmc.time_date));
-        snprintf(text, sizeof(text), "%s,Rx:%u bytes", text, Node->rx_byte_cnt);
-        snprintf(text, sizeof(text), "%s,Cor:%s", text, GnssCoordinateToStr(&Node->coordinate_dd));
-        snprintf(text, sizeof(text), "%s,MsgCnt:%2u", text, Node->msg_cnt);
-        snprintf(text, sizeof(text), "%s,CrcRead:%2u", text, Node->crc_read_cnt);
-        snprintf(text, sizeof(text), "%s,CrcOk:%2u", text, Node->crc_ok_cnt);
-        snprintf(text, sizeof(text), "%s,CrcErr:%2u", text, Node->crc_err_cnt);
-        snprintf(text, sizeof(text), "%s,Proc:%2u", text, Node->proc_msg_cnt);
-        snprintf(text, sizeof(text), "%s,RxUndef:%2u", text, Node->undef_err_cnt);
+        strcpy(temp,"");
+        snprintf(temp, sizeof(temp), "%s,%s", temp, TimeDateToStrShort(&Node->rmc.time_date));
+        snprintf(temp, sizeof(temp), "%s,Rx:%u bytes", temp, Node->rx_byte_cnt);
+        snprintf(temp, sizeof(temp), "%s,Cor:%s", temp, GnssCoordinateToStr(&Node->coordinate_dd));
+        snprintf(temp, sizeof(temp), "%s,MsgCnt:%2u", temp, Node->msg_cnt);
+        snprintf(temp, sizeof(temp), "%s,CrcRead:%2u", temp, Node->crc_read_cnt);
+        snprintf(temp, sizeof(temp), "%s,CrcOk:%2u", temp, Node->crc_ok_cnt);
+        snprintf(temp, sizeof(temp), "%s,CrcErr:%2u", temp, Node->crc_err_cnt);
+        snprintf(temp, sizeof(temp), "%s,Proc:%2u", temp, Node->proc_msg_cnt);
+        snprintf(temp, sizeof(temp), "%s,RxUndef:%2u", temp, Node->undef_err_cnt);
     }
-    return text;
+    return temp;
 }
 
 bool nmea_diag(uint8_t num) {

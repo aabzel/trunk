@@ -14,7 +14,7 @@
 #include "log_utils.h"
 #include "none_blocking_pause.h"
 #include "str_utils.h"
-#include "sys_config.h"
+//#include "sys_config.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
@@ -49,6 +49,7 @@ bool cmd_write_memory(int32_t argc, char* argv[]) {
         uint32_t value = 0u;
         res = try_str2uint32(argv[1], &value);
         log_res(DBG, res, "Value");
+
         if(res) {
             cli_printf("val: 0x%08x" CRLF, (unsigned int)value);
         }
@@ -244,7 +245,7 @@ bool cmd_launch_function(int32_t argc, char* argv[]) {
 static bool h_count_link_diag(char* key_word1, char* key_word2) {
     bool res = false;
 #if defined(HAS_ALLOCATOR) && defined(HAS_MICROCONTROLLER)
-    res = set_log_level(DBG, LOG_LEVEL_INFO);
+    res = log_level_set(DBG, LOG_LEVEL_INFO);
     static const table_col_t cols[] = {
         {5, "num"},
         {12, "addr"},
@@ -272,7 +273,7 @@ static bool h_count_link_diag(char* key_word1, char* key_word2) {
         res = true;
     }
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-    res = set_log_level(DBG, LOG_LEVEL_DEBUG);
+    res = log_level_set(DBG, LOG_LEVEL_DEBUG);
 #endif
     return res;
 }

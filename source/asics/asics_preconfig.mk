@@ -26,6 +26,10 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
         include $(ASICS_DIR)/bq24079/bq24079_preconfig.mk
     endif
 
+    ifeq ($(BTS724G),Y)
+        include $(ASICS_DIR)/bts724g/bts724g_preconfig.mk
+    endif
+    
     ifeq ($(BC127),Y)
         include $(ASICS_DIR)/bc127/bc127_preconfig.mk
     endif
@@ -105,6 +109,10 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
         include $(ASICS_DIR)/si4703/si4703_preconfig.mk
     endif
 
+    ifeq ($(GD5F1GQ5),Y)
+        include $(ASICS_DIR)/gd5f1gq5/gd5f1gq5_preconfig.mk
+    endif
+    
     ifeq ($(SI4737),Y)
         include $(ASICS_DIR)/si4737/si4737_preconfig.mk
     endif

@@ -1,6 +1,5 @@
 #include "core_diag.h"
 
-#include "array_diag.h"
 #include "core_const.h"
 #include "core_driver.h"
 #include "debug_info.h"
@@ -8,6 +7,10 @@
 #include "float_diag.h"
 #include "log.h"
 #include "rational_num_diag.h"
+
+#ifdef HAS_ARRAY_DIAG
+#include "array_diag.h"
+#endif
 
 extern int main(void);
 

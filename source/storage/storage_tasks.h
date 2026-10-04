@@ -101,14 +101,21 @@ extern "C" {
 
 #ifdef HAS_PARAM_PROC
 #include "param.h"
-#define PARAM_TASKS
+#define PARAM_TASKS  {.name="SwNvRam", .period_us=SW_NVRAM_POLL_PERIOD_US, .limiter.function=sw_nvram_proc,},
 #else
 #define PARAM_TASKS
 #endif
 
+#ifdef HAS_FILE_MCAL_PROC
+#include "file_mcal.h"
+#define FILE_MCAL_TASKS  {.name="fileMcal", .period_us=FILE_MCAL_POLL_PERIOD_US, .limiter.function=file_mcal_proc,},
+#else
+#define FILE_MCAL_TASKS
+#endif
+
 #ifdef HAS_SD_CARD_PROC
 #include "sd_card.h"
-#define SD_CARD_TASKS
+#define SD_CARD_TASKS  {.name="SwNvRam", .period_us=SW_NVRAM_POLL_PERIOD_US, .limiter.function=sw_nvram_proc,},
 #else
 #define SD_CARD_TASKS
 #endif
@@ -122,7 +129,13 @@ extern "C" {
 
 #ifdef HAS_RUNNING_LINE_PROC
 #include "running_line.h"
-#define RUNNING_LINE_TASKS   {.name="RunLine", .period_us=RUNNING_LINE_POLL_PERIOD_US, .limiter.function=running_line_proc,},
+#define RUNNING_LINE_TASKS                          \
+       {                                            \
+          .num = TASK_RUNNING_LINE,                 \
+          .name = "RunLine",                        \
+          .period_us = RUNNING_LINE_POLL_PERIOD_US, \
+          .limiter.function = running_line_proc,    \
+       },
 #else
 #define RUNNING_LINE_TASKS
 #endif
@@ -133,6 +146,7 @@ extern "C" {
     EXT_RAM_EMUL_TASKS    \
     FAT_FS_TASKS          \
     FLASH_TASKS           \
+    FILE_MCAL_TASKS       \
     FLASH_FS_TASKS        \
     LITTLE_FS_TASKS       \
     HEAP_TASKS            \

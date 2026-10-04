@@ -58,20 +58,19 @@ digits per byte. The upper nibble is used to represent the most significant digi
 } StorageType_t;
 
 typedef enum {
-    ACCESS_READ_ONLY = 1, /* Read-only. The bit or bit field can only be read. */
-    ACCESS_READ_WRITE = 4, /* Read and write. The bit or bit field can be read and written */
-    ACCESS_WRITE_ONLY = 2, /* Write-only. The bit or bit field can only be written. */
-    ACCESS_WRITE_CLEAR = 5, /* Write 0 or 1 to clear. The bit or bit field can be written as 0 or 1 to be "cleared." */
-    ACCESS_WRITE_0_CLEAR = 5, /* Write 0 to clear. The bit or bit field must be written as 0 to be "cleared." */
-    ACCESS_WRITE_1_CLEAR = 6, /* Write 1 to clear. The bit or bit field must be written as 1 to be "cleared." */
-    ACCESS_ERASE = 3,
-
     ACCESS_UNDEF = 0,
+    ACCESS_READ_ONLY ,   /* Read-only. The bit or bit field can only be read. */
+    ACCESS_READ_WRITE ,  /* Read and write. The bit or bit field can be read and written */
+    ACCESS_WRITE_ONLY ,  /* Write-only. The bit or bit field can only be written. */
+    ACCESS_WRITE_CLEAR , /* Write 0 or 1 to clear. The bit or bit field can be written as 0 or 1 to be "cleared." */
+    ACCESS_WRITE_0_CLEAR , /* Write 0 to clear. The bit or bit field must be written as 0 to be "cleared." */
+    ACCESS_WRITE_1_CLEAR , /* Write 1 to clear. The bit or bit field must be written as 1 to be "cleared." */
+    ACCESS_ERASE ,
 } StorageAccess_t;
 
 
 typedef enum  {
- STORAGE_UNITS_NO_UNIT  =0x00, /*unit,  no  prefix */
+ STORAGE_UNITS_NO_UNIT = 0x00, /*unit,  no  prefix */
  STORAGE_UNITS_METER  =0x1, /* m  Length */
  STORAGE_UNITS_FOOT  =0x2 , /* ft  Length */
  STORAGE_UNITS_INCH  =0x3 , /* in  Length */
@@ -94,11 +93,11 @@ typedef enum  {
  STORAGE_UNITS_WEBER  =0x14, /* Wb  magnetic  flux */
  STORAGE_UNITS_TESLA  =0x15, /* T  magnetic  flux  density */
  STORAGE_UNITS_KELVIN  =0x16, /* K  thermodynamic  temperature */
- STORAGE_UNITS_CELSIUS  =0x17, /* �C  thermodynamic  temperature */
- STORAGE_UNITS_FAHRENHEIT  =0x18 , /* �F  thermodynamic  temperature */
+ STORAGE_UNITS_CELSIUS  =0x17, /* C  thermodynamic  temperature */
+ STORAGE_UNITS_FAHRENHEIT  =0x18 , /* F  thermodynamic  temperature */
  STORAGE_UNITS_CANDELA  =0x19, /* cd  luminous  intensity */
  STORAGE_UNITS_RADIAN  =0x1a, /* rad  plane  angle */
- STORAGE_UNITS_DEGREE  =0x1b, /* �  plane  angle */
+ STORAGE_UNITS_DEGREE  =0x1b, /*  plane  angle */
  STORAGE_UNITS_HERTZ  =0x1c, /* Hz  frequency */
  STORAGE_UNITS_JOULE  =0x1d, /* J  energy */
  STORAGE_UNITS_NEWTON  =0x1e, /* N  force */
@@ -178,6 +177,7 @@ typedef enum {
     STORAGE_PHYSICAL_QUANTITY_ENERGY ,
     STORAGE_PHYSICAL_QUANTITY_LUMINOUS_INTENSITY ,
     STORAGE_PHYSICAL_QUANTITY_FORCE ,
+    STORAGE_PHYSICAL_QUANTITY_SENSITIVITY ,
     STORAGE_PHYSICAL_QUANTITY_POWER ,
 
     STORAGE_PHYSICAL_QUANTITY_UNDEF = 0 ,
@@ -193,6 +193,7 @@ typedef enum {
     STORAGE_SCALE_KILO  = 3 ,   /*    kilo (prefix) k 103 U   */
     STORAGE_SCALE_HECTO = 2 ,   /*    hecto (prefix) h 102 U   */
     STORAGE_SCALE_DECA  = 1 ,   /*    deca (prefix) da 10   */
+    STORAGE_SCALE_ONES  = 0 ,
     STORAGE_SCALE_DECI  =-1 ,   /*    deci (prefix) d 10-1 U   */
     STORAGE_SCALE_CENTI =-2 ,   /*    centi (prefix) c 10-2 U   */
     STORAGE_SCALE_MILLI =-3 ,   /*    milli (prefix) m 10-3 U   */
@@ -201,7 +202,6 @@ typedef enum {
     STORAGE_SCALE_PICO  =-12 ,   /*   pico (prefix) p 10-12 U   */
     STORAGE_SCALE_FEMTO =-15 ,   /*   femto (prefix) f 10-15 U    */
     STORAGE_SCALE_ATTO  =-18 ,   /*   atto (prefix) a 10-18   */
-    STORAGE_SCALE_ONES  = 0 ,
     STORAGE_SCALE_UNDEF  = 0xFF ,
 }StorageScale_t;
 

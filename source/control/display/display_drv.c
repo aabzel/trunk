@@ -122,7 +122,7 @@ bool display_init_one(uint8_t num) {
 
 bool display_init(void) {
     bool res = false;
-    set_log_level(DISPLAY, LOG_LEVEL_DEBUG);
+    log_level_set(DISPLAY, LOG_LEVEL_DEBUG);
     uint32_t cnt = display_get_cnt();
     LOG_WARNING(DISPLAY, "display %u", cnt);
     uint32_t i = 0;
@@ -138,7 +138,7 @@ bool display_init(void) {
     } else {
         res = false;
     }
-    set_log_level(DISPLAY, LOG_LEVEL_INFO);
+    log_level_set(DISPLAY, LOG_LEVEL_INFO);
     return res;
 }
 

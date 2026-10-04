@@ -14,8 +14,11 @@
 #include "mcal_types.h"
 #endif
 
-#ifdef HAS_DIAG
+#ifdef HAS_TABLE_UTILS
 #include "table_utils.h"
+#endif
+
+#ifdef HAS_WRITER
 #include "writer_config.h"
 #endif
 
@@ -45,7 +48,7 @@
 #endif
 
 #ifdef HAS_MICROCONTROLLER
-#include "sys_config.h"
+//#include "sys_config.h"
 #endif
 
 #ifdef HAS_WRITE_ADDR
@@ -233,7 +236,7 @@ bool h_count_link(register void* addr, LinkCounter_t* LinkCounter) { // 1
 
 #endif
 
-#if defined(HAS_DIAG) && defined(HAS_MCAL)
+#if defined(HAS_TABLE_UTILS) && defined(HAS_MCAL)
 bool debug_raw_reg_diag(facility_t facility, uint32_t base_address, const Reg32_t* const RegArray, uint32_t reg_cnt) {
     bool res = false;
     if(RegArray) {
@@ -321,7 +324,7 @@ bool memmory_test(const uint32_t address, const uint32_t size) {
             LOG_ERROR(DBG, "Addr:0x%08x,Err", run);
             break;
         }
-        diag_progress_log(run - address, size, 1000);
+        diag_progress_log(run - address, size, 1000, "MemTest");
     }
     return res;
 }

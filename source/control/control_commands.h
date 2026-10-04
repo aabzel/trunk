@@ -23,10 +23,22 @@
 #define GPIO_DAC_COMMANDS
 #endif
 
+#ifdef HAS_FILE_CLI_COMMANDS
+#include "file_cli_commands.h"
+#else
+#define FILE_CLI_COMMANDS
+#endif
+
 #ifdef HAS_AUTO_EXIT_COMMANDS
 #include "auto_exit_commands.h"
 #else
 #define AUTO_EXIT_COMMANDS
+#endif
+
+#ifdef HAS_GPIO_MAPPER_COMMANDS
+#include "gpio_mapper_commands.h"
+#else
+#define GPIO_MAPPER_COMMANDS
 #endif
 
 #ifdef HAS_LED_MONO_COMMANDS
@@ -105,6 +117,12 @@
 #include "i2s_commands.h"
 #else
 #define I2S_COMMANDS
+#endif
+
+#ifdef HAS_BIN_DAC_COMMANDS
+#include "bin_dac_commands.h"
+#else
+#define BIN_DAC_COMMANDS
 #endif
 
 #ifdef HAS_RDS_COMMANDS
@@ -246,6 +264,7 @@ bool cmd_action_bt1024_wm8731_fwd(int32_t argc, char* argv[]);
         CONTROL_FWD_COMMANDS                \
         DEBUGGER_COMMANDS                   \
         FREE_RTOS_COMMANDS                  \
+        FILE_CLI_COMMANDS                   \
         PC_COMMANDS                         \
         PID_COMMANDS                        \
         POSTPONE_FUN_COMMANDS               \
@@ -258,6 +277,7 @@ bool cmd_action_bt1024_wm8731_fwd(int32_t argc, char* argv[]);
 
 #define CONTROL_HARDWARE_COMMANDS           \
         ANT_MUX_COMMANDS                    \
+        BIN_DAC_COMMANDS                    \
         AUDIO_USB_COMMANDS                  \
         BOARD_COMMANDS                      \
         BOARD_CUSTOM_COMMANDS               \

@@ -33,6 +33,7 @@ extern const SystemInitInstance_t SystemInitInstance[];
 extern uint32_t send_err_cnt;
 extern System_t System;
 
+bool system_is_vaild_facility(const facility_t facility);
 bool sysrem_pre_init(void);
 bool system_mcal_init(void);
 bool system_is_all_init(void);

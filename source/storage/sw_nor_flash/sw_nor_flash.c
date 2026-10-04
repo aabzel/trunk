@@ -426,7 +426,7 @@ bool sw_nor_flash_init_one(uint8_t num) {
     } else {
         LOG_PARN(SW_NOR_FLASH, "ConfigErr %u", num);
     }
-    set_log_level(SW_NOR_FLASH, LOG_LEVEL_INFO);
+    log_level_set(SW_NOR_FLASH, LOG_LEVEL_INFO);
     return res;
 }
 

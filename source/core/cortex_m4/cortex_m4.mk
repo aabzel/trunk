@@ -67,6 +67,7 @@ ifneq ($(CORTEX_SELECT_MK_INC),Y)
     endif
 
     ifeq ($(FPU),Y)
+        #$(error FPU=$(FPU))
         MCAL_OPT += -DHAS_FPU
         #MCAL_OPT += -D__FPU_PRESENT=1
         #MCAL_OPT += -D__FPU_USED=1

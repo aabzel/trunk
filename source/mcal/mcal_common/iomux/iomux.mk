@@ -3,10 +3,11 @@ ifneq ($(IOMUX_GENERAL_DRV_MK_INC),Y)
     IOMUX_GENERAL_DRV_MK_INC=Y
 
     IOMUX_MCAL_DIR = $(MCAL_COMMON_DIR)/iomux
-    #@echo $(error IOMUX_MCAL_DIR=$(IOMUX_MCAL_DIR))
+    # $(error IOMUX_MCAL_DIR=$(IOMUX_MCAL_DIR))
 
     INCDIR += -I$(IOMUX_MCAL_DIR)
     MCAL_OPT += -DHAS_IOMUX
+    MCAL_OPT += -DHAS_IO_MUX
 
     SOURCES_C += $(IOMUX_MCAL_DIR)/iomux_general.c
 

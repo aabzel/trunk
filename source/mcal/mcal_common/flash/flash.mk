@@ -4,7 +4,7 @@ ifneq ($(FLASH_MCAL_MK_INC),Y)
     FLASH_MCAL_MK_INC=Y
 
     FLASH_MCAL_DIR = $(MCAL_COMMON_DIR)/flash
-    #@echo $(error FLASH_MCAL_DIR=$(FLASH_MCAL_DIR))
+    # $(error FLASH_MCAL_DIR=$(FLASH_MCAL_DIR))
 
     INCDIR += -I$(FLASH_MCAL_DIR)
     MCAL_OPT += -DHAS_FLASH
@@ -23,7 +23,7 @@ ifneq ($(FLASH_MCAL_MK_INC),Y)
     endif
 
     ifeq ($(FLASH_WRITE),Y)
-        #@echo $(error FLASH_WRITE=$(FLASH_WRITE))
+        # $(error FLASH_WRITE=$(FLASH_WRITE))
         MCAL_OPT += -DHAS_FLASH_WRITE
     endif
 
@@ -35,9 +35,9 @@ ifneq ($(FLASH_MCAL_MK_INC),Y)
     endif
 
     ifeq ($(CLI),Y)
-        #@echo $(error CLI=$(CLI))
+        # $(error CLI=$(CLI))
         ifeq ($(FLASH_COMMANDS),Y)
-            #@echo $(error FLASH_COMMANDS=$(FLASH_COMMANDS))
+            # $(error FLASH_COMMANDS=$(FLASH_COMMANDS))
             MCAL_OPT += -DHAS_FLASH_COMMANDS
             SOURCES_C += $(FLASH_MCAL_DIR)/flash_commands.c
         endif

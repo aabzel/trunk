@@ -373,7 +373,7 @@ Pixel_t FontPixelGet( int16_t x, int16_t y, char letter, Font_t font){
     uint32_t font_word32 = 0;
 
     int8_t bytes_in_row=Font2ByteInRow(  font);
-    switch((uint8_t)font) {
+    switch(font) {
 #ifdef HAS_FONT_12_X_6
         case FONT_12: {
             memcpy(&font_word, &gsc_ascii_1206[chr_ind][ x*bytes_in_row],bytes_in_row);
@@ -417,6 +417,7 @@ Pixel_t FontPixelGet( int16_t x, int16_t y, char letter, Font_t font){
 #endif
             pixel= GET_BIT_NUM(font_word32, msb_idx-y);
         }break;
+        default:            break;
     }
 
     return pixel;

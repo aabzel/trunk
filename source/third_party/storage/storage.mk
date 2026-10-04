@@ -25,6 +25,11 @@ ifneq ($(THIRD_PARTY_STORAGE_MK_INC),Y)
         include $(THIRD_PARTY_STORAGE_DIR)/fat_fs/fat_fs.mk
     endif
 
+    ifeq ($(JFES),Y)
+        # $(error JFES=$(JFES))
+        include $(THIRD_PARTY_STORAGE_DIR)/jfes/jfes.mk
+    endif
+
     ifeq ($(LITTLE_FS),Y)
         # $(error LITTLE_FS=$(LITTLE_FS))
         include $(THIRD_PARTY_STORAGE_DIR)/little_fs/little_fs.mk

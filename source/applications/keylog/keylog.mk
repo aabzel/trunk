@@ -10,13 +10,13 @@ ifneq ($(KEYLOG_MK_INC),Y)
 
     INCDIR += -I$(KEYLOG_DIR)
 
-    OPT += -DHAS_KEYLOG
-    OPT += -DHAS_KEYLOG_PROC
+    MCAL_OPT += -DHAS_KEYLOG
+    MCAL_OPT += -DHAS_KEYLOG_PROC
 
     FIFO_ARRAY=Y
     ifeq ($(DIAG),Y)
         ifeq ($(KEYLOG_DIAG),Y)
-            OPT += -DHAS_KEYLOG_DIAG
+            MCAL_OPT += -DHAS_KEYLOG_DIAG
             SOURCES_C += $(KEYLOG_DIR)/keylog_diag.c
         endif
     endif

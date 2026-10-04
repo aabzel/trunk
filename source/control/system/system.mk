@@ -35,9 +35,11 @@ ifneq ($(SYSTEM_MK_INC),Y)
         endif
     endif
     
+    FACILITY_SORTER_TOOL=C:/cygwin64/bin/sort.exe
+    # $(error FACILITY_SORTER_TOOL=[$(FACILITY_SORTER_TOOL)])
 .PHONY: sort_system_facility_tokens
-sort_system_facility_tokens: $(SYSTEM_FACILITY_TOKENS)
+sort_system_facility_tokens: $(SYSTEM_FACILITY_TOKENS) $(FACILITY_SORTER_TOOL)
 	$(info sort_system_facility_tokens...)
-	$(SORTER_TOOL) -u $(SYSTEM_FACILITY_TOKENS) -o $(SYSTEM_FACILITY_TOKENS)
+	$(FACILITY_SORTER_TOOL) -u $(SYSTEM_FACILITY_TOKENS) -o $(SYSTEM_FACILITY_TOKENS)
 
 endif

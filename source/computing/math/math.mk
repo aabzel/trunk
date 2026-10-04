@@ -10,6 +10,10 @@ ifneq ($(MATH_MISC_MK_INC),Y)
     MCAL_OPT +=-DHAS_MATH
     SOURCES_C += $(MATH_DIR)/utils_math.c
 
+    ifeq ($(MATH_CHIRP),Y)
+        SOURCES_C += $(MATH_DIR)/math_chirp.c
+    endif
+
     ifeq ($(DIAG),Y)
         SOURCES_DIAG_C += $(MATH_DIR)/math_diag.c
     endif

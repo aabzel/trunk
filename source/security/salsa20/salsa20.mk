@@ -8,10 +8,10 @@ ifneq ($(SALSA20_MK),Y)
     SALSA20_DIR = $(SECURITY_DIR)/salsa20
     #@echo $(error SALSA20_DIR=$(SALSA20_DIR))
     INCDIR += -I$(SALSA20_DIR)
-    OPT += -DHAS_SALSA20
+    MCAL_OPT += -DHAS_SALSA20
 
     ifeq ($(SALSA20_DIAG),Y)
-        OPT += -DHAS_SALSA20_DIAG
+        MCAL_OPT += -DHAS_SALSA20_DIAG
     endif
 
     SOURCES_C += $(SALSA20_DIR)/salsa20.c
@@ -19,7 +19,7 @@ ifneq ($(SALSA20_MK),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(SALSA20_COMMANDS),Y)
-            OPT += -DHAS_SALSA20_COMMANDS
+            MCAL_OPT += -DHAS_SALSA20_COMMANDS
             SOURCES_C += $(SALSA20_DIR)/salsa20_commands.c
         endif
     endif

@@ -11,7 +11,7 @@ ifneq ($(NRF5340_DK_MK_INC),Y)
     INTERFACES=Y
     NRF5340_DK=Y
 
-    OPT += -DHAS_NRF5340_DK
+    MCAL_OPT += -DHAS_NRF5340_DK
 
     SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_config.c
 
@@ -29,11 +29,11 @@ ifneq ($(NRF5340_DK_MK_INC),Y)
     endif
 
     ifeq ($(BLE_SPEAKER_CFG),Y)
-        OPT += -DHAS_BLE_SPEAKER_CFG
+        MCAL_OPT += -DHAS_BLE_SPEAKER_CFG
     endif
 
     ifeq ($(BT_BLE_UWB_TAG_CFG),Y)
-        OPT += -DHAS_BT_BLE_UWB_TAG_CFG
+        MCAL_OPT += -DHAS_BT_BLE_UWB_TAG_CFG
     endif
 
     ifeq ($(BT1026),Y)
@@ -125,7 +125,7 @@ ifneq ($(NRF5340_DK_MK_INC),Y)
 
     ifeq ($(LED_MONO),Y)
         #@echo $(error LED_MONO=$(LED_MONO))
-        OPT += -DHAS_LED_MONO
+        MCAL_OPT += -DHAS_LED_MONO
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/led_mono_config.c
     endif
 
@@ -156,7 +156,7 @@ ifneq ($(NRF5340_DK_MK_INC),Y)
 
     ifeq ($(PINS),Y)
         $(info Config Pins)
-        OPT += -DHAS_PINS
+        MCAL_OPT += -DHAS_PINS
     endif
 
     ifeq ($(PWM),Y)
@@ -204,7 +204,7 @@ ifneq ($(NRF5340_DK_MK_INC),Y)
 
     ifeq ($(TBFP),Y)
         $(info Add config TBFP)
-        OPT += -DTBFP_MAX_PAYLOAD=350
+        MCAL_OPT += -DTBFP_MAX_PAYLOAD=350
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c
     endif
 

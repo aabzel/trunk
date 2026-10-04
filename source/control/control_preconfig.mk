@@ -15,6 +15,11 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
         include $(CONTROL_DIR)/boot_drv/boot_preconfig.mk
     endif
 
+    ifeq ($(BIN_DAC),Y)
+        # $(error BIN_DAC=$(BIN_DAC))
+        include $(CONTROL_DIR)/bin_dac/bin_dac_preconfig.mk
+    endif
+
     ifeq ($(BOOTLOADER),Y)
         # $(error BOOTLOADER= $(BOOTLOADER))
         include $(CONTROL_DIR)/bootloader/bootloader_preconfig.mk
@@ -23,10 +28,10 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
     ifeq ($(BUZZER),Y)
         include $(CONTROL_DIR)/buzzer/buzzer_preconfig.mk
     endif
- 
-    ifeq ($(PWM_DAC),Y)
-        # $(error PWM_DAC= $(PWM_DAC))
-        include $(CONTROL_DIR)/pwm_dac/pwm_dac_preconfig.mk
+
+    ifeq ($(FILE_CLI),Y)
+        # $(error FILE_CLI=$(FILE_CLI))
+        include $(CONTROL_DIR)/file_cli/file_cli_preconfig.mk
     endif
     
     ifeq ($(GENERIC),Y)
@@ -61,13 +66,14 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
         # $(error DISPLAY=$(DISPLAY))
         include $(CONTROL_DIR)/display/display_preconfig.mk
     endif
-    
-    ifeq ($(SUPER_CYCLE),Y)
-        include $(CONTROL_DIR)/super_cycle/super_cycle_preconfig.mk    
-    endif
 
     ifeq ($(POSTPONE_FUN),Y)
         include $(CONTROL_DIR)/postpone_fun/postpone_fun_preconfig.mk    
+    endif
+ 
+    ifeq ($(PWM_DAC),Y)
+        # $(error PWM_DAC= $(PWM_DAC))
+        include $(CONTROL_DIR)/pwm_dac/pwm_dac_preconfig.mk
     endif
 
     ifeq ($(SYSTEM),Y)
@@ -76,6 +82,10 @@ ifneq ($(CONTROL_PRECONFIG_INC),Y)
 
     ifeq ($(SCHEDULER),Y)
         include $(CONTROL_DIR)/scheduler/scheduler_preconfig.mk
+    endif
+    
+    ifeq ($(SUPER_CYCLE),Y)
+        include $(CONTROL_DIR)/super_cycle/super_cycle_preconfig.mk    
     endif
 
     ifeq ($(WIN),Y)

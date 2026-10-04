@@ -14,13 +14,12 @@
 #define AUTO_EXIT_INIT
 #endif
 
-#ifdef HAS_GPIO_DAC
-#include "gpio_dac_mcal.h"
-#define GPIO_DAC_INIT {.init_function=gpio_dac_mcal_init, .name="GpioDac",},
+#ifdef HAS_BIN_DAC
+#include "bin_dac_mcal.h"
+#define BIN_DAC_INIT {.init_function=bin_dac_mcal_init, .name="BinDac",},
 #else
-#define GPIO_DAC_INIT
+#define BIN_DAC_INIT
 #endif
-
 
 #ifdef HAS_BUZZER
 #include "buzzer.h"
@@ -29,11 +28,11 @@
 #define BUZZER_INIT
 #endif
 
-#ifdef HAS_RTOS
-#include "rtos_drv.h"
-#define RTOS_INIT { .init_function=rtos_task_mcal_init, .name="RTOS",},
+#ifdef HAS_GPIO_DAC
+#include "gpio_dac_mcal.h"
+#define GPIO_DAC_INIT {.init_function=gpio_dac_mcal_init, .name="GpioDac",},
 #else
-#define RTOS_INIT
+#define GPIO_DAC_INIT
 #endif
 
 #ifdef HAS_FREE_RTOS
@@ -77,6 +76,12 @@
 #define RELAY_INIT
 #endif
 
+#ifdef HAS_FILE_CLI
+#include "file_cli_mcal.h"
+#define FILE_CLI_INIT {.init_function=file_cli_mcal_init, .name="fileCli",},
+#else
+#define FILE_CLI_INIT
+#endif
 
 #ifdef HAS_BOOT
 #include "boot_driver.h"
@@ -92,6 +97,12 @@
 #define BOOT_INIT
 #endif
 
+#ifdef HAS_GPIO_MAPPER
+#include "gpio_mapper_mcal.h"
+#define GPIO_MAPPER_INIT { .init_function=gpio_mapper_mcal_init, GPIO_MAPPER_INIT_NAME},
+#else
+#define GPIO_MAPPER_INIT
+#endif
 
 #ifdef HAS_USB_TO_I2S
 #include "usb_to_i2s_drv.h"
@@ -114,6 +125,12 @@
 #define PWM_DAC_INIT
 #endif
 
+#ifdef HAS_RTOS
+#include "rtos_drv.h"
+#define RTOS_INIT { .init_function=rtos_task_mcal_init, .name="RTOS",},
+#else
+#define RTOS_INIT
+#endif
 
 #ifdef HAS_SCRIPT
 #include "script.h"
@@ -121,8 +138,6 @@
 #else
 #define SCRIPT_INIT
 #endif
-
-
 
 #ifdef HAS_POSTPONE_FUN
 #include "postpone_fun.h"
@@ -146,14 +161,14 @@
 #define SCHEDULER_INIT
 #endif
 
-
 /* order matter */
 #define CONTROL_INIT    \
+    GPIO_MAPPER_INIT    \
     BOOT_INIT           \
     SCHEDULER_INIT      \
     LED_INIT            \
-    USB_TO_I2S_INIT     \
     RELAY_INIT          \
+    BIN_DAC_INIT        \
     RTOS_INIT           \
     FREE_RTOS_INIT      \
     ZEPHYR_RTOS_INIT    \

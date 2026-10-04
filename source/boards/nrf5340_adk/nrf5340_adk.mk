@@ -7,12 +7,12 @@ ifneq ($(NRF5340_ADK_MK_INC),Y)
     $(info + Config for NRF5340-ADK)
 
     NRF5340=Y
-    OPT += -DHAS_NRF5340
+    MCAL_OPT += -DHAS_NRF5340
     BOARD_CFG_DIR = $(BOARD_DIR)/nrf5340_adk
     #include $(WORKSPACE_LOC)/mcu/nrf5340/nrf5340.mk
     #@echo $(error BOARD_CFG_DIR=$(BOARD_CFG_DIR))
     #@echo $(error CFLAGS=$(CFLAGS))
-    OPT += -DHAS_NRF5340_ADK
+    MCAL_OPT += -DHAS_NRF5340_ADK
 
     SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_config.c
   
@@ -58,26 +58,26 @@ ifneq ($(NRF5340_ADK_MK_INC),Y)
         ifeq ($(LED_MONO),Y)
             $(info Config LED MONO)
             #@echo $(error LED_MONO=$(LED_MONO))
-            OPT += -DHAS_LED_MONO
+            MCAL_OPT += -DHAS_LED_MONO
             SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/led_mono_config.c
         endif
 
         ifeq ($(LED_RGB),Y)
             $(info Config LED RGB)
             #@echo $(error LED_RGB=$(LED_RGB))
-            OPT += -DHAS_LED_RGB
+            MCAL_OPT += -DHAS_LED_RGB
             SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/led_rgb_config.c
         endif
     endif
 
     ifeq ($(I2C),Y)
-        OPT += -DHAS_I2C
+        MCAL_OPT += -DHAS_I2C
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/i2c_config.c
     endif
 
     ifeq ($(I2S),Y)
         #@echo $(error I2S=$(I2S))
-        OPT += -DHAS_I2S
+        MCAL_OPT += -DHAS_I2S
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/i2s_config.c
     endif
 
@@ -86,7 +86,7 @@ ifneq ($(NRF5340_ADK_MK_INC),Y)
     endif
     ifeq ($(PINS),Y)
         $(info Config Pins)
-        OPT += -DHAS_PINS
+        MCAL_OPT += -DHAS_PINS
     endif
 
     ifeq ($(PDM),Y)

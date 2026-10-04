@@ -23,6 +23,12 @@
 #define MANCHESTER_DECODE_COMMANDS
 #endif
 
+#ifdef HAS_APERTURE_SYNTHESIS_COMMANDS
+#include "aperture_synthesis_commands.h"
+#else
+#define APERTURE_SYNTHESIS_COMMANDS
+#endif
+
 #ifdef HAS_SLIDING_INTEGRAL_COMMANDS
 #include "sliding_integral_commands.h"
 #else
@@ -120,6 +126,7 @@
     DELTA_SIGMA_COMMANDS             \
     ECHO_EFFECT_COMMANDS             \
     DC_CUT_FILTER_COMMANDS           \
+    APERTURE_SYNTHESIS_COMMANDS      \
     FIR_COMMANDS                     \
     FIR_INT_COMMANDS                 \
     FOURIER_SERIES_COMMANDS          \

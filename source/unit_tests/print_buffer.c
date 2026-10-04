@@ -1,10 +1,9 @@
-
 #include "print_buffer.h"
 
-#include <stdbool.h>
 #include <string.h>
 
 #include "ostream.h"
+#include "std_includes.h"
 
 char last_cmd_result_str[LAST_CMD_RESULT_SIZE + 1U];
 static char test_stream_str[64];

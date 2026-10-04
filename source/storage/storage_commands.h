@@ -105,6 +105,12 @@ extern "C" {
 #define PARAM_COMMANDS
 #endif
 
+#ifdef HAS_FILE_MCAL_COMMANDS
+#include "file_mcal_commands.h"
+#else
+#define FILE_MCAL_COMMANDS
+#endif
+
 #ifdef HAS_SD_CARD_COMMANDS
 #include "sd_card_commands.h"
 #else
@@ -168,6 +174,7 @@ bool malloc_try_command(int32_t argc, char* argv[]);
 #define STORAGE_COMMANDS        \
     STORAGE_ASICS_COMMANDS      \
     CALIBRATION_DATA_COMMANDS   \
+    FILE_MCAL_COMMANDS          \
     DISK_COMMANDS               \
     EXT_RAM_EMUL_COMMANDS       \
     FAT_FS_COMMANDS             \

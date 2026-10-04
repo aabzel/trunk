@@ -3,8 +3,11 @@
 #include "code_generator.h"
 #include "compiler_const.h"
 #include "flash_mcal.h"
-#include "interval.h"
 #include "log.h"
+
+#ifdef HAS_INTERVAL
+#include "interval.h"
+#endif
 
 #ifdef HAS_CRC16
 #include "crc16_ccitt.h"
@@ -15,8 +18,8 @@ COMPONENT_GET_CONFIG(Nvs, nvs)
 
 bool is_nvs_addr_range(uint8_t num, uint32_t address, uint32_t size) {
     bool res = false;
-    const NvsConfig_t *Config = NvsGetConfig(num);
-    if (Config) {
+    const NvsConfig_t* Config = NvsGetConfig(num);
+    if(Config) {
         uint32_t nvs_end = Config->start + Config->size;
         IntervalE_t IntervalNvs = {.start = Config->start, .end = nvs_end};
         IntervalE_t IntervalData = {.start = address, .end = address + size};
@@ -82,7 +85,7 @@ _WEAK_FUN_
 bool nvs_errase_all(uint8_t num) {
     bool res = false;
     const NvsConfig_t* Config = NvsGetConfig(num);
-    if(Config){
+    if(Config) {
         res = nvs_mcal_erase(num, Config->start, Config->size);
     }
     return res;
@@ -137,7 +140,6 @@ static bool NvsIsValidConfig(const NvsConfig_t* const Config) {
             res = false;
         }
 
-
 #if 0
         ifn(0 < Config->sector_size) {
             LOG_ERROR(NVS, "SectorSizeErr");
@@ -150,13 +152,12 @@ static bool NvsIsValidConfig(const NvsConfig_t* const Config) {
             res = false;
         }
 
-
         ifn(Config->name) {
             res = false;
             LOG_ERROR(NVS, "NVS%u NameErr", Config->num);
         }
-        
-        if (res) {
+
+        if(res) {
             res = is_flash_address_range(Config->start, Config->size);
             log_res(NVS, res, "CheckRange");
         }
@@ -164,7 +165,6 @@ static bool NvsIsValidConfig(const NvsConfig_t* const Config) {
 
     return res;
 }
-
 
 bool nvs_proc_one(uint8_t num) {
     bool res = false;
@@ -188,7 +188,6 @@ bool nvs_init_common(const NvsConfig_t* const Config, NvsHandle_t* const Node) {
     }
     return res;
 }
-
 
 _WEAK_FUN_
 bool nvs_init_one(uint8_t num) {
@@ -225,8 +224,6 @@ bool nvs_init_one(uint8_t num) {
     }
     return res;
 }
-
-
 
 #if 0
 _WEAK_FUN_

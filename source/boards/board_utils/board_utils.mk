@@ -10,6 +10,6 @@ ifneq ($(BOARD_UTILS_H_MK_INC),Y)
 
     INCDIR += -I$(BOARD_UTILS_H_DIR)
 
-    OPT += -DHAS_BOARD_UTILS
+    MCAL_OPT += -DHAS_BOARD_UTILS
 
 endif

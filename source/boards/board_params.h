@@ -1,7 +1,8 @@
-#ifndef BOARD_PARAMS_H
-#define BOARD_PARAMS_H
+#ifndef BOARD_MCAL_PARAMS_H
+#define BOARD_MCAL_PARAMS_H
 
 //#include "c_defines_generated.h"
+#error ererere
 
 #ifdef HAS_BOARD_CUSTOM
 
@@ -34,4 +35,4 @@
 
 #define BOARD_PARAMS
 
-#endif /* BOARD_PARAMS_H */
+#endif /* BOARD_MCAL_PARAMS_H */

@@ -56,14 +56,12 @@
 #define MEDIAN_FILTER_INIT
 #endif
 
-
 #ifdef HAS_MEDIAN_FILTER_FAST
 #include "median_filter_fast.h"
 #define MEDIAN_FILTER_FAST_INIT {.init_function=median_filter_fast_mcal_init, .name="MedianFilterFast",},
 #else
 #define MEDIAN_FILTER_FAST_INIT
 #endif
-
 
 #ifdef HAS_FIR
 #include "fir.h"
@@ -99,7 +97,6 @@
 #else
 #define SCAN_INIT
 #endif
-
 
 #ifdef HAS_PHASE_DETECTOR
 #include "phase_detector.h"

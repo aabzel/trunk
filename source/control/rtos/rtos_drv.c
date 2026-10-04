@@ -4,6 +4,17 @@
 #include "super_cycle.h"
 #include "code_generator.h"
 
+#ifdef HAS_FREE_RTOS
+#include "FreeRTOS.h"
+#include "portmacro.h"
+#include "task.h"
+#endif
+
+#ifdef HAS_ZEPHYR_RTOS
+#include <zephyr/kernel.h>
+#endif /*HAS_ZEPHYR_RTOS*/
+
+
 COMPONENT_GET_NODE(RtosTask, rtos_task)
 COMPONENT_GET_CONFIG(RtosTask, rtos_task)
 
@@ -16,8 +27,14 @@ bool rtos_delay_ms(uint32_t delay_ms){
     bool res = false;
     if(delay_ms) {
 #ifdef HAS_FREE_RTOS
-            vTaskDelay(2);
+            vTaskDelay(delay_ms);
             res = true;
+#endif
+
+#ifdef HAS_ZEPHYR_RTOS
+            k_msleep(delay_ms); /*Works*/
+                                                // k_sleep(K_NO_WAIT); /*Cli hang on No Sound*/
+                                                // k_yield(); /*Cli hang on, No Sound*/
 #endif
     }
     return res;

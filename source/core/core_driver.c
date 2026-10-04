@@ -5,8 +5,7 @@
 #include "common_functions.h"
 #include "compiler_const.h"
 #include "float_utils.h"
-#include "microcontroller_const.h"
-#include "microcontroller_drv.h"
+#include "microcontroller.h"
 
 #ifdef HAS_RATIONAL_NUM
 #include "rational_num.h"
@@ -76,6 +75,7 @@
 COMPONENT_GET_NODE(Core, core)
 COMPONENT_GET_CONFIG(Core, core)
 
+static uint32_t critical_nesting_level = 0U;
 uint8_t* low_stack = (uint8_t*)RAM_END;
 
 /*TODO: Test it*/
@@ -84,6 +84,10 @@ bool core_is_interrupt(void) {
     bool res = false;
 #ifdef HAS_CORTEX_M4
     res = cortex_m4_is_interrupt();
+#endif
+
+#ifdef HAS_CORTEX_M7
+    res = cortex_m7_is_interrupt();
 #endif
     return res;
 }
@@ -102,11 +106,16 @@ void sampling_timer_interrupt_handler(void) {
 
 #ifdef HAS_CORE_EXT
 
-_WEAK_FUN_ bool is_ram_addr(register uint32_t address) {
+_WEAK_FUN_ bool is_ram_addr(const uint32_t address) {
     bool res = false;
-    if(RAM_START <= address) {
-        if(address <= (RAM_START + RAM_SIZE)) {
-            res = true;
+    uint32_t cnt = ram_get_sector_cnt();
+    uint32_t i = 0;
+    for(i = 0; i < cnt; i++) {
+        if(RamSectorConfig[i].start <= address) {
+            if(address <= (RamSectorConfig[i].start + RamSectorConfig[i].size)) {
+                res = true;
+                break;
+            }
         }
     }
 
@@ -195,7 +204,7 @@ bool arm_is_vector(const ArmCortexVectorTable_t* const Node) {
     res = arm_is_reserved_vector_zero(Node);
     if(!res) {
 #ifdef HAS_LOG
-        LOG_DEBUG(CORE, "RevVectorError:Offset:%p", Node);
+        LOG_ERROR(CORE, "RevVectorError:Offset:%p", Node);
 #endif
     }
 
@@ -205,7 +214,7 @@ bool arm_is_vector(const ArmCortexVectorTable_t* const Node) {
         res = is_ram_addr(Node->stack_top);
         if(!res) {
 #ifdef HAS_LOG
-            LOG_DEBUG(CORE, "StackUpPrtUpError:Offset:%p", Node);
+            LOG_ERROR(CORE, "StackUpPrtUpError:Offset:%p", Node);
 #endif
         }
 #endif
@@ -216,7 +225,7 @@ bool arm_is_vector(const ArmCortexVectorTable_t* const Node) {
         res = is_flash_addr(Node->reset_handler);
         if(!res) {
 #ifdef HAS_LOG
-            LOG_DEBUG(CORE, "ResetHandlerError:0x%x", Node->reset_handler);
+            LOG_ERROR(CORE, "ResetHandlerError:0x%x", Node->reset_handler);
 #endif
         }
     }
@@ -224,48 +233,72 @@ bool arm_is_vector(const ArmCortexVectorTable_t* const Node) {
     if(res) {
         res = is_flash_addr(Node->HardFault_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "HardFault_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 
     if(res) {
         res = is_flash_addr(Node->MemManage_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "MemManage_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 
     if(res) {
         res = is_flash_addr(Node->BusFault_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "BusFault_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 
     if(res) {
         res = is_flash_addr(Node->UsageFault_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "UsageFault_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 
     if(res) {
         res = is_flash_addr(Node->DebugMon_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "DebugMon_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 
     if(res) {
         res = is_flash_addr(Node->SVC_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "SVC_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 
     if(res) {
         res = is_flash_addr(Node->PendSV_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "PendSV_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 
     if(res) {
         res = is_flash_addr(Node->NMI_Handler);
         if(!res) {
+#ifdef HAS_LOG
+            LOG_ERROR(CORE, "NMI_Handler:0x%x", Node->reset_handler);
+#endif
         }
     }
 #endif /*HAS_FLASH_EX*/
@@ -454,6 +487,7 @@ bool core_check_address(volatile const char* address) {
     return is_valid;
 }
 
+#ifdef HAS_CORTEX
 uint32_t cortex_offset_size_get(uint32_t const start) {
     uint32_t offset_size = 0;
 #ifdef HAS_LOG
@@ -477,6 +511,8 @@ uint32_t cortex_offset_size_get(uint32_t const start) {
 
     return offset_size;
 }
+
+#endif
 
 #ifdef HAS_CORE_EXT
 static FloatFixPoint_t core_stack_used_get(CoreHandle_t* const Node) {
@@ -516,7 +552,8 @@ static bool core_stack_monitor_proc_one(uint8_t num) {
 static bool core_init_custom(void) {
     bool res = true;
 #ifdef HAS_LOG
-    // LOG_PARN(CORE, "CustomInit");
+    uint32_t ram_size = cortex_offset_size_get(RAM_START);
+    LOG_INFO(CORE, "Start:0x%08x,Size:%u Byte", RAM_START, ram_size);
 #endif
     return res;
 }
@@ -563,21 +600,18 @@ static bool CoreIsValidConfig(const CoreConfig_t* const Config) {
 #ifdef HAS_LOG
             LOG_PARN(CORE, "CORE%u,StackTopNotRam:0x%x", Config->num, Config->stack_top);
 #endif
-            res = false;
         }
 
         ifn(is_ram_addr(Config->stack_limit)) {
 #ifdef HAS_LOG
             LOG_PARN(CORE, "CORE%u,StackLinNotRam:0x%x", Config->num, Config->stack_limit);
 #endif
-            res = false;
         }
 
         ifn(Config->name) {
 #ifdef HAS_LOG
             LOG_PARN(CORE, "CORE%u,Name,Error", Config->num);
 #endif
-            res = false;
         }
     }
 
@@ -604,9 +638,12 @@ static bool core_init_one(uint8_t num) {
 #ifdef HAS_FPU
                 res = fpu_init();
 #endif
+
                 Node->valid = true;
+#ifdef HAS_RATIONAL_NUM
                 Node->stack_used.fractional = 0;
                 Node->stack_used.integer = 0;
+#endif
                 Node->spin = 0;
                 Node->init = true;
                 res = true;
@@ -626,6 +663,37 @@ static bool core_init_one(uint8_t num) {
 #endif
     }
     return res;
+}
+
+bool core_is_from_interrupt(void) {
+    bool res = false;
+    /*TODO: Explore register SCB->ICSR */
+    // res = ((SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0);
+    return res;
+}
+
+void enter_critical(void) {
+    if(!core_is_from_interrupt()) {
+        if(critical_nesting_level == 0) {
+#ifdef HAS_CMSIS
+            __disable_irq();
+#endif
+        }
+        critical_nesting_level++;
+    }
+}
+
+void exit_critical(void) {
+    if(!core_is_from_interrupt()) {
+        if(critical_nesting_level) {
+            critical_nesting_level--;
+            if(critical_nesting_level == 0) {
+#ifdef HAS_CMSIS
+                __enable_irq();
+#endif
+            }
+        }
+    }
 }
 
 COMPONENT_INIT_PATTERT(CORE, CORE, core)

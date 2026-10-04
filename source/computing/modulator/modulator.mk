@@ -4,7 +4,7 @@ ifneq ($(MODULATOR_MK_INC),Y)
     MODULATOR_MK_INC=Y
 
     MODULATOR_DIR = $(COMPUTING_DIR)/modulator
-    #@echo $(error MODULATOR_DIR=$(MODULATOR_DIR))
+    # $(error MODULATOR_DIR=$(MODULATOR_DIR))
 
     INCDIR += -I$(MODULATOR_DIR)
     MCAL_OPT +=-DHAS_MODULATOR
@@ -21,6 +21,10 @@ ifneq ($(MODULATOR_MK_INC),Y)
         ifeq ($(MODULATOR_DIAG),Y)
             SOURCES_C += $(MODULATOR_DIR)/modulator_diag.c
         endif
+    endif
+
+    ifeq ($(BPSK_4FS),Y)
+        include $(MODULATOR_DIR)/bpsk_4fs/bpsk_4fs.mk
     endif
 
     ifeq ($(BPSK),Y)

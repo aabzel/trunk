@@ -11,7 +11,7 @@ ifneq ($(CONTROL_MK_INC),Y)
     ifeq ($(CONTROL_COMMANDS),Y)
         MCAL_OPT += -DHAS_CONTROL_COMMANDS
     endif
-    
+
     ifeq ($(CLI),Y)
         ifeq ($(CONTROL_COMMANDS),Y)
             # $(error CONTROL_COMMANDS=$(CONTROL_COMMANDS))
@@ -30,6 +30,11 @@ ifneq ($(CONTROL_MK_INC),Y)
 
     ifeq ($(AUTO_EXIT),Y)
         include $(CONTROL_DIR)/auto_exit/auto_exit.mk    
+    endif
+
+    ifeq ($(BIN_DAC),Y)
+        # $(error BIN_DAC=$(BIN_DAC))
+        include $(CONTROL_DIR)/bin_dac/bin_dac.mk
     endif
     
     ifeq ($(GENERIC),Y)
@@ -70,6 +75,10 @@ ifneq ($(CONTROL_MK_INC),Y)
     ifeq ($(DEBUGGER),Y)
         # $(error DEBUGGER=$(DEBUGGER))
         include $(CONTROL_DIR)/debugger/debugger.mk
+    endif
+
+    ifeq ($(FILE_CLI),Y)
+        include $(CONTROL_DIR)/file_cli/file_cli.mk
     endif
 
     ifeq ($(FREE_RTOS),Y)
@@ -114,6 +123,11 @@ ifneq ($(CONTROL_MK_INC),Y)
         include $(CONTROL_DIR)/rtos/rtos.mk
     endif
 
+    ifeq ($(GPIO_MAPPER),Y)
+        # $(error RTOS=$(RTOS))
+        include $(CONTROL_DIR)/gpio_mapper/gpio_mapper.mk
+    endif
+
     ifeq ($(SCRIPT),Y)
         # $(error SCRIPT=$(SCRIPT))
         include $(CONTROL_DIR)/script/script.mk
@@ -127,6 +141,7 @@ ifneq ($(CONTROL_MK_INC),Y)
     ifeq ($(SUPER_CYCLE),Y)
         include $(CONTROL_DIR)/super_cycle/super_cycle.mk    
     endif
+
 
     ifeq ($(SYSTEM),Y)
         include $(CONTROL_DIR)/system/system.mk    

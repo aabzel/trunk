@@ -57,6 +57,9 @@ bool math_is_equal_angles_deg(const float angle1_deg,
 float calc_fll_discriminator_rad( const VectorF_t* const new, const  VectorF_t*  const old);
 float calc_fll_discriminator_deg( const VectorF_t* const new, const  VectorF_t*  const old);
 
+float math_calc_2d_distance(const Dot2D_t* const  Dot1,
+                            const Dot2D_t* const  Dot2);
+
 #ifdef __cplusplus
 }
 #endif

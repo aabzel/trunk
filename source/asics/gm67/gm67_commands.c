@@ -36,4 +36,3 @@ bool gm67_init_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
-

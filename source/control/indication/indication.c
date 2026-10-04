@@ -3,7 +3,6 @@
 #include <stddef.h>
 
 #include "data_utils.h"
-#include "led_config.h"
 #include "led_drv.h"
 #include "system.h"
 
@@ -63,9 +62,9 @@ bool indication_init(void) {
     BuildType_t prog_type = system_get_prog_type();
     const Intication_t* Intication = GetIndication(prog_type);
     if(Intication) {
-        res = led_pwm(LED_HEARTBEAT_ID, Intication->freq, Intication->duty);
+        res = led_pwm(LED_ID_HEARTBEAT, Intication->freq, Intication->duty);
 #ifdef HAS_LED_RGB
-        res = led_rgb_set_color(LED_HEARTBEAT_ID, Intication->color);
+        res = led_rgb_set_color(LED_ID_HEARTBEAT, Intication->color);
 #endif
     }
     return res;

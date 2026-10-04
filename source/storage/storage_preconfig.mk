@@ -31,8 +31,8 @@ ifneq ($(STORAGE_PRECONFIG_INC),Y)
         include $(STORAGE_DIR)/nor_flash_off_chip/nor_flash_off_chip_preconfig.mk
     endif
 
-    ifeq ($(FILE_API),Y)
-        include $(STORAGE_DIR)/file_api/file_api_preconfig.mk
+    ifeq ($(FILE_MCAL),Y)
+        include $(STORAGE_DIR)/file_mcal/file_mcal_preconfig.mk
     endif
 
     ifeq ($(FAT_FS),Y)
@@ -62,6 +62,10 @@ ifneq ($(STORAGE_PRECONFIG_INC),Y)
         include $(STORAGE_DIR)/sw_nor_flash/sw_nor_flash_preconfig.mk
     endif
 
+    ifeq ($(PNG),Y)
+        include $(STORAGE_DIR)/png/png_preconfig.mk
+    endif
+    
     ifeq ($(SW_NVRAM),Y)
         include $(STORAGE_DIR)/sw_nvram/sw_nvram_preconfig.mk
     endif

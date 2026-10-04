@@ -15,7 +15,7 @@ ifneq ($(ASICS_MK_INC),Y)
     #SOURCES_C += $(ASICS_DIR)/asics_drv.c
 
     ifeq ($(AT24C02),Y)
-        include $(ASICS_DIR)/at24cxx/at24cxx.mk
+        include $(ASICS_DIR)/at24cx/at24cx.mk
     endif
 
     ifeq ($(DRV8870),Y)
@@ -58,6 +58,10 @@ ifneq ($(ASICS_MK_INC),Y)
     ifeq ($(DS3231),Y)
         # $(error DS3231= $(DS3231))
         include $(ASICS_DIR)/ds3231/ds3231.mk
+    endif
+
+    ifeq ($(LIS3DH),Y)
+        include $(ASICS_DIR)/lis3dh/lis3dh.mk
     endif
 
     ifeq ($(DW1000),Y)
@@ -121,8 +125,17 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/mx25r6435f/mx25r6435f.mk
     endif
 
+    ifeq ($(NAU8814),Y)
+        #@echo $(error NAU8814=$(NAU8814))
+        include $(ASICS_DIR)/nau8814/nau8814.mk
+    endif
+
+    ifeq ($(SA51034),Y)
+        include $(ASICS_DIR)/sa51034/sa51034.mk
+    endif
+    
     ifeq ($(MX25L6433F),Y)
-        include $(ASICS_DIR)/mx25l6433f_transformed/mx25l6433f.mk
+        include $(ASICS_DIR)/mx25l6433f/mx25l6433f.mk
     endif
 
     ifeq ($(SI4703),Y)
@@ -152,6 +165,14 @@ ifneq ($(ASICS_MK_INC),Y)
 
     ifeq ($(WM8731),Y)
         include $(ASICS_DIR)/wm8731/wm8731.mk
+    endif
+
+    ifeq ($(W25M02GV),Y)
+        include $(ASICS_DIR)/w25m02gv/w25m02gv.mk
+    endif
+    
+    ifeq ($(WM8994),Y)
+        include $(ASICS_DIR)/wm8994/wm8994.mk
     endif
 
     ifeq ($(UBLOX_NEO_6M),Y)

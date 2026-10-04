@@ -11,167 +11,21 @@
 #include "gpio_mcal.h"
 #endif
 
-#ifdef HAS_INTERFACES
-#include "if_config.h"
-#endif
-
 #ifdef HAS_WATCHDOG
 #include "watchdog_mcal.h"
 #endif
 
-#ifdef HAS_CAN
-#include "can_if_drv.h"
+#ifdef HAS_BOARD_INFO
+#include "board_info.h"
 #endif
 
-#ifdef HAS_ADT
-#include "adt_init.h"
-#else
-#define ADT_INIT
-#endif
-
-#ifdef HAS_CONNECTIVITY
-#include "connectivity_init.h"
-#else
-#define CONNECTIVITY_INIT
-#endif
-
-#ifdef HAS_STORAGE
-#include "storage_init.h"
-#else
-#define STORAGE_INIT
-#endif
-
-#ifdef HAS_CONTROL
-#include "control_init.h"
-#else
-#define CONTROL_INIT
+#ifdef HAS_GPIO_MAPPER
+#include "gpio_mapper_mcal.h"
 #endif
 
 #ifdef HAS_LOG
 #include "log.h"
 #endif
-
-#ifdef HAS_MICROCONTROLLER
-//#include "sys_config.h"
-#endif
-
-#ifdef HAS_SYSTEM_DIAG
-#include "system_diag.h"
-#endif
-
-#ifdef HAS_BOOTLOADER
-//#error "That API only for Generic"
-#endif
-
-#ifdef HAS_CORE
-#include "core_driver.h"
-#endif
-
-#ifdef HAS_SOFTWARE_TIMER
-#include "software_timer.h"
-#define SOFTWARE_TIMER_INIT                                                                                            \
-    {                                                                                                                  \
-        .init_function = sw_timer_init,                                                                                \
-        .name = "SwTimer",                                                                                             \
-    },
-#else
-#define SOFTWARE_TIMER_INIT
-#endif /*HAS_SOFTWARE_TIMER*/
-
-#ifdef HAS_SW_DAC
-#include "sw_dac_drv.h"
-#define SW_DAC_INIT                                                                                                    \
-    {                                                                                                                  \
-        .init_function = sw_dac_init,                                                                                  \
-        .name = "DACsw",                                                                                               \
-    },
-#else
-#define SW_DAC_INIT
-#endif /*HAS_SW_DAC*/
-
-#ifdef HAS_ADC
-#include "adc_drv.h"
-#define ADC_INIT                                                                                                       \
-    {                                                                                                                  \
-        .init_function = adc_init,                                                                                     \
-        .name = "Adc",                                                                                                 \
-    },
-#else
-#define ADC_INIT
-#endif /*HAS_GPIO*/
-
-#if 0
-#ifdef HAS_MICROCONTROLLER
-#include "board_config.h"
-#define BOARD_INIT                                                                                                     \
-    {                                                                                                                  \
-        .init_function = board_init,                                                                                   \
-        .name = "board",                                                                                               \
-    },
-#else
-#define BOARD_INIT
-#endif /*HAS_MICROCONTROLLER*/
-#endif
-
-#ifdef HAS_MICROCONTROLLER
-#include "hw_init.h"
-#else
-#define HW_INIT
-#endif
-
-#ifdef HAS_GAMES
-#include "games_init.h"
-#else
-#define GAMES_INIT
-#endif
-
-#ifdef HAS_MCAL
-#include "mcal_init.h"
-#else
-#define MCAL_INIT
-#endif
-
-#ifdef HAS_PROTOCOLS
-#include "protocols_init.h"
-#else
-#define PROTOCOLS_INIT
-#endif
-
-#ifdef HAS_SOCKET
-#include "interfaces_init.h"
-#else
-#define SOCKET_INIT
-#endif
-
-#ifdef HAS_TIME
-#include "time_mcal.h"
-#define SYS_TIME_INIT                                                                                                  \
-    {                                                                                                                  \
-        .init_function = time_mcal_init,                                                                               \
-        .name = "Time",                                                                                                \
-    },
-#else
-#define SYS_TIME_INIT
-#endif
-
-#ifdef HAS_INTERFACES
-#include "interfaces_init.h"
-#else
-#define HW_WIRELESS_INTERFACES_INIT
-#endif
-
-#ifdef HAS_UNIT_TEST
-#include "unit_test.h"
-#define UNIT_TEST_INIT                                                                                                 \
-    {                                                                                                                  \
-        .init_function = unit_test_init,                                                                               \
-        .name = "UnitTest",                                                                                            \
-    },
-#else
-#define UNIT_TEST_INIT
-#endif /*HAS_UNIT_TEST*/
-
-#include "sw_init.h"
 
 /*Order matter!*/
 const SystemInitInstance_t SystemInitInstance[] = {INIT_FUNCTIONS};
@@ -253,13 +107,13 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
     if(init_cnt) {
         /*init from array */
 #ifdef HAS_LOG
-        char InitOrder[1600] = {0};
-        memset(InitOrder, 0, sizeof(InitOrder));
-        strcpy(InitOrder, "");
+        memset(System.InitOrder, 0, sizeof(System.InitOrder));
+        strcpy(System.InitOrder, "");
 #endif
 
         uint32_t i = 0;
         uint32_t ok = 0;
+        uint32_t error = 0;
         for(i = 0; i < init_cnt; i++) {
 #ifdef HAS_WATCHDOG
             res = watchdog_proc();
@@ -269,6 +123,9 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
             if(res) {
                 /*TODO Add GPIO  negative front*/
                 ok++;
+            } else {
+                error++;
+                snprintf(System.InitError, sizeof(System.InitError), "%s%s,", System.InitError, Node[i].name);
             }
 
 #ifdef HAS_GPIO
@@ -276,21 +133,20 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
             gpio_toggle(System.DebugPad);
 #endif
 
-#ifdef HAS_LOG
-            res = try_init(res, i + 1, Node[i].name);
-#endif
+            res = try_init(res, i + 1, init_cnt, Node[i].name);
 
-#ifdef HAS_LOG
-            // LOG_INFO(SYS,"%u:----^[%s],%s", i + 1,Node[i].name, OkToStr(res));
+#ifdef HAS_GPIO_MAPPER
+            // TODO Add GPIO TOGGLE to trace init progress on DS-logic
+            gpio_mapper_set(GPIO_MAP_INIT_LEN, i);
 #endif
 
 #ifdef HAS_LOG_COLOR
-            snprintf(InitOrder, sizeof(InitOrder), "%s%s%s%s,", InitOrder, log_res_to_color(res), Node[i].name,
-                     log_res_to_color(true));
+            snprintf(System.InitOrder, sizeof(System.InitOrder), "%s%s%s%s,", System.InitOrder, log_res_to_color(res),
+                     Node[i].name, log_res_to_color(true));
 #endif
         } // for(i = 0; i < init_cnt; i++)
 #ifdef HAS_LOG
-        LOG_INFO(SYS, "InitOrder:[%sEnd]", InitOrder);
+        LOG_INFO(SYS, "InitOrder:Err:%u,[%sEnd]", error, System.InitOrder);
 #endif
         // led_mono_ctrl(2, true);
         if(ok == init_cnt) {
@@ -301,11 +157,18 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
             System.init = true;
         } else {
             System.init = false;
+#ifdef HAS_BOARD_INFO
+            board_indicate_init_error();
+#endif
             uint32_t error_cnt = init_cnt - ok;
             (void)error_cnt;
             res = false;
-            double init_compleetness = 100.0 * ((double)ok) / ((double)init_cnt);
+            float init_compleetness = 100.0f * ((float)ok) / ((float)init_cnt);
             (void)init_compleetness;
+#ifdef HAS_LOG
+            LOG_ERROR(SYS, "Init:Err:%u,[%s]", error_cnt, System.InitError);
+#endif
+
 #ifdef HAS_LOG
             LOG_ERROR(SYS, "InitInComplete:%u/%u,Only:%5.2f %%,Err:%u", ok, init_cnt, init_compleetness, error_cnt);
 #endif
@@ -331,8 +194,18 @@ bool system_init_one(const SystemInitInstance_t* const Node, const uint32_t init
 bool sysrem_pre_init(void) {
     bool res = true;
 #ifdef HAS_LOG
-    set_log_level(SYS, LOG_LEVEL_NOTICE);
+    log_level_set(SYS, LOG_LEVEL_NOTICE);
 #endif
+    return res;
+}
+
+bool system_is_vaild_facility(const facility_t facility) {
+    bool res = false;
+    if(UNKNOWN_FACILITY < facility) {
+        if(facility < ALL_FACILITY) {
+            res = true;
+        }
+    }
     return res;
 }
 

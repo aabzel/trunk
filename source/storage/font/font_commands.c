@@ -25,7 +25,7 @@ bool font_diag_char_command(int32_t argc, char* argv[]) {
     }
 
     if(res){
-        set_log_level(FONT,LOG_LEVEL_INFO);
+        log_level_set(FONT,LOG_LEVEL_INFO);
         res = false;
 #ifdef HAS_FONT_DIAG
         res = font_diag_char(letter, font);
@@ -35,7 +35,7 @@ bool font_diag_char_command(int32_t argc, char* argv[]) {
     }else{
         LOG_ERROR(FONT, "Usage: fdc char font");
     }
-    set_log_level(FONT,LOG_LEVEL_INFO);
+    log_level_set(FONT,LOG_LEVEL_INFO);
 
     return res;
 }
@@ -57,7 +57,7 @@ bool font_diag_char_raw_command(int32_t argc, char *argv[]){
     }
 
     if(res) {
-        set_log_level(FONT, LOG_LEVEL_INFO);
+        log_level_set(FONT, LOG_LEVEL_INFO);
         res = false;
 #ifdef HAS_FONT_DIAG
         res = font_diag_char_raw(letter, font);
@@ -65,7 +65,7 @@ bool font_diag_char_raw_command(int32_t argc, char *argv[]){
     } else {
         LOG_ERROR(FONT, "Usage: fdc char font");
     }
-    set_log_level(FONT,LOG_LEVEL_INFO);
+    log_level_set(FONT,LOG_LEVEL_INFO);
 
     return res;
 }

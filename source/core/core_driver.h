@@ -35,8 +35,7 @@ extern "C" {
 #define CORE_NAME
 #endif
 
-
-#define CORE_MCAL_INIT { .init_function=core_mcal_init, CORE_NAME},
+#define CORE_MCAL_INIT { .init_function=core_mcal_init, CORE_NAME },
 
 //#define EXPECT_STACK_SIZE (2048)   // _Min_Stack_Size //(2048)
 
@@ -54,8 +53,9 @@ bool fpu_init(void);
 bool arm_is_vector(const ArmCortexVectorTable_t* const Node) ;
 #endif
 bool arm_cortex_check_arm_vector_table(const uint32_t vector_table_addr);
-bool is_ram_addr(uint32_t phy_address);
+bool is_ram_addr(const uint32_t phy_address);
 bool core_is_interrupt(void);
+bool core_is_from_interrupt(void);
 bool core_is_valid_isr_handler(int16_t irq_n);
 bool core_check_address(volatile const char *address);
 uint32_t core_isr_handler_addr_get(int16_t irq_n);
@@ -67,10 +67,10 @@ bool try_recursion(const uint32_t stack_top_addr, const uint32_t max_depth, uint
 
 /*setters*/
 bool core_reboot(void);
-
 bool core_exeption(uint32_t in, uint32_t* out) ;
 void sampling_timer_interrupt_handler(void);
-
+void enter_critical(void);
+void exit_critical(void);
 
 
 #ifdef HAS_CHECK_STACK

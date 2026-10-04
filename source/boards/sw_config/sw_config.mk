@@ -6,7 +6,7 @@ ifneq ($(SW_CONFIG_MK_INC),Y)
     INCDIR += -I$(BOARD_CFG_DIR)
     #@echo $(error BOARD_CFG_DIR=$(BOARD_CFG_DIR))
 
-    OPT += -DHAS_SW_CONFIG
+    MCAL_OPT += -DHAS_SW_CONFIG
 
 
     ifeq ($(AUDIO),Y)
@@ -53,7 +53,7 @@ ifneq ($(SW_CONFIG_MK_INC),Y)
 
     ifeq ($(TBFP),Y)
         $(info Add config TBFP)
-        OPT += -DTBFP_MAX_PAYLOAD=350
+        MCAL_OPT += -DTBFP_MAX_PAYLOAD=350
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c
     endif
 

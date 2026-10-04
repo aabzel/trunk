@@ -9,7 +9,7 @@ extern "C" {
 #include "lockstep_config.h"
 #include "lockstep_isr.h"
 #include "lockstep_types.h"
-//#include "multicore_const.h"
+
 #ifdef HAS_LOCKSTEP_CUSTOM
 #include "lockstep_custom.h"
 #endif
@@ -20,8 +20,11 @@ extern "C" {
 
 /*API*/
 const LockStepConfig_t* LockStepGetConfig(uint8_t num);
-const LockStepInfo_t* LockStepGetInfo(uint8_t num);
 LockStepHandle_t* LockStepGetNode(uint8_t num);
+
+#ifdef HAS_LOCKSTEP_CUSTOM
+const LockStepInfo_t* LockStepGetInfo(uint8_t num);
+#endif
 
 bool lockstep_mcal_init(void);
 bool lockstep_proc(void);

@@ -8,6 +8,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
+#define DAC_CHANNEL_CUSTOM_COMMANDS
 
 bool dac_diag_custom_command(int32_t argc, char* argv[]);
 bool dac_all_int_command(int32_t argc, char* argv[]);

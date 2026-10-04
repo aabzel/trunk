@@ -9,7 +9,7 @@ extern "C" {
 #include <stdint.h>
 
 bool scr1_timer_diag(void);
-char* Scr1TimerClockSource2Str(uint8_t code);
+char* Scr1TimerClockSourceToStr(uint8_t code);
 
 #ifdef __cplusplus
 }

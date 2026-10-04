@@ -35,6 +35,10 @@ strict digraph graphname {
     #include "common.gvi"
 #endif
 
+#ifdef HAS_BOARD
+    #include "boards/boards.gvi"
+#endif
+
     #include "components.gvi"
 
 #ifdef HAS_COMPUTING

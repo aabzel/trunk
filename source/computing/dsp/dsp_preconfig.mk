@@ -8,6 +8,11 @@ ifneq ($(DSP_PRECONFIG_MK_INC),Y)
         include $(DSP_DIR)/dft/dft_preconfig.mk
     endif
 
+    ifeq ($(APERTURE_SYNTHESIS),Y)
+        #  $(error APERTURE_SYNTHESIS=$(APERTURE_SYNTHESIS))
+        include $(DSP_DIR)/aperture_synthesis/aperture_synthesis_preconfig.mk
+    endif
+
     ifeq ($(MANCHESTER_DECODE),Y)
         #  $(error SCHMITT_TRIGGER=$(SCHMITT_TRIGGER))
         include $(DSP_DIR)/manchester_decode/manchester_decode_preconfig.mk

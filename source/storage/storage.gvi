@@ -11,6 +11,11 @@ subgraph cluster_storage{
     ALLOCATOR
 #endif
 
+#ifdef HAS_PNG
+    PNG
+#endif
+
+
 #ifdef HAS_FAT_FS
     FAT_FS
 #endif
@@ -72,6 +77,10 @@ FLASH_FS
 
 #ifdef HAS_FILES
     #include "files.gvi"
+#endif
+
+#ifdef HAS_PNG
+    #include "png.gvi"
 #endif
 
 #ifdef HAS_FLASH_FS

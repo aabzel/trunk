@@ -60,7 +60,11 @@ ifneq ($(DSP__MK_INC),Y)
     ifeq ($(QUAD_MIX_4FS),Y)
         include $(DSP_DIR)/quad_mix_4fs/quad_mix_4fs.mk
     endif
-    
+
+    ifeq ($(APERTURE_SYNTHESIS),Y)
+        include $(DSP_DIR)/aperture_synthesis/aperture_synthesis.mk
+    endif
+
     ifeq ($(QUADRATURE_MIXER),Y)
         include $(DSP_DIR)/quadrature_mixer/quadrature_mixer.mk
     endif
@@ -125,7 +129,6 @@ ifneq ($(DSP__MK_INC),Y)
         #  $(error IIR=$(IIR))
         include $(DSP_DIR)/iir/iir.mk
     endif
-
 
     ifeq ($(CLI),Y)
         ifeq ($(DSP_COMMANDS),Y)

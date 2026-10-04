@@ -51,7 +51,7 @@ extern "C" {
 #include "aes_commands.h"
 #else
 #define AES_COMMANDS
-#endif /*HAS_AES_COMMANDS*/
+#endif
 
 #ifdef HAS_CRYP_COMMANDS
 #include "cryp_commands.h"
@@ -125,6 +125,11 @@ extern "C" {
 #define COMMON_COMMANDS
 #endif
 
+#ifdef HAS_PHYSICS_COMMANDS
+#include "physics_commands.h"
+#else
+#define PHYSICS_COMMANDS
+#endif
 
 #ifdef HAS_SW_COMPONENT_COMMANDS
 #include "sw_component_commands.h"
@@ -146,6 +151,7 @@ extern "C" {
     ADT_COMMANDS                                                           \
     APPLICATIONS_COMMANDS                                                  \
     ASICS_COMMANDS                                                         \
+    PHYSICS_COMMANDS                                                       \
     BIT_COMMANDS                                                           \
     CLI_SECURITY_COMMANDS                                                  \
     CONTROL_COMMANDS                                                       \

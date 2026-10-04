@@ -20,6 +20,11 @@ typedef struct  {
 } Dot_t;
 
 typedef struct  {
+    float x;
+    float y;
+} Dot2D_t;
+
+typedef struct  {
     double dx;
     double dy;
     double dz;

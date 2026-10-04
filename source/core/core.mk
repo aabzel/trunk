@@ -60,7 +60,7 @@ ifneq ($(CORE_GENERAL_MK_INC),Y)
     endif
 
     ifeq ($(SYSTICK),Y)
-        #$(error SYSTICK=$(SYSTICK))
+        # $(error SYSTICK=$(SYSTICK))
         include $(CORE_DIR)/systick/systick.mk
     endif
     

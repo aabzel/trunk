@@ -40,10 +40,6 @@
 #include "core_driver.h"
 #endif
 
-#ifdef HAS_FLASH
-//#include "flash_drv.h"
-#endif
-
 #include "log.h"
 
 #ifdef HAS_STORE_FS
@@ -69,7 +65,7 @@ bool generic_jump_to_bootloader(void) {
     bool res = false;
 #ifdef HAS_STORE_FS
     uint8_t boot_cmd = BOOT_CMD_STAY_ON;
-    res = store_fs_set(1, PAR_ID_BOOT_CMD, (uint8_t*)&boot_cmd);
+    res = store_fs_set(PAR_ID_BOOT_CMD, (uint8_t*)&boot_cmd);
     log_info_res(GENERIC, res, "SetBoot");
 #endif
 

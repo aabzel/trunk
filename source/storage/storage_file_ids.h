@@ -52,12 +52,6 @@
 #define STORAGE_KEEPPASS
 #endif
 
-#ifdef HAS_BOARD
-#include "board_params.h"
-#else
-#define PAR_IDS_BOARD
-#endif
-
 #ifdef HAS_CLOCK
 #define PAR_IDS_CLOCK PAR_ID_SYS_CLOCK_HZ = 92,
 #else
@@ -76,6 +70,28 @@
 
 #else
 #define STORAGE_BOOTLOADER
+#endif
+
+
+#ifdef HAS_WATCHDOG
+
+#define STORAGE_IDS_WATCHDOG                     \
+    PAR_ID_WATCHDOG_BOOTLOADER_ON =  70,     \
+    PAR_ID_WATCHDOG_GENERIC_ON =  72,        \
+    PAR_ID_WATCHDOG_TIME_OUT_S = 71 ,
+
+#else
+#define STORAGE_IDS_WATCHDOG
+#endif
+
+#ifdef HAS_UNIT_TEST
+#define STORAGE_IDS_UNIT_TEST                      \
+    PAR_ID_UNIT_TEST_FIRST_FAILED_HASH = 102,      \
+    PAR_ID_UNIT_TEST_LAST_FAILED_HASH = 103,       \
+    PAR_ID_UNIT_TEST_FAILED_CNT =  104,
+
+#else
+#define STORAGE_IDS_UNIT_TEST
 #endif
 
 
@@ -237,7 +253,7 @@ typedef enum  {
     PAR_ID_DAWN_2 = 90,
     PAR_ID_SUNSET_2 = 91,
 #endif
-    PAR_IDS_BOARD
+    PAR_IDS_BOARD,
 
     PAR_ID_NAN,
     PAR_ID_CNT

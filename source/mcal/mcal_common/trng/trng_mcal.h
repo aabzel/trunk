@@ -8,6 +8,7 @@ extern "C" {
 #include "std_includes.h"
 #include "trng_config.h"
 #include "trng_types.h"
+
 #ifdef HAS_TRNG_DIAG
 #include "trng_diag.h"
 #endif

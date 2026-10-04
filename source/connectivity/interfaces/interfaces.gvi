@@ -8,11 +8,13 @@
     #include "segger_rtt/segger_rtt.gvi"
 #endif
 
-
 #ifdef HAS_SOCKET
     #include "socket/socket.gvi"
 #endif
 
+#ifdef HAS_SW_UART
+#include "sw_uart/sw_uart.gvi"
+#endif
 
 #ifdef HAS_RADIO
 #include "radio.gvi"

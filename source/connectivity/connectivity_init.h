@@ -11,7 +11,7 @@
 #define LOG_DISABLE_INIT
 #endif
 
-#ifdef HAS_LOG
+#ifdef HAS_LOG_ENABLE
 #include "log.h"
 #define LOG_ENABLE  { .init_function = log_enable, .name="LogEnable",},
 #else

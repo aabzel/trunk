@@ -729,12 +729,6 @@ bool cli_init_one(uint8_t num) {
     return res;
 }
 
-bool cli1_init(void) { return cli_init_one(1); }
-
-bool cli2_init(void) { return cli_init_one(2); }
-
-bool cli3_init(void) { return cli_init_one(3); }
-
 COMPONENT_PROC_PATTERT(CLI, CLI, cli)
 
 COMPONENT_INIT_PATTERT(CLI, CLI, cli)

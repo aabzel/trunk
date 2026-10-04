@@ -424,7 +424,7 @@ const char* StorageIdToStr(const StorageId_t id) {
 }
 
 const char* StorageItemToStr(const StorageItem_t* const Item) {
-    static char lText[120] = {0};
+    static char lText[150] = {0};
     if(Item) {
         strcpy(lText, "");
         memset(lText, 0, sizeof(lText));

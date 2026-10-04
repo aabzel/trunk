@@ -1,4 +1,4 @@
-#include "microcontroller_drv.h"
+#include "microcontroller.h"
 
 #include "compiler_const.h"
 #include "microcontroller.h"
@@ -10,6 +10,10 @@
 
 #ifdef HAS_LOG
 #include "log.h"
+#endif
+
+#ifdef HAS_STM32_HAL
+#include "hal_mcal.h"
 #endif
 
 #ifdef HAS_CORE
@@ -70,16 +74,22 @@ bool mcu_is_text_addr(const uint32_t address) {
     return res;
 }
 
-_WEAK_FUN_ bool microcontroller_custom_init(void) {
+_WEAK_FUN_
+bool microcontroller_custom_init(void) {
     bool res = true;
     return res;
 }
 
+_WEAK_FUN_
 bool microcontroller_init(void) {
     bool res = false;
-#ifdef HAS_LOG
+#ifdef HAS_CLOCK
     uint32_t core_freq_hz = clock_core_freq_get();
+    (void)core_freq_hz;
+#ifdef MCU_NAME
     LOG_WARNING(MICROCONTROLLER, "Init,MCU:%s,CPUclk:%u Hz", MCU_NAME, core_freq_hz);
+#endif
+
 #endif
 
     res = microcontroller_custom_init();

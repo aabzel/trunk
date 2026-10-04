@@ -19,6 +19,15 @@ float norm_f(const VectorF_t* const Node) {
     return norm;
 }
 
+float math_calc_2d_distance(const Dot2D_t* const Dot1, const Dot2D_t* const Dot2) {
+    float distance = 0.0;
+    float dx = Dot2->x - Dot1->x;
+    float dy = Dot2->y - Dot1->y;
+    float argument = dx * dx + dy * dy;
+    distance = sqrtf(argument);
+    return distance;
+}
+
 static float dot_product_f(const VectorF_t* const v1, const VectorF_t* const v2) {
     float scalar_product = 0.0;
     scalar_product = (v1->dx) * (v2->dx) + (v1->dy) * (v2->dy) + (v1->dz) * (v2->dz);

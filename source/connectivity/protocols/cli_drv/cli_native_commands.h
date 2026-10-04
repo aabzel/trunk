@@ -45,9 +45,11 @@ bool cli_diag_command(int32_t argc, char *argv []);
 bool cmd_version(int32_t argc, char* argv[]);
 bool cli_help_command(int32_t argc, char* argv[]);
 bool cmd_sysinfo(int32_t argc, char* argv[]);
+bool cli_init_command(int32_t argc, char* argv[]);
 bool cmd_beep(int32_t argc, char* argv[]);
 
 #define CLI_NATIVE_BASE_COMMANDS                                                                           \
+    SHELL_CMD("cli_init", "clii", cli_init_command, "CliInit"),                                  \
     SHELL_CMD("ascii", "ascii", cli_print_ascii_command, "PrintASCII"),                                  \
     SHELL_CMD("cli_diag","clid",cli_diag_command, "CliDiag"),                                                             \
     SHELL_CMD("beep","b",cmd_beep, "CliBeep"),                                                             \

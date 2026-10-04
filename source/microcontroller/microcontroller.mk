@@ -4,7 +4,7 @@ ifneq ($(MICROCONTROLLER_MK_INC),Y)
     MICROCONTROLLER_SELECTED=N
 
     MICROCONTROLLER_DIR = $(WORKSPACE_LOC)/microcontroller
-    # $(error MICROCONTROLLER_DIR= $(MICROCONTROLLER_DIR))
+    #$(error MICROCONTROLLER_DIR=$(MICROCONTROLLER_DIR))
 
     INCDIR += -I$(MICROCONTROLLER_DIR)
 
@@ -19,6 +19,10 @@ ifneq ($(MICROCONTROLLER_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         SOURCES_C += $(MICROCONTROLLER_DIR)/microcontroller_commands.c
+    endif
+
+    ifeq ($(ATMEGA328PB),Y)
+        include $(MICROCONTROLLER_DIR)/atmega328pb/atmega328pb.mk
     endif
     
     ifeq ($(MCU_X86),Y)
@@ -100,6 +104,10 @@ ifneq ($(MICROCONTROLLER_MK_INC),Y)
         include $(MICROCONTROLLER_DIR)/stm32f411ce/stm32f411ce.mk
     endif
 
+    ifeq ($(STM32F413ZG),Y)
+        include $(MICROCONTROLLER_DIR)/stm32f413zg/stm32f413zg.mk
+    endif
+
     ifeq ($(STM32F413ZH),Y)
         include $(MICROCONTROLLER_DIR)/stm32f413zh/stm32f413zh.mk
     endif
@@ -119,6 +127,10 @@ ifneq ($(MICROCONTROLLER_MK_INC),Y)
 
     ifeq ($(STM32F746ZG),Y)
         include $(MICROCONTROLLER_DIR)/stm32f746zg/stm32f746zg.mk
+    endif
+
+    ifeq ($(STM32F746NG),Y)
+        include $(MICROCONTROLLER_DIR)/stm32f746ng/stm32f746ng.mk
     endif
 
     ifeq ($(STM32L073RZ),Y)

@@ -211,6 +211,17 @@ uint8_t count_set_bits_u16(uint16_t const inVal16bit) {
     return sum;
 }
 
+uint8_t count_set_bits_u8(uint8_t const inVal8bit) {
+    uint8_t sum = 0;
+    uint8_t val8bit = inVal8bit;
+    while(0u != val8bit) {
+        sum++;
+        val8bit &= (val8bit - 1u);
+    }
+    return sum;
+}
+
+
 // Return sum of bits in "data"
 uint8_t bit_summ16(uint16_t data) {
     uint8_t cnt = 0;
@@ -222,6 +233,19 @@ uint8_t bit_summ16(uint16_t data) {
     }
     return cnt;
 }
+
+/* Возвращает 1, если количество единичных бит нечётное (odd [2 4 6 8]), иначе 0 (1 3 5 7 9)
+ 1 = odd number of ones, 0 = even */
+uint8_t u8_calc_parity_bit(const uint8_t in_data) {
+    uint8_t data = in_data;
+    uint8_t parity = 0;
+    while (data) {
+        parity ^= (data & 1);
+        data >>= 1;
+    }
+    return parity;
+}
+
 
 /*
  *  Odd (Amount of 1 bits is 1 3 5 7 9 and so 31)

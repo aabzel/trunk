@@ -8,7 +8,7 @@ ifneq ($(NUCLEO_L073RZ_MK_INC),Y)
 
     #@echo $(error BOARD_CFG_DIR=$(BOARD_CFG_DIR))
     #@echo $(error CFLAGS=$(CFLAGS))DMA
-    OPT += -DHAS_NUCLEO_L073RZ
+    MCAL_OPT += -DHAS_NUCLEO_L073RZ
 
     MICROCONTROLLER=Y
 
@@ -84,13 +84,13 @@ ifneq ($(NUCLEO_L073RZ_MK_INC),Y)
 
     ifeq ($(I2S),Y)
         #@echo $(error I2S=$(I2S))
-        OPT += -DHAS_I2S
+        MCAL_OPT += -DHAS_I2S
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/i2s_config.c
     endif
 
     ifeq ($(LED_MONO),Y)
         #@echo $(error LED_MONO=$(LED_MONO))
-        OPT += -DHAS_LED_MONO
+        MCAL_OPT += -DHAS_LED_MONO
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/led_mono_config.c
     endif
 
@@ -109,7 +109,7 @@ ifneq ($(NUCLEO_L073RZ_MK_INC),Y)
 
     ifeq ($(PINS),Y)
         $(info Config Pins)
-        OPT += -DHAS_PINS
+        MCAL_OPT += -DHAS_PINS
     endif
 
     ifeq ($(SCHMITT_TRIGGER),Y)
@@ -138,7 +138,7 @@ ifneq ($(NUCLEO_L073RZ_MK_INC),Y)
 
     ifeq ($(TBFP),Y)
         $(info Add config TBFP)
-        OPT += -DTBFP_MAX_PAYLOAD=350
+        MCAL_OPT += -DTBFP_MAX_PAYLOAD=350
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c
     endif
 

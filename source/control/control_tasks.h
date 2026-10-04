@@ -8,18 +8,24 @@
 #endif
 
 #ifdef HAS_GPIO_PWM_PROC
-#define	GPIO_PWM_TASK {.name="GPIO_PWM", .period_us=GPIO_PWM_POLL_PERIOD_US, .limiter.function=gpio_pwm_proc,},
+#define	GPIO_PWM_TASK {.name="GpioPwm", .period_us=GPIO_PWM_POLL_PERIOD_US, .limiter.function=gpio_pwm_proc,},
 #else
 #define	GPIO_PWM_TASK
 #endif
 
 #ifdef HAS_DISPLAY_PROC
 #include "display_drv.h"
-#define DISPLAY_TASK {.name="DISPLAY", .period_us=DISPLAY_PERIOD_US, .limiter.function=display_proc,},
+#define DISPLAY_TASK {.name="Display", .period_us=DISPLAY_PERIOD_US, .limiter.function=display_proc,},
 #else
 #define DISPLAY_TASK
 #endif
 
+#ifdef HAS_BIN_DAC_PROC
+#include "bin_dac_mcal.h"
+#define BIN_DAC_TASK {.name = "BinDac", .period_us = BIN_DAC_PERIOD_US, .limiter.function = bin_dac_proc,},
+#else
+#define BIN_DAC_TASK
+#endif
 
 #ifdef HAS_AUTO_EXIT_PROC
 #include "auto_exit.h"
@@ -27,7 +33,6 @@
 #else
 #define AUTO_EXIT_TASK
 #endif
-
 
 #ifdef HAS_GENERIC_PROC
 #include "generic.h"
@@ -110,7 +115,7 @@
 
 
 #ifdef HAS_BOARD_PROC
-#include "board_config.h"
+#include "board_api.h"
 
 #ifdef HAS_LOG
 #define BOARD_TASK_NAME .name = "Board",
@@ -132,7 +137,8 @@
 
 
 #define CONTROL_TASKS       \
-    AUTO_EXIT_TASK            \
+    AUTO_EXIT_TASK          \
+    BIN_DAC_TASK            \
     BOOT_TASK               \
     BUZZER_TASK             \
     BOARD_TASK              \

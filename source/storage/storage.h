@@ -12,6 +12,15 @@ extern "C" {
 #ifdef HAS_STORAGE_DIAG
 #include "storage_diag.h"
 #endif
+
+float storage_scale_to_factor(const StorageScale_t scale);
+
+
+bool storage_data_to_float(const StorageUnivervalType_t* const Value,
+                           const StorageType_t type,
+                           float * const real);
+
+bool storage_data_to_value(const uint8_t* const buff, const uint32_t size, const StorageType_t type, StorageUnivervalType_t* const Value);
 bool storage_proc_cmd(uint8_t tbfp_num, const uint8_t* const payload, const uint32_t size);
 bool StorageIsValidParam(const StorageItem_t* const Config);
 uint32_t storage_get_type_len(const StorageType_t type);

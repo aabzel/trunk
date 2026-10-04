@@ -98,9 +98,9 @@ bool timer_diag(void) {
     uint32_t ok = 0;
     static const table_col_t cols[] = {
         {5, "Num"},
-        {12, "Name"},
-        {12, "cnt"},
+        {19, "Name"},
         {13, "freqHz"},
+        {12, "cnt"},
         {5, "En"},
         {8, "busName"},
         {10, "busFreq"},
@@ -142,9 +142,9 @@ bool timer_diag(void) {
                 ClockBus_t clock_bus_name=timer_clock_bus_name_get(num);
 
                 snprintf(temp, sizeof(temp),"%s %02u  " TSEP,temp, num);
-                snprintf(temp, sizeof(temp),"%s %10s " TSEP,temp, Node->name);
-                snprintf(temp, sizeof(temp),"%s %10u " TSEP,temp, counter);
+                snprintf(temp, sizeof(temp),"%s %17s " TSEP,temp, Node->name);
                 snprintf(temp, sizeof(temp),"%s %10u " TSEP,temp, freq_hz);
+                snprintf(temp, sizeof(temp),"%s %10u " TSEP,temp, counter);
                 snprintf(temp, sizeof(temp),"%s %3s " TSEP,temp, OnOffToStr(status));
                 snprintf(temp, sizeof(temp),"%s %6s " TSEP,temp, ClockBusToStr(clock_bus_name));
                 snprintf(temp, sizeof(temp),"%s %9u " TSEP,temp, timer_bus_clock_get(num));

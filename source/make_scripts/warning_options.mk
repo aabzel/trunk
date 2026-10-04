@@ -10,6 +10,9 @@ ifeq ($(EXTRA_VERIFICATION),Y)
     COMPILE_OPT += -Wconversion
 endif
 
+ifeq ($(AVR),Y)
+    COMPILE_GCC_OPT += -Wno-int-to-pointer-cast
+endif
 
 COMPILE_GCC_OPT += -Wno-sign-compare
 COMPILE_GCC_OPT += -Wno-unused-parameter

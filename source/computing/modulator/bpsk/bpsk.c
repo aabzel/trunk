@@ -31,8 +31,8 @@ bool bpsk_init_custom(void) {
 }
 
 
-static double BpskBitValToPhase(bool bit_val){
-    double phase = 0.0;
+static float BpskBitValToPhase(bool bit_val){
+    float phase = 0.0;
     switch((uint32_t)bit_val) {
         case false: phase = -1.0; break;
         case true: phase = 1.0; break;
@@ -85,11 +85,11 @@ bool bpsk_encode_ll(BpskHandle_t* Node,
                 uint8_t bit_num = 7-(bit%8);
                 bool bit_val = bit_get_u8(data[byte_num], bit_num);
                 LOG_DEBUG(BPSK,"Byte:%u,Bit:%u,Val:%u",byte_num,bit_num,bit_val);
-                double BinaryPhase = BpskBitValToPhase(bit_val);
+                float BinaryPhase = BpskBitValToPhase(bit_val);
                 uint32_t chirp = 0;
                 for(chirp=0;chirp<Node->sample_per_chip;chirp++) {
-                    double time_s = s * Node->sample_time_s;
-                    sample[s] = (SampleType_t) (BinaryPhase * math_calc_sin_sample(time_s,(double) Node->carrier_frequency_hz, 0.0, Node->amplitude, 0));
+                    float time_s = s * Node->sample_time_s;
+                    sample[s] = (SampleType_t) (BinaryPhase * math_calc_sin_sample(time_s,(float) Node->carrier_frequency_hz, 0.0, Node->amplitude, 0));
                     s++;
                     res = true;
                 }
@@ -162,8 +162,8 @@ bool bpsk_encode_to_wav(uint8_t num,
 }
 
 #ifdef HAS_BPSK_PHASE_ERROR_ASIN
-double bpsk_calc_phase_error_asin(BpskHandle_t* const Node){
-    double phase_error_rad = 0.0;
+float bpsk_calc_phase_error_asin(BpskHandle_t* const Node){
+    float phase_error_rad = 0.0;
     Node->s_feed_back = Node->SdrQ.AfterFilt*Node->SdrI.AfterFilt;
     Node->s_feed_back_sin = 8.0 * Node->s_feed_back;
     if(-1.0<Node->s_feed_back_sin) {
@@ -195,22 +195,22 @@ double bpsk_calc_phase_error_asin(BpskHandle_t* const Node){
  *   ++++++++|--------
  */
 
-double bpsk_calc_carrier_phase_err_rad(double i_val, double q_val) {
-    double carr_phase_err_rad = 0.0;
+float bpsk_calc_carrier_phase_err_rad(float i_val, float q_val) {
+    float carr_phase_err_rad = 0.0;
     /* PLL discriminator */
     if(0.0 < i_val) {
-        //atan2 monotone increasing function
-        carr_phase_err_rad = atan2((double)q_val, (double)i_val); // -pi/2......  pi/2
+        //atan2f monotone increasing function
+        carr_phase_err_rad = atan2f((float)q_val, (float)i_val); // -pi/2......  pi/2
     } else {
-        carr_phase_err_rad = atan2((double)-q_val, (double)-i_val);// -pi/2......  pi/2
+        carr_phase_err_rad = atan2f((float)-q_val, (float)-i_val);// -pi/2......  pi/2
     }
     LOG_PARN(BPSK, "Carr,Phase,Err:%7.6f Rad", carr_phase_err_rad);
     return carr_phase_err_rad;
 }
 
 #ifdef HAS_BPSK_PHASE_ERROR_ATAN
-double bpsk_calc_phase_error_atan(BpskHandle_t* const Node) {
-    double phase_error_rad = 0.0;
+float bpsk_calc_phase_error_atan(BpskHandle_t* const Node) {
+    float phase_error_rad = 0.0;
     if(Node) {
         phase_error_rad = bpsk_calc_carrier_phase_err_rad(Node->SdrI.AfterFilt, Node->SdrQ.AfterFilt);
     }
@@ -220,13 +220,13 @@ double bpsk_calc_phase_error_atan(BpskHandle_t* const Node) {
 
 #if 0
 //#ifdef HAS_BPSK_PHASE_ERROR_VECTOR
-double bpsk_calc_phase_error_vector(BpskHandle_t* const Node) {
-    double phase_error_rad = 0.0;
+float bpsk_calc_phase_error_vector(BpskHandle_t* const Node) {
+    float phase_error_rad = 0.0;
     if(Node) {
         Vector_t x_axis={    0};
         Vector_t phaseVector={ 0};
-        phaseVector.dx = (double) Node->SdrI.AfterFilt;
-        phaseVector.dy = (double) Node->SdrQ.AfterFilt;
+        phaseVector.dx = (float) Node->SdrI.AfterFilt;
+        phaseVector.dy = (float) Node->SdrQ.AfterFilt;
         phaseVector.dz = 0.0;
         x_axis.dx = 100.0;
         x_axis.dy = 0;
@@ -239,24 +239,24 @@ double bpsk_calc_phase_error_vector(BpskHandle_t* const Node) {
 
 static bool bpsk_decode_sample_ll(BpskHandle_t* const Node, SampleType_t sample, uint32_t s) {
     bool res = false;
-    Node->time_s = ((double)s) * Node->sample_time_s;
+    Node->time_s = ((float)s) * Node->sample_time_s;
     Node->sample = sample;
 #ifdef HAS_BPSK_PHASE_ERROR_ASIN
-    Node->real_sample = math_sign((double)sample);
+    Node->real_sample = math_sign((float)sample);
 #endif
-    //Node->real_sample = ((double)sample)/((double)Node->amplitude);
+    //Node->real_sample = ((float)sample)/((float)Node->amplitude);
 #ifdef HAS_BPSK_PHASE_ERROR_ATAN
-    Node->real_sample = ((double)sample);
+    Node->real_sample = ((float)sample);
 #endif
 #ifdef HAS_BPSK_PHASE_ERROR_VECTOR
-    Node->real_sample = ((double)sample);
+    Node->real_sample = ((float)sample);
 #endif
 
     QuadratureMixerHandle_t* QM = QuadratureMixerGetNode(Node->quadrature_mixer_num);
     if(QM) {
         res = quadrature_mixer_proc_sample_ll(QM,
                                               Node->time_s,
-                                              (double) Node->carrier_frequency_hz,
+                                              (float) Node->carrier_frequency_hz,
                                               Node->lo_phase_rad,
                                               Node->real_sample) ;
 
@@ -284,7 +284,7 @@ static bool bpsk_decode_sample_ll(BpskHandle_t* const Node, SampleType_t sample,
             res = filter_proc_in_out(Node->filter_loop_num,Node->filter_loop_type, (FirSample_t) Node->lo_phase_rad, (FirSample_t*) &lo_phase_filt_rad);
             if(res) {
                 //LOG_DEBUG(BPSK, "S=%d, lo_phase_filt_rad:%f", s, lo_phase_filt_rad);
-                Node->lo_phase_rad = (double) lo_phase_filt_rad;
+                Node->lo_phase_rad = (float) lo_phase_filt_rad;
             }else {
                 LOG_ERROR(BPSK, "Fir,Lo,Phase,Err");
             }
@@ -480,9 +480,9 @@ static bool bpsk_wav_proc_samples(BpskHandle_t* const Node, const char* const fi
                 LOG_INFO(BPSK, "Read,Header,Ok,%s",WavHeaderToStr(&WavHeader));
 
                 WavHandle_t WavHandle = {0};
-                WavHandle.sample_time_s = 1.0 / ((double)WavHeader.sampleRate);
+                WavHandle.sample_time_s = 1.0 / ((float)WavHeader.sampleRate);
                 WavHandle.sample_cnt = WavHeader.subchunk2Size/WavHeader.blockAlign;
-                WavHandle.duration_s = WavHandle.sample_time_s*((double)WavHandle.sample_cnt);
+                WavHandle.duration_s = WavHandle.sample_time_s*((float)WavHandle.sample_cnt);
                 LOG_INFO(BPSK, "%s",WavHandleToStr(&WavHandle));
               //  LOG_INFO(BPSK, "%s",WavHandleToStr(&WavHandle));
 
@@ -535,7 +535,7 @@ bool bpsk_decode_wav(uint8_t  num, const char* const file_name){
                 Node->sampling_frequency_hz =WavHeader.sampleRate ;
                 Node->sample_size_bit = WavHeader.bitsPerSample;
                 Node->sample_cnt = WavHeader.subchunk2Size/WavHeader.blockAlign;
-                Node->sample_time_s = 1.0/((double)Node->sampling_frequency_hz);
+                Node->sample_time_s = 1.0/((float)Node->sampling_frequency_hz);
 
                 LOG_INFO(BPSK, "%s", BpskNodeToStr(Node));
 
@@ -551,9 +551,9 @@ bool bpsk_reinit_node(uint8_t num){
     bool res = false;
     BpskHandle_t* Node = BpskGetNode(num);
     if(Node) {
-        Node->chip_dutation_s = 1.0/((double)Node->bit_rate);
-        Node->carrier_period_s = 1.0/((double)Node->carrier_frequency_hz);
-        Node->sample_time_s = 1.0/((double)Node->sampling_frequency_hz);
+        Node->chip_dutation_s = 1.0/((float)Node->bit_rate);
+        Node->carrier_period_s = 1.0/((float)Node->carrier_frequency_hz);
+        Node->sample_time_s = 1.0/((float)Node->sampling_frequency_hz);
         Node->sample_per_chip = (uint32_t) ( Node->chip_dutation_s/ Node->sample_time_s);
         Node->carrier_periods_per_chip = (uint32_t) ( Node->chip_dutation_s/ Node->carrier_period_s);
         Node->lo_phase_rad = 0.0;

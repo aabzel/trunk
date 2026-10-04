@@ -4,25 +4,25 @@
 #include "std_includes.h"
 
 #ifdef HAS_AT24CX
-#include "at24cxx_drv.h"
-#define AT24CX_INIT   {.init_function=at24cxx_mcal_init, .name="AT24Cxx",},
+#include "at24cx_drv.h"
+#define AT24CX_INIT   {.init_function=at24cx_mcal_init, .name="AT24Cxx",},
 #else
 #define AT24CX_INIT
-#endif /**/
+#endif
 
 #ifdef HAS_MX25L6433F
 #include "mx25l6433f_mcal.h"
 #define MX25L6433F_INIT   {.init_function = mx25l6433f_mcal_init, .name = "MX25L6433F",},
 #else
 #define MX25L6433F_INIT
-#endif /**/
+#endif
 
 #ifdef HAS_GM67
 #include "gm67_drv.h"
 #define GM67_INIT   {.init_function=gm67_mcal_init, .name="gm67",},
 #else
 #define GM67_INIT
-#endif /**/
+#endif
 
 #ifdef HAS_BC127
 #include "bc127_drv.h"
@@ -174,55 +174,62 @@
 #define MAX9860_INIT   {.init_function=max9860_mcal_init, .name="max9860",},
 #else
 #define MAX9860_INIT
-#endif /*HAS_MAX9860*/
+#endif
 
 #ifdef HAS_WM8731
 #include "wm8731_drv.h"
 #define WM8731_INIT   {.init_function=wm8731_mcal_init, .name="WM8731",},
 #else
 #define WM8731_INIT
-#endif /*HAS_WM8731*/
+#endif
+
+#ifdef HAS_WM8994
+#include "wm8994_mcal.h"
+#define WM8994_INIT   {.init_function = wm8994_mcal_init, .name = "WM8994",},
+#else
+#define WM8994_INIT
+#endif
 
 #ifdef HAS_NEO_6M
 #define NEO_6M_INIT   {.init_function=neo_6m_mcal_init, .name="NEO_6M",},
 #else
 #define NEO_6M_INIT
-#endif /*HAS_NEO_6M*/
+#endif
 
 #ifdef HAS_BH1750
 #include "bh1750_drv.h"
 #define BH1750_INIT   {.init_function=bh1750_mcal_init, .name="bh1750",},
 #else
 #define BH1750_INIT
-#endif /*HAS_BH1750*/
+#endif
 
 #ifdef HAS_DS3231
 #include "ds3231_drv.h"
 #define DS3231_INIT   {.init_function=ds3231_mcal_init, .name="ds3231",},
 #else
 #define DS3231_INIT
-#endif /*HAS_DS3231*/
+#endif
 
 #ifdef HAS_UBLOX_NEO_6M
 #include "ublox_neo_6m.h"
 #define UBLOX_NEO_6M_INIT {.init_function=ublox_neo_6m_mcal_init, .name="uBloxNEO-6M",},
 #else
 #define UBLOX_NEO_6M_INIT
-#endif /*HAS_UBLOX_NEO_6M*/
+#endif
 
 #ifdef HAS_SA51034
 #include "SA51034_drv.h"
 #define SA51034_INIT   {.init_function=sa51034_mcal_init, .name="SA51034",},
 #else
 #define SA51034_INIT
-#endif /*HAS_SA51034*/
+#endif
 
 #ifdef HAS_ZED_F9P
 #include "zed_f9p_drv.h"
 #define ZED_F9P_INIT   {.init_function=zed_f9p_mcal_init, .name="ZED_F9P",},
 #else
 #define ZED_F9P_INIT
-#endif /* */
+#endif
 
 #define ASICS_SENSITIVITY_INIT    \
     SI4703_INIT                   \
@@ -253,6 +260,7 @@
     RS2058_INIT                   \
     AD9833_INIT                   \
     WM8731_INIT                   \
+    WM8994_INIT                   \
     MAX9860_INIT                  \
     MAX98357_INIT                 \
     DRV8870_INIT                  \

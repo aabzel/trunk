@@ -6,7 +6,7 @@ ifneq ($(NMEA_MK),Y)
 
     NMEA_DIR = $(PROTOCOLS_DIR)/nmea
     
-    #@ echo $(error NMEA_DIR = $(NMEA_DIR)) 
+    # $(error NMEA_DIR = $(NMEA_DIR)) 
 
     MCAL_OPT += -DHAS_NMEA
     MCAL_OPT += -DHAS_NMEA_PROC

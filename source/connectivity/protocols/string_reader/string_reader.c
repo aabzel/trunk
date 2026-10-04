@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+
 #ifdef HAS_MINGW
 #include <conio.h> /*for kbhit getch function. Clang/cygwin64 build error*/
 #endif
@@ -18,8 +19,8 @@
 #include "auto_exit.h"
 #endif
 
-#ifdef HAS_LED_MONO
-#include "led_mono_drv.h"
+#ifdef HAS_LED
+#include "led_drv.h"
 #endif
 
 #ifdef HAS_CLI
@@ -69,11 +70,11 @@ bool string_reader_rx_character(StringReaderHandle_t* Node, char character) {
 }
 
 /*called from ISR*/
-bool string_reader_rx_byte(const InterfaceType_t interface_if, uint8_t rx_byte) {
+bool string_reader_rx_byte(const InterfaceType_t interface_if, const uint8_t rx_byte) {
     bool res = false;
-    writer_interface_set(interface_if);
     StringReaderHandle_t* Node = StringReaderInterfaceToNode(interface_if);
     if(Node) {
+        writer_interface_set(interface_if);
         res = string_reader_rx_character(Node, (char)rx_byte);
     }
     return res;
@@ -262,9 +263,9 @@ bool string_reader_proc_one(uint8_t num) {
                 auto_exit_postone();
 #endif
                 LOG_DEBUG(STRING_READER, "Rx:%u bytes", size);
-#ifdef HAS_LED_MONO
+#ifdef HAS_LED
                 if(Node) {
-                    res = led_mono_blink(Node->feedback_led, 50);
+                    res = led_blink(Node->feedback_led, 50);
                 }
 #endif
                 res = writer_interface_set(Node->interface_if);
@@ -421,6 +422,7 @@ bool string_reader_init_one(uint8_t num) {
     return res;
 }
 
+#if 0
 bool string_reader1_proc(void) {
     bool res = true;
     res = string_reader_proc_one(1);
@@ -438,6 +440,7 @@ bool string_reader3_proc(void) {
     res = string_reader_proc_one(3);
     return res;
 }
+#endif
 
 COMPONENT_PROC_PATTERT(STRING_READER, STRING_READER, string_reader)
 

@@ -12,23 +12,23 @@ ifneq ($(RISK_V_SELECT_MK_INC),Y)
 
     MICROCONTROLLER=Y
     SOURCES_C += $(RISK_V_SEL_DIR)/rv32imc_driver.c
-    OPT += -DHAS_RISC_V
-    OPT += -DHAS_RV32IMC
+    MCAL_OPT += -DHAS_RISC_V
+    MCAL_OPT += -DHAS_RV32IMC
     
     ifeq ($(RV32IMC_EXT),Y)
-        OPT += -DHAS_RV32IMC_EXT
+        MCAL_OPT += -DHAS_RV32IMC_EXT
     endif
 
     ifeq ($(DIAG),Y)
         ifeq ($(RV32IMC_DIAG),Y)
-            OPT += -DHAS_RV32IMC_DIAG
+            MCAL_OPT += -DHAS_RV32IMC_DIAG
             SOURCES_C += $(RISK_V_SEL_DIR)/rv32imc_diag.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(RV32IMC_COMMANDS),Y)
-            OPT += -DHAS_RV32IMC_COMMANDS
+            MCAL_OPT += -DHAS_RV32IMC_COMMANDS
             SOURCES_C += $(RISK_V_SEL_DIR)/rv32imc_commands.c
         endif
     endif

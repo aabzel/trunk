@@ -201,7 +201,7 @@ bool load_detect_init_one(uint8_t num) {
 
 bool load_detect_init(void) {
     bool res = false;
-    set_log_level(LOAD_DETECT, LOG_LEVEL_DEBUG);
+    log_level_set(LOAD_DETECT, LOG_LEVEL_DEBUG);
     uint32_t cnt = load_detect_get_cnt();
     uint32_t ok = 0;
     LOG_WARNING(LOAD_DETECT, "Init Cnt %d", cnt);
@@ -225,7 +225,7 @@ bool load_detect_init(void) {
         LOG_ERROR(LOAD_DETECT, "InitErr");
     }
 
-    set_log_level(LOAD_DETECT, LOG_LEVEL_INFO);
+    log_level_set(LOAD_DETECT, LOG_LEVEL_INFO);
     return res;
 }
 

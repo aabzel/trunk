@@ -1,11 +1,18 @@
 #ifndef ASICS_TASKS_H
 #define ASICS_TASKS_H
 
-#ifdef HAS_AT24CXX_PROC
-#include "at24cxx_drv.h"
-#define AT24CXX_TASK   {.name="AT24CXX", .period_us=AT24CXX_PERIOD_US, .limiter.function=at24cxx_proc,},
+#ifdef HAS_AT24CX_PROC
+#include "at24cx_drv.h"
+#define AT24CX_TASK   {.name="AT24CX", .period_us=AT24CX_PERIOD_US, .limiter.function=at24cx_proc,},
 #else
-#define AT24CXX_TASK
+#define AT24CX_TASK
+#endif
+
+#ifdef HAS_MX25L6433F_PROC
+#include "MX25L6433F_mcal.h"
+#define MX25L6433F_TASK   {.name="AT24CX", .period_us=AT24CX_PERIOD_US, .limiter.function=at24cxx_proc,},
+#else
+#define MX25L6433F_TASK
 #endif
 
 #ifdef HAS_BQ24079_PROC
@@ -82,6 +89,13 @@
 #define LTR390_TASK
 #endif
 
+#ifdef HAS_BH1750_PROC
+#include "bh1750_drv.h"
+#define BH1750_TASK {.name="bh1750", .period_us=BH1750_POLL_PERIOD_US, .limiter.function=bh1750_proc,},
+#else
+#define BH1750_TASK
+#endif
+
 #ifdef HAS_MAX9860_PROC
 #include "max9860_drv.h"
 #define MAX9860_TASK  {.name="MAX9860", .period_us=MAX9860_PERIOD_US, .limiter.function=max9860_proc,},
@@ -110,8 +124,15 @@
 #define SA51034_TASK
 #endif
 
+#ifdef HAS_DS3231_PROC
+#include "ds3231_drv.h"
+#define DS3231_TASKS {.name="DS3231", .period_us=DS3231_PERIOD_US, .limiter.function=ds3231_proc,},
+#else
+#define DS3231_TASKS
+#endif
+
 #ifdef HAS_SI4703_PROC
-#include "si4703_drv.h"
+#include "si4703_mcal.h"
 #define SI4703_TASKS {.name="SI4703", .period_us=SI4703_PERIOD_US, .limiter.function=si4703_proc,},
 #else
 #define SI4703_TASKS
@@ -126,17 +147,29 @@
 
 #ifdef HAS_SSD1306_PROC
 #include "ssd1306_drv.h"
-#define SSD1306_TASK  {.name="SSD1306", .period_us=SSD1306_PERIOD_US, .limiter.function=ssd1306_proc,},
+#define SSD1306_TASK  { .num = TASK_SSD1306, .name="SSD1306", .period_us=SSD1306_PERIOD_US, .limiter.function=ssd1306_proc,},
 #else
 #define SSD1306_TASK
 #endif
-
 
 #ifdef HAS_SX1262_PROC
 #include "sx1262_drv.h"
 #define SX1262_TASKS  {.name="SX1262", .period_us=SX1262_PERIOD_US, .limiter.function=sx1262_process,},
 #else
 #define SX1262_TASKS
+#endif
+
+#ifdef HAS_ESP_01_PROC
+#include "esp_01.h"
+
+#define ESP_01_TASKS                                                                               \
+    {.name="Esp01PollAP", .period_us=ESP_01_POLL_AP_PERIOD_US, .limiter.function = esp_01_poll_ap_proc,},\
+    {.name="Esp01", .period_us=ESP_01_PERIOD_US, .limiter.function = esp_01_proc,},
+
+//{.name="Esp01TxDfsm", .period_us=ESP_01_TX_PERIOD_US, .limiter.function=esp_01_proc_data_tx,},
+//{.name="Esp01TcpSer", .period_us=ESP_01_SER_PERIOD_US, .limiter.function=esp_01_proc_server,},
+#else
+#define ESP_01_TASKS
 #endif
 
 #ifdef HAS_UBLOX_NEO_6M_PROC
@@ -146,21 +179,12 @@
 #define UBLOX_NEO_6M_TASK
 #endif
 
-
 #ifdef HAS_TCAN4550_PROC
 #include "tcan4550_drv.h"
 #define TCAN4550_TASKS  {.name="TCAN4550", .period_us=TCAN4550_PERIOD_US, .limiter.function=tcan4550_proc,},
 #else
 #define TCAN4550_TASKS
 #endif
-
-#ifdef HAS_ZED_F9P_PROC
-#include "zed_f9p_drv.h"
-#define ZED_F9P_TASK {.name="ZED_F9P", .period_us=ZED_F9P_PERIOD_US, .limiter.function=zed_f9p_proc,},
-#else
-#define ZED_F9P_TASK
-#endif
-
 
 #ifdef HAS_W25Q32JV_PROC
 #include "w25q32jv_drv.h"
@@ -169,31 +193,58 @@
 #define W25Q32JV_TASK
 #endif
 
+#ifdef HAS_WM8994_PROC
+#include "wm8994_mcal.h"
+#define WM8994_TASK  {.name="WM8994", .period_us=WM8994_PERIOD_US, .limiter.function=wm8994_proc,},
+#else
+#define WM8994_TASK
+#endif
+
+#ifdef HAS_WM8731_PROC
+#include "wm8731_drv.h"
+#define WM8731_TASK {.name="WM8731", .period_us=WM8731_PERIOD_US, .limiter.function=wm8731_proc,},
+#else
+#define WM8731_TASK
+#endif
+
+
+#ifdef HAS_ZED_F9P_PROC
+#include "zed_f9p_drv.h"
+#define ZED_F9P_TASK {.name="ZED_F9P", .period_us=ZED_F9P_PERIOD_US, .limiter.function=zed_f9p_proc,},
+#else
+#define ZED_F9P_TASK
+#endif
 
 #define ASICS_STORAGE_TASK   \
-    AT24CXX_TASK             \
+    AT24CX_TASK              \
+    MX25L6433F_TASK          \
     W25Q32JV_TASK
 
 #define ASICS_CONNECTIVITY_TASK   \
     BC127_TASKS         \
-    TCAN4550_TASKS      \
-    SX1262_TASKS        \
     BT1026_TASKS        \
-    DECADRIVER_TASK
+    DECADRIVER_TASK     \
+    ESP_01_TASKS        \
+    TCAN4550_TASKS      \
+    SX1262_TASKS
 
 
 #define ASICS_SENSITIVITY_TASK   \
-    UBLOX_NEO_6M_TASK \
-    SI4703_TASKS      \
-    SI4737_TASKS      \
-    GM67_TASK         \
-    LTR390_TASK       \
+    BH1750_TASK                  \
+    GM67_TASK                    \
+    LTR390_TASK                  \
+    SI4703_TASKS                 \
+    DS3231_TASKS                 \
+    SI4737_TASKS                 \
+    UBLOX_NEO_6M_TASK            \
     ZED_F9P_TASK
 
 
 #define ASICS_MULTIMEDIA_TASK   \
-    MAX9860_TASK      \
-    NAU8814_TASK      \
+    MAX9860_TASK                \
+    WM8731_TASK                 \
+    WM8994_TASK                 \
+    NAU8814_TASK                \
     FDA801_TASKS
 
 #define ASICS_CONTROL_TASK   \

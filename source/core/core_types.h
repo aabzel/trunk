@@ -55,7 +55,7 @@ typedef struct {
     CORE_COMMON_VARIABLES
     bool init;
     uint32_t spin;
-#ifdef HAS_FLOAT
+#ifdef HAS_RATIONAL_NUM
     FloatFixPoint_t stack_used;
 #endif
 }CoreHandle_t;

@@ -36,6 +36,10 @@
 #include "fc7300f8mdt_types.h"
 #endif
 
+#ifdef HAS_STM32F746NG
+#include "stm32f746ng_types.h"
+#endif
+
 #ifdef HAS_STM32F407ZG
 #include "stm32f407zg.h"
 #endif

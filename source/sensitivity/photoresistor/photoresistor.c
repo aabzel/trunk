@@ -78,7 +78,7 @@ bool photoresistor_proc(void){
         if(Node) {
             Node->resistance = photoresistor_read_om(  i);
             Node->lighting= resistance2lighting(Node->resistance, Node->scale);
-            LOG_DEBUG(PHOTORESISTOR,"Resistance:%s Om  Lighting: %f", BigVal2Str(Node->resistance),Node->lighting);
+            LOG_DEBUG(PHOTORESISTOR,"Resistance:%s Om  Lighting: %f", BigValToStr(Node->resistance),Node->lighting);
         }
     }
     return res;

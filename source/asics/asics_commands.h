@@ -7,10 +7,40 @@
 #define AXP192_COMMANDS
 #endif
 
+#ifdef HAS_BTS724G_COMMANDS
+#include "bts724g_commands.h"
+#else
+#define BTS724G_COMMANDS
+#endif
+
+#ifdef HAS_BH1750_COMMANDS
+#include "bh1750_commands.h"
+#else
+#define BH1750_COMMANDS
+#endif
+
+#ifdef HAS_DS3231_COMMANDS
+#include "ds3231_commands.h"
+#else
+#define DS3231_COMMANDS
+#endif
+
+#ifdef HAS_DRV8870_COMMANDS
+#include "drv8870_commands.h"
+#else
+#define DRV8870_COMMANDS
+#endif
+
 #ifdef HAS_LTR390_COMMANDS
 #include "ltr390_commands.h"
 #else
 #define LTR390_COMMANDS
+#endif
+
+#ifdef HAS_LIS3DH_COMMANDS
+#include "lis3dh_commands.h"
+#else
+#define LIS3DH_COMMANDS
 #endif
 
 #ifdef HAS_AD9833_COMMANDS
@@ -49,6 +79,12 @@
 #define RS2058_COMMANDS
 #endif
 
+#ifdef HAS_GD5F1GQ5_COMMANDS
+#include "gd5f1gq5_commands.h"
+#else
+#define GD5F1GQ5_COMMANDS
+#endif
+
 #ifdef HAS_BC127_COMMANDS
 #include "bc127_commands.h"
 #else
@@ -59,6 +95,12 @@
 #include "bt1026_commands.h"
 #else
 #define BT1026_COMMANDS
+#endif
+
+#ifdef HAS_ESP_01_COMMANDS
+#include "esp_01_commands.h"
+#else
+#define ESP_01_COMMANDS
 #endif
 
 #ifdef HAS_FDA801_COMMANDS
@@ -72,6 +114,13 @@
 #else
 #define GM67_COMMANDS
 #endif
+
+#ifdef HAS_MX25L6433F_COMMANDS
+#include "mx25l6433f_commands.h"
+#else
+#define MX25L6433F_COMMANDS
+#endif
+
 
 #ifdef HAS_MAX9860_COMMANDS
 #include "max9860_commands.h"
@@ -115,12 +164,17 @@
 #define TPA2013D1_COMMANDS
 #endif
 
+#ifdef HAS_W25M02GV_COMMANDS
+#include "w25m02gv_commands.h"
+#else
+#define W25M02GV_COMMANDS
+#endif
+
 #ifdef HAS_WM8731_COMMANDS
 #include "wm8731_commands.h"
 #else
 #define WM8731_COMMANDS
 #endif
-
 
 #ifdef HAS_W25Q32JV_COMMANDS
 #include "w25q32jv_commands.h"
@@ -128,38 +182,55 @@
 #define W25Q32JV_COMMANDS
 #endif
 
-
 #ifdef HAS_UBLOX_NEO_6M_COMMANDS
 #include "ublox_neo_6m_commands.h"
 #else
 #define UBLOX_NEO_6M_COMMANDS
 #endif
 
+#ifdef HAS_WM8994_COMMANDS
+#include "WM8994_commands.h"
+#else
+#define WM8994_COMMANDS
+#endif
+
 #define ASICS_SENSITIVITY_COMMANDS    \
+    TPA2013D1_COMMANDS    \
+    DS3231_COMMANDS       \
+    BH1750_COMMANDS       \
+    SI4703_COMMANDS       \
+    SI4737_COMMANDS       \
+    UBLOX_NEO_6M_COMMANDS \
+    SA51034_COMMANDS      \
     GM67_COMMANDS         \
     LTR390_COMMANDS
 
-#define ASICS_COMMANDS    \
-    AD9833_COMMANDS       \
-    ASICS_SENSITIVITY_COMMANDS       \
-    AXP192_COMMANDS       \
-    BC127_COMMANDS        \
-    BQ24079_COMMANDS      \
-    BT1026_COMMANDS       \
-    FDA801_COMMANDS       \
-    W25Q32JV_COMMANDS     \
-    MAX9860_COMMANDS      \
-    MAX98357_COMMANDS     \
-    NAU8814_COMMANDS      \
-    RS2058_COMMANDS       \
-    BQ25171_Q1_COMMANDS   \
-    TPA2013D1_COMMANDS    \
-    SA51034_COMMANDS      \
-    SI4703_COMMANDS       \
-    SI4737_COMMANDS       \
-    SSD1306_COMMANDS      \
-    MIC2026_COMMANDS      \
-    UBLOX_NEO_6M_COMMANDS \
-    WM8731_COMMANDS
+#define ASICS_STORAGE_COMMANDS     \
+    MX25L6433F_COMMANDS
+
+#define ASICS_CONTROL_COMMANDS    \
+            MAX9860_COMMANDS      \
+            MIC2026_COMMANDS      \
+            RS2058_COMMANDS       \
+            AXP192_COMMANDS       \
+            BQ24079_COMMANDS      \
+            AD9833_COMMANDS       \
+            SSD1306_COMMANDS      \
+            MAX98357_COMMANDS     \
+            WM8994_COMMANDS       \
+            NAU8814_COMMANDS      \
+            BQ25171_Q1_COMMANDS   \
+            FDA801_COMMANDS       \
+            DRV8870_COMMANDS      \
+            WM8731_COMMANDS
+
+#define ASICS_COMMANDS             \
+    ASICS_CONTROL_COMMANDS         \
+    ASICS_STORAGE_COMMANDS         \
+    ASICS_SENSITIVITY_COMMANDS     \
+    BC127_COMMANDS                 \
+    BT1026_COMMANDS                \
+    ESP_01_COMMANDS                \
+    W25Q32JV_COMMANDS
 
 #endif /* ASICS_COMMANDS_H */

@@ -32,7 +32,7 @@ bool clock_core_freq_set(uint32_t core_freq_hz);
 //uint64_t pause_1us(void);
 //uint64_t pause_1ms(void);
 uint64_t clock_sw_pause_ms(uint32_t delay_in_ms);
-
+bool clock_config_default(void) ;
 //uint64_t pause_1ms(void) ;
 
 /*getters*/

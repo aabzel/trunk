@@ -8,7 +8,7 @@ extern "C" {
 #include "std_includes.h"
 #include "bpsk_const.h"
 #include "interfaces_const.h"
-#include "audio_types.h"
+//#include "audio_types.h"
 #include "dsp_types.h"
 
 typedef int16_t BpskSample_t;
@@ -47,8 +47,8 @@ typedef struct {
 
 #if 0
 typedef struct {
-    double  LocalOcs;
-    double  AfterMux;
+    float  LocalOcs;
+    float  AfterMux;
     FirSample_t  AfterFilt;
 }SdrData_t;
 #endif
@@ -57,14 +57,14 @@ typedef struct {
     uint32_t decoded_byte_cnt; /* number of bytes demodulated*/   \
     uint32_t bit_rx_cnt;   \
     uint32_t data_size_bytes; /* number of bytes in sample array*/ \
-    double time_s;   \
+    float time_s;   \
     uint8_t* BinDataArray; \
-    double real_sample;   \
-    double s_feed_back;   \
-    double s_feed_back_sin;   \
-    double s_feed_back_sin_arg;   \
-    double lo_phase_rad;          \
-    double lo_phase_err_rad;   \
+    float real_sample;   \
+    float s_feed_back;   \
+    float s_feed_back_sin;   \
+    float s_feed_back_sin_arg;   \
+    float lo_phase_rad;          \
+    float lo_phase_err_rad;   \
     int8_t data;
 
 #if 0
@@ -73,9 +73,9 @@ typedef struct {
 #endif
 
 #define BPSK_ENCODER_VARIABLE     \
-    double sample_time_s;         \
-    double carrier_period_s;      \
-    double chip_dutation_s;       \
+    float sample_time_s;         \
+    float carrier_period_s;      \
+    float chip_dutation_s;       \
     uint32_t sample_per_chip;     \
     uint32_t carrier_periods_per_chip;
 

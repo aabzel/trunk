@@ -40,21 +40,21 @@ const char* SoundRecorderNodeToStr(const SoundRecorderHandle_t* const Node) {
 }
 
 bool SoundRecorderPrintfMem(const SoundRecorderHandle_t* const Node) {
-    bool res = false ;
+    bool res = false;
     if(Node) {
-        uint32_t i = 0 ;
-        uint32_t s = 0 ;
-        for(s=0,i=0;i<Node->sample_cnt;s++,i+=2){
-            char temp[150] = {0};
+        uint32_t i = 0;
+        uint32_t s = 0;
+        for (s = 0, i = 0; i < Node->sample_cnt; s++, i += 2) {
+            char temp[150] = { 0 };
             strcpy(temp, "");
             snprintf(temp, sizeof(temp), "%s %u ", temp, s);
             snprintf(temp, sizeof(temp), "%s %u ", temp, i);
             snprintf(temp, sizeof(temp), "%s 0x%04x ", temp, Node->RxSampleArray[i]);
-            snprintf(temp, sizeof(temp), "%s 0x%04x ", temp, Node->RxSampleArray[i+1]);
+            snprintf(temp, sizeof(temp), "%s 0x%04x ", temp, Node->RxSampleArray[i + 1]);
 
             snprintf(temp, sizeof(temp), "%s %d ", temp, Node->RxSampleArray[i]);
-            snprintf(temp, sizeof(temp), "%s %d ", temp, Node->RxSampleArray[i+1]);
-            cli_printf("%s",temp);
+            snprintf(temp, sizeof(temp), "%s %d ", temp, Node->RxSampleArray[i + 1]);
+            cli_printf("%s", temp);
         }
     }
     return res;
@@ -81,11 +81,10 @@ bool sound_recorder_diag(void) {
     return res;
 }
 
-
 bool sound_recorder_raw_reg_diag(uint8_t num) {
     bool res = false;
     SoundRecorderHandle_t *Node = SoundRecorderGetNode(num);
-    if(Node){
+    if(Node) {
         res = true;
     }
     return res;
@@ -94,37 +93,37 @@ bool sound_recorder_raw_reg_diag(uint8_t num) {
 bool sound_recorder_stop_report(const SoundRecorderHandle_t* const Node) {
     bool res = false;
     if(Node) {
-        LOG_INFO(SOUND_RECORDER, "RecDuration:%u ms", Node->duration_ms);
-        LOG_INFO(SOUND_RECORDER, "WrOkCnt:%u", Node->wr_ok_cnt);
+        LOG_NOTICE(SOUND_RECORDER, "RecDuration:%u ms", Node->duration_ms);
+        LOG_NOTICE(SOUND_RECORDER, "WrOkCnt:%u", Node->wr_ok_cnt);
 
-        if(FR_OK!=Node->fat_fs_err_code) {
+        if(Node->long_save_error) {
+            LOG_ERROR(SOUND_RECORDER, "LongSaveErrCnt:%u", Node->long_save_error);
+        }
+
+        if(FR_OK != Node->fat_fs_err_code) {
             LOG_ERROR(SOUND_RECORDER, "FatErrCode:%u=%s", Node->fat_fs_err_code, FatFsResToStr(Node->fat_fs_err_code));
         }
 
         if(Node->error_cnt) {
-            LOG_ERROR(SOUND_RECORDER, "WrErrorCnt:%u", Node->error_cnt);
+            LOG_ERROR(SOUND_RECORDER, "WrErrCnt:%u", Node->error_cnt);
         }
 
         if(Node->long_write_error_cnt) {
-            LOG_WARNING(SOUND_RECORDER, "longWriteErrorCnt:%u", Node->long_write_error_cnt);
-        }
-
-        if(Node->long_save_error) {
-            LOG_ERROR(SOUND_RECORDER, "LongSaveErrorCnt:%u", Node->long_save_error);
+            LOG_WARNING(SOUND_RECORDER, "longWriteErrCnt:%u", Node->long_write_error_cnt);
         }
 
         if(Node->error_size_cnt) {
-            LOG_ERROR(SOUND_RECORDER, "WrSzErrorCnt:%u", Node->error_size_cnt);
+            LOG_ERROR(SOUND_RECORDER, "WrSzErrCnt:%u", Node->error_size_cnt);
         }
 
-        LOG_INFO(SOUND_RECORDER, "total_file_size:%u", Node->total_file_size);
+        LOG_NOTICE(SOUND_RECORDER, "total_file_size:%u", Node->total_file_size);
 
         if(Node->error_size_cnt) {
             LOG_ERROR(SOUND_RECORDER, "I2SerrCnt:%u", Node->i2s_error_cnt);
         }
 
-        LOG_INFO(SOUND_RECORDER, "Rec,SN:%u", Node->rec_cnt);
-        LOG_WARNING(SOUND_RECORDER, "RecStop:[%s]", Node->file_name);
+        LOG_NOTICE(SOUND_RECORDER, "Rec,SN:%u", Node->rec_cnt);
+        LOG_NOTICE(SOUND_RECORDER, "RecStop:[%s]", Node->file_name);
         res = true;
     }
     return res;

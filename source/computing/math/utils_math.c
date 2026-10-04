@@ -167,14 +167,24 @@ float math_calc_sin_sample(float time_s, float frequency, float phase_ms, float 
     return amplitude_scaled;
 }
 
-float calc_sin_sample(uint64_t time_us, float frequency, float phase_ms, float des_amplitude, float in_offset,
+float calc_sin_sample(uint64_t time_us,
+                      float frequency,
+                      float phase_ms,
+                      float des_amplitude,
+                      float in_offset,
                       float signal_diration_s) {
     float cur_time_s = USEC_2_SEC(time_us);
     float amplitude_scaled = 0.0f;
     if(cur_time_s < signal_diration_s) {
         float lineVal = 0.0f;
 #ifdef HAS_LOG
-        LOG_DEBUG(MATH, "Sin,T:%u,Freq:%f Hz,Pha:%f,Amp:%f,O:%f", time_us, frequency, phase_ms, des_amplitude, in_offset);
+        LOG_DEBUG(MATH,
+                  "Sin,T:%u us,Freq:%f Hz,Pha:%f,Amp:%f,O:%f",
+                  time_us,
+                  frequency,
+                  phase_ms,
+                  des_amplitude,
+                  in_offset);
 #endif
 
         float argument = 0.0f;
@@ -208,7 +218,6 @@ float calc_sin_sample(uint64_t time_us, float frequency, float phase_ms, float d
     return amplitude_scaled;
 }
 
-
 #ifdef HAS_DTMF
 float calc_dtmf_sample(uint64_t time_us, float frequency1, float frequency2, float phase_ms, float des_amplitude,
                        float in_offset) {
@@ -225,59 +234,6 @@ float calc_dtmf_sample(uint64_t time_us, float frequency1, float frequency2, flo
     return amplitude_scaled;
 }
 #endif
-
-/*
-  cur_time_s - up time in s
-  signal_diration_s - signal duration
-  f_2_hz - maximum value of signal frequency.
-  f_1_hz - initial signal frequency
-  des_amplitude - signal amplitude
-  phase_rad -  initial phase.
- */
-float calc_chirp_sample(float cur_time_s, float f_2_hz, float f_1_hz, float phase_rad, float amplitude,
-                        float signal_diration_s) {
-    float amplitude_scaled = 0.0f;
-    float b = 0.0f;
-    if(0.0f < signal_diration_s) {
-        float bandwith_hz = f_2_hz - f_1_hz;
-        b = bandwith_hz / signal_diration_s;
-
-        // float cur_time_s = ((float)time_us) / 1000000.0f;
-
-        float argument_rad = phase_rad;
-        argument_rad += M_2PI * (f_1_hz * cur_time_s + (b * cur_time_s * cur_time_s) / 2.0f);
-
-        if(signal_diration_s < cur_time_s) {
-            amplitude = 0.0f;
-        }
-        amplitude_scaled = amplitude * sinf(argument_rad);
-    }
-    return amplitude_scaled;
-}
-
-float calc_chirp_sample_hamming_window(float cur_time_s, float f_2_hz, float f_1_hz, float phase_rad, float amplitude,
-                                       float signal_diration_s) {
-    float amplitude_scaled = 0.0f;
-    float b = 0.0f;
-    if(0.0f < signal_diration_s) {
-        float bandwith_hz = f_2_hz - f_1_hz;
-        b = bandwith_hz / signal_diration_s;
-
-        // float cur_time_s = ((float)time_us) / 1000000.0f;
-
-        float argument_rad = phase_rad;
-        argument_rad += M_2PI * (f_1_hz * cur_time_s + (b * cur_time_s * cur_time_s) / 2.0f);
-
-        if(signal_diration_s < cur_time_s) {
-            amplitude = 0.0f;
-        }
-
-        float cos_arg = (M_2PI * cur_time_s) / signal_diration_s;
-        float hamming_window = 0.46f - 0.46f * cosf(cos_arg);
-        amplitude_scaled = amplitude * sinf(argument_rad) * hamming_window;
-    }
-    return amplitude_scaled;
-}
 
 float calc_pwm_sample(uint64_t time_us, float freq, float cur_phase_ms, float des_amplitude, float duty_cycle_percent,
                       float offset) {
@@ -534,6 +490,14 @@ int64_t math_diod_s64(const int64_t value) {
     return out;
 }
 
+double math_diod_d(const double value) {
+    double out = 0.0;
+    if(0.0 < value) {
+        out = value;
+    }
+    return out;
+}
+
 bool math_sum4(const uint32_t sum) {
     bool res = false;
     uint32_t cnt = 0;
@@ -670,12 +634,21 @@ uint8_t calc_quadrant_num(const int32_t i, const int32_t q) {
 }
 
 float math_log10(const float value) {
-    static float value_log10 = 0.0;
+    float value_log10 = 0.0f;
     if(1.0f < value) {
         value_log10 = logf(value) / logf(10.0f);
     } else {
     }
     return value_log10;
+}
+
+float math_log2(const float value) {
+    float value_log2 = 0.0f;
+    if(1.0f < value) {
+        value_log2 = logf(value) / logf(2.0f);
+    } else {
+    }
+    return value_log2;
 }
 
 static uint8_t calc_octant_in_quadrant_1(const int32_t i, const int32_t q) {

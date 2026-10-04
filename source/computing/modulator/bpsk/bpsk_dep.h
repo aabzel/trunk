@@ -6,7 +6,11 @@
 #endif
 
 #ifndef HAS_FIR
-#error "+HAS_FIR"
+#warning "+HAS_FIR"
+#endif
+
+#ifndef HAS_IIR
+#error "+HAS_IIR"
 #endif
 
 #endif /* BPSK_DEP_H */

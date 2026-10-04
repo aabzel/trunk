@@ -15,6 +15,7 @@ extern "C" {
 #define CHECK_BIT_NUM(VAL, BIT) ((1U << (BIT)) == ((VAL) & (1U << (BIT))))
 #define IS_BIT_RESET(VAL, BIT) (0 == ((VAL) & (1 << (BIT))))
 
+uint8_t u8_calc_parity_bit(const uint8_t in_data);
 uint8_t bit_u8_ctrl(const uint8_t in_val, const uint8_t bit_num, const uint8_t bit_val) ;
 bool bit_get_u8(uint8_t byte, uint8_t bit_num);
 uint8_t bit_not(const uint8_t byte);
@@ -43,6 +44,7 @@ uint32_t insert_subval_in_32bit(uint32_t orig_val, uint32_t sub_val, uint8_t max
 uint8_t bit_summ16(uint16_t data);
 uint8_t count_set_bits(uint32_t const inVal32bit);
 uint8_t count_set_bits_u16(uint16_t const inVal16bit) ;
+uint8_t count_set_bits_u8(uint8_t const inVal8bit) ;
 bool bit32_control_proc(uint32_t* address_val, char cmd, uint8_t bit);
 bool is_parity_odd(uint32_t const inVal);
 int max_no_branch(int x, int y);

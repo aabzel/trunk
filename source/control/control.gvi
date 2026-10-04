@@ -147,7 +147,11 @@ ZEPHYR_RTOS
 #ifdef HAS_RTOS
 #include "rtos.gvi"
 #endif
- 
+
+#ifdef HAS_BIN_DAC
+ #include "bin_dac.gvi"
+#endif
+
 #ifdef HAS_SUPER_CYCLE
  #include "super_cycle.gvi"
 #endif
