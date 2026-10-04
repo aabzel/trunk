@@ -8,6 +8,7 @@ extern "C" {
 #include "std_includes.h"
 #include "dashboard_config.h"
 #include "dashboard_types.h"
+
 #ifdef HAS_DASHBOARD_DIAG
 #include "dashboard_diag.h"
 #endif

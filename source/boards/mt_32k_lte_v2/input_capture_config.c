@@ -6,7 +6,7 @@
 
 #include "data_utils.h"
 
-const InputCaptureConfig_t InputCaptureConfig[] = {
+const InputCaptureConfig_t SECTION_CFG_DATA InputCaptureConfig[] = {
      {
              .num = INPUT_CAPTURE_NUM_SPK_INT,
              .direction = INPUT_CAPTURE_CNT_DIRR_UP,
@@ -27,6 +27,6 @@ InputCaptureHandle_t InputCaptureInstance[] = {
     {.num=INPUT_CAPTURE_NUM_SPK_INT, .valid=true, },
 };
 
-COMPONENT_GET_CNT(InputCapture, input_capture)
 
+COMPONENT_GET_CNT(InputCapture, input_capture)
 

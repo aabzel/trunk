@@ -5,7 +5,7 @@
 
 const DwtConfig_t DwtConfig[] = {
     {
-        .num = 1,
+        .num = DWT_NUM_CORE0,
         .valid = true,
         .counter_freq = 168000000,
         .DWTx = DWT  ,
@@ -15,7 +15,7 @@ const DwtConfig_t DwtConfig[] = {
 
 DwtHandle_t DwtInstance[] = {
     {
-        .num = 1,
+        .num = DWT_NUM_CORE0,
         .valid = true,
     },
 };

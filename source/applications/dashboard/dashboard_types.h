@@ -13,11 +13,12 @@ extern "C" {
 #include "dashboard_dep.h"
 
 #define DASHBOARD_COMMON_VARIABLES                 \
-    uint8_t num;                                    \
-    uint8_t display_num;            \
-    uint8_t rtc_num;             \
-    uint8_t light_sensor_num;       \
-    uint8_t light_nav_num;          \
+    uint32_t update_period_ms;                     \
+    uint8_t num;                                   \
+    uint8_t display_num;                           \
+    uint8_t rtc_num;                               \
+    uint8_t light_sensor_num;                      \
+    uint8_t light_nav_num;                         \
     bool valid;
 
 typedef struct {
@@ -28,6 +29,7 @@ typedef struct {
 typedef struct {
     DASHBOARD_COMMON_VARIABLES
     char text[300];
+    uint32_t last_update_ms;
     bool init_done;
     double lighting;
     struct tm time_date;

@@ -54,8 +54,6 @@
   #include <stdint.h>
   //extern uint32_t SystemCoreClock;
 #endif
-#include  "system_stm32f4xx.h"
-
 #define configENABLE_FPU                         0
 #define configENABLE_MPU                         0
 

@@ -5,6 +5,10 @@
 #include "diag_inc.h"
 #include "log.h"
 
+/*
+ Serializatiors
+ */
+
 const char* SwComponentConfigToStr(const SwComponentConfig_t* const Config) {
     strcpy(text, "");
     if(Config) {

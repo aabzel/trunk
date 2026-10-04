@@ -7,6 +7,7 @@
 #include "audio_types.h"
 
 bool audio_print_sample(const SampleType_t* const sample, size_t size);
+const char* AudioStereoSample16bitToStr(const AudioStereoSample16bit_t* const  Node);
 const char* SampleMode2Str(DspSampleMode_t sample_mode);
 
 #endif /* AUDIO_DIAG_H */

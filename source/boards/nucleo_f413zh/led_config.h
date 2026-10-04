@@ -3,7 +3,7 @@
 
 #ifndef HAS_LED
 #error "Add HAS_LED"
-#endif /*HAS_LED*/
+#endif
 
 #include "led_mono_config.h"
 

@@ -7,7 +7,7 @@
 #include "data_utils.h"
 #include "photoresistor_types.h"
 
-const PhotoResistorConfig_t PhotoResistorConfig[] = {
+const PhotoResistorConfig_t SECTION_CFG_DATA PhotoResistorConfig[] = {
 		{
 		.num=1,
 		.valid=true,
@@ -25,14 +25,5 @@ PhotoResistorHandle_t PhotoResistorInstance[] = {
     {.num=1, .valid=true},
 };
 
-uint32_t photo_resistor_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(PhotoResistorInstance);
-    cnt2 = ARRAY_SIZE(PhotoResistorConfig);
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(PhotoResistor, photo_resistor)
+

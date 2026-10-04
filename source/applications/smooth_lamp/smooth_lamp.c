@@ -4,11 +4,14 @@
 
 #include "code_generator.h"
 #include "compiler_const.h"
-#include "drv8870_mcal.h"
 #include "pwm_mcal.h"
 #include "pid.h"
 #include "float_utils.h"
 #include "log.h"
+
+#ifdef HAS_DRV8870
+#include "drv8870_mcal.h"
+#endif
 
 #ifdef HAS_DELTA_SIGMA
 #include "delta_sigma.h"

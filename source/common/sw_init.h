@@ -102,12 +102,6 @@
 #define MULTIMEDIA_INIT
 #endif
 
-#ifdef HAS_COMPUTING
-#include "computing_init.h"
-#else
-#define COMPUTING_INIT
-#endif
-
 //#ifdef HAS_RTOS
 //#include "rtos_drv.h"
 //#define RTOS_INIT {.init_function=rtos_init, .name="rtos",},
@@ -131,8 +125,7 @@
     GPIO_PWM_INIT          \
     CALENDAR_INIT          \
     SERIAL_INIT            \
-    DISPLAY_INIT           \
-    COMPUTING_INIT
+    DISPLAY_INIT
 
 
 

@@ -21,9 +21,11 @@ const PidConfig_t PidConfig[] = {
     },
 };
 
-
 PidHandle_t PidInstance[] = {
-    { .num = 1, .valid = true, },
+    {
+        .num = 1,
+        .valid = true,
+    },
 };
 
 COMPONENT_GET_CNT(Pid, pid)

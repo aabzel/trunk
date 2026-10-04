@@ -2,7 +2,7 @@
 
 #include "data_utils.h"
 
-const TimeConfig_t TimeConfig[] = {
+const TimeConfig_t SECTION_CFG_DATA TimeConfig[] = {
         { .num = TIME_SYSTICK, .time_source = TIME_SRC_SYSTICK, .valid = true, },
         { .num = TIME_TIMER2, .time_source = TIME_SRC_TIMER2, .valid = true, },
         { .num = TIME_TIMER5, .time_source = TIME_SRC_TIMER5, .valid = true, },
@@ -21,3 +21,4 @@ TimeHandle_t TimeInstance[] = {
 };
 
 COMPONENT_GET_CNT(Time, time)
+

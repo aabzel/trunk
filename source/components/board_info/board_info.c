@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "board_config.h"
+#include "compiler_const.h"
 
 bool connectors_is_equal(const ConnectorPin_t* const conn1, const ConnectorPin_t* const conn2) {
     bool res = false;
@@ -17,7 +18,7 @@ bool connectors_is_equal(const ConnectorPin_t* const conn1, const ConnectorPin_t
     return res;
 }
 
-const Wire_t* Pad2WireInfio(Pad_t pad) {
+const Wire_t* PadToWireInfo(const Pad_t pad) {
     const Wire_t* WireNode = NULL;
     uint32_t i = 0;
     uint32_t cnt = wires_get_cnt();
@@ -55,4 +56,10 @@ const WirePin_t* Conn2WirePinInfio(ConnectorPin_t conn, WirePin_t* WireList, uin
         }
     }
     return WireNode;
+}
+
+_WEAK_FUN_
+bool board_indicate_init_error(void) {
+    bool res = true;
+    return res;
 }

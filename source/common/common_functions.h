@@ -3,6 +3,7 @@
 
 #include "std_includes.h"
 //#include "c_defines_generated.h"
+
 #ifdef HAS_DIAG
 #include "common_diag.h"
 #endif
@@ -15,20 +16,20 @@
 
 #ifndef HAS_SCHEDULER
 #warning "+ HAS_SCHEDULER"
-#endif /**/
+#endif
 
 #include "super_cycle_types.h"
 
 #endif /**/
 
-bool common_diag(void);
-
-uint32_t ok_cnt_update(const uint32_t cur, const bool res) ;
-bool try_init(bool status, uint32_t i, char* message);
+uint32_t ok_cnt_update(const uint32_t cur, const bool res);
+//bool common_diag(void);
+bool is_equal_u32(const uint32_t exp_val, const uint32_t real_val);
+bool try_init(bool status, uint32_t i, uint32_t cnt, char* message);
 bool ok_cnt_to_res(const uint32_t ok_cnt);
 
 #ifdef HAS_SUPER_CYCLE
 bool super_cycle_proc_ll(const SuperCycleHandle_t* const Node);
-#endif /**/
+#endif
 
 #endif /* COMMON_FUNCTIONS_H */

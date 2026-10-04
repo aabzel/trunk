@@ -4,7 +4,9 @@
 #include <string.h>
 
 //#include "c_defines_generated.h"
+#ifdef HAS_RUNNING_LINE
 #include "running_line.h"
+#endif
 
 #ifdef HAS_GNSS
 #include "gnss_drv.h"
@@ -17,11 +19,15 @@
 
 #ifdef HAS_NMEA
 #include "nmea_protocol.h"
-#endif /*HAS_NMEA*/
+#endif /**/
+
+#ifdef HAS_SONAR
+#include "sonar.h"
+#endif /**/
 
 #ifdef HAS_DISPLAY
 #include "display_drv.h"
-#endif /*HAS_DISPLAY*/
+#endif /**/
 
 #ifdef HAS_SCHMITT_TRIGGER
 #include "schmitt_trigger.h"
@@ -87,7 +93,7 @@ static bool dashboard_decawave(DashBoardHandle_t* Node) {
         if(DecaNode) {
             uint32_t up_time_ms = time_get_ms32();
             double up_time_s = MSEC_2_SEC(up_time_ms);
-            snprintf(Node->text, sizeof(Node->text), "UpTime: %s", UpTimeSec2Str(up_time_s));
+            snprintf(Node->text, sizeof(Node->text), "UpTime: %s", UpTimeSecToStr(up_time_s));
             snprintf(Node->text, sizeof(Node->text), "%s, Dist:%6.2f m", Node->text, distance_real_m);
             snprintf(Node->text, sizeof(Node->text), "%s, Spin: %u", Node->text, DecaNode->spin_cnt);
             snprintf(Node->text, sizeof(Node->text), "%s, DistFilt:%6.2f m", Node->text,
@@ -95,7 +101,7 @@ static bool dashboard_decawave(DashBoardHandle_t* Node) {
             snprintf(Node->text, sizeof(Node->text), "%s, Flow %u/%u", Node->text, DecaNode->Flow.cur,
                      DecaNode->Flow.maximum_continuous);
             snprintf(Node->text, sizeof(Node->text), "%s, MyAddr:0x%x", Node->text, DecaNode->addr);
-            snprintf(Node->text, sizeof(Node->text), "%s, Role:%s", Node->text, UwbRole2Str(DecaNode->role));
+            snprintf(Node->text, sizeof(Node->text), "%s, Role:%s", Node->text, UwbRoleToStr(DecaNode->role));
             res = true;
         }
     } else {
@@ -112,10 +118,10 @@ static bool dashboard_nmea(void) {
     bool res = false;
     NmeaHandle_t* Nmea = NmeaGetNode(1);
     if(Nmea) {
-        char text[300]="";
-        memset(text, 0, sizeof(text));
-        snprintf(text, sizeof(text), "%s%s,",text,NmeaNodeMainToStr(Nmea));
-        res = running_line_add_suffix(1, text);
+        char lText[300]="";
+        memset(lText, 0, sizeof(lText));
+        snprintf(lText, sizeof(lText), "%s%s,",lText,NmeaNodeMainToStr(Nmea));
+        res = running_line_add_suffix(1, lText);
     }
     return res;
 }
@@ -126,14 +132,14 @@ static bool dashboard_ltr390(DashBoardHandle_t* Node) {
     bool res = false;
     if(Node) {
         Ltr390Handle_t* Ltr390Node = Ltr390GetNode(  Node->light_sensor_num);
-        char text[200]="";
-        memset(text,0,sizeof(text));
+        char lText[200]="";
+        memset(lText,0,sizeof(lText));
         if(Ltr390Node){
-            snprintf(text, sizeof(text), "%s%s,",text,Ltr390Diag2Str(Ltr390Node));
-            snprintf(text, sizeof(text), "%s%s,",text,Ltr390UvsDiag2Str(Ltr390Node));
-            snprintf(text, sizeof(text), "%s%s,",text,Ltr390AlsDiag2Str(Ltr390Node));
+            snprintf(lText, sizeof(lText), "%s%s,",lText,Ltr390DiagNode(Ltr390Node));
+            snprintf(lText, sizeof(lText), "%s%s,",lText,Ltr390UvsDiagToStr(Ltr390Node));
+            snprintf(lText, sizeof(lText), "%s%s,",lText,Ltr390AlsDiagToStr(Ltr390Node));
         }
-        res= running_line_set_text(2, text);
+        res= running_line_set_text(2, lText);
     } else {
         LOG_ERROR(DASHBOARD, "LiNavErr");
     }
@@ -146,10 +152,10 @@ static bool dashboard_light_navigator(DashBoardHandle_t* Node) {
     bool res = false;
     LightNavigatorHandle_t* LiNavNode = LightNavigatorGetNode(Node->light_nav_num);
     if(LiNavNode) {
-        char text[400]="";
-        memset(text,0,sizeof(text));
-        snprintf(text, sizeof(text), "%s,%s", text, LightNavigatorDiag2Str(LiNavNode));
-        res = running_line_set_text(3, text);
+        char lText[400]="";
+        memset(lText,0,sizeof(lText));
+        snprintf(lText, sizeof(lText), "%s,%s", lText, LightNavigatorDiagToStr(LiNavNode));
+        res = running_line_set_text(3, lText);
 
     } else {
         LOG_ERROR(DASHBOARD, "LiNavErr");
@@ -165,10 +171,12 @@ bool dashboard_rtc(DashBoardHandle_t* Node){
     char time_date_str[40] = "";
     res = rtc_get(Node->rtc_num, &Node->time_date);
     if(res) {
-        res = TimeDate2Str(&Node->time_date, time_date_str, sizeof(time_date_str));
+        res = TimeDateToStrExt(&Node->time_date, time_date_str, sizeof(time_date_str));
         LOG_PARN(DASHBOARD, "GetTime:%s", time_date_str);
         if(res) {
+#ifdef HAS_RUNNING_LINE
             res= running_line_set_text(1, time_date_str);
+#endif
         }
     } else {
         LOG_ERROR(DASHBOARD, "GetTimeErr");
@@ -186,10 +194,10 @@ bool dashboard_schmitt_trigger(DashBoardHandle_t* Node){
         if(LiNavNode) {
             SchmittTriggerHandle_t* Trigger=SchmittTriggerGetNode(LiNavNode->trigger_num);
             if(Trigger) {
-                char text[400]="";
-                memset(text,0,sizeof(text));
-                snprintf(text, sizeof(text), "%s,%s", text, SchmittTriggerNode2Str(Trigger));
-                res= running_line_set_text(4, text);
+                char lText[400]="";
+                memset(lText,0,sizeof(lText));
+                snprintf(lText, sizeof(lText), "%s,%s", lText, SchmittTriggerNodeToStr(Trigger));
+                res= running_line_set_text(4, lText);
             }
 
         }
@@ -210,91 +218,105 @@ bool dashboard_schmitt_trigger(DashBoardHandle_t* Node){
         }
 #endif
 
-// ll dashboard parn
+static bool dashboard_update(DashBoardHandle_t* Node,uint32_t up_time) {
+    bool res = false;
+    memset(Node->text, 0, sizeof(Node->text));
+
+#ifdef HAS_RTC
+    double up_time_s = MSEC_2_SEC(up_time);
+    snprintf(Node->text, sizeof(Node->text), "UpTime:%s", UpTimeSecToStr(up_time_s));
+
+            res = dashboard_rtc(Node);
+    #endif
+
+#ifdef HAS_LIGHT_NAVIGATOR
+            res = dashboard_light_navigator(Node);
+    #endif
+
+#ifdef HAS_LTR390
+            res = dashboard_ltr390(Node);
+    #endif
+
+#ifdef HAS_LIGHT_NAVIGATOR
+            res = dashboard_schmitt_trigger(Node);
+    #endif
+
+#ifdef HAS_BH1750
+            res = dashboard_bh1750(Node);
+    #endif
+
+#ifdef HAS_NMEA
+            res = dashboard_nmea();
+    #endif
+    str_del_char_inplace(Node->text, ' ');
+
+
+
+                strcpy(Node->text,"");
+#ifdef HAS_SONAR
+                snprintf(Node->text, sizeof(Node->text),"%s%f m", Node->text,  sonar_position_get(SONAR_NUM_CHIRP));
+#endif
+
+#ifdef HAS_RUNNING_LINE
+                snprintf(Node->text, sizeof(Node->text),"%s%s"CRLF, Node->text,  running_line_get_text(1));
+                snprintf(Node->text, sizeof(Node->text),"%s%s"CRLF, Node->text,  running_line_get_text(2));
+#ifdef HAS_RUNNING_LINE3
+                snprintf(Node->text, sizeof(Node->text),"%s%s"CRLF, Node->text,  running_line_get_text(3));
+#endif
+
+#ifdef HAS_RUNNING_LINE4
+                snprintf(Node->text, sizeof(Node->text),"%s%s"CRLF, Node->text,  running_line_get_text(4));
+#endif
+#endif /**/
+                LOG_DEBUG(DASHBOARD, "[%s]L:%u,Byte", Node->text, strlen(Node->text));
+#ifdef HAS_SSD1306
+                ssd1306_sram_clean(Node->display_num);
+                res = ssd1306_write_string(Node->display_num, 0, 0, Node->text,strlen(Node->text), FONT_24);
+#endif /**/
+                if(res) {
+                    Node->last_update_ms= time_get_ms32();
+                } else {
+                    LOG_ERROR(DASHBOARD, "Display %u Err", Node->display_num);
+                }
+
+
+#if defined(HAS_TIME) && defined(HAS_PC)
+            res = time_get_cur(&Node->time_date);
+            if(res) {
+                sprintf(Node->text, "%s" CRLF "UpTime: %4.1f s", TimeDateToStrShort(&Node->time_date), MSEC_2_SEC(up_time));
+            }
+    #endif
+
+#ifdef HAS_DISPLAY // That is SW display
+            if(res) {
+                // display_sram_clean(Node->display_num);
+                LOG_DEBUG(DASHBOARD, "St:%u,[%s] %u Byte", Node->run_lText_start_index,
+                          &Node->text[Node->run_lText_start_index], strlen(&Node->text[Node->run_lText_start_index]));
+                res = display_write_string(Node->display_num, 0, 0, &Node->text[Node->run_lText_start_index],
+                                           strlen(&Node->text[Node->run_lText_start_index]), FONT_12);
+                if(res) {
+
+                } else {
+                    LOG_ERROR(DASHBOARD, "DisplayErr");
+                }
+            }
+    #endif /*HAS_DISPLAY*/
+    return res;
+}
+
+/*
+ ll dashboard parn
+ */
 static bool dashboard_proc_one(uint8_t num) {
     bool res = false;
     LOG_PARN(DASHBOARD, "Proc:%u", num);
     DashBoardHandle_t* Node = DashBoardGetNode(num);
     if(Node) {
-        LOG_PARN(DASHBOARD, "Spot %u", num);
-        memset(Node->text, 0, sizeof(Node->text));
-
         uint32_t up_time = time_get_ms32();
-        double up_time_s = MSEC_2_SEC(up_time);
-        snprintf(Node->text, sizeof(Node->text), "UpTime:%s", UpTimeSec2Str(up_time_s));
-#ifdef HAS_DECAWAVE
-        res = dashboard_decawave(Node);
-#endif /*HAS_DECAWAVE*/
-
-#ifdef HAS_RTC
-        res = dashboard_rtc(Node);
-#endif
-
-#ifdef HAS_LIGHT_NAVIGATOR
-        res = dashboard_light_navigator(Node);
-#endif
-
-#ifdef HAS_LTR390
-        res = dashboard_ltr390(Node);
-#endif
-
-#ifdef HAS_LIGHT_NAVIGATOR
-        res = dashboard_schmitt_trigger(Node);
-#endif
-
-#ifdef HAS_BH1750
-        res = dashboard_bh1750(Node);
-#endif
-
-#ifdef HAS_NMEA
-        res = dashboard_nmea();
-#endif
-
-        str_del_char_inplace(Node->text, ' ');
-        res = true;
-
-#ifdef HAS_SSD1306
-        if(res) {
-            ssd1306_sram_clean(Node->display_num);
-
-            snprintf(Node->text,sizeof(Node->text),"%s"CRLF"%s"CRLF"%s"CRLF"%s"CRLF,
-                    running_line_get_text(1),
-                    running_line_get_text(2),
-                    running_line_get_text(3),
-                    running_line_get_text(4));
-            LOG_DEBUG(DASHBOARD, "St:%u, [%s] %u Byte", Node->text, strlen(Node->text));
-            res = ssd1306_write_string(Node->display_num, 0, 0, Node->text,strlen(Node->text), FONT_16);
-            if(res) {
-
-            } else {
-                LOG_ERROR(DASHBOARD, "Display %u Err", Node->display_num);
-            }
-        } else {
-            LOG_ERROR(DASHBOARD, "DisplayData %u Err", Node->display_num);
+        uint32_t diff_ms = up_time-Node->last_update_ms;
+        if(Node->update_period_ms < diff_ms) {
+            res = dashboard_update(Node,up_time);
         }
-#endif /*HAS_SSD1306*/
-
-#if defined(HAS_TIME) && defined(HAS_PC)
-        res = time_get_cur(&Node->time_date);
-        if(res) {
-            sprintf(Node->text, "%s" CRLF "UpTime: %4.1f s", TimeDate2StrShort(&Node->time_date), MSEC_2_SEC(up_time));
-        }
-#endif
-
-#ifdef HAS_DISPLAY // That is SW display
-        if(res) {
-            // display_sram_clean(Node->display_num);
-            LOG_DEBUG(DASHBOARD, "St:%u,[%s] %u Byte", Node->run_text_start_index,
-                      &Node->text[Node->run_text_start_index], strlen(&Node->text[Node->run_text_start_index]));
-            res = display_write_string(Node->display_num, 0, 0, &Node->text[Node->run_text_start_index],
-                                       strlen(&Node->text[Node->run_text_start_index]), FONT_12);
-            if(res) {
-
-            } else {
-                LOG_ERROR(DASHBOARD, "DisplayErr");
-            }
-        }
-#endif /*HAS_DISPLAY*/
     }
     return res;
 }
@@ -304,7 +326,6 @@ bool dashboard_init_custom(void){
     return res;
 }
 
-
 static bool dashboard_init_one(uint8_t num) {
     bool res = false;
     const DashBoardConfig_t* Config = DashBoardGetConfig(num);
@@ -312,12 +333,14 @@ static bool dashboard_init_one(uint8_t num) {
         DashBoardHandle_t* Node = DashBoardGetNode(num);
         if(Node) {
             LOG_WARNING(DASHBOARD, "DASHBOARD_%u Init", num);
+            Node->update_period_ms = Config->update_period_ms;
+            Node->last_update_ms = 0;
             Node->display_num = Config->display_num;
             Node->rtc_num = Config->rtc_num;
             Node->light_sensor_num = Config->light_sensor_num;
             Node->light_nav_num = Config->light_nav_num;
             snprintf(Node->text, sizeof(Node->text), "DashBoard_%u init", num);
-            // snprintf(Node->run_text, sizeof(Node->run_text), "RunText", num);
+            // snprintf(Node->run_lText, sizeof(Node->run_lText), "RunText", num);
 #ifdef HAS_SSD1306
             res = ssd1306_sram_clean(Node->display_num);
             res = ssd1306_write_string(Node->display_num, 0, 0, Node->text, strlen(Node->text), FONT_12);

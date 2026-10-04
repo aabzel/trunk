@@ -18,13 +18,15 @@
 #define LED_NAME_SIZE 20
 
 typedef enum {
+    LED_MCAL_MODE_UNDEF = 0,
+
     LED_MCAL_MODE_OFF = 1,
     LED_MCAL_MODE_ON = 2,
     LED_MCAL_MODE_PWM = 3,
     LED_MCAL_MODE_NONE = 4,
     LED_MCAL_MODE_BLINK = 5,
     LED_MCAL_MODE_BAM = 6,
-    LED_MCAL_MODE_UNDEF = 0,
+    LED_MCAL_MODE_COUNTER = 7,
 } LedMode_t;
 
 /*Do not change constants*/

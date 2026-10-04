@@ -12,8 +12,9 @@ typedef enum {
     TIME_PCAN_TIMESTAMP = 4,
     TIME_HAL_TICK = 5,
     TIME_DWT= 6,
-    TIME_CNT= 7,
+    TIME_CNT,
 }TimeLegalNum_t;
+#define TIME_US_MAIN_NUM TIME_DWT
 
 #define TIME_MAIN_NUM TIME_DWT
 

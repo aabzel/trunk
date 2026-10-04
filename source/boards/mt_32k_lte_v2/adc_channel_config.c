@@ -57,7 +57,5 @@ AdcChannelHandle_t AdcChannelInstance[]={
 #endif
 };
 
-
-COMPONENT_GET_CNT(AdcChannel,adc_channel)
-
+COMPONENT_GET_CNT(AdcChannel, adc_channel)
 

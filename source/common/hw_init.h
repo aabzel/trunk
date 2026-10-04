@@ -70,13 +70,13 @@
 #include "proc_connectivity.h"
 #else
 #define CONNECTIVITY_HW_INIT
-#endif /*HAS_CONNECTIVITY*/
+#endif /**/
 
 #ifdef HAS_STORAGE
 #include "storage_init.h"
 #else
 #define STORAGE_HW_INIT
-#endif /*HAS_STORAGE*/
+#endif /**/
 
 
 /*Order matters*/

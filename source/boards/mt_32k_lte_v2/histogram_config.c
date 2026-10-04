@@ -6,7 +6,7 @@
 
 static uint32_t HistogramData[1023*16]={0};
 
-const HistogramConfig_t HistogramConfig[] = {
+const HistogramConfig_t SECTION_CFG_DATA HistogramConfig[] = {
     {
       .num=1,
       .valid = true,
@@ -21,6 +21,7 @@ const HistogramConfig_t HistogramConfig[] = {
 HistogramHandle_t HistogramInstance[]={
     {.num=1, .valid=true,},
 };
+
 
 COMPONENT_GET_CNT(Histogram, histogram)
 

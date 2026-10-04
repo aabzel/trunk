@@ -1,14 +1,12 @@
-#ifndef BASICAL_MACRO_UTIL_H
-#define BASICAL_MACRO_UTIL_H
+#ifndef BASICAL_MACRO_UTILS_H
+#define BASICAL_MACRO_UTILS_H
 
 #define K_BYTES 1024UL
 #define M_BYTES (1024UL*K_BYTES)
 
 
 /*
-
    #include "macro_utils.h"
-
  */
 //#define GBYTE_BYTE(GBYTE) ((GBYTE)*1024UL*1024UL*1024UL)
 
@@ -16,7 +14,9 @@
 #define MBYTE_BYTE(MBYTE) KBYTE_BYTE((MBYTE)*1024UL)
 #define GBYTE_BYTE(GBYTE) MBYTE_BYTE(1024UL*(GBYTE))
 
-#define BYTES_2_KBYTES(BYTES) (((float)(BYTES))/(1024.0))
+#define BYTES_2_KBYTES(BYTES) (((float)(BYTES))/(1024.0f))
+#define BYTES_2_MBYTES(BYTES) (((float)(BYTES))/(1048576.0f))
+
 #define BYTES_2_KBYTES_U(BYTES) ((BYTES)/1024)
 
 #define MHZ_TO_HZ_U(MHZ) ((MHZ)*1000000U)
@@ -26,7 +26,7 @@
 
 #ifdef HAS_NORTOS
 #define IS_ENABLED(x) x
-#endif /*HAS_NORTOS*/
+#endif
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
@@ -40,4 +40,4 @@
 #define SECTION_CFG_DATA
 #endif
 
-#endif /* BASICAL_MACRO_UTIL_H */
+#endif /* BASICAL_MACRO_UTILS_H */

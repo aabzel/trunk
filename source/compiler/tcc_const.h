@@ -1,0 +1,48 @@
+#ifndef GCC_CONSTANTS_H
+#define TCC_CONSTANTS_H
+
+/*
+ All compilers has its own implementations of compiler extensions: weak packed inline place_at_addr interrupt align
+ If you want to use these features, add
+ #include "compiler_const.h"
+*/
+
+#define _ALIGNMENT_ __attribute__ ((aligned (4)))
+
+/* Be carefull! MinGW TCC does not support weak functions! */
+#define _WEAK_FUN_  __attribute__((weak))
+
+
+#define _PACKED_S_  __attribute__((gcc_struct, packed))
+#define _PACKED_  __attribute__((__packed__))
+//#define _PACKED_  __attribute__ ((packed))
+
+#define _INTERRUPT_  __attribute__ ((interrupt))
+
+
+/*
+This built-in function represents all anonymous arguments of
+an inline function. It can be used only in inline functions
+that are always inlined, never compiled as a separate function,
+such as those using */
+#define _INLINE_FUN_ inline __attribute__((__always_inline__))
+
+// Compiler keyword for placing an object at an absolute address (global variable address modifier)
+// Usage example: unsigned char My_Array[3] AT_ADDR(0x0810C000) = {0x12, 0x15, 0x78};
+#define PLACE_AT_ADDR(address)    __attribute__ ((section (".address_"#address)))
+
+//   void __nop( void );
+// Generates a NOP instruction
+#define _NOP_()  __asm("nop");  // TBD
+
+//   void INTERRUPT_ENABLE(void);
+//  Interrupt enable
+#define INTERRUPT_ON()  __asm__("cpsie i");
+
+//   void INTERRUPT_DISABLE(void);
+//  Interrupt disable
+#define INTERRUPT_OFF()  __asm__("cpsid i");
+
+
+
+#endif /* TCC_CONSTANTS_H */

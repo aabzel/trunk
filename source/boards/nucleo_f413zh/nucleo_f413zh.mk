@@ -6,7 +6,7 @@ ifneq ($(NUCLEO_F413ZH_MK_INC),Y)
     BOARD_CFG_DIR = $(BOARD_DIR)/nucleo_f413zh
     STM32F413ZH=Y
 
-    OPT += -DHAS_NUCLEO_F413ZH
+    MCAL_OPT += -DHAS_NUCLEO_F413ZH
     NUCLEO_F413ZH=Y
     MICROCONTROLLER=Y
     STM32=Y
@@ -37,7 +37,7 @@ ifneq ($(NUCLEO_F413ZH_MK_INC),Y)
     endif
 
     ifeq ($(DMA),Y)
-        OPT += -DHAS_DMA
+        MCAL_OPT += -DHAS_DMA
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/dma_config.c
     endif
 
@@ -102,8 +102,8 @@ ifneq ($(NUCLEO_F413ZH_MK_INC),Y)
     endif
 
     ifeq ($(GENERIC),Y)
-        OPT += -DHAS_DMA1
-        OPT += -DHAS_DMA2
+        MCAL_OPT += -DHAS_DMA1
+        MCAL_OPT += -DHAS_DMA2
         #DMA is needed for UART
     endif
 
@@ -129,7 +129,7 @@ ifneq ($(NUCLEO_F413ZH_MK_INC),Y)
 
     ifeq ($(I2S),Y)
         #@echo $(error I2S=$(I2S))
-        OPT += -DHAS_I2S
+        MCAL_OPT += -DHAS_I2S
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/i2s_config.c
     endif
 
@@ -166,7 +166,7 @@ ifneq ($(NUCLEO_F413ZH_MK_INC),Y)
 
     ifeq ($(PINS),Y)
         $(info Config Pins)
-        OPT += -DHAS_PINS
+        MCAL_OPT += -DHAS_PINS
     endif
 
     ifeq ($(PWM),Y)
@@ -204,7 +204,7 @@ ifneq ($(NUCLEO_F413ZH_MK_INC),Y)
 
     ifeq ($(TBFP),Y)
         $(info Add config TBFP)
-        OPT += -DTBFP_MAX_PAYLOAD=350
+        MCAL_OPT += -DTBFP_MAX_PAYLOAD=350
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c
     endif
 

@@ -1,8 +1,8 @@
 #include "clock_config.h"
 
+#include "clock.h"
 #include "log.h"
 #include "sys_config.h"
-#include "clock.h"
 //#include "clock_custom.h"
 
 ClockConfig_t ClockConfig = {
@@ -12,9 +12,6 @@ ClockConfig_t ClockConfig = {
 ClockHandle_t ClockInstance = {
     .valid = true,
 };
-
-
-
 
 __attribute__((weak)) bool clock_init(void) {
     bool res = true;

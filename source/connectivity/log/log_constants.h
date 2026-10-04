@@ -26,10 +26,10 @@ extern "C" {
 
 typedef enum {
     LOG_EOF_UNDEF = 0,
-    LOG_EOF_CRLF  = 1,
-    LOG_EOF_CR    = 2,
-    LOG_EOF_LF    = 3,
-    LOG_EOF_LFCR  = 4,
+    LOG_EOF_CRLF = 1,
+    LOG_EOF_CR = 2,
+    LOG_EOF_LF = 3,
+    LOG_EOF_LFCR = 4,
 } LogEndOfLine_t;
 
 typedef enum {
@@ -41,10 +41,10 @@ typedef enum {
     LOG_LEVEL_INFO = 0,
     LOG_LEVEL_WARNING = 1,
     LOG_LEVEL_ERROR = 2,
-    LOG_LEVEL_CRITICAL = 3,
-    LOG_LEVEL_COVERAGE = 4,
-    LOG_LEVEL_DISABLE = 5,
-    LOG_LEVEL_LAST = LOG_LEVEL_DISABLE
+    LOG_LEVEL_TRACE = 3,   /* For code coverage */
+    LOG_LEVEL_CRITICAL = 4,
+    LOG_LEVEL_DISABLE = 5, /* LOG_LEVEL_DISABLE Must be no where */
+    LOG_LEVEL_LAST
 } log_level_t;
 
 #ifdef __cplusplus

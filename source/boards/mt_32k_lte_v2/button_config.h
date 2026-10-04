@@ -6,7 +6,7 @@
 
 #ifndef HAS_BUTTON
 #error "Add HAS_BUTTON"
-#endif
+#endif /**/
 
 
 #define BOARD_CUSTOM_CONFIG

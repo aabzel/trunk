@@ -1,5 +1,5 @@
-#ifndef CPU_X86_H
-#define CPU_X86_H
+#ifndef CPU__X86_H
+#define CPU__X86_H
 
 
 #include "macro_utils.h"
@@ -9,13 +9,14 @@
 
 typedef int16_t IRQn_Type;
 
+
 #define ADC_CHANNELS_COUNT 24
-#define ADC_COUNT 3
+#define ADC_COUNT 0
 #define DMA_CHANNEL_COUNT 0
 #define AHB1_CLOCK_HZ SYS_FREQ
 #define APB1_CLOCK_HZ (AHB1_CLOCK_HZ/2)
 #define APB2_CLOCK_HZ (AHB1_CLOCK_HZ/2)
-#define CAN_COUNT 2
+#define CAN_COUNT 0
 #define CPU_MAX_HZ 288000000
 #define DAC_COUNT 2
 #define DMA_COUNT 2
@@ -23,7 +24,7 @@ typedef int16_t IRQn_Type;
 #define GPIO_COUNT 0
 #define GPIO_PIN_MAX 0
 #define LSI_FREQ 32000
-#define MAX_IRQ_NUM (114) /*See page 53 in RM*/
+#define MAX_IRQ_NUM (0) /*See page 53 in RM*/
 #define MCU_NAME "cpu_x86"
 #define MCU_PACKAGE "LQFP144"
 #define RAM_END (RAM_START + RAM_SIZE)
@@ -57,4 +58,4 @@ extern const PinData_t PinConfig[];
 uint16_t pin_get_cnt(void);
 #endif
 
-#endif /* CPU_X86_H */
+#endif /* CPU__X86_H */

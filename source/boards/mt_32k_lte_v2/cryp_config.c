@@ -2,7 +2,7 @@
 
 #include "data_utils.h"
 
-const CrypConfig_t CrypConfigLut[] = {
+const CrypConfig_t SECTION_CFG_DATA CrypConfigLut[] = {
     {
     	.num = CRYP_SW_NUM, 
         .algo = CRYP_ALGO_AES_CBC, 

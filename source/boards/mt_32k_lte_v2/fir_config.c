@@ -43,9 +43,6 @@ FirHandle_t FirInstance[]={
 
 };
 
-uint32_t fir_get_cnt(void){
-    uint8_t cnt=0;
-    cnt = ARRAY_SIZE(FirConfig);
-    return cnt;
-}
+COMPONENT_GET_CNT(Fir, fir)
+
 

@@ -21,6 +21,51 @@
 #include "num_to_str.h"
 #endif
 
+const char* OkToStr(bool status) {
+    const char* name = "?";
+    switch((uint8_t) status) {
+        case true:      name = "Ok";       break;
+        case false:     name = "Err";      break;
+        default:        name = "?";        break;
+    }
+    return name;
+}
+
+const char* ResToStr(bool res) {
+    return OkToStr(res);
+}
+
+const char* OnOffToStr(uint8_t status) {
+    const char* name = "?";
+    switch(status) {
+        case false:     name = "Off";        break;
+        case true:      name = "On";        break;
+        default:        name = "??";        break;
+    }
+    return name;
+}
+
+const char* BoolToOnOff(const bool on_off) {
+    const char* name = "?";
+    switch((uint8_t) on_off) {
+        case false:     name = "OFF";        break;
+        case true:      name = "ON";        break;
+        default:        name = "??";        break;
+    }
+    return name;
+}
+
+
+const char* YesNoToStr(uint8_t status) {
+    const char* name = "?";
+    switch(status) {
+        case 0:        name = "No";        break;
+        case 1:        name = "Yes";        break;
+        default:       name = "?";        break;
+    }
+    return name;
+}
+
 char* HexWordToStr(uint16_t word) {
     snprintf(text, sizeof(text), "0x%04x", word);
     return text;
@@ -66,6 +111,17 @@ const char* U8DecToStr(const void* const data) {
     }
     return text;
 }
+
+const char* FloatDataToStr(const void* const data) {
+    if(data) {
+        float value= 0.0f;
+        memcpy(&value,data,sizeof(float));
+        snprintf(text, sizeof(text), "%f", value);
+    }
+    return text;
+}
+
+
 
 const char* U8ToStr(const void* const data) {
     if(data) {
@@ -130,70 +186,6 @@ bool hex2ascii(const uint8_t* const in_hex, uint32_t hex_len, uint8_t* out_ascii
         out_ascii[j] = 0x00;
     }
     return res;
-}
-
-const char* ResToStr(bool res) {
-    const char* name = "?";
-    switch((uint32_t)res) {
-    case false:
-        name = "Err";
-        break;
-    case true:
-        name = "Ok";
-        break;
-    default:
-        name = "??";
-        break;
-    }
-    return name;
-}
-
-const char* OnOffToStr(uint8_t status) {
-    const char* name = "?";
-    switch(status) {
-    case false:
-        name = "Off";
-        break;
-    case true:
-        name = "On";
-        break;
-    default:
-        name = "??";
-        break;
-    }
-    return name;
-}
-
-const char* OkToStr(bool status) {
-    const char* name = "?";
-    switch(status) {
-    case false:
-        name = "Err";
-        break;
-    case true:
-        name = "Ok";
-        break;
-    default:
-        name = "?";
-        break;
-    }
-    return name;
-}
-
-const char* YesNoToStr(uint8_t status) {
-    const char* name = "?";
-    switch(status) {
-    case 0:
-        name = "No";
-        break;
-    case 1:
-        name = "Yes";
-        break;
-    default:
-        name = "?";
-        break;
-    }
-    return name;
 }
 
 char* uint2str(uint32_t val) {
@@ -337,13 +329,13 @@ bool print_progress(uint32_t cur, uint32_t total) {
     return res;
 }
 
-float diag_progress_log(uint32_t cur, uint32_t total, uint32_t parts) {
+float diag_progress_log(const uint32_t cur, const uint32_t total, const uint32_t parts, const char * const token) {
     float progress_pp = 0.0;
     if(cur <= total) {
         progress_pp = ((float)(100U * cur)) / ((float)total);
         if(parts < (total / 3)) {
             if(0 == (cur % (total / parts))) {
-                cli_printf("\rProgress:%s", ProgressToStr(cur, total));
+                cli_printf("\r[%s]:Progress:%s",token, ProgressToStr(cur, total));
             }
         }
     }

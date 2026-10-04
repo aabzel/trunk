@@ -6,13 +6,50 @@
 #include "data_utils.h"
 #include "log.h"
 #include "log_utils.h"
+#include "terminal_codes.h"
+
 #ifdef HAS_DIAG
 #include "common_diag.h"
 #include "system_diag.h"
 #endif
-//#include "table_utils.h"
-#include "terminal_codes.h"
-//#include "writer_config.h"
+
+bool cmd_log_level_reset(int32_t argc, char* argv[]) {
+    bool res = true;
+    facility_t facility = UNKNOWN_FACILITY;
+    log_level_t level = LOG_LEVEL_UNKNOWN;
+
+    if(1 <= argc) {
+        facility = strToFacility(argv[0]);
+        if(UNKNOWN_FACILITY == facility) {
+            LOG_WARNING(LOG, "UnknownFacility %s", argv[0]);
+            // res = true;
+        } else {
+#ifdef HAS_SYSTEM_DIAG
+            LOG_INFO(LOG, "Spot %u=%s", facility, FacilityToStr(facility));
+#endif
+            res = true;
+        }
+    }
+
+    if(2 <= argc) {
+        level = strToLogLevel(argv[1]);
+        if(LOG_LEVEL_UNKNOWN == level) {
+            LOG_ERROR(LOG, "UnknownLogLevelName:[%s]", argv[1]);
+            res = false;
+        } else {
+            res = true;
+        }
+    }
+
+    if(res) {
+        res = log_level_reset(facility, level);
+    } else {
+        LOG_ERROR(LOG, "Usage llr facility logLevel");
+        res = false;
+    }
+
+    return res;
+}
 
 bool cmd_log_level(int32_t argc, char* argv[]) {
     bool res = true;
@@ -24,7 +61,7 @@ bool cmd_log_level(int32_t argc, char* argv[]) {
     }
 
     if(1 <= argc) {
-        facility = str2facility(argv[0]);
+        facility = strToFacility(argv[0]);
         if(UNKNOWN_FACILITY == facility) {
             LOG_WARNING(LOG, "UnknownFacility %s", argv[0]);
             res = true;
@@ -37,7 +74,7 @@ bool cmd_log_level(int32_t argc, char* argv[]) {
     }
 
     if(2 <= argc) {
-        level = str2level(argv[1]);
+        level = strToLogLevel(argv[1]);
         if(LOG_LEVEL_UNKNOWN == level) {
             LOG_ERROR(LOG, "Unknown log level name %s", argv[1]);
             res = false;
@@ -60,7 +97,7 @@ bool cmd_log_level(int32_t argc, char* argv[]) {
 
         } break;
         case 2: {
-            res = set_log_level(facility, level);
+            res = log_level_set(facility, level);
 
         } break;
         default: {
@@ -170,6 +207,7 @@ bool cmd_log_init(int32_t argc, char* argv[]) {
     return res;
 }
 
+// lts 0
 bool log_time_stamp_command(int32_t argc, char* argv[]) {
     bool res = true;
     bool on_off = true;
@@ -180,8 +218,32 @@ bool log_time_stamp_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
+        res = false;
+#ifdef HAS_LOG_TIME_STAMP
         res = log_level_time_stamp(on_off);
+#endif
         log_info_res(LOG, res, "TimeStamp");
+    } else {
+        LOG_ERROR(LOG, "Usage: lts OnOff");
+    }
+    return res;
+}
+
+bool log_in_place_command(int32_t argc, char* argv[]) {
+    bool res = true;
+    bool on_off = true;
+
+    if(1 <= argc) {
+        res = try_str2bool(argv[0], &on_off);
+        log_info_res(LOG, res, "OnOff");
+    }
+
+    if(res) {
+        res = false;
+        res = log_level_in_place(on_off);
+        log_info_res(LOG, res, "InPlace");
+    } else {
+        LOG_ERROR(LOG, "Usage: lip OnOff");
     }
     return res;
 }

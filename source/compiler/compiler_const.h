@@ -10,7 +10,7 @@ extern "C" {
 #include "clang_const.h"
 #endif
 
-#ifdef HAS_ARM_GCC
+#ifdef HAS_GCC
 #include "gcc_const.h"
 #endif
 

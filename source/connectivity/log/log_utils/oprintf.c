@@ -107,22 +107,28 @@ static char a2i(char ch, const char** src, int32_t* nump) {
     return ch;
 }
 
+bool is_mem_addr(uint32_t addr);
+
 static void putsw(ostream_t* s, int n, bool z, const char* bf) {
     if(s) {
         if(s->f_putch) {
             if(s->f_putstr) {
-                char fc = z ? '0' : ' ';
-                const char* p = bf;
-                while(*p && (0 < n)) {
-                    n--;
-                    p++;
+                bool res = is_mem_addr((uint32_t)bf);
+                if(res) {
+
+                    char fc = z ? '0' : ' ';
+                    const char* p = bf;
+                    while(*p && (0 < n)) {
+                        n--;
+                        p++;
+                    }
+                    while(0 < n) {
+                        s->f_putch(s, fc);
+                        n--;
+                    }
+                    int32_t len = strlen(bf);
+                    s->f_putstr(s, bf, len); /*Error*/
                 }
-                while(0 < n) {
-                    s->f_putch(s, fc);
-                    n--;
-                }
-                int32_t len = strlen(bf);
-                s->f_putstr(s, bf, len); /*Error*/
             }
         }
     }

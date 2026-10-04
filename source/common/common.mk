@@ -14,7 +14,7 @@ ifneq ($(COMMON_MK_INC),Y)
     ifeq ($(DIAG),Y)
         MCAL_OPT += -DHAS_COMMON_DIAG
         SOURCES_C += $(COMMON_DIR)/shared_array.c
-        SOURCES_C += $(COMMON_DIR)/common_diag.c
+        SOURCES_DIAG_C += $(COMMON_DIR)/common_diag.c
     endif
 
     ifeq ($(SUPER_LOOP),Y)

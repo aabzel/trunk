@@ -8,7 +8,7 @@ extern "C" {
 #include "std_includes.h"
 
 #ifdef HAS_FILE_API
-#include "file_api.h"
+#include "file_api_mcal.h"
 #endif
 
 #ifndef MASK_4BIT
@@ -19,7 +19,7 @@ extern "C" {
 #define LOG_ERROR_LINE(FASIL) LOG_ERROR(FASIL,"%s:%u",file_path_to_file_name(__FILE__),__LINE__)
 #endif
 
-float diag_progress_log(uint32_t cur, uint32_t total, uint32_t parts);
+float diag_progress_log(const uint32_t cur, const uint32_t total, const uint32_t parts, const char * const token) ;
 char* uint2str(uint32_t val);
 char* RfFreqToStr(uint32_t rf_freq);
 char* HexWordToStr(uint16_t word);
@@ -28,6 +28,7 @@ char* BitRateToStr(double bit_s);
 char* ByteRateToStr(double bit_s);
 char* ByteToStr(uint8_t byte);
 
+const char* BoolToOnOff(const bool on_off);
 const char* UnsignedBigEndianToStr(const uint8_t* const memory, const uint32_t param_size);
 const char* ProgressRealToStr(float cur, float total) ;
 const char* ProgressFloatToStr(float cur, float total) ;
@@ -38,6 +39,7 @@ const char* OkToStr(bool status);
 const char* ResToStr(bool res);
 const char* OnOffToStr(uint8_t status);
 const char* BitToAsterisk(const uint8_t bit);
+const char* FloatDataToStr(const void* const data);
 const char* U8DecToStr(const void* const data);
 const char* U8ToStr(const void* const data);
 const char* U16DecToStr(const void* const data);

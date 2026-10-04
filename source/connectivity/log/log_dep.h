@@ -9,4 +9,9 @@
 #error "+ HAS_LOG"
 #endif
 
+#ifndef HAS_SYSTEM
+#error "+HAS_SYSTEM"
+#endif
+
+
 #endif /* LOG_DEP_H */

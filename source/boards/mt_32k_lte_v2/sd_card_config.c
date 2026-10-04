@@ -3,7 +3,7 @@
 #include "gpio_types.h"
 #include "spi_types.h"
 
-const SdCardConfig_t SdCardConfig = {
+const SdCardConfig_t SECTION_CFG_DATA SdCardConfig = {
     .spi_num = 2,
     .block_len = 512,
     .valid = true,

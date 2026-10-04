@@ -8,14 +8,16 @@ extern "C" {
 #include "std_includes.h"
 #include "mbr_const.h"
 
+#define MBR_COMMON_VARIABLES       \
+    uint32_t boot_start_address;   \
+    uint8_t led_num;
+
 typedef struct  {
-    uint32_t boot_start_address;
-    uint32_t led_num;
+    MBR_COMMON_VARIABLES
 } MbrConfig_t;
 
 typedef struct  {
-    uint32_t boot_start_address;
-    uint32_t led_num;
+    MBR_COMMON_VARIABLES
     bool init;
 } MbrHandle_t;
 

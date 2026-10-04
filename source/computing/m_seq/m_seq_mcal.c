@@ -74,7 +74,7 @@ bool m_sec_to_signal(uint8_t* m_seq, int16_t* signal, uint32_t size) {
         if(signal) {
             if(size) {
                 uint32_t i = 0;
-                for (i = 0; i < size; i++) {
+                for(i = 0; i < size; i++) {
                     signal[i] = m_sec_code_to_signal(m_seq[i]);
                 }
                 res = true;
@@ -498,7 +498,7 @@ bool m_seq_reinit_one(uint8_t num, uint32_t shift_reg_num) {
             }
             Node->memory[0] = 1;
 
-            res = m_seq_find_first_feedback(num) ;
+            res = m_seq_find_first_feedback(num);
             LOG_INFO(M_SEQ, "M_SEQ_%u,%s", num, MseqNodeToStr(Node));
             res = true;
         } else {
@@ -507,7 +507,6 @@ bool m_seq_reinit_one(uint8_t num, uint32_t shift_reg_num) {
     }
     return res;
 }
-
 
 #ifdef HAS_CORRELATOR_NAIV_S16
 bool m_seq_calc_correlation_2(uint8_t* seq1, uint8_t* seq2, uint32_t size, char* CorrelationFileName) {
@@ -568,7 +567,6 @@ bool m_seq_find_feedback(uint8_t num) {
     return out_res;
 }
 
-
 bool m_seq_find_first_feedback(uint8_t num) {
     bool out_res = false;
     MseqHandle_t* Node = MseqGetNode(num);
@@ -594,7 +592,6 @@ bool m_seq_find_first_feedback(uint8_t num) {
                 break;
             }
         }
-
     }
     return out_res;
 }
@@ -613,7 +610,7 @@ static int8_t m_seq_modilator(MseqHandle_t* Node, float time_s, float carrier_pe
         }
         LOG_PARN(M_SEQ, "UpTime:%s,Part:%u,modulator:%d", FloatToStr(time_s, 1), part, modulator);
     } else {
-        LOG_ERROR(M_SEQ, "CodeIsNotGenerated:%u",Node->num);
+        LOG_ERROR(M_SEQ, "CodeIsNotGenerated:%u", Node->num);
     }
     return modulator;
 }

@@ -7,11 +7,11 @@
 #include "data_utils.h"
 #include "ds3231_types.h"
 
-const Ds3231Config_t Ds3231Config[]={
+const Ds3231Config_t SECTION_CFG_DATA Ds3231Config[]={
     {.num = 1, .i2c_num = 1, .valid = true, .hour_mode = HOUR_MODE_24H, .offset = 127, .rate_select = RS_8192_HZ,},
 };
 
-Ds3231Handle_t Ds3231Instance[]={
+Ds3231Handle_t Ds3231Item[]={
     {.num=1, .valid=true, .init=false,}
 };
 
@@ -24,5 +24,7 @@ uint32_t ds3231_get_reg_config_cnt(void){
     return cnt;
 }
 
+
 COMPONENT_GET_CNT(Ds3231, ds3231)
+
 

@@ -39,7 +39,7 @@ extern "C" {
 #define LOG_PROC_ERROR  LOG_PARN(FASIL, "%s%u Proc Err", CG_FASIL, num);
 #define LOG_INIT_ERROR   LOG_DEBUG(FASIL, "%s_%u Init Err", CG_FASIL, num);
 #define LOG_PROC_STATISTIC  LOG_PARN(FASIL, "Proc %u %s", ok, CG_FASIL);
-#define LOG_INIT_STATISTIC  LOG_INFO(FASIL, "Init %u %s", ok, CG_FASIL);
+#define LOG_INIT_STATISTIC  LOG_INFO(FASIL, "Init:%u/%u,%s", ok, cnt, CG_FASIL);
 #define LOG_SET_FASIL_INFO  log_level_get_set(FASIL, LOG_LEVEL_INFO);
 #define LOG_SET_FASIL_DEBUG  log_level_get_set(FASIL, LOG_LEVEL_DEBUG);
 #else
@@ -55,20 +55,18 @@ extern "C" {
 #define LOG_SET_FASIL_INFO
 #endif
 
-
-
 /*If not()  */
 #define ifn(CONDITION)    if(!(CONDITION))
 #define nif(CONDITION)    if(!(CONDITION))
 
 #define COMPONENT_IS_VALID(XXX, xxx)                                                                                   \
-    bool xxx##_is_valid(uint8_t num) {                                                                                 \
+    bool xxx##_is_valid_num(uint8_t num) {                                                                             \
         bool res = false;                                                                                              \
         uint32_t i = 0;                                                                                                \
         for(i = 0; i < xxx##_get_cnt(); i++) {                                                                         \
-            if(num == XXX##Config[i].num) {                                                                            \
-                if(XXX##Config[i].valid) {                                                                             \
-                    res = true;                                                                                        \
+            if(num == XXX##Instance[i].num) {                                                                          \
+                if(XXX##Instance[i].valid) {                                                                           \
+                    res = XXX##Instance[i].init;                                                                       \
                     break;                                                                                             \
                 }                                                                                                      \
             }                                                                                                          \
@@ -151,12 +149,8 @@ extern "C" {
                 LOG_INIT_ERROR                                                                                         \
             }                                                                                                          \
         }                                                                                                              \
-        if(cnt==ok) {                                                                                                       \
-            res = true;                                                                                                \
-            LOG_INIT_STATISTIC                                                                                         \
-        } else {                                                                                                       \
-            res = false;                                                                                               \
-        }                                                                                                              \
+        res = is_equal_u32(ok, cnt);                                                                                   \
+        LOG_INIT_STATISTIC                                                                                             \
         LOG_SET_FASIL_INFO                                                                                             \
         return res;                                                                                                    \
     }
@@ -172,7 +166,7 @@ extern "C" {
         uint32_t cnt = xxx##_get_cnt();                                                                                \
         (void) cnt ;                                                                                                   \
         LOG_INIT_ALL                                                                                                   \
-        uint8_t num = 0;                                                                                              \
+        uint32_t num = 0;                                                                                              \
         for(num = 0; num <= CUSTOM_CNT; num++) {                                                                       \
             res = xxx##_init_one(num);                                                                                 \
             if(res) {                                                                                                  \
@@ -182,12 +176,37 @@ extern "C" {
                 LOG_INIT_ERROR                                                                                         \
             }                                                                                                          \
         }                                                                                                              \
-        if(cnt==ok) {                                                                                                       \
+        res = is_equal_u32(ok, CUSTOM_CNT);                                                                            \
+        LOG_INIT_STATISTIC                                                                                             \
+        LOG_SET_FASIL_INFO                                                                                             \
+        return res;                                                                                                    \
+    }
+
+#define COMPONENT_INIT_ANY_PATTERT_CNT(FASIL, XXX, xxx, CUSTOM_CNT)                                                    \
+    bool xxx##_mcal_init(void) {                                                                                       \
+        bool res = true;                                                                                               \
+        res = xxx##_init_custom();                                                                                     \
+        uint32_t ok = 0;                                                                                               \
+        LOG_SET_FASIL_DEBUG                                                                                            \
+        uint32_t cnt = xxx##_get_cnt();                                                                                \
+        (void) cnt ;                                                                                                   \
+        LOG_INIT_ALL                                                                                                   \
+        uint8_t num = 0;                                                                                               \
+        for(num = 0; num <= CUSTOM_CNT; num++) {                                                                       \
+            res = xxx##_init_one(num);                                                                                 \
+            if(res) {                                                                                                  \
+                LOG_INIT_OK                                                                                            \
+                ok++;                                                                                                  \
+            } else {                                                                                                   \
+                LOG_INIT_ERROR                                                                                         \
+            }                                                                                                          \
+        }                                                                                                              \
+        if(0 < ok) {                                                                                                   \
             res = true;                                                                                                \
-            LOG_INIT_STATISTIC                                                                                         \
         } else {                                                                                                       \
             res = false;                                                                                               \
         }                                                                                                              \
+        LOG_INIT_STATISTIC                                                                                             \
         LOG_SET_FASIL_INFO                                                                                             \
         return res;                                                                                                    \
     }
@@ -223,7 +242,6 @@ extern "C" {
     }
 
 #define COMPONENT_PROC_PATTERT(FASIL, XXX, xxx) COMPONENT_PROC_PATTERT_CNT(FASIL, XXX, xxx, cnt)
-
 
 #define COMPONENT_GET_CNT(Prefix, prefix)               \
     uint32_t prefix##_get_cnt(void) {                   \

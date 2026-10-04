@@ -44,5 +44,3 @@ ExtIntHandle_t ExtIntInstance[] = {
 
 COMPONENT_GET_CNT(ExtInt, ext_int)
 
-
-

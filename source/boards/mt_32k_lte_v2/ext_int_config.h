@@ -5,7 +5,7 @@
 #include "sys_config.h"
 
 extern const ExtIntConfig_t ExtIntConfig[];
-extern ExtIntHandle_t ExtIntInstance[];
+extern ExtIntHandle_t ExtIntInstance[16];
 
 uint32_t ext_int_get_cnt(void);
 

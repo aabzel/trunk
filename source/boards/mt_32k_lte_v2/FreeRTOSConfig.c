@@ -11,7 +11,7 @@
 //uint32_t SystemCoreClock = 0;
 
 #if 0
-const RtosTaskConfig_t RtosTaskConfig[] = {
+const RtosTaskConfig_t SECTION_CFG_DATA RtosTaskConfig[] = {
     { .num=1, .TaskCode=bare_bone, .name="BareBone", .stack_depth_byte=2048, .priority=PRIORITY_LOW, .valid=true,},
     { .num=2, .TaskCode=default_task, .name="DefTask", .stack_depth_byte=256, .priority=PRIORITY_LOW, .valid=true,},
     { .num=3, .TaskCode=usb_proc_task, .name="UsbHost", .stack_depth_byte=1024, .priority=PRIORITY_LOW, .valid=true,},
@@ -29,15 +29,5 @@ RtosTaskHandle_t RtosTaskInstance[] = {
 #endif
 };
 
-uint32_t rtos_task_get_cnt(void){
-    uint32_t  cnt  = 0 ;
-    uint32_t  cnt1  = 0 ;
-    uint32_t  cnt2  = 0 ;
-    cnt1 = ARRAY_SIZE(RtosTaskConfig);
-    cnt2 = ARRAY_SIZE(RtosTaskInstance);
-    if(cnt1==cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
-#endif
+COMPONENT_GET_CNT(RtosTask, rtos_task)
+

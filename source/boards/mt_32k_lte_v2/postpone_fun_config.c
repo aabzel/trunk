@@ -72,4 +72,7 @@ PostponeFunHandle_t PostponeFunInstance[] = {
     {  .num = 4, .valid = true, },
 };
 
+
 COMPONENT_GET_CNT(PostponeFun, postpone_fun)
+
+

@@ -15,7 +15,7 @@ char* Connector2Str(ConnectorPin_t conn) {
 
 char* Pad2ConnectorPin(Pad_t pad) {
     char* conn_name = "??";
-    const Wire_t* WireNode = Pad2WireInfio(pad);
+    const Wire_t* WireNode = PadToWireInfo(pad);
     if(WireNode) {
         conn_name = Connector2Str(WireNode->conn);
     }
@@ -24,11 +24,11 @@ char* Pad2ConnectorPin(Pad_t pad) {
 
 const char* Pad2ValidWireName(Pad_t pad) {
     const char* wire_name = "??";
-    const Wire_t* WireNode = Pad2WireInfio(pad);
+    const Wire_t* WireNode = PadToWireInfo(pad);
     if(WireNode) {
         int ret = strcmp(SPARE_WIRE_NAME, WireNode->wire_name);
         if(0 == ret) {
-            wire_name = GpioPad2WireName(pad.byte);
+            wire_name = GpioPad2WireName(pad);
         } else {
             wire_name = WireNode->wire_name;
         }
@@ -38,7 +38,7 @@ const char* Pad2ValidWireName(Pad_t pad) {
 
 const char* Pad2SilkName(Pad_t pad) {
     const char* silk_name = "??";
-    const Wire_t* WireNode = Pad2WireInfio(pad);
+    const Wire_t* WireNode = PadToWireInfo(pad);
     if(WireNode) {
         silk_name = WireNode->silk;
     }
@@ -51,7 +51,7 @@ const char* Conn2ValidWireName(ConnectorPin_t conn) {
     if(WireNode) {
         int ret = strcmp(SPARE_WIRE_NAME, WireNode->wire_name);
         if(0 == ret) {
-            wire_name = GpioPad2WireName(WireNode->pad.byte);
+            wire_name = GpioPad2WireName(WireNode->pad);
         } else {
             wire_name = WireNode->wire_name;
         }

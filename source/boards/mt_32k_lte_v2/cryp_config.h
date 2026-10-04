@@ -6,9 +6,10 @@
 
 #ifndef HAS_CRYP
 #error "Add HAS_CRYP"
-#endif /*HAS_CRYP*/
+#endif /**/
 
 #define CRYP_SW_NUM 1
+
 extern const CrypConfig_t CrypConfigLut[];
 extern CrypHandle_t CrypItem[];
 

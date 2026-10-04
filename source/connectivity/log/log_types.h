@@ -6,11 +6,6 @@ extern "C" {
 #endif
 
 #include "std_includes.h"
-
-#ifndef HAS_SYSTEM
-#error "+HAS_SYSTEM"
-#endif
-
 #include "log_constants.h"
 
 #ifdef HAS_INTERFACES
@@ -29,8 +24,25 @@ extern "C" {
 #define LOG_IF_COMMON_VARIABLES
 #endif
 
+typedef union {
+    uint16_t word;
+    struct{
+        uint16_t protected :1;
+        uint16_t trace :1;     //coverage
+        uint16_t paranoid :1;
+        uint16_t debug :1;
+        uint16_t notice :1;
+        uint16_t info :1;
+        uint16_t warning :1;
+        uint16_t error :1;
+        uint16_t critical :1;
+        uint16_t res :7;
+    };
+}LogLevels_t;
+
 #define LOG_COMMON_VARIABLES   \
     LOG_IF_COMMON_VARIABLES    \
+    bool in_place;             \
     bool valid;                \
     bool colored;              \
     bool time_stamp;           \
@@ -46,21 +58,16 @@ typedef struct {
 }LogHandle_t;
 
 typedef struct {
-    log_level_t levels[ALL_FACILITY];
+    LOG_COMMON_VARIABLES
+    LogLevels_t levels[ALL_FACILITY];
     bool flush;
     bool new_line;
     uint32_t serial_nun;
 #ifdef HAS_LOG_DIAG
     bool facility_name;
-#endif /*HAS_LOG_DIAG*/
+#endif /**/
 
-#ifdef HAS_LOG_TIME_STAMP
-    bool time_stamp;
-#endif/*HAS_LOG_TIME_STAMP*/
 
-#ifdef HAS_LOG_COLOR
-    bool colored;
-#endif/*HAS_LOG_COLOR*/
     uint32_t up_time_prev_ms;
 }Log_t;
 

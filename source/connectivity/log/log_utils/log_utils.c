@@ -6,9 +6,8 @@
 #include "log.h"
 #endif
 
+#include "microcontroller.h"
 #include "oprintf.h"
-
-#include "microcontroller_drv.h"
 
 #ifdef HAS_WRITER
 #include "writer.h"

@@ -4,12 +4,10 @@ ifneq ($(MCU_CUSTOM_MK_INC),Y)
     MCU_CUSTOM_MK_INC=Y
 
     MCU_CUSTOM_DIR = $(MICROCONTROLLER_DIR)/x86
-    #@echo $(error MCU_CUSTOM_DIR=$(MCU_CUSTOM_DIR))
-    OPT += -DHAS_X86
+    # $(error MCU_CUSTOM_DIR=$(MCU_CUSTOM_DIR))
+    MCAL_OPT += -DHAS_X86
 
     FIRMWARE_TYPE_SELECTED=N
-
-    #AT32F4XX_HAL_DRIVER=Y
 
     INCDIR += -I$(MCU_CUSTOM_DIR)
 
@@ -17,49 +15,56 @@ ifneq ($(MCU_CUSTOM_MK_INC),Y)
          SOURCES_C += $(MCU_CUSTOM_DIR)/clock_config.c
     endif
 
-
-
-
-
-
     ifeq ($(GPIO),Y)
         SOURCES_C += $(MCU_CUSTOM_DIR)/cpu_x86.c
     endif
 
-    
     ifeq ($(NVS),Y)
         $(info Add config NVS)
         SOURCES_C += $(MCU_CUSTOM_DIR)/nvs_config.c
     endif
 
-    ifeq ($(DMA),Y)
-        $(info Config DMA)
-        #@echo $(error DMA=$(DMA))
-        SOURCES_C += $(MCU_CUSTOM_DIR)/dma_config.c
+    ifeq ($(SUPER_CYCLE),Y)
+        SOURCES_C += $(MCU_CUSTOM_DIR)/super_cycle_config.c
     endif
 
-    ifeq ($(PARAM),Y)
-        $(info Config Param)
-        #@echo $(error PARAM=$(PARAM))
-        SOURCES_C += $(MCU_CUSTOM_DIR)/param_config.c
+    ifeq ($(DMA),Y)
+        $(info Config DMA)
+        # $(error DMA=$(DMA))
+        SOURCES_C += $(MCU_CUSTOM_DIR)/dma_config.c
     endif
 
     ifeq ($(FLASH),Y)
         $(info Config Flash)
-        #@echo $(error FLASH=$(FLASH))
+        # $(error FLASH=$(FLASH))
         SOURCES_C += $(MCU_CUSTOM_DIR)/flash_config.c
     endif
 
     ifeq ($(UART),Y)
         $(info Config UART)
-        #@echo $(error UART=$(UART))
+        # $(error UART=$(UART))
         SOURCES_C += $(MCU_CUSTOM_DIR)/uart_config.c
     endif
     
     ifeq ($(FLASH_FS),Y)
-        #@echo $(error FLASH_FS=$(FLASH_FS))
+        # $(error FLASH_FS=$(FLASH_FS))
         $(info Add config FlashFs)
         SOURCES_C += $(MCU_CUSTOM_DIR)/flash_fs_config.c
+    endif
+
+    ifeq ($(STORAGE),Y)
+        $(info Config STORAGE)
+        # $(error STORAGE=$(STORAGE))
+        SOURCES_C += $(MCU_CUSTOM_DIR)/storage_config.c
+    endif
+
+    ifeq ($(SCHEDULER),Y)
+        SOURCES_C += $(MCU_CUSTOM_DIR)/scheduler_config.c
+    endif
+
+    ifeq ($(WRITER),Y)
+        #  $(error WRITER=$(WRITER))
+        SOURCES_C += $(MCU_CUSTOM_DIR)/writer_config.c
     endif
 
 

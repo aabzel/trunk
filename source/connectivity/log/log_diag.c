@@ -8,8 +8,10 @@
 #endif
 
 #include "log.h"
+#include "bit_diag.h"
 #include "terminal_codes.h"
 #include "writer_config.h"
+#include "num_to_str.h"
 
 #ifdef HAS_STRING
 #include "str_utils.h"
@@ -23,36 +25,58 @@
 #include "table_utils.h"
 #endif
 
+
+const char* LogLevelToStr(const LogLevels_t LogLevels) {
+    static char temp[40] = {0};
+    strcpy(temp,"");
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.critical,   "Cr," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.error,      "Er," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.warning,    "Wa," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.info,       "In," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.notice,     "No," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.debug,      "De," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.paranoid,   "Pa," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.trace,      "Tr," ,  "__,"));
+    snprintf(temp,sizeof(temp),"%s%s",temp,BitToStr(LogLevels.protected,  "Pr," ,  "__,"));
+    return temp;
+}
+
+const char* LogEndOfLineToStr(LogEndOfLine_t eof) {
+    const char* end_of_line = "";
+    switch(eof) {
+    case LOG_EOF_CR:
+        end_of_line = "\r";
+        break;
+    case LOG_EOF_LF:
+        end_of_line = "\n";
+        break;
+    case LOG_EOF_CRLF:
+        end_of_line = "\r\n";
+        break;
+    case LOG_EOF_LFCR:
+        end_of_line = "\n\r";
+        break;
+    default:
+        end_of_line = "";
+        break;
+    }
+    return end_of_line;
+}
+
 const char* log_level_name_long(log_level_t level) {
     const char* result;
     switch(level) {
-    case LOG_LEVEL_UNKNOWN:
-        result = "?????";
-        break;
-    case LOG_LEVEL_PARANOID:
-        result = "PARANOID";
-        break;
-    case LOG_LEVEL_DEBUG:
-        result = "DEBUG";
-        break;
-    case LOG_LEVEL_NOTICE:
-        result = "NOTICE";
-        break;
-    case LOG_LEVEL_INFO:
-        result = "INFO";
-        break;
-    case LOG_LEVEL_WARNING:
-        result = "WARNING";
-        break;
-    case LOG_LEVEL_ERROR:
-        result = "ERROR";
-        break;
-    case LOG_LEVEL_CRITICAL:
-        result = "CRITICAL";
-        break;
-    default:
-        result = "?";
-        break;
+        case LOG_LEVEL_UNKNOWN:        result = "?????";        break;
+        case LOG_LEVEL_PARANOID:       result = "PARANOID";        break;
+        case LOG_LEVEL_DEBUG:          result = "DEBUG";        break;
+        case LOG_LEVEL_NOTICE:         result = "NOTICE";        break;
+        case LOG_LEVEL_INFO:           result = "INFO";        break;
+        case LOG_LEVEL_WARNING:        result = "WARNING";        break;
+        case LOG_LEVEL_ERROR:          result = "ERROR";        break;
+        case LOG_LEVEL_CRITICAL:       result = "CRITICAL";        break;
+        case LOG_LEVEL_TRACE:          result = "TRACE";        break;
+        case LOG_LEVEL_DISABLE:        result = "LOG_LEVEL_DISABLE";        break;
+        default:        result = "?";        break;
     }
     return result;
 }
@@ -60,41 +84,23 @@ const char* log_level_name_long(log_level_t level) {
 char log_level_name(const log_level_t level) {
     char result = 'U';
     switch(level) {
-    case LOG_LEVEL_INFO:
-        result = 'I';
-        break;
-    case LOG_LEVEL_ERROR:
-        result = 'E';
-        break;
-    case LOG_LEVEL_DEBUG:
-        result = 'D';
-        break;
-    case LOG_LEVEL_UNKNOWN:
-        result = 'U';
-        break;
-    case LOG_LEVEL_PARANOID:
-        result = 'P';
-        break;
-    case LOG_LEVEL_NOTICE:
-        result = 'N';
-        break;
-    case LOG_LEVEL_WARNING:
-        result = 'W';
-        break;
-    case LOG_LEVEL_CRITICAL:
-        result = 'C';
-        break;
-    case LOG_LEVEL_PROTECTED:
-        result = 'T';
-        break;
-    default:
-        result = '?';
-        break;
+        case LOG_LEVEL_INFO:        result = 'I';        break;
+        case LOG_LEVEL_ERROR:        result = 'E';        break;
+        case LOG_LEVEL_DEBUG:        result = 'D';        break;
+        case LOG_LEVEL_UNKNOWN:        result = 'U';        break;
+        case LOG_LEVEL_PARANOID:        result = 'P';        break;
+        case LOG_LEVEL_NOTICE:        result = 'N';        break;
+        case LOG_LEVEL_WARNING:        result = 'W';        break;
+        case LOG_LEVEL_CRITICAL:        result = 'C';        break;
+        case LOG_LEVEL_PROTECTED:        result = 'T';        break;
+        case LOG_LEVEL_TRACE:        result = 'O';        break;
+        case LOG_LEVEL_DISABLE:        result = 'S';        break;
+        default:        result = '?';        break;
     }
     return result;
 }
 
-log_level_t str2level(const char* str) {
+log_level_t strToLogLevel(const char* const str) {
     if(0 == strcasecmp(str, "P") || 0 == strcasecmp(str, "PARN") || 0 == strcasecmp(str, "PARANOID")) {
         return LOG_LEVEL_PARANOID;
     }
@@ -123,7 +129,7 @@ log_level_t str2level(const char* str) {
     return LOG_LEVEL_UNKNOWN;
 }
 
-facility_t str2facility(const char* const str) {
+facility_t strToFacility(const char* const str) {
     facility_t facility;
     facility_t result = UNKNOWN_FACILITY;
     for(facility = UNKNOWN_FACILITY; facility <= ALL_FACILITY; facility++) {
@@ -153,33 +159,16 @@ const char* log_res_to_color(const bool res) {
 const char* log_level_color(log_level_t level) {
     const char* result = VT_SETCOLOR_NORMAL;
     switch(level) {
-    case LOG_LEVEL_DEBUG:
-        result = VT_SETCOLOR_DEBUG;
-        break;
-    case LOG_LEVEL_NOTICE:
-        result = VT_SETCOLOR_NOTICE;
-        break;
-    case LOG_LEVEL_UNKNOWN:
-        result = VT_SETCOLOR_NORMAL;
-        break;
-    case LOG_LEVEL_PARANOID:
-        result = VT_SETCOLOR_PARANOID;
-        break;
-    case LOG_LEVEL_PROTECTED:
-        result = VT_SETCOLOR_PINK;
-        break;
-    case LOG_LEVEL_INFO:
-        result = VT_SETCOLOR_GREEN;
-        break;
-    case LOG_LEVEL_WARNING:
-        result = VT_SETCOLOR_YELLOW;
-        break;
-    case LOG_LEVEL_ERROR:
-        result = VT_SETCOLOR_RED;
-        break;
-    case LOG_LEVEL_CRITICAL:
-        result = VT_SETCOLOR_RED;
-        break;
+    case LOG_LEVEL_DEBUG:        result = VT_SETCOLOR_DEBUG;        break;
+    case LOG_LEVEL_NOTICE:        result = VT_SETCOLOR_NOTICE;        break;
+    case LOG_LEVEL_UNKNOWN:        result = VT_SETCOLOR_NORMAL;        break;
+    case LOG_LEVEL_PARANOID:        result = VT_SETCOLOR_PARANOID;        break;
+    case LOG_LEVEL_PROTECTED:        result = VT_SETCOLOR_PINK;        break;
+    case LOG_LEVEL_INFO:        result = VT_SETCOLOR_GREEN;        break;
+    case LOG_LEVEL_WARNING:        result = VT_SETCOLOR_YELLOW;        break;
+    case LOG_LEVEL_ERROR:        result = VT_SETCOLOR_RED;        break;
+    case LOG_LEVEL_CRITICAL:        result = VT_SETCOLOR_RED;        break;
+    case LOG_LEVEL_TRACE:        result = VT_SETCOLOR_YELLOW0;        break;
 
     default:
         result = "?";
@@ -195,11 +184,19 @@ bool log_level_diag(const char* const key_word1) {
     LOG_INFO(SYS, "KeyWord[%s]", key_word1);
     uint32_t num = 0;
     char log_line[150];
-    // if(&(curWriterPtr->stream)) {
     facility_t facil = UNKNOWN_FACILITY;
     res = true;
     // uint16_t max_name_len=facility_max_name();
-    static const table_col_t cols[] = {{4, "#"}, {4, "code"}, {16, "facility"}, {5, "lev"}, {10, "level"}};
+    static const table_col_t cols[] = {
+            {4, "#"},
+            {4, "code"},
+            {16, "facility"},
+            {4, "Cnt"},
+            {8, "LogLev"},
+            {23, "LogLev"},
+            {29, "CombinedLogLev"},
+            {10, "DownLgLe"}
+    };
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     for(facil = UNKNOWN_FACILITY; facil < ALL_FACILITY; facil++) {
@@ -211,11 +208,14 @@ bool log_level_diag(const char* const key_word1) {
             strcpy(log_line, TSEP);
             snprintf(log_line, sizeof(log_line), "%s %2u " TSEP, log_line, facil);
             snprintf(log_line, sizeof(log_line), "%s %14s " TSEP, log_line, FacilityName);
-            snprintf(log_line, sizeof(log_line), "%s %3d " TSEP, log_line, Log.levels[facil]);
+            snprintf(log_line, sizeof(log_line), "%s %2u " TSEP, log_line, count_set_bits_u16(Log.levels[facil].word));
+            snprintf(log_line, sizeof(log_line), "%s 0x%04x " TSEP, log_line, Log.levels[facil].word);
+            snprintf(log_line, sizeof(log_line), "%s 0b%s " TSEP, log_line, utoa_bin16(Log.levels[facil].word));
+            snprintf(log_line, sizeof(log_line), "%s %6s " TSEP, log_line, LogLevelToStr(Log.levels[facil]));
 #ifdef HAS_LOG_COLOR
-            const char* color = log_level_color(Log.levels[facil]);
+            const char* color = log_level_color(log_level_min_get(Log.levels[facil]));
             snprintf(log_line, sizeof(log_line), "%s %s%8s%s " TSEP, log_line, color,
-                     log_level_name_long(Log.levels[facil]), VT_SETCOLOR_NORMAL);
+                     log_level_name_long(log_level_min_get(Log.levels[facil])), VT_SETCOLOR_NORMAL);
 #endif
             const char* name = str_case_str(log_line, key_word1);
             if(name) {
@@ -236,24 +236,3 @@ bool log_level_diag(const char* const key_word1) {
 }
 #endif
 
-const char* LogEndOfLineToStr(LogEndOfLine_t eof) {
-    const char* end_of_line = "";
-    switch(eof) {
-    case LOG_EOF_CR:
-        end_of_line = "\r";
-        break;
-    case LOG_EOF_LF:
-        end_of_line = "\n";
-        break;
-    case LOG_EOF_CRLF:
-        end_of_line = "\r\n";
-        break;
-    case LOG_EOF_LFCR:
-        end_of_line = "\n\r";
-        break;
-    default:
-        end_of_line = "";
-        break;
-    }
-    return end_of_line;
-}

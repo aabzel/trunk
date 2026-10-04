@@ -13,7 +13,6 @@
 #define BOARD_CUSTOM_CONFIG
 #endif
 
-
 typedef struct {
     char* designator;
     uint16_t num;

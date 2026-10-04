@@ -17,6 +17,11 @@
 #ifdef HAS_LED
 #include "led_drv.h"
 #endif
+
+#ifndef LED_ID_HEARTBEAT
+#define LED_ID_HEARTBEAT 1
+#endif
+
 #ifdef HAS_FLASH
 #include "flash_config.h"
 #endif
@@ -30,12 +35,14 @@ static bool mbr_init_ll(const MbrConfig_t* const Config, MbrHandle_t* const Node
 #ifdef HAS_PARAM
             res = param_get(PAR_ID_BOOT_START, (uint8_t*) &boot_start_address);
 #endif
+
             if(false == res) {
                 Node->boot_start_address = Config->boot_start_address;
                 res = true;
             }
+
 #ifdef HAS_LED_MONO
-            LedMonoHandle_t* LedNode = LedMonoGetNode(LED_HEARTBEAT_ID);
+            LedMonoHandle_t* LedNode = LedMonoGetNode(LED_ID_HEARTBEAT);
             if(LedNode) {
                 LedNode->mode = LED_MCAL_MODE_PWM;
                 if(false == res) {
@@ -45,7 +52,7 @@ static bool mbr_init_ll(const MbrConfig_t* const Config, MbrHandle_t* const Node
                 }
                 LedNode->duty = 50;
             }
-#endif /*HAS_LED_MONO*/
+#endif
 
             Node->init = true;
         }
@@ -62,10 +69,14 @@ bool mbr_init(void) {
 bool mbr_proc(void) {
     bool res = false;
     if(MbrInstance.init) {
+#ifdef HAS_BOOT
         res = boot_jump_to_code(MbrInstance.boot_start_address);
         if(!res) {
+#ifdef HAS_LED_MONO
             led_mono_frequency_set(    MbrInstance.led_num, 10.0f);
+#endif
         }
+#endif
     } else {
         res = mbr_init();
     }

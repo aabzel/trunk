@@ -1,8 +1,10 @@
 #ifndef AUDIO_CONST_H
 #define AUDIO_CONST_H
 
-#include "dsp_const.h"
 #include "audio_dep.h"
+#ifdef HAS_DSP
+#include "dsp_const.h"
+#endif
 
 typedef enum {
     AUDIO_FREQ_UNDEF = 0,

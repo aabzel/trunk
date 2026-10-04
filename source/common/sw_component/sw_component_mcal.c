@@ -64,16 +64,6 @@ bool sw_component_proc_one(uint8_t num) {
 }
 
 _WEAK_FUN_
-bool sw_component_is_valid_num(const uint8_t num) {
-    bool res = false;
-    SwComponentHandle_t *Node = SwComponentGetNode(num);
-    if(Node) {
-        res = Node->init;
-    }
-    return res;
-}
-
-_WEAK_FUN_
 bool sw_component_init_common(const SwComponentConfig_t* const Config, SwComponentHandle_t* const Node) {
     bool res = false;
     if(Config) {

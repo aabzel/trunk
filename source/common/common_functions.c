@@ -20,6 +20,10 @@
 #include "interrupt_mcal.h"
 #endif
 
+#ifdef HAS_GPIO_MAPPER
+#include "gpio_mapper_mcal.h"
+#endif
+
 #ifdef HAS_INTERFACES
 #include "interface_drv.h"
 #endif
@@ -83,7 +87,7 @@
 
 #ifdef HAS_ADC
 #include "adc_mcal.h"
-#endif /*HAS_ADC*/
+#endif /**/
 
 #ifdef HAS_APPLICATIONS
 //#include "applications_proc.h"
@@ -91,11 +95,11 @@
 
 #ifdef HAS_LED
 #include "led_drv.h"
-#endif /*HAS_LED*/
+#endif /**/
 
 #ifdef HAS_LED_RGB
 #include "led_rgb_drv.h"
-#endif /*HAS_LED_RGB*/
+#endif /**/
 
 #ifdef HAS_MATH
 #include "utils_math.h"
@@ -114,8 +118,8 @@
 #endif
 
 #ifdef HAS_DAC
-#include "dac_drv.h"
-#endif /*HAS_DAC*/
+#include "dac_mcal.h"
+#endif /**/
 
 #ifdef HAS_GPIO
 #include "gpio_mcal.h"
@@ -123,7 +127,7 @@
 
 #ifdef HAS_GPIO_PWM
 #include "gpio_pwm_drv.h"
-#endif /*HAS_GPIO_PWM*/
+#endif /**/
 
 #ifdef HAS_HEALTH_MONITOR
 #include "health_monitor.h"
@@ -131,11 +135,11 @@
 
 #ifdef HAS_CORE
 #include "core_driver.h"
-#endif /*HAS_CORE*/
+#endif /**/
 
 #ifdef HAS_MCU
 #include "hw_init.h"
-#endif /*HAS_MCU*/
+#endif /**/
 
 #ifdef HAS_LOG
 #include "log.h"
@@ -182,14 +186,20 @@ bool super_cycle_proc_ll(const SuperCycleHandle_t* const Node) {
 }
 #endif /*HAS_SUPER_CYCLE*/
 
-bool try_init(bool status, uint32_t i, char* message) {
+bool try_init(bool status, uint32_t i, uint32_t cnt, char* message) {
 
 #ifdef HAS_DIAG
-    log_write(ResToLogLevel(status), HMON, "-----------------------------%u,Init:[%s],%s", i, message, OkToStr(status));
+    log_write(ResToLogLevel(status), SYS, "N:%u/%u,Init:[%s],%s", i, cnt, message, OkToStr(status));
 #endif
 
     if(false == status) {
-        // LOG_ERROR(HMON, "-----------------------------%u,Init[%s],%s",i, message,OkToStr(status));
+#ifdef HAS_GPIO_MAPPER
+        gpio_mapper_set(GPIO_MAP_ERR_CODE, i);
+#endif
+
+#ifdef HAS_COMMON_DIAG
+        LOG_ERROR(HMON, "-----------------------------%u,Init[%s],%s", i, message, OkToStr(status));
+#endif
 
 #ifdef HAS_HEALTH_MONITOR
         HealthMon.init_error = true;
@@ -224,6 +234,16 @@ uint32_t ok_cnt_update(const uint32_t cur, const bool res) {
         ret++;
     }
     return ret;
+}
+
+bool is_equal_u32(const uint32_t exp_val, const uint32_t real_val) {
+    bool res = false;
+    if(exp_val == real_val) {
+        res = true;
+    } else {
+        res = false;
+    }
+    return res;
 }
 
 bool ok_cnt_to_res(const uint32_t ok_cnt) {

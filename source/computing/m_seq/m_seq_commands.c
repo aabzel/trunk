@@ -178,7 +178,6 @@ bool m_seq_size_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
 bool m_seq_find_first_feedback_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -197,5 +196,3 @@ bool m_seq_find_first_feedback_command(int32_t argc, char* argv[]) {
 
     return res;
 }
-
-

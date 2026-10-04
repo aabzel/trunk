@@ -16,7 +16,7 @@ static bool button2_proc(void) {
     return res;
 }
 
-const ButtonConfig_t ButtonConfig[ ] = {
+const ButtonConfig_t SECTION_CFG_DATA ButtonConfig[ ] = {
     {
             .num = 1,
             .press_short_handler = button1_proc,

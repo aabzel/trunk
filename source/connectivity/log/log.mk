@@ -1,3 +1,4 @@
+
 ifneq ($(LOG_MK_INC),Y)
     LOG_MK_INC=Y
 
@@ -25,6 +26,10 @@ ifneq ($(LOG_MK_INC),Y)
 
     ifeq ($(LOG_UTILS),Y)
         include $(LOG_DIR)/log_utils/log_utils.mk
+    endif
+
+    ifeq ($(LOG_TIME_STAMP_DIFF),Y)
+        MCAL_OPT += -DHAS_LOG_TIME_STAMP_DIFF
     endif
 
     ifeq ($(LOG_TIME_STAMP),Y)

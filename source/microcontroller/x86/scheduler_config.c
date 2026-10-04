@@ -5,6 +5,12 @@
 
 SchedulerTaskHandle_t SchedulerTaskSet1[] = {SCHEDULER_CORE0_LIST_ALL};
 
+uint32_t scheduler_task_get_cnt(void) {
+    uint32_t cnt = 0;
+    cnt = ARRAY_SIZE(SchedulerTaskSet1);
+    return cnt;
+}
+
 #ifdef HAS_SCHEDULER_CONFIG
 
 SchedulerTaskConfig_t SchedulerCfgTaskSet1[] = {SCHEDULER_CORE0_LIST_ALL};

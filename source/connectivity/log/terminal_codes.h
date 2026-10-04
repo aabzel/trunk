@@ -23,7 +23,9 @@ https://habr.com/ru/company/macloud/blog/558316/
 #define VT_STYLE_BLINK 5
 
 #define VT_ERROR_BEEP "\a"
+#define VT_SETCOLOR_ORDINARY_BLACK    "\x1B[0;30m"
 #define VT_SETCOLOR_BLACK    "\x1B[0;30m"
+#define VT_SETCOLOR_BOLD_BLACK "\x1B[1;30m"
 #define VT_SETCOLOR_RED      "\x1B[1;31m"
 // \u001b[31m
 #define VT_SETCOLOR_GREEN0   "\x1B[0;32m"
@@ -45,10 +47,11 @@ https://habr.com/ru/company/macloud/blog/558316/
 #define VT_CLEAR_LINE_END    "\x1B[K"
 #define VT_CLEAR_SCREEN      "\x1B[2J"
 
-#define VT_SETCOLOR_NOTICE   VT_SETCOLOR_CYAN
+
+#define VT_SETCOLOR_NOTICE   VT_SETCOLOR_PINK
 #define VT_SETCOLOR_DEBUG   VT_SETCOLOR_BLUE
 #define VT_SETCOLOR_ERROR VT_SETCOLOR_RED
-#define VT_SETCOLOR_PARANOID "\x1B[1;30m"
+#define VT_SETCOLOR_PARANOID  VT_SETCOLOR_BOLD_BLACK
 #define VT_SETCOLOR_NORMAL   "\x1B[0m"
 #define VT_SETCOLOR_INFO   VT_SETCOLOR_GREEN
 

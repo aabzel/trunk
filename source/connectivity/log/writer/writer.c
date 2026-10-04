@@ -117,7 +117,7 @@ static bool writer_init_custom(void) {
 #endif
 
 #ifdef HAS_UART
-    curWriterPtr = &dbg_o;
+    curWriterPtr = pDBGo;
     res = true;
 #endif
     return res;
@@ -126,7 +126,7 @@ static bool writer_init_custom(void) {
 WriterHandle_t* writer_set_default(void) {
     WriterHandle_t* Node = NULL;
 #ifdef HAS_UART
-    Node = &dbg_o;
+    Node = pDBGo;
 #endif
     return Node;
 }
@@ -158,7 +158,7 @@ bool writer_default(void) {
 #endif
 
 #ifdef HAS_UART
-    curWriterPtr = &dbg_o;
+    curWriterPtr = pDBGo;
     res = true;
 #endif
 
@@ -291,5 +291,23 @@ static bool writer_init_one(uint8_t num) {
     return res;
 }
 
-COMPONENT_PROC_PATTERT(WRITER, WRITER, writer)
-COMPONENT_INIT_PATTERT(WRITER, WRITER, writer)
+bool writer_mcal_init(void) {
+    bool res = true;
+    res = writer_init_custom();
+    uint32_t ok = 0;
+    uint32_t cnt = writer_get_cnt();
+    (void)cnt;
+    uint8_t num = 0;
+    for(num = 0; num <= WRITER_NUM_CNT; num++) {
+        res = writer_init_one(num);
+        if(res) {
+            ok++;
+        } else {
+        }
+    }
+    res = is_equal_u32(ok, WRITER_NUM_CNT);
+    return res;
+}
+
+COMPONENT_PROC_PATTERT_CNT(WRITER, WRITER, writer, WRITER_NUM_CNT)
+// COMPONENT_INIT_PATTERT_CNT(WRITER, WRITER, writer, WRITER_NUM_CNT)

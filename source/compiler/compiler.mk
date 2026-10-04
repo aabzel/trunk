@@ -5,6 +5,9 @@ ifneq ($(COMPILER_MK_INC),Y)
     COMPILER_DIR = $(WORKSPACE_LOC)/compiler
     # $(error COMPILER_DIR= $(COMPILER_DIR))
 
-    MCAL_OPT += -DHAS_GCC
+    ifeq ($(GCC),Y)
+        MCAL_OPT += -DHAS_GCC
+    endif
+
     INCDIR += -I$(COMPILER_DIR)
 endif

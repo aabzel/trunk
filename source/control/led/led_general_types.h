@@ -21,6 +21,7 @@
 #define LED_GENERAL_VARIABLES                 \
     LED_SW_PWM_VARIABLES                      \
     LED_BLITZ_VARIABLES                       \
+    uint8_t back_count_num;                   \
     char* name;                               \
     uint32_t off_time_stamp;                  \
     ControlMode_t ctrl_mode;                  \
