@@ -1,20 +1,35 @@
 #include "storage_config.h"
 
-#include "std_includes.h"
-#include "array.h"
+#include <inttypes.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+#ifndef HAS_STORAGE
+#error "Params need STORAGE"
+#endif
+
+#include "boot_driver.h"
+#include "common_diag.h"
+#include "data_utils.h"
 #include "storage_diag.h"
 #include "storage_types.h"
 
-#ifdef HAS_SDIO
-#include "sdio_params.h"
-#else
-#define PARAMS_SDIO
+#ifdef HAS_STORAGE
+#include "storage.h"
 #endif
+
+#ifdef HAS_CLI
+#include "log.h"
+#endif
+
 #ifdef HAS_BOOT
 #include "boot_params.h"
 #else
 #define PARAMS_BOOT
 #endif
+
 #ifdef HAS_KEEPASS
 #include "keepass_params.h"
 #else
@@ -33,11 +48,11 @@
 #define PARAMS_LIGHT_NAVIGATOR
 #endif
 
-#ifdef HAS_FLASH_FS
-#include "flash_fs_params.h"
+#ifdef HAS_STORAGE
+#include "storage_params.h"
 #else
-#define PARAMS_FLASH_FS
-#endif /**/
+#define PARAMS_STORAGE
+#endif
 
 #ifdef HAS_GNSS
 #include "gnss_params.h"
@@ -51,7 +66,6 @@
 #define PARAMS_BOOTLOADER
 #endif
 
-
 #ifdef HAS_GENERIC
 #include "generic_params.h"
 #else
@@ -64,12 +78,48 @@
 #define PARAMS_TIME
 #endif
 
+#ifdef HAS_SDIO
+#include "sdio_params.h"
+#else
+#define PARAMS_SDIO
+#endif
+
+#ifdef HAS_WATCHDOG
+#include "watchdog_params.h"
+#else
+#define PARAMS_WATCHDOG
+#endif
+
 /*TODO: Sort by index for bin search in future*/
-const StorageItem_t StorageArray[] = {
+const StorageItem_t SECTION_CFG_DATA StorageArray[] = {
+    PARAMS_BOOT
+    PARAMS_LIGHT_NAVIGATOR
+    PARAMS_STORAGE
+    PARAMS_GNSS
     PARAMS_GENERIC
+    PARAMS_WATCHDOG
     PARAMS_KEEPASS
     PARAMS_PASTILDA
+    PARAMS_SDIO
     PARAMS_TIME
+    PARAMS_BOOTLOADER
+
+    {
+        .facility = SYS,
+        .id = PAR_ID_SERIAL_NUM,
+        .hide = false,
+        .Scale = STORAGE_SCALE_ONES,
+        .physical_quantity = STORAGE_PHYSICAL_QUANTITY_NO,
+        .access = ACCESS_READ_WRITE,
+        .parser = U32DecToStr,
+        .Units = STORAGE_UNITS_NO_UNIT,
+        .len = 4,
+        .type = TYPE_UINT32,
+        .default_value = "1",
+        .name = "SerialNum",
+    },   /**/
+
+
 };
 
 uint32_t storage_get_cnt(void) {

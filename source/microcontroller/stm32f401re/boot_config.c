@@ -2,32 +2,27 @@
 
 #include "microcontroller_const.h"
 #include "std_includes.h"
+#include "code_generator.h"
 
-const BootConfig_t BootConfig[] = {
-    {
-        .num = 0,
-        .fw_start_address = ROM_START,
-        //.stack_lim_address = &__Core0_StackLimit,
-        //.stack_top_address = &__Core0_StackTop,
-        .valid = true,
-        .name = "Core0",
-    },
-};
+#ifdef HAS_LINKER_INFO
+extern uint8_t __Core0_StackLimit, __Core0_StackTop  ;
+#endif
+
+const BootConfig_t SECTION_CFG_DATA BootConfig[] = {
+        { .num = 1,
+          .fw_start_address = ROM_START,
+          .valid =  true,
+          .name="MBR",
+#ifdef HAS_LINKER_INFO
+          .stack_lim_address = (uint32_t) &__Core0_StackLimit,
+          .stack_top_address = (uint32_t) &__Core0_StackTop,
+#endif
+        },
+        };
 
 BootHandle_t BootInstance[] = {
-    {
-        .num = 0,
-        .valid = true,
-    },
-
+   { .num = 1, .valid = true, },
+   { .num = 2, .valid = true, },
 };
 
-uint32_t boot_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = ARRAY_SIZE(BootConfig);
-    uint32_t cnt2 = ARRAY_SIZE(BootInstance);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Boot, boot)

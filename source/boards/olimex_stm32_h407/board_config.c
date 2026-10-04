@@ -1,6 +1,7 @@
 #include "board_config.h"
 
 #include "log.h"
+
 #ifdef HAS_MIC2026
 #include "mic2026_drv.h"
 #endif
@@ -11,6 +12,9 @@
 
 #include "none_blocking_pause.h"
 
+const Wire_t Wires[] = {
+};
+
 bool board_init(void) {
     bool res = true;
 #ifdef HAS_LOG
@@ -19,11 +23,11 @@ bool board_init(void) {
     LOG_INFO(SYS,"XTall:%u Hz",XTAL_FREQ_HZ);
 #ifdef HAS_PASTILDA
     set_log_level(PASTILDA,LOG_LEVEL_INFO);
-#endif /**/
+#endif 
 
 #ifdef HAS_KEEPASS
     set_log_level(KEEPASS,LOG_LEVEL_INFO);
-#endif /**/
+#endif 
 
 #ifdef HAS_USB
     set_log_level(USB,LOG_LEVEL_INFO);
@@ -45,4 +49,8 @@ bool keyboard_reboot(void){
     res = mic2026_set_channel_ctrl(CHANNEL_A, true);
 #endif
     return res;
+}
+
+uint32_t wires_get_cnt(void){
+    return 0;
 }

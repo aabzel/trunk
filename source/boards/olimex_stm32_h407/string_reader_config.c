@@ -4,11 +4,11 @@
 #include "cli_drv.h"
 //#include "c_defines_generated.h"
 
-static char FifoData1[100]={0};
-static char LineData1[100]={0};
+static uint8_t FifoData1[100]={0};
+static uint8_t LineData1[100]={0};
 #ifdef HAS_USB
-static char FifoData2[100]={0};
-static char LineData2[100]={0};
+static uint8_t FifoData2[100]={0};
+static uint8_t LineData2[100]={0};
 #endif
 
 const StringReaderConfig_t StringReaderConfig[] = {
@@ -17,8 +17,7 @@ const StringReaderConfig_t StringReaderConfig[] = {
         .valid = true,
         .echo = true,
         .cli_num= 1,
-        .interface_if = IF_UART3,
-        .if_num = 3,
+        .interface_if =  {.interface_name=INTERFACE_NAME_UART, .num=3,},
         .name= "UART3",
         .fifo_heap = FifoData1,
         .fifo_heap_size=sizeof(FifoData1),

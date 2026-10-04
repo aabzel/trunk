@@ -17,10 +17,7 @@ const RtcConfig_t RtcConfig[] = {
 };
 
 RtcHandle_t RtcInstance[] = {
-    {
-        .num = 1,
-        .valid = true,
-    },
+    { .num = 1, .valid = true, },
 //  { .num = 2, .valid = true, }
 };
 

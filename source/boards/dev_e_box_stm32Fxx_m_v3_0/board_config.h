@@ -7,8 +7,6 @@
 #include "gpio_config.h"
 #include "board_types.h"
 
-
-
 #define XTAL_FREQ_HZ 12000000
 
 #define SYSTEM_DEBUG_PORT PORT_A

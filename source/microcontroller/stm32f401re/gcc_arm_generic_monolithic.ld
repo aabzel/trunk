@@ -2,7 +2,7 @@
 **  Author      : aabdev
 **
 **  Abstract    : Linker script for STM32F401RETx Device with
-**                1536KByte FLASH, 320KByte RAM
+**                512 KByte FLASH, 96 KByte RAM
 **
 **                Set heap size, stack size and stack location according
 **                to application requirements.
@@ -20,14 +20,17 @@ ENTRY(Reset_Handler)
 _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 4K;      /* required amount of heap  */
-_Min_Stack_Size = 4K; /* required amount of stack */
+_Min_Stack_Size = 4K;     /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
     RAM (xrw)  : ORIGIN = 0x20000000, LENGTH = 96K
-    FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 511K
-    CALIBRATION_DATA (rx) : ORIGIN = 0x807FC00, LENGTH = 1K
+    
+    FLASH1 (rx)    : ORIGIN = 0x08000000, LENGTH = 1K
+    CONFIGURATION_DATA (rx)    : ORIGIN = 0x08000400, LENGTH = 31K
+    NVRAM (rx)     : ORIGIN = 0x08008000, LENGTH = 32K
+    FLASH2 (rx)    : ORIGIN = 0x08010000, LENGTH = 448K
 }
 
 /* Define output sections */
@@ -36,21 +39,39 @@ SECTIONS
   /* The startup code goes first into FLASH */
   .isr_vector :
   {
-   isr_vector_start = .; 
-    /*. = ALIGN(4);*/
+    . = ALIGN(4);
+    isr_vector_start = . ;
     KEEP(*(.isr_vector)) /* Startup code */
-    /* . = ALIGN(4); */
-    isr_vector_end = .; 
-  } >FLASH 
+    isr_vector_end = . ;
+    FILL(0xFF);
+    . = ALIGN(4);
+  } >FLASH1
+    /*We will change content of ConfigurationData with TunerPRO program*/
+    .ConfigurationData :
+    {
+        __configuration_data_section_start__ = .;
+        KEEP(*(.ConfigurationData))
+        __configuration_data_section_end__ = .;
+        FILL(0xFF);
+        . = ORIGIN(CONFIGURATION_DATA) + LENGTH(CONFIGURATION_DATA); 
+    } >CONFIGURATION_DATA
 
-  /* . = ABSOLUTE(.); */
-/*  . = AT(ADDR(.isr_vector) + SIZEOF(.isr_vector)+64)  AT(ADDR(.isr_vector) + SIZEOF(.isr_vector)+4)*/
-  /* . =  (ADDR(.isr_vector) + SIZEOF(.isr_vector));*/
+   /* placing my named section at given address: */
+  .NvRam  : {
+      . = ALIGN(4);
+      _nvram_start = .;  
+
+      KEEP(*(.NvRam))
+      KEEP(*(.NvRam.*))
+     FILL(0xFF); 
+      . = ORIGIN(NVRAM) + LENGTH(NVRAM); /* Move location counter to end of FLASH */
+      _nvram_end = .; 
+  } > NVRAM
   /* The program code and other data goes into FLASH */
-  .text :  
+  .text :
   {
-     . = ALIGN(16); 
-    text_start = .; 
+     . = ALIGN(16);
+    text_start = .;    /* define a global symbols at start of code */
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
@@ -62,7 +83,8 @@ SECTIONS
 
     . = ALIGN(4);
     _etext = .;        /* define a global symbols at end of code */
-  } >FLASH=0x8000198
+         FILL(0xFF); 
+  } >FLASH2
 
   /* Constant data goes into FLASH */
   .rodata :
@@ -71,21 +93,22 @@ SECTIONS
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     . = ALIGN(4);
-  } >FLASH 
+         FILL(0xFF); 
+  } >FLASH2
 
   .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
   .ARM : {
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
-  } >FLASH 
+  } >FLASH2
 
   .preinit_array     :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >FLASH 
+  } >FLASH2
   
   .init_array :
   {
@@ -93,7 +116,7 @@ SECTIONS
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >FLASH 
+  } >FLASH2
   
   .fini_array :
   {
@@ -101,43 +124,31 @@ SECTIONS
     KEEP (*(SORT(.fini_array.*)))
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >FLASH 
+         FILL(0xFF); 
+  } >FLASH2
   
   /* used by the startup to initialize data */
   _sidata = LOADADDR(.data);
 
   
   /* Initialized data sections goes into RAM, load LMA copy after code */
-  .data : 
+  .data :
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
     *(.data)           /* .data sections */
     *(.data*)          /* .data* sections */
 
+    __RamFunc_start__ = .; 
+    *(.RamFunc)        /* .RamFunc sections */
+    *(.RamFunc*)       /* .RamFunc* sections */
+    __RamFunc_end__ = .;
+       
     . = ALIGN(4);
     _edata = .;        /* define a global symbol at data end */
-  } >RAM AT> FLASH
+         FILL(0xFF); 
+  } >RAM AT> FLASH2
 
-   .fill_flash :
-   {
-        . = ALIGN(4);
-         _fill_start = .;  
-        /* Fill the remaining space in FLASH with 0xFF */
-        FILL(0xFF);
-        . = ORIGIN(FLASH) + LENGTH(FLASH) - 1; /* Move location counter to end of FLASH */
-        BYTE(0xFF); /* Ensure the very last byte is also filled */
-        _fill_end = .;        
-   } > FLASH
-  
-  /* placing my named section at given address: */
-  .CalibrationDataSection :
-  {
-      . = ALIGN(4);
-      _calib_data_start = .;  
-      KEEP(*(.CalibrationDataSection)) /* keep my variable even if not referenced */
-      _calib_data_end = .; 
-  } > CALIBRATION_DATA 
   
   /* Uninitialized data section */
   . = ALIGN(4);
@@ -162,8 +173,11 @@ SECTIONS
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
+    
+    __Core0_StackLimit = .;
     . = . + _Min_Stack_Size;
     . = ALIGN(4);
+    __Core0_StackTop = . ;
   } >RAM
 
 

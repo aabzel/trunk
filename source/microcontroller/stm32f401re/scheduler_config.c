@@ -3,9 +3,13 @@
 #include "data_utils.h"
 #include "scheduler_list_all.h"
 
-SchedulerTaskHandle_t SchedulerTaskSet1[]={SCHEDULER_CORE0_LIST_ALL};
+SchedulerTaskHandle_t SchedulerTaskSet1[] = { SCHEDULER_CORE0_LIST_ALL };
 
-
+uint32_t scheduler_task_get_cnt(void) {
+    uint32_t cnt = 0;
+    cnt = ARRAY_SIZE(SchedulerTaskSet1);
+    return cnt;
+}
 
 #ifdef HAS_MULTICORE
 SchedulerTaskHandle_t SchedulerTaskSet2[]={SCHEDULER_CORE1_LIST_ALL};
@@ -55,8 +59,8 @@ const SchedulerConfig_t SchedulerConfig[] = {
 
 SchedulerHandle_t SchedulerInstance[]={
     {
-    		.num = 1,
-			.valid = true,
+            .num = 1,
+            .valid = true,
             .TaskArray = SchedulerTaskSet1,
             .task_array_cnt = ARRAY_SIZE(SchedulerTaskSet1),
     },
@@ -65,14 +69,14 @@ SchedulerHandle_t SchedulerInstance[]={
 #ifdef HAS_MULTICORE
 
     {
-    		.num = 2,
-			.valid = true,
+            .num = 2,
+            .valid = true,
             .TaskArray = SchedulerTaskSet2,
             .task_array_cnt = ARRAY_SIZE(SchedulerTaskSet2),
     },
     {
-    		.num = 3,
-			.valid = true,
+            .num = 3,
+            .valid = true,
             .TaskArray=SchedulerTaskSet3,
             .task_array_cnt=ARRAY_SIZE(SchedulerTaskSet3),
     },
@@ -88,7 +92,7 @@ uint32_t scheduler_get_cnt(void) {
     uint32_t cnt2 = 0;
     cnt2 = ARRAY_SIZE(SchedulerConfig);
     if(cnt1==cnt2){
-    	cnt = cnt1;
+        cnt = cnt1;
     }
 #endif
     return cnt;

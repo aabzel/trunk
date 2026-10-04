@@ -28,15 +28,4 @@ LightNavigatorHandle_t LightNavigatorInstance[] = {
     },
 };
 
-uint32_t light_navigator_get_cnt(void) {
-    uint8_t cnt = 0;
-    uint8_t cnt1 = 0;
-    uint8_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(LightNavigatorConfig);
-    cnt2 = ARRAY_SIZE(LightNavigatorInstance);
-
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(LedMono, light_navigator)

@@ -1,9 +1,5 @@
 #include "light_navigator_config.h"
 
-#ifdef HAS_I2C
-//#include "i2c_drv.h"
-#endif
-
 #include "data_utils.h"
 #include "light_navigator_types.h"
 
@@ -18,11 +14,26 @@ const LightNavigatorConfig_t LightNavigatorConfig[] = {
         .day_light_filename = "DayLig.txt",
         .coordinate_filename = "Coordi.txt",
     },
+    {
+        .num = 2,
+        .rtc_num = 1,
+        .trigger_num = 2,
+        .light_sensor_num = 2,
+        .valid = true,
+        .filename = "LiRaw2.csv",
+        .day_light_filename = "DayLig2.txt",
+        .coordinate_filename = "Coordi2.txt",
+    },
 };
 
 LightNavigatorHandle_t LightNavigatorInstance[] = {
     {
         .num = 1,
+        .valid = true,
+        .init = false,
+    },
+    {
+        .num = 2,
         .valid = true,
         .init = false,
     },

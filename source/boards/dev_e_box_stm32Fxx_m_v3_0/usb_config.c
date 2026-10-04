@@ -58,6 +58,9 @@ UsbHandle_t UsbInstance[]={
 #endif
 };
 
+COMPONENT_GET_CNT(Usb, usb)
+
+#if 0
 uint32_t usb_get_cnt(void){
     uint32_t cnt = 0;
     uint32_t cnt1 = 0;
@@ -70,4 +73,5 @@ uint32_t usb_get_cnt(void){
     assert_param(2==cnt);
     return cnt;
 }
+#endif
 

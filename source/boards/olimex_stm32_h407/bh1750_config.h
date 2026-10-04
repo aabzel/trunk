@@ -1,10 +1,7 @@
-
 #ifndef BH1750_CONFIG_H
 #define BH1750_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "bh1750_types.h"
 #include "bh1750_dep.h"
 

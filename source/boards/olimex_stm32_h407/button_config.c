@@ -1,8 +1,5 @@
 #include "button_config.h"
 
-#ifndef HAS_BUTTON
-#error "Add HAS_BUTTON"
-#endif /*HAS_BUTTON*/
 
 #include "data_utils.h"
 
@@ -10,12 +7,25 @@
 #include "bootloader.h"
 #endif
 
+#ifdef HAS_ESP_01
+#include "esp_01.h"
+#endif
+
 #ifdef HAS_SI4703
 #include "si4703_drv.h"
 #endif
 
+#ifndef HAS_BUTTON
+#error "Add HAS_BUTTON"
+#endif
+
 static bool button1_proc(void) {
     bool res = false;
+
+#ifdef HAS_ESP_01
+    res = esp_01_mcal_init( );
+#endif
+
 
 #ifdef HAS_SI4703
     res = si4703_fm_seek_start( SEEK_DIR_UP, SEEK_END_WRAP);

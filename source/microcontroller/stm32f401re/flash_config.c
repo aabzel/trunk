@@ -2,21 +2,19 @@
 
 #ifndef HAS_FLASH
 #error "Add HAS_FLASH"
-#endif /*HAS_FLASH*/
+#endif
 
 #include "data_utils.h"
+#include "flash_types.h"
 #include "macro_utils.h"
-#include "flash_custom_types.h"
+#include "microcontroller_const.h"
 
 FlashHandle_t FlashInstance = {0};
 
-const FlashConfig_t FlashConfig = {
-    .boot_start= BOOT_START_ADDRESS,
-    .app_start = APP_START_ADDRESS,
-    };
+
 
 /*see Table 5. Flash module organization (STM32F401xB/C and STM32F401xD/E)*/
-const FlashSectorConfig_t FlashSectorConfig[]= {
+const MemoryConfig_t FlashSectorConfig[]= {
     {.sector=0 , .start=0x08000000,     .size = 16*K_BYTES, .content=MEM_CONTENT_MBR,},
     {.sector=1 , .start=0x08004000,     .size = 16*K_BYTES, .content=MEM_CONTENT_MBR,},
     {.sector=2 , .start=0x08008000,     .size = 16*K_BYTES, .content=MEM_CONTENT_FLASH_FS_PAGE1,},
@@ -27,8 +25,35 @@ const FlashSectorConfig_t FlashSectorConfig[]= {
     {.sector=7 , .start=0x08060000,     .size = 128*K_BYTES,.content=MEM_CONTENT_BOOTLADER,}
     };
 
-uint32_t flash_get_sector_cnt(void){
+
+const FlashConfig_t FlashConfig = {
+    .boot_start = BOOT_START_ADDRESS,
+    .app_start = APP_START_ADDRESS,
+    .start = ROM_START,
+    .size = ROM_SIZE,
+    .PageArray = FlashSectorConfig,
+    .page_cnt = ARRAY_SIZE(FlashSectorConfig),
+    .page_size = 0,
+    .is_equal_sectors = false,
+};
+
+uint32_t flash_get_sector_cnt(void) {
     uint32_t cnt = 0;
-    cnt=ARRAY_SIZE(FlashSectorConfig);
+    cnt = ARRAY_SIZE(FlashSectorConfig);
+    return cnt;
+}
+const MemoryConfig_t RamSectorConfig[] = {
+    {
+        .sector = 1,           // RAM
+        .start = 0x20000000,   //
+        .size = 96 * K_BYTES, //
+        .content = MEM_CONTENT_SRAM,
+    },
+
+};
+
+uint32_t ram_get_sector_cnt(void) {
+    uint32_t cnt = 0;
+    cnt = ARRAY_SIZE(RamSectorConfig);
     return cnt;
 }

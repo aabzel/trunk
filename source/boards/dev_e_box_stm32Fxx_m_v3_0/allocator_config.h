@@ -1,5 +1,5 @@
-#ifndef ALLOCATOR_CONFIGURATION_H
-#define ALLOCATOR_CONFIGURATION_H
+#ifndef ALLOCATOR_CONFIG_H
+#define ALLOCATOR_CONFIG_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,4 +17,4 @@ extern "C" {
 }
 #endif
 
-#endif /* ALLOCATOR_CONFIGURATION_H */
+#endif /* ALLOCATOR_CONFIG_H */

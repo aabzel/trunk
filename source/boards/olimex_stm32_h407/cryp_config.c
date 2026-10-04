@@ -21,14 +21,4 @@ CrypHandle_t CrypItem[]={
     },
 };
 
-uint32_t cryp_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(CrypItem); 
-    cnt2 = ARRAY_SIZE(CrypConfigLut);
-    if(cnt1==cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(Cryp, cryp)

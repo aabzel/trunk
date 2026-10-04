@@ -12,8 +12,8 @@ extern "C" {
 #error "Add HAS_LED"
 #endif
 
-#define LED_GREEN_ID 1
-#define LED_HEARTBEAT_ID 1
+#define LED_ID_GREN 1
+#define LED_ID_HEARTBEAT 1
 
 extern const LedMonoConfig_t LedMonoConfig[];
 extern LedMonoHandle_t LedMonoInstance[];

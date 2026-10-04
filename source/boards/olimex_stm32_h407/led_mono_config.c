@@ -2,36 +2,32 @@
 
 #ifndef HAS_LED
 #error "Add HAS_LED"
-#endif /*HAS_LED*/
+#endif
 
 #include "data_utils.h"
 #include "gpio_custom_const.h"
+#include "control_const.h"
 
 const LedMonoConfig_t LedMonoConfig[] = {
    {
-    .num = 1,
-    .period_ms = 5000,
-    .phase_ms = 0,
-    .duty = 10,
-    .pad = {.port = PORT_C, .pin = 13},
-    .name = "Green",
-    .mode = LED_MODE_PWM,
-    .active = GPIO_LVL_LOW,
-    .valid=true,},
+        .active = GPIO_LVL_LOW,
+        .num = 1, .group = 1,
+        .period_ms = 5000,
+        .phase_ms = 0, .duty = 10,
+        .duration_ms = 10, .on_time_ms = 0,
+        .pad = {.port = PORT_C, .pin = 13},
+        .name = "Green",
+        .mode = LED_MCAL_MODE_PWM,
+        .valid = true,
+    },
 };
 
 LedMonoHandle_t LedMonoInstance[] = {
-     {.num=1, .valid=true, .active=GPIO_LVL_LOW,},
+     { 
+         .active = GPIO_LVL_LOW,
+         .num = 1,
+         .valid = true,
+     },
 };
 
-uint32_t led_mono_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(LedMonoInstance);
-    cnt2 = ARRAY_SIZE(LedMonoConfig);
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(LedMono, led_mono)

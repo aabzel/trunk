@@ -14,8 +14,6 @@ extern Drv8870Handle_t Drv8870Instance[];
 
 uint32_t drv8870_get_cnt(void);
 
-
-
 #ifdef __cplusplus
 }
 #endif

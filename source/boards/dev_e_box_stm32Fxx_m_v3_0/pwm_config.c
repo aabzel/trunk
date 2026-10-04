@@ -106,14 +106,6 @@ PwmHandle_t PwmInstance[] = {
     {.num = 7,  .valid = true,},
 };
 
-uint32_t pwm_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(PwmInstance);
-    cnt2 = ARRAY_SIZE(PwmConfig); 
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(Pwm, pwm)
+
+

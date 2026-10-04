@@ -300,7 +300,7 @@ static uint32_t SpiChipSelectToStmChipSelect(ChipSelect_t chip_select) {
 
 bool spi_mcal_write_it(uint8_t num, const uint8_t* const tx_array, const uint32_t size) {
     bool res = false;
-    LOG_DEBUG(SPI, "SPI%u,Write,Size:%u,Data:[%s]", num, size, ArrayToStr(tx_array, size));
+    LOG_PARN(SPI, "SPI%u,Write,Size:%u,Data:[%s]", num, size, ArrayToStr(tx_array, size));
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node && tx_array) {
         Node->tx_done = false;
@@ -648,7 +648,7 @@ bool spi_init_one(uint8_t num) {
             LOG_ERROR(SPI, "SPI%u,NodeErr", num);
         }
     } else {
-        LOG_DEBUG(SPI, "SPI%u,ConfErr", num);
+        LOG_PARN(SPI, "SPI%u,ConfErr", num);
     }
     return res;
 }

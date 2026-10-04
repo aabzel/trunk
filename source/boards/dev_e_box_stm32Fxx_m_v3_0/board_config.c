@@ -16,3 +16,6 @@ bool board_init(void) {
     return res;
 }
 
+uint32_t wires_get_cnt(void){
+    return 0;
+}

@@ -9,11 +9,11 @@ extern "C" {
 
 #ifndef HAS_SPI
 #error "+HAS_SPI"
-#endif /*HAS_SPI*/
+#endif /**/
 
 #ifndef HAS_SPI_COMMANDS
 #error "+HAS_SPI_COMMANDS"
-#endif /*HAS_SPI_COMMANDS*/
+#endif /**/
 
 
 #define SPI_CUSTOM_COMMANDS

@@ -11,19 +11,10 @@ const LightSensorConfig_t LightSensorConfig[ ] = {
     },
 };
 
-LightSensorHandle_t LightSensorItem[ ]={
- {.num=1, .valid=true,},
- {.num=2, .valid=true,},
+LightSensorHandle_t LightSensorItem[ ] = {
+    {.num = 1, .valid = true, },
+    {.num = 2, .valid = true, },
 };
 
-uint32_t light_sensor_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(LightSensorItem);
-    cnt2 = ARRAY_SIZE(LightSensorConfig);
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(LightSensor, light_sensor)
+

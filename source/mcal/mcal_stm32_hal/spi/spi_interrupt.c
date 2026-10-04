@@ -6,7 +6,7 @@
 
 bool spi_read_interrupt(uint8_t num, uint8_t* const data, uint32_t size) {
     bool res = false;
-    LOG_DEBUG(SPI, "SPI%u,RxInt,Size:%u", num, size);
+    LOG_PARN(SPI, "SPI%u,RxInt,Size:%u", num, size);
     SpiHandle_t *Node = SpiGetNode(num);
     if(Node) {
         if(data) {
@@ -32,7 +32,7 @@ bool spi_read_interrupt(uint8_t num, uint8_t* const data, uint32_t size) {
 
 bool spi_write_interrupt(uint8_t num, const uint8_t* const data, uint32_t size) {
     bool res = false;
-    LOG_DEBUG(SPI, "SPI%u,WriteInt,Size:%u", num, size);
+    LOG_PARN(SPI, "SPI%u,WriteInt,Size:%u", num, size);
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         Node->tx_done = false;
@@ -61,7 +61,7 @@ bool spi_write_interrupt(uint8_t num, const uint8_t* const data, uint32_t size) 
 
 bool spi_write_read_interrupt(uint8_t num, const uint8_t* const tx_array, uint8_t* const rx_array, uint32_t size) {
     bool res = false;
-    LOG_DEBUG(SPI, "SPI%u,TxRxInt,Size:%u", num, size);
+    LOG_PARN(SPI, "SPI%u,TxRxInt,Size:%u", num, size);
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         Node->tx_done = false;

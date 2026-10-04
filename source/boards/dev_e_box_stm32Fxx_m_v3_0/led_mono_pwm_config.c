@@ -44,8 +44,10 @@ const LedMonoPwmConfig_t LedMonoPwmConfig[] = {
 };
 
 LedMonoPwmHandle_t LedMonoPwmInstance[] = {
-    {        .num = 1,        .valid = true,        .active = GPIO_LVL_LOW,    },
-    {        .num = 2,        .valid = true,        .active = GPIO_LVL_LOW,    },
+    {        .num = 1,     
+       .valid = true,        .active = GPIO_LVL_LOW,    },
+    {        .num = 2,      
+      .valid = true,        .active = GPIO_LVL_LOW,    },
 };
 
 uint32_t led_mono_pwm_get_cnt(void) {

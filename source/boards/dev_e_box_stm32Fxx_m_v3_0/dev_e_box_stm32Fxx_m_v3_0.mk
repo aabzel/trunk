@@ -8,7 +8,7 @@ ifneq ($(DEV_E_BOX_STM32FXX_M_V3_0_MK_INC),Y)
     MCAL_OPT += -DHAS_DEV_E_BOX_STM32FXX_M_V3_0
 
     MCAL_OPT += -DHSE_VALUE=8000000U
-    
+
     MICROCONTROLLER=Y
 
     INCDIR += -I$(BOARD_CUSTOM_DIR)
@@ -17,6 +17,10 @@ ifneq ($(DEV_E_BOX_STM32FXX_M_V3_0_MK_INC),Y)
 
     ifeq ($(LOG),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/log_config.c
+    endif
+
+    ifeq ($(FIR),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/fir_config.c
     endif
 
     ifeq ($(DDS),Y)
@@ -64,6 +68,10 @@ ifneq ($(DEV_E_BOX_STM32FXX_M_V3_0_MK_INC),Y)
     ifeq ($(GPIO),Y)
         $(info Config GPIO)
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/gpio_config.c
+    endif
+
+    ifeq ($(SONAR),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/sonar_config.c
     endif
 
     ifeq ($(DASHBOARD),Y)
@@ -120,16 +128,16 @@ ifneq ($(DEV_E_BOX_STM32FXX_M_V3_0_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/cryp_config.c
     endif
 
+    ifeq ($(I2S_FULL_DUPLEX),Y)
+        #SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/i2s_full_duplex_config.c
+    endif
+    
     ifeq ($(EXT_INT),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/ext_int_config.c
     endif
 
     ifeq ($(PWM),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/pwm_config.c
-    endif
-
-    ifeq ($(WM8731),Y)
-        SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/wm8731_config.c
     endif
 
     ifeq ($(RC_CAR),Y)
@@ -240,6 +248,10 @@ ifneq ($(DEV_E_BOX_STM32FXX_M_V3_0_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/xml_config.c
     endif
 
+    ifeq ($(CORRELATOR_S16),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/correlator_s16_config.c
+    endif
+
     ifeq ($(TBFP),Y)
         MCAL_OPT += -DTBFP_MAX_PAYLOAD=20
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/tbfp_config.c
@@ -253,7 +265,11 @@ ifneq ($(DEV_E_BOX_STM32FXX_M_V3_0_MK_INC),Y)
     ifeq ($(W25Q16BV),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/w25q16bv_config.c
     endif
-
+    
+    ifeq ($(WM8731),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/wm8731_config.c
+    endif
+    
     #####
     ifeq ($(BOARD_SELECTED),Y)
         @echo $(error Board has been selected before)

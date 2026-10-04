@@ -1,10 +1,7 @@
-
 #ifndef DASHBOARD_CONFIG_H
 #define DASHBOARD_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "dashboard_types.h"
 
 extern const DashBoardConfig_t DashBoardConfig[];

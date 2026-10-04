@@ -23,15 +23,11 @@ const Ltr390Register_t Ltr390Register[]={
 };
 
 uint32_t ltr390_reg_get_cnt(void){
-    uint8_t cnt=0;
+    uint8_t cnt = 0;
     cnt = ARRAY_SIZE(Ltr390Register);
     return cnt;
 }
 
+COMPONENT_GET_CNT(Ltr390, ltr390)
 
-uint32_t ltr390_get_cnt(void){
-    uint8_t cnt=0;
-    cnt = ARRAY_SIZE(Ltr390Config);
-    return cnt;
-}
 
