@@ -1,36 +1,54 @@
 
-subgraph cluster_applications{
-    label = "Applications";
-    //rank = same; 
-    style=filled;
-    color=oldlace;
-
-#ifdef HAS_AUTO_VOLUME
-    AUTO_VOLUME
+#ifdef HAS_ENCODER_LAMP
+    #include "encoder_lamp.gvi"
 #endif
 
-#ifdef HAS_DASHBOARD
-    DASHBOARD
- #endif
-
-#ifdef HAS_KEYLOG
-    KEYLOG
- #endif
-
-#ifdef HAS_LIGHT_NAVIGATOR
-    LIGHT_NAVIGATOR
+#ifdef HAS_SMOOTH_LAMP
+    #include "smooth_lamp.gvi"
 #endif
 
-#ifdef HAS_PASTILDA
-    PASTILDA
+#ifdef HAS_CAN_DIFF
+    #include "can_diff.gvi"
 #endif
 
-}
+#ifdef HAS_CAN_TX_PLANNER
+    #include "can_tx_planner.gvi"
+#endif
 
+#ifdef HAS_DEMAGNETIZER
+    #include "demagnetizer.gvi"
+#endif
 
+#ifdef HAS_LOOPBACK_AUDIO
+    #include "loopback_audio.gvi"
+#endif
+
+#ifdef HAS_BICYCLE_HEADLAMP
+    #include "bicycle_headlamp.gvi"
+#endif
+
+#ifdef HAS_REC_PLAY
+    #include "rec_play.gvi"
+#endif
+
+#ifdef HAS_TICKET_SET_OPT
+    #include "ticket_set_opt.gvi"
+#endif
 
 #ifdef HAS_AUTO_VOLUME
     #include "auto_volume.gvi"
+#endif
+
+#ifdef HAS_RC_CAR
+    #include "rc_car.gvi"
+#endif
+
+#ifdef HAS_AKIP1160
+    #include "akip1160.gvi"
+#endif
+
+#ifdef HAS_PCAN_PRO_X_APP
+    #include "pcan_pro_x_app.gvi"
 #endif
 
 #ifdef HAS_DASHBOARD
@@ -41,8 +59,28 @@ subgraph cluster_applications{
     #include "keylog.gvi"
 #endif
 
+#ifdef HAS_I2S_ECHO
+    #include "i2s_echo.gvi"
+#endif
+
+#ifdef HAS_SOUND_RECORDER
+    #include "sound_recorder.gvi"
+#endif
+
+#ifdef HAS_BPSK_DECODER
+    #include "bpsk_decoder.gvi"
+#endif
+
 #ifdef HAS_LIGHT_NAVIGATOR
     #include "light_navigator.gvi"
+#endif
+
+#ifdef HAS_CAN_RX_HIST
+    #include "can_rx_hist.gvi"
+#endif
+
+#ifdef HAS_WAV_PLAYER
+    #include "wav_player.gvi"
 #endif
 
 #ifdef HAS_PASTILDA

@@ -88,6 +88,10 @@ ifneq ($(APPS_PRECONFIG_MK_INC),Y)
         include $(APPLICATIONS_DIR)/light_navigator/light_navigator_preconfig.mk
     endif
 
+    ifeq ($(LOOPBACK_AUDIO),Y)
+        include $(APPLICATIONS_DIR)/loopback_audio/loopback_audio_preconfig.mk
+    endif
+
     ifeq ($(PASTILDA),Y)
         # $(error PASTILDA=$(PASTILDA))
         include $(APPLICATIONS_DIR)/pastilda/pastilda_preconfig.mk
@@ -108,6 +112,11 @@ ifneq ($(APPS_PRECONFIG_MK_INC),Y)
     ifeq ($(SONAR),Y)
         include $(APPLICATIONS_DIR)/sonar/sonar_preconfig.mk
     endif
+
+    ifeq ($(I2S_ECHO),Y)
+        include $(APPLICATIONS_DIR)/i2s_echo/i2s_echo_preconfig.mk
+    endif
+
 
     ifeq ($(SOUND_RECORDER),Y)
         include $(APPLICATIONS_DIR)/sound_recorder/sound_recorder_preconfig.mk
