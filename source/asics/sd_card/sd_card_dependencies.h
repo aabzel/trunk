@@ -18,7 +18,7 @@
 #endif
 
 #ifndef HAS_MCU
-#error "+HAS_MCU"
+#warning "+HAS_MCU"
 #endif
 
 

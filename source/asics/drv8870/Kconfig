@@ -1,0 +1,4 @@
+
+config DRV8870
+    bool "Enable use of the DRV8870 drivers"
+

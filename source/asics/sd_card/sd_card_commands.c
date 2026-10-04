@@ -6,26 +6,27 @@
 #include "array.h"
 #include "convert.h"
 #include "data_utils.h"
+#include "byte_utils.h"
 #include "debug_info.h"
-#ifdef HAS_FAT_FS
-#include "diskio.h"
-#endif
 #include "log.h"
 #include "sd_card_config.h"
 #include "sd_card_diag.h"
 #include "sd_card_drv.h"
-#include "spi_drv.h"
+#include "spi_mcal.h"
 #include "table_utils.h"
+#ifdef HAS_FAT_FS
+#include "diskio.h"
+#endif
 
 bool cmd_sd_card_init(int32_t argc, char* argv[]) {
     bool res = false;
-    if(0 == argc) {
+    if (0 == argc) {
         res = true;
     }
-    if(res) {
+    if (res) {
 
         uint8_t ret = sd_disk_initialize();
-        if(RES_OK == ret) {
+        if (RES_OK == ret) {
             LOG_INFO(SD_CARD, "InitOk");
             res = true;
         } else {
@@ -38,7 +39,7 @@ bool cmd_sd_card_init(int32_t argc, char* argv[]) {
 bool cmd_sd_card_74ones_command(int32_t argc, char* argv[]) {
     bool res = false;
     res = sent_74_ones();
-    if(false == res) {
+    if (false == res) {
         LOG_ERROR(SD_CARD, "74 ones train error");
         res = false;
     } else {
@@ -47,44 +48,59 @@ bool cmd_sd_card_74ones_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-// cmd arg crc
+/*
+ Read CID reg
+ sdc 0x0a 0 512
+
+ CMR13
+ sdc 13 0 512
+
+  CMR55
+ sdc 55 0 512
+
+
+ sdc 58 0 400
+
+ */
 bool cmd_sd_card_send_command(int32_t argc, char* argv[]) {
     bool res = false;
-    LOG_INFO(SD_CARD, "argc %u ", argc);
     uint8_t cmd = 0;
-    uint32_t arg = 0;
-    if(1 <= argc) {
+    uint32_t rx_size = 600;
+    uint32_t arg = 0x00000000;
+
+    if (1 <= argc) {
         res = try_str2uint8(argv[0], &cmd);
-        if(false == res) {
+        if (false == res) {
             LOG_ERROR(SD_CARD, "ParseErr cmd  %s", argv[0]);
         }
     }
-    if(2 <= argc) {
+    if (2 <= argc) {
         res = try_str2uint32(argv[1], &arg);
-        if(false == res) {
+        if (false == res) {
             LOG_ERROR(SD_CARD, "ParseErr arg  %s", argv[1]);
         }
     }
 
-    if(res) {
-        uint8_t ret = SD_sendCommand(cmd, arg);
-        const SdCommandInfo_t* Node = SdCmdGetNode(cmd);
-        if(Node) {
-            uint8_t response = 0xFF;
-            res = sd_fetch_resp(&response);
-            if(res) {
-                LOG_INFO(SD_CARD, "ret 0x%02x ", res);
-                uint8_t buff[512 + 10];
-                uint16_t remaining_bytes = Node->ret_len - 1;
-                res = sd_read(buff, remaining_bytes);
-                print_hex_buf(buff, Node->ret_len + 2);
-                LOG_INFO(SD_CARD, "Sd_sendCommand cmd 0x%02x arg 0x%08x ret 0x%02x ", cmd, arg, ret);
-            } else {
-                LOG_ERROR(SD_CARD, "NoResp");
-            }
+    if (3 <= argc) {
+        res = try_str2uint32(argv[2], &rx_size);
+        if (false == res) {
+            LOG_ERROR(SD_CARD, "ParseErr arg  %s", argv[1]);
         }
+    }
+
+    if (res) {
+        res = sd_card_send_command(cmd, arg);
+        if (res) {
+            LOG_INFO(SD_CARD, "Sd_sendCommand,cmd:0x%02x,arg:0x%08x,RxSize:%u", cmd, arg, rx_size);
+            uint8_t buff[1024] = { 0 };
+            res = sd_read(buff, rx_size);
+            print_mem(buff, rx_size, true, true, true, true);
+        } else {
+            LOG_ERROR(SD_CARD, "NoResp");
+        }
+
     } else {
-        LOG_ERROR(SD_CARD, "Usage: sdsc cmd arg crc");
+        LOG_ERROR(SD_CARD, "Usage: sdc cmd arg RxSize");
     }
     return res;
 }
@@ -92,21 +108,21 @@ bool cmd_sd_card_send_command(int32_t argc, char* argv[]) {
 bool cmd_sd_card_write_sector(int32_t argc, char* argv[]) {
     bool res = false;
     LOG_INFO(SD_CARD, "argc %u ", argc);
-    if(1 == argc) {
+    if (1 == argc) {
         res = true;
         uint32_t block_numb = 0;
-        if(res) {
+        if (res) {
             res = try_str2uint32(argv[0], &block_numb);
-            if(false == res) {
+            if (false == res) {
                 LOG_ERROR(SD_CARD, "ParseErr block_numb  %s", argv[0]);
             }
         }
 
-        if(res) {
+        if (res) {
             uint8_t buff[512 + 1];
-            array_incr(buff, 512);
+            array_incr(buff, 512,0);
             res = sd_write_sector(block_numb, buff);
-            if(res) {
+            if (res) {
                 LOG_INFO(SD_CARD, "WriteBlockNumb %u OK", block_numb);
             } else {
                 LOG_ERROR(SD_CARD, "WriteBlockNumb %u Err", block_numb);
@@ -121,68 +137,69 @@ bool cmd_sd_card_write_sector(int32_t argc, char* argv[]) {
 bool cmd_sd_card_read_sector(int32_t argc, char* argv[]) {
     bool res = false;
     LOG_INFO(SD_CARD, "argc %u ", argc);
-    if(1 == argc) {
+    if (1 == argc) {
         res = true;
         uint32_t sector = 0;
-        if(res) {
+        if (res) {
             res = try_str2uint32(argv[0], &sector);
-            if(false == res) {
+            if (false == res) {
                 LOG_ERROR(SD_CARD, "ParseErr sector  %s", argv[0]);
             }
         }
 
-        if(res) {
+        if (res) {
             uint8_t buff[512 + 1];
             memset(buff, 0x00, sizeof(buff));
             DRESULT ret = SD_disk_read(0, buff, sector, 0);
-            if(RES_OK == ret) {
+            if (RES_OK == ret) {
                 LOG_INFO(SD_CARD, "read sector %u OK", sector);
             } else {
                 LOG_ERROR(SD_CARD, "error read sector %u", sector);
             }
             print_hex_buf(buff, 512);
         }
-    } else if(2 == argc) {
-        res = true;
-        uint32_t block_numb = 0;
-        uint32_t uniq_cnt = 0;
-        if(res) {
-            res = try_str2uint32(argv[0], &block_numb);
-            if(false == res) {
-                LOG_ERROR(SD_CARD, "ParseErr block_numb  %s", argv[0]);
-            }
-        }
-        uint8_t buff[512 + 1];
-        while(0 == uniq_cnt) {
-            memset(buff, 0x00, sizeof(buff));
-            res = sd_read_sector(block_numb, buff);
-            if(res) {
-                res = uniq_array(buff, 512);
-                if(res) {
-                    LOG_INFO(SD_CARD, "uniq block_num %u ", block_numb);
-                    uniq_cnt++;
-                    print_hex_buf(buff, 512);
+    } else
+        if (2 == argc) {
+            res = true;
+            uint32_t block_numb = 0;
+            uint32_t uniq_cnt = 0;
+            if (res) {
+                res = try_str2uint32(argv[0], &block_numb);
+                if (false == res) {
+                    LOG_ERROR(SD_CARD, "ParseErr block_numb  %s", argv[0]);
                 }
             }
-            block_numb++;
+            uint8_t buff[512 + 1];
+            while (0 == uniq_cnt) {
+                memset(buff, 0x00, sizeof(buff));
+                res = sd_read_sector(block_numb, buff);
+                if (res) {
+                    res = uniq_array(buff, 512);
+                    if (res) {
+                        LOG_INFO(SD_CARD, "uniq block_num %u ", block_numb);
+                        uniq_cnt++;
+                        print_hex_buf(buff, 512);
+                    }
+                }
+                block_numb++;
+            }
+        } else {
+            LOG_ERROR(SD_CARD, "Usage: sdr block_numb");
         }
-    } else {
-        LOG_ERROR(SD_CARD, "Usage: sdr block_numb");
-    }
     return res;
 }
 
 bool cmd_sd_card_diag(int32_t argc, char* argv[]) {
     bool res = false;
-    if(0 == argc) {
+    if (0 == argc) {
         res = true;
     }
 
     res = is_card_connected();
-    if(res) {
+    if (res) {
         LOG_INFO(SD_CARD, "Connected");
         res = sd_read_registers();
-        if(false == res) {
+        if (false == res) {
             LOG_ERROR(SD_CARD, "ReadRegErr");
         }
         res = sd_card_diag(&SdCardInstance);
@@ -192,16 +209,41 @@ bool cmd_sd_card_diag(int32_t argc, char* argv[]) {
     return res;
 }
 
+/*
+ ll sdcard debug; sdrssr
+*/
+bool cmd_sd_card_read_ssr_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    res = sd_card_read_ssr(&SdCardInstance.SSR);
+    if (res) {
+        res = sd_parse_ssr(&SdCardInstance.SSR);
+    } else {
+        LOG_ERROR(SD_CARD, "Usage: sdrssr");
+    }
+    return res;
+}
+
+bool cmd_sd_card_read_cid_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    res = sd_card_read_cid(&SdCardInstance.CID);
+    if (res) {
+        res = sd_parse_cid(&SdCardInstance.CID);
+    } else {
+        LOG_ERROR(SD_CARD, "Usage: sdrcid");
+    }
+    return res;
+}
+
 bool cmd_sd_card_ioctl(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t ctrl = 0;
-    if(1 <= argc) {
+    if (1 <= argc) {
         res = try_str2uint8(argv[0], &ctrl);
-        if(false == res) {
+        if (false == res) {
             LOG_ERROR(SD_CARD, "ParseErr ctrl  %s", argv[0]);
         }
     }
-    if(res) {
+    if (res) {
         uint8_t buff[512 + 1];
         DRESULT ret = sd_disk_ioctl(0, ctrl, buff);
         LOG_INFO(SD_CARD, "SD_disk_ioctl ret 0x%02x ", ret);
@@ -220,13 +262,13 @@ bool cmd_sd_card_power_on(int32_t argc, char* argv[]) {
 bool cmd_sd_card_read_csd_command(int32_t argc, char* argv[]) {
     bool res = false;
 
-    if(0 == argc) {
+    if (0 == argc) {
         res = true;
     }
 
-    if(res) {
+    if (res) {
         res = sd_card_read_csd(&SdCardInstance.CSD);
-        if(res) {
+        if (res) {
             print_hex(SdCardInstance.CSD.byte, sizeof(CSD_t));
             res = sd_parse_csd(&SdCardInstance.CSD);
         } else {
@@ -238,3 +280,69 @@ bool cmd_sd_card_read_csd_command(int32_t argc, char* argv[]) {
 
     return res;
 }
+
+
+bool sd_card_read_csr_command(int32_t argc, char* argv[]){
+    bool res = false;
+
+    if (0 == argc) {
+        res = true;
+    }
+
+    if (res) {
+        res = sd_card_read_csr(&SdCardInstance.CSR);
+        if (res) {
+            print_hex(SdCardInstance.CSR.byte, sizeof(CSR_t));
+            res = sd_parse_csr(&SdCardInstance.CSR);
+        } else {
+            LOG_ERROR(SD_CARD, "ReadCSDerror");
+        }
+    } else {
+        LOG_ERROR(SD_CARD, "Usage: sdrcsd");
+    }
+    return res;
+}
+
+bool sd_card_read_ocr_command(int32_t argc, char* argv[]){
+    bool res = false;
+    if (0 == argc) {
+        res = true;
+    }
+
+    if (res) {
+        res = sd_card_read_ocr(&SdCardInstance.OCR);
+        if (res) {
+            res = sd_parse_ocr(&SdCardInstance.OCR);
+        } else {
+            LOG_ERROR(SD_CARD, "ReadocrError");
+        }
+    } else {
+        LOG_ERROR(SD_CARD, "Usage: sdrocr");
+    }
+
+    return res;
+}
+
+
+
+bool sd_card_read_sr_command(int32_t argc, char* argv[]){
+    bool res = false;
+    if (0 == argc) {
+        res = true;
+    }
+
+    if (res) {
+        res = sd_card_read_sr(&SdCardInstance.SR);
+        if (res) {
+            res = sd_parse_sr(&SdCardInstance.SR);
+        } else {
+            LOG_ERROR(SD_CARD, "ReadocrSRError");
+        }
+    } else {
+        LOG_ERROR(SD_CARD, "Usage: sdrsr");
+    }
+
+    return res;
+}
+
+

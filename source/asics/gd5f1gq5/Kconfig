@@ -1,0 +1,4 @@
+
+config GD5F1GQ5
+    bool "Enable use of the GD5F1GQ5 drivers"
+

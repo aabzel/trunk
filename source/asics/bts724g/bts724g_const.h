@@ -1,0 +1,27 @@
+#ifndef BTS724G_CONST_H
+#define BTS724G_CONST_H
+
+#include "time_mcal.h"
+#include "bts724g_dep.h"
+
+#define BTS724G_VERSION 2
+#define BTS724G_PERIOD_US MSEC_2_USEC(10)
+#define BTS724G_MAX_OUT_VOLTAGE 24.0f
+#define BTS724G_HALF_MAX_OUT_VOLTAGE (BTS724G_MAX_OUT_VOLTAGE/2.0f)
+
+typedef enum {
+    BTS724G_MODE_OFF= 1,
+    BTS724G_MODE_ON = 2,
+    BTS724G_MODE_BLINK = 3,
+    BTS724G_MODE_PWM = 4,
+    BTS724G_MODE_PULSE_TRAIN = 5,
+    BTS724G_MODE_UNDEF = 0,
+} Bts724gPinMode_t;
+
+typedef enum {
+    BTS724G_FEEDBACK_MODE_GPIO = 1,
+    BTS724G_FEEDBACK_MODE_ADC = 2,
+    BTS724G_FEEDBACK_MODE_UNDEF = 0,
+} Bts724gFeedBackMode_t;
+
+#endif /* BTS724G_CONST_H */

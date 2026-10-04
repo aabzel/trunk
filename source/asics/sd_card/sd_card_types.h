@@ -57,17 +57,20 @@ typedef union {
     } __attribute__((__packed__));
 } Mdt_t;
 
+#define R1_VARIABLES                                                     \
+        uint8_t idle : 1;          /* bit0: 0-busy, 1-idle */         \
+        uint8_t erase_reset : 1;   /* bit1 */         \
+        uint8_t illegal_cmd : 1;   /* bit2 */         \
+        uint8_t com_crc_err : 1;   /* bit3 */         \
+        uint8_t errase_sec_err : 1;/* bit4 */         \
+        uint8_t addr_err : 1;      /* bit 5 Address error*/         \
+        uint8_t param_err : 1;     /* bit6 */         \
+        uint8_t msb_zero : 1;      /* bit7 Always 0*/
+
 typedef union {
     uint8_t byte;
     struct {
-        uint8_t idle : 1; /* bit0: 0-busy, 1-idle */
-        uint8_t erase_reset : 1;/* bit1 */
-        uint8_t illegal_cmd : 1;/* bit2 */
-        uint8_t com_crc_err : 1;/* bit3 */
-        uint8_t errase_sec_err : 1;/* bit4 */
-        uint8_t addr_err : 1; /*bit 5 Address error*/
-        uint8_t param_err : 1;/* bit6 */
-        uint8_t msb_zero : 1; /*bit7 Always 0*/
+            R1_VARIABLES
     } __attribute__((__packed__));
 } R1_t;
 
@@ -75,10 +78,21 @@ typedef union {
     uint8_t byte[4];
     uint32_t dword;
     struct {
-        uint32_t res1 : 24; /* bit0 */
-        uint32_t sw_1_8_accep : 1;
-        uint32_t res2 : 4;
-        uint32_t uhs_ii_card_status : 1;   /**/
+        uint32_t res1 : 7;                /* bit 6-0 */
+        uint32_t dual_voltage_card : 1;   /* bit 7 */
+        uint32_t res2 : 7;                /* bit 14-8 */
+        uint32_t voltage_interval_27_28 : 1;  /* bit 15  */
+        uint32_t voltage_interval_28_29 : 1;  /* bit 16 */
+        uint32_t voltage_interval_29_30 : 1;  /* bit 17 */
+        uint32_t voltage_interval_30_31 : 1;  /* bit 18 */
+        uint32_t voltage_interval_31_32 : 1;  /* bit 19 */
+        uint32_t voltage_interval_32_33 : 1;  /* bit 20 */
+        uint32_t voltage_interval_33_34 : 1;  /* bit 21 */
+        uint32_t voltage_interval_34_35 : 1;  /* bit 22 */
+        uint32_t voltage_interval_35_36 : 1;  /* bit 23 */
+        uint32_t sw_1_8_accep : 1;         /*   24   */
+        uint32_t res3 : 4;                 /*   28--25*/
+        uint32_t uhs_ii_card_status : 1;   /*Bit 29 */
         uint32_t card_capacity_status : 1; /*Bit 30 Card capacity status bit*/
         uint32_t card_power_up_status : 1; /*Bit 31 Card power up status bit*/
     };
@@ -118,23 +132,52 @@ typedef union {
     } __attribute__((__packed__));
 } R7_t;
 
+
 typedef union {
     uint8_t byte[2];
     uint16_t word;
     struct {
         struct {
-            uint16_t card_is_locked : 1;  /*0*/
-            uint16_t wp_erase_skip : 1;   /*1*/
-            uint16_t error : 1;           /*2*/
-            uint16_t cc_error : 1;        /*3*/
-            uint16_t card_ecc_failed : 1; /*4*/
-            uint16_t wp_violation : 1;    /*5*/
-            uint16_t erase_param : 1;     /*6*/
-            uint16_t out_of_range : 1;    /*7*/
+            uint16_t card_is_locked : 1;  /*Bit 0*/
+            uint16_t wp_erase_skip : 1;   /*Bit 1*/
+            uint16_t error : 1;           /*Bit 2*/
+            uint16_t cc_error : 1;        /*Bit 3*/
+            uint16_t card_ecc_failed : 1; /*Bit 4*/
+            uint16_t wp_violation : 1;    /*Bit 5*/
+            uint16_t erase_param : 1;     /*Bit 6*/
+            uint16_t out_of_range : 1;    /*Bit 7*/
         } __attribute__((__packed__));
         R1_t R1;
     };
 } R2_t;
+
+
+/*Status register (see Figure 7-10 R2 respond format)*/
+typedef union {
+    uint8_t byte[2];
+    uint16_t word;
+    struct {
+        uint16_t card_is_locked :1; /*0*/
+        uint16_t wp_erase_skip :1; /*1*/
+        uint16_t error :1; /*2*/
+        uint16_t cc_error :1; /*3*/
+        uint16_t card_ecc_failed :1; /*4*/
+        uint16_t wp_violation :1; /*5*/
+        uint16_t erase_param :1; /*6*/
+        uint16_t out_of_range :1; /*7*/
+
+        uint16_t idle :1; /* bit0: 0-busy, 1-idle */
+        uint16_t erase_reset :1; /* bit1 */
+        uint16_t illegal_cmd :1; /* bit2 */
+        uint16_t com_crc_err :1; /* bit3 */
+        uint16_t errase_sec_err :1;/* bit4 */
+        uint16_t addr_err :1; /* bit 5 Address error*/
+        uint16_t param_err :1; /* bit6 */
+        uint16_t msb_zero :1; /* bit7 Always 0*/
+    } __attribute__((__packed__));
+} SR_t;
+
+
 
 
 /*SEND_IF_COND*/
@@ -157,13 +200,14 @@ typedef union {
     };
 } ACmd41Arg_t;
 
+//see page 246
 typedef union {
     uint8_t byte;
     struct {
-        uint8_t one : 1; /* bit0 */
-        uint8_t status : 3;
-        uint8_t zero : 1;
-        uint8_t res : 3;
+        uint8_t one : 1;   /* bit0 */
+        uint8_t status : 3;/*bits 3-1*/
+        uint8_t zero : 1;  /*bit 4*/
+        uint8_t res : 3;   /*bits 7-5*/
     };
 } DataResponseToken_t;
 
@@ -257,19 +301,20 @@ typedef union {
     uint64_t qword[2];
     struct {
         struct {
-            uint32_t one : 1;  /*always 1*/
-            uint32_t crc : 7;  /*CRC7 checksum*/
-            uint32_t mdt : 12; /*manufacturing date*/
+            uint32_t one : 1;   /* always 1 */
+            uint32_t crc7 : 7;  /* CRC7 checksum */
+            uint32_t mdt : 12;  /* manufacturing date */
             uint32_t res : 4;
         } __attribute__((__packed__));
         uint32_t psn;   /*pruduct serial number*/
-        uint8_t prv;    /*Producat revision*/
+        uint8_t prv;    /*Product revision*/
         uint8_t pnm[5]; /*Product Name*/
         uint16_t oid;   /*Application ID*/
         uint8_t mid;    /*Manufacturer ID*/
     } __attribute__((__packed__));
-} CID_t;
+} __attribute__((__packed__)) CID_t;
 
+/*CardStatus 4.10.1 CMR13 Table 4-42*/
 typedef union {
     uint8_t byte[4];
     uint32_t dword;
@@ -280,20 +325,24 @@ typedef union {
     uint64_t qword;
 } SCR_t;
 
-typedef struct {
-    uint32_t block_len;
-    uint8_t spi_num;
-    Pad_t chip_sel;
+#define SD_CARD_COMMON_VARIAVLES                  \
+    uint32_t block_len;                           \
+    uint8_t num;                                  \
+    uint8_t spi_num;                              \
+    Pad_t chip_sel;                               \
     bool valid;
+
+typedef struct {
+        SD_CARD_COMMON_VARIAVLES
 } SdCardConfig_t;
 
 typedef struct {
+    SD_CARD_COMMON_VARIAVLES
     int32_t chip_enable_cnt;
     uint16_t read_crc16;
     uint32_t err_cnt;
     uint32_t read_pat_try_cnt;
     uint32_t memory_capacity;
-    uint32_t block_len;
     uint32_t mult;
     uint32_t block_number;
     uint8_t version;
@@ -302,9 +351,9 @@ typedef struct {
     OCR_t OCR;
     CID_t CID;
     SSR_t SSR;
+    SR_t SR;
+    CSR_t CSR;
     bool locked;
-    uint8_t spi_num;
-    bool valid;
 } SdCardHandle_t;
 
 #endif /* SD_CARD_TYPES_H */

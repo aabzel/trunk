@@ -1,0 +1,12 @@
+
+Run all unit tests for w25 SPI-flash
+
+tsr w25+
+
+LowLevel register diag for 1st ASIC
+w25l 1 
+
+
+
+
+tsr w25m02gv_jedec_id_read

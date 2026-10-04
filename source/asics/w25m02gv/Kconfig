@@ -1,0 +1,4 @@
+
+config HW_AMP_W25M02GV
+    bool "Enable use of the w25m02gv driver"
+

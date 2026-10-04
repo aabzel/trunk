@@ -1,0 +1,8 @@
+ifneq ($(W25M02GV_PRECONFIG_INC),Y)
+    W25M02GV_PRECONFIG_INC=Y
+
+    W25M02GV=Y
+    SPI=Y
+    GPIO=Y
+
+endif

@@ -1,0 +1,4 @@
+
+config BTS724G
+    bool "Enable use of the BTS724G drivers"
+

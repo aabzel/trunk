@@ -1,0 +1,7 @@
+ifneq ($(BTS724G_PRECONFIG_INC),Y)
+    BTS724G_PRECONFIG_INC=Y
+    
+    GPIO=Y
+    EXT_INT=Y
+    BTS724G=Y
+endif

@@ -12,11 +12,11 @@ ifneq ($(SD_CARD_MK_INC),Y)
     INCDIR += -I$(SD_CARD_DIR)
     #@echo $(error INCDIR= $(INCDIR))
 
-    OPT += -DHAS_CRC7
-    OPT += -DHAS_CRC16
-    OPT += -DHAS_SD_CARD
-    OPT += -DHAS_SD_CARD_CRC7
-    OPT += -DHAS_SD_CARD_CRC16
+    MCAL_OPT += -DHAS_CRC7
+    MCAL_OPT += -DHAS_CRC16
+    MCAL_OPT += -DHAS_SD_CARD
+    MCAL_OPT += -DHAS_SD_CARD_CRC7
+    MCAL_OPT += -DHAS_SD_CARD_CRC16
 
     SOURCES_C += $(SD_CARD_DIR)/sd_card_drv.c
     SOURCES_C += $(SD_CARD_DIR)/sd_card_crc.c
@@ -25,7 +25,7 @@ ifneq ($(SD_CARD_MK_INC),Y)
     ifeq ($(DIAG),Y)
         ifeq ($(SD_CARD_DIAG),Y)
             $(info + SD card diag)
-            OPT += -DHAS_SD_CARD_DIAG
+            MCAL_OPT += -DHAS_SD_CARD_DIAG
             SOURCES_C += $(SD_CARD_DIR)/sd_card_diag.c
         endif
     endif
@@ -33,7 +33,7 @@ ifneq ($(SD_CARD_MK_INC),Y)
     ifeq ($(CLI),Y)
         ifeq ($(SD_CARD_COMMANDS),Y)
             $(info + SD card commands)
-            OPT += -DHAS_SD_CARD_COMMANDS
+            MCAL_OPT += -DHAS_SD_CARD_COMMANDS
             SOURCES_C += $(SD_CARD_DIR)/sd_card_commands.c
         endif
     endif

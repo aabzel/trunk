@@ -1,0 +1,8 @@
+ifneq ($(GD5F1GQ5_PRECONFIG_INC),Y)
+    GD5F1GQ5_PRECONFIG_INC=Y
+    
+    GD5F1GQ5=Y
+    SPI=Y
+    GPIO=Y
+    STORAGE=Y
+endif

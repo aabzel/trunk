@@ -1,0 +1,7 @@
+ifneq ($(DRV8870_PRECONFIG_INC),Y)
+    DRV8870_PRECONFIG_INC=Y
+    
+    PWM=Y
+    GPIO=Y
+    DRV8870=Y
+endif
