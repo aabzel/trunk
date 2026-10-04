@@ -6,12 +6,12 @@ ifneq ($(STM32F429ZI_MK_INC),Y)
     #@echo $(error MCU_CUSTOM_DIR=$(MCU_CUSTOM_DIR))
     #@echo $(error MCU_CUSTOM_DIR=$(MCU_CUSTOM_DIR))
     #@echo $(error CFLAGS=$(CFLAGS))
-    OPT += -DHAS_STM32
-    OPT += -DHAS_STM32F429ZI
-    OPT += -DSTM32F429xx
-    OPT += -DSTM32F429ZI
-    OPT += -DSTM32F429xI
-    OPT += -DSTM32F429Zx
+    MCAL_OPT += -DHAS_STM32
+    MCAL_OPT += -DHAS_STM32F429ZI
+    MCAL_OPT += -DSTM32F429xx
+    MCAL_OPT += -DSTM32F429ZI
+    MCAL_OPT += -DSTM32F429xI
+    MCAL_OPT += -DSTM32F429Zx
 
     FIRMWARE_TYPE_SELECTED=N
     BOARD=Y
@@ -45,7 +45,7 @@ ifneq ($(STM32F429ZI_MK_INC),Y)
 
     ifeq ($(GENERIC),Y)
         # link script
-        OPT += -DVECT_TAB_OFFSET=0x08010000
+        MCAL_OPT += -DVECT_TAB_OFFSET=0x08010000
         FIRMWARE_TYPE_SELECTED=Y
         LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_generic.ld
     endif

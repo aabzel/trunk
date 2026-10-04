@@ -1,0 +1,14 @@
+#ifndef ADC_CONFIG_H
+#define ADC_CONFIG_H
+
+#include "adc_types.h"
+#include "sys_config.h"
+
+//#define ADC_REF_VOLTAGE (3.00)
+
+extern const AdcConfig_t AdcConfig[];
+extern AdcHandle_t AdcInstance[];
+
+uint32_t adc_get_cnt(void);
+
+#endif /* ADC_CONFIG_H  */

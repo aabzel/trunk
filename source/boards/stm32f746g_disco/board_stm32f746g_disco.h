@@ -1,0 +1,14 @@
+#ifndef BOARD_STM32F746G_DISCO_H
+#define BOARD_STM32F746G_DISCO_H
+
+#include "stm32f746ng.h"
+
+#define BOARD_NAME "STM32F746G-DISCO"
+
+#ifndef HSE_VALUE
+#define HSE_VALUE 25000000
+#endif
+
+#define  XTALL_FREQ_HZ HSE_VALUE
+
+#endif /* BOARD_STM32F746G_DISCO_H   */

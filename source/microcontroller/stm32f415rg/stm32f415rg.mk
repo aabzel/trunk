@@ -5,13 +5,13 @@ ifneq ($(STM32F415RG_MK_INC),Y)
 
     MCU_CUSTOM_DIR = $(MICROCONTROLLER_DIR)/stm32f415rg
     #@echo $(error MCU_CUSTOM_DIR=$(MCU_CUSTOM_DIR))
-    OPT += -DHAS_STM32F415RG
-    OPT += -DHAS_STM32
-    OPT += -DSTM32F4xxxx
-    OPT += -DSTM32F415xx
-    OPT += -DSTM32F415RG
-    OPT += -DSTM32F415xG
-    OPT += -DSTM32F415Rx
+    MCAL_OPT += -DHAS_STM32F415RG
+    MCAL_OPT += -DHAS_STM32
+    MCAL_OPT += -DSTM32F4xxxx
+    MCAL_OPT += -DSTM32F415xx
+    MCAL_OPT += -DSTM32F415RG
+    MCAL_OPT += -DSTM32F415xG
+    MCAL_OPT += -DSTM32F415Rx
     mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
     $(info Build  $(mkfile_path) )
     FIRMWARE_TYPE_SELECTED=N
@@ -40,7 +40,7 @@ ifneq ($(STM32F415RG_MK_INC),Y)
         $(info Config Flash)
         #@echo $(error FLASH=$(FLASH))
         ifeq ($(GENERIC_MONOLITHIC),Y)
-            OPT += -DHAS_GENERIC_MONOLITHIC
+            MCAL_OPT += -DHAS_GENERIC_MONOLITHIC
             SOURCES_C += $(MCU_CUSTOM_DIR)/flash_config_monolithic.c
         else
             SOURCES_C += $(MCU_CUSTOM_DIR)/flash_config.c
@@ -77,7 +77,7 @@ ifneq ($(STM32F415RG_MK_INC),Y)
         # link script
         FIRMWARE_TYPE_SELECTED=Y
         ifeq ($(GENERIC_MONOLITHIC),Y)
-            OPT += -DVECT_TAB_OFFSET=0
+            MCAL_OPT += -DVECT_TAB_OFFSET=0
             $(info Generic Monilitic)
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_generic_monolithic.ld
         else

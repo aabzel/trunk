@@ -1,0 +1,21 @@
+ifneq ($(STM32F746G_DISCO_PRECONFIG_INC),Y)
+    STM32F746G_DISCO_PRECONFIG_INC=Y
+
+    MICROCONTROLLER=Y
+    STM32F746G_DISCO=Y
+    STM32F746NG=Y
+    STM32=Y
+    STM=Y
+    #GPIO=Y
+    #LED=Y
+    #WM8994=Y
+    #PINS=Y
+    #UART1=Y
+    #UART=Y
+    #USB=Y
+    #LED=Y
+    #LED_MONO=Y
+    #USB_DEVICE=Y
+    #USB_HS=Y
+    #PWM=Y
+endif
