@@ -13,7 +13,6 @@ extern "C" {
 #endif
 
 const char* AdcConfigToStr(const AdcConfig_t* const Config);
-
 const char* AdcNodeToStr(const AdcHandle_t* const Node);
 const char* AdcNumToStr(uint8_t adc_num);
 bool adc_diag_isr(const char* const key_word1, const char* const key_word2);

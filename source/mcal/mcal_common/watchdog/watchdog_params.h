@@ -29,15 +29,15 @@
     },                                                            \
     {                                                             \
      .facility = WATCHDOG,                                        \
-     .id = PAR_ID_WATCHDOG_TIME_OUT_MS,                           \
-     .default_value = "14000",                                    \
+     .id = PAR_ID_WATCHDOG_TIME_OUT_S,                            \
+     .default_value = "14.0",                                     \
      .len = 4,                                                    \
-     .type = TYPE_UINT32,                                         \
-     .parser = U32DecToStr,                                       \
+     .type = TYPE_FLOAT,                                          \
+     .parser = FloatDataToStr,                                    \
      .Units = STORAGE_UNITS_SECOND,                               \
-     .Scale = STORAGE_SCALE_MILLI,                                \
+     .Scale = STORAGE_SCALE_ONES,                                 \
      .physical_quantity = STORAGE_PHYSICAL_QUANTITY_TIME,         \
-     .name = "WatchDogTimeOutMs",                                 \
+     .name = "WatchDogTimeOut",                                   \
 },
 
 

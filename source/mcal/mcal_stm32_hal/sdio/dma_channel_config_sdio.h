@@ -20,9 +20,14 @@ bool CallBackHalfSdio1Tx(void);
 bool CallBackErrorSdio1Rx(void);
 bool CallBackErrorSdio1Tx(void);
 
+#define DMA_SDIO_MEMCPY_SIZE 50
+extern  uint8_t SdiotoArray[DMA_SDIO_MEMCPY_SIZE];
+extern  uint8_t SdiofromArray[DMA_SDIO_MEMCPY_SIZE];
+
 /*DMA_PFCTRL DMA_PFCTRL DMA_PFCTRL DMA_PFCTRL*/
 #define DMA_CHANNEL_SDIO_COMMON                      \
-        .block_size = (uint32_t) MIN( sizeof(toArray) ,sizeof(fromArray))  ,    \
+        .mode = DMA_MODE_PFCTRL,                     \
+        .block_size = (uint32_t) MIN( sizeof(SdiotoArray) ,sizeof(SdiofromArray))  ,    \
         .per_inc = DMA_INC_OFF,                      \
         .mem_inc = DMA_INC_ON,                       \
         .aligment_mem = DMA_ALIGNMENT_DWORD,         \
@@ -31,7 +36,6 @@ bool CallBackErrorSdio1Tx(void);
         .periph_burst = DMA_BURST_INC4,              \
         .fifo = DMA_FIFO_ON,                         \
         .priority = DMA_PRIOR_VERY_HIGH,             \
-        .mode = DMA_MODE_PFCTRL,                     \
         .valid = true,                               \
         .interrupt_on = true,
 
@@ -44,8 +48,8 @@ bool CallBackErrorSdio1Tx(void);
         .num = DMA_CHANNEL_NUM_SDIO_RX,              \
         .CallBackHalf = CallBackHalfSdio1Rx,         \
         .CallBackDone = CallBackDoneSdio1Rx,         \
-        .base_addr_source = (uint32_t) fromArray,    \
-        .base_addr_destination = (uint32_t) toArray, \
+        .base_addr_source = (uint32_t) SdiofromArray,    \
+        .base_addr_destination = (uint32_t) SdiotoArray, \
         .block_count = 1,                            \
         .mux = 0,                                    \
     },
@@ -59,8 +63,8 @@ bool CallBackErrorSdio1Tx(void);
         .name = "SDIO_TX",                         \
         .CallBackHalf = CallBackHalfSdio1Tx,        \
         .CallBackDone = CallBackDoneSdio1Tx,        \
-        .base_addr_source = (uint32_t)fromArray,    \
-        .base_addr_destination =(uint32_t) toArray, \
+        .base_addr_source = (uint32_t)SdiofromArray,    \
+        .base_addr_destination =(uint32_t) SdiotoArray, \
         .block_count = 1,                           \
         .mux = 0,                                   \
     },

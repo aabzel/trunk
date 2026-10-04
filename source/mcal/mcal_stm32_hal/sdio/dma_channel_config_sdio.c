@@ -6,6 +6,10 @@
 #include "sdio_mcal.h"
 #include "sdio_isr.h"
 
+uint8_t SdiotoArray[DMA_SDIO_MEMCPY_SIZE]={0};
+uint8_t SdiofromArray[DMA_SDIO_MEMCPY_SIZE]={0};
+
+
 
  bool CallBackDoneSdio1Rx(void) {
     bool res = false;

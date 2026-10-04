@@ -62,7 +62,7 @@ typedef union {
     uint32_t baud_rate;                                \
     uint8_t num;                                       \
     uint8_t stop_bit_cnt;                              \
-    bool parity_check;                                 \
+    SwUartParity_t parity_check;                       \
     bool valid;                                        \
     char *name;
 
@@ -98,6 +98,8 @@ typedef struct {
     uint32_t rx_bit_diff;
     uint32_t bit_duration_us;
     uint32_t bit_i;
+    uint32_t parity_ok;
+    uint32_t parity_err;
     uint32_t spin;
     uint8_t sample;
     uint8_t RxBit[20];

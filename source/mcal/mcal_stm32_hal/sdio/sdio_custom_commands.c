@@ -233,6 +233,46 @@ bool sdio_scan_command(int32_t argc, char* argv[]) {
     if(res) {
         res = sdio_scan(num);
         log_info_res(LG_SDIO, res, "Scan");
+    } else {
+        LOG_ERROR(LG_SDIO, "Usage sdr num block_add number_of_blocks");
     }
+
+    return res;
+}
+
+bool sdio_clk_div_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t clk_div = 0;
+
+    if(0 <= argc) {
+        res = true;
+    }
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &clk_div);
+        log_info_res(LG_SDIO, res, "Num");
+    }
+
+    if(res) {
+        switch (argc) {
+            case 0: {
+                clk_div = sdio_clk_div_get(1);
+                LOG_INFO(LG_SDIO, "GetClkDiv:%u", clk_div);
+            } break;
+
+            case 1: {
+                LOG_WARNING(LG_SDIO, "SetClkDiv:%u", clk_div);
+                res = sdio_clk_div_set(1, clk_div);
+                log_info_res(LG_SDIO, res, "ClkDivSet");
+            } break;
+
+            default: {
+                res = false;
+            } break;
+        }
+    } else {
+        LOG_ERROR(LG_SDIO, "Usage sdcd ClkDiv");
+    }
+
     return res;
 }

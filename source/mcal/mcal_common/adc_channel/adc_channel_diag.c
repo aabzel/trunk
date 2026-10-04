@@ -10,6 +10,10 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
+#ifdef HAS_ADC_CHANNEL_CUSTOM
+#include "adc_channel_custom_types.h"
+#endif
+
 #ifdef HAS_ADC_CUSTOM
 #include "adc_custom_types.h"
 #endif
@@ -19,7 +23,7 @@ const char* AdcChannelConfigToStr(const AdcChannelConfig_t* const Config) {
     strcpy(temp, "");
     if(Config) {
         snprintf(temp, sizeof(temp), "%sN:%u", temp, Config->num);
-        snprintf(temp, sizeof(temp), "%sADC%u_IN%u,", temp, Config->adc_num, Config->channel);
+        snprintf(temp, sizeof(temp), "%sADC%u_IN%u,", temp, Config->AdcCh.adc, Config->AdcCh.channel);
         snprintf(temp, sizeof(temp), "%sScale:%f,", temp, Config->scale);
         snprintf(temp, sizeof(temp), "%s%s,", temp, GpioPadToStr(Config->Pad));
         snprintf(temp, sizeof(temp), "%sSec:%u,", temp, Config->sequence);
@@ -27,7 +31,6 @@ const char* AdcChannelConfigToStr(const AdcChannelConfig_t* const Config) {
     }
     return temp;
 }
-
 
 bool AdcDiagConfigChannel(AdcChannelConfig_t* const Config) {
     bool res = false;
@@ -44,7 +47,7 @@ const char* AdcChannelToStr(uint8_t channel) {
     return temp;
 }
 
-bool adc_diag(const char* const key_word1, const char* const key_word2) {
+bool adc_channel_diag1(const char* const key_word1, const char* const key_word2) {
     bool res = false;
     static const table_col_t cols1[] = {
         {10, "ADC"}, {15, "Code"}, {13, "VoltagePin"}, {13, "GPIO"}, {6, "MCU"}, {6, "Scale"}, {13, "VoltageReal"},
@@ -65,19 +68,19 @@ bool adc_diag(const char* const key_word1, const char* const key_word2) {
         AdcChannelHandle_t* Node = AdcChannelGetNode(i);
         if(Node) {
 
-            // AdcChannelHandle_t* Channel=AdcChannelGetNodeV2(Node->adc_num, Node->channel);
-            // float voltage = adc_channel_read_voltage_short(Node->adc_num, Node->channel);
+            // AdcChannelHandle_t* Channel=AdcChannelGetNodeV2(Node->AdcCh.adc, Node->AdcCh.channel);
+            // float voltage = adc_channel_read_voltage_short(Node->AdcCh.adc, Node->AdcCh.channel);
             char log_line[120];
             strcpy(log_line, TSEP);
-            snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->adc_num);
-            snprintf(log_line, sizeof(log_line), "%s %2u " TSEP, log_line, Node->channel);
+            snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->AdcCh.adc);
+            snprintf(log_line, sizeof(log_line), "%s %2u " TSEP, log_line, Node->AdcCh.channel);
             snprintf(log_line, sizeof(log_line), "%s %4u " TSEP, log_line, Node->code);
             snprintf(log_line, sizeof(log_line), "%s 0x%04x " TSEP, log_line, Node->code);
             snprintf(log_line, sizeof(log_line), "%s %4u " TSEP, log_line, ((uint32_t)(Node->voltage * 1000.0)));
             snprintf(log_line, sizeof(log_line), "%s %1.2f " TSEP, log_line, Node->voltage);
             // const AdcChannelInfo_t* AdcChannelToInfo(uint8_t adc_num, AdcChannel_t channel)
 #ifdef HAS_ADC_CHANNEL_CUSTOM
-            AdcChannelInfo_t* Info = AdcChannelToInfo(Node->adc_num, Node->channel);
+            AdcChannelInfo_t* Info = AdcChannelToInfo(Node->AdcCh.adc, Node->AdcCh.channel);
             if(Info) {
                 Pad_t pad = Info->pad;
                 snprintf(log_line, sizeof(log_line), "%s %4u " TSEP, log_line, pad.port);
@@ -107,7 +110,17 @@ bool adc_diag(const char* const key_word1, const char* const key_word2) {
 bool adc_channel_diag(const char* const key_word1, const char* const key_word2) {
     bool res = false;
     static const table_col_t cols1[] = {
-        {5, "ADC"}, {4, "cha"}, {7, "Code"}, {7, "Voltage"}, {7, "scale"}, {7, "VoltReal"}, {5, "Pad"}, {14, "wire"},
+        {5, "ADC"},
+        {4, "cha"},
+        {4, "rank"},
+        {7, "Code"},
+        {8, "Code"},
+        {7, "Voltage"},
+        {7, "scale"},
+        {7, "VoltReal"},
+        {5, "Pad"},
+        {14, "wire"},
+        {14, "Connector"},
     };
 
     table_header(&(curWriterPtr->stream), cols1, ARRAY_SIZE(cols1));
@@ -119,28 +132,27 @@ bool adc_channel_diag(const char* const key_word1, const char* const key_word2) 
         if(Config) {
             AdcChannelHandle_t* Node = AdcChannelGetNode(num);
             if(Node) {
+                float volt_real = Node->voltage * Node->scale;
                 char log_line[220] = {0};
                 strcpy(log_line, TSEP);
-                snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->adc_num);
-                snprintf(log_line, sizeof(log_line), "%s %2u " TSEP, log_line, Node->channel);
+                snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->AdcCh.adc);
+                snprintf(log_line, sizeof(log_line), "%s %2u " TSEP, log_line, Node->AdcCh.channel);
+                snprintf(log_line, sizeof(log_line), "%s %2u " TSEP, log_line, Node->sequence);
                 snprintf(log_line, sizeof(log_line), "%s %5u " TSEP, log_line, Node->code);
+                snprintf(log_line, sizeof(log_line), "%s 0x%04x " TSEP, log_line, Node->code);
                 snprintf(log_line, sizeof(log_line), "%s %5.2f " TSEP, log_line, Node->voltage);
-                float volt_real = Node->voltage * Node->scale;
                 snprintf(log_line, sizeof(log_line), "%s %5.1f " TSEP, log_line, Node->scale);
                 snprintf(log_line, sizeof(log_line), "%s %5.2f " TSEP, log_line, volt_real);
-#ifdef HAS_ADC_CUSTOM
-                const AdcChannelInfo_t* Info = AdcChannelToInfo(Node->adc_num, Node->channel);
-                if(Info) {
-                    snprintf(log_line, sizeof(log_line), "%s %s " TSEP, log_line, GpioPadToStr(Info->pad));
-                    const Wire_t* Wire = Pad2WireInfio(Info->pad);
-                    if(Wire) {
-                        snprintf(log_line, sizeof(log_line), "%s %s " TSEP, log_line, Wire->wire_name);
-                    }
-                } else {
-                    snprintf(log_line, sizeof(log_line), "%s %s " TSEP, log_line, "???");
+                snprintf(log_line, sizeof(log_line), "%s %s " TSEP, log_line, GpioPadToStr(Node->Pad));
+                snprintf(log_line, sizeof(log_line), "%s %12s " TSEP, log_line, Config->name);
+#ifdef HAS_ADC_CHANNEL_CUSTOM
+                const Wire_t* Wire = PadToWireInfo(Node->Pad);
+                if(Wire) {
+                    snprintf(log_line, sizeof(log_line), "%s %s " TSEP, log_line, Wire->wire_name);
+                }else{
+                    snprintf(log_line, sizeof(log_line), "%s ? " TSEP, log_line);
                 }
 #endif
-                snprintf(log_line, sizeof(log_line), "%s %12s " TSEP, log_line, Config->name);
 
                 res = is_contain(log_line, key_word1, key_word2);
                 if(res) {

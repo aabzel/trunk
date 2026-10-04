@@ -20,15 +20,19 @@ extern "C" {
 #error "only for CLI"
 #endif
 
+bool rtc_sync_nmea_command(int32_t argc, char* argv[]);
 bool rtc_adjust_command(int32_t argc, char* argv[]);
 bool rtc_ctrl_command(int32_t argc, char* argv[]);
 bool rtc_diag_command(int32_t argc, char* argv[]);
 bool rtc_get_command(int32_t argc, char* argv[]);
 bool rtc_set_time_command(int32_t argc, char* argv[]);
 bool rtc_set_date_command(int32_t argc, char* argv[]);
+bool rtc_init_command(int32_t argc, char* argv[]);
 
 #define RTC_COMMANDS                                                                               \
         RTC_CUSTOM_COMMANDS                                                                        \
+        SHELL_CMD("rtc_sync_nmea", "rtcs", rtc_sync_nmea_command, "RtcSyncNMEA"),                  \
+        SHELL_CMD("rtc_init", "rtci", rtc_init_command, "RtcInit"),                                \
         SHELL_CMD("rtc_adjust", "rta", rtc_adjust_command, "RtcAdjust"),                           \
         SHELL_CMD("rtc_ctrl", "rtc", rtc_ctrl_command, "RtcCtrl"),                                 \
         SHELL_CMD("rtc_set_time", "rst", rtc_set_time_command, "RtcSetTime"),                      \

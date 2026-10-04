@@ -34,4 +34,13 @@ typedef enum {
 }SwUartRxFrameState_t;
 
 
+typedef enum {
+    SW_UART_PARITY_UNDEF = 0,
+    SW_UART_PARITY_NONE,
+    SW_UART_PARITY_ODD, // 1 3 5 7
+    SW_UART_PARITY_EVEN, // 2 4 6 8
+} SwUartParity_t;
+
+
+
 #endif /* SW_UART_CONST_H */

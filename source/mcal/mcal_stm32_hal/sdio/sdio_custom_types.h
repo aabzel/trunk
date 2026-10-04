@@ -17,8 +17,8 @@ typedef union {
 }ProdRev_t;
 
 #define SDIO_CUSTOM_TYPES                        \
-    SDIO_TypeDef* SDIOx;                         \
     SD_HandleTypeDef Handle;                     \
+    SDIO_TypeDef* SDIOx;                         \
     HAL_SD_CardCSDTypeDef CSD;                   \
     HAL_SD_CardCIDTypeDef CID ;                  \
     HAL_SD_CardStatusTypeDef status;             \

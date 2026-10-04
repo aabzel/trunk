@@ -8,6 +8,7 @@
 #include "std_includes.h"
 #include "super_cycle.h"
 #include "time_mcal.h"
+
 #ifdef HAS_SPI_POLLING
 #include "spi_polling.h"
 #endif
@@ -82,7 +83,7 @@ bool spi_init_one(uint8_t num) {
 _WEAK_FUN_
 bool spi_init_custom(void) {
     bool res = false;
-    LOG_INFO(SPI, "Version:%s", SPI_VERSION);
+    LOG_INFO(SPI, "Version:%u", SPI_VERSION);
     return res;
 }
 
@@ -138,7 +139,7 @@ bool spi_mcal_read(uint8_t num, uint8_t* const rxData, uint32_t size) {
         if(Config) {
             res = false;
             /* res = spi_role_set(num, SPI_MODE_MASTER_RX);*/
-            switch((uint32_t)Node->move_mode) {
+            switch(Node->move_mode) {
             case MOVE_MODE_POLLING: {
 #ifdef HAS_SPI_POLLING
                 res = spi_read_polling(num, rxData, size);
@@ -152,7 +153,7 @@ bool spi_mcal_read(uint8_t num, uint8_t* const rxData, uint32_t size) {
             } break;
             case MOVE_MODE_DMA: {
 #ifdef HAS_SPI_DMA
-                res = spi_read_dma(num, rxData, size);
+                res = spi_dma_read(num, rxData, size);
 #endif
             } break;
             default:
@@ -168,7 +169,7 @@ bool spi_mcal_read(uint8_t num, uint8_t* const rxData, uint32_t size) {
 _WEAK_FUN_
 bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* const rx_array, uint32_t size) {
     bool res = false;
-    LOG_DEBUG(SPI, "SPI%u,WriteRead,Size:%u byte", num, size);
+    LOG_PARN(SPI, "SPI%u,WriteRead,Size:%u byte", num, size);
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         res = false;
@@ -190,7 +191,7 @@ bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* co
             } break;
             case MOVE_MODE_DMA: {
 #ifdef HAS_SPI_DMA
-                res = spi_write_read_dma(num, tx_array, rx_array, size);
+                res = spi_dma_write_read(num, tx_array, rx_array, size);
 #endif
             } break;
             default:
@@ -206,7 +207,7 @@ bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* co
 _WEAK_FUN_
 bool spi_mcal_write(uint8_t num, const uint8_t* const array, uint32_t size) {
     bool res = false;
-    LOG_DEBUG(SPI, "SPI%u,Write,Size:%u byte", num, size);
+    LOG_PARN(SPI, "SPI%u,Write,Size:%u byte", num, size);
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         res = false;
@@ -228,7 +229,7 @@ bool spi_mcal_write(uint8_t num, const uint8_t* const array, uint32_t size) {
             } break;
             case MOVE_MODE_DMA: {
 #ifdef HAS_SPI_DMA
-                res = spi_write_dma(num, array, size);
+                res = spi_dma_write(num, array, size);
 #endif
             } break;
             default:
@@ -336,8 +337,10 @@ bool spi_init_common(const SpiConfig_t* const Config, SpiHandle_t* const Node) {
             Node->GpioTxDebug = Config->GpioTxDebug;
             Node->GpioRxDebug = Config->GpioRxDebug;
 #ifdef HAS_SPI_DMA
-            Node->DmaTx = Config->DmaTx;
-            Node->DmaRx = Config->DmaRx;
+            Node->DmaChRx = Config->DmaChRx;
+            Node->DmaChTx = Config->DmaChTx;
+            Node->dma_channel_rx_num = Config->dma_channel_rx_num;
+            Node->dma_channel_tx_num = Config->dma_channel_tx_num;
 #endif
             res = true;
         }
@@ -446,7 +449,7 @@ bool spi_wait_txrx_ll(SpiHandle_t* Node) {
 _WEAK_FUN_
 bool spi_write_byte(uint8_t num, const uint8_t tx_byte) {
     bool res = false;
-    LOG_DEBUG(SPI, "SPI%u,Write Byte 0x%02x", num, tx_byte);
+    LOG_PARN(SPI, "SPI%u,Write Byte 0x%02x", num, tx_byte);
     res = spi_mcal_write(num, &tx_byte, 1);
     return res;
 }
@@ -481,7 +484,7 @@ bool spi_read_until_pattern(const uint8_t num, const uint8_t exp_rx, const uint3
             break;
         }
     }
-    LOG_DEBUG(SPI, "SPI%u,ReadUntil,Pattern:0x%02x,Try:%u/%u", num, exp_rx, i, try);
+    LOG_PARN(SPI, "SPI%u,ReadUntil,Pattern:0x%02x,Try:%u/%u", num, exp_rx, i, try);
     return res;
 }
 
@@ -572,5 +575,5 @@ uint32_t spi_get_rate_conf(uint8_t num) {
     return bit_rate_hz;
 }
 
-COMPONENT_INIT_PATTERT_CNT(SPI, SPI, spi, SPI_COUNT)
+COMPONENT_INIT_ANY_PATTERT_CNT(SPI, SPI, spi, SPI_COUNT)
 COMPONENT_PROC_PATTERT_CNT(SPI, SPI, spi, SPI_COUNT)

@@ -4,7 +4,7 @@
 #include "time_mcal.h"
 #include "spi_dep.h"
 
-#define SPI_VERSION "7"
+#define SPI_VERSION 8
 
 #define SPI_NAME_SIZE_BYTE 30
 #define SPI_TX_DONE_TIME_OUT_MS 2000

@@ -6,7 +6,7 @@ ifneq ($(ADC_CHANNEL_GENERAL_MK_INC),Y)
 
     INCDIR += -I$(ADC_CHANNEL_MCAL_DIR)
     MCAL_OPT += -DHAS_ADC_CHANNEL
-    
+
     ifeq ($(ADC_CHANNEL_PROC),Y)
         MCAL_OPT += -DHAS_ADC_CHANNEL_PROC
     endif
@@ -14,7 +14,7 @@ ifneq ($(ADC_CHANNEL_GENERAL_MK_INC),Y)
     SOURCES_C += $(ADC_CHANNEL_MCAL_DIR)/adc_channel_general.c
 
     ifeq ($(DIAG),Y)
-        ifeq ($(ADC_DIAG),Y)
+        ifeq ($(ADC_CHANNEL_DIAG),Y)
             MCAL_OPT += -DHAS_ADC_CHANNEL_DIAG
             SOURCES_DIAG_C += $(ADC_MCAL_DIR)/adc_channel_diag.c
         endif

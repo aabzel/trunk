@@ -165,3 +165,20 @@ bool rtc_adjust_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
+
+bool rtc_init_command(int32_t argc, char* argv[]) {
+    bool res = rtc_mcal_init();
+    return res;
+}
+
+bool rtc_sync_nmea_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint8_t num = 1;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+    res = rtc_sync_nmea_one(num);
+    return res;
+}

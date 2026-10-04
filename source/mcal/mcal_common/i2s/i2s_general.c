@@ -219,7 +219,6 @@ bool i2s_is_valid_config(const I2sConfig_t* const Config) {
             LOG_ERROR(I2S, "I2S_%u,Err,pHandle", Config->num);
         }
 
-
         l_res = audio_is_valid_frequency(Config->audio_frequency_hz);
         ifn(l_res) {
             res = false;
@@ -237,8 +236,6 @@ bool i2s_is_valid_config(const I2sConfig_t* const Config) {
             res = false;
             LOG_ERROR(I2S, "I2S_%u,Err,Dma", Config->num);
         }
-
-
 
         ifn(Config->mclk_out) {
             res = false;

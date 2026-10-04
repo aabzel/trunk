@@ -9,8 +9,8 @@ extern "C" {
 
 #define SDIO_PERIOD_US SEC_2_USEC(5)
 #define BLOCK_SIZE_BYTE (512U)
-#define SDIO_RX_TIME_OUT_MS 4000U
-#define SDIO_TX_TIME_OUT_MS 4000U
+#define SDIO_RX_TIME_OUT_MS 500U
+#define SDIO_TX_TIME_OUT_MS 500U
 #define SDIO_TIME_OUT_MS 200U
 //1-err < SDIO_TIME_OUT_MS <64
 //2-err

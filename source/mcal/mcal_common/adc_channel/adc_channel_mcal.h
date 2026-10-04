@@ -19,13 +19,13 @@ extern "C" {
 #include "adc_channel_custom_drv.h"
 #endif
 
-/*API*/
+/* API */
 bool adc_channel_init(uint8_t adc_num, AdcChannel_t channel);
 #ifdef HAS_ADC_CHANNEL_CUSTOM
 const AdcChannelInfo_t* AdcChannelToInfo(uint8_t adc_num, AdcChannel_t channel) ;
 #endif
 
-/*ADC*/
+/* ADC */
 const AdcChannelConfig_t* AdcChannelGetConfig(uint8_t num);
 const AdcChannelConfig_t* AdcChannelGetConfigV2(AdcNum_t adc_num, AdcChannel_t channel);
 bool AdcChannelGetVoltage(uint8_t node_num, float* const voltage_scale);
@@ -33,18 +33,18 @@ bool AdcChannelGetVoltage(uint8_t node_num, float* const voltage_scale);
 AdcChannelHandle_t* AdcChannelGetNodeV2(AdcNum_t adc_num, AdcChannel_t channel);
 AdcChannelHandle_t* AdcChannelGetNode(uint8_t num);
 
-/*init */
+/* init */
 bool adc_channel_init_node(const AdcChannelConfig_t* const Config, AdcChannelHandle_t*  const Node);
 bool adc_channel_init_custom(void);
 bool adc_channel_init_one(uint8_t num);
 bool adc_channel_mcal_init(void);
 
+bool adc_channel_dma_proc_one(uint8_t num);
 bool adc_channel_proc_one(uint8_t num);
 bool adc_channel_proc(void);
 
 Pad_t AdcChannel2Pad(AdcNum_t adc_num, AdcChannel_t channel);
 uint32_t AdcCode2mV(AdcNum_t adc_num, AdcChannel_t channel, int32_t code);
-
 
 /*Get*/
 AdcChannel_t AdcPad2Channel(Pad_t pad);

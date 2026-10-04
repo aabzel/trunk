@@ -24,12 +24,15 @@ extern "C" {
 #error "+HAS_DIAG"
 #endif
 
+
 bool sw_uart_diag_one(uint8_t num);
 bool sw_uart_diag(void);
+const char* SwUartConfigTxToStr(const SwUartConfig_t* const Config) ;
+const char* SwUartParityAlgoToStr(const SwUartParity_t parity) ;
 const char* SwUartRxFrameToStr(const SwUartRxFrameState_t rx_frame_state);
 const char* SwUartFrameToStr(const SwUartFrameRx_t RxFrame);
-const char* SwUartConfigToStr(const SwUartConfig_t* const Config);
 const char* SwUartNodeToStr(const SwUartHandle_t* const Node);
+const char* SwUartConfigToStr(const SwUartConfig_t* const Config);
 
 #ifdef __cplusplus
 }

@@ -35,10 +35,10 @@ bool sw_uart_proc(void);
 /*setters*/
 bool sw_uart_tx_next(uint8_t num);
 bool sw_uart_writer_transmit(void* base);
-void sw_uart_puts(void* stream_ptr, const char* str, int32_t len);
 void sw_uart_putc(void* stream_ptr, char ch);
 bool sw_uart_proc_bit(SwUartHandle_t* Node, uint8_t sample);
 bool sw_uart_baudrate_set(uint8_t num, const uint32_t baudrate);
+void sw_uart_puts(void* stream_ptr, const char* str, int32_t len);
 bool sw_uart_mcal_send(uint8_t num, const uint8_t* const data, uint32_t size);
 bool sw_uart_last_rx_set(const uint8_t num, const uint8_t data);
 

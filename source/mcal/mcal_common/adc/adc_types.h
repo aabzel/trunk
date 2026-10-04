@@ -7,9 +7,12 @@ extern "C" {
 
 #include "std_includes.h"
 #include "adc_const.h"
-#include "lib_iqueue.h"
 #include "gpio_types.h"
 #include "mcal_const.h"
+
+#ifdef HAS_IQUEUE
+#include "lib_iqueue.h"
+#endif
 
 #ifdef HAS_ADC_CUSTOM
 #include "adc_custom_types.h"
@@ -17,18 +20,28 @@ extern "C" {
 #define ADC_CUSTOM_VARIABLES
 #endif
 
-#define ADC_COMMON_VARIABLES                                              \
-    uint8_t num;                                                          \
-    char * name ;                                                         \
-    uint16_t * RxSamples;                                                 \
-    MoveMode_t move_mode;                                                 \
-    uint8_t irq_priority;                                                 \
-    uint32_t RxSamplesCnt;                                                \
+#ifdef HAS_IQUEUE
+#define ADC_COMMON_FIFO_VARIABLES                                         \
     uint16_t * SampleFifoMem;                                             \
-    uint32_t SampleFifoMemCnt;                                            \
-    AdcExternalTriggerSource_t trigger_source;                            \
-    bool valid;                                                           \
-    float v_ref_voltage;                                                  \
+    uint32_t SampleFifoMemCnt;
+#else
+#define ADC_COMMON_FIFO_VARIABLES
+#endif
+
+#define ADC_COMMON_VARIABLES                                \
+    ADC_COMMON_FIFO_VARIABLES                               \
+    uint8_t num;                                            \
+    char * name ;                                           \
+    uint16_t * RxSamples;                                   \
+    uint8_t irq_priority;                                   \
+    uint32_t RxSamplesCnt;                                  \
+    uint32_t num_of_conversion;                             \
+    MoveMode_t move_mode;                                   \
+    AdcExternalTriggerSource_t trigger_source;              \
+    bool interrupt_on;                                      \
+    bool scan_conv_mode;                                    \
+    bool valid;                                             \
+    float v_ref_voltage;                                    \
     AdcResolution_t resolution; /*12bit */
 
 typedef struct {
@@ -72,7 +85,9 @@ typedef struct {
     uint8_t cur_channel_node;
     bool init_done;
     uint32_t code;
+#ifdef HAS_IQUEUE
     iqueue_t iQueue;
+#endif
     uint32_t max_code; /*code at Vref*/
     uint32_t err_cnt;
     uint32_t spin_cnt;

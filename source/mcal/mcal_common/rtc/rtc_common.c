@@ -6,6 +6,10 @@
 #include "time_diag.h"
 #include "time_mcal.h"
 
+#ifdef HAS_NMEA
+#include "nmea_protocol.h"
+#endif
+
 COMPONENT_GET_NODE(Rtc, rtc)
 COMPONENT_GET_CONFIG(Rtc, rtc)
 
@@ -24,7 +28,8 @@ bool rtc_set(uint8_t num, const struct tm* const date_time) {
                 res = rtc_external_set(num, date_time);
 #endif
             } break;
-            default: break;
+            default:
+                break;
             }
         }
         if(res) {
@@ -73,7 +78,8 @@ bool rtc_set_date(uint8_t num, const struct tm* const date_time) {
                 res = rtc_external_set_date(num, date_time);
 #endif
             } break;
-            default: break;
+            default:
+                break;
             } // switch(Node->rtc_location)
         }     // if(Node)
 
@@ -166,6 +172,29 @@ bool rtc_init_custom(void) {
     return res;
 }
 
+bool rtc_proc_one(uint8_t num) {
+    bool res = true;
+    RtcHandle_t* Node = RtcGetNode(num);
+    if(Node) {
+    }
+    return res;
+}
+
+bool rtc_sync_nmea_one(uint8_t num) {
+    bool res = false;
+    RtcHandle_t* Node = RtcGetNode(num);
+    if(Node) {
+#ifdef HAS_NMEA
+        struct tm gnss_time = {0};
+        res = nmea_time_get_cur_utc(1, &gnss_time);
+        if(res) {
+            Node->TimeDate = gnss_time;
+        }
+#endif
+    }
+    return res;
+}
+
 bool rtc_adjust_by_build_time(uint8_t num) {
     bool res = false;
     struct tm time_date_compile = {0};
@@ -204,7 +233,6 @@ bool rtc_init_one(uint8_t num) {
         RtcHandle_t* Node = RtcGetNode(num);
         if(Node) {
             res = rtc_init_common_one(Config, Node);
-
             switch(Node->rtc_location) {
             case RTC_LOCATION_INTERNAL: {
                 res = rtc_internal_init_one(num);
@@ -225,3 +253,4 @@ bool rtc_init_one(uint8_t num) {
 }
 
 COMPONENT_INIT_PATTERT(LG_RTC, RTC, rtc)
+COMPONENT_PROC_PATTERT(LG_RTC, RTC, rtc)

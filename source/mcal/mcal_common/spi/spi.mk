@@ -10,6 +10,7 @@ ifneq ($(SPI_COMMON_MCAL_MK_INC),Y)
     MCAL_OPT += -DHAS_SPI
 
     SOURCES_C += $(SPI_COMMON_MCAL_DIR)/spi_general.c
+    
     ifeq ($(SPI_PROC),Y)
         MCAL_OPT += -DHAS_SPI_PROC
     endif

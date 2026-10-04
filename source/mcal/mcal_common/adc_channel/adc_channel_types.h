@@ -16,11 +16,23 @@ extern "C" {
 #define ADC_CHANNEL_CUSTOM_VARIABLES
 #endif
 
+typedef union {
+    uint8_t byte;
+    struct {
+        uint8_t adc  : 2; /*ADC number 1 2 3*/
+        uint8_t channel : 6; /*0 1  2... 63 */
+    };
+}AdcChannelPad_t;
+
+#if 0
+    AdcNum_t adc_num;
+    AdcChannel_t channel;
+#endif
+
 #define ADC_CHANNEL_COMMON_VARIABLES                       \
     uint8_t num;                                           \
-    AdcNum_t adc_num; /*ADC number*/                       \
-    AdcChannel_t channel;                                  \
     uint8_t sequence;                                      \
+    AdcChannelPad_t AdcCh;                                 \
     float scale; /*   1.0/volt_div   */                    \
     bool valid;                                            \
     Pad_t Pad;                                             \

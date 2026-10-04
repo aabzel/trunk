@@ -6,10 +6,11 @@
 #include "log.h"
 #include "microcontroller_const.h"
 #include "std_includes.h"
+
+#ifdef HAS_IQUEUE
 #include "lib_iqueue.h"
 #include "iqueue.h"
-
-#include "dac_channel_mcal.h"
+#endif
 
 COMPONENT_GET_NODE(Adc, adc)
 COMPONENT_GET_CONFIG(Adc, adc)
@@ -38,18 +39,25 @@ bool AdcIsValidConfig(const AdcConfig_t* const Config) {
             res = false;
         }
 
-        ifn(Config->SampleFifoMem) {
-            LOG_ERROR(LG_ADC, "ADC%u,SampleFifoMem,Err", Config->num);
-            res = false;
-        }
 
         ifn(Config->RxSamplesCnt) {
             LOG_ERROR(LG_ADC, "ADC%u,RxSamplesCnt,Err", Config->num);
             res = false;
         }
 
+#ifdef HAS_IQUEUE
+        ifn(Config->SampleFifoMem) {
+            LOG_ERROR(LG_ADC, "ADC%u,SampleFifoMem,Err", Config->num);
+            res = false;
+        }
         ifn(Config->SampleFifoMemCnt) {
             LOG_ERROR(LG_ADC, "ADC%u,SampleFifoMemCnt,Err", Config->num);
+            res = false;
+        }
+#endif
+
+        ifn(1<=Config->num_of_conversion) {
+            LOG_ERROR(LG_ADC, "ADC%u,numOfConversion,Err", Config->num);
             res = false;
         }
 
@@ -79,9 +87,10 @@ bool adc_init_common(const AdcConfig_t* const Config, AdcHandle_t* const Node) {
 
             Node->RxSamples = Config->RxSamples;
             Node->RxSamplesCnt = Config->RxSamplesCnt;
-
+#ifdef HAS_IQUEUE
             Node->SampleFifoMem = Config->SampleFifoMem;
             Node->SampleFifoMemCnt = Config->SampleFifoMemCnt;
+#endif
 
             res = true;
         }
@@ -89,6 +98,11 @@ bool adc_init_common(const AdcConfig_t* const Config, AdcHandle_t* const Node) {
     return res;
 }
 
+_WEAK_FUN_
+bool adc_start(uint8_t num) {
+    bool res = false;
+    return res;
+}
 
 _WEAK_FUN_
 bool adc_set_vref(uint8_t adc_num, float v_ref_voltage) {
@@ -129,11 +143,9 @@ float AdcCode2Voltage(const int32_t code) {
 bool adc_wait_convert_done_ll(AdcHandle_t* Node, uint32_t time_out_ms) {
     bool res = true;
     uint32_t start_ms = time_get_ms32();
-    uint32_t cur_ms = start_ms;
-    uint32_t diff_ms = 0;
     while(false == Node->conv_done) {
-        cur_ms = time_get_ms32();
-        diff_ms = cur_ms - start_ms;
+        uint32_t cur_ms = time_get_ms32();
+        uint32_t diff_ms = cur_ms - start_ms;
         if(time_out_ms < diff_ms) {
             res = false;
             LOG_ERROR(LG_ADC, "ADC%u ConvTimeOut %u ms", Node->num, time_out_ms);

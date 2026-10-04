@@ -69,8 +69,8 @@ const AdcChannelConfig_t* AdcChannelGetConfigV2(AdcNum_t adc_num, AdcChannel_t c
     uint32_t cnt = adc_channel_get_cnt();
     for(i = 0; i < cnt; i++) {
         // AdcDiagConfigChannel(&AdcChannelConfig[i]);
-        if(adc_num == AdcChannelConfig[i].adc_num) {
-            if(channel == AdcChannelConfig[i].channel) {
+        if(adc_num == AdcChannelConfig[i].AdcCh.adc) {
+            if(channel == AdcChannelConfig[i].AdcCh.channel) {
                 if(AdcChannelConfig[i].valid) {
                     ChConfig = &AdcChannelConfig[i];
                     break;
@@ -89,8 +89,8 @@ AdcChannelHandle_t* AdcChannelGetNodeV2(AdcNum_t adc_num, AdcChannel_t channel) 
     uint32_t i = 0;
     uint32_t cnt = adc_channel_get_cnt();
     for(i = 0; i < cnt; i++) {
-        if(adc_num == AdcChannelInstance[i].adc_num) {
-            if(channel == AdcChannelInstance[i].channel) {
+        if(adc_num == AdcChannelInstance[i].AdcCh.adc) {
+            if(channel == AdcChannelInstance[i].AdcCh.channel) {
                 if(AdcChannelInstance[i].valid) {
                     Channel = &AdcChannelInstance[i];
                     break;
@@ -106,14 +106,15 @@ bool adc_channel_init_node(const AdcChannelConfig_t* const Config, AdcChannelHan
     bool res = false;
     if(Config) {
         if(Node) {
-            Node->adc_num = Config->adc_num;
+            Node->AdcCh.adc = Config->AdcCh.adc;
+            Node->AdcCh.channel = Config->AdcCh.channel;
             Node->Pad = Config->Pad;
             Node->sequence = Config->sequence;
             Node->scale = Config->scale;
-            Node->channel = Config->channel;
             Node->num = Config->num;
-            Node->valid = true;
             Node->name = Config->name;
+
+            Node->valid = true;
             Node->code = 0;
             Node->read_cnt = 0;
             Node->err_cnt = 0;
@@ -123,6 +124,8 @@ bool adc_channel_init_node(const AdcChannelConfig_t* const Config, AdcChannelHan
     }
     return res;
 }
+
+
 
 _WEAK_FUN_
 bool adc_channel_read_code(AdcNum_t adc_num, AdcChannel_t channel, int32_t* const code) {
@@ -160,10 +163,28 @@ bool adc_code_to_params(AdcChannelHandle_t* const Channel) {
 }
 
 _WEAK_FUN_
-bool adc_channel_proc_one(uint8_t num){
+bool adc_channel_dma_proc_one(uint8_t num) {
     bool res = false;
+    AdcChannelHandle_t *AdcCh = AdcChannelGetNode(num);
+    if(AdcCh) {
+        AdcHandle_t *Adc = AdcGetNode(AdcCh->AdcCh.adc);
+        if(Adc) {
+            if(Adc->RxSamples) {
+                if(AdcCh->sequence <= Adc->RxSamplesCnt) {
+                    AdcCh->code = Adc->RxSamples[AdcCh->sequence-1];
+                    res = adc_code_to_params(AdcCh);
+                }
+            }
+        }
+    }
     return res;
+}
 
+_WEAK_FUN_
+bool adc_channel_proc_one(uint8_t num) {
+    bool res = false;
+    res = adc_channel_dma_proc_one(num);
+    return res;
 }
 
 COMPONENT_INIT_PATTERT(ADC_CHANNEL, ADC_CHANNEL, adc_channel)

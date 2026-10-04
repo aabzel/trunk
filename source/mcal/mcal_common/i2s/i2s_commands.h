@@ -49,7 +49,7 @@ bool i2s_diag_rx_command(int32_t argc, char* argv[]);
 
 
 #define I2S_DIAG_COMMANDS                                                                                              \
-    SHELL_CMD("i2s_reg_map", "i2srm", i2s_reg_map_command, "I2sRawRegs"),                                                \
+    SHELL_CMD("i2s_reg_map", "i2srm", i2s_reg_map_command, "I2sRawRegs"),                                              \
     SHELL_CMD("i2s_diag_cfg", "i2sdc", i2s_diag_configs_command, "I2sDiagConfig"),                                     \
     SHELL_CMD("i2s_diag", "i2sd", i2s_diag_command, "I2sDiag"),                                                        \
     SHELL_CMD("i2s_rx_diag", "i2sdx", i2s_diag_rx_command, "I2sDiagRx"),                                               \
@@ -59,6 +59,7 @@ bool i2s_diag_rx_command(int32_t argc, char* argv[]);
 
 
 
+bool i2s_sample_rate_command(int32_t argc, char* argv[]);
 bool i2s_read_sample_command(int32_t argc, char* argv[]);
 bool i2s_read_command(int32_t argc, char* argv[]);
 bool i2s_read_write_command(int32_t argc, char* argv[]);
@@ -71,7 +72,7 @@ bool i2s_listen_command(int32_t argc, char* argv[]);
     SHELL_CMD("i2s_calc_dft", "i2sdf", i2s_calc_dft_command, "I2sCalcDft"),                              \
     SHELL_CMD("i2s_listen", "i2sli", i2s_listen_command, "I2sListen"),                                   \
     SHELL_CMD("i2s_rec_show", "i2sre", i2s_rec_show_command, "I2sRecShow"),                              \
-    SHELL_CMD("i2s_rec_reverce", "i2srr", i2s_rec_reverse_command, "I2sRecRev"),                              \
+    SHELL_CMD("i2s_rec_reverce", "i2srr", i2s_rec_reverse_command, "I2sRecRev"),                         \
     SHELL_CMD("i2s_read_sample", "i2srs", i2s_read_sample_command, "I2sReadSample "),                    \
     SHELL_CMD("i2s_read", "i2srd", i2s_read_command, "I2sRead "),                                        \
     SHELL_CMD("i2s_txrx", "i2srw", i2s_read_write_command, "I2sReadWrite"),                              \
@@ -93,15 +94,15 @@ bool i2s_play_command(int32_t argc, char* argv[]);
     SHELL_CMD("i2s_write", "i2sw", i2s_write_command, "I2sWriteHexStr"),                                           \
     SHELL_CMD("i2s_echo", "i2se", i2s_set_echo_command, "I2sEcho"),
 
-
 #define I2S_COMMANDS                                                                                                   \
     I2S_CUSTOM_COMMANDS                                                                                                \
     I2S_DIAG_COMMANDS                                                                                                  \
     I2S_RECORD_COMMANDS                                                                                                \
     I2S_PLAY_COMMANDS                                                                                                  \
+    SHELL_CMD("i2s_sample_rate", "i2ssr", i2s_sample_rate_command, "I2sSampleRate"),                                   \
     SHELL_CMD("i2s_loop", "i2sl", i2s_set_loopback_command, "I2sLoopBack"),                                            \
     SHELL_CMD("i2s_iir", "i2sii", i2s_set_iir_command, "I2sIrr"),                                                      \
-    SHELL_CMD("i2s_freq", "i2sf", i2s_freq_command, "I2sFreq"),                                                      \
+    SHELL_CMD("i2s_freq", "i2sf", i2s_freq_command, "I2sFreq"),                                                        \
     SHELL_CMD("i2s_bus_role", "i2sbr", i2s_bus_role_command, "I2sBusRole"),                                            \
     SHELL_CMD("i2s_dma_pause", "i2sdp", i2s_dma_pause_command, "I2sDmaPause"),                                         \
     SHELL_CMD("i2s_dma_stop", "i2sds", i2s_dma_stop_command, "I2sDmaStop"),                                            \

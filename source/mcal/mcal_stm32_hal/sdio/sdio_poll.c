@@ -16,6 +16,7 @@ bool sdio_write_sector_time_out(uint8_t num, uint32_t block_num, uint32_t block_
         HAL_StatusTypeDef ret;
         ret = HAL_SD_WriteBlocks(&Node->Handle, (uint8_t*)TxData, block_num, block_cnt, SDIO_TX_TIME_OUT_MS);
         if(HAL_OK == ret) {
+            sdio_wait_card_operation(&Node->Handle);
             LOG_DEBUG(LG_SDIO, "SDIO%u,WriteBlockTo %u Ok", num, block_num);
             res = true;
         } else {
@@ -41,6 +42,7 @@ bool sdio_read_sector_time_out(uint8_t num, uint32_t block_num, uint32_t block_c
         HAL_StatusTypeDef ret;
         ret = HAL_SD_ReadBlocks(&Node->Handle, RxData, block_num, block_cnt, SDIO_RX_TIME_OUT_MS);
         if(HAL_OK == ret) {
+            sdio_wait_card_operation(&Node->Handle);
 #ifdef HAS_ARRAY_DIAG
             LOG_DEBUG(LG_SDIO, "SDIO%u,ReadBlockTo %u Ok", num, block_num);
             log_level_t log_level = log_level_get(LG_SDIO);

@@ -28,6 +28,7 @@ bool rtc_set_time(uint8_t num, const struct tm* const time_date);
 bool rtc_external_set(uint8_t num, const struct tm *const DateTime);
 bool rtc_external_set_date(uint8_t num, const struct tm* const time_date);
 bool rtc_external_set_time(uint8_t num, const struct tm* const time_date);
+bool rtc_sync_nmea_one(uint8_t num);
 
 // getter
 bool rtc_get(uint8_t num, struct tm* const time_date);

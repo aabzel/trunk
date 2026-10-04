@@ -15,8 +15,10 @@
 #include "sw_uart_mcal.h"
 #include "writer_config.h"
 
-// us 8 byte
-// us 8 hex_string
+/*
+ us 8 byte
+ us 8 hex_string
+ */
 bool sw_uart_send_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -107,7 +109,25 @@ bool sw_uart_set_baudrate_command(int32_t argc, char* argv[]) {
 
 bool sw_uart_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
-    res = sw_uart_diag();
+    uint8_t num = 0;
+
+    if (0 <= argc) {
+        num = 1;
+        res = true;
+    }
+
+    if (1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+    }
+
+    if (res) {
+        res = sw_uart_diag();
+        if (1 <= argc) {
+            res = sw_uart_diag_one(num);
+        }
+    } else {
+        LOG_ERROR(SW_UART, "Usage: sud Num");
+    }
     return res;
 }
 

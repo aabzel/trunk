@@ -4,24 +4,16 @@
 #include "convert.h"
 #include "log.h"
 
-
-
-bool adc_voltage_read_command(int32_t argc, char* argv[]) {
+bool adc_channel_voltage_read_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint16_t channel = 0;
     uint8_t adc = 0;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &adc);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr adc %s", argv[0]);
-        }
     }
 
     if(2 <= argc) {
         res = try_str2uint16(argv[1], &channel);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr AdcChannel %s", argv[1]);
-        }
     }
 
     if(res) {
@@ -60,7 +52,7 @@ bool adc_channel_diag_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-#ifdef HAS_ADC_DIAG
+#ifdef HAS_ADC_CHANNEL_DIAG
         res = adc_channel_diag(keyWord1, keyWord2);
 #endif
     } else {
@@ -69,22 +61,16 @@ bool adc_channel_diag_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-bool adc_code_read_command(int32_t argc, char* argv[]) {
+bool adc_channel_code_read_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t adc = 0;
     uint16_t channel = 0;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &adc);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr adc %s", argv[0]);
-        }
     }
 
     if(2 <= argc) {
         res = try_str2uint16(argv[1], &channel);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr AdcChannel %s", argv[1]);
-        }
     }
 
     if(res) {

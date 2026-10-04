@@ -79,3 +79,45 @@ bool adc_diag_isr(const char* const key_word1, const char* const key_word2) {
     table_row_bottom(&(curWriterPtr->stream), cols1, ARRAY_SIZE(cols1));
     return res;
 }
+
+bool adc_diag(const char* const key_word1, const char* const key_word2) {
+    bool res = false;
+    static const table_col_t cols1[] = {
+        {5, "ADC"},
+        {5, "Init"},
+        {5, "Err"},
+        {10, "Half"},
+        {10, "Done"},
+        {10, "OutWindow"},
+        {10, "ErrDone"},
+    };
+
+    table_cap(&(curWriterPtr->stream), cols1, ARRAY_SIZE(cols1));
+    uint16_t num = 0;
+    uint32_t cnt = adc_get_cnt();
+    uint8_t i = 0;
+    for(i = 0; i <= cnt; i++) {
+        AdcHandle_t* Node = AdcGetNode(i);
+        if(Node) {
+            char log_line[120];
+            strcpy(log_line, TSEP);
+            snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->num);
+            snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->init_done);
+            snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, Node->err_cnt);
+            snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->half_cplt_done_cnt);
+            snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->chan_conv_end_cnt);
+            snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->level_out_window_done_cnt);
+            snprintf(log_line, sizeof(log_line), "%s %8u " TSEP, log_line, Node->error_done_cnt);
+
+            res = is_contain(log_line, key_word1, key_word2);
+            if(res) {
+                cli_printf("%s" CRLF, log_line);
+                num++;
+                res = true;
+            }
+        }
+    }
+    table_row_bottom(&(curWriterPtr->stream), cols1, ARRAY_SIZE(cols1));
+    return res;
+}
+

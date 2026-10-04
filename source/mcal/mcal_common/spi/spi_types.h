@@ -12,6 +12,10 @@ extern "C" {
 #include "std_includes.h"
 #include "sys_config.h"
 
+#ifdef HAS_DMA_CHANNEL
+#include "dma_channel_general_types.h"
+#endif
+
 #ifdef HAS_GPIO_CUSTOM
 #include "gpio_custom_types.h"
 #endif
@@ -22,11 +26,6 @@ extern "C" {
 #define SPI_CUSTOM_VARIABLES
 #endif
 
-#ifndef HAS_SPI
-#error "+HAS_SPI"
-#endif /**/
-
-
 #define SPI_GPIO_VARIABLES                                                   \
     Pad_t GpioRxDebug;                                                       \
     Pad_t GpioTxDebug;                                                       \
@@ -36,9 +35,11 @@ extern "C" {
     Pad_t PadMiso;
 
 #ifdef HAS_SPI_DMA
-#define SPI_DMA_VARIABLES     \
-    DmaChannelPad_t DmaRx;    \
-    DmaChannelPad_t DmaTx;
+#define SPI_DMA_VARIABLES           \
+    uint8_t dma_channel_tx_num;     \
+    uint8_t dma_channel_rx_num;     \
+    DmaInfoChannel_t DmaChRx;       \
+    DmaInfoChannel_t DmaChTx;
 #else
 #define SPI_DMA_VARIABLES
 #endif
@@ -67,11 +68,19 @@ typedef struct {
     /* irq_priority*/
 } SpiConfig_t;
 
-#define SPI_ISR_RX_VARIABLES                                  \
-    volatile uint32_t rx_half_cnt;                            \
-    volatile uint32_t rx_cnt;                                 \
-    volatile bool rx_half_done;                               \
+#define SPI_RX_VARIABLES                     \
+    uint8_t* rx_buff;                        \
+    uint32_t rx_buff_size;                   \
+
+#define SPI_ISR_RX_VARIABLES                  \
+    volatile uint32_t rx_half_cnt;            \
+    volatile uint32_t rx_cnt;                 \
+    volatile bool rx_half_done;               \
     volatile bool rx_done;
+
+#define SPI_TX_VARIABLES                     \
+    uint8_t* tx_buff;                        \
+    uint32_t tx_cpl_cnt;
 
 #define SPI_ISR_TX_VARIABLES                         \
     volatile uint32_t tx_half_cnt;                   \
@@ -105,28 +114,18 @@ typedef struct {
     SPI_ISR_TX_RX_VARIABLES                          \
     volatile bool it_done;                           \
     volatile uint32_t it_cnt;
-    
-#define SPI_RX_VARIABLES                     \
-    uint8_t* rx_buff;                        \
-    uint32_t rx_buff_size;                   \
-    uint32_t rx_byte_cnt;
 
-#define SPI_TX_VARIABLES                     \
-    uint8_t* tx_buff;                        \
-    uint32_t tx_byte_cnt;                    \
-    uint32_t tx_cpl_cnt;
+
+
 
 typedef struct {
     SPI_COMMON_VARIABLES
     SPI_ISR_COMMON_VARIABLES
     SPI_CUSTOM_VARIABLES
-    uint8_t* rx_buff;
-    uint32_t rx_byte_cnt;
-    uint32_t tx_byte_cnt;
+    SPI_TX_VARIABLES
+    SPI_RX_VARIABLES
     uint32_t err_cnt;
-    uint32_t rx_buff_size;
     uint32_t spin;
-    uint32_t tx_cpl_cnt;
     IfOperation_t operation;
     uint32_t busy_time_out;
     bool init;

@@ -179,8 +179,8 @@ bool i2s_read_write_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = false ;
-        //res = i2s_read_write(num, tx_sample);
+        res = false;
+        // res = i2s_read_write(num, tx_sample);
         if(res) {
             LOG_INFO(I2S, LOG_OK);
         }
@@ -278,7 +278,7 @@ bool i2s_diag_command(int32_t argc, char* argv[]) {
     if(res) {
         res = i2s_diag_one(num);
         res = i2s_diag_all();
-        res = i2s_diag_clocks() ;
+        res = i2s_diag_clocks();
     } else {
         LOG_ERROR(I2S, "Usage: i2sd i2sNum");
         LOG_INFO(I2S, "i2sNum [0..%u]", I2S_COUNT);
@@ -850,7 +850,8 @@ bool i2s_bus_role_command(int32_t argc, char* argv[]) {
             res = i2s_dir_bus_role_set(num, (IfBusRole_t)bus_role);
 
         } break;
-        default:break;
+        default:
+            break;
         }
     } else {
         LOG_ERROR(I2S, "Usage: i2sbr I2sNum BusRole");
@@ -858,7 +859,7 @@ bool i2s_bus_role_command(int32_t argc, char* argv[]) {
     }
     return res;
 }
-//i2sf 2 48000
+// i2sf 2 48000
 bool i2s_freq_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 0;
@@ -884,7 +885,6 @@ bool i2s_freq_command(int32_t argc, char* argv[]) {
     return res;
 }
 
-
 bool i2s_reg_map_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t num = 1;
@@ -899,5 +899,49 @@ bool i2s_reg_map_command(int32_t argc, char* argv[]) {
     } else {
         LOG_ERROR(I2S, "Usage: i2srm num");
     }
+    return res;
+}
+
+/*
+ i2ssr 2
+
+  i2ssr 2 48000;  i2ssr 2
+
+ */
+bool i2s_sample_rate_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    uint32_t audio_frequency_hz = 32000;
+    uint8_t num = 1;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(I2S, res, "Num");
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint32(argv[1], &audio_frequency_hz);
+        log_info_res(I2S, res, "SampleFrequencyHz");
+    }
+
+    if(res) {
+        switch(argc) {
+        case 1: {
+            int32_t sample_frequency_hz = i2s_get_sample_rate(num);
+            LOG_INFO(I2S, "I2S_%u,Get,SampleFreq:%d Hz", num, sample_frequency_hz);
+        } break;
+
+        case 2: {
+            LOG_INFO(I2S, "I2S_%u,Set,SampleFreq:%u Hz", num, audio_frequency_hz);
+            res = i2s_audio_frequency_set_fast(num, audio_frequency_hz);
+        } break;
+
+        default: {
+            res = false;
+        } break;
+        }
+    } else {
+        LOG_ERROR(I2S, "Usage: i2ssr Num SampleFreqHz");
+    }
+
     return res;
 }

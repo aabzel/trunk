@@ -68,7 +68,9 @@ bool i2s_is_tx(uint8_t num);
 bool i2s_is_rx(uint8_t num);
 
 /*setters*/
+bool i2s_audio_frequency_set_slow(const uint8_t num, const uint32_t audio_frequency_hz);
 bool i2s_audio_frequency_set_fast(const uint8_t num, const uint32_t audio_frequency_hz) ;
+bool i2s_audio_frequency_set(const uint8_t num, const uint32_t audio_frequency_hz);
 bool i2s_ctrl(uint8_t num, bool en ) ;
 bool i2s_prescaler_set(uint8_t num , uint8_t i2s_div, bool odd, bool master_clk_out);
 bool i2s_proc_ctrl(uint8_t num, bool on_off);
@@ -97,7 +99,6 @@ bool i2s_read_write(uint8_t num,
 bool i2s_clock_init(const uint8_t num);
 bool i2s_set_join_write(uint8_t num, uint32_t* array1, uint32_t* array2);
 bool i2s_rec_reverse_byte_order(uint8_t num);
-bool i2s_audio_frequency_set(const uint8_t num, const uint32_t audio_frequency_hz);
 bool i2s_test(uint8_t num);
 
 bool i2s_loopback_shared_memory(uint8_t num, uint32_t words_num);

@@ -14,7 +14,8 @@ bool sdio_write_sector_it(uint8_t num, uint32_t block_num, uint32_t block_cnt, c
         res = false;
         HAL_StatusTypeDef ret;
         Node->tx_done = false;
-        wait_ms(SDIO_TIME_OUT_MS);
+        //wait_ms(SDIO_TIME_OUT_MS);
+        sdio_wait_card_operation(&Node->Handle);
         ret = HAL_SD_WriteBlocks_IT(&Node->Handle, (uint8_t*)TxData, block_num, block_cnt);
         if(HAL_OK == ret) {
             res = SdioWaitTxDoneLl(Node, SDIO_TX_TIME_OUT_MS, num, block_num);
@@ -42,8 +43,9 @@ bool sdio_read_sector_it(uint8_t num, uint32_t block_num, uint32_t block_cnt, ui
     if(Node) {
         memset(RxData, 0, SDIO_BLOCK_SIZE * block_cnt);
         Node->rx_done = false;
-        wait_ms(SDIO_TIME_OUT_MS); /*TODO discard pause*/
+        //wait_ms(SDIO_TIME_OUT_MS); /*TODO discard pause*/
         HAL_StatusTypeDef ret;
+        sdio_wait_card_operation(&Node->Handle);
         ret = HAL_SD_ReadBlocks_IT(&Node->Handle, RxData, block_num, block_cnt);
         if(HAL_OK == ret) {
             res = SdioWaitRxDoneLl(Node, SDIO_RX_TIME_OUT_MS, num, block_num);

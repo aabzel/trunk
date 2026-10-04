@@ -142,6 +142,11 @@ bool SwUartIsValidConfig(const SwUartConfig_t* const Config) {
             res = false;
         }
 
+        ifn(Config->parity_check) {
+            LOG_ERROR(SW_UART, "SW_UART_%u,parity_check,Err", Config->num);
+            res = false;
+        }
+
         ifn(0<Config->stop_bit_cnt) {
             LOG_ERROR(SW_UART, "SW_UART_%u,stop_bit_cnt,Err", Config->num);
             res = false;
@@ -149,6 +154,16 @@ bool SwUartIsValidConfig(const SwUartConfig_t* const Config) {
 
     }
     return res;
+}
+
+/* Even parity: бит дополняет число единиц до чётного */
+uint8_t uart_even_parity(const uint8_t data) {
+    return u8_calc_parity_bit(data);
+}
+
+/* Odd parity: бит дополняет число единиц до нечётного */
+uint8_t uart_odd_parity(const uint8_t data){
+    return u8_calc_parity_bit(data) ^ 1;
 }
 
 uint8_t sw_uart_last_rx_get(const uint8_t num) {
@@ -170,16 +185,11 @@ bool sw_uart_last_rx_set(const uint8_t num, const uint8_t data) {
     return res;
 }
 
-
 bool sw_uart_baudrate_get(uint8_t num, uint32_t* const baudrate){
     bool res = false;
     return res;
 }
 
-bool sw_uart_baudrate_set(uint8_t num, const uint32_t baudrate){
-    bool res = false;
-    return res;
-}
 
 #define SW_UART_BITS_PER_FRAME 32
 uint32_t sw_uart_compose_samples(const SwUartFrameTx_t Frame,
@@ -198,8 +208,62 @@ uint32_t sw_uart_compose_samples(const SwUartFrameTx_t Frame,
     return tx_sample_cnt;
 }
 
+static bool sw_uart_check_parity(const SwUartParity_t algo,
+                                 const uint8_t rx_byte,
+                                 const uint8_t read_parity) {
+    bool res = false;
+    bool need_check = false;
+    uint8_t calc_parity = 0;
+    switch(algo) {
+        case SW_UART_PARITY_NONE: {
+            res = true;
+            need_check = false;
+        }break;
 
+        case SW_UART_PARITY_ODD: {
+            calc_parity = uart_odd_parity(rx_byte);
+            need_check = true;
+        } break;
 
+        case SW_UART_PARITY_EVEN: {
+            calc_parity = uart_even_parity(rx_byte);
+            need_check = true;
+        } break;
+
+        default:{
+            res = true;
+            need_check = false;
+        } break;
+    }
+
+    if(need_check) {
+        if (calc_parity==read_parity) {
+            res = true;
+        }else{
+            res = false;
+        }
+    }
+    return res;
+}
+
+static uint32_t sw_uart_calc_parity(const SwUartParity_t algo, const uint8_t byte) {
+    uint32_t parity = 1;
+    switch(algo) {
+        case SW_UART_PARITY_NONE : {
+           parity = 1;
+        } break;
+        case SW_UART_PARITY_ODD: {
+           parity = uart_odd_parity(byte);
+        }  break;
+        case SW_UART_PARITY_EVEN: {
+           parity =  uart_even_parity(byte);
+        }  break;
+        default: {
+           parity = 1;
+        }  break;
+    }
+    return parity;
+}
 
 static bool sw_uart_mcal_send_byte_ll(SwUartHandle_t* const Node, const uint8_t byte) {
     bool res = false;
@@ -207,10 +271,9 @@ static bool sw_uart_mcal_send_byte_ll(SwUartHandle_t* const Node, const uint8_t 
     Frame.dword = 0xFFFFFFFF;
     Frame.start_bit = 0;
     Frame.byte = byte;
+    Frame.parity = sw_uart_calc_parity(Node->parity_check, byte);
     Frame.stop1 = 1;
     Frame.stop2 = 1;
-    Frame.parity = 1; // TODO
-
     uint32_t tx_sample_cnt = sw_uart_compose_samples(Frame, Node->tx_over_sampling, Node->txSamples);
     if (0 < tx_sample_cnt) {
             res = bin_dac_push_samples(Node->bin_dac_num, Node->txSamples, tx_sample_cnt);
@@ -225,8 +288,6 @@ static bool sw_uart_mcal_send_byte_ll(SwUartHandle_t* const Node, const uint8_t 
             } else {
                 Node->error_cnt++;
             }
-
-
         //res = bin_dac_sample_tx(Node->bin_dac_num, Node->txSamples, SW_UART_SAMPLE_PER_FRAME);
 #ifdef HAS_BIN_DAC
 #endif
@@ -236,6 +297,7 @@ static bool sw_uart_mcal_send_byte_ll(SwUartHandle_t* const Node, const uint8_t 
 
 bool sw_uart_tx_next_ll(SwUartHandle_t* const Node) {
     bool res = false;
+    bool out_res = false;
     uint32_t count = fifo_get_count(&Node->TxByteFifo);
     if (count) {
         uint32_t i = 0 ;
@@ -246,13 +308,16 @@ bool sw_uart_tx_next_ll(SwUartHandle_t* const Node) {
                 res = sw_uart_mcal_send_byte_ll(Node, tx_byte);
                 if (res) {
                     res = fifo_pull(&Node->TxByteFifo, &tx_byte);
+                    if(res){
+                        out_res = true;
+                    }
                 } else {
                     break;
                 }
             }
         }
     }
-    return res;
+    return out_res;
 }
 
 bool sw_uart_tx_next(uint8_t num) {
@@ -279,9 +344,6 @@ bool sw_uart_mcal_send(uint8_t num, const uint8_t* const data, uint32_t size) {
     }
     return res;
 }
-
-
-
 
 bool sw_uart_init_custom(void) {
     bool res = false;
@@ -416,10 +478,11 @@ static bool sw_uart_proc_event(SwUartHandle_t* Node, ExtIntEvent_t* Event) {
 }
 #endif
 
+
 bool sw_uart_decimate(SwUartHandle_t* const Node) {
     bool res = true;
     res = true;
-    SwUartFrameRx_t rxFrame;
+    SwUartFrameRx_t rxFrame={0};
     rxFrame.dword = 0;
     uint32_t b = 0;
     for (b = 0; b < SW_UART_BIT_PER_FRAME_MAX; b++) {
@@ -430,9 +493,18 @@ bool sw_uart_decimate(SwUartHandle_t* const Node) {
     }
 
     if ( 0==rxFrame.start_bit ) {
-        Node->rx_byte = rxFrame.byte;
-        LOG_DEBUG(SW_UART, "RxByte,%s", SwUartNodeToStr(Node));
-        res = fifo_push(&Node->RxByteFifo, Node->rx_byte);
+        if(rxFrame.stop1) {
+            res = sw_uart_check_parity(Node->parity_check, rxFrame.byte, rxFrame.parity);
+            if(res){
+                Node->parity_ok++;
+                Node->rx_byte = rxFrame.byte;
+                LOG_DEBUG(SW_UART, "RxByte,%s", SwUartNodeToStr(Node));
+                res = fifo_push(&Node->RxByteFifo, Node->rx_byte);
+            }else{
+                Node->parity_err++;
+            }
+
+        }
     }
 
     return res;
@@ -616,8 +688,8 @@ bool sw_uart_proc_one(uint8_t num) {
 static bool sw_uart_init_tx_one(SwUartHandle_t* Node) {
     bool res = false;
     uint32_t dac_fs_hz = Node->baud_rate * Node->tx_over_sampling;
-    res = fifo_init(&Node->TxByteFifo, Node->TxFifoMem, Node->tx_fifo_mem_size);
     res = bin_dac_sample_freq_set(Node->bin_dac_num, dac_fs_hz) && res;
+    res = fifo_init(&Node->TxByteFifo, Node->TxFifoMem, Node->tx_fifo_mem_size);
     res = bin_dac_tx_pad_set(Node->bin_dac_num, Node->Tx) && res;
     return res;
 }
@@ -628,6 +700,25 @@ static bool sw_uart_init_rx_one( SwUartHandle_t *Node){
     res = bin_adc_sample_freq_set(Node->bin_adc_num, adc_fs_hz);
     res = fifo_init(&Node->RxByteFifo, Node->RxFifoMem, Node->rx_fifo_mem_size)&& res;
     res = bin_adc_rx_pad_set(Node->bin_dac_num, Node->Rx)&& res;
+    return res;
+}
+
+bool sw_uart_baudrate_set(const uint8_t num, const uint32_t baudrate) {
+    bool res = false;
+    SwUartHandle_t* Node=SwUartGetNode(num);
+    if(Node) {
+        uint32_t old_baudrate = Node->baud_rate ;
+        uint32_t adc_fs_hz = baudrate * Node->rx_over_sampling ;
+        res = bin_adc_sample_freq_set(Node->bin_adc_num, adc_fs_hz);
+        if(res){
+            uint32_t dac_fs_hz = baudrate * Node->tx_over_sampling;
+            res = bin_dac_sample_freq_set(Node->bin_dac_num, dac_fs_hz) ;
+            if(res){
+                Node->baud_rate = baudrate;
+                LOG_INFO(SW_UART,"Set,BaudRate,%u->%u Bit/s",old_baudrate,baudrate);
+            }
+        }
+    }
     return res;
 }
 
@@ -644,22 +735,8 @@ bool sw_uart_init_one(uint8_t num) {
         if(Node) {
             res = sw_uart_init_common(Config, Node);
             res = sw_uart_init_node(Node)&& res;
-
-#if 0
-            uint32_t adc_fs_hz = Node->baud_rate * Node->rx_over_sampling ;
-            res = bin_adc_sample_freq_set(Node->bin_adc_num, adc_fs_hz)&& res;
-            res = bin_adc_rx_pad_set(Node->bin_dac_num, Node->Rx)&& res;
-
-            res = fifo_init(&Node->RxByteFifo, Node->RxFifoMem, Node->rx_fifo_mem_size)&& res;
-
-            uint32_t dac_fs_hz = Node->baud_rate*Node->tx_over_sampling ;
-            res = bin_dac_sample_freq_set(Node->bin_dac_num, dac_fs_hz);
-            res = bin_dac_tx_pad_set(Node->bin_dac_num, Node->Tx) && res;
-#endif
-
             res = sw_uart_init_tx_one(Node) && res;
             res = sw_uart_init_rx_one(Node) && res;
-
 
             LOG_INFO(SW_UART, "%s", SwUartNodeToStr(Node));
         } else {

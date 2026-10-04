@@ -7,19 +7,46 @@
 #include "code_generator.h"
 #include "data_utils.h"
 #include "debug_info.h"
-#include "disk_const.h"
 #include "hal_diag.h"
 #include "sdio_register_types.h"
 #include "interrupt_mcal.h"
 #include "log.h"
 #include "none_blocking_pause.h"
 #include "sdio_int.h"
+#include "diskio.h"
 #include "sdio_poll.h"
 #include "time_mcal.h"
+
+#ifdef HAS_DISK
+#include "disk_const.h"
+#endif
 
 #ifdef HAS_SDIO_DMA
 #include "sdio_dma.h"
 #endif
+
+/* 0-84MHz */
+/* 1-48MHz */
+/* 2-28MHz */
+/* 3-21MHz */
+/* 4-16MHz */
+/* 5-14MHz */
+static uint32_t SdioCalcClockDiv(uint32_t apb2_clk2, uint32_t bit_rate_hz) {
+    uint32_t clock_div = 0;
+    LOG_INFO(LG_SDIO, "APB2 Clock %u Hz(Max: 84 MHz) DesClk %u Hz", apb2_clk2, bit_rate_hz);
+    float tapb2 = 1.0 / ((float)apb2_clk2);
+    float tclk = 1.0 / ((float)bit_rate_hz);
+    LOG_INFO(LG_SDIO, "tapb2 %f", tapb2);
+    LOG_INFO(LG_SDIO, "tclk %f", tclk);
+    float needed_div = tclk / tapb2;
+    LOG_INFO(LG_SDIO, "CalcDiv %f", needed_div);
+    clock_div = (uint32_t)needed_div;
+    LOG_INFO(LG_SDIO, "CalcDiv %f =%u", needed_div, clock_div);
+    float read_clock = 1.0 / ((tapb2) * ((float)clock_div));
+
+    LOG_INFO(LG_SDIO, "RealSDIOclock %f Hz", read_clock);
+    return clock_div - 1;
+}
 
 static SdioInfo_t SdioInfo[] = {
     {
@@ -58,6 +85,37 @@ bool SdioWaitTxDoneLl(SdioHandle_t* Node, uint32_t time_out, uint8_t num, uint32
             res = true;
             break;
         }
+    }
+    return res;
+}
+
+static bool sdio_hal_init(const SdioConfig_t* const Config,
+                          SD_InitTypeDef *  const pInit) {
+    bool res = false;
+    if(pInit) {
+        pInit->ClockEdge = SDIO_CLOCK_EDGE_RISING;
+        pInit->ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
+        pInit->ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
+        pInit->BusWide = SDIO_BUS_WIDE_1B;
+        pInit->HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
+        uint32_t pclk2 = HAL_RCC_GetPCLK2Freq();
+        if(pclk2) {
+            uint32_t clock_div = SdioCalcClockDiv(pclk2, Config->bit_rate_hz);
+            clock_div = uint32_limiter(clock_div, 254);
+            pInit->ClockDiv = clock_div;
+            res = true;
+        } else {
+            pInit->ClockDiv = 100;
+        }
+        /*ClockDiv = 0   FAT32 4GByte SDcard mount error
+          ClockDiv = 2   FAT32   SDcard mount error
+         ClockDiv = 5   SDcard mount ok
+         ClockDiv = 10  FAT32 4GByte SDcard mount ok
+         ClockDiv = 25  FAT32 4GByte SDcard mount ok
+         ClockDiv = 50  FAT32 4GByte SDcard mount ok
+         ClockDiv = 100  FAT32 4GByte SDcard mount ok        */
+        //pInit->ClockDiv = 2; // 3, 4-ok 2 - error
+        LOG_INFO(LG_SDIO, "PCLK2:%u Hz,FinalClockDiv:%u, BitRate:%u Hz",pclk2, pInit->ClockDiv, Config->bit_rate_hz);
     }
     return res;
 }
@@ -164,6 +222,82 @@ bool sdio_read_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, uint8
     return res;
 }
 
+
+static bool sd_card_busy_state(const HAL_SD_CardStateTypeDef state){
+    bool res = false;
+    switch(state){
+        case HAL_SD_CARD_RECEIVING: res = true; break;
+        case HAL_SD_CARD_PROGRAMMING:res = true;  break;
+        case HAL_SD_CARD_SENDING: res = true; break;
+
+        case HAL_SD_CARD_TRANSFER: res = false;break;
+        case HAL_SD_CARD_READY:res = false; break;
+        case HAL_SD_CARD_IDENTIFICATION:res = false; break;
+        case HAL_SD_CARD_STANDBY: res = false;break;
+        case HAL_SD_CARD_DISCONNECTED:res = false; break;
+        case HAL_SD_CARD_ERROR:res = false; break;
+        default:res = false; break;
+    }
+    return res;
+}
+
+uint32_t sdio_wait_card_operation(SD_HandleTypeDef *  hsd){
+    HAL_SD_CardStateTypeDef state = HAL_SD_CARD_ERROR;
+    uint32_t  start_ms = time_get_ms32();
+    uint32_t  cnt = 0;
+    bool busy = true;
+    while(busy){
+        cnt++;
+        state = HAL_SD_GetCardState( hsd);
+        busy = sd_card_busy_state(state);
+
+        uint32_t diff_ms = time_get_ms32()- start_ms;
+        if(5000<diff_ms ){
+            sdio_mcal_init();
+            busy = false ;
+            break;
+        }
+    }
+
+    return cnt;
+}
+
+bool sdio_init_test(SdioHandle_t* Node) {
+    bool res = false;
+    res = sdio_read_sector(Node->num, 0, 1, Node->RxData);
+    if(res) {
+        LOG_INFO(LG_SDIO, "TestReadOk", Node->num);
+        array_print_hex(Node->RxData, SDIO_BLOCK_SIZE);
+    } else {
+        LOG_ERROR(LG_SDIO, "TestReadErr", Node->num);
+    }
+    return res;
+}
+
+uint8_t sdio_clk_div_get(uint8_t num) {
+    uint8_t clk_div = 0xFF;
+    SdioHandle_t* Node = SdioGetNode(num);
+    if(Node){
+        SdioRegSDIO_CLKCR_t CLKCR;
+        CLKCR.dword = Node->SDIOx->CLKCR;
+        clk_div = CLKCR.CLKDIV ;
+    }
+    return clk_div;
+}
+
+bool sdio_clk_div_set(uint8_t num, uint8_t clk_div) {
+    bool res = false;
+    SdioHandle_t* Node = SdioGetNode(num);
+    if(Node){
+        SdioRegSDIO_CLKCR_t CLKCR;
+        CLKCR.dword = Node->SDIOx->CLKCR;
+        CLKCR.CLKDIV = clk_div;
+        Node->SDIOx->CLKCR = CLKCR.dword ;
+        res = true;
+    }
+    return res;
+}
+
 bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, const uint8_t* const TxData) {
     bool res = false;
     SdioHandle_t* Node = SdioGetNode(num);
@@ -210,51 +344,6 @@ bool sdio_write_sector(uint8_t num, uint32_t block_num, uint32_t block_cnt, cons
     return res;
 }
 
-/* 0-84MHz */
-/* 1-48MHz */
-/* 2-28MHz */
-/* 3-21MHz */
-/* 4-16MHz */
-/* 5-14MHz */
-static uint32_t SdioCalcClockDiv(uint32_t apb2_clk2, uint32_t bit_rate_hz) {
-    uint32_t clock_div = 0;
-    LOG_INFO(LG_SDIO, "APB2 Clock %u Hz(Max: 84 MHz) DesClk %u Hz", apb2_clk2, bit_rate_hz);
-    double tapb2 = 1.0 / ((double)apb2_clk2);
-    double tclk = 1.0 / ((double)bit_rate_hz);
-    LOG_INFO(LG_SDIO, "tapb2 %f", tapb2);
-    LOG_INFO(LG_SDIO, "tclk %f", tclk);
-    double needed_div = tclk / tapb2;
-    LOG_INFO(LG_SDIO, "CalcDiv %f", needed_div);
-    clock_div = (uint32_t)needed_div;
-    LOG_INFO(LG_SDIO, "CalcDiv %f =%u", needed_div, clock_div);
-    double read_clock = 1.0 / ((tapb2) * ((double)clock_div));
-
-    LOG_INFO(LG_SDIO, "RealSDIOclock %f Hz", read_clock);
-    return clock_div - 1;
-}
-
-static bool sdio_init_handle(SdioHandle_t* const Node, const SdioConfig_t* Config) {
-    bool res = false;
-    if(Node) {
-        Node->Handle.Instance = SDIO;
-        Node->Handle.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
-        Node->Handle.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
-        Node->Handle.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
-        Node->Handle.Init.BusWide = SDIO_BUS_WIDE_1B;
-        Node->Handle.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-        uint32_t pclk2 = HAL_RCC_GetPCLK2Freq();
-        if(pclk2) {
-            LOG_INFO(LG_SDIO, "PCLK2:%u Hz", pclk2);
-            uint32_t clock_div = SdioCalcClockDiv(pclk2, Config->bit_rate_hz);
-            clock_div = uint32_limiter(clock_div, 254);
-            LOG_INFO(LG_SDIO, "FinalClockDiv:%u", clock_div);
-            Node->Handle.Init.ClockDiv = clock_div;
-            res = true;
-        }
-        Node->Handle.Init.ClockDiv =3;
-    }
-    return res;
-}
 
 bool sdio_init_4bit_mode(SdioHandle_t* Node) {
     bool res = false;
@@ -273,16 +362,6 @@ bool sdio_init_4bit_mode(SdioHandle_t* Node) {
     return res;
 }
 
-bool sdio_init_test(SdioHandle_t* Node) {
-    bool res = false;
-    res = sdio_read_sector(Node->num, 2, 1, Node->RxData);
-    if(res) {
-        LOG_INFO(LG_SDIO, "TestReadOk", Node->num);
-    } else {
-        LOG_ERROR(LG_SDIO, "TestReadErr", Node->num);
-    }
-    return res;
-}
 
 static bool sdio_init_card(SdioHandle_t* Node) {
     bool res = false;
@@ -312,10 +391,11 @@ bool sdio_init_one(uint8_t num) {
             SdioInfo_t* Info = SdioGetInfo(num);
             if(Info) {
                 if(Node) {
-                    Node->SDIOx = Info->SDIOx;
-                    res = sdio_init_common(Config, Node);
                     __HAL_RCC_SDIO_CLK_ENABLE();
-                    res = sdio_init_handle(Node, Config);
+                    Node->SDIOx = Info->SDIOx;
+                    Node->Handle.Instance = SDIO;
+                    res = sdio_init_common(Config, Node);
+                    res = sdio_hal_init(Config, &(Node->Handle.Init)) ;
                     HAL_StatusTypeDef ret = HAL_ERROR;
                     ret = HAL_SD_Init(&Node->Handle);
                     if(HAL_OK == ret) {
@@ -324,9 +404,11 @@ bool sdio_init_one(uint8_t num) {
                         res = sdio_dma_init(&Node->Handle);
 #endif
 
+                        if(SDIO_BUS_RESOLUTION_4BIT==Config->bus_resolution) {
 #ifdef HAS_SDIO_4BIT
-                        res = sdio_init_4bit_mode(Node);
+                            res = sdio_init_4bit_mode(Node);
 #endif
+                        }
 
 #ifdef HAS_SDIO_INIT_TEST
                         res = sdio_init_test(Node);
@@ -610,6 +692,7 @@ bool sdio_proc_status(SdioHandle_t* Node) {
     }
     return res;
 }
+
 
 bool sdio_proc_one(uint8_t num) {
     bool res = false;

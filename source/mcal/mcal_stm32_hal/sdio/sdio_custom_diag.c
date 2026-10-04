@@ -406,22 +406,22 @@ bool ParseSdCardCID(const HAL_SD_CardCIDTypeDef* const CIDp) {
     LOG_WARNING(LG_SDIO, CRLF "CID...");
     if(CIDp) {
         res = true;
-        LOG_INFO(LG_SDIO, "ManID:%u 0x%x %s", CIDp->ManufacturerID, CIDp->ManufacturerID,
+        LOG_INFO(LG_SDIO, "ManID:%u=0x%x=%s", CIDp->ManufacturerID, CIDp->ManufacturerID,
                  ManufaturerId2Str(CIDp->ManufacturerID));
         U16_bit_t un16;
         un16.u16 = CIDp->OEM_AppliID;
-        LOG_INFO(LG_SDIO, "OemAppId:%u 0x%04x %c%c", un16.u16, un16.u16, un16.u8[0], un16.u8[1]);
+        LOG_INFO(LG_SDIO, "OemAppId:%u=0x%04x=%c%c", un16.u16, un16.u16, un16.u8[0], un16.u8[1]);
         U32_bit_t un32;
         un32.u32 = CIDp->ProdName1;
-        LOG_INFO(LG_SDIO, "ProdName1:%u 0x%08x %c%c%c%c%c", un32.u32, un32.u32, un32.u8[3], un32.u8[2], un32.u8[1],
+        LOG_INFO(LG_SDIO, "ProdName1:%u=0x%08x=%c%c%c%c%c", un32.u32, un32.u32, un32.u8[3], un32.u8[2], un32.u8[1],
                  un32.u8[0], CIDp->ProdName2);
         ProdRev_t prv;
         prv.byte = CIDp->ProdRev;
         LOG_INFO(LG_SDIO, "ProdRev:0x%02x=%u.%u", prv.byte, prv.m, prv.n);
-        LOG_INFO(LG_SDIO, "ProdSN:%u 0x%08x", CIDp->ProdSN, CIDp->ProdSN);
+        LOG_INFO(LG_SDIO, "ProdSN:%u=0x%08x", CIDp->ProdSN, CIDp->ProdSN);
         ManufDate_t ManufDate;
         ManufDate.word = CIDp->ManufactDate;
-        LOG_INFO(LG_SDIO, "ManufactDate: Month:%u Year:%u", ManufDate.month, ManufDate.year + 2000);
+        LOG_INFO(LG_SDIO, "ManufactDate,Month:%u,Year:%u", ManufDate.month, ManufDate.year + 2000);
         LOG_INFO(LG_SDIO, "CID_CRC:%u=0x%x", CIDp->CID_CRC, CIDp->CID_CRC);
     }
     return res;
@@ -471,19 +471,25 @@ bool ParseSdCardCSD(const HAL_SD_CardCSDTypeDef* const pCSD) {
     return res;
 }
 
-bool ParseSdCardInfo(const HAL_SD_CardInfoTypeDef* const CardInfo) {
+bool ParseSdCardInfo(const HAL_SD_CardInfoTypeDef* const Info) {
     bool res = false;
-    LOG_WARNING(LG_SDIO, CRLF "CardInfo...");
-    if(CardInfo) {
+    LOG_WARNING(LG_SDIO, CRLF "DsCardInfo...");
+    if(Info) {
         res = true;
-        LOG_INFO(LG_SDIO, "CardType:%u 0x%x %s", CardInfo->CardType, CardInfo->CardType);
-        LOG_INFO(LG_SDIO, "CardVersion:%u", CardInfo->CardVersion);
-        LOG_INFO(LG_SDIO, "Class:%u", CardInfo->Class);
-        LOG_INFO(LG_SDIO, "RelCardAdd:%u", CardInfo->RelCardAdd);
-        LOG_INFO(LG_SDIO, "BlockNbr:%u", CardInfo->BlockNbr);
-        LOG_INFO(LG_SDIO, "BlockSize:%u", CardInfo->BlockSize);
-        LOG_INFO(LG_SDIO, "LogBlockNbr:%u", CardInfo->LogBlockNbr);
-        LOG_INFO(LG_SDIO, "LogBlockSize:%u", CardInfo->LogBlockSize);
+        uint32_t total_size = Info->BlockNbr*Info->BlockSize;
+        LOG_INFO(LG_SDIO, "CardVersion:%u", Info->CardVersion);
+        LOG_INFO(LG_SDIO, "Class:%u", Info->Class);
+        LOG_INFO(LG_SDIO, "RelCardAdd:%u", Info->RelCardAdd);
+        LOG_INFO(LG_SDIO, "BlockNbr:%u", Info->BlockNbr);
+        LOG_INFO(LG_SDIO, "BlockSize:%u", Info->BlockSize);
+        LOG_INFO(LG_SDIO, "TotalSize:%u Byte=%f kByte=%f MBytes",
+                total_size,
+                BYTES_2_KBYTES(total_size),
+                BYTES_2_MBYTES(total_size)
+                );
+        LOG_INFO(LG_SDIO, "LogBlockNbr:%u", Info->LogBlockNbr);
+        LOG_INFO(LG_SDIO, "LogBlockSize:%u", Info->LogBlockSize);
+        LOG_INFO(LG_SDIO, "CardType:%u", Info->CardType);
     }
     return res;
 }
@@ -574,7 +580,7 @@ bool sdio_scan(uint8_t num) {
         LOG_INFO(LG_SDIO, "BlockNbr %u", Node->CardInfo.BlockNbr);
         uint32_t i = 0;
         for(i = 0; i < Node->CardInfo.BlockNbr; i++) {
-            diag_progress_log(i, Node->CardInfo.BlockNbr, 200);
+            diag_progress_log(i, Node->CardInfo.BlockNbr, 200,"SDIOScan");
             res = sdio_read_sector(num, i, 1, Node->RxData);
             if(res) {
                 sum = arr_sum(Node->RxData, SDIO_BLOCK_SIZE);

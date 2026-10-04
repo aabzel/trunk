@@ -7,9 +7,13 @@ ifneq ($(ADC_GENERAL_MK_INC),Y)
 
     INCDIR += -I$(ADC_MCAL_DIR)
     MCAL_OPT += -DHAS_ADC
-    
+
     ifeq ($(ADC_PROC),Y)
         MCAL_OPT += -DHAS_ADC_PROC
+    endif
+
+    ifeq ($(ADC_DMA),Y)
+        MCAL_OPT += -DHAS_ADC_DMA
     endif
 
     SOURCES_C += $(ADC_MCAL_DIR)/adc_general.c

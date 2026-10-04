@@ -12,11 +12,7 @@ bool adc_init_command(int32_t argc, char* argv[]) {
 
     if(res) {
         res = adc_mcal_init();
-        if(res) {
-            LOG_INFO(LG_ADC, "InitOk");
-        } else {
-            LOG_ERROR(LG_ADC, "InitErr");
-        }
+        log_info_res(LG_ADC, res, "Info");
     }
     return res;
 }
@@ -45,6 +41,7 @@ bool adc_diag_command(int32_t argc, char* argv[]) {
     if(res) {
 #ifdef HAS_ADC_DIAG
         res = adc_diag(keyWord1, keyWord2);
+        log_info_res(LG_ADC, res, "Diag");
 #endif
     } else {
         LOG_ERROR(LG_ADC, "Usage: ad keyWord keyWord");
@@ -58,9 +55,7 @@ bool adc_set_vref_command(int32_t argc, char* argv[]) {
     float v_ref = 3.3;
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &adc);
-        if(false == res) {
-            LOG_ERROR(SYS, "ParseErr adc %s", argv[0]);
-        }
+        log_info_res(LG_ADC, res, "Num");
     }
 
     if(2 <= argc) {
@@ -105,9 +100,27 @@ bool adc_isr_command(int32_t argc, char* argv[]) {
     if(res) {
 #ifdef HAS_ADC_DIAG
         res = adc_diag_isr(keyWord1, keyWord2);
+        log_info_res(LG_ADC, res, "DiagIsr");
 #endif
     } else {
         LOG_ERROR(LG_ADC, "Usage: as keyWord keyWord");
+    }
+    return res;
+}
+
+
+bool adc_start_command(int32_t argc, char* argv[]){
+    bool res = false;
+    uint8_t num=1;
+
+    if(1 <= argc) {
+        res = try_str2uint8(argv[0], &num);
+        log_info_res(LG_ADC, res, "Num");
+    }
+
+    if(res) {
+        res = adc_start(num);
+        log_info_res(LG_ADC, res, "Start");
     }
     return res;
 }

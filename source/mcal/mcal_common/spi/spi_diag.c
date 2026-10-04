@@ -126,8 +126,8 @@ const char* SpiConfigToStr(const SpiConfig_t* const Config) {
         snprintf(text, sizeof(text), "%sSCK:%s,", text, GpioPadToStr(Config->PadSck));
         snprintf(text, sizeof(text), "%sRole:%s,", text, IfBusRoleToStr(Config->bus_role));
 #ifdef HAS_SPI_DMA
-        snprintf(text, sizeof(text), "%sDmaTx:%s,", text, DmaPadToStr(Config->DmaTx));
-        snprintf(text, sizeof(text), "%sDmaRx:%s,", text, DmaPadToStr(Config->DmaRx));
+        snprintf(text, sizeof(text), "%sDmaTx:%s,", text, DmaInfoPadToStr(&Config->DmaChTx));
+        snprintf(text, sizeof(text), "%sDmaRx:%s,", text, DmaInfoPadToStr(&Config->DmaChRx));
 #endif
     }
 
@@ -182,8 +182,8 @@ bool spi_diag(void) {
             snprintf(temp_str, sizeof(temp_str), "%s  %1u  " TSEP, temp_str, spi_get_phase(num));
             snprintf(temp_str, sizeof(temp_str), "%s  %1u  " TSEP, temp_str, spi_get_polarity(num));
             snprintf(temp_str, sizeof(temp_str), "%s  %2u " TSEP, temp_str, spi_get_data_size(num));
-            snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, Node->tx_byte_cnt);
-            snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, Node->rx_byte_cnt);
+            snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, Node->tx_cnt);
+            snprintf(temp_str, sizeof(temp_str), "%s %6u " TSEP, temp_str, Node->rx_cnt);
             const SpiConfig_t* Config = SpiGetConfig(num);
             if(Config) {
                 snprintf(temp_str, sizeof(temp_str), "%s %8s " TSEP, temp_str, Config->name);

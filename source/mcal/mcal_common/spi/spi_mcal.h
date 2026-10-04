@@ -63,6 +63,8 @@ bool spi_move_mode_get(const uint8_t num, MoveMode_t* const move_mode);
 bool spi_read_until_pattern(const uint8_t num, const uint8_t exp_rx, const uint32_t try);
 
 /*setters*/
+bool spi_interrupt_ctrl(uint8_t num, bool enable);
+bool spi_interrupt_priority_set(uint8_t num, uint8_t irq_priority) ;
 bool spi_move_mode_set(const uint8_t num, const MoveMode_t move_mode);
 bool spi_write_byte(uint8_t num, const uint8_t byte);
 bool spi_write_word(uint8_t num, const uint16_t word);

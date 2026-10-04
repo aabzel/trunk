@@ -13,8 +13,8 @@ extern "C" {
 #include "bit_const.h"
 #include "time_mcal.h"
 
-#define ADC_POLL_PERIOD_US 1
-#define ADC_CHANNEL_PERIOD_US MSEC_2_USEC(5)
+#define ADC_POLL_PERIOD_US MSEC_2_USEC(20)
+
 
 typedef enum {
     ADC_0 = 0,
@@ -65,7 +65,6 @@ typedef enum {
     ADC_MCAL_TRIG_SRC_EXT_TIRER8_COM_CH1  ,  //
     ADC_MCAL_TRIG_SRC_EXT_IT11 ,             //
 } AdcExternalTriggerSource_t;
-
 
 #ifdef __cplusplus
 }
