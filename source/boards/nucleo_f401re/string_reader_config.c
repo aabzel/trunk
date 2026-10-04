@@ -3,39 +3,31 @@
 #include "data_utils.h"
 #include "cli_drv.h"
 
-static char FifoData1[100]={0};
-static char LineData1[100]={0};
+static uint8_t FifoData1[100]={0};
+static uint8_t LineData1[100]={0};
 
 const StringReaderConfig_t StringReaderConfig[] = {
     { 
     .num = 1, 
     .valid = true,
-     .echo = true,
-      .cli_num= 1, 
-      .interface_if = IF_UART3,
-       .if_num = 3,
-       .name= "UART3",
-        .fifo_heap = FifoData1, 
-        .fifo_heap_size=sizeof(FifoData1), 
-        .string=LineData1, 
-        .string_size= sizeof(LineData1),
-          .callback =(handle_string_f)(cli_process_cmd), 
-          .feedback_led=2,  
-           },
+    .echo = true,
+    .cli_num = 1,
+    .interface_if =  { .interface_name=INTERFACE_NAME_UART,  .num=2, } ,
+    .name = "CLIin",
+    .fifo_heap = FifoData1,
+    .fifo_heap_size = sizeof(FifoData1),
+    .string = LineData1,
+    .string_size = sizeof(LineData1),
+    .callback = (handle_string_f)(cli_process_cmd),
+    .feedback_led = 1,
+   },
 };
 
 StringReaderHandle_t StringReaderInstance[]={
-    {.num=1, .valid=true, },
+    {
+    	.num = 1, 
+    .valid = true,
+     },
 };
 
-uint32_t string_reader_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(StringReaderInstance);
-    cnt2 = ARRAY_SIZE(StringReaderConfig);
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(StringReader, string_reader)

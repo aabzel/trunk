@@ -3,76 +3,61 @@
 #include "data_utils.h"
 #include "fir_types.h"
 
-#define FIR_MAX_ORDER 100000
+#define FIR_MAX_ORDER 10000
 
+#ifdef HAS_PHASE_DETECTOR
 static FirSample_t StaticX1[FIR_MAX_ORDER] = {0};
 static FirSample_t StaticB1[FIR_MAX_ORDER] = {0};
+static FirSample_t StaticX4[FIR_MAX_ORDER] = {0};
+static FirSample_t StaticB4[FIR_MAX_ORDER] = {0};
 
+#endif
+
+#ifdef HAS_SDR
 static FirSample_t StaticX2[FIR_MAX_ORDER] = {0};
 static FirSample_t StaticB2[FIR_MAX_ORDER] = {0};
 
 static FirSample_t StaticX3[FIR_MAX_ORDER] = {0};
 static FirSample_t StaticB3[FIR_MAX_ORDER] = {0};
 
-static FirSample_t StaticX4[FIR_MAX_ORDER] = {0};
-static FirSample_t StaticB4[FIR_MAX_ORDER] = {0};
-
 static FirSample_t StaticX5[FIR_MAX_ORDER] = {0};
 static FirSample_t StaticB5[FIR_MAX_ORDER] = {0};
 
 static FirSample_t StaticX6[FIR_MAX_ORDER] = {0};
 static FirSample_t StaticB6[FIR_MAX_ORDER] = {0};
+#endif
 
+
+#ifdef HAS_SONAR
 static FirSample_t StaticX7[FIR_MAX_ORDER] = {0};
 static FirSample_t StaticB7[FIR_MAX_ORDER] = {0};
+#endif
 
 
+#ifdef HAS_SOUND_LOCALIZATION
 static FirSample_t StaticX8[FIR_MAX_ORDER] = {0};
 static FirSample_t StaticB8[FIR_MAX_ORDER] = {0};
+#endif
 
 const FirConfig_t FirConfig[] = {
+#ifdef HAS_SONAR
     {
-        .num = 1,
+        .mode = FIR_MODE_CORRELATION,
+        .num = FIR_MUN_CHIRP_CORRELATION,
         .valid = true,
-        .file_name_out = "out.csv",
         .cut_off_freq_hz = 10,
-        .sample_rate_hz = 96000.0,
+        .sample_rate_hz = 48000.0,
         .max_size = FIR_MAX_ORDER, /*filter Order M */
-        .size = 400,               /*filter Order M */
-        .name = "PhaseDetector",
-        .x = StaticX1,
-        .b = StaticB1,
-        .mode = FIR_MODE_CLASSIC,
-    },
-
-    {
-        .num = 2,
-        .valid = true,
-        .cut_off_freq_hz = 4000,
-        .sample_rate_hz = 44100.0,
-        .max_size = FIR_MAX_ORDER, /*filter Order M */
-        .size = 800,               /*filter Order M */
-        .name = "FIR_I",
-        .x = StaticX2,
+        .size = 2880,              /*filter Order M */
+        .name = "Chirp",
+        .file_name_in = "in.csv",
         .file_name_out = "out.csv",
-        .b = StaticB2,
-        .mode = FIR_MODE_CLASSIC,
+        .x = StaticX7,
+        .b = StaticB7,
     },
+#endif
 
-    {
-        .num = 3,
-        .valid = true,
-        .cut_off_freq_hz = 4000,
-        .sample_rate_hz = 44100.0,
-        .max_size = FIR_MAX_ORDER, /*filter Order M */
-        .size = 800,               /*filter Order M */
-        .name = "FIR_Q",
-        .x = StaticX3,
-        .file_name_out = "out.csv",
-        .b = StaticB3,
-        .mode = FIR_MODE_CLASSIC,
-    },
-
+#ifdef HAS_PHASE_DETECTOR
     {
         .num = 4,
         .valid = true,
@@ -88,6 +73,49 @@ const FirConfig_t FirConfig[] = {
     },
 
     {
+        .num = FIR_MUN_LO_PHASE,
+        .valid = true,
+        .file_name_out = "out.csv",
+        .cut_off_freq_hz = 10,
+        .sample_rate_hz = 8000.0,
+        .max_size = FIR_MAX_ORDER, /*filter Order M */
+        .size = 80,               /*filter Order M */
+        .name = "LoPhase",
+        .x = StaticX1,
+        .b = StaticB1,
+        .mode = FIR_MODE_CLASSIC,
+    },
+#endif
+
+#ifdef HAS_SDR
+    {
+        .num = FIR_MUN_I,
+        .valid = true,
+        .cut_off_freq_hz = 4000,
+        .sample_rate_hz = 44100.0,
+        .max_size = FIR_MAX_ORDER, /*filter Order M */
+        .size = 800,               /*filter Order M */
+        .name = "FIR_I",
+        .x = StaticX2,
+        .file_name_out = "out.csv",
+        .b = StaticB2,
+        .mode = FIR_MODE_CLASSIC,
+    },
+
+    {
+        .num = FIR_MUN_Q,
+        .valid = true,
+        .cut_off_freq_hz = 4000,
+        .sample_rate_hz = 44100.0,
+        .max_size = FIR_MAX_ORDER, /*filter Order M */
+        .size = 800,               /*filter Order M */
+        .name = "FIR_Q",
+        .x = StaticX3,
+        .file_name_out = "out.csv",
+        .b = StaticB3,
+        .mode = FIR_MODE_CLASSIC,
+    },
+    {
         .num = 5,
         .valid = true,
         .cut_off_freq_hz = 10,
@@ -100,7 +128,6 @@ const FirConfig_t FirConfig[] = {
         .b = StaticB5,
         .mode = FIR_MODE_CLASSIC,
     },
-
     {
         .num = 6,
         .valid = true,
@@ -114,21 +141,12 @@ const FirConfig_t FirConfig[] = {
         .file_name_out = "out.csv",
         .mode = FIR_MODE_CLASSIC,
     },
+#endif
 
-    {
-        .num = FIR_MUN_CHIRP_CORRELATION,
-        .valid = true,
-        .cut_off_freq_hz = 10,
-        .sample_rate_hz = 44100.0,
-        .max_size = FIR_MAX_ORDER, /*filter Order M */
-        .size = 800,               /*filter Order M */
-        .name = "Chirp",
-        .mode = FIR_MODE_CORRELATION,
-        .file_name_out = "out.csv",
-        .x = StaticX7,
-        .b = StaticB7,
-    },
 
+
+
+#ifdef HAS_SOUND_LOCALIZATION
     {
         .num = FIR_MUN_SOUND_DIR,
         .valid = true,
@@ -142,22 +160,33 @@ const FirConfig_t FirConfig[] = {
         .b = StaticB8,
         .mode = FIR_MODE_CLASSIC,
     },
+#endif
 
 };
 
 FirHandle_t FirInstance[] = {
-    {        .num = 1,        .valid = true,        .init = false,    },
-    {        .num = 2,        .valid = true,        .init = false,    },
-    {        .num = 3,        .valid = true,        .init = false,    },
+#ifdef HAS_PHASE_DETECTOR
+    {        .num = FIR_MUN_LO_PHASE,        .valid = true,        .init = false,    },
     {        .num = 4,        .valid = true,        .init = false,    },
+#endif
+
+#ifdef HAS_SONAR
+    {        .num = FIR_MUN_CHIRP_CORRELATION,        .valid = true,        .init = false,    },
+#endif
+
+#ifdef HAS_SOUND_LOCALIZATION
+    {        .num = FIR_MUN_SOUND_DIR,        .valid = true,        .init = false,    },
+#endif
+
+
+#ifdef HAS_SDR
+    {        .num = FIR_MUN_I,        .valid = true,        .init = false,    },
+    {        .num = FIR_MUN_Q,        .valid = true,        .init = false,    },
     {        .num = 5,        .valid = true,        .init = false,    },
     {        .num = 6,        .valid = true,        .init = false,    },
-    {        .num = FIR_MUN_CHIRP_CORRELATION,        .valid = true,        .init = false,    },
-    {        .num = FIR_MUN_SOUND_DIR,        .valid = true,        .init = false,    },
+#endif
 };
 
-uint32_t fir_get_cnt(void) {
-    uint8_t cnt = 0;
-    cnt = ARRAY_SIZE(FirConfig);
-    return cnt;
-}
+
+COMPONENT_GET_CNT(Fir, fir)
+

@@ -1,4 +1,3 @@
-
 #ifndef XML_CONFIG_H
 #define XML_CONFIG_H
 

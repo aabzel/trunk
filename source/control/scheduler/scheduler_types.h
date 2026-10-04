@@ -28,6 +28,7 @@ typedef struct  {
     uint64_t period_us; /* mininum task invocation period in microseconds*/
     bool on;
     bool init;
+    uint32_t num;
 }SchedulerTaskHandle_t;
 
 #ifdef HAS_SCHEDULER_CONFIG

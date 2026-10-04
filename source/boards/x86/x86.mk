@@ -5,8 +5,8 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
     BOARD_CFG_DIR = $(BOARD_DIR)/x86
     #$(error BOARD_CFG_DIR=$(BOARD_CFG_DIR))
 
-    OPT += -DHAS_X86
-    OPT += -DHAS_PC
+    MCAL_OPT += -DHAS_X86
+    MCAL_OPT += -DHAS_PC
 
     INCDIR += -I$(BOARD_CFG_DIR)
 
@@ -14,34 +14,54 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         @echo $(error Board has been selected before)
     endif
 
-    SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_api.c
+    SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_config.c
     SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/board_monitor.c
 
     ifeq ($(GPIO),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/gpio_config.c
     endif
-    
+
     ifeq ($(BPSK),Y)
         $(info Add config BPSK)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/bpsk_config.c
+    endif
+
+    ifeq ($(SLIDING_INTEGRAL),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/sliding_integral_config.c
+    endif
+
+    ifeq ($(BPSK_4FS),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/bpsk_4fs_config.c
     endif
 
     ifeq ($(CORRELATOR),Y)
         $(info Add config CORRELATOR)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/correlator_config.c
     endif
+    
+    ifeq ($(CAN),Y)
+        $(info Add config SCAN)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/can_config.c
+    endif
+
+    ifeq ($(DDS),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/dds_config.c
+    endif
 
     ifeq ($(FW_LOADER),Y)
         $(info Add config FW_LOADER)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/fw_loader_config.c
     endif
-    
-    
+
+    ifeq ($(POSTPONE_FUN),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/postpone_fun_config.c
+    endif
+
     ifeq ($(SCAN),Y)
         $(info Add config SCAN)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/scan_config.c
     endif
-    
+
     ifeq ($(QUADRATURE_MIXER),Y)
         $(info Add config QUADRATURE_MIXER)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/quadrature_mixer_config.c
@@ -84,7 +104,6 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
     ifeq ($(TOPO_SORT),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/topo_sort_config.c
     endif
-    
 
     ifeq ($(GPS_1BIT),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/gps_1bit_config.c
@@ -123,9 +142,18 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/iir_config.c
     endif
 
+    ifeq ($(FAT_FS),Y)
+        $(info Config FAT_FS)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/fat_fs_config.c
+    endif
+
     ifeq ($(KEEPASS),Y)
         $(info Config KeePass)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/keepass_config.c
+    endif
+
+    ifeq ($(LITTLE_FS),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/little_fs_config.c
     endif
 
     ifeq ($(NOR_FLASH),Y)
@@ -133,12 +161,16 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/nor_flash_config.c
     endif
 
+    ifeq ($(ESP_01),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/esp_01_config.c
+    endif
+
     ifeq ($(SET),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/set_config.c
     endif
 
-    ifeq ($(STRING_READER),Y)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/string_reader_config.c
+    ifeq ($(IQUEUE),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/iqueue_config.c
     endif
 
     ifeq ($(SDR),Y)
@@ -146,15 +178,27 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/local_oscillator_config.c
     endif
 
-    ifeq ($(SOCKET),Y)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/socket_config.c
+    ifeq ($(STRING_READER),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/string_reader_config.c
     endif
 
     ifeq ($(SERIAL_PORT),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/serial_port_config.c
     endif
 
+    ifeq ($(SOCKET),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/socket_config.c
+    endif
 
+    ifeq ($(SONAR),Y)
+        $(info Config SONAR)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/sonar_config.c
+    endif
+
+    ifeq ($(SOUND_LOCALIZATION),Y)
+        $(info Add config SOUND_LOCALIZATION)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/sound_localization_config.c
+    endif
 
     ifeq ($(SW_NOR_FLASH),Y)
         $(info Config SwNvRam)
@@ -176,11 +220,10 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/sw_nvram_config.c
     endif
 
-    ifeq ($(DECAWAVE),Y)
-        $(info Add config DECAWAVE)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/decawave_proto_config.c
+    ifeq ($(SLCAN),Y)
+        SOURCES_C += $(BOARD_CFG_DIR)/slcan_config.c
     endif
-    
+
     ifeq ($(FIR),Y)
         $(info Add config FIR)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/fir_config.c
@@ -206,29 +249,61 @@ ifneq ($(LAP_TOP_X86_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/running_line_config.c
     endif
 
+    ifeq ($(STORE_FS),Y)
+        $(info Config STORE_FS)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/store_fs_config.c
+    endif
+
+    ifeq ($(FILE_MCAL),Y)
+        $(info Add config FILE_API)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/file_mcal_config.c
+    endif
+
     ifeq ($(TIME),Y)
         $(info Add config TIME)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/time_config.c
     endif
 
-    ifeq ($(WAV),Y)
-        $(info Config WAV)
-        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/wav_config.c
+    ifeq ($(UDS_SERVER),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/did_config.c
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/uds_server_config.c
     endif
-    
+
+    ifeq ($(QUAD_MIX_4FS),Y)
+        $(info Add config QUAD_MIX_4FS)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/quad_mix_4fs_config.c
+    endif
+
     ifeq ($(ISO_TP),Y)
         $(info Add config ISO_TP)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/iso_tp_config.c
     endif
 
+    ifeq ($(UDS_CLIENT),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/uds_client_config.c
+    endif
+
+    ifeq ($(CORRELATOR_NAIV_S16),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/correlator_naiv_s16_config.c
+    endif
+
+    ifeq ($(CORRELATOR_S16),Y)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/correlator_s16_config.c
+    endif
+
     ifeq ($(TBFP),Y)
         $(info Add config TBFP)
-        OPT += -DTBFP_MAX_PAYLOAD=512
+        MCAL_OPT += -DTBFP_MAX_PAYLOAD=512
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c
     endif
 
     ifeq ($(XML),Y)
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/xml_config.c
+    endif
+
+    ifeq ($(WAV),Y)
+        $(info Config WAV)
+        SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/wav_config.c
     endif
 
     BOARD_SELECTED=Y

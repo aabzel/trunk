@@ -37,8 +37,7 @@ bool clock_control(ClockDomain_t domain, bool on_off) {
     return res;
 }
 
-
-bool clock_init(void) {
+bool clock_mcal_init(void) {
     LOG_WARNING(CLK, "Init..");
     bool res = false;
     return res;

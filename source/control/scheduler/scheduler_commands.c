@@ -77,7 +77,7 @@ bool scheduler_ctrl_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        SchedulerTaskHandle_t* Task = SchedulerNunToTaskNode(num, task_num);
+        SchedulerTaskHandle_t* Task = SchedulerTaskIndexToTaskNode(num, task_num);
         if(Task) {
             Task->limiter.on_off = scheduler_state;
             LOG_INFO(SCHEDULER, "%s", SchedulerTaskToStr(Task));

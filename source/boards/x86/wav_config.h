@@ -7,6 +7,13 @@ extern "C" {
 
 #include "wav_types.h"
 
+typedef enum{
+    WAV_NUM_READ,
+    WAV_NUM_WRITE,
+    WAV_NUM_GENERATE,
+    WAV_NUM_CNT,
+}WavLegalNums_t;
+
 extern const WavConfig_t WavConfig[];
 extern WavHandle_t WavInstance[];
 

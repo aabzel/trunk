@@ -9,19 +9,19 @@ ifneq ($(CLOCK_CUSTOM_MK_INC),Y)
     #@echo $(error CLOCK_CUSTOM_DIR=$(CLOCK_CUSTOM_DIR))
 
     INCDIR += -I$(CLOCK_CUSTOM_DIR)
-    OPT += -DHAS_CLOCK
-    OPT += -DHAS_CLOCK_CUSTOM
+    MCAL_OPT += -DHAS_CLOCK
+    MCAL_OPT += -DHAS_CLOCK_CUSTOM
 
     SOURCES_CONFIGURATION_C += $(CLOCK_CUSTOM_DIR)/clock.c
 
     ifeq ($(DIAG),Y)
-        OPT += -DHAS_CLOCK_CUSTOM_DIAG
+        MCAL_OPT += -DHAS_CLOCK_CUSTOM_DIAG
         SOURCES_CONFIGURATION_C += $(CLOCK_CUSTOM_DIR)/clock_custom_diag.c
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(CLOCK_COMMANDS),Y)
-            OPT += -DHAS_CLOCK_CUSTOM_COMMANDS
+            MCAL_OPT += -DHAS_CLOCK_CUSTOM_COMMANDS
             SOURCES_CONFIGURATION_C += $(CLOCK_CUSTOM_DIR)/clock_custom_commands.c
         endif
     endif

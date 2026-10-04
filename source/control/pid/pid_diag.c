@@ -5,15 +5,73 @@
 #include <string.h>
 
 #include "common_diag.h"
-#ifdef HAS_GPIO
-#include "gpio_diag.h"
-#endif
 #include "log.h"
 #include "num_to_str.h"
 #include "pid.h"
+#include "storage_diag.h"
 #include "str_utils.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
+#ifdef HAS_GPIO
+#include "gpio_diag.h"
+#endif
+
+
+
+const char* PidNodeManualToStr(const PidHandle_t* const Node) {
+    static char temp[250] = "";
+    strcpy(temp, "");
+    if(Node) {
+        snprintf(temp, sizeof(temp), "%sN:%u,", temp, Node->num);
+        snprintf(temp, sizeof(temp), "%sManual:%u,", temp, Node->manual);
+        snprintf(temp, sizeof(temp), "%sOut:%5.3f,", temp, Node->out);
+        snprintf(temp, sizeof(temp), "%sErr:%5.2f,", temp, Node->error);
+        snprintf(temp, sizeof(temp), "%sSumErr:%5.2f,", temp, Node->error_sum);
+        snprintf(temp, sizeof(temp), "%sDiffErr:%5.2f,", temp, Node->error_diff);
+    }
+
+    return temp;
+}
+
+const char* PidNodeToStr(const PidHandle_t* const Node) {
+    static char temp[250] = "";
+    strcpy(temp, "");
+    if(Node) {
+        snprintf(temp, sizeof(temp), "%sN%u,", temp, Node->num);
+        snprintf(temp, sizeof(temp), "%sDiffErr:%5.2f,", temp, Node->error_diff);
+        snprintf(temp, sizeof(temp), "%sOut:%5.2f,", temp, Node->out);
+        //snprintf(temp, sizeof(temp), "%sRead:%5.2f,", temp, Node->read);
+        snprintf(temp, sizeof(temp), "%sSumErr:%5.1f,", temp, Node->error_sum);
+        snprintf(temp, sizeof(temp), "%sP:%5.4f,", temp, Node->p);
+        snprintf(temp, sizeof(temp), "%sI:%5.4f,", temp, Node->i);
+        snprintf(temp, sizeof(temp), "%sD:%5.4f,,", temp, Node->d);
+        snprintf(temp, sizeof(temp), "%sTrg:%5.2f->", temp, Node->last_target);
+        snprintf(temp, sizeof(temp), "%s%5.2f,", temp, Node->target);
+        snprintf(temp, sizeof(temp), "%sErr:%5.2f,", temp, Node->error);
+        snprintf(temp, sizeof(temp), "%sshift:%5.2f,", temp, Node->shift);
+        snprintf(temp, sizeof(temp), "%sd_sum:%5.2f,", temp, Node->d_sum);
+    }
+    return temp;
+}
+
+const char* PidConfigToStr(const PidConfig_t* const Config) {
+    static char temp[150] = "";
+    strcpy(temp, "");
+    if(Config) {
+        snprintf(temp, sizeof(temp), "%sN:%u,", temp, Config->num);
+        snprintf(temp, sizeof(temp), "%sADC:%u,", temp, Config->adc_channel_num);
+        snprintf(temp, sizeof(temp), "%sPWM:%u,", temp, Config->pwm_dac_num);
+        snprintf(temp, sizeof(temp), "%sPeriod:%f s,", temp, Config->period_s);
+        snprintf(temp, sizeof(temp), "%sP:%f,", temp, Config->p);
+        snprintf(temp, sizeof(temp), "%sI:%f,", temp, Config->i);
+        snprintf(temp, sizeof(temp), "%sD:%f,", temp, Config->d);
+        snprintf(temp, sizeof(temp), "%s%s,", temp, Config->name);
+        snprintf(temp, sizeof(temp), "%sUnits:%s", temp, StorageUnitsToStr(Config->units));
+    }
+
+    return temp;
+}
 
 bool pid_diag(char* key_word1, char* key_word2) {
     bool res = false;
@@ -22,7 +80,7 @@ bool pid_diag(char* key_word1, char* key_word2) {
     uint32_t cnt = pid_get_cnt();
     LOG_INFO(PID, "Cnt:%u", cnt);
     static const table_col_t cols[] = {
-        {15, "name"}, {5, "Num"}, {9, "target"},  {9, "read"},     {10, "out"}, {9, "P"},  {9, "I"},
+        {15, "temp"}, {5, "Num"}, {9, "target"},  {9, "read"},     {10, "out"}, {9, "P"},  {9, "I"},
         {9, "D"},     {9, "err"}, {11, "errSum"}, {11, "errDiff"}, {5, "init"}, {5, "on"},
     };
 
@@ -60,41 +118,4 @@ bool pid_diag(char* key_word1, char* key_word2) {
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
     return res;
-}
-
-const char* PidConfigToStr(const PidConfig_t* const Config) {
-    static char name[150] = "";
-    strcpy(name, "");
-    if(Config) {
-        snprintf(name, sizeof(name), "%sN:%u,", name, Config->num);
-        snprintf(name, sizeof(name), "%sADC:%u,", name, Config->adc_channel_num);
-        snprintf(name, sizeof(name), "%sPWM:%u,", name, Config->pwm_dac_num);
-        snprintf(name, sizeof(name), "%sPeriod:%llu us,", name, Config->period_us);
-        snprintf(name, sizeof(name), "%sP:%f,", name, Config->p);
-        snprintf(name, sizeof(name), "%sI:%f,", name, Config->i);
-        snprintf(name, sizeof(name), "%sD:%f,", name, Config->d);
-        snprintf(name, sizeof(name), "%s%s,", name, Config->name);
-        snprintf(name, sizeof(name), "%sUnit:%u", name, Config->unit);
-    }
-
-    return name;
-}
-
-const char* PidNodeToStr(const PidHandle_t* const Node) {
-    static char name[150] = "";
-    if(Node) {
-        strcpy(name, "");
-        snprintf(name, sizeof(name), "%sN:%u,", name, Node->num);
-        snprintf(name, sizeof(name), "%sOut:%5.3f,", name, Node->out);
-        snprintf(name, sizeof(name), "%sRead:%5.2f,", name, Node->read);
-        snprintf(name, sizeof(name), "%sTarget:%5.2f,", name, Node->target);
-        snprintf(name, sizeof(name), "%sErr:%5.2f,", name, Node->error);
-        snprintf(name, sizeof(name), "%sSumErr:%5.2f,", name, Node->error_sum);
-        snprintf(name, sizeof(name), "%sDiffErr:%5.2f,", name, Node->error_diff);
-        snprintf(name, sizeof(name), "%sP:%5.2f,", name, Node->p);
-        snprintf(name, sizeof(name), "%sI:%5.2f,", name, Node->i);
-        snprintf(name, sizeof(name), "%sD:%5.2f,,", name, Node->d);
-    }
-
-    return name;
 }

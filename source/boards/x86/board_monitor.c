@@ -1,4 +1,3 @@
-
 #include "board_monitor.h"
 
 bool board_check(void) {

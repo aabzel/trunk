@@ -2,55 +2,63 @@
 
 #ifndef HAS_SPI
 #error "Add HAS_SPI"
-#endif /*HAS_SPI*/
+#endif
 
 #include "data_utils.h"
 #include "spi_types.h"
 
 const SpiConfig_t SpiConfig[] = {
-    //{.num=1 , .name="SPI1",  .bit_rate_hz=2000000, .valid=true},
+#ifdef HAS_SPI1
+   {
+           .num = 1,
+           .name = "W25Q16",
+           .bit_rate_hz = 250000,
+           .bus_role = BUS_ROLE_MASTER,
+           .frame_size =  8,
+           .tx_mode = SPI_TX_FULL_DUPLEX,
+           .move_mode = MOVE_MODE_INTERRUPT,
+           .bit_order = BIT_ORDER_LSB,
+           .polarity =  SPI_POLARITY_LATCH_FALING,
+           .phase =  SPI_CLK_IDLE_LEVEL_1,
+           .chip_select = SPI_CHIP_SEL_SW,
+           .interrupt_on = true,
+           .irq_priority =  0,
+           .valid = true,
+   },
+#endif
+
+#ifdef HAS_SPI2
     {
         .num = 2,
-        .name = "SPI2",
-        .bit_rate_hz = 20000000,
-        .bit_order = SPI_MOST_SIGNIFICANT_BIT_FIRST,
+        .bit_order = BIT_ORDER_MSB, //BIT_ORDER_LSB LackOfAntiPattern:0xff,After:1025 try, // BIT_ORDER_MSB read R1=0x80,
+        .direction = SPI_DIRECTION_2WIRES,
         .polarity = SPI_POLARITY_LATCH_RISING,
         .chip_select = SPI_CHIP_SEL_SW,
-        .phase = SPI_PHASE_0,
-        .irq_priority = 1,
+        .bit_rate_hz = 200000,//300000,
+        .bus_role = IF_BUS_ROLE_MASTER,
+        .tx_mode = SPI_TX_FULL_DUPLEX,
+        .interrupt_on = true,
+        .name = "SD-CARD",
+        .move_mode = MOVE_MODE_INTERRUPT,
+        .frame_size = 8,
+        .irq_priority = 2,
+        .PadSck = { .port = PORT_B, .pin = 10, },
+        .PadMosi = { .port = PORT_B, .pin = 15, },
+        .PadMiso = { .port = PORT_B, .pin = 14, },
+        .phase = SPI_CLK_IDLE_LEVEL_0,
         .valid = true,
-
-        .PadSck =
-            {
-                .port = PORT_B,
-                .pin = 10,
-            },
-        .PadMosi =
-            {
-                .port = PORT_B,
-                .pin = 15,
-            },
-        .PadMiso =
-            {
-                .port = PORT_B,
-                .pin = 14,
-            },
     },
+#endif
 };
 
 SpiHandle_t SpiInstance[] = {
-    //{.num=1, .valid=true},
-    {.num = 2, .valid = true},
+#ifdef HAS_SPI1
+    {.num = 1, .valid = true,},
+#endif
+
+#ifdef HAS_SPI2
+    {.num = 2, .valid = true,},
+#endif
 };
 
-uint32_t spi_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(SpiInstance);
-    cnt2 = ARRAY_SIZE(SpiConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Spi, spi)

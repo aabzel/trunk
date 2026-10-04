@@ -3,7 +3,9 @@
 #include "data_utils.h"
 #include "log.h"
 
+#ifdef HAS_CLOCK_DIVIDER
 #include "clock_divider.h"
+#endif
 
 static bool schmitt_trigger1_proc_up(void) {
     bool res = false;
@@ -21,7 +23,9 @@ static bool schmitt_trigger1_proc_down(void) {
 static bool schmitt_trigger2_proc_up(void) {
     bool res = false;
     LOG_PARN(SCHMITT_TRIGGER, "Up2");
+#ifdef HAS_CLOCK_DIVIDER
     res = clock_divider_proc_period(1);
+#endif
     return res;
 }
 
@@ -34,7 +38,9 @@ static bool schmitt_trigger2_proc_down(void) {
 static bool schmitt_trigger3_proc_up(void) {
     bool res = false;
     LOG_PARN(SCHMITT_TRIGGER, "Up3");
+#ifdef HAS_CLOCK_DIVIDER
     res = clock_divider_proc_period(2);
+#endif
     return res;
 }
 
@@ -90,14 +96,5 @@ SchmittTriggerHandle_t SchmittTriggerInstance[] = {
     },
 };
 
-uint32_t schmitt_trigger_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(SchmittTriggerInstance);
-    cnt2 = ARRAY_SIZE(SchmittTriggerConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(SchmittTrigger, schmitt_trigger)
+

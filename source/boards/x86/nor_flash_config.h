@@ -9,10 +9,10 @@ extern "C" {
 
 #ifndef HAS_NOR_FLASH
 #error "+HAS_NOR_FLASH"
-#endif /*HAS_NOR_FLASH*/
+#endif
 
 extern const NorFlashConfig_t NorFlashConfig[];
-extern NorFlashItem_t NorFlashItem[];
+extern NorFlashInstance_t NorFlashInstance[];
 
 uint32_t nor_flash_get_cnt(void);
 

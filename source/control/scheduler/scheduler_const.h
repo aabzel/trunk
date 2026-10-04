@@ -3,4 +3,14 @@
 
 #include "scheduler_dep.h"
 
+typedef enum{
+   TASK_UNDEF,
+   TASK_SSD1306,
+   TASK_DASHBOARD,
+   TASK_EXT_INT,
+   TASK_INCREMENTAL_ENCODER,
+   TASK_INCREMENTAL_ENCODER_SHOW,
+   TASK_RUNNING_LINE,
+}SchedulerTaskCode_t;
+
 #endif /* SCHEDULER_CONST_H */

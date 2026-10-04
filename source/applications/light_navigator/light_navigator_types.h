@@ -6,7 +6,7 @@
 #include <time.h>
 
 #include "data_types.h"
-#include "flash_fs_file_ids.h"
+#include "storage_file_ids.h"
 #include "gnss_types.h"
 #include "light_navigator_const.h"
 
@@ -20,8 +20,8 @@
     char* filename;                                          \
     char* day_light_filename;                                \
     char* coordinate_filename;                               \
-    Id_t dawn_id;                                            \
-    Id_t sunset_id;
+    StorageId_t dawn_id;                                     \
+    StorageId_t sunset_id;
 
 typedef struct {
     LIGHT_NAVIGATOR_COMMON_VARIABLES
@@ -44,6 +44,7 @@ typedef struct {
     double temperature;
     double lambda_max_illumination;
     double day_length_h;
+    double day_length_prev_h;
     double max_day_length_h; /*continuous*/
     double delta_deg;
     double cordinate_error_m;

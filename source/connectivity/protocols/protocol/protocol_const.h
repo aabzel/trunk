@@ -20,22 +20,24 @@ typedef enum {
 } RxState_t;
 
 typedef enum {
-	PROTO_STACK_FRAME=1,
-	PROTO_AT_COMMANDS=2,
-	PROTO_BASE64=3,
-	PROTO_BASE16=4,
-	PROTO_CLI=5,
-	PROTO_CSV=6,
-	PROTO_DECAWAVE=7,
-	PROTO_DS_TWR=8,
-	PROTO_NMEA=9,
-	PROTO_RDS=10,
-	PROTO_RTCM3=11,
-	PROTO_TBFP=12,
-	PROTO_UBX=13,
+    PROTO_STACK_FRAME = 1,
+    PROTO_AT_COMMANDS = 2,
+    PROTO_BASE64 = 3,
+    PROTO_BASE16 = 4,
+    PROTO_CLI = 5,
+    PROTO_CSV = 6,
+    PROTO_DECAWAVE = 7,
+    PROTO_DS_TWR = 8,
+    PROTO_NMEA = 9,
+    PROTO_RDS = 10,
+    PROTO_RTCM3 = 11,
+    PROTO_TBFP = 12,
+    PROTO_UBX = 13,
+    PROTO_ISO_TP = 14,
+    PROTO_J1939 = 15,
 
-	PROTO_UNDEF=0,
-}Protocol_t;
+    PROTO_UNDEF = 0,
+} Protocol_t;
 
 #ifdef __cplusplus
 }

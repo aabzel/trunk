@@ -3,6 +3,27 @@
 
 #include "string_reader_types.h"
 
+typedef enum{
+    STRING_READER_NUM_UNDEF=0,
+
+#ifdef HAS_UART1
+    STRING_READER_NUM_UART1,
+#endif
+
+#ifdef HAS_UART2
+    STRING_READER_NUM_UART2,
+#endif
+
+#ifdef HAS_USB
+    STRING_READER_NUM_USB,
+#endif
+
+    STRING_READER_NUM_CNT,
+
+}StringReaderLeglNums_t;
+
+
+
 extern const StringReaderConfig_t StringReaderConfig[];
 extern StringReaderHandle_t StringReaderInstance[];
 

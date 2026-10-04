@@ -2,44 +2,48 @@
 
 #include <stddef.h>
 
+#include "file_mcal_config.h"
 #include "data_utils.h"
 
 const WavConfig_t WavConfig[] = {
     {
-        .num = 1,
+        .num = WAV_NUM_READ,
+        .file_num = FILE_MCAL_READ,
+        .channels = 2,
         .valid = true,
-        .sampling_frequency_hz = 44100,
-        .sample_cnt = 5000,
-        .file_name = "track.wav",
-        .name = "Rec",
+        .sampling_frequency_hz = 48000,
+        .sample_cnt = 10000,
+        .file_name_dflt = "out.wav",
+        .name = "Play",
     },
     {
-        .num = 2,
+        .num = WAV_NUM_WRITE,
+        .channels = 2,
+        .file_num = FILE_MCAL_WRITE,
         .valid = true,
-        .sampling_frequency_hz = 44100,
+        .sampling_frequency_hz = 48000,
         .sample_cnt = 5000,
-        .file_name = "track.wav",
+        .file_name_dflt = "track.wav",
+        .name = "pulse",
+    },
+
+    {
+        .num = WAV_NUM_GENERATE,
+        .channels = 2,
+        .file_num = FILE_MCAL_WRITE,
+        .valid = true,
+        .sampling_frequency_hz = 48000,
+        .sample_cnt = 5000,
+        .file_name_dflt = "out.wav",
         .name = "pulse",
     },
 };
 
 WavHandle_t WavInstance[] = {
-    {
-        .num = 1,
-        .valid = true,
-    },
-    {
-        .num = 2,
-        .valid = true,
-    },
+    {        .num = WAV_NUM_READ,        .valid = true,    },
+    {        .num = WAV_NUM_WRITE,        .valid = true,    },
+    {        .num = WAV_NUM_GENERATE,        .valid = true,    },
 };
 
-uint32_t wav_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt_conf = ARRAY_SIZE(WavConfig);
-    uint32_t cnt_ints = ARRAY_SIZE(WavInstance);
-    if(cnt_conf == cnt_ints) {
-        cnt = cnt_ints;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Wav, wav)
+

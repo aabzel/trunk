@@ -5,8 +5,8 @@ ifneq ($(LIGHT_NAVIGATOR_MK_INC),Y)
 
     #@ echo $(error LIGHT_NAVIGATOR_DIR = $(LIGHT_NAVIGATOR_DIR))
     #@ echo $(error CFLAGS = $(CFLAGS)) 
-    OPT += -DHAS_LIGHT_NAVIGATOR
-    OPT += -DHAS_LIGHT_NAVIGATOR_PROC
+    MCAL_OPT += -DHAS_LIGHT_NAVIGATOR
+    MCAL_OPT += -DHAS_LIGHT_NAVIGATOR_PROC
 
     INCDIR += -I$(LIGHT_NAVIGATOR_DIR)
 
@@ -16,7 +16,7 @@ ifneq ($(LIGHT_NAVIGATOR_MK_INC),Y)
 
     ifeq ($(CLI),Y)
         ifeq ($(LIGHT_NAVIGATOR_COMMANDS),Y)
-            OPT += -DHAS_LIGHT_NAVIGATOR_COMMANDS
+            MCAL_OPT += -DHAS_LIGHT_NAVIGATOR_COMMANDS
             SOURCES_C += $(LIGHT_NAVIGATOR_DIR)/light_navigator_commands.c
         endif
     endif

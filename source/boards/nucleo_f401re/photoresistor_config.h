@@ -1,9 +1,7 @@
 #ifndef PHOTO_RESISTOR_CONFIG_GENERAL_H
 #define PHOTO_RESISTOR_CONFIG_GENERAL_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "photoresistor_types.h"
 
 extern const PhotoResistorConfig_t PhotoResistorConfig[];

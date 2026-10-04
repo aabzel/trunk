@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "gpio_mcal.h"
-#include "gpio_types.h"
+//#include "gpio_mcal.h"
+//#include "gpio_types.h"
 #include "stm32f4xx_hal.h"
 #include "sys_config.h"
 

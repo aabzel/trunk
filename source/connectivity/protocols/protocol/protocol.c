@@ -89,7 +89,7 @@ bool protocol_check_flow_control(const facility_t facility, FlowCrtl_t* const No
                                  const InterfaceType_t inter_face) {
     bool res = false;
     if(Node) {
-        //Node->rx_cnt++;
+        Node->rx_cnt++;
         // LOG_PARN(facility, "%s PrevSN:%u SN:%u flow:%u", InterfaceTypeToStr(inter_face), Node->prev_s_num, snum,
         // Node->cur);
         Node->prev_flow = Node->cur;

@@ -1,12 +1,8 @@
 #ifndef RELAY_CONSTANTS_H
 #define RELAY_CONSTANTS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-#include <stdbool.h>
-
+#include "std_includes.h"
 #include "relay_dep.h"
 #include "time_mcal.h"
 
@@ -29,8 +25,5 @@ typedef enum {
     RELAY_MODE_UNDEF = 0,
 } RelayMode_t;
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 #endif /*RELAY_CONSTANTS_H*/

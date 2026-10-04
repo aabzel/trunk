@@ -9,4 +9,4 @@
 #define HSE_VALUE 8000000
 #endif
 
-#endif /* BOARD_NUCLEO_F401RE_H   */
+#endif

@@ -26,7 +26,7 @@
 #endif
 
 #ifndef HAS_FAT_FS
-#error "+HAS_FAT_FS"
+#warning "+HAS_FAT_FS"
 #endif
 
 #ifndef HAS_EXTERNAL_RTC

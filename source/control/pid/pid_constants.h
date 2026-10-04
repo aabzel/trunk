@@ -10,9 +10,7 @@ extern "C" {
 #include "pid_dep.h"
 #include "time_mcal.h"
 
-
-
-#define PID_POLL_PERIOD_US MSEC_2_USEC(1)
+#define PID_POLL_PERIOD_US MSEC_2_USEC(10)
 
 #ifdef __cplusplus
 } /* extern "C" */

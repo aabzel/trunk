@@ -30,14 +30,5 @@ ClockDividerHandle_t ClockDividerInstance[] = {
     },
 };
 
-uint32_t clock_divider_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(ClockDividerInstance);
-    cnt2 = ARRAY_SIZE(ClockDividerConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(ClockDivider, clock_divider)
+

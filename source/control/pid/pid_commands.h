@@ -15,15 +15,17 @@ bool pid_p_command(int32_t argc, char* argv[]);
 bool pid_i_command(int32_t argc, char* argv[]);
 bool pid_d_command(int32_t argc, char* argv[]);
 bool pid_init_command(int32_t argc, char* argv[]);
+bool pid_manual_command(int32_t argc, char* argv[]);
 
 #define PID_COMMANDS                                                  \
       SHELL_CMD("pid_target", "pidt", pid_target_command, "PidTarget"),     \
       SHELL_CMD("pid_ctrl", "pt", pid_ctrl_command, "PidControl"),     \
       SHELL_CMD("pid_diag", "pid", pid_diag_command, "PidDiag"),     \
       SHELL_CMD("pid_init", "pidn", pid_init_command, "PidInit"),     \
-      SHELL_CMD("pid_p", "pidp", pid_p_command, "PidP"),     \
-      SHELL_CMD("pid_i", "pidi", pid_i_command, "PidI"),     \
-      SHELL_CMD("pid_d", "pidd", pid_d_command, "PidD"),
+      SHELL_CMD("pid_manual", "pidm", pid_manual_command, "PidManualCtrl"),     \
+      SHELL_CMD("pid_p", "pidp", pid_p_command, "PidProp"),     \
+      SHELL_CMD("pid_i", "pidi", pid_i_command, "PidIntegral"),     \
+      SHELL_CMD("pid_d", "pidd", pid_d_command, "PidDiff"),
 
 #ifdef __cplusplus
 }

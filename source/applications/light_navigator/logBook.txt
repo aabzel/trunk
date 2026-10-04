@@ -1,0 +1,38 @@
+phi/lambda: 57.196777,34.558333 Deg, 2 Feb 2025
+phi/lambda: 55.934570,34.458333 Deg, 3 Feb 2025
+phi/lambda: 53.168457,34.829167 Deg, 4 Feb 2025
+phi/lambda: 58.757080,34.304167 Deg, 5 Feb 2025
+phi/lambda: 56.289062,33.670833 Deg, 10 Feb 2025
+phi/lambda: 53.603516,33.120833 Deg, 18 Feb 2025
+phi/lambda: 49.650391,33.920833 Deg, 19 Feb 2025
+phi/lambda: 52.550781,34.066667 Deg, 20 Feb 2025
+phi/lambda: 55.234985,34.504167 Deg, 23 Jun 2025
+phi/lambda: 55.091309,37.175000 Deg, 24 Jun 2025
+phi/lambda: 56.039307,36.220833 Deg, 25 Jun 2025
+
+
+DayDur:  8.394 h,SunDec:-17.306 Deg,Rise:05:29:58,2,Feb,2025,,Noon:09:41:46,Set:13:53:35,2,Feb,2025,,Lambda:34.558333 Deg
+DayDur:  8.644 h,SunDec:-17.032 Deg,Rise:05:22:51,3,Feb,2025,,Noon:09:42:10,Set:14:01:29,3,Feb,2025,,Lambda:34.458333 Deg
+DayDur:  9.055 h,SunDec:-16.752 Deg,Rise:05:09:02,4,Feb,2025,,Noon:09:40:41,Set:14:12:20,4,Feb,2025,,Lambda:34.829167 Deg
+DayDur:  8.371 h,SunDec:-16.467 Deg,Rise:05:31:40,5,Feb,2025,,Noon:09:42:47,Set:13:53:54,5,Feb,2025,,Lambda:34.304167 Deg
+DayDur:  9.078 h,SunDec:-14.972 Deg,Rise:05:12:58,10,Feb,2025,,Noon:09:45:19,Set:14:17:40,10,Feb,2025,,Lambda:33.670833 Deg
+DayDur:  9.899 h,SunDec:-12.355 Deg,Rise:04:50:33,18,Feb,2025,,Noon:09:47:31,Set:14:44:30,18,Feb,2025,,Lambda:33.120833 Deg
+DayDur: 10.251 h,SunDec:-12.010 Deg,Rise:04:36:48,19,Feb,2025,,Noon:09:44:19,Set:14:51:51,19,Feb,2025,,Lambda:33.920833 Deg
+DayDur: 10.113 h,SunDec:-11.662 Deg,Rise:04:40:22,20,Feb,2025,,Noon:09:43:44,Set:14:47:07,20,Feb,2025,,Lambda:34.066667 Deg
+DayDur: 17.433 h,SunDec: 23.432 Deg,Rise:00:58:59,23,Jun,2025,,Noon:09:41:59,Set:18:24:59,23,Jun,2025,,Lambda:34.504167 Deg
+DayDur: 17.394 h,SunDec: 23.418 Deg,Rise:00:49:28,24,Jun,2025,,Noon:09:31:18,Set:18:13:08,24,Jun,2025,,Lambda:37.175000 Deg
+DayDur: 17.623 h,SunDec: 23.397 Deg,Rise:00:46:26,25,Jun,2025,,Noon:09:35:07,Set:18:23:49,25,Jun,2025,,Lambda:36.220833 Deg
+
+
+lambda:25.066667,,10:19:44,2,Feb,2025,,LightMax:3.085217Lx
+lambda:67.816667,,07:28:44,3,Feb,2025,,LightMax:0.401739Lx
+lambda:35.475000,,09:38:06,4,Feb,2025,,LightMax:6.136087Lx
+lambda:55.116667,,08:19:32,5,Feb,2025,,LightMax:0.142609Lx
+lambda:56.037500,,08:15:51,10,Feb,2025,,LightMax:0.274348Lx
+lambda:56.216667,,08:15:08,18,Feb,2025,,LightMax:7.965217Lx
+lambda:68.795833,,07:24:49,19,Feb,2025,,LightMax:8.196957Lx
+lambda:48.679167,,08:45:17,20,Feb,2025,,LightMax:4.760870Lx
+lambda:44.437500,,09:02:15,23,Jun,2025,,LightMax:8.970870Lx
+lambda:43.583333,,09:05:40,24,Jun,2025,,LightMax:8.470435Lx
+lambda:43.625000,,09:05:30,25,Jun,2025,,LightMax:9.265652Lx
+

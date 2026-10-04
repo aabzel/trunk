@@ -84,7 +84,7 @@ bool scheduler_diag_run(const uint8_t num, char* key_word1, char* key_word2) {
     char lgLine[150] = {0};
     int32_t t = 0;
     for(t = 0; t < t_cnt; t++) {
-        SchedulerTaskHandle_t* Task = SchedulerNunToTaskNode(num, t);
+        SchedulerTaskHandle_t* Task = SchedulerTaskIndexToTaskNode(num, t);
         Limiter_t* Limiter = &(Task->limiter);
         cpu_use = (((float)Limiter->run_time_total_us) * 100.0) / ((float)all_scheduler_us);
         strcpy(lgLine, TSEP);
@@ -128,7 +128,7 @@ bool scheduler_diag(const uint8_t num, char* key_word1, char* key_word2) {
     all_scheduler_us = scheduler_all_run_time_us(num);
 
     LOG_INFO(SCHEDULER, "up_time:%u ms", up_time_ms);
-    super_cycle_diag();
+    // super_cycle_diag();
 
     // uint64_t total_run_time_us = super_cycle_run_time_us();
     // LOG_INFO(SCHEDULER, "TotalRunTime:%f s", usec_to_sec(total_run_time_us));
@@ -143,7 +143,7 @@ bool scheduler_diag(const uint8_t num, char* key_word1, char* key_word2) {
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     char lgLine[150] = {0};
     for(t = 0; t < t_cnt; t++) {
-        SchedulerTaskHandle_t* Task = SchedulerNunToTaskNode(num, t);
+        SchedulerTaskHandle_t* Task = SchedulerTaskIndexToTaskNode(num, t);
         if(Task) {
             Limiter_t* Limiter = &(Task->limiter);
             if(Limiter) {
@@ -186,7 +186,7 @@ bool scheduler_diag(const uint8_t num, char* key_word1, char* key_word2) {
 bool scheduler_diag_period(const uint8_t num, char* key_word1, char* key_word2) {
     bool res = false;
     uint32_t t_cnt = scheduler_get_task_cnt(num);
-    super_cycle_diag();
+    // super_cycle_diag();
     int32_t t = 0;
     uint64_t total_run_time_us = super_cycle_run_time_us(num);
     LOG_INFO(SCHEDULER, "SchedulerCnt %u,UpTime:%f s" CRLF, t_cnt, USEC_2_SEC(total_run_time_us));
@@ -202,7 +202,7 @@ bool scheduler_diag_period(const uint8_t num, char* key_word1, char* key_word2) 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
     char lgLine[150];
     for(t = 0; t < t_cnt; t++) {
-        SchedulerTaskHandle_t* Task = SchedulerNunToTaskNode(num, t);
+        SchedulerTaskHandle_t* Task = SchedulerTaskIndexToTaskNode(num, t);
         if(Task) {
             Limiter_t* Limiter = &(Task->limiter);
             if(Limiter) {

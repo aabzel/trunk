@@ -85,6 +85,6 @@ const char* RelayConfigToStr(const RelayConfig_t* const Config) {
     static char name[150] = "";
     snprintf(name, sizeof(name), "N:%u,%s,Mode:%s,Set:%s,Get:%s,Active:%s,Duty:%u", Config->num, Config->name,
              RelayModeToStr(Config->mode), GpioPadToStr(Config->pad_set), GpioPadToStr(Config->pad_get),
-             GpioLevel2Str(Config->active), Config->duty);
+             GpioLevelToStr(Config->active), Config->duty);
     return name;
 }

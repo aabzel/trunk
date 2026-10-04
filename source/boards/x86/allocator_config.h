@@ -5,6 +5,10 @@
 extern "C" {
 #endif
 
+#ifndef HAS_ALLOCATOR
+#error "+HAS_ALLOCATOR"
+#endif
+
 #include "macro_utils.h"
 
 #define TOTAL_HEAP_SIZE (10*K_BYTES)

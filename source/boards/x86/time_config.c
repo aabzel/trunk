@@ -4,7 +4,7 @@
 
 const TimeConfig_t TimeConfig[] = {
     {
-        .num = 1,
+        .num = TIME_NUM_MAIN,
         .time_source = TIME_SRC_WIN_CLOCK,
         .valid = true,
     },
@@ -12,19 +12,10 @@ const TimeConfig_t TimeConfig[] = {
 
 TimeHandle_t TimeInstance[] = {
     {
-        .num = 1,
+        .num = TIME_NUM_MAIN,
         .valid = true,
     },
 };
 
-uint32_t time_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(TimeInstance);
-    cnt2 = ARRAY_SIZE(TimeConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Time, time)
+

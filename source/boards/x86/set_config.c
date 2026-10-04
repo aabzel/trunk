@@ -21,12 +21,6 @@ SetItem_t SetItem[] = {
     },
 };
 
-uint32_t set_get_instance_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt_conf = ARRAY_SIZE(SetConfig);
-    uint32_t cnt_ints = ARRAY_SIZE(SetItem);
-    if(cnt_conf == cnt_ints) {
-        cnt = cnt_ints;
-    }
-    return cnt;
-}
+
+COMPONENT_GET_CNT(Set, set)
+

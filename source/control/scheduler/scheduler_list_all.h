@@ -13,7 +13,8 @@
 #define ASICS_TASK
 #endif
 
-#ifdef HAS_BOARD
+//#ifdef HAS_BOARD
+#if 0
 #include "board_task.h"
 #else
 #define BOARD_TASKS

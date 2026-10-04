@@ -18,14 +18,5 @@ SocketHandle_t SocketInstance[]={
     {.num=4, .valid=true,},
 };
 
-uint32_t socket_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(SocketInstance);
-    cnt2 = ARRAY_SIZE(SocketConfig);
-    if(cnt1==cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+
+COMPONENT_GET_CNT(Socket, socket)

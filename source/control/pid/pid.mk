@@ -5,7 +5,7 @@ ifneq ($(PID_MK_INC),Y)
     $(info + PID)
 
     PID_DIR = $(CONTROL_DIR)/pid
-    #@echo $(error PID_DIR=$(PID_DIR))
+    # $(error PID_DIR=$(PID_DIR))
 
     MCAL_OPT += -DHAS_PID
 

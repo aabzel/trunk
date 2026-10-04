@@ -1,9 +1,7 @@
 #ifndef CLOCK_CONFIG_H
 #define CLOCK_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "clock_types.h"
 
 extern ClockConfig_t ClockConfig;

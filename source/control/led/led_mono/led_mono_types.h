@@ -40,6 +40,7 @@ typedef struct {
     bool init;
     LedMode_t prev_mode;
     uint32_t cur_time_ms;
+    uint32_t counter;
     uint32_t spin;
 } LedMonoHandle_t;
 

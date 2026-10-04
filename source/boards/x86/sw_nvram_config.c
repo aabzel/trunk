@@ -59,12 +59,6 @@ NvRamItem_t NvRamItem[] = {
     },
 };
 
-uint32_t sw_nvram_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt_conf = ARRAY_SIZE(NvRamConfig);
-    uint32_t cnt_ints = ARRAY_SIZE(NvRamItem);
-    if(cnt_conf == cnt_ints) {
-        cnt = cnt_ints;
-    }
-    return cnt;
-}
+
+COMPONENT_GET_CNT(NvRam, sw_nvram)
+

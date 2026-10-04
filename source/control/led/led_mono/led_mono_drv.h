@@ -45,6 +45,8 @@ bool led_mono_set_on_duty(const uint8_t num, const float on_duty) ;
 bool led_set_state(Pad_t Pad, GpioLogicLevel_t des_logic_level);
 bool led_mono_blink(uint8_t num, uint32_t duration_ms);
 bool led_mono_frequency_set(uint8_t num, float freq);
+bool led_mono_counter_add(uint8_t num, const uint32_t counter);
+bool led_mono_sw_pwm_duty(uint8_t num, float duty) ;
 bool led_mono_sw_pwm(uint8_t num, float freq, float duty);
 bool led_mono_hw_pwm(uint8_t num, float freq, float duty);
 bool led_mono_ctrl(const uint8_t num, const bool on_off);
@@ -56,6 +58,7 @@ bool led_mono_mode_set(uint8_t num, LedMode_t mode);
 bool led_mono_set(uint8_t num, GpioLogicLevel_t level);
 
 /*Getters*/
+uint32_t led_mono_counter_get(uint8_t num);
 bool led_mono_is_valid_num(uint8_t num);
 bool led_mono_set_off_duty(const uint8_t num, const float off_duty) ;
 float led_logic_level_to_duty(const LedMonoHandle_t* const Node, const GpioLogicLevel_t des_logic_level);

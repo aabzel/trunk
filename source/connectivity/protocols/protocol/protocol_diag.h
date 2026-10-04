@@ -12,8 +12,8 @@ extern "C" {
 #include "interfaces_types.h"
 #include "sys_constants.h"
 
-bool flow_ctrl_print_lost(facility_t facility, FlowCrtl_t* Node, uint16_t s_num, InterfaceType_t interface);
-bool flow_ctrl_diag(facility_t facility, FlowCrtl_t* Node, InterfaceType_t interface);
+bool flow_ctrl_print_lost(facility_t facility, FlowCrtl_t* Node, uint16_t s_num, InterfaceType_t inter_face);
+bool flow_ctrl_diag(facility_t facility, FlowCrtl_t* Node, InterfaceType_t inter_face);
 char* ProtocolRxStateToStr(RxState_t rx_state);
 char* Mask32ToStr(const Addr32Mask_t* const Mask);
 const char* FlowCtrlToStr(const FlowCrtl_t* const Node);

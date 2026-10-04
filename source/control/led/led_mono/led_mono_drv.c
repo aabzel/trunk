@@ -10,6 +10,10 @@
 #include "std_includes.h"
 #include "sys_config.h"
 
+#ifdef HAS_BACK_COUNT
+#include "back_count_mcal.h"
+#endif
+
 #ifdef HAS_PWM
 #include "pwm_mcal.h"
 #endif
@@ -225,9 +229,11 @@ static bool led_set_state_ll(LedMonoHandle_t* const Node, const GpioLogicLevel_t
         case LED_PHY_RELAY: {
         } break;
 
-        default:
+        default:{
+            GpioLogicLevel_t voltage = LedLogicLevel2Voltage(des_logic_level, Node->active);
+            res = gpio_logic_level_set(Node->pad, voltage);
             res = false;
-            break;
+        } break;
         }
 
         Node->prev = des_logic_level;
@@ -373,6 +379,44 @@ bool led_mono_frequency_set(const uint8_t num, const float frequency_hz) {
     return res;
 }
 
+bool led_mono_sw_pwm_duty(uint8_t num, float duty) {
+    bool res = false;
+    LedMonoHandle_t* Node = LedMonoGetNode(num);
+    if(Node) {
+        Node->duty = duty;
+        res = true;
+    }
+    return res;
+}
+
+bool led_mono_counter_add(uint8_t num, const uint32_t counter) {
+    bool res = false;
+    LedMonoHandle_t* Node = LedMonoGetNode(num);
+    if(Node) {
+        if(counter) {
+#ifdef HAS_BACK_COUNT
+            res = back_count_add(Node->back_count_num,   counter);
+            if(res){
+                Node->prev_mode = Node->mode;
+                Node->mode = LED_MCAL_MODE_COUNTER;
+            }
+#endif
+        }
+    }
+    return res;
+}
+
+uint32_t led_mono_counter_get(uint8_t num) {
+    bool counter = false;
+    LedMonoHandle_t* Node = LedMonoGetNode(num);
+    if(Node) {
+        counter=Node->counter ;
+    }
+    return counter;
+}
+
+
+
 bool led_mono_sw_pwm(uint8_t num, float freq_hz, float duty) {
     bool res = true;
     LedMonoHandle_t* Node = LedMonoGetNode(num);
@@ -508,12 +552,17 @@ bool led_mono_init_custom(void) {
     return res;
 }
 
+
+
 static bool led_mono_init_common(const LedMonoConfig_t* const Config, LedMonoHandle_t* const Node) {
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->back_count_num = Config->back_count_num;
             Node->active = Config->active;
+            Node->off_time_stamp = Config->off_time_stamp;
             Node->color = Config->color;
+            Node->ctrl_mode = Config->ctrl_mode;
             Node->group = Config->group;
             Node->prev = GPIO_LVL_UNDEF;
             Node->duty = Config->duty;
@@ -565,11 +614,13 @@ static bool led_mono_init_node(LedMonoHandle_t* const Node) {
 static bool LedMonoIsValidConfig(const LedMonoConfig_t* const Config) {
     bool res = false;
     if(Config) {
+        res = true;
         res = gpio_is_valid_pad(Config->pad);
         ifn(res) {
 #ifdef HAS_LOG
             LOG_ERROR(LED_MONO, "Gpio,Err:%u", Config->num);
 #endif
+            res = false;
         }
 
 #ifdef HAS_PWM
@@ -578,6 +629,7 @@ static bool LedMonoIsValidConfig(const LedMonoConfig_t* const Config) {
 #ifdef HAS_LOG
             LOG_ERROR(LED_MONO, "Duty,Err:%u", Config->num);
 #endif
+            res = false;
         }
 
         res = LedMonoIsValidConfigPwm(Config);
@@ -587,24 +639,28 @@ static bool LedMonoIsValidConfig(const LedMonoConfig_t* const Config) {
 #ifdef HAS_LOG
             LOG_ERROR(LED_MONO, "period,Err:%u", Config->num);
 #endif
+            res = false;
         }
 
         ifn(Config->name) {
 #ifdef HAS_LOG
             LOG_ERROR(LED_MONO, "name,Err:%u", Config->num);
 #endif
+            res = false;
         }
 
         ifn(Config->led_phy) {
 #ifdef HAS_LOG
             LOG_ERROR(LED_MONO, "ledPhy,Err:%u", Config->num);
 #endif
+            res = false;
         }
 
         ifn(Config->mode) {
 #ifdef HAS_LOG
             LOG_ERROR(LED_MONO, "mode,Err:%u", Config->num);
 #endif
+            res = false;
         }
     }
     return res;
@@ -679,6 +735,17 @@ static bool led_mono_proc_one_ll(LedMonoHandle_t* const Node) {
 #endif /*HAS_TIME*/
         uint8_t val = 0;
         switch(Node->mode) {
+#ifdef HAS_BACK_COUNT
+        case LED_MCAL_MODE_COUNTER: {
+            val = back_count_state_get(Node->back_count_num);
+            if (0xFF==val) {
+                val = 0;
+                Node->mode = LED_MCAL_MODE_PWM;
+            }
+            res = true;
+        } break;
+#endif
+
         case LED_MCAL_MODE_ON: {
             val = 1;
             res = true;
@@ -753,7 +820,6 @@ bool led_mono_proc_one(uint32_t num) {
 #ifdef HAS_LOG
     LOG_PARN(LED_MONO, "Proc:%u", num);
 #endif
-    led_mono_fix();
     LedMonoHandle_t* Node = LedMonoGetNode(num);
     if(Node) {
         res = led_mono_proc_one_ll(Node);

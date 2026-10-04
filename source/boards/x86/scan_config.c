@@ -3,12 +3,13 @@
 #include "data_utils.h"
 
 const ScanConfig_t ScanConfig[] = {
-   {.num=1,
-		   .threshold = 23.0,
-		   .timeout_s = 0.3,
-		   .valid = true,
-		   .sample_freq_hz = 44100,
-		   .name = "ConvLog",
+   {
+     .num = 1,
+     .threshold = 23.0,
+     .timeout_s = 0.3,
+     .valid = true,
+     .sample_freq_hz = 44100,
+     .name = "ConvLog",
     },
 };
 

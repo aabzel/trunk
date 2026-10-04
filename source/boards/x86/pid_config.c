@@ -6,32 +6,22 @@
 const PidConfig_t PidConfig[] = {
     {
         .num = 1,
-        .unit = UNITS_RADIANS,
-        .period_us =  SEC_2_USEC(1.0/44100.0), // 1/44100
+        .units = STORAGE_UNITS_RADIAN,
+        .period_s =  (1.0f/1000.0f),
         .p = 0.00,// proportional part
-        .i = -0.002,// integral part
+        .i = -0.02,// integral part
         .d = 0.00, // differential part
         .on = true,
         .valid = true,
-        .name = "PhaseErr",
+        .adc_channel_num = 0x55,
+        .pwm_dac_num = 0x55,
+        .name = "LocOcsPhase",
     },
 };
 
 PidHandle_t PidInstance[] = {
-    {
-        .num = 1,
-        .valid = true,
-    },
+    { .num = 1, .valid = true, },
 };
 
-uint32_t pid_get_cnt(void) {
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    uint32_t cnt = 0;
-    cnt1 = ARRAY_SIZE(PidConfig);
-    cnt2 = ARRAY_SIZE(PidInstance);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(Pid, pid)
+

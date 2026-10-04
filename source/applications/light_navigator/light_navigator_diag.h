@@ -8,10 +8,14 @@ extern "C" {
 #include "std_includes.h"
 #include "light_navigator_types.h"
 
+bool light_navigator_coordinate(void);
 bool light_navigator_diag(void);
 bool light_navigator_diag_one(uint8_t num);
 bool LightNavigatorDiag(const LightNavigatorHandle_t* const Node);
-const char* LightNavigatorDiag2Str(const LightNavigatorHandle_t* const Node);
+bool LightNavigatorDiagCoordinate(const LightNavigatorHandle_t* const Node);
+const char* LightNavigatorDiagToStr(const LightNavigatorHandle_t* const Node);
+const char* LightNavigatorCordLogToStr(const LightNavigatorHandle_t* const Node);
+const char* LightNavigatorDiagCoordinateToStr(const LightNavigatorHandle_t* const Node) ;
 
 #ifdef __cplusplus
 }

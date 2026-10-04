@@ -4,12 +4,13 @@
 #include "dashboard_const.h"
 
 const DashBoardConfig_t DashBoardConfig[] = {
-      {.num=1,
-       .valid=true,
-       .display_num=1,
-       .ds3231_num=1,
-       .bh1750_num=1,
-       .light_nav_num=2,
+      {
+          .num=1,
+          .valid=true,
+          .display_num=1,
+          .ds3231_num=1,
+          .bh1750_num=1,
+          .light_nav_num=2,
       },
 };
 

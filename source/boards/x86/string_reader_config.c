@@ -3,17 +3,21 @@
 #include "cli_drv.h"
 #include "data_utils.h"
 
-static char FifoData[500] = {0};
-static char LineData[500] = {0};
+#define SR_MAX_LINE 7000
+static uint8_t FifoData[SR_MAX_LINE] = {0};
+static uint8_t LineData[SR_MAX_LINE] = {0};
 
 const StringReaderConfig_t StringReaderConfig[] = {
     {
     .num = 1,
     .valid = true,
     .echo = true,
+    .core = 1,
     .cli_num = 1,
-    .interface_if = IF_STDIO,
-    .if_num = 0,
+    .interface_if = {
+                        .interface_name = INTERFACE_NAME_STDIO,
+                        .num = 0,
+                    },
     .name = "STDIN",
     .fifo_heap = FifoData,
     .fifo_heap_size = sizeof(FifoData),
@@ -29,14 +33,5 @@ StringReaderHandle_t StringReaderInstance[] = {
     }
 };
 
-uint32_t string_reader_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(StringReaderInstance);
-    cnt2 = ARRAY_SIZE(StringReaderConfig);
-    if(cnt1 == cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+
+COMPONENT_GET_CNT(StringReader, string_reader)

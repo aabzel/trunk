@@ -1,23 +1,23 @@
 #ifndef RELAY_TYPES_H
 #define RELAY_TYPES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "relay_constants.h"
 #include "gpio_types.h"
+#include "control_const.h"
+#include "pwm_types.h"
 
-
-#define RELAY_COMMON_VARIABLE    \
-    uint8_t num;                 \
-    Pad_t pad_set;               \
-    Pad_t pad_get;               \
-    bool valid;                  \
-    RelayMode_t mode;            \
-    uint8_t  duty;               \
-    char* name;                  \
-    GpioLogicLevel_t active;
+#define RELAY_COMMON_VARIABLE               \
+    PWM_SIGNAL_VARIABLES                    \
+    ControlMode_t ctrl_mode;                \
+    GpioLogicLevel_t active;                \
+    Pad_t pad_get;                          \
+    Pad_t pad_set;                          \
+    RelayMode_t mode;                       \
+    bool valid;                             \
+    char* con_name;                         \
+    char* name;                             \
+    uint8_t num;                            \
+    uint8_t pwm_num;
 
 typedef struct  {
     RELAY_COMMON_VARIABLE
@@ -38,8 +38,5 @@ typedef struct  {
     bool on;
 } RelayHandle_t;
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 #endif /*RELAY_TYPES_H*/

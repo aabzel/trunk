@@ -2,35 +2,35 @@
 
 #ifndef HAS_LED
 #error "Add HAS_LED"
-#endif /*HAS_LED*/
+#endif
 
+#include "back_count_config.h"
 #include "data_utils.h"
 #include "gpio_custom_const.h"
 
 const LedMonoConfig_t LedMonoConfig[] = {
-       {.num=LED_GREEN_ID,   
-       .period_ms=1000,
-       .phase_ms=0,
-       .duty=50,
-       .pad={.port=PORT_A, .pin=5},
-       .name="Green",
-       .mode=LED_MODE_PWM,
-       .active=GPIO_LVL_LOW,
-       .valid=true,},
+    {
+       .back_count_num = BACK_COUNT_WIFI_AP,
+       .num = LED_GREEN_ID,
+       .duty = 1,
+       .group = 1,
+       .led_phy = LED_PHY_GPIO,
+       .period_ms = 5000,
+       .phase_ms = 0,
+       .pad = {.port = PORT_A, .pin = 5,}, /* TIM2_CH1 */
+       .name = "Green",
+       .mode = LED_MCAL_MODE_PWM,
+       .active = GPIO_LVL_HI,
+       .valid = true,
+    },
 };
 
-LedHandle_t LedMonoInstance[]={
-     {.num=LED_GREEN_ID, .valid=true, .active=GPIO_LVL_LOW,},
+LedMonoHandle_t LedMonoInstance[] = {
+     {
+         .num = LED_GREEN_ID, 
+         .valid = true, 
+         .active = GPIO_LVL_HI,
+     },
 };
 
-uint32_t led_mono_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(LedMonoInstance); 
-    cnt2 = ARRAY_SIZE(LedMonoConfig); 
-    if(cnt1==cnt2){
-        cnt = cnt1;
-    }
-    return cnt;
-} 
+COMPONENT_GET_CNT(LedMono, led_mono)

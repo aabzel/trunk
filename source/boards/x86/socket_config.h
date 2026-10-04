@@ -1,9 +1,7 @@
 #ifndef SOCKET_CONFIG_H
 #define SOCKET_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "socket_types.h"
 
 #ifndef HAS_SOCKET

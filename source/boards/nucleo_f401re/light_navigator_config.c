@@ -1,14 +1,15 @@
 #include "light_navigator_config.h"
 
 #ifdef HAS_I2C
-#include "i2c_drv.h"
+//#include "i2c_drv.h"
 #endif
 
 #include "data_utils.h"
 #include "flash_fs_file_ids.h"
 #include "light_navigator_types.h"
 
-const LightNavigatorConfig_t LightNavigatorConfig[] = {{
+const LightNavigatorConfig_t LightNavigatorConfig[] = {
+	{
                                                            .num = 1,
                                                            .rtc_num = 1,
                                                            .trigger_num = 1,
