@@ -1,22 +1,18 @@
 #include "flash_fs.h"
 
-//#include "c_defines_generated.h" /*Temp*/
-/**
- * NOR Flash Memory manager
- * This file contains implementation of key-val(file) map in Nor-Flash with
- * uniform deterioration of Nor Flash memory
+/*
+  NOR Flash Memory manager
+  This file contains implementation of key-val(file) map in Nor-Flash with
+  uniform deterioration of Nor Flash memory
  */
-#include "flash_fs_types.h"
 
 #include <string.h>
 
+//#include "c_defines_generated.h" /*Temp*/
 #include "data_types.h"
 #include "data_utils.h"
-#include "flash_config.h"
-#include "flash_fs_config.h"
 #include "flash_fs_ll.h"
 #include "interrupt_mcal.h"
-#include "nvs_config.h"
 #include "std_includes.h"
 
 #ifdef HAS_NVS
@@ -30,6 +26,7 @@
 #ifdef HAS_CRC8
 #include "crc8_autosar.h"
 #endif
+
 /* status for a active page */
 const uint32_t active_page_token = FLASH_FS_ACTIV_PAGE_DWORD;
 #if 0
@@ -43,11 +40,11 @@ const Type32Union_t ActivePageToken = {
 // static const uint8_t mm_PageStateActive[QWORD_LEN] = {0x00, 0x00, 0xa5, 0x5a};
 
 /*
- *    locate currently active page
+ *   locate currently active page
  *
- *    @param    page_start - pointer where active page start address will be stored
- *    @param    mm_page_len - pointer where active page length will be stored
- *    @retval   exe status
+ *   page_start - pointer where active page start address will be stored
+ *   mm_page_len - pointer where active page length will be stored
+ *   @retval   exe status
  */
 bool flash_fs_get_active_page(uint32_t* page_start, uint32_t* mm_page_len) {
     bool res = false;
@@ -141,9 +138,9 @@ static uint32_t calc_rem_size(uint32_t offset) {
 /**
  *       finds next valid file item
  *
- *    @param    offset - pointer to store active offset in flash
- *    @param    maxOffset - maximum offset that could be in specified storage
- *    @param    len - pointer to store complete
+ *        offset - pointer to store active offset in flash
+ *        maxOffset - maximum offset that could be in specified storage
+ *        len - pointer to store complete
  */
 static bool flash_fs_get_next(uint32_t* offset, uint32_t maxOffset, uint32_t* completeLen) {
     LOG_DEBUG(FLASH_FS, "GetNext Offset:0x%08x MaxOffset:0x%08x Len:%u", *offset, maxOffset, completeLen);
@@ -238,12 +235,12 @@ uint32_t flash_fs_cnt_files(uint32_t start_page_addr, uint32_t page_len, uint32_
 /**
  *        search for a specified item
  *
- *     @param    page_start - start address of the page
- *     @param    mm_page_len - number of bytes within page
- *     @param    file_id - id that should be found, MM_INVALID_ID if we try to find empty space
- *     @param    item - pointer to item that was located
- *     @param    empty - poitner to first empty item
- *     @param    rem_space - pointer where remaining space will be placed
+ *         page_start - start address of the page
+ *         mm_page_len - number of bytes within page
+ *         file_id - id that should be found, MM_INVALID_ID if we try to find empty space
+ *         item - pointer to item that was located
+ *         empty - poitner to first empty item
+ *         rem_space - pointer where remaining space will be placed
  *     @retval
  */
 static bool flash_fs_find_field(uint16_t file_id, FlashFsHeader_t** item, FlashFsHeader_t** empty,
@@ -332,31 +329,32 @@ uint32_t flash_fs_get_remaining_space(void) {
     return rem_space;
 }
 
-double flash_fs_get_remaining_space_percent(void) {
-    double rem_space_present = 100.0;
+float flash_fs_get_remaining_space_percent(void) {
+    float rem_space_present = 100.0;
     uint32_t rem_space = flash_fs_get_remaining_space();
 
     FlashFsPage_t page_num = flash_fs_get_active_page_num();
     LOG_DEBUG(FLASH_FS, "CurPage %u", page_num);
     uint32_t page_size = flash_fs_get_page_size(page_num);
     LOG_DEBUG(FLASH_FS, "PageSize %u Byte", page_size);
-    rem_space_present = 100.0 * ((double)rem_space) / ((double)page_size);
+    rem_space_present = 100.0f * ((float)rem_space) / ((float)page_size);
     LOG_DEBUG(FLASH_FS, "RemSize %6.2f %%", rem_space_present);
     return rem_space_present;
 }
 
 #ifdef HAS_FLASH_FS_WRITE
-/*
- *  flash memory is not mapped yet, remap it
- */
+/*  flash memory is not mapped yet, remap it */
 bool flash_fs_format(void) {
     bool res = false;
     LOG_WARNING(FLASH_FS, "Format");
     /* invalidate second page as passive */
     res = flash_fs_zero(FlashFsConfig.page[1].offset, QWORD_LEN);
     if(res) {
+        res = false;
+#ifdef HAS_NVS_WRITE
         /* erase first page */
-        res = nvs_mcal_erase(1,FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
+        res = nvs_mcal_erase(1, FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
+#endif /*HAS_NVS_WRITE*/
     }
 
     if(res) {
@@ -370,23 +368,23 @@ bool flash_fs_format(void) {
     }
     return res;
 }
-#endif
+#endif /*HAS_FLASH_FS_WRITE*/
 
 #ifdef HAS_FLASH_FS_WRITE
 static bool flash_fs_update_toggle_cnt(void) {
     bool res = false;
     LOG_WARNING(FLASH_FS, "UpdateToggleCnt");
-    FlashFs.toggle_cnt = 0;
+    FlashFsInstance.toggle_cnt = 0;
     uint16_t read_len = 0;
-    res = flash_fs_get(PAR_ID_FLASH_FS_TOGGLE_CNT, (uint8_t*)&FlashFs.toggle_cnt, 4, &read_len);
+    res = flash_fs_get(PAR_ID_FLASH_FS_TOGGLE_CNT, (uint8_t*)&FlashFsInstance.toggle_cnt, 4, &read_len);
     if(res) {
-        LOG_DEBUG(FLASH_FS, "CurToggleCnt: %u", FlashFs.toggle_cnt);
-        FlashFs.toggle_cnt++;
-        res = flash_fs_set(PAR_ID_FLASH_FS_TOGGLE_CNT, (uint8_t*)&FlashFs.toggle_cnt, 4);
+        LOG_DEBUG(FLASH_FS, "CurToggleCnt: %u", FlashFsInstance.toggle_cnt);
+        FlashFsInstance.toggle_cnt++;
+        res = flash_fs_set(PAR_ID_FLASH_FS_TOGGLE_CNT, (uint8_t*)&FlashFsInstance.toggle_cnt, 4);
     } else {
         LOG_WARNING(FLASH_FS, "LackOkToggleCnt. InitValiable");
-        FlashFs.toggle_cnt = 1;
-        res = flash_fs_set(PAR_ID_FLASH_FS_TOGGLE_CNT, (uint8_t*)&FlashFs.toggle_cnt, 4);
+        FlashFsInstance.toggle_cnt = 1;
+        res = flash_fs_set(PAR_ID_FLASH_FS_TOGGLE_CNT, (uint8_t*)&FlashFsInstance.toggle_cnt, 4);
     }
     return res;
 }
@@ -413,14 +411,20 @@ bool flash_fs_turn_page(void) {
     /* erase passive page and get pointer to it */
     if(FlashFsConfig.page[0].offset == ff_page_active_start) {
         /* clear page # 2 */
-        res = nvs_mcal_erase(1,FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size);
+        res = false;
+#ifdef HAS_NVS_WRITE
+        res = nvs_mcal_erase(1, FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size);
+#endif
         if(false == res) {
             return false;
         }
         mmPagePassiveStart = FlashFsConfig.page[1].offset;
     } else if(FlashFsConfig.page[1].offset == ff_page_active_start) {
         /* clear page # 1 */
-        res = nvs_mcal_erase(1,FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
+        res = false;
+#ifdef HAS_NVS_WRITE
+        res = nvs_mcal_erase(1, FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size);
+#endif
         if(false == res) {
             return false;
         }
@@ -479,7 +483,7 @@ bool flash_fs_maintain(void) {
     // uint32_t rem_space = 100 * MIN_FILE_LEN;
     /* try to find previous file of the same variable */
     // res = flash_fs_find_field(MM_INVALID_ID, &prevItem, &empty, &rem_space);
-    double rem = flash_fs_get_remaining_space_percent();
+    float rem = flash_fs_get_remaining_space_percent();
     LOG_DEBUG(FLASH_FS, "RemSpace %f %%", rem);
     res = true;
     if(rem < 5.0) {
@@ -506,9 +510,9 @@ bool flash_fs_proc(void) {
     uint32_t i = 0;
     for(i = 0; i < 2; i++) {
         spare_cnt = 0;
-        FlashFs.page[i].files_cnt =
+        FlashFsInstance.page[i].files_cnt =
             flash_fs_cnt_files(FlashFsConfig.page[i].offset, FlashFsConfig.page[i].size, &spare_cnt);
-        FlashFs.page[i].usage_pre_cent = 100 - ((100U * spare_cnt) / FlashFsConfig.page[i].size);
+        FlashFsInstance.page[i].usage_pre_cent = 100 - ((100U * spare_cnt) / FlashFsConfig.page[i].size);
     }
     res = flash_fs_maintain();
 
@@ -522,10 +526,10 @@ bool flash_fs_proc(void) {
  *     @note    operation from user point of view is atomic - if something goes wrong during memory write,
  *             old file will be stored in memory, if old file doesn't exist - new variable will not be created
  *
- *     @param    data_id - data identifier to be written
+ *         data_id - data identifier to be written
  *             user could operate with data_id '0000' - '7FFF', other are reserved to the system
- *     @param    new_file - pointer to the new file of the variable
- *     @param    new_file_len - number of bytes within new_file
+ *         new_file - pointer to the new file of the variable
+ *         new_file_len - number of bytes within new_file
  *     @retval ok/err
  */
 bool flash_fs_set(uint16_t data_id, const void* const new_file, uint16_t new_file_len) {
@@ -626,9 +630,9 @@ bool flash_fs_set_lazy(uint16_t data_id, const void* const new_file, uint16_t ne
 /**
  *       get address of the specified variable, stored within memory
  *
- *    @param    data_id - data identifier to be located
- *    @param    file_address - pointer where location of the variable will be written
- *    @param    file_len - pointer to variable that will contain length of the variable
+ *        data_id - data identifier to be located
+ *        file_address - pointer where location of the variable will be written
+ *        file_len - pointer to variable that will contain length of the variable
 
  */
 bool flash_fs_get_address(uint16_t data_id, uint8_t** file_address, uint16_t* file_len) {
@@ -659,10 +663,10 @@ bool flash_fs_get_address(uint16_t data_id, uint8_t** file_address, uint16_t* fi
 /**
  *       get file of the specified variable
  *
- *    @param    data_id - data identifier to be read
- *    @param    file - pointer where data should be stored
- *    @param    size - maximum number of bytes that could be stored within file
- *    @param    file_len - actual number of bytes stored within file
+ *        data_id - data identifier to be read
+ *        file - pointer where data should be stored
+ *        size - maximum number of bytes that could be stored within file
+ *        file_len - actual number of bytes stored within file
 
  */
 bool flash_fs_get(uint16_t data_id, void* const file, uint16_t size, uint16_t* file_len) {
@@ -703,9 +707,9 @@ bool flash_fs_get(uint16_t data_id, void* const file, uint16_t size, uint16_t* f
  *        invalidate (erase) specified variable, all references to specified variable will be removed
  *
  *     @note    this function does not erase actual file of the variable
- *             if user need to do that (if file is very sensitive), double page swap MUST be executed
+ *             if user need to do that (if file is very sensitive), float page swap MUST be executed
  *
- *     @param    data_id - data identifier to be invalidated
+ *         data_id - data identifier to be invalidated
  *     @retval
  */
 bool flash_fs_invalidate(uint16_t data_id) {
@@ -730,10 +734,13 @@ bool flash_fs_invalidate(uint16_t data_id) {
  *       flash memory is not mapped yet, remap it
  */
 bool flash_fs_erase(void) {
-    bool res = true;
+    bool res = false;
     /* invalidate second page as passive */
-    res = nvs_mcal_erase(1,FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size) && res;
-    res = nvs_mcal_erase(1,FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size) && res;
+#ifdef HAS_NVS_WRITE
+    res = true;
+    res = nvs_mcal_erase(1, FlashFsConfig.page[0].offset, FlashFsConfig.page[0].size) && res;
+    res = nvs_mcal_erase(1, FlashFsConfig.page[1].offset, FlashFsConfig.page[1].size) && res;
+#endif
     return res;
 }
 #endif
@@ -741,7 +748,7 @@ bool flash_fs_erase(void) {
 bool flash_fs_init(void) {
     bool res = false;
     LOG_WARNING(FLASH_FS, "Init");
-    set_log_level(FLASH_FS, LOG_LEVEL_INFO);
+    log_level_set(FLASH_FS, LOG_LEVEL_INFO);
 
     uint8_t i = 0;
     for(i = 0; i < 2; i++) {
@@ -830,7 +837,7 @@ FlashFsPage_t addr2page_num(uint32_t page_start) {
 
 bool is_flash_fs_addr(uint32_t addr) {
     bool res = false;
-    res = is_nvs_addr(1,addr);
+    res = is_nvs_addr(1, addr);
     return res;
 }
 

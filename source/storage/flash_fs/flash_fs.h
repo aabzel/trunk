@@ -56,7 +56,7 @@ uint32_t flash_fs_get_page_size(uint8_t page_num);
 uint32_t flash_fs_get_page_base_addr(uint8_t page_num);
 uint32_t flash_fs_cnt_files(uint32_t start_page_addr, uint32_t page_len, uint32_t* spare_cnt);
 uint32_t flash_fs_get_remaining_space(void);
-double flash_fs_get_remaining_space_percent(void);
+float flash_fs_get_remaining_space_percent(void);
 FlashFsPage_t addr2page_num(uint32_t page_start);
 
 #endif /* NOR_FLASH_FS_H */

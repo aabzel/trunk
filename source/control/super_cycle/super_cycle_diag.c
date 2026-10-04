@@ -33,7 +33,11 @@ bool super_cycle_diag(void) {
 #ifdef HAS_DEBUG
         {12, "MinUs"},    {9, "CurUs"},  {10, "MaxUs"}, {9, "AvrUs"},
 #endif
-        {12, "RunTimeS"}, {7, "Err"},
+#ifdef HAS_FLOAT_DIAG
+        {12, "RunTimeS"},
+#endif
+
+        {7, "Err"},
     };
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 

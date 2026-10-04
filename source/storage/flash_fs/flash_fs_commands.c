@@ -38,7 +38,7 @@ bool cmd_flash_fs_diag(int32_t argc, char* argv[]) {
         page_num = flash_fs_get_active_page_num();
         LOG_INFO(FLASH_FS, "PageNum %u", page_num);
 
-        double rem = flash_fs_get_remaining_space_percent();
+        float rem = flash_fs_get_remaining_space_percent();
         LOG_INFO(FLASH_FS, "RemSpace %6.2f %%", rem);
 
         static const table_col_t cols[] = {
@@ -46,13 +46,13 @@ bool cmd_flash_fs_diag(int32_t argc, char* argv[]) {
         };
         uint32_t spare_cnt = 0;
         table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
-        char log_line[120];
         for(page_num = 1; page_num <= 2; page_num++) {
             spare_cnt = 0;
             uint32_t page_base_addr = flash_fs_get_page_base_addr(page_num);
             uint32_t page_len = flash_fs_get_page_size(page_num);
             uint32_t files = flash_fs_cnt_files(page_base_addr, page_len, &spare_cnt);
-            double usage_pre_cent = 100.0 - ((100.0 * ((double)spare_cnt)) / ((double)page_len));
+            float usage_pre_cent = 100.0f - ((100.0f * ((float)spare_cnt)) / ((float)page_len));
+            char log_line[120];
             strcpy(log_line, TSEP);
             snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, page_num);
             snprintf(log_line, sizeof(log_line), "%s 0x%08x " TSEP, log_line, page_base_addr);
@@ -111,7 +111,7 @@ bool cmd_flash_fs_get(int32_t argc, char* argv[]) {
             if((res) && (0 < file_len)) {
 #ifdef HAS_ARRAY_DIAG
                 cli_printf("| %5u | 0x%08p | ", file_id, file_Address);
-                //print_bin(array, file_len, 0);
+                // print_bin(array, file_len, 0);
                 print_ascii_line((char*)array, file_len, 1);
                 cli_printf(CRLF);
                 res = true;
@@ -155,7 +155,7 @@ bool cmd_flash_fs_get_addr(int32_t argc, char* argv[]) {
 }
 #endif
 
-#ifdef HAS_FLASH_FS_EXT_COMMANDS
+#ifdef HAS_FLASH_FS_WRITE
 bool cmd_flash_fs_set(int32_t argc, char* argv[]) {
     bool res = false;
     if(2 == argc) {

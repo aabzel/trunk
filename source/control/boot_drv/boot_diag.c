@@ -90,7 +90,6 @@ const char* BootConfigToStr(const BootConfig_t* const Config) {
     return text;
 }
 
-
 const char* BootNodeToStr(const BootHandle_t* const Node) {
     if(Node) {
         strcpy(text, "");

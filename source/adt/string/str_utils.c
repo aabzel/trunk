@@ -343,23 +343,40 @@ bool generate_string(uint8_t* array, uint32_t size, char pattern) {
 len: 6
   */
 char* str_limit(const char* const str, const uint32_t max_size) {
-    memset(text, 0, sizeof(text));
+    static char lTest[200] = {0};
+    memset(lTest, 0, sizeof(lTest));
     if(str) {
         uint32_t len = strlen(str); // 6
-        if(len < sizeof(text)) {
-            strcpy(text, str);
+        if(len < sizeof(lTest)) {
+            strcpy(lTest, str);
+        } else {
+            memcpy(lTest,str,sizeof(lTest)-1);
         }
 
         if(max_size < len) {
             if(2 <= len) {
-                text[max_size - 3] = '.';
-                text[max_size - 2] = '.';
-                text[max_size - 1] = '\0';
+                lTest[max_size - 3] = '.';
+                lTest[max_size - 2] = '.';
+                lTest[max_size - 1] = '\0';
             }
         }
     }
-    return text;
+    return lTest;
 }
+
+char* str_limit_len(const char* const str, const uint32_t max_size) {
+    static char lTest[200] = {0};
+    memset(lTest, 0, sizeof(lTest));
+    if(str) {
+        if(max_size<sizeof(lTest)){
+            memcpy(lTest,str,max_size);
+        }else{
+            memcpy(lTest,str,sizeof(lTest)-1);
+        }
+    }
+    return lTest;
+}
+
 
 uint32_t str_delete_first(char* in_text, size_t size, char letter) {
     uint32_t i = 0;

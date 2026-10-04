@@ -10,7 +10,7 @@ ifneq ($(CAN_COMMON_MCAL_MK_INC),Y)
     MCAL_OPT += -DHAS_CAN
 
     ifeq ($(CAN_PROC),Y)
-        #$(error CAN_PROC=$(CAN_PROC))
+        # $(error CAN_PROC=$(CAN_PROC))
         MCAL_OPT += -DHAS_CAN_PROC
     endif
 

@@ -1,18 +1,18 @@
 #ifndef BOARD_CONFIG_H
 #define BOARD_CONFIG_H
 
-#include <stdint.h>
-#include <stdbool.h>
-
+#include "std_includes.h"
 #include "sys_config.h"
+
 #ifdef HAS_BOARD_INFO
 #include "board_types.h"
 #endif
 
 #ifdef HAS_GPIO
 #include "gpio_config.h"
-#endif /*HAS_GPIO*/
+#endif /**/
 
+bool board_indicate_init_error(void);
 
 #ifdef HAS_BOARD_INFO
 extern const BoardConfig_t BoardConfig;

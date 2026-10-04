@@ -19,13 +19,5 @@ ExtIntHandle_t ExtIntInstance[] = {
     {.num=0, .valid=true,},
 };
 
-uint32_t ext_int_get_cnt(void) {
-    uint32_t cnt = 0;
-    uint32_t cnt_conf = ARRAY_SIZE(ExtIntConfig);
-    uint32_t cnt_ints = ARRAY_SIZE(ExtIntInstance);
-    if(cnt_conf==cnt_ints){
-        cnt = cnt_ints;
-    }
-    return cnt;
-}
+COMPONENT_GET_CNT(ExtInt, ext_int)
 

@@ -14,4 +14,10 @@
 #error "+HAS_SDIO"
 #endif
 
+typedef enum {
+    SDIO_BUS_RESOLUTION_UNDEF = 0,
+    SDIO_BUS_RESOLUTION_1BIT = 1,
+    SDIO_BUS_RESOLUTION_4BIT = 4,
+}SdioBusResolution_t;
+
 #endif /* SDIO_GENERAL_CONST_H */

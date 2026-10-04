@@ -5,14 +5,14 @@ ifneq ($(MCU_CUSTOM_MK_INC),Y)
 
     MCU_CUSTOM_DIR = $(MICROCONTROLLER_DIR)/at32f437zm
     #@echo $(error MCU_CUSTOM_DIR=$(MCU_CUSTOM_DIR))
-    OPT += -DHAS_AT32F437ZM
-    OPT += -DHAS_AT32
-    OPT += -DAT32F4xxxx
-    OPT += -DAT32F437xx
-    OPT += -DAT32F437ZM
-    OPT += -DAT32F437xM
-    OPT += -DAT32F437Zx
-    OPT += -DAT32F437ZMT7
+    MCAL_OPT += -DHAS_AT32F437ZM
+    MCAL_OPT += -DHAS_AT32
+    MCAL_OPT += -DAT32F4xxxx
+    MCAL_OPT += -DAT32F437xx
+    MCAL_OPT += -DAT32F437ZM
+    MCAL_OPT += -DAT32F437xM
+    MCAL_OPT += -DAT32F437Zx
+    MCAL_OPT += -DAT32F437ZMT7
 
     FIRMWARE_TYPE_SELECTED=N
 
@@ -28,7 +28,7 @@ ifneq ($(MCU_CUSTOM_MK_INC),Y)
 
     ifeq ($(MBR),Y)
         FIRMWARE_TYPE_SELECTED=Y
-        OPT += -DVECT_TAB_OFFSET=0x08000000
+        MCAL_OPT += -DVECT_TAB_OFFSET=0x08000000
         ifeq ($(MBR_ADVANCED),Y)
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_mbr_advanced.ld
         else
@@ -39,7 +39,7 @@ ifneq ($(MCU_CUSTOM_MK_INC),Y)
     ifeq ($(BOOTLOADER),Y)
         # link script
         FIRMWARE_TYPE_SELECTED=Y
-        OPT += -DVECT_TAB_OFFSET=0x08000000
+        MCAL_OPT += -DVECT_TAB_OFFSET=0x08000000
         LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_boot.ld
     endif
 
@@ -53,12 +53,12 @@ ifneq ($(MCU_CUSTOM_MK_INC),Y)
         ifeq ($(GENERIC_MONOLITHIC),Y)
             #@echo $(error GENERIC_MONOLITHIC=$(GENERIC_MONOLITHIC))
             FIRMWARE_TYPE_SELECTED=Y
-            OPT += -DVECT_TAB_OFFSET=0x08000000
-            OPT += -DHAS_GENERIC_MONOLITHIC
+            MCAL_OPT += -DVECT_TAB_OFFSET=0x08000000
+            MCAL_OPT += -DHAS_GENERIC_MONOLITHIC
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_generic_monolithic.ld
         else
             FIRMWARE_TYPE_SELECTED=Y
-            OPT += -DVECT_TAB_OFFSET=0x08010000
+            MCAL_OPT += -DVECT_TAB_OFFSET=0x08010000
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_generic.ld
         endif
     endif

@@ -11,9 +11,8 @@ Bh1750Handle_t Bh1750Instance[]={
     {.num=1, .valid=true, .init=false,}
 };
 
-uint32_t bh1750_get_cnt(void){
-    uint8_t cnt=0;
-    cnt = ARRAY_SIZE(Bh1750Config);
-    return cnt;
-}
+
+COMPONENT_GET_CNT(Bh1750,bh1750)
+
+
 

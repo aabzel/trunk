@@ -26,6 +26,7 @@ const StoreFsInfo_t* StoreFsGetInfo(uint8_t num);
 bool store_fs_mcal_init(void);
 bool store_fs_init_custom(void);
 bool store_fs_init_one(uint8_t num);
+bool store_fs_is_valid(uint8_t num);
 bool store_fs_init_common(const StoreFsConfig_t* const Config,
                           StoreFsHandle_t* const Node);
 
@@ -34,14 +35,15 @@ bool store_fs_proc(void);
 
 /*setters*/
 bool store_fs_invalidate(const uint8_t num, const StorageId_t id);
-bool store_fs_set(uint8_t num, StorageId_t id, const void* const data);
+bool store_fs_set_one(uint8_t num, StorageId_t id, const void* const data);
+bool store_fs_set(StorageId_t id, const void* const data);
 bool store_fs_set_verify(uint8_t num, StorageId_t id, const void* const data);
 bool store_fs_set_lazy(uint8_t num, StorageId_t id, const void* const data);
 
-
 /*getters*/
-bool store_fs_get(uint8_t num, StorageId_t id, void* const out_data);
-bool store_fs_load(uint8_t num, StorageId_t id, void* const out_data);
+bool store_fs_get_one(uint8_t num, StorageId_t id, void* const out_data);
+bool store_fs_get( StorageId_t id, void* const out_data);
+bool store_fs_load_one(uint8_t num, StorageId_t id, void* const out_data);
 
 #ifdef __cplusplus
 }

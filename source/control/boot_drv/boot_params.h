@@ -70,4 +70,5 @@
 },
 
 
+
 #endif /* BOOT_PARAMS_H */

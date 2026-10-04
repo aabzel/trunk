@@ -2,7 +2,7 @@
 
 #include <windows.h>
 
-#include <Assert.h>
+//#include <Assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -68,5 +68,13 @@ bool win_color_init(void) {
     bool res = true;
     srand(time(NULL));
     win_color_enable();
+    return res;
+}
+
+bool csv_plot_line(char* CsvFileName, uint8_t x_col, uint8_t y_col) {
+    bool res = true;
+    char command[120] = {0};
+    snprintf(command, sizeof(command), "python %s %s %u %u", CSV_PLOT_SCRIPT, CsvFileName, x_col, y_col);
+    res = win_cmd_run(command);
     return res;
 }

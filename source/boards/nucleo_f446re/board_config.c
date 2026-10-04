@@ -4,6 +4,12 @@
 #include "log.h"
 #include "board_nucleo_f446re.h"
 
+
+bool board_indicate_init_error(void) {
+    bool res = true;
+    return res;
+}
+
 #ifdef HAS_BOARD_INFO
 #include "board_types.h"
 

@@ -7,7 +7,12 @@ ifneq ($(I2C_GENERAL_MK_INC),Y)
     INCDIR += -I$(I2C_MCAL_DIR)
 
     SOURCES_C += $(I2C_MCAL_DIR)/i2c_general.c
-    SOURCES_C += $(I2C_MCAL_DIR)/i2c_database.c
+
+    ifeq ($(I2C_DATABASE),Y)
+        MCAL_OPT += -DHAS_I2C_DATABASE
+        SOURCES_C += $(I2C_MCAL_DIR)/i2c_database.c
+    endif
+
     SOURCES_C += $(I2C_MCAL_DIR)/i2c_isr.c
 
     MCAL_OPT += -DHAS_I2C

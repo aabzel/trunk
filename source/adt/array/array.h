@@ -30,6 +30,9 @@ extern "C" {
 #endif
 
 /*setters*/
+bool array_s16_decimator2(int16_t* const array,
+                          const uint32_t size,
+                          const uint32_t parity);
 bool array_u8_shift_right(uint8_t* const arr, uint32_t size, uint32_t shift);
 bool array_u8_to_s16(uint8_t* m_seq, int16_t* signal, uint32_t size) ;
 bool array_u8_add_front(uint8_t* const arr, uint32_t size, int8_t value) ;
@@ -70,6 +73,7 @@ bool array_u16_item_reverse_bytes(uint16_t* const in_out_array, uint32_t len);
 bool array_u32_item_reverse_bytes(uint32_t* const in_out_array, uint32_t len);
 bool array_shift_right(uint8_t* arr, uint32_t size, uint32_t shift);
 uint32_t arr_i8_sum_vals(const int8_t* const arr, uint32_t num, int8_t val);
+uint8_t array_bin_vote_u8(const uint8_t* const data, const uint32_t size);
 uint32_t array_index_prev(uint32_t cur_index, uint32_t size);
 uint32_t array_index_next(uint32_t cur_index, uint32_t size);
 uint32_t inc_index(uint32_t cur, uint32_t max, bool* const overflow);

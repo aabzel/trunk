@@ -16,6 +16,6 @@
 #endif
 
 extern const SysTickConfig_t SysTickConfig;
-extern SysTick_t SysTickItem;
+extern SysTick_t SysTickInstance;
 
 #endif /* SYSTICK_CONFIG_H */

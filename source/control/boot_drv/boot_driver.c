@@ -3,7 +3,7 @@
 #include <stddef.h>
 
 #include "code_generator.h"
-#include "microcontroller_drv.h"
+#include "microcontroller.h"
 #include "std_includes.h"
 #include "sys_config.h"
 #include "sys_config_common.h"
@@ -224,10 +224,10 @@ bool boot_reboot(void) {
 static bool boot_update_store_fs(uint8_t store_fs_num) {
     bool res = false;
     uint16_t cnt = 0;
-    res = store_fs_get(store_fs_num, PAR_ID_REBOOT_CNT, &cnt);
+    res = store_fs_get(PAR_ID_REBOOT_CNT, &cnt);
     if(res) {
         cnt++;
-        res = store_fs_set(store_fs_num, PAR_ID_REBOOT_CNT, &cnt);
+        res = store_fs_set(PAR_ID_REBOOT_CNT, &cnt);
     }
     return res;
 }
@@ -260,8 +260,8 @@ bool boot_seek_vector_table(const uint32_t mem_start, const uint32_t size) {
 #endif
             cnt++;
         }
-#ifdef HAS_LOG
-        diag_progress_log(offset, end_size, 1000);
+#ifdef HAS_DIAG
+        diag_progress_log(offset, end_size, 1000,"boot_seek_vector_table");
 #endif
     }
 #ifdef HAS_LOG
@@ -315,6 +315,7 @@ static bool BootIsValidConfig(const BootConfig_t* const Config) {
     return res;
 }
 
+#ifdef HAS_RATIONAL_NUM
 bool boot_stack_paint(const uint8_t num, FloatFixPoint_t* const stack_used) {
     bool res = false;
     BootHandle_t* Node = BootGetNode(num);
@@ -329,6 +330,7 @@ bool boot_stack_paint(const uint8_t num, FloatFixPoint_t* const stack_used) {
     }
     return res;
 }
+#endif
 
 bool boot_init_one(uint8_t num) {
     bool res = false;

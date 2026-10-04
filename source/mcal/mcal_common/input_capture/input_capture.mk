@@ -2,7 +2,7 @@ ifneq ($(INPUT_CAPTURE_GENERAL_DRV_MK_INC),Y)
     INPUT_CAPTURE_GENERAL_DRV_MK_INC=Y
 
     INPUT_CAPTURE_MCAL_DIR = $(MCAL_COMMON_DIR)/input_capture
-    #@echo $(error INPUT_CAPTURE_MCAL_DIR=$(INPUT_CAPTURE_MCAL_DIR))
+    # $(error INPUT_CAPTURE_MCAL_DIR=$(INPUT_CAPTURE_MCAL_DIR))
 
     INCDIR += -I$(INPUT_CAPTURE_MCAL_DIR)
     MCAL_OPT += -DHAS_INPUT_CAPTURE
@@ -13,7 +13,7 @@ ifneq ($(INPUT_CAPTURE_GENERAL_DRV_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(INPUT_CAPTURE_DIAG),Y)
-            #@echo $(error DIAG_INPUT_CAPTURE=$(DIAG_INPUT_CAPTURE))
+            # $(error DIAG_INPUT_CAPTURE=$(DIAG_INPUT_CAPTURE))
             MCAL_OPT += -DHAS_INPUT_CAPTURE_DIAG
             SOURCES_C += $(INPUT_CAPTURE_MCAL_DIR)/input_capture_diag.c
         endif

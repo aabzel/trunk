@@ -1,5 +1,5 @@
-#ifndef CLI_CONFIG_FOR_BOARD_H
-#define CLI_CONFIG_FOR_BOARD_H
+#ifndef CLI_CONFIG_H
+#define CLI_CONFIG_H
 
 #include "cli_general_config.h"
 #include "cli_types.h"
@@ -9,4 +9,4 @@ extern CliHandle_t CliInstance[];
 
 uint32_t cli_get_cnt(void);
 
-#endif /*CLI_CONFIG_FOR_BOARD_H*/
+#endif /*CLI_CONFIG_H*/

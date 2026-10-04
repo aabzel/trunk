@@ -7,9 +7,13 @@
 #include "debug_info.h"
 #include "fat_fs.h"
 #include "ff.h"
-#include "integer.h"
 #include "log.h"
 #include "log_utils.h"
+
+#ifdef HAS_FAT_FS_TEST
+#include "test_fat_fs.h"
+#endif
+
 
 bool fat_fs_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
@@ -72,26 +76,29 @@ bool fat_fs_read_dirr_command(int32_t argc, char* argv[]) {
  * */
 bool fat_fs_file_write_command(int32_t argc, char* argv[]) {
     bool res = false;
-    char filename[100] = "";
-    memset(text, 0, sizeof(text));
+
+    char line[150] = {0};
+    memset(line, 0, sizeof(line));
     uint32_t len = 0;
+
+    char filename[100] = "";
     if(1 <= argc) {
         strcpy(filename, argv[0]);
         res = true;
     }
 
     if(2 <= argc) {
-        strcpy(text, argv[1]);
+        strcpy(line, argv[1]);
         len = strlen(argv[1]);
         res = true;
     }
 
     if(res) {
-        LOG_INFO(FAT_FS, "File[%s],text[%s],Len:%u", filename, text, len);
-        res = fat_fs_write_line(1, filename, text);
+        LOG_INFO(FAT_FS, "text[%s],Len:%u",  line, len);
+        res = fat_fs_write_line_black_box(1,filename, line);
         log_res(FAT_FS, res, "Write");
     } else {
-        LOG_ERROR(FAT_FS, "Usage ffw file text");
+        LOG_ERROR(FAT_FS, "Usage ffw fileName Line");
     }
     return res;
 }
@@ -243,7 +250,6 @@ fatff 0 1024
 bool fat_fs_format_command(int32_t argc, char* argv[]) {
     bool res = false;
     uint8_t format_opt = FM_FAT;
-    uint32_t allocation_unit = 512;
 
     if(0 <= argc) {
         res = true;
@@ -253,14 +259,11 @@ bool fat_fs_format_command(int32_t argc, char* argv[]) {
         res = try_str2uint8(argv[0], &format_opt);
     }
 
-    if(2 <= argc) {
-        res = try_str2uint32(argv[1], &allocation_unit);
-    }
 
     if(res) {
-        res = fat_fs_format(1, format_opt, allocation_unit);
+        res = fat_fs_format(1, format_opt);
     } else {
-        LOG_ERROR(FAT_FS, "Usage fatff FormatOpt AllocationUnit");
+        LOG_ERROR(FAT_FS, "Usage fatff FormatOpt");
     }
     return res;
 }
@@ -298,12 +301,27 @@ bool fat_fs_scan_command(int32_t argc, char* argv[]) {
 bool fat_fs_delete_command(int32_t argc, char* argv[]){
     bool res = false;
     char path[30] = "";
+
+    if(0 <= argc) {
+        res = true;
+    }
+
+
     if(1 <= argc) {
         strcpy(path, argv[0]);
         res = true;
     }
 
     if(res) {
+        res = false;
+
+        switch(argc){
+
+        case 0:{
+            res = fat_fs_delete_all_files();
+        } break;
+        case 1:{
+#if 0==_FS_MINIMIZE
         FRESULT ret=f_unlink ( (TCHAR*) path );
         res = FatFsRetToRes( ret, "DeleteFile");
         if(res){
@@ -311,9 +329,62 @@ bool fat_fs_delete_command(int32_t argc, char* argv[]){
         }else {
             LOG_ERROR(FAT_FS, "Del,File:[%s]Err",path);
         }
+#endif
+
+        } break;
+
+
+        default: {
+
+        } break;
+        }
     } else {
-        LOG_ERROR(FAT_FS, "Usage ftfsdel path");
+        LOG_ERROR(FAT_FS, "Usage ffdel path");
     }
     return res;
 
+}
+
+
+/*
+  ffwv Tst.bin 0x55 512 262144 3000
+*/
+bool fat_fs_write_verify_command(int32_t argc, char* argv[]) {
+    bool res = false;
+    char file_name[30] = "";
+    uint32_t total_size = 128 * 1024;
+    uint32_t pause_ms = 3000;
+    uint32_t part_size = 512;
+    uint8_t pattern = 0x55;
+
+    if(1 <= argc) {
+        strcpy(file_name, argv[0]);
+        res = true;
+    }
+
+    if(2 <= argc) {
+        res = try_str2uint8(argv[1], &pattern);
+    }
+
+    if(3 <= argc) {
+        res = try_str2uint32(argv[2], &part_size);
+    }
+
+    if(4 <= argc) {
+        res = try_str2uint32(argv[3], &total_size);
+    }
+
+    if(5 <= argc) {
+        res = try_str2uint32(argv[4], &pause_ms);
+    }
+
+    if(res) {
+#ifdef HAS_FAT_FS_TEST
+        res = test_fat_fs_write_pattern_one(file_name, pattern, part_size, total_size, pause_ms);
+#endif
+        log_res(FAT_FS, res, "WaritePath");
+    } else {
+        LOG_ERROR(FAT_FS, "Usage ffwv FileName Pattern PartSz TotSize Pause");
+    }
+    return res;
 }

@@ -88,7 +88,7 @@ __attribute__((weak)) bool input_capture_ctrl_ll(InputCaptureHandle_t* Node, boo
     bool res = false;
     LOG_WARNING(INPUT_CAPTURE, "INPUT_CAPTURE%u,%s", Node->num, OnOffToStr(on_off));
     if(Node) {
-        res = timer_channel_ctrl(Node->timer_num, (TimerCapComChannel_t)Node->channel, on_off);
+        res = timer_channel_ctrl(Node->timer_num, (TimerOutChannel_t)Node->channel, on_off);
         if(res) {
             LOG_PARN(INPUT_CAPTURE, "TIMER%u,%s,CtrlOk", Node->timer_num, OnOffToStr(on_off));
         } else {

@@ -5,7 +5,7 @@ ifneq ($(AT_START_F437_MK_INC),Y)
     BOARD_CUSTOM_DIR = $(BOARD_DIR)/at_start_f437
 
     #@echo $(error BOARD_CUSTOM_DIR=$(BOARD_CUSTOM_DIR))
-    OPT += -DHAS_AT_START_F437
+    MCAL_OPT += -DHAS_AT_START_F437
 
     ifeq ($(EHAL),Y)
         BOARD_EHAL_CONFIG_DIR = $(BOARD_CUSTOM_DIR)/ehal_configs
@@ -115,7 +115,7 @@ ifneq ($(AT_START_F437_MK_INC),Y)
 
     ifeq ($(PINS),Y)
         $(info Config Pins)
-        OPT += -DHAS_PINS
+        MCAL_OPT += -DHAS_PINS
     endif
     
     ifeq ($(LED_MONO),Y)
@@ -230,7 +230,7 @@ ifneq ($(AT_START_F437_MK_INC),Y)
 
     ifeq ($(TBFP),Y)
         $(info Add config TBFP)
-        OPT += -DTBFP_MAX_PAYLOAD=350
+        MCAL_OPT += -DTBFP_MAX_PAYLOAD=350
         SOURCES_CONFIGURATION_C += $(BOARD_CFG_DIR)/tbfp_config.c
     endif
 
@@ -240,12 +240,12 @@ ifneq ($(AT_START_F437_MK_INC),Y)
     endif
 
     ifeq ($(W25M02GV),Y)
-        OPT += -DHAS_W25M02GV
+        MCAL_OPT += -DHAS_W25M02GV
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/w25m02gv_config.c
     endif
 
     ifeq ($(WM8731),Y)
-        OPT += -DHAS_WM8731
+        MCAL_OPT += -DHAS_WM8731
         SOURCES_CONFIGURATION_C += $(BOARD_CUSTOM_DIR)/wm8731_config.c
     endif
 

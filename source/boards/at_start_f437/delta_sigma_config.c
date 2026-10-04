@@ -2,7 +2,7 @@
 
 #include "data_utils.h"
 
-const DeltaSigmaConfig_t DeltaSigmaConfig[] = {
+const DeltaSigmaConfig_t SECTION_CFG_DATA DeltaSigmaConfig[] = {
     {
       .num = 1,
       .valid = true,
@@ -19,14 +19,6 @@ DeltaSigmaHandle_t DeltaSigmaInstance[]={
     {.num=1, .valid=true,},
 };
 
-uint32_t delta_sigma_get_cnt(void){
-    uint32_t cnt = 0;
-    uint32_t cnt1 = 0;
-    uint32_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(DeltaSigmaInstance);
-    cnt2 = ARRAY_SIZE(DeltaSigmaConfig);
-    if(cnt1==cnt2) {
-        cnt = cnt1;
-    }
-    return cnt;
-}
+
+COMPONENT_GET_CNT(DeltaSigma, delta_sigma)
+

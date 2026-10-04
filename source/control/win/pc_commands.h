@@ -8,9 +8,11 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
+bool plot_graph_command(int32_t argc, char* argv[]);
 bool exit_command(int32_t argc, char* argv[]);
 
-#define PC_COMMANDS                                               \
+#define PC_COMMANDS                                                       \
+    SHELL_CMD("plot_graph", "pg", plot_graph_command, "PlotGrapFromCsv"), \
     SHELL_CMD("exit", "exit", exit_command, "Exit"),
 
 #ifdef __cplusplus

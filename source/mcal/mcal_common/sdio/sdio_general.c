@@ -22,6 +22,7 @@ bool sdio_init_common(const SdioConfig_t* const Config, SdioHandle_t* const Node
         if(Node) {
             Node->num = Config->num;
             Node->name = Config->name;
+            Node->bus_resolution = Config->bus_resolution;
             Node->bit_rate_hz = Config->bit_rate_hz;
             Node->interrupt_on = Config->interrupt_on;
             Node->move_mode = Config->move_mode;

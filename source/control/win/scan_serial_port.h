@@ -7,9 +7,8 @@
 extern "C" {
 #endif
 
-#include <windows.h>
-
 #include "std_includes.h"
+#include <windows.h>
 
 #ifdef HAS_MICROCONTROLLER
 #warning That code only for desktop builds

@@ -1,16 +1,17 @@
 #include "file_pc.h"
 
 #include <limits.h>
+#include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h> //_fullpath
 
-#include "file_api.h"
+#include "file_mcal.h"
 #include "log.h"
 #include "macro_utils.h"
-#include "std_includes.h"
 #include "str_utils.h"
 #include "win_utils.h"
+
 #ifdef HAS_STRING
 #include "str_utils_ex.h"
 #endif
@@ -20,16 +21,17 @@
 #endif
 
 #ifdef HAS_PC
+#include <stdlib.h> //_fullpath
 char* _fullpath(char*, const char*, size_t);
-
 #define REAL_RATH(N, R) _fullpath((R), (N), 5000)
+//#define REAL_RATH(N, R)
 #else
 
 char* realpath(const char* restrict path, char* restrict resolved_path);
 #endif
 
 int32_t file_pc_line_cnt(const char* const file_name) {
-    LOG_INFO(FILE_PC, "FileName: [%s]", file_name);
+    LOG_DEBUG(FILE_PC, "FileName: [%s]", file_name);
     FILE* fp = NULL;
     int32_t count = 0; // Line counter (result)
     char c = '?';      // To store a character read from file
@@ -58,17 +60,23 @@ int32_t file_pc_line_cnt(const char* const file_name) {
 
 int32_t file_pc_get_size(char* file_name) {
     int32_t fize_size = -1;
-    FILE* FileNode;
-    FileNode = fopen(file_name, "rb");
-    if(FileNode) {
-        LOG_INFO(FILE_PC, "Open file [%s]", file_name);
-        fseek(FileNode, 0, SEEK_END); // seek to end of file
-        fize_size = ftell(FileNode);  // get current file pointer
-        fseek(FileNode, 0, SEEK_SET); // seek back to beginning of file
-        // read size of firmware
-        fclose(FileNode);
-    } else {
-        LOG_ERROR(FILE_PC, "File open error [%s]", file_name);
+    if(file_name) {
+        if(0 < strlen(file_name)) {
+            FILE *FileNode;
+            FileNode = fopen(file_name, "rb");
+            if(FileNode) {
+                LOG_DEBUG(FILE_PC, "Open file [%s]", file_name);
+                fseek(FileNode, 0, SEEK_END); // seek to end of file
+                fize_size = ftell(FileNode); // get current file pointer
+                fseek(FileNode, 0, SEEK_SET); // seek back to beginning of file
+                // read size of firmware
+                fclose(FileNode);
+            } else {
+                LOG_ERROR(FILE_PC, "FileOpenError3:[%s]", file_name);
+            }
+        } else {
+            LOG_ERROR(FILE_PC, "GetSize,FileNameLenError:[%s]", file_name);
+        }
     }
     return fize_size;
 }
@@ -88,7 +96,7 @@ bool file_pc_load_to_array(const char* const file_name, uint8_t* const out_buff,
     uint32_t file_size = 0;
     if(res) {
         res = false;
-        file_size = file_get_size(file_name);
+        file_size = file_get_size(1, file_name);
         if(file_size) {
             LOG_NOTICE(FILE_PC, "File Size:%u Byte=%u kByte", file_size, BYTES_2_KBYTES(file_size));
             if(file_size < size) {
@@ -115,7 +123,7 @@ bool file_pc_load_to_array(const char* const file_name, uint8_t* const out_buff,
             }
             fclose(FileNode);
         } else {
-            LOG_ERROR(FILE_PC, "File open error [%s]", file_name);
+            LOG_ERROR(FILE_PC, "FileOpenError2:[%s]", file_name);
         }
     }
     return res;
@@ -166,7 +174,10 @@ bool file_pc_load_to_array_i8(char* const file_name, size_t offset, int8_t* cons
     return res;
 }
 
-bool file_pc_run_through_lines(char* in_file_name, char* pattern, char* rep, char* out_file_name) {
+bool file_pc_run_through_lines(char* in_file_name,
+                               char* pattern,
+                               char* rep,
+                               char* out_file_name) {
     bool res = false;
     FILE* FileNode;
     FILE* out_file_prt;
@@ -189,7 +200,7 @@ bool file_pc_run_through_lines(char* in_file_name, char* pattern, char* rep, cha
         fclose(FileNode);
         fclose(out_file_prt);
     } else {
-        LOG_ERROR(FILE_PC, "File open error [%s]", in_file_name);
+        LOG_ERROR(FILE_PC, "RunThroughLines,FileOpenError[%s]", in_file_name);
     }
     return res;
 }
@@ -197,11 +208,11 @@ bool file_pc_run_through_lines(char* in_file_name, char* pattern, char* rep, cha
 #define CACHE_SIZE (20 * 1024)
 static char cache[CACHE_SIZE] = {0};
 
-bool file_pc_print_line_cache(const char* const file_name, const char* const in_text, size_t size) {
+bool file_pc_print_line_cache(const char* const file_name, const char* const line, size_t size) {
     bool res = false;
     if(file_name) {
-        if(in_text && size) {
-            snprintf(cache, sizeof(cache), "%s%s\n", cache, in_text);
+        if(line && size) {
+            snprintf(cache, sizeof(cache), "%s%s\n", cache, line);
             size_t size_len = strlen(cache);
             LOG_DEBUG(FILE_PC, "size:%u", size);
             if(((uint32_t)((float)CACHE_SIZE) * 0.75) < size) {
@@ -211,7 +222,7 @@ bool file_pc_print_line_cache(const char* const file_name, const char* const in_
                 res = true;
             }
         } else {
-            LOG_ERROR(FILE_PC, "text[%s]%u,Err", in_text, size);
+            LOG_ERROR(FILE_PC, "text[%s]%u,Err", line, size);
         }
     } else {
         LOG_ERROR(FILE_PC, "Ptr[%s]Err", file_name);
@@ -219,23 +230,49 @@ bool file_pc_print_line_cache(const char* const file_name, const char* const in_
     return res;
 }
 
-bool file_pc_print_line(const char* const file_name, const char* const in_text, size_t size) {
+bool file_pc_write_line(const FILE* const pFile, const char* const line, const uint32_t size) {
+    bool res = false;
+    if(pFile) {
+        if(line) {
+            if(size) {
+                LOG_DEBUG(FILE_PC, "AddToEndof,Len:%u,text:[%s]", size, line);
+                // fprintf(pFile, "%s", line);
+                // fwrite(pFile, "%s", line);
+                size_t cnt = fwrite((const void*)line, size, 1, pFile);
+                if(1 == cnt) {
+                    res = true;
+                }
+                // res = true;
+            } else {
+                LOG_ERROR(FILE_PC, "SizeZero,Err");
+            }
+
+        } else {
+            LOG_ERROR(FILE_PC, "text[%s]%u,Err", line, size);
+        }
+    } else {
+        LOG_ERROR(FILE_PC, "FilePtrErr,[%p]Err", pFile);
+    }
+    return res;
+}
+
+bool file_pc_print_line(const char* const file_name, const char* const line, size_t size) {
     bool res = false;
     if(file_name) {
-        if(in_text && size) {
-            LOG_DEBUG(FILE_PC, "size:%u", size);
+        if(line && size) {
+            LOG_DEBUG(FILE_PC, "AddToEndof,File:[%s],Len:%u,text:[%s]", file_name, size, line);
             FILE* file = NULL;
             file = fopen(file_name, "a");
             if(file) {
                 LOG_DEBUG(FILE_PC, "Open[%s]Ok", file_name);
-                fprintf(file, "%s\n", in_text);
+                fprintf(file, "%s\n", line);
                 res = true;
                 fclose(file);
             } else {
                 LOG_ERROR(FILE_PC, "Open[%s]Err", file_name);
             }
         } else {
-            LOG_ERROR(FILE_PC, "text[%s]%u,Err", in_text, size);
+            LOG_ERROR(FILE_PC, "text[%s]%u,Err", line, size);
         }
     } else {
         LOG_ERROR(FILE_PC, "Ptr[%s]Err", file_name);
@@ -335,11 +372,11 @@ bool file_pc_array_to_binary_file(const char* const file_name, const uint8_t* co
     if(file_name) {
         if(data) {
             if(size) {
-                LOG_INFO(FILE_PC, "Write File:%s,Size:%u byte", file_name, size);
+                LOG_DEBUG(FILE_PC, "Write File:%s,Size:%u byte", file_name, size);
                 FILE* file = NULL;
                 file = fopen(file_name, "wb");
                 if(file) {
-                    LOG_INFO(FILE_PC, "Open[%s]Ok", file_name);
+                    LOG_DEBUG(FILE_PC, "Open[%s]Ok", file_name);
                     size_t cnt = fwrite((const void*)data, size, 1, file);
                     if(1 == cnt) {
                         res = true;
@@ -374,10 +411,10 @@ bool file_pc_replace_substr(const char* const file_name, const char* const prev_
     if(file_name) {
         if(prev_str) {
             if(new_str) {
-                LOG_INFO(FILE_PC, "PeplaceSubStr File:[%s],Prev:[%s]->New[%s]", file_name, prev_str, new_str);
+                LOG_DEBUG(FILE_PC, "PeplaceSubStr File:[%s],Prev:[%s]->New[%s]", file_name, prev_str, new_str);
                 char command_line[200] = {0};
                 snprintf(command_line, sizeof(command_line), "sed -i -e 's/%s/%s/g' %s", prev_str, new_str, file_name);
-                LOG_WARNING(FILE_PC, "PefrormSed:[%s]", command_line);
+                LOG_DEBUG(FILE_PC, "PefrormSed:[%s]", command_line);
                 res = win_cmd_run(command_line);
             }
         }
@@ -385,12 +422,29 @@ bool file_pc_replace_substr(const char* const file_name, const char* const prev_
     return res;
 }
 
-bool file_pc_delete(const char* const file_name) {
+bool file_pc_rename(const char* const old_name, const char* const new_name) {
     bool res = false;
-    if(file_name) {
+    int ret = rename(old_name, new_name);
+    if(0 == ret) {
+        LOG_DEBUG(FILE_PC, "rename Prev:[%s]->New[%s]", old_name, new_name);
+        res = true;
+    }
+    return res;
+}
+
+bool file_pc_delete(const char* const file_to_del) {
+    bool res = false;
+    if(file_to_del) {
+        int ret = remove(file_to_del);
+        if(0 == ret) {
+            LOG_WARNING(FILE_PC, "delete [%s]", file_to_del);
+            res = true;
+        }
+#if 0
         char CmdCommand[500] = {0};
         snprintf(CmdCommand, sizeof(CmdCommand), "rm -f %s", file_name);
         res = win_cmd_run(CmdCommand);
+#endif
     }
     return res;
 }
@@ -415,6 +469,28 @@ bool file_pc_realpath(const char* const in_path, char* const out_file) {
                 free(abs_path);
                 res = true;
             }
+        }
+    }
+    return res;
+}
+
+
+bool file_pc_get_file_content(const char* filename, char* content, unsigned long* max_content_size) {
+    bool res = false;
+    if (filename) {
+        if (content) {
+            if (max_content_size) {
+                FILE *pFile = fopen(filename, "r");
+                if (pFile ) {
+                    LOG_DEBUG(FILE_PC, "Open,Filename:[%s]Ok", filename);
+                    *max_content_size = fread(content, sizeof(char), *max_content_size, pFile );
+                    fclose(pFile );
+                    res = true;
+                }else{
+                    LOG_ERROR(FILE_PC, "Open,FileName:[%s]", filename);
+                }
+            }
+
         }
     }
     return res;

@@ -66,7 +66,10 @@ typedef struct {
     volatile uint32_t err_cnt;
     volatile uint32_t up_time_ms32;
     volatile uint64_t up_time_ms64;
+    volatile uint64_t counter_wrap;
     volatile uint32_t int_cnt;
+    volatile uint32_t divider_1us;
+    volatile uint32_t counter_freq; /*cpu freq of init*/
     bool init_done;
 }SysTickHandle_t;
 

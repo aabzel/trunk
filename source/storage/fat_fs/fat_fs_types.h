@@ -37,7 +37,7 @@ typedef struct {
     uint32_t spin;
     char path[100];
     char dirr_name[100];
-    FIL file;
+    FIL File;
     FATFS fileSystem;
     FILINFO FileInfo;
     DIR Dir;

@@ -28,11 +28,6 @@ const char* SdioNodeToStr(const SdioHandle_t* const Node) {
     return text;
 }
 
-bool sdio_diag(void) {
-    bool res = false;
-    return res;
-}
-
 bool sdio_raw_reg_diag(uint8_t num) {
     bool res = false;
     const SdioInfo_t* Info = SdioGetInfo(num);
@@ -42,5 +37,11 @@ bool sdio_raw_reg_diag(uint8_t num) {
         res = debug_raw_reg_diag(LG_SDIO, (uint32_t)Info->SDIOx, SdioReg, reg_cnt);
     }
 
+    return res;
+}
+
+bool sdio_diag(void) {
+    bool res = false;
+    res = sdio_raw_reg_diag(1);
     return res;
 }

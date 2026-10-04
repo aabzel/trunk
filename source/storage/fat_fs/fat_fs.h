@@ -36,15 +36,24 @@ bool fat_fs_proc_one(uint8_t num);
 bool fat_fs_proc(void);
 
 /*setters*/
-bool fat_fs_format(uint8_t num, BYTE format_opt,DWORD allocation_unit  ) ;
+bool fat_fs_save_array_printf_black_box(uint8_t num, const char* const file_name,
+                                        const uint8_t* const array, uint32_t size);
+
+bool fat_fs_write_line_black_box(uint8_t num,
+                                 const char* const file_name,
+                                 const char* const line) ;
+bool fat_fs_rename(const char* const old_name, const char* const new_name);
+bool fat_fs_delete_all_files(void);
+bool fat_fs_format(uint8_t num, BYTE format_opt  ) ;
 bool fat_fs_mount(uint8_t num,uint8_t opt,   char* path ) ;
-bool fat_fs_save_array(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size) ;
-bool fat_fs_save_array_puts(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size) ;
-bool fat_fs_save_array_printf(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size);
-bool fat_fs_write_line(uint8_t num, const char* const file_name, char* const in_text);
+bool fat_fs_save_array(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size);
+bool fat_fs_save_array_puts(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size);
+bool fat_fs_save_array_printf(FIL* const pFile, const uint8_t* const array, const uint32_t size);
+bool fat_fs_write_line(FIL* const pFile, char* const line_str, const uint32_t wr_len);
 bool fat_fs_write_file(uint8_t num, const char* const file_name, const uint8_t* const array, uint32_t size);
 
 bool fat_fs_write_bin(uint8_t num, uint8_t const * const array, uint32_t size);
+bool fat_fs_open_force(FIL* pFile, char* file_name) ;
 bool fat_fs_open_dirr(uint8_t num, const char* const dirr_name);
 bool fat_fs_unlink(const uint8_t num, const char* const path);
 bool fat_fs_open(const uint8_t num, const char* const path, const BYTE mode);
@@ -53,6 +62,7 @@ bool fat_fs_close(uint8_t num);
 /*getters*/
 int32_t fat_fs_file_line_cnt(const char* const path);
 int32_t fat_fs_file_get_size(const char* const path);
+bool fat_fs_touch(const char* const file_name);
 bool fat_fs_scan_light(uint8_t num, const char* const path);
 bool fat_fs_cat(uint8_t num, const char* const file_name) ;
 bool fat_fs_read_dirr(uint8_t num) ;

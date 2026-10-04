@@ -7,19 +7,20 @@
 
 bool store_fs_diag_command(int32_t argc, char* argv[]) {
     bool res = false;
+    uint8_t num = 1;
 
     char keyWord1[11] = "";
     char keyWord2[11] = "";
 
     if(0 <= argc) {
+        num = 1;
         strncpy(keyWord1, "", sizeof(keyWord1));
         strncpy(keyWord2, "", sizeof(keyWord2));
         res = true;
     }
 
     if(1 <= argc) {
-        strncpy(keyWord1, argv[0], sizeof(keyWord1));
-        res = true;
+        res = try_str2uint8(argv[0], &num);
     }
 
     if(2 <= argc) {
@@ -27,14 +28,19 @@ bool store_fs_diag_command(int32_t argc, char* argv[]) {
         res = true;
     }
 
-    if(2 < argc) {
+    if(3 <= argc) {
+        strncpy(keyWord1, argv[2], sizeof(keyWord1));
+        res = true;
+    }
+
+    if(3 < argc) {
         res = false;
     }
 
     if(res) {
-        res = store_fs_diag(1, keyWord1, keyWord2);
+        res = store_fs_diag_one(num, keyWord1, keyWord2);
     } else {
-        LOG_ERROR(STORE_FS, "Usage: sd  keyWord1 keyWord2");
+        LOG_ERROR(STORE_FS, "Usage: sd N keyWord1 keyWord2");
     }
     return res;
 }
@@ -59,7 +65,7 @@ bool store_fs_set_command(int32_t argc, char* argv[]) {
     }
 
     if(res) {
-        res = store_fs_set(1, id, wrData);
+        res = store_fs_set(id, wrData);
         res = log_info_res(STORE_FS, res, "Set");
     } else {
         LOG_ERROR(STORE_FS, "Usage: sfs id data");
@@ -103,7 +109,7 @@ bool store_fs_get_command(int32_t argc, char* argv[]) {
 
     if(res) {
         uint8_t data[128] = {0};
-        res = store_fs_get(1, (StorageId_t)id, data);
+        res = store_fs_get_one(1, (StorageId_t)id, data);
         log_res(STORE_FS, res, "Get");
         if(res) {
             LOG_INFO(STORE_FS, "%s", StoreFsDataToStr(id, data));

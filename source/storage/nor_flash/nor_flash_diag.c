@@ -10,6 +10,7 @@
 #include "nor_flash_drv.h"
 #include "table_utils.h"
 #include "writer_config.h"
+
 #ifdef HAS_LOG
 #include "log.h"
 #endif
@@ -27,7 +28,7 @@ bool nor_flash_usage(uint8_t flash_num, uint32_t piece_size) {
     double usage_pec = 0.0f;
     uint32_t spare = 0;
     uint32_t num = 0;
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
 
         uint32_t piece_cnt = Node->size / piece_size;
@@ -78,7 +79,7 @@ const char* NorFlashOptionToStr(NorFlashOption_t code) {
 const char* NorFlashNum2Option(uint8_t flash_num) {
     const char* name = "UndefNode";
     LOG_INFO(NOR_FLASH, "FindNode %u", flash_num);
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
         name = NorFlashOptionToStr(Node->option);
     } else {

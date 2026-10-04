@@ -2,6 +2,7 @@
 
 #include "common_functions.h"
 #include "compiler_const.h"
+#include "scheduler_config.h"
 
 #ifdef HAS_MISCELLANEOUS
 #include "data_utils.h"
@@ -47,9 +48,23 @@ static bool SuperCycleIsValidConfig(const SuperCycleConfig_t* const Config) {
         if(0 < Config->max_duration_us) {
         } else {
 #ifdef HAS_LOG
-            LOG_ERROR(SUPER_CYCLE, "NoMaxDiaration");
+            LOG_ERROR(SUPER_CYCLE, "NoMaxDiarationZero");
 #endif
-            res = false;
+            // res = false;
+        }
+    }
+
+    return res;
+}
+
+_WEAK_FUN_
+bool super_cycle_proc_max_perf(void) {
+    bool res = false;
+    uint32_t i = 0;
+    uint32_t cnt = scheduler_task_get_cnt();
+    for(i = 0; i < cnt; i++) {
+        if(SchedulerTaskSet1[i].limiter.on_off) {
+            res = SchedulerTaskSet1[i].limiter.function();
         }
     }
 
@@ -177,6 +192,7 @@ bool super_cycle_init_one(uint8_t num) {
 #ifdef HAS_LOG
                 LOG_WARNING(SUPER_CYCLE, "Init:%u", num);
 #endif
+                Node->max_duration_us = Config->max_duration_us;
                 Node->scheduler_num = Config->scheduler_num;
                 Node->start_time_us = 0;
                 Node->iteration_sleep_ms = SUPER_CYCLE_DEFAUIT_ITERATION_MS;
@@ -206,13 +222,12 @@ bool super_cycle_init_one(uint8_t num) {
 #endif
                 res = true;
             }
+        } else {
+#ifdef HAS_LOG
+            LOG_ERROR(SUPER_CYCLE, "ConfigError");
+#endif
         }
     }
-    return res;
-}
-
-_WEAK_FUN_ bool super_cycle_proc_max_perf(void) {
-    bool res = true;
     return res;
 }
 
@@ -226,7 +241,7 @@ void super_cycle_start_one(uint8_t num) {
 #ifdef HAS_SUPER_CYCLE_MAX_PERF
         super_cycle_proc_max_perf();
 #else
-        super_cycle_proc_max_perf();
+        // super_cycle_proc_max_perf();
         super_cycle_proc_one(num);
 #endif
     }

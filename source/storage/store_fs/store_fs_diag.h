@@ -11,21 +11,22 @@ extern "C" {
 
 #ifndef HAS_LOG
 #error "+HAS_LOG"
-#endif /*HAS_LOG*/
+#endif
 
 #ifndef HAS_STORE_FS
 #error "+HAS_STORE_FS"
-#endif /*HAS_STORE_FS*/
+#endif
 
 #ifndef HAS_STORE_FS_DIAG
 #error "+HAS_STORE_FS_DIAG"
-#endif /*HAS_DIAG_STORE_FS*/
+#endif
 
 #ifndef HAS_DIAG
 #error "+HAS_DIAG"
-#endif /*HAS_DIAG*/
+#endif
 
-bool store_fs_diag(uint8_t num, char* keyWord1, char* keyWord2) ;
+bool store_fs_diag( char* keyWord1, char* keyWord2) ;
+bool store_fs_diag_one(uint8_t num, char* keyWord1, char* keyWord2) ;
 const char* StorageToStr(const StorageId_t id);
 const char* StoreFsDataToStr(const StorageId_t id, const void* const data);
 const char* StoreFsConfigToStr(const StoreFsConfig_t* const Config);

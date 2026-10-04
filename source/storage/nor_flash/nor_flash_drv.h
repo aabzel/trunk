@@ -8,7 +8,7 @@
 #include "nor_flash_types.h"
 
 const NorFlashConfig_t* NorFlashGetConfig(uint8_t num);
-NorFlashItem_t* NorFlashGetNode(uint8_t num);
+NorFlashInstance_t* NorFlashGetNode(uint8_t num);
 bool nor_flash_init(void);
 bool nor_flash_init_one(uint8_t num);
 

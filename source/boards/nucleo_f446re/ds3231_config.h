@@ -1,10 +1,7 @@
-
 #ifndef DS3231_CONFIG_H
 #define DS3231_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "ds3231_types.h"
 
 #ifndef HAS_DS3231
@@ -17,7 +14,7 @@
 
 extern const Ds3231Config_t Ds3231Config[];
 extern const Ds3231RegConfig_t Ds3231RegConfig[];
-extern Ds3231Handle_t Ds3231Item[];
+extern Ds3231Handle_t Ds3231Instance[];
 
 uint32_t ds3231_get_cnt(void);
 uint32_t ds3231_get_reg_config_cnt(void);

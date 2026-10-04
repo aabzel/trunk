@@ -9,14 +9,14 @@
 #include "nor_flash_api.h"
 #include "nor_flash_diag.h"
 
-NorFlashItem_t* NorFlashGetNode(uint8_t num) {
-    NorFlashItem_t* Node = NULL;
+NorFlashInstance_t* NorFlashGetNode(uint8_t num) {
+    NorFlashInstance_t* Node = NULL;
     uint32_t i = 0;
     uint32_t cnt = nor_flash_get_cnt();
     for(i = 0; i < cnt; i++) {
-        if(num == NorFlashItem[i].num) {
-            if(NorFlashItem[i].valid) {
-                Node = &NorFlashItem[i];
+        if(num == NorFlashInstance[i].num) {
+            if(NorFlashInstance[i].valid) {
+                Node = &NorFlashInstance[i];
                 break;
             }
         }
@@ -289,7 +289,7 @@ bool nor_flash_init_one(uint8_t num) {
     LOG_WARNING(NOR_FLASH, "Init One %u", num);
     const NorFlashConfig_t* Config = NorFlashGetConfig(num);
     if(Config) {
-        NorFlashItem_t* Node = NorFlashGetNode(num);
+        NorFlashInstance_t* Node = NorFlashGetNode(num);
         if(Node) {
             LOG_INFO(NOR_FLASH, "%u->%s", num, NorFlashOptionToStr(Config->option));
             LOG_INFO(NOR_FLASH, "%u 0x%08x....0x%08x Size:%u byte", num, Config->start, Config->start + Config->size,
@@ -317,7 +317,7 @@ bool nor_flash_init_one(uint8_t num) {
 
 bool nor_flash_init(void) {
     bool res = false;
-    set_log_level(NOR_FLASH, LOG_LEVEL_INFO);
+    log_level_set(NOR_FLASH, LOG_LEVEL_INFO);
     uint32_t cnt = nor_flash_get_cnt();
     LOG_WARNING(NOR_FLASH, "Init Cnt:%u", cnt);
     uint32_t i = 0;
@@ -338,6 +338,6 @@ bool nor_flash_init(void) {
         LOG_ERROR(NOR_FLASH, "InitErr");
     }
 
-    set_log_level(NOR_FLASH, LOG_LEVEL_INFO);
+    log_level_set(NOR_FLASH, LOG_LEVEL_INFO);
     return res;
 }

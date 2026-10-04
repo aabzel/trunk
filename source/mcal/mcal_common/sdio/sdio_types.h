@@ -76,13 +76,18 @@ typedef struct {
     uint32_t try_read_cnt;
 
 
-#define SDIO_COMMON_VARIABLES         \
-    uint8_t num;                      \
-    uint32_t bit_rate_hz;             \
-    bool interrupt_on;                \
-    char* name;                       \
-    MoveMode_t move_mode;             \
+#define SDIO_COMMON_VARIABLES             \
+    SdioBusResolution_t bus_resolution;   \
+    uint8_t num;                          \
+    uint32_t bit_rate_hz;                 \
+    bool interrupt_on;                    \
+    char* name;                           \
+    MoveMode_t move_mode;                 \
     bool valid;
+
+typedef struct  {
+    SDIO_COMMON_VARIABLES
+}SdioConfig_t;
 
 typedef struct  {
     SDIO_COMMON_VARIABLES
@@ -97,9 +102,6 @@ typedef struct  {
 }SdioHandle_t;
 
 
-typedef struct  {
-    SDIO_COMMON_VARIABLES
-}SdioConfig_t;
 
 #ifdef __cplusplus
 }

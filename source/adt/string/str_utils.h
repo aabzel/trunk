@@ -47,6 +47,7 @@ bool is_contain(const char* const temp_str, const char* const key_word1, const c
 bool generate_string(uint8_t* array, uint32_t size, char pattern);
 char* rx_strtok_r(char* s, const char* delim, char** lasts);
 char* str_limit(const char* const  str, const uint32_t size);
+char* str_limit_len(const char* const str, const uint32_t max_size);
 const char* str_case_str(const char* const text, const char* const pattern);
 int strcmp_custon(const char* const string1, const char* const string2);
 int replace_char(char* in_out_str, char orig, char rep);

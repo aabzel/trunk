@@ -26,7 +26,9 @@ bool boot_init_one(uint8_t num) ;
 bool boot_mcal_init(void);
 
 /*getters*/
+#ifdef HAS_RATIONAL_NUM
 bool boot_stack_paint(const uint8_t num, FloatFixPoint_t * const stack_used);
+#endif
 uint32_t boot_stack_top_addr_get(const uint8_t num) ;
 bool boot_seek_vector_table(const uint32_t mem_start,const uint32_t size);
 bool boot_check_reset_handler(const uint32_t app_start_address,

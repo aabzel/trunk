@@ -1,7 +1,13 @@
 #ifndef LOG_CONFIG_H
 #define LOG_CONFIG_H
 
-#define  UART_NUM_LOG 2
-//#define  LOG_UART_BAUD_RATE 460800
+#include "log_types.h"
+
+#define LOG_UART_NUM 2
+
+extern const LogConfig_t LogConfig[];
+extern LogHandle_t LogInstance[];
+
+uint32_t log_get_cnt(void);
 
 #endif /* LOG_CONFIG_H */

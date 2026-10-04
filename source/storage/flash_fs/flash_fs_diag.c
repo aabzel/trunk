@@ -37,7 +37,7 @@ bool flash_fs_diag(void) {
         uint32_t page_base_addr = flash_fs_get_page_base_addr(page_num);
         uint32_t page_len = flash_fs_get_page_size(page_num);
         uint32_t files = flash_fs_cnt_files(page_base_addr, page_len, &spare_cnt);
-        double usage_pre_cent = 100.0 - ((100.0 * ((double)spare_cnt)) / ((double)page_len));
+        float usage_pre_cent = 100.0 - ((100.0 * ((float)spare_cnt)) / ((float)page_len));
         strcpy(log_line, TSEP);
         snprintf(log_line, sizeof(log_line), "%s %3u " TSEP, log_line, page_num);
         snprintf(log_line, sizeof(log_line), "%s 0x%08x " TSEP, log_line, page_base_addr);

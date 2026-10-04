@@ -16,9 +16,10 @@ const SuperCycleConfig_t* SuperCycleGetConfig(uint8_t num);
 SuperCycleHandle_t* SuperCycleGetNode(uint8_t num);
 bool super_cycle_mcal_init(void);
 bool super_cycle_init_one(uint8_t num);
-bool super_cycle_proc_max_perf(void);
+
 bool super_cycle_proc(void);
 bool super_cycle_proc_one(uint8_t num);
+bool super_cycle_proc_max_perf(void);
 
 /*setters*/
 void super_cycle_start_one(uint8_t num) ;
@@ -26,9 +27,10 @@ void super_cycle_start_one(uint8_t num) ;
 /*getters*/
 bool super_cycle_check_continuity(SuperCycleHandle_t* const Node, uint64_t loop_start_time_us);
 uint8_t super_cycle_core_to_num(void);
-uint32_t super_cycle_run_time_ms(void);
 uint64_t super_cycle_get_init_time_us(void);
 uint64_t super_cycle_run_time_us(uint8_t num);
+uint32_t super_cycle_run_time_ms(void);
+
 
 
 #endif /* SUPER_CYCLE_H */

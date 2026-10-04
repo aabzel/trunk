@@ -161,7 +161,7 @@ bool fat_fs_scan(const char* const path) {
                 if('.' == FileInfo.fname[0]) {
                     continue;
                 } else {
-                    char line_str[120] = {0};
+                    char line_str[200] = {0};
                     strcpy(line_str, TSEP);
                     snprintf(line_str, sizeof(line_str), "%s %7u " TSEP, line_str, FileInfo.fsize);
                     snprintf(line_str, sizeof(line_str), "%s %8.3f " TSEP, line_str, BYTES_2_KBYTES(FileInfo.fsize));
@@ -170,7 +170,9 @@ bool fat_fs_scan(const char* const path) {
                     snprintf(line_str, sizeof(line_str), "%s 0x%02x " TSEP, line_str, FileInfo.fattrib);
                     snprintf(line_str, sizeof(line_str), "%s %9s " TSEP, line_str,
                              FatFsFileAttrToStr(FileInfo.fattrib));
+#if FF_USE_LFN
                     snprintf(line_str, sizeof(line_str), "%s %12s " TSEP, line_str, FileInfo.altname);
+#endif
                     snprintf(line_str, sizeof(line_str), "%s %20s " TSEP, line_str, FileInfo.fname);
 
                     cli_printf(TSEP " %3u ", num);

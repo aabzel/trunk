@@ -6,11 +6,11 @@ ifneq ($(NRF5340_MK_INC),Y)
     MCU_SELECT_DIR = $(MICROCONTROLLER_DIR)/nRF5340
     #@echo $(error MCU_SELECT_DIR=$(MCU_SELECT_DIR))
 
-    OPT += -DNRF5340
-    OPT += -DHAS_ARM
-    OPT += -DHAS_NRF53
-    OPT += -DHAS_NRF5340
-    OPT += -DHAS_MULTICORE
+    MCAL_OPT += -DNRF5340
+    MCAL_OPT += -DHAS_ARM
+    MCAL_OPT += -DHAS_NRF53
+    MCAL_OPT += -DHAS_NRF5340
+    MCAL_OPT += -DHAS_MULTICORE
 
     BOARD=Y
     CORTEX_M33=Y
@@ -28,7 +28,7 @@ ifneq ($(NRF5340_MK_INC),Y)
     SOURCES_C += $(MCU_SELECT_DIR)/nrf5340.c
 
     ifeq ($(PINS),Y)
-        OPT += -DHAS_PINS
+        MCAL_OPT += -DHAS_PINS
         SOURCES_C += $(MCU_SELECT_DIR)/pin_config.c
     endif
 
@@ -57,9 +57,9 @@ ifneq ($(NRF5340_MK_INC),Y)
     ifeq ($(CORE_APP),Y)
         #@echo $(error CORE_APP=$(CORE_APP))
         #@echo $(error NRF5340_APP=$(NRF5340_APP))
-        OPT += -DHAS_CORE_APP
-        OPT += -DNRF5340_APP
-        OPT += -DNRF5340_XXAA_APPLICATION
+        MCAL_OPT += -DHAS_CORE_APP
+        MCAL_OPT += -DNRF5340_APP
+        MCAL_OPT += -DNRF5340_XXAA_APPLICATION
         SOURCES_C += $(MCU_SELECT_DIR)/nrf5340_app_nvic_diag.c
         ifeq ($(BOOTLOADER),Y)
             LDSCRIPT = $(MCU_SELECT_DIR)/nrf5340_bootloader_app.ld
@@ -72,9 +72,9 @@ ifneq ($(NRF5340_MK_INC),Y)
 
     ifeq ($(CORE_NET),Y)
         #@echo $(error NRF5340_NET=$(NRF5340_NET))
-        OPT += -DHAS_CORE_NET
-        OPT += -DNRF5340_NET
-        OPT += -DNRF5340_XXAA_NETWORK
+        MCAL_OPT += -DHAS_CORE_NET
+        MCAL_OPT += -DNRF5340_NET
+        MCAL_OPT += -DNRF5340_XXAA_NETWORK
         LDSCRIPT = $(MCU_SELECT_DIR)/nrf5340_net.ld
     endif
 

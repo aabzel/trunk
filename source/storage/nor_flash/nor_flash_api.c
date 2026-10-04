@@ -20,7 +20,7 @@
 bool nor_flash_read(uint8_t flash_num, uint32_t phy_address, uint8_t* const data, uint32_t size) {
     bool res = false;
     LOG_DEBUG(NOR_FLASH, "Read Addr %u=0x%08x Size %u byte", phy_address, phy_address, size);
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
         if(data) {
             if(size) {
@@ -64,7 +64,7 @@ bool nor_flash_read(uint8_t flash_num, uint32_t phy_address, uint8_t* const data
 
 bool nor_flash_erase_sector(uint8_t flash_num, uint32_t phy_address) {
     bool res = false;
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
         res = nor_flash_is_valid_addr(flash_num, phy_address);
         if(res) {
@@ -97,7 +97,7 @@ bool nor_flash_erase_sector(uint8_t flash_num, uint32_t phy_address) {
 bool nor_flash_erase_chip(uint8_t flash_num) {
     bool res = true;
     LOG_WARNING(NOR_FLASH, "ErraseAll");
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
         switch(Node->option) {
 #ifdef HAS_NOR_FLASH_SW
@@ -121,13 +121,8 @@ bool nor_flash_erase_chip(uint8_t flash_num) {
             break;
         }
         if(res) {
-
             res = nor_flash_erase_verify(flash_num, Node->start, Node->size);
-            if(res) {
-                LOG_INFO(NOR_FLASH, "ErraseOk");
-            } else {
-                LOG_WARNING(NOR_FLASH, "ErraseError");
-            }
+            log_res(NOR_FLASH, res,"Errase");
         }
     }
     return res;
@@ -136,7 +131,7 @@ bool nor_flash_erase_chip(uint8_t flash_num) {
 bool nor_flash_erase_block(uint8_t flash_num, uint32_t phy_address, uint32_t block_size) {
     bool res = false;
     LOG_INFO(NOR_FLASH, "Addr %u Erase Block %u byte", phy_address, block_size);
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
         switch(Node->option) {
 #ifdef HAS_NOR_FLASH_SW
@@ -161,10 +156,9 @@ bool nor_flash_erase_block(uint8_t flash_num, uint32_t phy_address, uint32_t blo
             LOG_ERROR(NOR_FLASH, "UndefNORFlashOption %u", Node->option);
             break;
         }
+
         res = nor_flash_is_valid_addr(flash_num, phy_address);
-        if(res) {
-            res = false;
-        }
+        log_res(NOR_FLASH, res,"NorFlashIsValidAddr");
     }
     return res;
 }
@@ -172,7 +166,7 @@ bool nor_flash_erase_block(uint8_t flash_num, uint32_t phy_address, uint32_t blo
 bool nor_flash_write(uint8_t flash_num, uint32_t phy_address, const uint8_t* const data, uint32_t size) {
     bool res = false;
     LOG_DEBUG(NOR_FLASH, "Write Addr 0x%08x=%u Size: %u Byte", phy_address, phy_address, size);
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
         if(size) {
             if(data) {
@@ -203,9 +197,7 @@ bool nor_flash_write(uint8_t flash_num, uint32_t phy_address, const uint8_t* con
             break;
         }
         res = nor_flash_verify(flash_num, phy_address, data, size);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "VeryfyError");
-        }
+        log_res(NOR_FLASH, res,"VeryfyError");
     }
     return res;
 }
@@ -213,7 +205,7 @@ bool nor_flash_write(uint8_t flash_num, uint32_t phy_address, const uint8_t* con
 bool nor_flash_zero(uint8_t flash_num, uint32_t phy_address, uint32_t size) {
     bool res = false;
     LOG_INFO(NOR_FLASH, "Zero 0x%08x=%u Size: %u Byte", phy_address, phy_address, size);
-    NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+    NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
     if(Node) {
         switch(Node->option) {
 #ifdef HAS_NOR_FLASH_SW
@@ -257,7 +249,7 @@ bool nor_flash_erase_mem(uint8_t flash_num, uint32_t phy_address, uint32_t size)
     LOG_WARNING(NOR_FLASH, "Errase 0x%x...0x%x Size %u...", phy_address, phy_address + size, size);
     res = nor_flash_erase_verify(flash_num, phy_address, size);
     if(false == res) {
-        NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+        NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
         if(Node) {
             switch(Node->option) {
 #ifdef HAS_NOR_FLASH_SW

@@ -13,30 +13,31 @@
 #error That code only for desktop builds
 #endif
 
-HANDLE hComm;
+HANDLE gComm;
 
 xSerialConnection_t deviceList[MAX_COM_NUM];
 
-static bool com_set_params(HANDLE hComm, uint32_t baud_rate) {
+static bool com_set_params(HANDLE h_Comm, uint32_t baud_rate) {
     bool res = false;
+    LOG_DEBUG(COM, "BaudRate:%u Bit/s", baud_rate);
     // Initializing DCB structure
     DCB dcbSerialParams = {0};
     dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
 
-    BOOL status = GetCommState(hComm, &dcbSerialParams);
+    BOOL status = GetCommState(h_Comm, &dcbSerialParams);
     dcbSerialParams.BaudRate = baud_rate;  // Setting BaudRate = 460800
     dcbSerialParams.ByteSize = 8;          // Setting ByteSize = 8
     dcbSerialParams.StopBits = ONESTOPBIT; // Setting StopBits = 1
     dcbSerialParams.Parity = NOPARITY;     // Setting Parity = None
 
-    SetCommState(hComm, &dcbSerialParams);
+    SetCommState(h_Comm, &dcbSerialParams);
     if(status) {
         res = true;
     }
     return res;
 }
 
-static bool com_set_timeout(HANDLE hComm) {
+static bool com_set_timeout(HANDLE h_Comm) {
     bool res = false;
     COMMTIMEOUTS timeouts = {0};
     timeouts.ReadIntervalTimeout = 2;        // in milliseconds
@@ -45,21 +46,21 @@ static bool com_set_timeout(HANDLE hComm) {
     timeouts.WriteTotalTimeoutConstant = 1;  // in milliseconds
     timeouts.WriteTotalTimeoutMultiplier = 1;
 
-    SetCommTimeouts(hComm, &timeouts);
+    SetCommTimeouts(h_Comm, &timeouts);
     return res;
 }
 
-bool com_send_str(HANDLE hComm, char* txBuffer, uint32_t tx_buff_len) {
+bool com_send_str(HANDLE h_Comm, char* txBuffer, uint32_t tx_buff_len) {
     LOG_DEBUG(COM, "COMsend [%s]", txBuffer);
     bool res = false;
     uint32_t remain_len = 0;
-    res = com_receive_remain(hComm, &remain_len);
+    res = com_receive_remain(h_Comm, &remain_len);
     BOOL status;
     DWORD dNoOfBytesWritten = 0;
-    status = WriteFile(hComm, txBuffer, (DWORD)tx_buff_len, &dNoOfBytesWritten, NULL);
+    status = WriteFile(h_Comm, txBuffer, (DWORD)tx_buff_len, &dNoOfBytesWritten, NULL);
     if(dNoOfBytesWritten == tx_buff_len) {
         if(status) {
-            LOG_INFO(COM, "WriteSerial %p Ok [%s]", hComm, txBuffer);
+            LOG_INFO(COM, "WriteSerial %p Ok [%s]", h_Comm, txBuffer);
             res = true;
         }
     } else {
@@ -69,7 +70,7 @@ bool com_send_str(HANDLE hComm, char* txBuffer, uint32_t tx_buff_len) {
     return res;
 }
 
-bool com_receive_remain(HANDLE hComm, uint32_t* remain_len) {
+bool com_receive_remain(HANDLE h_Comm, uint32_t* remain_len) {
     bool res = false;
 #ifdef HAS_COM_PORT_DEBUG
     LOG_DEBUG(COM, "%s():", __FUNCTION__);
@@ -81,7 +82,7 @@ bool com_receive_remain(HANDLE hComm, uint32_t* remain_len) {
         uint32_t BytesReadCnt = 0;
         bool loopRun = true;
         while(loopRun) {
-            ReadFile(hComm,            // Handle of the Serial port
+            ReadFile(h_Comm,            // Handle of the Serial port
                      &tempChar,        // Temporary character
                      sizeof(tempChar), // Size of TempChar
                      &numberBytesRead, // Number of bytes read
@@ -104,7 +105,7 @@ bool com_receive_remain(HANDLE hComm, uint32_t* remain_len) {
     return res;
 }
 
-bool com_receive_str(HANDLE hComm, char* outRxArray, uint32_t capasityRxArray, uint32_t* remain_len) {
+bool com_receive_str(HANDLE h_Comm, char* outRxArray, uint32_t capasityRxArray, uint32_t* remain_len) {
     bool res = false;
 #ifdef HAS_COM_PORT_DEBUG
     LOG_DEBUG(COM, "%s():", __FUNCTION__);
@@ -117,7 +118,7 @@ bool com_receive_str(HANDLE hComm, char* outRxArray, uint32_t capasityRxArray, u
         bool loopRun = true;
         uint32_t ret = 0;
         while(loopRun) {
-            ret = ReadFile(hComm,            // Handle of the Serial port
+            ret = ReadFile(h_Comm,            // Handle of the Serial port
                            &tempChar,        // Temporary character
                            sizeof(tempChar), // Size of TempChar
                            &numberBytesRead, // Number of bytes read
@@ -148,7 +149,7 @@ bool com_receive_str(HANDLE hComm, char* outRxArray, uint32_t capasityRxArray, u
     return res;
 }
 
-bool com_receive_str_timeout(HANDLE hComm, char* outRxArray, uint32_t capasityRxArray, uint32_t* remain_len,
+bool com_receive_str_timeout(HANDLE h_Comm, char* outRxArray, uint32_t capasityRxArray, uint32_t* remain_len,
                              uint32_t time_out_ms) {
     bool res = false;
 #ifdef HAS_COM_PORT_DEBUG
@@ -170,7 +171,7 @@ bool com_receive_str_timeout(HANDLE hComm, char* outRxArray, uint32_t capasityRx
             if(time_out_ms < diff_secs * 1000) {
                 loopRun = false;
             }
-            ret = ReadFile(hComm,            // Handle of the Serial port
+            ret = ReadFile(h_Comm,            // Handle of the Serial port
                            &tempChar,        // Temporary character
                            sizeof(tempChar), // Size of TempChar
                            &numberBytesRead, // Number of bytes read
@@ -236,21 +237,21 @@ bool init_serial(char* com_name, uint32_t baud_rate) {
 
     LOG_WARNING(COM, "try open [%s]... Rate: %u bit/s", com_name, baud_rate);
 
-    hComm = CreateFile(com_name,
+    l_Comm = CreateFile(com_name,
                        GENERIC_READ | GENERIC_WRITE, // Read/Write
                        0,                            // No Sharing
                        NULL,                         // No Security
                        OPEN_EXISTING,                // Open existing port only
                        0,                            // Non Overlapped I/O
                        NULL);                        // Null for Comm Devices
-    if(INVALID_HANDLE_VALUE == hComm) {
-        LOG_ERROR(COM, "Unable to open serial port [%s] hComm [%p]", com_name, hComm);
+    if(INVALID_HANDLE_VALUE == l_Comm) {
+        LOG_ERROR(COM, "Unable to open serial port [%s] l_Comm [%p]", com_name, l_Comm);
         res = false;
     } else {
-        LOG_INFO(COM, "[i] Open [%s] hComm [%p] OK ", com_name, hComm);
+        LOG_INFO(COM, "[i] Open [%s] l_Comm [%p] OK ", com_name, l_Comm);
 
-        com_set_params(hComm, baud_rate);
-        com_set_timeout(hComm);
+        com_set_params(l_Comm, baud_rate);
+        com_set_timeout(l_Comm);
         res = true;
     }
 
@@ -269,9 +270,9 @@ bool scan_serial(void) {
 #if DEBUG_FAILED_OPENS
         LOG_DEBUG(COM, "  try [%s]...", com_name);
 #endif
-        HANDLE hComm;
+        HANDLE l_Comm;
 #if 1
-        hComm = CreateFile(com_name,
+        l_Comm = CreateFile(com_name,
                            GENERIC_READ | GENERIC_WRITE, // Read/Write
                            0,                            // No Sharing
                            NULL,                         // No Security
@@ -279,9 +280,9 @@ bool scan_serial(void) {
                            0,                            // Non Overlapped I/O
                            NULL);                        // Null for Comm Devices
 #if DEBUG_FAILED_OPENS
-        LOG_DEBUG(COM, "  hComm [%p]", hComm);
+        LOG_DEBUG(COM, "  l_Comm [%p]", l_Comm);
 #endif
-        if(hComm == INVALID_HANDLE_VALUE) {
+        if(l_Comm == INVALID_HANDLE_VALUE) {
 #if DEBUG_FAILED_OPENS
             LOG_DEBUG(COM, " Unable open serial port [%s]", com_name);
 #endif
@@ -290,21 +291,21 @@ bool scan_serial(void) {
             LOG_DEBUG(COM, "  [%s] exists in PC", com_name);
 #endif
             deviceList[comPortNum].isExistPort = true;
-            CloseHandle(hComm);
+            CloseHandle(l_Comm);
             out_res = true;
         }
 #endif
 
         snprintf(com_name, sizeof(com_name), "\\\\.\\COM%u", comPortNum);
-        hComm = CreateFile(com_name, GENERIC_READ | GENERIC_WRITE, 0, // No Sharing
+        l_Comm = CreateFile(com_name, GENERIC_READ | GENERIC_WRITE, 0, // No Sharing
                            NULL,                                      // No Security
                            OPEN_EXISTING,
                            0,     // Non Overlapped I/O
                            NULL); // Null for Comm Devices
 #if DEBUG_FAILED_OPENS
-        LOG_DEBUG(COM, "  hComm [%p]", hComm);
+        LOG_DEBUG(COM, "  l_Comm [%p]", l_Comm);
 #endif
-        if(hComm == INVALID_HANDLE_VALUE) {
+        if(l_Comm == INVALID_HANDLE_VALUE) {
 #if DEBUG_FAILED_OPENS
             LOG_DEBUG(COM, "   Error in opening serial port [%s]", com_name);
 #endif
@@ -313,14 +314,14 @@ bool scan_serial(void) {
             LOG_DEBUG(COM, "  [%s] exists in PC", com_name);
 #endif
             deviceList[comPortNum].isExistPort = true;
-            com_set_params(hComm, 9600);
-            com_set_timeout(hComm);
+            com_set_params(l_Comm, 9600);
+            com_set_timeout(l_Comm);
             uint32_t realRxLen = 0;
 
-            res = com_receive_remain(hComm, &realRxLen);
+            res = com_receive_remain(l_Comm, &realRxLen);
 
             char txBuffer[] = "vi\n\r";
-            res = com_send_str(hComm, txBuffer, strlen(txBuffer));
+            res = com_send_str(l_Comm, txBuffer, strlen(txBuffer));
             if(true == res) {
 #if DEBUG_FINE_VI_REQ
                 LOG_DEBUG(COM, "  vi request ok!");
@@ -330,7 +331,7 @@ bool scan_serial(void) {
             }
             char rxBuffer[10000] = "";
             LOG_DEBUG(COM, " ");
-            res = com_receive_str(hComm, rxBuffer, sizeof(rxBuffer), &realRxLen);
+            res = com_receive_str(l_Comm, rxBuffer, sizeof(rxBuffer), &realRxLen);
             if(true == res) {
                 if(10 < realRxLen) {
 #if DEDUG_RX_TEXT
@@ -344,7 +345,7 @@ bool scan_serial(void) {
                 LOG_DEBUG(COM, "  read fail!");
             }
 
-            CloseHandle(hComm);
+            CloseHandle(l_Comm);
         }
     }
 
@@ -428,13 +429,13 @@ bool serial_init(void) {
     bool res = false;
     uint8_t i;
     uint16_t ok = 0;
-    char text[10] = "";
+    char lText[10] = "";
     for(i = 0; i < 10; i++) {
-        snprintf(text, sizeof(text), "COM%u", i);
-        res = init_serial(text, 115200);
+        snprintf(lText, sizeof(lText), "COM%u", i);
+        res = init_serial(lText, 115200);
         if(res) {
             ok++;
-            LOG_INFO(SERIAL, " Spot %s", text);
+            LOG_INFO(SERIAL, " Spot %s", lText);
             break;
         }
     }

@@ -1,8 +1,7 @@
 #ifndef NOR_FLASH_COMMANDS_H
 #define NOR_FLASH_COMMANDS_H
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "std_includes.h"
 
 #ifdef __cplusplus
 extern "C" {

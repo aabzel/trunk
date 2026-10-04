@@ -15,13 +15,12 @@ bool nor_flash_diag_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &flash_num);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr FlashNum  %s", argv[0]);
-        }
+        log_res(NOR_FLASH, res,"Num");
     }
 
     if(res) {
         res = nor_flash_diag(flash_num);
+        log_res(NOR_FLASH, res,"Diag");
     } else {
         LOG_ERROR(NOR_FLASH, "Usage: nfd num");
     }
@@ -34,13 +33,12 @@ bool nor_flash_init_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &flash_num);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr FlashNum  %s", argv[0]);
-        }
+        log_res(NOR_FLASH, res,"Num");
     }
 
     if(res) {
         res = nor_flash_init_one(flash_num);
+        log_res(NOR_FLASH, res,"Init1");
     } else {
         LOG_ERROR(NOR_FLASH, "Usage: nfi num");
     }
@@ -53,13 +51,12 @@ bool nor_flash_reset_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &flash_num);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr FlashNum  %s", argv[0]);
-        }
+        log_res(NOR_FLASH, res,"Num");
     }
 
     if(res) {
         res = nor_flash_reset(flash_num);
+        log_res(NOR_FLASH, res,"Reset");
     } else {
         LOG_ERROR(NOR_FLASH, "Usage: nft num");
     }
@@ -75,23 +72,17 @@ bool nor_flash_read_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &flash_num);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr FlashNum  %s", argv[0]);
-        }
+        log_res(NOR_FLASH, res,"Num");
     }
 
     if(2 <= argc) {
         res = try_str2uint32(argv[1], &address);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr block_numb  %s", argv[1]);
-        }
+        log_res(NOR_FLASH, res,"Addr");
     }
 
-    if(2 <= argc) {
+    if(3 <= argc) {
         res = try_str2uint32(argv[2], &size);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr size %s", argv[2]);
-        }
+        log_res(NOR_FLASH, res,"Size");
     }
 
     if(res && size) {
@@ -122,16 +113,12 @@ bool nor_flash_write_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &flash_num);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr FlashNum  %s", argv[0]);
-        }
+        log_res(NOR_FLASH, res,"Num");
     }
 
     if(2 <= argc) {
         res = try_str2uint32(argv[1], &address);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr block_numb  %s", argv[1]);
-        }
+        log_res(NOR_FLASH, res,"Addr");
     }
 
     if(3 <= argc) {
@@ -165,22 +152,19 @@ bool nor_flash_analyze_command(int32_t argc, char* argv[]) {
 
     if(1 <= argc) {
         res = try_str2uint8(argv[0], &flash_num);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr FlashNum  %s", argv[0]);
-        }
+        log_res(NOR_FLASH, res,"Num");
     }
 
     if(2 <= argc) {
         res = try_str2uint32(argv[1], &piece_size);
-        if(false == res) {
-            LOG_ERROR(NOR_FLASH, "ParseErr piece_size  %s", argv[1]);
-        }
+        log_res(NOR_FLASH, res,"PiceSize");
     }
 
     if(res) {
-        NorFlashItem_t* Node = NorFlashGetNode(flash_num);
+        NorFlashInstance_t* Node = NorFlashGetNode(flash_num);
         if(Node) {
             res = nor_flash_usage(flash_num, piece_size);
+            log_res(NOR_FLASH, res,"Usage");
         }
     } else {
         LOG_ERROR(NOR_FLASH, "Usage:nfa num PieceSize");

@@ -2,7 +2,6 @@
 #define PWM_CONFIG_GENERAL_H
 
 #include "std_includes.h"
-
 #include "pwm_types.h"
 
 #ifndef HAS_PWM

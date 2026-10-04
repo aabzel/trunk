@@ -25,9 +25,9 @@ extern "C" {
 #error "+HAS_DIAG"
 #endif
 
+const char* FatFsResToStr(FRESULT code);
 const char* FatFsFileAttrToStr(BYTE fattrib);
 const char* FatFormatOptionsToStr(BYTE format_opt);
-const char* FatFsResToStr(FRESULT code);
 const char* FatFsFileToStr(const FIL*const  file);
 const char* FatFsConfigToStr(const FatFsConfig_t* const Config);
 const char* FatFsNodeToStr(const FatFsHandle_t* const Node);

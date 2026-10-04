@@ -1,14 +1,12 @@
 #ifndef SCHMITT_TRIGGER_CONFIG_H
 #define SCHMITT_TRIGGER_CONFIG_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "schmitt_trigger_types.h"
 
 #ifndef HAS_SCHMITT_TRIGGER
 #error "Add HAS_SCHMITT_TRIGGER"
-#endif /*HAS_SCHMITT_TRIGGER*/
+#endif /**/
 
 extern const SchmittTriggerConfig_t SchmittTriggerConfig[];
 extern SchmittTriggerHandle_t SchmittTriggerInstance[];

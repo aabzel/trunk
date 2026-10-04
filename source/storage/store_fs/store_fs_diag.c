@@ -367,16 +367,20 @@ const char* StoreFsDataToStr(const StorageId_t id, const void* const data) {
     return name;
 }
 
-bool store_fs_diag(uint8_t num, char* keyWord1, char* keyWord2) {
+bool store_fs_diag_one(uint8_t num, char* keyWord1, char* keyWord2) {
     bool res = false;
     cli_printf(CRLF);
     static const table_col_t cols[] = {
-        {5, "No"},     {6, "id"},
+        {5, "N"},      {5, "No"},
+        {6, "id"},
 #ifdef HAS_SYSTEM_DIAG
         {12, "group"},
 #endif
         {9, "type"},   {23, "VariableName"},
         {5, "len"},    {17, "Value"},
+        {7, "Scale"},  {10, "PhyQ"},
+        {6, "Units"},  {6, "Access"},
+        {10, "Dflt"},
     };
 
     table_header(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
@@ -384,11 +388,11 @@ bool store_fs_diag(uint8_t num, char* keyWord1, char* keyWord2) {
     uint16_t i = 0;
     for(i = 0; i < storage_get_cnt(); i++) {
         uint8_t value[100] = {0};
-        res = store_fs_get(num, StorageArray[i].id, value);
+        res = store_fs_get_one(num, StorageArray[i].id, value);
 
         char temp[200] = {0};
         strcpy(temp, TSEP);
-
+        snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, num);
         snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, cnt);
         snprintf(temp, sizeof(temp), "%s %4u " TSEP, temp, StorageArray[i].id);
 #ifdef HAS_SYSTEM_DIAG
@@ -398,6 +402,12 @@ bool store_fs_diag(uint8_t num, char* keyWord1, char* keyWord2) {
         snprintf(temp, sizeof(temp), "%s %21s " TSEP, temp, StorageArray[i].name);
         snprintf(temp, sizeof(temp), "%s %3u " TSEP, temp, StorageArray[i].len);
         snprintf(temp, sizeof(temp), "%s %15s " TSEP, temp, StoreFsDataToStr(StorageArray[i].id, value));
+        snprintf(temp, sizeof(temp), "%s %5s " TSEP, temp, StorageScaleToStr(StorageArray[i].Scale));
+        snprintf(temp, sizeof(temp), "%s %8s " TSEP, temp,
+                 str_limit(StoragePhysicalQuantityToStr(StorageArray[i].physical_quantity), 8));
+        snprintf(temp, sizeof(temp), "%s %4s " TSEP, temp, str_limit(StorageUnitsToStr(StorageArray[i].Units), 4));
+        snprintf(temp, sizeof(temp), "%s %4s " TSEP, temp, str_limit(StorageAccessToStr(StorageArray[i].access), 4));
+        snprintf(temp, sizeof(temp), "%s %8s " TSEP, temp, str_limit(StorageArray[i].default_value, 8));
 
         res = is_contain(temp, keyWord1, keyWord2);
         if(res) {
@@ -407,5 +417,19 @@ bool store_fs_diag(uint8_t num, char* keyWord1, char* keyWord2) {
     }
     table_row_bottom(&(curWriterPtr->stream), cols, ARRAY_SIZE(cols));
 
+    return res;
+}
+
+bool store_fs_diag(char* keyWord1, char* keyWord2) {
+    bool res = false;
+    uint32_t cnt = storage_get_cnt();
+    uint32_t i = 0;
+    uint32_t ok = 0;
+    for(i = 1; i <= cnt; i++) {
+        res = store_fs_diag_one(i, keyWord1, keyWord2);
+        ok = ok_cnt_update(ok, res);
+    }
+
+    res = is_equal_u32(ok, cnt);
     return res;
 }

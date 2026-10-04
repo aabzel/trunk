@@ -27,7 +27,7 @@ typedef struct {
     uint32_t err_get_cnt;
     FlashFsPage_t cur_page;
     uint32_t toggle_cnt;
-} FlashFs_t;
+} FlashFsHandle_t;
 
 typedef struct {
     uint16_t id;

@@ -1,9 +1,7 @@
 #ifndef NOR_FLASH_TYPES_H
 #define NOR_FLASH_TYPES_H
 
-#include <stdbool.h>
-#include <stdint.h>
-
+#include "std_includes.h"
 #include "nor_flash_const.h"
 
 typedef bool (*CustomInit_t)(uint8_t num);
@@ -25,6 +23,6 @@ typedef struct {
 typedef struct {
     COMMON_VARIABLES
     bool init;
-} NorFlashItem_t;
+} NorFlashInstance_t;
 
 #endif /* NOR_FLASH_TYPES_H */

@@ -78,9 +78,9 @@ bool store_fs_invalidate(const uint8_t num, const StorageId_t id) {
     return res;
 }
 
-bool store_fs_set(uint8_t num, StorageId_t id, const void* const data) {
+bool store_fs_set_one(uint8_t num, StorageId_t id, const void* const data) {
     bool res = false;
-    LOG_WARNING(STORE_FS, "%u,Set:%s", num, StorageIdToStr(id));
+    LOG_DEBUG(STORE_FS, "%u,Set:%s", num, StorageIdToStr(id));
     StoreFsHandle_t* Node = StoreFsGetNode(num);
     if(Node) {
         uint32_t size = storage_get_len(id);
@@ -97,11 +97,9 @@ bool store_fs_set(uint8_t num, StorageId_t id, const void* const data) {
 
             case STORAGE_TYPE_FLASH_FS: {
 #ifdef HAS_FLASH_FS
-                res = flash_fs_set((uint16_t) id, (void*)data,(uint16_t) size);
+                res = flash_fs_set((uint16_t)id, (void*)data, (uint16_t)size);
 #endif
             } break;
-
-
 
             case STORAGE_TYPE_FAT_FS: {
 #ifdef HAS_FAT_FS
@@ -118,7 +116,20 @@ bool store_fs_set(uint8_t num, StorageId_t id, const void* const data) {
     return res;
 }
 
-bool store_fs_get(uint8_t num, StorageId_t id, void* const out_data) {
+bool store_fs_set(StorageId_t id, const void* const data) {
+    bool res = false;
+    uint32_t cnt = store_fs_get_cnt();
+    uint32_t i = 0;
+    uint32_t ok = 0;
+    for(i = 1; i <= cnt; i++) {
+        res = store_fs_set_one(i, id, data);
+        ok = ok_cnt_update(ok, res);
+    }
+    res = is_equal_u32(ok, cnt);
+    return res;
+}
+
+bool store_fs_get_one(uint8_t num, StorageId_t id, void* const out_data) {
     bool res = false;
     LOG_DEBUG(STORE_FS, "%u,Get:%u=%s", num, id, StorageIdToStr(id));
     StoreFsHandle_t* Node = StoreFsGetNode(num);
@@ -139,7 +150,7 @@ bool store_fs_get(uint8_t num, StorageId_t id, void* const out_data) {
             case STORAGE_TYPE_FLASH_FS: {
 #ifdef HAS_FLASH_FS
                 uint16_t value_len = 0;
-                res = flash_fs_get((uint16_t) id, (void*)  out_data, (uint16_t) size, &value_len);
+                res = flash_fs_get((uint16_t)id, (void*)out_data, (uint16_t)size, &value_len);
 #endif
             } break;
 
@@ -162,12 +173,32 @@ bool store_fs_get(uint8_t num, StorageId_t id, void* const out_data) {
     return res;
 }
 
+bool store_fs_get(StorageId_t id, void* const out_data) {
+    bool res = false;
+
+    uint32_t ok = 0;
+    res = store_fs_get_one(1, id, out_data);
+    ok = ok_cnt_update(ok, res);
+
+#if 0
+    uint32_t i = 0;
+    uint32_t cnt = store_fs_get_cnt();
+    for(i = 1; i <= cnt; i++) {
+        res = store_fs_get_one(i, id, out_data);
+        ok = ok_cnt_update(ok, res);
+    }
+
+    res = is_equal_u32(ok, cnt);
+#endif
+    return res;
+}
+
 bool store_fs_set_lazy(uint8_t num, StorageId_t id, const void* const data_write) {
     bool res = false;
     uint32_t len = storage_get_len(id);
     uint8_t read_data[128] = {0};
     if(len < sizeof(read_data)) {
-        res = store_fs_get(num, id, read_data);
+        res = store_fs_get_one(num, id, read_data);
         if(res) {
             int ret = memcmp(data_write, read_data, len);
             if(0 == ret) {
@@ -182,7 +213,7 @@ bool store_fs_set_lazy(uint8_t num, StorageId_t id, const void* const data_write
         }
 
         if(false == res) {
-            res = store_fs_set(num, id, data_write);
+            res = store_fs_set_one(num, id, data_write);
         }
     } else {
         LOG_ERROR(STORE_FS, "TooBigParam");
@@ -193,10 +224,10 @@ bool store_fs_set_lazy(uint8_t num, StorageId_t id, const void* const data_write
 
 bool store_fs_set_verify(uint8_t num, StorageId_t id, const void* const data_write) {
     bool res = false;
-    res = store_fs_set(num, id, data_write);
+    res = store_fs_set_one(num, id, data_write);
     if(res) {
         uint8_t read_data[128] = {0};
-        res = store_fs_get(num, id, read_data);
+        res = store_fs_get_one(num, id, read_data);
         if(res) {
             uint32_t len = storage_get_len(id);
             int ret = memcmp(data_write, read_data, len);
@@ -217,10 +248,10 @@ bool store_fs_set_verify(uint8_t num, StorageId_t id, const void* const data_wri
     return res;
 }
 
-bool store_fs_load(uint8_t num, StorageId_t id, void* const out_data) {
+bool store_fs_load_one(uint8_t num, StorageId_t id, void* const out_data) {
     bool res = false;
     StorageItem_t* Node = StorageGetNode(id);
-    bool present = store_fs_get(num, id, out_data);
+    bool present = store_fs_get_one(num, id, out_data);
     if(!present) {
         LOG_WARNING(STORE_FS, "NoId:%s", StorageIdToStr(id));
         if(Node) {
@@ -236,7 +267,7 @@ bool store_fs_load(uint8_t num, StorageId_t id, void* const out_data) {
             res = try_str2type(Node->default_value, Node->type, defaultData, sizeof(defaultData));
             if(res) {
                 LOG_INFO(STORE_FS, "SetDefailt:%s", StorageItemToStr(Node));
-                res = store_fs_set(num, id, defaultData);
+                res = store_fs_set_one(num, id, defaultData);
                 if(res) {
                     memcpy(out_data, defaultData, Node->len);
                 } else {
@@ -311,7 +342,7 @@ static bool store_fs_load_defaults(uint8_t num) {
             res = StorageIsValidParam(&StorageArray[i]);
             if(res) {
                 uint8_t out_data[512] = {0};
-                res = store_fs_load(num, StorageArray[i].id, out_data);
+                res = store_fs_load_one(num, StorageArray[i].id, out_data);
                 if(res) {
                     ok++;
                 }
@@ -332,6 +363,15 @@ static bool store_fs_load_defaults(uint8_t num) {
         res = false;
     }
     return out_res;
+}
+
+bool store_fs_is_valid(uint8_t num) {
+    bool res = false;
+    StoreFsHandle_t *Node = StoreFsGetNode(num);
+    if(Node) {
+        res = Node->init;
+    }
+    return res;
 }
 
 bool store_fs_init_one(uint8_t num) {
