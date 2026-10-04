@@ -31,8 +31,4 @@ SysTickHandle_t SysTickInstance[] = {
     } ,
 };
 
-uint32_t systick_get_cnt(void) {
-    return 1;
-}
-
-
+COMPONENT_GET_CNT(SysTick, systick)

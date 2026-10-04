@@ -149,7 +149,7 @@ SECTIONS
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
   {
-    . = ALIGN(8);
+    . = ALIGN(4);
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
@@ -157,7 +157,7 @@ SECTIONS
     __Core0_StackLimit = .;
     
     . = . + _Min_Stack_Size;
-    . = ALIGN(8);
+    . = ALIGN(4);
     __Core0_StackTop = . ;
   } >RAM
 

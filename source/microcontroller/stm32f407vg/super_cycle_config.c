@@ -1,7 +1,9 @@
 #include "super_cycle_config.h"
 
 #include "time_mcal.h"
+#ifdef HAS_DATA_MISC
 #include "data_utils.h"
+#endif
 
 #ifndef HAS_SUPER_CYCLE
 #error "Add HAS_SUPER_CYCLE"

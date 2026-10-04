@@ -133,26 +133,14 @@ static const MpuRegionConfig_t MpuRegions[] = {
 
 const MpuConfig_t SECTION_CFG_DATA MpuConfig[] = {
     { .num = 0, .Region = MpuRegions, .region_cnt = ARRAY_SIZE(MpuRegions), .valid = true, .name = "MPU0", },
-#ifdef HAS_MULTICORE
-    { .num = 1, .Region = MpuRegions, .region_cnt = ARRAY_SIZE(MpuRegions), .valid = true, .name = "MPU1", },
-    { .num = 2, .Region = MpuRegions, .region_cnt = ARRAY_SIZE(MpuRegions), .valid = true, .name = "MPU2", },
-#endif
+
 };
 
 MpuHandle_t MpuInstance[] = {
     { .num = 0, .valid = true, },
-#ifdef HAS_MULTICORE
-    { .num = 1, .valid = true, },
-    { .num = 2, .valid = true, },
-#endif
+
 };
 
-uint32_t mpu_get_cnt(void) {
-    uint8_t cnt1 = 0;
-    uint8_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(MpuConfig);
-    cnt2 = ARRAY_SIZE(MpuInstance);
-    if(cnt2 == cnt1) {
-    }
-    return cnt1;
-}
+
+COMPONENT_GET_CNT(Mpu, mpu)
+

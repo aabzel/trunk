@@ -1,7 +1,7 @@
 #include "super_cycle_config.h"
 
 #include "super_cycle_config.h"
-//#include "time_mcal.h"
+#include "time_mcal.h"
 #ifdef HAS_DATA_MISC
 #include "data_utils.h"
 #endif
@@ -13,7 +13,7 @@
 const SuperCycleConfig_t SECTION_CFG_DATA SuperCycleConfig[] = {
 
     {
-        .max_duration_us = 100000,
+        .max_duration_us = MSEC_2_USEC(100),
         .num = SUPER_CYCLE_CORE_0,
         .scheduler_num = 1,
         .valid = true,

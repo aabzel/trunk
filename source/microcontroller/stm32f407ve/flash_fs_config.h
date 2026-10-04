@@ -10,12 +10,11 @@
 
 #ifndef HAS_FLASH_FS
 #error "Add HAS_FLASH_FS"
-#endif /*HAS_FLASH_FS*/
+#endif
 
 #ifndef HAS_FLASH
 #error "Add HAS_FLASHER"
-#endif /*HAS_FLASHER*/
-
+#endif
 
 #define FLASH_FS_PAGE_SIZE ((NVS_SIZE) / 2)
 
@@ -26,6 +25,6 @@
 #define MEMORY_MANAGER2_LENGTH FLASH_FS_PAGE_SIZE
 
 extern const FlashFsConfig_t FlashFsConfig;
-extern FlashFs_t FlashFs;
+extern FlashFsHandle_t FlashFsInstance;
 
 #endif /* FLASH_FS_CONFIG_H  */

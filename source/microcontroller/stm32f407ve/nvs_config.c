@@ -23,12 +23,4 @@ NvsHandle_t NvsInstance[] = {
 
 const uint8_t SECTION_NVRAM nvram_memory[NVS_SIZE]= { [0 ... (NVS_SIZE-1)] = 0xFF };
 
-uint32_t nvs_get_cnt(void) {
-    uint8_t cnt1 = 0;
-    uint8_t cnt2 = 0;
-    cnt1 = ARRAY_SIZE(NvsConfig);
-    cnt2 = ARRAY_SIZE(NvsInstance);
-    if(cnt2 == cnt1) {
-    }
-    return cnt1;
-}
+COMPONENT_GET_CNT(Nvs, nvs)

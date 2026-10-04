@@ -5,19 +5,19 @@ ifneq ($(STM32F413ZH_MK_INC),Y)
     MCU_SELECT_DIR = $(MICROCONTROLLER_DIR)/stm32f413zh
     #@echo $(error MCU_SELECT_DIR=$(MCU_SELECT_DIR))
     #@echo $(error CFLAGS=$(CFLAGS))
-    OPT += -DHAS_STM32F413ZH
-    OPT += -DHAS_STM32
-    OPT += -DSTM32F4xxxx
-    OPT += -DSTM32F413xx
-    OPT += -DSTM32F413ZH
-    OPT += -DSTM32F413xH
-    OPT += -DSTM32F413Zx
+    MCAL_OPT += -DHAS_STM32F413ZH
+    MCAL_OPT += -DHAS_STM32
+    MCAL_OPT += -DSTM32F4xxxx
+    MCAL_OPT += -DSTM32F413xx
+    MCAL_OPT += -DSTM32F413ZH
+    MCAL_OPT += -DSTM32F413xH
+    MCAL_OPT += -DSTM32F413Zx
 
-    OPT += -DHAS_STM32F4xxxx
-    OPT += -DHAS_STM32F413xx
-    OPT += -DHAS_STM32F413ZH
-    OPT += -DHAS_STM32F413xH
-    OPT += -DHAS_STM32F413Zx
+    MCAL_OPT += -DHAS_STM32F4xxxx
+    MCAL_OPT += -DHAS_STM32F413xx
+    MCAL_OPT += -DHAS_STM32F413ZH
+    MCAL_OPT += -DHAS_STM32F413xH
+    MCAL_OPT += -DHAS_STM32F413Zx
     
     mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
     $(info Build  $(mkfile_path))
@@ -33,11 +33,11 @@ ifneq ($(STM32F413ZH_MK_INC),Y)
     SOURCES_ASM += $(MCU_SELECT_DIR)/startup_stm32f413xx.S
 
     ifeq ($(CLOCK),Y)
-        SOURCES_C += $(MCU_SELECT_DIR)/clock_config.c
+        SOURCES_CONFIGURATION_C += $(MCU_SELECT_DIR)/clock_config.c
     endif
     
     ifeq ($(GPIO),Y)
-        SOURCES_C += $(MCU_SELECT_DIR)/stm32f413zh.c
+        SOURCES_CONFIGURATION_C += $(MCU_SELECT_DIR)/stm32f413zh.c
     endif
 
     INCDIR += -I$(MCU_SELECT_DIR)
@@ -60,7 +60,7 @@ ifneq ($(STM32F413ZH_MK_INC),Y)
     endif
 
     ifeq ($(SYSTICK),Y)
-        SOURCES_C += $(STM32F401RE_DIR)/systick_general_config.c
+        SOURCES_CONFIGURATION_C += $(STM32F401RE_DIR)/systick_general_config.c
     endif
 
     MICROCONTROLLER_SELECTED=Y

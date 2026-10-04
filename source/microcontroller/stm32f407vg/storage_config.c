@@ -8,6 +8,14 @@
 #include "common_diag.h"
 #include "data_utils.h"
 #include "std_includes.h"
+#include "storage_diag.h"
+#include "storage_types.h"
+
+#ifdef HAS_CLOCK
+#include "clock_params.h"
+#else
+#define PARAMS_CLOCK
+#endif
 
 #ifdef HAS_FLASH_FS
 #include "flash_fs.h"
@@ -16,9 +24,6 @@
 #ifdef HAS_CLI
 #include "log.h"
 #endif
-
-#include "storage_diag.h"
-#include "storage_types.h"
 
 #ifdef HAS_SDIO
 #include "sdio_params.h"
@@ -29,7 +34,7 @@
 #ifdef HAS_IWDG
 #include "iwdg_params.h"
 #else
-#define IWDG_PARAMS
+#define PARAMS_IWDG
 #endif
 
 #ifdef HAS_BOOT
@@ -60,7 +65,7 @@
 #include "flash_fs_params.h"
 #else
 #define PARAMS_FLASH_FS
-#endif /*HAS_FLASH_FS*/
+#endif 
 
 #ifdef HAS_GNSS
 #include "gnss_params.h"
@@ -89,21 +94,29 @@
 #define STORAGE_ARRAY_ALL                                                                                              \
     PARAMS_CLOCK                                                                                                       \
     PARAMS_BOOT                                                                                                        \
+    PARAMS_LIGHT_NAVIGATOR                                                                                             \
     PARAMS_FLASH_FS                                                                                                    \
     PARAMS_GNSS                                                                                                        \
     PARAMS_GENERIC                                                                                                     \
-    PARAMS_WATCHDOG                                                                                                        \
+    PARAMS_WATCHDOG                                                                                                    \
+    PARAMS_KEEPASS                                                                                                     \
+    PARAMS_PASTILDA                                                                                                    \
     PARAMS_SDIO                                                                                                        \
     PARAMS_TIME                                                                                                        \
     PARAMS_BOOTLOADER
-    
+
 /*TODO: Sort by index for bin search in future*/
-const StorageItem_t StorageArray[] = {
-    PARAMS_BOOT PARAMS_LIGHT_NAVIGATOR PARAMS_FLASH_FS PARAMS_GNSS PARAMS_GENERIC IWDG_PARAMS PARAMS_KEEPASS
-        PARAMS_PASTILDA PARAMS_SDIO PARAMS_TIME PARAMS_BOOTLOADER{
-            .facility = BOOT, .id = PAR_ID_BOOT_CMD, .len = 1, .type = TYPE_UINT8, .name = "BootCmd"}, /*num*/
-    {.facility = BOOT, .id = PAR_ID_REBOOT_CNT, .len = 2, .type = TYPE_UINT16, .name = "ReBootCnt"},   /*num*/
-    {.facility = SYS, .id = PAR_ID_SERIAL_NUM, .len = 4, .type = TYPE_UINT32, .name = "SerialNum"},    /**/
+const StorageItem_t SECTION_CFG_DATA StorageArray[] = {
+    STORAGE_ARRAY_ALL
+    {
+     .facility = SYS,
+     .id = PAR_ID_SERIAL_NUM,
+     .len = 4,
+     .type = TYPE_UINT32,
+     .parser = U32ToStr,
+     .default_value = "1",
+     .name = "SerialNum"
+     },
 };
 
 uint32_t storage_get_cnt(void) {

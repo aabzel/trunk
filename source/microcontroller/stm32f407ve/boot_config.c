@@ -12,7 +12,7 @@ const BootConfig_t SECTION_CFG_DATA BootConfig[] = {
         { .num = 1,
           .fw_start_address = ROM_START,
           .valid =  true,
-          .name="MBR",
+          .name="Core0",
 #ifdef HAS_LINKER_INFO
           .stack_lim_address = (uint32_t) &__Core0_StackLimit,
           .stack_top_address = (uint32_t) &__Core0_StackTop,

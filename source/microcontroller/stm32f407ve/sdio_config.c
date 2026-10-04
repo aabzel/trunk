@@ -33,4 +33,3 @@ SdioHandle_t SdioInstance[] = {
 };
 
 COMPONENT_GET_CNT(Sdio, sdio)
-

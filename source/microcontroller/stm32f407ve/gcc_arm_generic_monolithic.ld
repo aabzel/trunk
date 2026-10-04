@@ -4,7 +4,6 @@
 
 **  File        : LinkerScript.ld
 **
-**  Author		: STM32CubeMX
 **
 **  Abstract    : Linker script for STM32F407VETx series
 **                512Kbytes FLASH and 192Kbytes RAM
@@ -61,8 +60,8 @@ _Min_Stack_Size = 8K; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 112K
-CCMRAM (xrw)   : ORIGIN = 0x10000000, LENGTH = 64K
+RAM (xrw)    : ORIGIN = 0x20000000, LENGTH = 112K
+CCMRAM (xrw) : ORIGIN = 0x10000000, LENGTH = 64K
 
 FLASH1 (rx)    : ORIGIN = 0x08000000, LENGTH = 1K
 CONFIGURATION_DATA (rx)    : ORIGIN = 0x08000400, LENGTH = 31K
@@ -201,7 +200,7 @@ SECTIONS
     
     . = ALIGN(4);
     _eccmram = .;       /* create a global symbol at ccmram end */
-  } >CCMRAM AT> FLASH2
+  } >CCMRAM AT> FLASH
 
    /* RamFunctions  section 
      If initialized variables will be placed in this section,
@@ -217,7 +216,7 @@ SECTIONS
         
         *(.Ram_Fun)       /*  .CCMRamFunc sections */
         *(.Ram_Fun*)      /*  .CCMRamFunc* sections */
-    
+ 
         . = ALIGN(4);
         RamFuncEnd = .;    /* create a global symbol at RamFunctions end */
     } >RAM AT> FLASH2

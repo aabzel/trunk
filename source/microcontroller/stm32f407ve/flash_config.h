@@ -9,7 +9,9 @@
 #error "Add HAS_FLASHER"
 #endif
 
+#ifndef NOR_FLASH_BASE
 #define NOR_FLASH_BASE ROM_START
+#endif
 
 #ifndef MBR_START_ADDRESS
 #define MBR_START_ADDRESS NOR_FLASH_BASE

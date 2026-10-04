@@ -11,7 +11,7 @@
 
 FlashHandle_t FlashInstance = {0};
 
-const MemoryConfig_t FlashSectorConfig[] = {
+const MemoryConfig_t SECTION_CFG_DATA FlashSectorConfig[] = {
     {
         .sector = 0,
         .start = 0x08000000,
@@ -86,13 +86,14 @@ const MemoryConfig_t FlashSectorConfig[] = {
     },
 };
 
-const FlashConfig_t FlashConfig = {
+const FlashConfig_t SECTION_CFG_DATA FlashConfig = {
     .boot_start = BOOT_START_ADDRESS,
     .app_start = APP_START_ADDRESS,
     .start = ROM_START,
-    .size = ROM_SIZE,
     .PageArray = FlashSectorConfig,
+    .interrupt_on = false,
     .page_cnt = ARRAY_SIZE(FlashSectorConfig),
+    .size = ROM_SIZE,
     .page_size = 0,
     .is_equal_sectors = false,
 };
@@ -105,18 +106,23 @@ uint32_t flash_get_sector_cnt(void) {
 
 const MemoryConfig_t RamSectorConfig[] = {
     {
-        .sector = 0,          // CCMRAM
-        .start = 0x10000000,  //
-        .size = 64 * K_BYTES, //
+        .sector = 0,
+        .start = 0x10000000,
+        .size = 64 * K_BYTES,
+        .content = MEM_CONTENT_CCMRAM,
+    },
+    {
+        .sector = 1,
+        .start = 0x20000000,
+        .size = 128 * K_BYTES,
         .content = MEM_CONTENT_SRAM,
     },
     {
-        .sector = 1,           // RAM
-        .start = 0x20000000,   //
-        .size = 128 * K_BYTES, //
-        .content = MEM_CONTENT_SRAM,
+        .sector = 2,
+        .start = 0x40024000,
+        .size = 4 * K_BYTES,
+        .content = MEM_CONTENT_BKPSRAM,
     },
-
 };
 
 uint32_t ram_get_sector_cnt(void) {

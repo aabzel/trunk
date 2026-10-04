@@ -55,8 +55,8 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size = 9K;      /* required amount of heap  */
-_Min_Stack_Size = 9K; /* required amount of stack */
+_Min_Heap_Size  = 8K;      /* required amount of heap  */
+_Min_Stack_Size = 8K; /* required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
@@ -81,6 +81,7 @@ SECTIONS
   .text :
   {
     . = ALIGN(4);
+    start_text = .;        /* define a global symbols at start of code */
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
@@ -135,7 +136,7 @@ SECTIONS
   _sidata = LOADADDR(.data);
 
   /* Initialized data sections goes into RAM, load LMA copy after code */
-  .data : 
+  .data :
   {
     . = ALIGN(4);
     _sdata = .;        /* create a global symbol at data start */
@@ -191,13 +192,11 @@ SECTIONS
     . = . + _Min_Heap_Size;
     
     __Core0_StackLimit = .;
-    
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
     __Core0_StackTop = . ;
   } >RAM
 
-  
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

@@ -103,9 +103,18 @@ const StorageItem_t SECTION_CFG_DATA StorageArray[] = {
     PARAMS_SDIO
     PARAMS_TIME
     PARAMS_BOOTLOADER
-    { .facility = BOOT, .id = PAR_ID_BOOT_CMD,   .len = 1, .type = TYPE_UINT8,  .name = "BootCmd"},     /*num*/
-    { .facility = BOOT, .id = PAR_ID_REBOOT_CNT, .len = 2, .type = TYPE_UINT16, .name = "ReBootCnt"},   /*num*/
-    { .facility = SYS,  .id = PAR_ID_SERIAL_NUM, .len = 4, .type = TYPE_UINT32, .name = "SerialNum"},   /**/
+    { .facility = SYS,
+      .id = PAR_ID_SERIAL_NUM,
+      .parser = U32ToStr,
+      .len = 4,
+      .type = TYPE_UINT32,
+      .name = "SerialNum",
+      .default_value = "1",
+      .Units = STORAGE_UNITS_NO_UNIT,
+      .Scale = STORAGE_SCALE_ONES,
+      .physical_quantity = STORAGE_PHYSICAL_QUANTITY_NO,
+      .hide = false,
+    }, 
 };
 
 uint32_t storage_get_cnt(void) {

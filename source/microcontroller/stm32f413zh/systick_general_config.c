@@ -11,7 +11,7 @@ const SysTickConfig_t SysTickConfig = {
     .bus_clock_hz = SYS_FREQ,
 };
 
-SysTick_t SysTickItem = {
+SysTick_t SysTickInstance = {
     .init_done = true,
     .err_cnt = 0,
     .base_address = (SysTickMap_t*) SysTick_BASE,

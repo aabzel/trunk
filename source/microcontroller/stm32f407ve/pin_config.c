@@ -816,10 +816,8 @@ const PinData_t SECTION_CFG_DATA PinConfig[] = {
 #endif
 };
 
-uint32_t pin_get_cnt(void) {
+uint16_t pin_get_cnt(void) {
     uint32_t cnt = ARRAY_SIZE(PinConfig);
     return cnt;
 }
-
-
 

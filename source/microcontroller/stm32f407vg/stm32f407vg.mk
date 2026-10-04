@@ -33,6 +33,11 @@ ifneq ($(STM32f407VG_MK_INC),Y)
 
     INCDIR += -I$(MCU_CUSTOM_DIR)
 
+    ifeq ($(BOOT),Y)
+        # $(error BOOT=$(BOOT))
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/boot_config.c
+    endif
+
     ifeq ($(DMA),Y)
         # $(error DMA=$(DMA))
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_config.c
@@ -60,10 +65,6 @@ ifneq ($(STM32f407VG_MK_INC),Y)
     ifeq ($(CLOCK_OUT),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/clock_out_config.c
     endif
-    
-    ifeq ($(BOOT),Y)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/boot_config.c
-    endif
 
     ifeq ($(MBR),Y)
         FIRMWARE_TYPE_SELECTED=Y
@@ -72,7 +73,7 @@ ifneq ($(STM32f407VG_MK_INC),Y)
         else
             LDSCRIPT = $(MCU_CUSTOM_DIR)/gcc_arm_mbr.ld
         endif
-    endif  
+    endif
 
     ifeq ($(MPU),Y)
         $(info Add config MPU)

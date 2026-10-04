@@ -20,6 +20,7 @@
 #define ADC_COUNT 3
 #define ADC_CHANNELS_COUNT 16
 #define MAX_IRQ_NUM FPU_IRQn
+#define EXT_INT_COUNT 16
 #define TIMER_COUNT 14
 #define TIMER_MAX_NUM 15
 //#define TIMER_MAX_COUNT (TIMER_COUNT+1)
@@ -30,12 +31,12 @@
 #define DAC_COUNT 2
 #define DMA_COUNT 2
 #define GPIO_PIN_MAX 15
+//#define GPIO_PORT_CNT 6
 #define DMA_STREAM_COUNT 8
 #define DMA_CHANNEL_COUNT DMA_STREAM_COUNT
 
 // computing
 #define CPU_MAX_HZ 168000000
-//#define SYS_FREQ 48000000
 
 // storage
 #define RAM_START 0x20000000

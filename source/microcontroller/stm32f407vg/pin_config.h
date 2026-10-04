@@ -3,7 +3,12 @@
 
 #include "pin_types.h"
 
+#ifdef HAS_MBR
+#warning "MBR does not need PINs"
+#endif
+
 extern const PinData_t PinConfig[];
+
 uint16_t pin_get_cnt(void);
 
 #endif /* PIN_CONFIG_H */

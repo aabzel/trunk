@@ -3,11 +3,19 @@
 #ifdef HAS_INTERRUPT
 #include "interrupt_types.h"
 
+
 /*
   for command
  int_diag
  */
 const IntNumInfo_t IntNumInfo[] = {
+        {    .name="EXTI0_IRQn", .int_n=EXTI0_IRQn, /*IRQn_Type*/},
+        {    .name="EXTI1_IRQn", .int_n=EXTI1_IRQn, /*IRQn_Type*/},
+        {    .name="EXTI2_IRQn", .int_n=EXTI2_IRQn, /*IRQn_Type*/},
+        {    .name="EXTI3_IRQn", .int_n=EXTI3_IRQn, /*IRQn_Type*/},
+        {    .name="EXTI4_IRQn", .int_n=EXTI4_IRQn, /*IRQn_Type*/},
+        {    .name="EXTI9_5_IRQn", .int_n=EXTI9_5_IRQn, /*IRQn_Type*/},
+        {    .name="EXTI15_10_IRQn", .int_n=EXTI15_10_IRQn, /*IRQn_Type*/},
         {    .name="ADC", .int_n=ADC_IRQn, /*IRQn_Type*/},
         {    .name="DMA1_Stream0", .int_n=DMA1_Stream0_IRQn, /*IRQn_Type*/},
         {    .name="DMA1_Stream1", .int_n=DMA1_Stream1_IRQn, /*IRQn_Type*/},

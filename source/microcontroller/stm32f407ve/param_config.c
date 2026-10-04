@@ -63,7 +63,7 @@
 #ifdef HAS_FLASH_FS
 #include "flash_fs_params.h"
 #else
-#define FLASH_FS_PARAMS
+#define PARAMS_FLASH_FS
 #endif /*HAS_FLASH_FS*/
 
 
@@ -75,9 +75,9 @@
 
 /*TODO: Sort by index for bin search in future*/
 const ParamItem_t SECTION_CFG_DATA ParamArray[] = {
-    BOOT_PARAMS
+    PARAMS_BOOT
     PARAMS_LIGHT_NAVIGATOR
-    FLASH_FS_PARAMS
+    PARAMS_FLASH_FS
     PARAMS_GNSS
     IWDG_PARAMS
     PARAMS_KEEPASS

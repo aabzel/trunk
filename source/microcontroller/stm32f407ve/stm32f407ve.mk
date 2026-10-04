@@ -5,7 +5,10 @@ ifneq ($(STM32F407VE_MK_INC),Y)
 
     MCU_CUSTOM_DIR = $(MICROCONTROLLER_DIR)/stm32f407ve
     # $(error MCU_CUSTOM_DIR=$(MCU_CUSTOM_DIR))
+    INCDIR += -I$(MCU_CUSTOM_DIR)
     MCAL_OPT += -DHAS_STM32F407VE
+
+    INCDIR += -I$(MCU_SELECT_DIR)
     MCAL_OPT += -DHAS_STM32
     MCAL_OPT += -DSTM32F4xxxx
     MCAL_OPT += -DSTM32F4x
@@ -21,10 +24,10 @@ ifneq ($(STM32F407VE_MK_INC),Y)
     CMSIS=Y
     MICROCONTROLLER=Y
     STM32=Y
+    STM32x=Y
     STM32F407VE=Y
     STM32F4XX_HAL_DRIVER=Y
 
-    INCDIR += -I$(MCU_CUSTOM_DIR)
 
     ifeq ($(BOOT),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/boot_config.c
@@ -44,7 +47,7 @@ ifneq ($(STM32F407VE_MK_INC),Y)
 
     ifeq ($(DMA_CHANNEL),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config.c
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config_adc.c
+        #SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config_adc.c
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/dma_channel_config_memcpy.c
     endif
 
@@ -108,16 +111,8 @@ ifneq ($(STM32F407VE_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/mpu_config.c
     endif
 
-    ifeq ($(SDIO),Y)
-        $(info Config SDIO)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/sdio_config.c
-    endif
-
     SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/system_stm32f4xx.c
 
-    ifeq ($(GPIO),Y)
-        #SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/stm32f407ve.c
-    endif
 
     ifeq ($(INTERRUPT),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/interrupt_config.c
@@ -126,21 +121,10 @@ ifneq ($(STM32F407VE_MK_INC),Y)
     ifeq ($(SYSTICK),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/systick_config.c
     endif
-    
+
     ifeq ($(NVS),Y)
         $(info Add config NVS)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/nvs_config.c
-    endif
-
-    ifeq ($(SCHEDULER),Y)
-        $(info Add config SCHEDULER)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/scheduler_config.c
-    endif
-
-    ifeq ($(STORAGE),Y)
-        $(info Config STORAGE)
-        # $(error STORAGE=$(STORAGE))
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/storage_config.c
     endif
 
     ifeq ($(FLASH),Y)
@@ -154,6 +138,22 @@ ifneq ($(STM32F407VE_MK_INC),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/flash_fs_config.c
     endif
 
+    ifeq ($(SDIO),Y)
+        $(info Config SDIO)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/sdio_config.c
+    endif
+
+    ifeq ($(SCHEDULER),Y)
+        $(info Add config SCHEDULER)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/scheduler_config.c
+    endif
+
+    ifeq ($(STORE_FS),Y)
+        #  $(error STORE_FS=$(STORE_FS))
+        $(info Add config STORE_FS)
+        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/storage_config.c
+    endif
+
     ifeq ($(SUPER_CYCLE),Y)
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/super_cycle_config.c
     endif
@@ -162,12 +162,6 @@ ifneq ($(STM32F407VE_MK_INC),Y)
         $(info Config WATCHDOG)
         #  $(error WATCHDOG=$(WATCHDOG))
         SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/watchdog_config.c
-    endif
-
-    ifeq ($(STORE_FS),Y)
-        #  $(error STORE_FS=$(STORE_FS))
-        $(info Add config STORE_FS)
-        SOURCES_CONFIGURATION_C += $(MCU_CUSTOM_DIR)/storage_config.c
     endif
 
     SOURCES_DIAG_C += $(MCU_CUSTOM_DIR)/stm32f407ve_diag.c

@@ -55,13 +55,13 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
-_Min_Heap_Size  = 8K; /* required amount of heap  */
-_Min_Stack_Size = 16K; /* required amount of stack */
+_Min_Heap_Size  = 3K; /* 4k-ok required amount of heap  */
+_Min_Stack_Size = 7K; /* 8k 16k-ok required amount of stack */
 
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)    : ORIGIN = 0x20000000, LENGTH = 112K
+RAM (xrw)    : ORIGIN = 0x20000000, LENGTH = 128K
 CCMRAM (xrw) : ORIGIN = 0x10000000, LENGTH = 64K
 
 FLASH1 (rx)    : ORIGIN = 0x08000000, LENGTH = 1K
@@ -80,7 +80,7 @@ SECTIONS
     __isr_vector_start__ = . ;
     KEEP(*(.isr_vector)) /* Startup code */
     __isr_vector_end__ = . ;
-     FILL(0xFF); 
+    FILL(0xFF); 
     . = ALIGN(4);
   } >FLASH1
 
@@ -110,7 +110,7 @@ SECTIONS
   .text :
   {
     . = ALIGN(4);
-    start_text = .;        /* define a global symbols at start of code */
+    start_text = .;    /* define a global symbols at start of code */
     *(.text)           /* .text sections (code) */
     *(.text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
@@ -134,6 +134,7 @@ SECTIONS
     . = ALIGN(4);
          FILL(0xFF); 
   } >FLASH2
+  
 
   .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH2
   .ARM : {
@@ -212,7 +213,7 @@ SECTIONS
          FILL(0xFF); 
         . = ALIGN(4);
         RamFuncEnd = .;    /* create a global symbol at RamFunctions end */
-    } >RAM AT> FLASH2
+    } >CCMRAM AT> FLASH2
 
   /* Uninitialized data section */
   . = ALIGN(4);

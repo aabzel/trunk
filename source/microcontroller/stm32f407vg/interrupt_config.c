@@ -6,28 +6,35 @@
 #include "data_utils.h"
 #endif
 
-#ifdef HAS_DMA_CHANNEL_INTERRUPT
-
+#ifdef HAS_DMA1
 #define INTERRUPT_CONFIG_DMA1_CHANNEL                                                               \
         {     .irq_n = DMA1_Stream0_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA1_Stream1_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA1_Stream2_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
-        {     .irq_n = DMA1_Stream3_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
-        {     .irq_n = DMA1_Stream4_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
+        {     .irq_n = DMA1_Stream3_IRQn, .priority = 0, .on_off = true, .valid = true,},           \
+        {     .irq_n = DMA1_Stream4_IRQn, .priority = 0, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA1_Stream5_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA1_Stream6_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA1_Stream7_IRQn, .priority = 2, .on_off = true, .valid = true,},
+#else
+#define INTERRUPT_CONFIG_DMA1_CHANNEL
+#endif
 
+#ifdef HAS_DMA2
 #define INTERRUPT_CONFIG_DMA2_CHANNEL                                                               \
         {     .irq_n = DMA2_Stream0_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream1_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream2_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
-        {     .irq_n = DMA2_Stream3_IRQn, .priority = 0, .on_off = true, .valid = true,},           \
+        {     .irq_n = DMA2_Stream3_IRQn, .priority = 4, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream4_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream5_IRQn, .priority = 2, .on_off = true, .valid = true,},           \
-        {     .irq_n = DMA2_Stream6_IRQn, .priority = 0, .on_off = true, .valid = true,},           \
+        {     .irq_n = DMA2_Stream6_IRQn, .priority = 4, .on_off = true, .valid = true,},           \
         {     .irq_n = DMA2_Stream7_IRQn, .priority = 2, .on_off = true, .valid = true,},
+#else
+#define INTERRUPT_CONFIG_DMA2_CHANNEL
+#endif
 
+#ifdef HAS_DMA_CHANNEL_INTERRUPT
 
 #define INTERRUPT_CONFIG_DMA_CHANNEL           \
         INTERRUPT_CONFIG_DMA1_CHANNEL          \
@@ -39,7 +46,7 @@
 
 
 #ifdef HAS_USB_INTERRUPT
-#define INTERRUPT_CONFIG_USB                                                           \
+#define INTERRUPT_CONFIG_USB                                                   \
         {     .irq_n = OTG_HS_IRQn, .priority = 0, .on_off = true, .valid = true,},
 
 #else
@@ -74,24 +81,48 @@
 
 #ifdef HAS_TIMER_INTERRUPT
 #define INTERRUPT_CONFIG_TIMER                                                          \
-        {     .irq_n = TIM4_IRQn,                .priority =0, .on_off=true, .valid=true,},                \
-        {     .irq_n = TIM1_BRK_TIM9_IRQn,       .priority=8, .on_off=true, .valid=true,},       \
-        {     .irq_n = TIM1_UP_TIM10_IRQn,       .priority=4, .on_off=true, .valid=true,},       \
-        {     .irq_n = TIM1_TRG_COM_TIM11_IRQn,  .priority=4, .on_off=true, .valid=true,},  \
-        {     .irq_n = TIM1_CC_IRQn,             .priority=4, .on_off=true, .valid=true,},
+        {     .irq_n = TIM4_IRQn,                .priority = 0, .on_off = true, .valid = true,},                \
+        {     .irq_n = TIM1_BRK_TIM9_IRQn,       .priority = 8, .on_off = true, .valid = true,},       \
+        {     .irq_n = TIM1_UP_TIM10_IRQn,       .priority = 4, .on_off = true, .valid = true,},       \
+        {     .irq_n = TIM1_TRG_COM_TIM11_IRQn,  .priority = 4, .on_off = true, .valid = true,},  \
+        {     .irq_n = TIM1_CC_IRQn,             .priority = 4, .on_off = true, .valid = true,},
 
 #else
 #define INTERRUPT_CONFIG_TIMER
 #endif
 
+#ifdef HAS_I2C1
+#define INTERRUPT_CONFIG_I2C1                     \
+    {        .irq_n = I2C1_EV_IRQn,        .priority = 7,        .on_off = true,        .valid = true,    },       \
+    {        .irq_n = I2C1_ER_IRQn,        .priority = 7,        .on_off = true,        .valid = true,    },       \
+#else
+#define INTERRUPT_CONFIG_I2C1
+#endif
 
-const InterruptConfig_t SECTION_CFG_DATA InterruptConfig[] ={
-        {     .irq_n = USART3_IRQn, .priority = 1, .on_off = true, .valid = true,},
-        {     .irq_n = ADC_IRQn, .priority = 1, .on_off = true, .valid = true,},
+#ifdef HAS_I2C2
+#define INTERRUPT_CONFIG_I2C2                     \
+    {        .irq_n = I2C2_EV_IRQn,        .priority = 7,        .on_off = true,        .valid = true,    },       \
+    {        .irq_n = I2C2_ER_IRQn,        .priority = 7,        .on_off = true,        .valid = true,    },       \
+#else
+#define INTERRUPT_CONFIG_I2C1
+#endif
+
+#ifdef HAS_I2C
+#define INTERRUPT_CONFIG_I2C          \
+        INTERRUPT_CONFIG_I2C1         \
+        INTERRUPT_CONFIG_I2C2
+#else
+#define INTERRUPT_CONFIG_I2C
+#endif
+
+const InterruptConfig_t SECTION_CFG_DATA InterruptConfig[] = {
+        {     .irq_n = USART3_IRQn, .priority = 5, .on_off = true, .valid = true,},
+        {     .irq_n = ADC_IRQn, .priority = 5, .on_off = true, .valid = true,},
         INTERRUPT_CONFIG_CAN
         INTERRUPT_CONFIG_USB
         INTERRUPT_CONFIG_DMA_CHANNEL
         INTERRUPT_CONFIG_EXT_INT
+        INTERRUPT_CONFIG_I2C
         INTERRUPT_CONFIG_TIMER
 };
 
