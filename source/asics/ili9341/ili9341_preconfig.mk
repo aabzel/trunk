@@ -1,0 +1,8 @@
+ifneq ($(ILI9341_PRECONFIG_INC),Y)
+    ILI9341_PRECONFIG_INC=Y
+    
+    SPI=Y
+    GPIO=Y
+    TIME=Y
+    ILI9341=Y
+endif

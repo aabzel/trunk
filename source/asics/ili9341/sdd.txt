@@ -1,0 +1,10 @@
+
+
+Напиши си функцию для чтения ID из микросхемы ILI9341 по SPI (Read display identification information (04h)).
+
+
+bool ili9341_read_id(const uint8_t num, uint32_t * const id);
+
+
+
+Составь на Си  перечисление всех команд драйвера ILI9341 согласно таблице 8.1. Command List.

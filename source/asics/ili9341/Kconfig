@@ -1,0 +1,4 @@
+
+config ILI9341
+    bool "Enable use of the ILI9341 drivers"
+
