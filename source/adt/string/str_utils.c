@@ -350,7 +350,7 @@ char* str_limit(const char* const str, const uint32_t max_size) {
         if(len < sizeof(lTest)) {
             strcpy(lTest, str);
         } else {
-            memcpy(lTest,str,sizeof(lTest)-1);
+            memcpy(lTest, str, sizeof(lTest) - 1);
         }
 
         if(max_size < len) {
@@ -368,15 +368,14 @@ char* str_limit_len(const char* const str, const uint32_t max_size) {
     static char lTest[200] = {0};
     memset(lTest, 0, sizeof(lTest));
     if(str) {
-        if(max_size<sizeof(lTest)){
-            memcpy(lTest,str,max_size);
-        }else{
-            memcpy(lTest,str,sizeof(lTest)-1);
+        if(max_size < sizeof(lTest)) {
+            memcpy(lTest, str, max_size);
+        } else {
+            memcpy(lTest, str, sizeof(lTest) - 1);
         }
     }
     return lTest;
 }
-
 
 uint32_t str_delete_first(char* in_text, size_t size, char letter) {
     uint32_t i = 0;

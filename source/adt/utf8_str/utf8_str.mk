@@ -1,0 +1,12 @@
+$(info UTF8_STR_MK_INC=$(UTF8_STR_MK_INC))
+
+ifneq ($(UTF8_STR_MK_INC),Y)
+    UTF8_STR_MK_INC=Y
+
+    UTF8_STR_UTILS_DIR = $(ADT_DIR)/utf8_str
+    # $(error UTF8_STR_UTILS_DIR=$(UTF8_STR_UTILS_DIR))
+    INCDIR += -I$(UTF8_STR_UTILS_DIR)
+
+    MCAL_OPT += -DHAS_UTF8_STR
+    SOURCES_C += $(UTF8_STR_UTILS_DIR)/utf8_str.c
+endif

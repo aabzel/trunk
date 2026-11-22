@@ -134,7 +134,7 @@ bool has_fifo_valid_data(FifoChar_t* const Node) {
     return res;
 }
 
-bool fifo_pull(FifoChar_t* Node, uint8_t* const out_char) {
+bool fifo_pull(FifoChar_t* const Node, uint8_t* const out_char) {
     bool res = true;
 #ifdef HAS_INTERRUPT
     interrupt_control_all(false);

@@ -15,8 +15,8 @@
 
 #ifdef HAS_BYTE_MICS
 #include "byte_utils.h"
-#include "word_utils.h"
 #include "dword_utils.h"
+#include "word_utils.h"
 #endif
 
 #ifdef HAS_BIT_UTILS
@@ -1163,7 +1163,6 @@ bool array_u8_xor(const uint8_t* const arr1, const uint8_t* const arr2, uint8_t*
     return res;
 }
 
-
 /*
 Remove every second element
 
@@ -1179,11 +1178,9 @@ parity
   [12345]
    f f s
  */
-bool array_s16_decimator2(int16_t* const array,
-                          const uint32_t size,
-                          const uint32_t parity) {
+bool array_s16_decimator2(int16_t* const array, const uint32_t size, const uint32_t parity) {
     bool res = false;
-    LOG_DEBUG(ARRAY, "decimator2:%p,Size:%u,parity:%u", array, size,parity);
+    LOG_DEBUG(ARRAY, "decimator2:%p,Size:%u,parity:%u", array, size, parity);
     if(array) {
         if(0 < size) {
             uint32_t write_pos = 0;
@@ -1192,20 +1189,20 @@ bool array_s16_decimator2(int16_t* const array,
                 // 0 2 4 6 8 10 12 .....
                 if((i + 1) < size) {
                     switch(parity) {
-                        case 1: {
-                            array[write_pos] =  array[i + 1] ;
-                            //1; 3; 5; 7; 9;
-                        } break;
+                    case 1: {
+                        array[write_pos] = array[i + 1];
+                        // 1; 3; 5; 7; 9;
+                    } break;
 
-                        case 2: {
-                            array[write_pos] =  array[i]  ;
-                            // 0 2 4 6 8 10 12
-                        } break;
+                    case 2: {
+                        array[write_pos] = array[i];
+                        // 0 2 4 6 8 10 12
+                    } break;
 
-                        default: {
-                            array[write_pos] =  array[i]  ;
-                            // 0 2 4 6 8 10 12
-                        } break;
+                    default: {
+                        array[write_pos] = array[i];
+                        // 0 2 4 6 8 10 12
+                    } break;
                     }
                 } else {
                     // last odd (3 5 7 9)
@@ -1226,34 +1223,33 @@ uint8_t array_bin_vote_u8(const uint8_t* const data, const uint32_t size) {
     uint32_t i = 0;
     uint32_t one_cnt = 0;
     uint32_t zero_cnt = 0;
-    for (i = 0; i < size; i++) {
-        switch (data[i]) {
-            case 0: {
-                zero_cnt++;
-            } break;
+    for(i = 0; i < size; i++) {
+        switch(data[i]) {
+        case 0: {
+            zero_cnt++;
+        } break;
 
-            case 1: {
-                one_cnt++;
-            } break;
+        case 1: {
+            one_cnt++;
+        } break;
 
-            default: {
-            } break;
+        default: {
+        } break;
         }
     }
 
-    if (zero_cnt < one_cnt) {
+    if(zero_cnt < one_cnt) {
         voting_result = 1;
     }
 
-    if (one_cnt < zero_cnt) {
+    if(one_cnt < zero_cnt) {
         voting_result = 0;
     }
 
-    if (one_cnt == zero_cnt) {
+    if(one_cnt == zero_cnt) {
         voting_result = data[0];
     }
-    LOG_DEBUG(ARRAY, "Vote:%u<-%s",voting_result,  ArrayU8ToStr(data, size));
+    LOG_DEBUG(ARRAY, "Vote:%u<-%s", voting_result, ArrayU8ToStr(data, size));
 
     return voting_result;
 }
-

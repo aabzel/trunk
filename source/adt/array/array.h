@@ -68,6 +68,7 @@ bool array_u32_max_cont(const uint32_t* const dword, const uint32_t size_dw, con
 bool array_reverse_s16(int16_t* const data, const uint32_t size) ;
 bool array_reverse_s32(int32_t* const data, const uint32_t size) ;
 bool array_reverse_bytes(uint8_t* const in_out_array, uint32_t len);
+bool array_u32_max_cont(const uint32_t* const dword, const uint32_t size_dw, const uint32_t pattern, uint32_t* const max_cont_patt) ;
 bool array_reverse_float(float* const in_out_array, uint32_t len);
 bool array_u16_item_reverse_bytes(uint16_t* const in_out_array, uint32_t len);
 bool array_u32_item_reverse_bytes(uint32_t* const in_out_array, uint32_t len);

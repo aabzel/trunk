@@ -334,7 +334,7 @@ bool array_print_bin(uint8_t const* const buff, uint32_t size, uint16_t indent) 
     res = print_indent(indent);
     for(i = 0; i < size; i++) {
         uint8_t value = *(buff + i);
-        cli_printf("%02x", value);
+        cli_printf("%02X", value);
     }
     return res;
 }

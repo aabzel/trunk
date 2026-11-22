@@ -80,4 +80,8 @@ ifneq ($(ADT_MK),Y)
         # $(error STRING=$(STRING))
         include $(ADT_DIR)/string/string.mk
     endif
+
+    ifeq ($(UTF8_STR),Y)
+        include $(ADT_DIR)/utf8_str/utf8_str.mk
+    endif
 endif
