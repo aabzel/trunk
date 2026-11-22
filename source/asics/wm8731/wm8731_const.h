@@ -14,6 +14,10 @@
 #define WM_MAX_VOL_DB (6)
 #define WM_MIN_VOL_DB (-73)
 
+#define WM8731_OUTPUT_VOLUME_M73_DB 0x30
+#define WM8731_OUTPUT_VOLUME_P6_DB 0x7F
+
+
 typedef enum {
     WM8731_REG_LINVOL =   0x00,
     WM8731_REG_RINVOL =   0x01,
@@ -147,9 +151,9 @@ typedef enum {
 }BitClockInv_t;
 
 typedef enum {
-    MIC_IN_BOOST_ON=1,
-    MIC_IN_BOOST_OFF=0,
-    MIC_IN_BOOST_UNDEF=2,
+    MIC_IN_BOOST_ON = 1,
+    MIC_IN_BOOST_OFF = 0,
+    MIC_IN_BOOST_UNDEF = 2,
 }MicInBoost_t;
 
 typedef enum {

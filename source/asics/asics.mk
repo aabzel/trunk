@@ -60,10 +60,6 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/ds3231/ds3231.mk
     endif
 
-    ifeq ($(LIS3DH),Y)
-        include $(ASICS_DIR)/lis3dh/lis3dh.mk
-    endif
-
     ifeq ($(DW1000),Y)
         include $(ASICS_DIR)/dw1000/dw1000.mk
     endif
@@ -80,11 +76,6 @@ ifneq ($(ASICS_MK_INC),Y)
         include $(ASICS_DIR)/dws3000/dws3000.mk
     endif
 
-    ifeq ($(LTR390),Y)
-        # $(error LTR390=$(LTR390))
-        include $(ASICS_DIR)/ltr390/ltr390.mk
-    endif
-
     ifeq ($(FDA801),Y)
         include $(ASICS_DIR)/fda801/fda801.mk
     endif
@@ -92,21 +83,35 @@ ifneq ($(ASICS_MK_INC),Y)
     ifeq ($(GD5F1GQ5),Y)
         include $(ASICS_DIR)/gd5f1gq5/gd5f1gq5.mk
     endif
-    
+
     ifeq ($(GM67),Y)
         include $(ASICS_DIR)/gm67/gm67.mk
     endif
 
-    ifeq ($(W25Q16BV),Y)
-        include $(ASICS_DIR)/w25q16bv/w25q16bv.mk
+    ifeq ($(W25Q16J),Y)
+        # $(error W25Q16J=$(W25Q16J))
+        include $(ASICS_DIR)/w25q16j/w25q16j.mk
+    endif
+
+    ifeq ($(ILI9341),Y)
+        include $(ASICS_DIR)/ili9341/ili9341.mk
+    endif
+
+    ifeq ($(LIS3DH),Y)
+        include $(ASICS_DIR)/lis3dh/lis3dh.mk
+    endif
+
+    ifeq ($(LTR390),Y)
+        # $(error LTR390=$(LTR390))
+        include $(ASICS_DIR)/ltr390/ltr390.mk
+    endif
+
+    ifeq ($(MAX9860),Y)
+        include $(ASICS_DIR)/max9860/max9860.mk
     endif
 
     ifeq ($(W25Q32JV),Y)
         include $(ASICS_DIR)/w25q32jv/w25q32jv.mk
-    endif
-    
-    ifeq ($(MAX9860),Y)
-        include $(ASICS_DIR)/max9860/max9860.mk
     endif
 
     ifeq ($(RS2058),Y)
@@ -126,7 +131,7 @@ ifneq ($(ASICS_MK_INC),Y)
     endif
 
     ifeq ($(NAU8814),Y)
-        #@echo $(error NAU8814=$(NAU8814))
+        # $(error NAU8814=$(NAU8814))
         include $(ASICS_DIR)/nau8814/nau8814.mk
     endif
 

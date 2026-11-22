@@ -8,20 +8,20 @@ ifneq ($(NAU8814_EHAL_MK_INC),Y)
 
     $(info +TP_NAU8814)
     
-    OPT += -DNAU8814_IN_USE
-    OPT += -DHAS_NAU8814_EHAL
-    OPT += -DHAS_NAU8814_EHAL_PROC
+    MCAL_OPT += -DNAU8814_IN_USE
+    MCAL_OPT += -DHAS_NAU8814_EHAL
+    MCAL_OPT += -DHAS_NAU8814_EHAL_PROC
 
     ifeq ($(NAU8814_VERIFY),Y)
-        OPT += -DHAS_NAU8814_VERIFY
+        MCAL_OPT += -DHAS_NAU8814_VERIFY
     endif
 
     ifeq ($(NAU8814_I2S_SLAVE),Y)
-        OPT += -DHAS_NAU8814_I2S_SLAVE
+        MCAL_OPT += -DHAS_NAU8814_I2S_SLAVE
     endif
 
     ifeq ($(NAU8814_I2S_MASTER),Y)
-        OPT += -DHAS_NAU8814_I2S_MASTER
+        MCAL_OPT += -DHAS_NAU8814_I2S_MASTER
     endif
 
     SOURCES_THIRD_PARTY_C += $(TP_NAU8814_DIR)/nau8814_driver.c
@@ -47,14 +47,14 @@ ifneq ($(NAU8814_EHAL_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(NAU8814_DIAG),Y)
-            OPT += -DHAS_NAU8814_DIAG
+            MCAL_OPT += -DHAS_NAU8814_DIAG
             SOURCES_THIRD_PARTY_C += $(TP_NAU8814_DIR)/nau8814_diagnostic.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(NAU8814_COMMANDS),Y)
-            OPT += -DHAS_NAU8814_CLI
+            MCAL_OPT += -DHAS_NAU8814_CLI
             SOURCES_THIRD_PARTY_C += $(TP_NAU8814_DIR)/nau8814_cli.c
         endif
     endif

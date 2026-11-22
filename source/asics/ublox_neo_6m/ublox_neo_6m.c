@@ -22,7 +22,7 @@ static bool ublox_neo_6m_proc_one(uint8_t num){
 	return res;
 }
 
-COMPONENT_INIT_PATTERT(UBLOX_NEO_6M, UBLOX_NEO_6M, ublox_neo_6m)
+COMPONENT_INIT_ANY_PATTERT_CNT(UBLOX_NEO_6M, UBLOX_NEO_6M, ublox_neo_6m,2)
 COMPONENT_PROC_PATTERT(UBLOX_NEO_6M, UBLOX_NEO_6M, ublox_neo_6m)
 
 

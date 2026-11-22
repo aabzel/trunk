@@ -6,11 +6,11 @@ ifneq ($(TP_LIS3DH_MK_INC),Y)
 
     INCDIR += -I$(TP_LIS3DH_DIR)
 
-    OPT += -DHAS_LIS3DH_EHAL
-    OPT += -DLIS3DH_IN_USE
+    MCAL_OPT += -DHAS_LIS3DH_EHAL
+    MCAL_OPT += -DLIS3DH_IN_USE
 
     ifeq ($(LIS3DH_EHAL_PROC),Y)
-        OPT += -DHAS_LIS3DH_EHAL_PROC
+        MCAL_OPT += -DHAS_LIS3DH_EHAL_PROC
     endif
 
     SOURCES_THIRD_PARTY_C+= $(TP_LIS3DH_DIR)/lis3dh_driver.c
@@ -27,14 +27,14 @@ ifneq ($(TP_LIS3DH_MK_INC),Y)
 
     ifeq ($(DIAG),Y)
         ifeq ($(LIS3DH_EHAL_DIAG),Y)
-            OPT += -DHAS_LIS3DH_DIAGNOSTIC
+            MCAL_OPT += -DHAS_LIS3DH_DIAGNOSTIC
             SOURCES_THIRD_PARTY_C+= $(TP_LIS3DH_DIR)/lis3dh_diagnostic.c
         endif
     endif
 
     ifeq ($(CLI),Y)
         ifeq ($(LIS3DH_EHAL_COMMANDS),Y)
-            OPT += -DHAS_LIS3DH_CLI
+            MCAL_OPT += -DHAS_LIS3DH_CLI
             SOURCES_THIRD_PARTY_C+= $(TP_LIS3DH_DIR)/lis3dh_cli.c
         endif
     endif

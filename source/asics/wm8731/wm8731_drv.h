@@ -23,7 +23,7 @@ bool wm8731_proc(void);
 bool wm8731_is_valid_volume(int8_t vol_db);
 
 /*setters*/
-bool wm8731_sample_rate(const uint8_t num, const AudioFreq_t audio_freq_hz);
+bool wm8731_sample_rate(const uint8_t num, const uint32_t audio_freq_hz);
 bool wm8731_bypass(uint8_t num);
 bool wm8731_mute(uint8_t num);
 bool wm8731_play_freq(uint8_t num, double freq, SampleType_t amplitude);

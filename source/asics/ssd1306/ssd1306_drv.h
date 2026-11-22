@@ -6,6 +6,7 @@
 #include "std_includes.h"
 #include "ssd1306_config.h"
 #include "ssd1306_types.h"
+
 #ifdef HAS_SSD1306_DIAG
 #include "ssd1306_diag.h"
 #endif
@@ -36,7 +37,7 @@ bool ssd1306_write_cmd(uint8_t num, Ssd1306Command_t cmd);
 bool ssd1306_write_data(uint8_t num, uint8_t* array, uint32_t size);
 bool ssd1306_sram_clean(uint8_t num);
 bool ssd1306_update(uint8_t num);
-bool ssd1306_write_data_ll(Ssd1306Handle_t* const Node, Ssd1306Command_t cmd);
+bool ssd1306_write_byte_ll(Ssd1306Handle_t* const Node, uint8_t data);
 bool ssd1306_write_cmd_ll(Ssd1306Handle_t* Node, Ssd1306Command_t cmd);
 bool ssd1306_is_connected(uint8_t num);
 bool ssd1306_write_cmd2_ll(Ssd1306Handle_t* Node, Ssd1306Command_t cmd1, Ssd1306Command_t cmd2);

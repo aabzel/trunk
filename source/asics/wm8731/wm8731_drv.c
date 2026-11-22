@@ -262,15 +262,18 @@ static uint8_t wm8731_audio_freq_to_sample_rate(Wm8731Mode_t mode,  AudioFreq_t 
 }
 
 
-bool wm8731_sample_rate(const uint8_t num, const AudioFreq_t audio_freq_hz) {
+bool wm8731_sample_rate(const uint8_t num, const uint32_t audio_freq_hz) {
     bool res = false ;
+    LOG_INFO(WM8731,"Set,AudioFreq,N:%u,Fs:%u Hz",num,audio_freq_hz);
     Wm8731Handle_t* Node = Wm8731GetNode(num);
     if(Node) {
-        Node->audio_freq_hz = audio_freq_hz;
-        Wm8731RegSamplingCtrl_t Reg;
-        Reg.reg_val = wm8731_reg_get_dflt_val(WM8731_REG_SRATE);
-        Reg.sr = wm8731_audio_freq_to_sample_rate(Node->mode, audio_freq_hz);
-        res = wm8731_set_reg(  num,   WM8731_REG_SRATE,   Reg.reg_val);
+        if(Node->init){
+            Node->audio_freq_hz = audio_freq_hz;
+            Wm8731RegSamplingCtrl_t Reg;
+            Reg.reg_val = wm8731_reg_get_dflt_val(WM8731_REG_SRATE);
+            Reg.sr = wm8731_audio_freq_to_sample_rate(Node->mode, audio_freq_hz);
+            res = wm8731_set_reg(  num,   WM8731_REG_SRATE,   Reg.reg_val);
+        }
     }
     return res;
 }
@@ -585,15 +588,16 @@ static inline bool wm8731_init_common(const Wm8731Config_t* const Config, Wm8731
     bool res = false;
     if(Config) {
         if(Node) {
+            Node->i2c_num = Config->i2c_num;
             Node->mode = Config->mode;
             Node->num = Config->num;
+            Node->output_volume = Config->output_volume;
             Node->chip_addr = Config->chip_addr;
             Node->i2s_rx_num = Config->i2s_rx_num;
             Node->i2s_tx_num = Config->i2s_tx_num;
             Node->RegArray = Config->RegArray;
             Node->reg_cnt = Config->reg_cnt;
             Node->dds_num = Config->dds_num;
-            Node->i2c_num = Config->i2c_num;
             Node->left = Config->left;
             Node->right = Config->right;
             Node->valid = true;
@@ -660,7 +664,9 @@ bool wm8731_init_one(uint8_t num) {
     const Wm8731Config_t* Config = Wm8731GetConfig(num);
     res = Wm8731IsValidConfig(Config);
     if(res) {
+#ifdef HAS_WM8731_DIAG
         LOG_WARNING(WM8731, "Init,%s", Wm8731ConfigToStr(Config));
+#endif
         Wm8731Handle_t* Node = Wm8731GetNode(num);
         if(Node) {
             res = wm8731_init_common(Config, Node);
@@ -676,6 +682,8 @@ bool wm8731_init_one(uint8_t num) {
                 res = true;
             }
         }
+    }else {
+        LOG_ERROR(WM8731, "WM8731_%u,ConfigError",num);
     }
 
     wm8731_log_level_set(LOG_LEVEL_INFO);

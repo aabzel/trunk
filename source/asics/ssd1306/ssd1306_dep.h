@@ -14,7 +14,7 @@
 #error "SSD1306 Needs HAS_I2C"
 #endif
 
-#ifndef HAS_MCU
+#ifndef HAS_MICROCONTROLLER
 #error "SSD1306 Needs HAS_MCU"
 #endif
 

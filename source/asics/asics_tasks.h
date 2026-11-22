@@ -2,42 +2,42 @@
 #define ASICS_TASKS_H
 
 #ifdef HAS_AT24CX_PROC
-#include "at24cx_drv.h"
+#include "at24cx_mcal.h"
 #define AT24CX_TASK   {.name="AT24CX", .period_us=AT24CX_PERIOD_US, .limiter.function=at24cx_proc,},
 #else
 #define AT24CX_TASK
 #endif
 
 #ifdef HAS_MX25L6433F_PROC
-#include "MX25L6433F_mcal.h"
+#include "mx25l6433f_mcal.h"
 #define MX25L6433F_TASK   {.name="AT24CX", .period_us=AT24CX_PERIOD_US, .limiter.function=at24cxx_proc,},
 #else
 #define MX25L6433F_TASK
 #endif
 
 #ifdef HAS_BQ24079_PROC
-#include "bq24079_drv.h"
+#include "bq24079_mcal.h"
 #define BQ24079_TASK   {.name="BQ24079", .period_us=BQ24079_PERIOD_US, .limiter.function=bq24079_proc,},
 #else
 #define BQ24079_TASK
 #endif
 
 #ifdef HAS_SX1262_PROC
-#include "sx1262_drv.h"
+#include "sx1262_mcal.h"
 #define SX1262_TASK  {.name="SX1262", .period_us=SX1262_PERIOD_US, .limiter.function=sx1262_proc,},
 #else
 #define SX1262_TASK
 #endif
 
 #ifdef HAS_BC127_PROC
-#include "bc127_drv.h"
+#include "bc127_mcal.h"
 #define BC127_TASKS {.name="BC127", .period_us=BC127_PERIOD_US, .limiter.function=bc127_proc,},
 #else
 #define BC127_TASKS
 #endif
 
 #ifdef HAS_BT1026_PROC
-#include "bt1026_drv.h"
+#include "bt1026_mcal.h"
 
 #define BT1026_TASKS                                                                                            \
     {.name="BT1026", .period_us=BT1026_PERIOD_US, .limiter.function=bt1026_proc,},                    \
@@ -48,14 +48,14 @@
 #endif
 
 #ifdef HAS_DW1000_PROC
-#include "dw1000_drv.h"
+#include "dw1000_mcal.h"
 #define DW1000_TASKS  {.name="DW1000", .period_us=DW1000_PERIOD_US, .limiter.function=dw1000_process,},
 #else
 #define DW1000_TASKS
 #endif
 
 #ifdef HAS_DW3000_PROC
-#include "dw3000_drv.h"
+#include "dw3000_mcal.h"
 #define DW3000_TASKS  {.name="DW3000", .period_us=DW3000_PERIOD_US, .limiter.function=dwm3000_process,},
 #else
 #define DW3000_TASKS
@@ -69,63 +69,71 @@
 #endif
 
 #ifdef HAS_GM67_PROC
-#include "gm67_drv.h"
+#include "gm67_mcal.h"
 #define GM67_TASK {.name="GM67", .period_us=GM67_PERIOD_US, .limiter.function=gm67_proc,},
 #else
 #define GM67_TASK
 #endif
 
 #ifdef HAS_FDA801_PROC
-#include "fda801_drv.h"
+#include "fda801_mcal.h"
 #define FDA801_TASKS {.name="FDA801", .period_us=FDA801_PERIOD_US, .limiter.function=fda801_proc,},
 #else
 #define FDA801_TASKS
 #endif
 
 #ifdef HAS_LTR390_PROC
-#include "ltr390_drv.h"
+#include "ltr390_mcal.h"
 #define LTR390_TASK {.name="Ltr390", .period_us=LTR390_PERIOD_US, .limiter.function=ltr390_proc,},
 #else
 #define LTR390_TASK
 #endif
 
 #ifdef HAS_BH1750_PROC
-#include "bh1750_drv.h"
+#include "bh1750_mcal.h"
 #define BH1750_TASK {.name="bh1750", .period_us=BH1750_POLL_PERIOD_US, .limiter.function=bh1750_proc,},
 #else
 #define BH1750_TASK
 #endif
 
 #ifdef HAS_MAX9860_PROC
-#include "max9860_drv.h"
+#include "max9860_mcal.h"
 #define MAX9860_TASK  {.name="MAX9860", .period_us=MAX9860_PERIOD_US, .limiter.function=max9860_proc,},
 #else
 #define MAX9860_TASK
 #endif
 
 #ifdef HAS_NAU8814_PROC
-#include "nau8814_drv.h"
+#include "nau8814_mcal.h"
 #define NAU8814_TASK  {.name="Nau8814", .period_us=NAU8814_PERIOD_US, .limiter.function=nau8814_proc,},
 #else
 #define NAU8814_TASK
 #endif
 
+#ifdef HAS_ILI9341_PROC
+#include "ili9341_mcal.h"
+#define ILI9341_TASK {.name="ili9341", .period_us=ILI9341_PERIOD_US, .limiter.function=ili9341_proc,},
+#else
+#define ILI9341_TASK
+#endif
+
+
 #ifdef HAS_MIC2026_PROC
-#include "mic2026_drv.h"
+#include "mic2026_mcal.h"
 #define MIC2026_TASK {.name="MIC2026", .period_us=MIC2026_PERIOD_US, .limiter.function=mic2026_proc,},
 #else
 #define MIC2026_TASK
 #endif
 
 #ifdef HAS_SA51034_PROC
-#include "sa51034_drv.h"
+#include "sa51034_mcal.h"
 #define SA51034_TASK {.name="SA51034", .period_us=SA51034_PERIOD_US, .limiter.function=sa51034_proc,},
 #else
 #define SA51034_TASK
 #endif
 
 #ifdef HAS_DS3231_PROC
-#include "ds3231_drv.h"
+#include "ds3231_mcal.h"
 #define DS3231_TASKS {.name="DS3231", .period_us=DS3231_PERIOD_US, .limiter.function=ds3231_proc,},
 #else
 #define DS3231_TASKS
@@ -139,21 +147,21 @@
 #endif
 
 #ifdef HAS_SI4737_PROC
-#include "si4737_drv.h"
+#include "si4737_mcal.h"
 #define SI4737_TASKS {.name="SI4737", .period_us=SI4737_PERIOD_US, .limiter.function=si4737_proc,},
 #else
 #define SI4737_TASKS
 #endif
 
 #ifdef HAS_SSD1306_PROC
-#include "ssd1306_drv.h"
+#include "ssd1306_mcal.h"
 #define SSD1306_TASK  { .num = TASK_SSD1306, .name="SSD1306", .period_us=SSD1306_PERIOD_US, .limiter.function=ssd1306_proc,},
 #else
 #define SSD1306_TASK
 #endif
 
 #ifdef HAS_SX1262_PROC
-#include "sx1262_drv.h"
+#include "sx1262_mcal.h"
 #define SX1262_TASKS  {.name="SX1262", .period_us=SX1262_PERIOD_US, .limiter.function=sx1262_process,},
 #else
 #define SX1262_TASKS
@@ -180,14 +188,22 @@
 #endif
 
 #ifdef HAS_TCAN4550_PROC
-#include "tcan4550_drv.h"
+#include "tcan4550_mcal.h"
 #define TCAN4550_TASKS  {.name="TCAN4550", .period_us=TCAN4550_PERIOD_US, .limiter.function=tcan4550_proc,},
 #else
 #define TCAN4550_TASKS
 #endif
 
+#ifdef HAS_W25Q16J_PROC
+#include "w25q16j_mcal.h"
+#define W25Q16J_TASK  {.name="W25Q16J", .period_us=W25Q16J_PERIOD_US, .limiter.function=w25q16j_proc,},
+#else
+#define W25Q16J_TASK
+#endif
+
+
 #ifdef HAS_W25Q32JV_PROC
-#include "w25q32jv_drv.h"
+#include "w25q32jv_mcal.h"
 #define W25Q32JV_TASK  {.name="W25Q32JV", .period_us=W25Q32JV_PERIOD_US, .limiter.function=w25q32jv_proc,},
 #else
 #define W25Q32JV_TASK
@@ -201,7 +217,7 @@
 #endif
 
 #ifdef HAS_WM8731_PROC
-#include "wm8731_drv.h"
+#include "wm8731_mcal.h"
 #define WM8731_TASK {.name="WM8731", .period_us=WM8731_PERIOD_US, .limiter.function=wm8731_proc,},
 #else
 #define WM8731_TASK
@@ -209,7 +225,7 @@
 
 
 #ifdef HAS_ZED_F9P_PROC
-#include "zed_f9p_drv.h"
+#include "zed_f9p_mcal.h"
 #define ZED_F9P_TASK {.name="ZED_F9P", .period_us=ZED_F9P_PERIOD_US, .limiter.function=zed_f9p_proc,},
 #else
 #define ZED_F9P_TASK
@@ -218,6 +234,7 @@
 #define ASICS_STORAGE_TASK   \
     AT24CX_TASK              \
     MX25L6433F_TASK          \
+    W25Q16J_TASK             \
     W25Q32JV_TASK
 
 #define ASICS_CONNECTIVITY_TASK   \
@@ -249,6 +266,7 @@
 
 #define ASICS_CONTROL_TASK   \
     SA51034_TASK      \
+    ILI9341_TASK      \
     MIC2026_TASK      \
     BQ24079_TASK      \
     SSD1306_TASK

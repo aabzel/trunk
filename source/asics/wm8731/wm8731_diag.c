@@ -14,6 +14,7 @@ const char* Wm8731I2sBusRole2Str(uint8_t bus_role) {
     case BUS_MODE_MASTER:
         name = "Master";
         break;
+    default: break;
     }
     return name;
 }

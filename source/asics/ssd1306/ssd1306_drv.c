@@ -12,6 +12,7 @@
 #endif
 
 #include "ssd1306_dep.h"
+
 #ifdef HAS_SSD1306_DIAG
 #include "ssd1306_diag.h"
 #include "str_utils.h"
@@ -27,7 +28,6 @@
 #include "i2c_mcal.h"
 #endif /*HAS_I2C*/
 
-
 #include "code_generator.h"
 
 COMPONENT_GET_NODE(Ssd1306, ssd1306)
@@ -35,7 +35,19 @@ COMPONENT_GET_CONFIG(Ssd1306, ssd1306)
 COMPONENT_INIT_PATTERT(SSD1306, SSD1306, ssd1306)
 COMPONENT_PROC_PATTERT(SSD1306, SSD1306, ssd1306)
 
+static bool ssd1306_write_data_ll(Ssd1306Handle_t* Node, uint8_t* array, uint32_t size) {
+    bool res = false;
+    ControlByte_t ctrl;
+    ctrl.control = 0;
+    ctrl.data_command_sel = SSD1306_DC_DATA;
+    ctrl.continuation = 0;
 
+    uint8_t buff[1024 + 1];
+    buff[0] = ctrl.byte;
+    memcpy(&buff[1], array, size);
+    res = i2c_mcal_write(Node->i2c_num, Node->i2c_addr, buff, size + 1);
+    return res;
+}
 
 #if 0
 const Ssd1306Config_t* Ssd1306GetConfig(uint8_t num) {
@@ -67,30 +79,21 @@ Ssd1306Handle_t* Ssd1306GetNode(uint8_t num) {
 
 bool ssd1306_update(uint8_t num) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
-        res = ssd1306_write_data(num, Node->FrameBuffer, FRAME_BUFFER_SIZE);
     }
     return res;
 }
 
 bool ssd1306_proc_one(uint8_t i) {
     bool res = false;
-    uint32_t ok = 0;
-        Ssd1306Handle_t* Node = Ssd1306GetNode(i);
-        if(Node) {
-            LOG_DEBUG(SSD1306, "Proc %u", i);
-            res = ssd1306_update(i);
-            if(res) {
-                ok++;
-            }
+    Ssd1306Handle_t *Node = Ssd1306GetNode(i);
+    if(Node) {
+        uint32_t up_time = time_get_ms32();
+        uint32_t diff_ms = up_time - Node->last_update_ms;
+        if(Node->update_period_ms < diff_ms) {
+            res = ssd1306_write_data_ll(Node, Node->FrameBuffer, FRAME_BUFFER_SIZE);
         }
-
-
-    if(ok) {
-        res = true;
-    } else {
-        res = false;
     }
     return res;
 }
@@ -132,11 +135,11 @@ bool ssd1306_reset(void) {
 
 bool ssd1306_write_frame(uint8_t num, Ssd1306Command_t cmd, uint8_t data) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
-        uint8_t array[2] = {cmd, data};
+        uint8_t array[2] = { cmd, data };
         // uint8_t address = i2c_compose_write_address(Node->i2c_addr);
-        res = i2c_api_write(Node->i2c_num, Node->i2c_addr, array, 2);
+        res = i2c_mcal_write(Node->i2c_num, Node->i2c_addr, array, 2);
     }
     return res;
 }
@@ -149,16 +152,16 @@ bool ssd1306_write_cmd_ll(Ssd1306Handle_t* Node, Ssd1306Command_t cmd) {
         ctrl.data_command_sel = SSD1306_DC_CMD;
         ctrl.continuation = 1;
 
-        uint8_t array[2] = {ctrl.byte, cmd};
+        uint8_t array[2] = { ctrl.byte, cmd };
         array[0] = ctrl.byte;
         array[1] = cmd;
         // uint8_t address = i2c_compose_write_address(Node->i2c_addr);
-        res = i2c_api_write(Node->i2c_num, Node->i2c_addr, array, 2);
+        res = i2c_mcal_write(Node->i2c_num, Node->i2c_addr, array, 2);
     }
     return res;
 }
 
-bool ssd1306_write_data_ll(Ssd1306Handle_t* const Node, Ssd1306Command_t cmd) {
+bool ssd1306_write_byte_ll(Ssd1306Handle_t* const Node, uint8_t data) {
     bool res = false;
     if(Node) {
         ControlByte_t ctrl;
@@ -168,16 +171,17 @@ bool ssd1306_write_data_ll(Ssd1306Handle_t* const Node, Ssd1306Command_t cmd) {
 
         uint8_t array[2];
         array[0] = ctrl.byte;
-        array[1] = cmd;
+        array[1] =(uint8_t) data;
 
         // uint8_t address = i2c_compose_write_address(Node->i2c_addr);
-        res = i2c_api_write(Node->i2c_num, Node->i2c_addr, array, sizeof(array));
+        res = i2c_mcal_write(Node->i2c_num, Node->i2c_addr, array, sizeof(array));
     }
     return res;
 }
 
+
 static bool ssd1306_set_display_clock_ll(Ssd1306Handle_t* Node) {
-    bool res= false;
+    bool res = false;
     if(Node) {
         DivideRatio_t Reg;
         Reg.oscillator_frequency = 0x8;
@@ -193,7 +197,7 @@ bool ssd1306_write_cmd2_ll(Ssd1306Handle_t* Node, Ssd1306Command_t cmd1, Ssd1306
         ControlByte_t ctrl;
         ctrl.byte = 0;
 
-        uint8_t array[4] = {0};
+        uint8_t array[4] = { 0 };
         memset(array, 0, sizeof(array));
 
         ctrl.continuation = 1;
@@ -209,14 +213,14 @@ bool ssd1306_write_cmd2_ll(Ssd1306Handle_t* Node, Ssd1306Command_t cmd1, Ssd1306
         array[3] = cmd2;
         // uint8_t address = i2c_compose_write_address(Node->i2c_addr);
 
-        res = i2c_api_write(Node->i2c_num, Node->i2c_addr, array, sizeof(array));
+        res = i2c_mcal_write(Node->i2c_num, Node->i2c_addr, array, sizeof(array));
     }
     return res;
 }
 
 bool ssd1306_write_cmd(uint8_t num, Ssd1306Command_t cmd) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         res = ssd1306_write_cmd_ll(Node, cmd);
     }
@@ -225,7 +229,7 @@ bool ssd1306_write_cmd(uint8_t num, Ssd1306Command_t cmd) {
 
 bool ssd1306_set_display_start_line(uint8_t num, uint8_t start_line) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         if(start_line <= 63) {
             uint8_t cmd = 0x40 | start_line;
@@ -246,7 +250,7 @@ bool ssd1306_set_contrast_ll(Ssd1306Handle_t* Node, uint8_t contrast) {
 bool ssd1306_set_multiplex_ratio(uint8_t num, uint8_t multiplex_ratio) {
     bool res = false;
     if((14 < multiplex_ratio) && (multiplex_ratio < 64)) {
-        Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+        Ssd1306Handle_t *Node = Ssd1306GetNode(num);
         if(Node) {
             res = ssd1306_write_cmd2_ll(Node, SSD1306_CMD_SET_MULTIPLEX_RATIO, multiplex_ratio);
         }
@@ -258,13 +262,14 @@ bool ssd1306_set_multiplex_ratio(uint8_t num, uint8_t multiplex_ratio) {
 bool ssd1306_init_one(uint8_t num) {
     bool res = false;
     LOG_WARNING(SSD1306, "SSD1306_%u", num);
-    const Ssd1306Config_t* Config = Ssd1306GetConfig(num);
+    const Ssd1306Config_t *Config = Ssd1306GetConfig(num);
     if(Config) {
         LOG_WARNING(SSD1306, "SpotConfig SSD1306_%u", num);
-        Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+        Ssd1306Handle_t *Node = Ssd1306GetNode(num);
         if(Node) {
             res = true;
             LOG_WARNING(SSD1306, "SpotNode SSD1306_%u", num);
+            Node->update_period_ms = Config->update_period_ms;
             Node->i2c_num = Config->i2c_num;
             Node->i2c_addr = Config->i2c_addr;
             Node->valid = true;
@@ -306,7 +311,6 @@ bool ssd1306_init_custom(void) {
     return true;
 }
 
-
 bool ssd1306_set_page_start_addr(uint8_t num, Ssd1306Page_t page) {
     bool res = false;
     Ssd1306Command_t cmd = SSD1306_CMD_SET_PAGE_START_ADDR | page;
@@ -316,38 +320,31 @@ bool ssd1306_set_page_start_addr(uint8_t num, Ssd1306Page_t page) {
 
 bool ssd1306_is_connected(uint8_t num) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         res = ssd1306_write_cmd_ll(Node, SSD1306_CMD_NOP);
     }
     return res;
 }
 
+
 bool ssd1306_write_data(uint8_t num, uint8_t* array, uint32_t size) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
-        ControlByte_t ctrl;
-        ctrl.control = 0;
-        ctrl.data_command_sel = SSD1306_DC_DATA;
-        ctrl.continuation = 0;
-
-        uint8_t buff[1024 + 1];
-        buff[0] = ctrl.byte;
-        memcpy(&buff[1], array, size);
-        res = i2c_api_write(Node->i2c_num, Node->i2c_addr, buff, size + 1);
+        res = ssd1306_write_data_ll(Node, array, size);
     }
     return res;
 }
 
 bool ssd1306_write_data2(uint8_t num, uint8_t* array, uint32_t size) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         uint32_t i = 0;
         uint32_t ok = 0;
-        for(i = 0; i < size; i++) {
-            res = ssd1306_write_data_ll(Node, array[i]);
+        for (i = 0; i < size; i++) {
+            res = ssd1306_write_byte_ll(Node, array[i]);
             if(res) {
                 ok++;
             }
@@ -363,18 +360,17 @@ bool ssd1306_write_data2(uint8_t num, uint8_t* array, uint32_t size) {
 
 bool ssd1306_set_memory_addressing_mode(uint8_t num, Ssd1306MemoryAddressingMode_t mem_addressing_mode) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
-        res = ssd1306_write_cmd2_ll(Node,
-        		SSD1306_CMD_SET_MEMORY_ADDRESSING_MODE,
-        		(Ssd1306Command_t) mem_addressing_mode);
+        res = ssd1306_write_cmd2_ll(Node, SSD1306_CMD_SET_MEMORY_ADDRESSING_MODE,
+                (Ssd1306Command_t) mem_addressing_mode);
     }
     return res;
 }
 
 bool ssd1306_set_display_offset(uint8_t num, uint8_t offset) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         if(offset < 64) {
             res = ssd1306_write_cmd2_ll(Node, SSD1306_CMD_SET_DISPLAY_OFFSET, offset);
@@ -401,7 +397,7 @@ Ssd1306Page_t ssd1306_y_cord_2_page(int16_t y) {
 
 bool ssd1306_sram_clean(uint8_t num) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         memset(Node->FrameBuffer, 0, FRAME_BUFFER_SIZE);
         res = true;
@@ -418,13 +414,17 @@ bool ssd1306_write_dot_ll(Ssd1306Handle_t* Node, int16_t x, int16_t y, bool on_o
             Ssd1306Page_t page = ssd1306_y_cord_2_page(y);
             uint8_t pos = y % 8;
             uint8_t byte = 1 << pos;
-            switch((uint8_t)on_off) {
+            switch (on_off) {
             case true: {
                 Node->FrameBuffer[page * SSD1306_PAGE_SIZE + x] |= byte;
-            } break;
+            }
+                break;
             case false: {
                 Node->FrameBuffer[page * SSD1306_PAGE_SIZE + x] &= ~byte;
-            } break;
+            }
+                break;
+            default:
+                break;
             }
         } else {
             LOG_DEBUG(SSD1306, "DotErr %u,%u", x, y);
@@ -438,7 +438,7 @@ bool ssd1306_write_dot_ll(Ssd1306Handle_t* Node, int16_t x, int16_t y, bool on_o
 /**/
 bool ssd1306_write_dot(uint8_t num, int16_t x, int16_t y, bool on_off) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         res = ssd1306_write_dot_ll(Node, x, y, on_off);
     }
@@ -453,8 +453,8 @@ bool ssd1306_write_char_ll(Ssd1306Handle_t* Node, int16_t x, int16_t y, char let
     int16_t yy;
     int16_t xx;
     FontFrame_t Dimension = Font2FontDimension(font);
-    for(xx = x; xx < Dimension.dx + x; xx++) {
-        for(yy = y; yy < (Dimension.dy + y); yy++) {
+    for (xx = x; xx < Dimension.dx + x; xx++) {
+        for (yy = y; yy < (Dimension.dy + y); yy++) {
             // res = font_is_dot_on(letter, font, xx - x, yy - y);
             Pixel_t pix = FontPixelGet(xx - x, yy - y, letter, font);
             if(PIXEL_ON == pix) {
@@ -469,7 +469,7 @@ bool ssd1306_write_char_ll(Ssd1306Handle_t* Node, int16_t x, int16_t y, char let
 
 bool ssd1306_write_char(uint8_t num, int16_t x, int16_t y, char str, Font_t font) {
     bool res = false;
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     if(Node) {
         res = ssd1306_write_char_ll(Node, x, y, str, font);
     } else {
@@ -485,7 +485,7 @@ bool ssd1306_write_char(uint8_t num, int16_t x, int16_t y, char str, Font_t font
 bool ssd1306_write_string(uint8_t num, int16_t x_start, int16_t y_start, char* const str, size_t len, Font_t font) {
     bool res = false;
     LOG_DEBUG(SSD1306, "SSD1306%u,Print,Text,(%d,%d),[%s],Len:%u,Font:%u", num, x_start, y_start, str, len, font);
-    Ssd1306Handle_t* Node = Ssd1306GetNode(num);
+    Ssd1306Handle_t *Node = Ssd1306GetNode(num);
     int16_t x = x_start;
     int16_t y = y_start;
     if(Node) {
@@ -501,23 +501,27 @@ bool ssd1306_write_string(uint8_t num, int16_t x_start, int16_t y_start, char* c
     if(res) {
         FontFrame_t Dimension = Font2FontDimension(font);
         uint32_t i = 0;
-        for(i = 0; i < len; i++) {
+        for (i = 0; i < len; i++) {
             bool is_real = true;
-            switch(str[i]) {
+            switch (str[i]) {
             case '\b': {
                 x -= Dimension.dx;
                 is_real = false;
-            } break;
+            }
+                break;
             case '\r': {
                 x = 0;
                 is_real = false;
-            } break;
+            }
+                break;
             case '\n': {
                 y += Dimension.dy;
                 is_real = false;
-            } break;
+            }
+                break;
             default: {
-            } break;
+            }
+                break;
             }
             if(is_real) {
                 res = ssd1306_write_char_ll(Node, x, y, str[i], font);

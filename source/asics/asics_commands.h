@@ -73,6 +73,13 @@
 #define MAX98357_COMMANDS
 #endif
 
+#ifdef HAS_ILI9341_COMMANDS
+#include "ili9341_commands.h"
+#else
+#define ILI9341_COMMANDS
+#endif
+
+
 #ifdef HAS_RS2058_COMMANDS
 #include "rs2058_commands.h"
 #else
@@ -176,10 +183,16 @@
 #define WM8731_COMMANDS
 #endif
 
-#ifdef HAS_W25Q32JV_COMMANDS
+#ifdef HAS_W25Q16J_COMMANDS
+#include "w25q16j_commands.h"
+#else
+#define W25Q16J_COMMANDS
+#endif
+
+#ifdef HAS_W25Q32J_COMMANDS
 #include "w25q32jv_commands.h"
 #else
-#define W25Q32JV_COMMANDS
+#define W25Q32J_COMMANDS
 #endif
 
 #ifdef HAS_UBLOX_NEO_6M_COMMANDS
@@ -206,12 +219,15 @@
     LTR390_COMMANDS
 
 #define ASICS_STORAGE_COMMANDS     \
+    W25Q16J_COMMANDS               \
+    W25Q32J_COMMANDS               \
     MX25L6433F_COMMANDS
 
 #define ASICS_CONTROL_COMMANDS    \
             MAX9860_COMMANDS      \
             MIC2026_COMMANDS      \
             RS2058_COMMANDS       \
+            ILI9341_COMMANDS      \
             AXP192_COMMANDS       \
             BQ24079_COMMANDS      \
             AD9833_COMMANDS       \
@@ -231,6 +247,5 @@
     BC127_COMMANDS                 \
     BT1026_COMMANDS                \
     ESP_01_COMMANDS                \
-    W25Q32JV_COMMANDS
 
 #endif /* ASICS_COMMANDS_H */

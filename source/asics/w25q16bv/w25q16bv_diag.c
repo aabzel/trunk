@@ -13,7 +13,7 @@
 #include "table_utils.h"
 #include "writer_config.h"
 
-const char* Wip2Str(W25Wip_t code) {
+const char* WipToStr(W25Wip_t code) {
     char* name = "?";
     switch((uint8_t)code) {
     case W25_WIP_NOT_IN_WRITE_OPERATION:
@@ -26,7 +26,7 @@ const char* Wip2Str(W25Wip_t code) {
     return name;
 }
 
-const char* Wel2Str(W25Wel_t code) {
+const char* WelToStr(W25Wel_t code) {
     char* name = "?";
     switch((uint8_t)code) {
     case W25_WEL_WRITE_ENABLE:
@@ -39,7 +39,7 @@ const char* Wel2Str(W25Wel_t code) {
     return name;
 }
 
-const char* BlockProt2Str(W25ProtAria_t code) {
+const char* BlockProtToStr(W25ProtAria_t code) {
     char* name = "?";
     switch((uint8_t)code) {
     case W25_PROT_ARIA_NONE:
@@ -94,7 +94,7 @@ const char* BlockProt2Str(W25ProtAria_t code) {
     return name;
 }
 
-const char* Quad2Str(W25Quad_t code) {
+const char* QuadToStr(W25Quad_t code) {
     char* name = "?";
     switch((uint8_t)code) {
     case W25_QUAD_ENABLE:
@@ -107,7 +107,7 @@ const char* Quad2Str(W25Quad_t code) {
     return name;
 }
 
-const char* Srwd2Str(W25Srwd_t code) {
+const char* SrwdToStr(W25Srwd_t code) {
     char* name = "?";
     switch((uint8_t)code) {
     case W25_STATUS_REG_WR_PROT_DISABLE:
@@ -125,11 +125,11 @@ bool mx25_diag_status(RegStatus_t* reg) {
     if(reg) {
         LOG_INFO(W25Q16BV, "Status 0x%x=%s", reg->byte, utoa_bin8(reg->byte));
 
-        LOG_INFO(W25Q16BV, "writeProg %u=%s", reg->wip, Wip2Str(reg->wip));
-        LOG_INFO(W25Q16BV, "write %u=%s", reg->wel, Wel2Str(reg->wel));
-        LOG_INFO(W25Q16BV, "levelOfProtBlock %u=%s", reg->bp, BlockProt2Str(reg->bp));
-        LOG_INFO(W25Q16BV, "Quad %u=%s", reg->qe, Quad2Str(reg->qe));
-        LOG_INFO(W25Q16BV, "StatRegWrProt %u=%s", reg->srwd, Srwd2Str(reg->srwd));
+        LOG_INFO(W25Q16BV, "writeProg %u=%s", reg->wip, WipToStr(reg->wip));
+        LOG_INFO(W25Q16BV, "write %u=%s", reg->wel, WelToStr(reg->wel));
+        LOG_INFO(W25Q16BV, "levelOfProtBlock %u=%s", reg->bp, BlockProtToStr(reg->bp));
+        LOG_INFO(W25Q16BV, "Quad %u=%s", reg->qe, QuadToStr(reg->qe));
+        LOG_INFO(W25Q16BV, "StatRegWrProt %u=%s", reg->srwd, SrwdToStr(reg->srwd));
     }
     return res;
 }

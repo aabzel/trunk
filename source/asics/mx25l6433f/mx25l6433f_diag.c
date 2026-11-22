@@ -18,7 +18,7 @@
 
 const char* WipToStr(Mx25Wip_t code) {
     char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case MX25_WIP_NOT_IN_WRITE_OPERATION:
         name = "NotWrOp";
         break;
@@ -32,7 +32,7 @@ const char* WipToStr(Mx25Wip_t code) {
 
 const char* WelToStr(Mx25Wel_t code) {
     char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case MX25_WEL_WRITE_ENABLE:
         name = "WrEnable";
         break;
@@ -102,7 +102,7 @@ const char* BlockProtToStr(Mx25ProtAria_t code) {
 
 const char* QuadToStr(Mx25Quad_t code) {
     char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case MX25_QUAD_ENABLE:
         name = "QuadEnable";
         break;
@@ -116,7 +116,7 @@ const char* QuadToStr(Mx25Quad_t code) {
 
 const char* SrwdToStr(Mx25Srwd_t code) {
     char* name = "?";
-    switch((uint8_t)code) {
+    switch(code) {
     case MX25_STATUS_REG_WR_PROT_DISABLE:
         name = "disabled";
         break;

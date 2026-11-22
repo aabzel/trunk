@@ -46,7 +46,6 @@ bool mx25l6433f_identification_read(uint8_t num);
 bool mx25l6433f_status_reg_read(uint8_t num);
 uint32_t mx25l6433f_reg_cnt(void);
 
-bool pack_24bit_big_endian(uint32_t address, uint8_t* const buff);
 
 /*setters*/
 bool mx25l6433f_write_activate(uint8_t num, uint32_t time_out);

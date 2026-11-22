@@ -97,6 +97,10 @@ ifneq ($(ASICS_PRECONFIG_MK_INC),Y)
         include $(ASICS_DIR)/max98357/max98357_preconfig.mk
     endif
 
+    ifeq ($(ILI9341),Y)
+        include $(ASICS_DIR)/ili9341/ili9341_preconfig.mk
+    endif
+
     ifeq ($(MIC2026),Y)
         include $(ASICS_DIR)/mic2026/mic2026_preconfig.mk
     endif

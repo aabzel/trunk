@@ -1,6 +1,8 @@
 #include "asics_initialize.h"
 
+#ifdef HAS_EHAL
 #include "mcal_to_ehal.h"
+#endif
 
 #ifdef HAS_LIS3DH_EHAL
 #include "lis3dh_driver.h"

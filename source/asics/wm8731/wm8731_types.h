@@ -29,6 +29,7 @@ typedef struct {
     Wm8731Mode_t mode;                                                                    \
     Wm8731RegConfig_t* RegArray;                                                          \
     uint32_t reg_cnt;                                                                     \
+    int8_t output_volume;                                                                 \
     uint8_t dds_num;                                                                      \
     uint8_t i2c_num;                                                                      \
     int8_t left;                                                                          \

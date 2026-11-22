@@ -260,6 +260,8 @@ bool cmd_wm8731_tone(int32_t argc, char* argv[]) {
         case 3: {
             res = test_wm8731_play_freq(num, (double)freq, (SampleType_t)amplitude, duration_ms);
         } break;
+
+        default: break;
         }
 
         if(res) {
