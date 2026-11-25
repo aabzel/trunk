@@ -1,0 +1,12 @@
+$(info TEST_SW_UART_MK_INC=$(TEST_SW_UART_MK_INC))
+
+ifneq ($(TEST_SW_UART_MK_INC),Y)
+    TEST_SW_UART_MK_INC=Y
+
+    TEST_SW_UART_DIR = $(TEST_SET_HW_DIR)/test_sw_uart
+    # $(error TEST_SW_UART_DIR=$(TEST_SW_UART_DIR))
+
+    INCDIR += -I$(TEST_SW_UART_DIR)
+    MCAL_OPT += -DHAS_TEST_SW_UART
+    SOURCES_C += $(TEST_SW_UART_DIR)/test_sw_uart.c
+endif

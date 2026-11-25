@@ -8,7 +8,7 @@
 #include "data_utils.h"
 #include "debug_info.h"
 #include "log.h"
-#include "ostream.h"
+//#include "ostream.h"
 #include "string_reader.h"
 #include "table_utils.h"
 #include "uart_diag.h"

@@ -12,14 +12,14 @@ static uint8_t ByteTxFiFo[4000] = {0};
 
 #define SW_UART_CONFIG_TX                         \
         .Tx = {.port = PORT_A, .pin = 4,},        \
-        .tx_over_sampling  = 4,                   \
+        .tx_over_sampling  = 2,                   \
         .tx_timer_num = 1,                        \
         .bin_dac_num = 1,                         \
         .TxFifoMem = ByteTxFiFo,                  \
         .tx_fifo_mem_size = ARRAY_SIZE(ByteTxFiFo),
 
 #define SW_UART_CONFIG_RX                        \
-        .rx_over_sampling  = 8,                  \
+        .rx_over_sampling  = 4,                  \
         .rx_timer_num = 8,                       \
         .Rx = {.port = PORT_A, .pin = 1,},       \
         .bin_adc_num = 1,                        \
@@ -32,13 +32,14 @@ const SwUartConfig_t SECTION_CFG_DATA SwUartConfig[] = {
          SW_UART_CONFIG_RX
          SW_UART_CONFIG_TX
         .num = 1,
-        .parity_check = false,
+        .parity_check = SW_UART_PARITY_EVEN,
         .stop_bit_cnt = 2,
-        .baud_rate = 9600,
+        .baud_rate = 14400,
         .name = "Debug",
         .valid = true,
     },
 };
+
 
 SwUartHandle_t SwUartInstance[] = {
     { .num = 1,  .valid = true, },
