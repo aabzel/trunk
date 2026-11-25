@@ -1,0 +1,56 @@
+
+    #ifdef HAS_ADC
+        #include "mcal_fc7300x/adc/adc.gvi"
+    #endif
+
+    #ifdef HAS_CLOCK
+        #include "mcal_fc7300x/clock/clock.gvi"
+    #endif
+
+    #ifdef HAS_FLASH
+        #include "mcal_fc7300x/flash/flash.gvi"
+    #endif
+
+    #ifdef HAS_GPIO
+        #include "mcal_fc7300x/gpio/gpio.gvi"
+    #endif
+
+    #ifdef HAS_I2C
+        #include "mcal_fc7300x/i2c/i2c.gvi"
+    #endif
+
+    #ifdef HAS_IPC
+        #include "mcal_fc7300x/ipc/ipc.gvi"
+    #endif
+
+    #ifdef HAS_NVS
+        #include "mcal_fc7300x/nvs/nvs.gvi"
+    #endif
+
+    #ifdef HAS_PWM
+        #include "mcal_fc7300x/pwm/pwm.gvi"
+    #endif
+
+    #ifdef HAS_RTC
+        #include "mcal_fc7300x/rtc/rtc.gvi"
+    #endif
+
+    #ifdef HAS_SPI
+        #include "mcal_fc7300x/spi/spi.gvi"
+    #endif
+
+    #ifdef HAS_SYSTICK
+        #include "mcal_fc7300x/systick/systick.gvi"
+    #endif
+
+    #ifdef HAS_TIMER
+        #include "mcal_fc7300x/timer/timer.gvi"
+    #endif
+    
+    #ifdef HAS_QSPI
+        #include "mcal_fc7300x/qspi/qspi.gvi"
+    #endif
+
+    #ifdef HAS_UART
+        #include "mcal_fc7300x/uart/uart.gvi"
+    #endif

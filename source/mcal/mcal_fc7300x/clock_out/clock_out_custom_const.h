@@ -1,0 +1,5 @@
+#ifndef CLOCK_OUT_CUSTOM_CONST_H
+#define CLOCK_OUT_CUSTOM_CONST_H
+
+
+#endif /* CLOCK_OUT_CUSTOM_CONST_H  */

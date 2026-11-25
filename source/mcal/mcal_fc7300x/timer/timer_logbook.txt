@@ -1,0 +1,24 @@
+start notepad++ simplelink_cc13x2_26x2_sdk_5_20_00_52/source/ti/devices/cc13x2_cc26x2/driverlib/timer.c
+
+start notepad++ examples/rtos/CC26X2R1_LAUNCHXL/drivers/timerled/timerled.c:77:    timer0 = Timer_open(CONFIG_TIMER_0, &params);
+source/ti/drivers/timer/TimerCC26XX.c:126:Timer_Handle Timer_open(uint_least8_t index, Timer_Params *params)
+
+start notepad++ source/ti/ble5stack/boards/CC26X2R1_LAUNCHXL/CC26X2R1_LAUNCHXL.c
+
+source/ti/ble5stack/boards/CC26X2R1_LAUNCHXL/CC26X2R1_LAUNCHXL.c:652:const GPTimerCC26XX_Config GPTimerCC26XX_config[CC26X2R1_LAUNCHXL_GPTIMERPARTSCOUNT] = {
+source/ti/drivers/pwm/PWMTimerCC26XX.c:487:        GPTimerCC26XX_configureDebugStall(object->hTimer, *(GPTimerCC26XX_DebugMode *)arg);
+source/ti/drivers/timer/GPTimerCC26XX.c:55:extern const GPTimerCC26XX_Config GPTimerCC26XX_config[];
+source/ti/drivers/timer/GPTimerCC26XX.c:203:    GPTimerCC26XX_Handle handle = (GPTimerCC26XX_Handle) & GPTimerCC26XX_config[index];
+source/ti/drivers/timer/GPTimerCC26XX.c:612:    GPTimerCC26XX_configureDebugStall(handle, params->debugStallMode);
+source/ti/drivers/timer/GPTimerCC26XX.c:752:void GPTimerCC26XX_configureDebugStall(GPTimerCC26XX_Handle handle, GPTimerCC26XX_DebugMode mode)
+source/ti/drivers/timer/GPTimerCC26XX.h:223: *  Used in GPTimer configuration structure GPTimerCC26XX_config to
+source/ti/drivers/timer/GPTimerCC26XX.h:395: *  const GPTimerCC26XX_Config GPTimerCC26XX_config[CC2650_GPTIMERPARTSCOUNT] = {
+source/ti/drivers/timer/GPTimerCC26XX.h:451: *                        the GPTimerCC26XX_config table
+source/ti/drivers/timer/GPTimerCC26XX.h:661:extern void GPTimerCC26XX_configureDebugStall(GPTimerCC26XX_Handle handle, GPTimerCC26XX_DebugMode mode);
+
+barunin@N433 MINGW64 /c/ti/simplelink_cc13x2_26x2_sdk_5_20_00_52
+$
+
+tsr sys+
+rm 0x4001003C
+wm 0x4001003C 1
