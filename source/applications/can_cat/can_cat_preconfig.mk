@@ -1,0 +1,13 @@
+ifneq ($(CAN_CAT_PRECONFIG_INC),Y)
+    CAN_CAT_PRECONFIG_INC=Y
+
+    CAN_CAT=Y
+    LOG=Y
+    CAN=Y
+    SLCAN_PROC=Y
+    ISO_TP=Y
+    CLI=Y
+    PROTOCOL=Y
+    APPLICATIONS=Y
+    SLCAN=Y
+endif

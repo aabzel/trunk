@@ -1,0 +1,4 @@
+
+config CAN_TX_PLANNER
+    bool "Enable use of the CAN_TX_PLANNER drivers"
+

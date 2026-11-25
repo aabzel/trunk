@@ -1,0 +1,9 @@
+    
+    TEST_TCAN4550_DIR = $(TEST_SET_HW_DIR)/test_flash_fs
+#@echo $(error TEST_TCAN4550_DIR=$(TEST_TCAN4550_DIR))
+INCDIR += -I$(TEST_TCAN4550_DIR)
+
+MCAL_OPT += -DHAS_TEST_TCAN4550
+
+SOURCES_C += $(TEST_TCAN4550_DIR)/test_flash_fs.c
+

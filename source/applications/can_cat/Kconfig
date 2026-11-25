@@ -1,0 +1,4 @@
+
+config CAN_CAT
+    bool "Enable use of the CAN_CAT drivers"
+

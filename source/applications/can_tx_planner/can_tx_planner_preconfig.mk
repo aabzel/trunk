@@ -1,0 +1,7 @@
+ifneq ($(CAN_TX_PLANNER_PRECONFIG_INC),Y)
+    CAN_TX_PLANNER_PRECONFIG_INC=Y
+    
+    CAN_TX_PLANNER=Y
+    CAN=Y
+    TIME=Y
+endif

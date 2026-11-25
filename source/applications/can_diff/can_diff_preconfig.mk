@@ -1,0 +1,5 @@
+ifneq ($(CAN_DIFF_PRECONFIG_INC),Y)
+    CAN_DIFF_PRECONFIG_INC=Y
+    
+    CAN_DIFF=Y
+endif

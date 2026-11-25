@@ -1,0 +1,5 @@
+ifneq ($(CAN_RX_HIST_PRECONFIG_INC),Y)
+    CAN_RX_HIST_PRECONFIG_INC=Y
+    
+    CAN_RX_HIST=Y
+endif

@@ -1,0 +1,4 @@
+
+config CAN_RX_HIST
+    bool "Enable use of the CAN_RX_HIST drivers"
+
