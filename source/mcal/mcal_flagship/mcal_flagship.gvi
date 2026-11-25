@@ -1,0 +1,76 @@
+
+    #ifdef HAS_ADC
+        #include "mcal_module/adc/adc.gvi"
+    #endif
+
+    #ifdef HAS_CLOCK
+        #include "mcal_module/clock/clock.gvi"
+    #endif
+
+    #ifdef HAS_LOCKSTEP
+        #include "mcal_module/lockstep/lockstep.gvi"
+    #endif
+    
+    #ifdef HAS_EIM
+        #include "mcal_module/eim/eim.gvi"
+    #endif
+
+    #ifdef HAS_FCSMU
+        #include "mcal_module/fcsmu/fcsmu.gvi"
+    #endif
+
+    #ifdef HAS_FLASH
+        #include "mcal_module/flash/flash.gvi"
+    #endif
+
+    #ifdef HAS_GPIO
+        #include "mcal_module/gpio/gpio.gvi"
+    #endif
+
+    #ifdef HAS_MPU
+        #include "mcal_module/mpu/mpu.gvi"
+    #endif
+    
+    #ifdef HAS_MAM
+        #include "mcal_module/mam/mam.gvi"
+    #endif
+    
+    #ifdef HAS_I2C
+        #include "mcal_module/i2c/i2c.gvi"
+    #endif
+
+    #ifdef HAS_IPC
+        #include "mcal_module/ipc/ipc.gvi"
+    #endif
+
+    #ifdef HAS_NVS
+        #include "mcal_module/nvs/nvs.gvi"
+    #endif
+
+    #ifdef HAS_PWM
+        #include "mcal_module/pwm/pwm.gvi"
+    #endif
+
+    #ifdef HAS_RTC
+        #include "mcal_module/rtc/rtc.gvi"
+    #endif
+
+    #ifdef HAS_SPI
+        #include "mcal_module/spi/spi.gvi"
+    #endif
+
+    #ifdef HAS_SYSTICK
+        #include "mcal_module/systick/systick.gvi"
+    #endif
+
+    #ifdef HAS_TIMER
+        #include "mcal_module/timer/timer.gvi"
+    #endif
+    
+    #ifdef HAS_QSPI
+        #include "mcal_module/qspi/qspi.gvi"
+    #endif
+
+    #ifdef HAS_UART
+        #include "mcal_module/uart/uart.gvi"
+    #endif

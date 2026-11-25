@@ -1,0 +1,23 @@
+$(info CAN_NODE_MK_INC=  $(CAN_NODE_MK_INC) )
+ifneq ($(CAN_NODE_MK_INC),Y)
+    CAN_NODE_MK_INC=Y
+
+    CAN_NODE_DIR = $(CAN_FLAGSHIP_DIR)/canNode
+
+    CAN_NODE_SRC_DIR = $(CAN_NODE_DIR)/Src
+    CAN_NODE_INC_DIR = $(CAN_NODE_DIR)/Inc
+
+    INCDIR += -I$(CAN_NODE_DIR)
+    INCDIR += -I$(CAN_NODE_INC_DIR)
+    MCAL_OPT += -DHAS_CAN_NODE
+    MCAL_OPT += -DDEBUG
+
+    SOURCES_THIRD_PARTY_C += $(CAN_NODE_SRC_DIR)/can_error.c
+    SOURCES_THIRD_PARTY_C += $(CAN_NODE_SRC_DIR)/can_node.c
+    SOURCES_THIRD_PARTY_C += $(CAN_NODE_SRC_DIR)/can_tx.c
+
+    ifeq ($(J1939),Y)
+        MCAL_OPT += -DHAS_J1939
+        SOURCES_THIRD_PARTY_C += $(CAN_NODE_SRC_DIR)/j1939_tp.c
+    endif
+endif

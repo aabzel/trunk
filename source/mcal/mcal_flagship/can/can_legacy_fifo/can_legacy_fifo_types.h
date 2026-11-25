@@ -1,0 +1,5 @@
+#ifndef FC_CAN_LEGACY_TYPE_H
+#define FC_CAN_LEGACY_TYPE_H
+
+
+#endif /* FC_CAN_LEGACY_TYPE_H  */
