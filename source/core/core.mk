@@ -17,6 +17,11 @@ ifneq ($(CORE_GENERAL_MK_INC),Y)
         include $(CORE_DIR)/rv32imc/rv32imc.mk
     endif
 
+    ifeq ($(CORTEX_A9),Y)   
+        # $(error CORTEX_A9=$(CORTEX_A9))
+        include $(CORE_DIR)/cortex_a9/cortex_a9.mk
+    endif
+    
     ifeq ($(CORTEX_M0),Y)   
         # $(error CORTEX_M0=$(CORTEX_M0))
         include $(CORE_DIR)/cortex_m0/cortex_m0.mk

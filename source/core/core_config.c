@@ -20,8 +20,8 @@ const CoreConfig_t CoreConfig[] = {
       .valid = true,
       .name = "CORE0",
 #ifdef HAS_LINKER_INFO
-            .stack_top = (uint32_t)&__Core0_StackTop,
-            .stack_limit = (uint32_t)&__Core0_StackLimit,
+      .stack_top = (uint32_t)&__Core0_StackTop,
+      .stack_limit = (uint32_t)&__Core0_StackLimit,
 #endif
     },
 #ifdef HAS_MULTICORE

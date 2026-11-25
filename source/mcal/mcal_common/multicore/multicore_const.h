@@ -3,10 +3,11 @@
 
 #include "multicore_dep.h"
 
-#define MULTICORE_COMPONENT_VERSION "1"
+#define MULTICORE_COMPONENT_VERSION "3"
 
-#define CORE_1_VECTOR_ADDR 0x01200000U
-#define CORE_2_VECTOR_ADDR 0x01400000U
+
+#define MULTICORE_POLL_PERIOD_US 5000000
+
 
 typedef enum {
     CPU_CORE_0 = 0,

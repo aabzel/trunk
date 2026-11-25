@@ -12,8 +12,10 @@ extern "C" {
 #include <stdint.h>
 
 #include "multicore_types.h"
+#include "control_types.h"
 
 bool multicore_diag(void);
+const char* MultiCoresToStr(const ControlCores_t Cores);
 bool MultiCoreDiagConfig(const MultiCoreConfig_t* const Config);
 const char* MultiCoreConfigToStr(const MultiCoreConfig_t* const Config);
 

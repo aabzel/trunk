@@ -3,14 +3,26 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "byte_diag.h"
 #include "gpio_diag.h"
 #include "log.h"
 #include "multicore_mcal.h"
 #include "table_utils.h"
 #include "writer_config.h"
 
+const char* MultiCoresToStr(const ControlCores_t Cores) {
+    static char lText[5] = {0};
+    memset(lText, 0, sizeof(lText));
+    strcpy(lText, "");
+    snprintf(lText, sizeof(lText), "%s%s", lText, ByteNameToStr(Cores.core0, "0"));
+    snprintf(lText, sizeof(lText), "%s%s", lText, ByteNameToStr(Cores.core1, "1"));
+    snprintf(lText, sizeof(lText), "%s%s", lText, ByteNameToStr(Cores.core2, "2"));
+    return lText;
+}
+
 const char* MultiCoreConfigToStr(const MultiCoreConfig_t* const Config) {
     if(Config) {
+        memset(text, 0, sizeof(text));
         sprintf(text, "MULTICORE%u", Config->num);
         snprintf(text, sizeof(text), "%s%s,", text, Config->name);
     }

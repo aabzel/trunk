@@ -5,7 +5,6 @@
 extern "C" {
 #endif
 
-
 #include "std_includes.h"
 #include "multicore_isr.h"
 #include "multicore_types.h"
@@ -19,6 +18,7 @@ extern "C" {
 /*API*/
 const MultiCoreConfig_t* MultiCoreGetConfig(uint8_t num);
 MultiCoreHandle_t* MultiCoreGetNode(uint8_t num);
+bool MultiCoreIsValidConfig(const MultiCoreConfig_t* const Config);
 bool multicore_init_one(uint8_t num);
 bool multicore_proc_one(uint8_t num);
 bool multicore_control(uint8_t num, bool on_off);
@@ -31,9 +31,15 @@ bool multicore3_init(void);
 
 /*getters*/
 int8_t multicore_get_core_num(void);
+bool multicore_is_my_core(const int8_t core_num, const ControlCores_t Cores);
+bool multicore_is_my_nucleus(const uint8_t core_num);
+bool multicore_is_my_kernel(const ControlCores_t Cores);
 
 /*setters*/
+bool multicore_turn_on_all(void);
+bool multicore_hold(uint8_t core_num);
 bool multicore_reset(uint8_t core_num);
+bool multicore_reset_handler(uint8_t core_num);
 bool multicore_release(uint8_t core_num);
 
 #ifdef __cplusplus
