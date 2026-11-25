@@ -169,7 +169,7 @@ bool spi_mcal_read(uint8_t num, uint8_t* const rxData, uint32_t size) {
 _WEAK_FUN_
 bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* const rx_array, uint32_t size) {
     bool res = false;
-    LOG_PARN(SPI, "SPI%u,WriteRead,Size:%u byte", num, size);
+    LOG_DEBUG(SPI, "SPI%u,WriteRead,Size:%u byte", num, size);
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         res = false;
@@ -204,10 +204,23 @@ bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* co
     return res;
 }
 
+bool spi_mcal_write_words(uint8_t num, const uint16_t* const words, const uint32_t size){
+    bool res = false ;
+
+#if 0
+    res = spi_mcal_write( num, (uint8_t*) words, size*2);
+#endif
+    uint32_t i = 0;
+    for(i=0; i<size; i++) {
+        res = spi_write_word(num, words[i]);
+    }
+    return res;
+}
+
 _WEAK_FUN_
 bool spi_mcal_write(uint8_t num, const uint8_t* const array, uint32_t size) {
     bool res = false;
-    LOG_PARN(SPI, "SPI%u,Write,Size:%u byte", num, size);
+    LOG_DEBUG(SPI, "SPI%u,Write,Size:%u byte", num, size);
     SpiHandle_t* Node = SpiGetNode(num);
     if(Node) {
         res = false;
@@ -449,7 +462,7 @@ bool spi_wait_txrx_ll(SpiHandle_t* Node) {
 _WEAK_FUN_
 bool spi_write_byte(uint8_t num, const uint8_t tx_byte) {
     bool res = false;
-    LOG_PARN(SPI, "SPI%u,Write Byte 0x%02x", num, tx_byte);
+    LOG_DEBUG(SPI, "SPI%u,Write Byte 0x%02x", num, tx_byte);
     res = spi_mcal_write(num, &tx_byte, 1);
     return res;
 }
@@ -484,7 +497,7 @@ bool spi_read_until_pattern(const uint8_t num, const uint8_t exp_rx, const uint3
             break;
         }
     }
-    LOG_PARN(SPI, "SPI%u,ReadUntil,Pattern:0x%02x,Try:%u/%u", num, exp_rx, i, try);
+    LOG_DEBUG(SPI, "SPI%u,ReadUntil,Pattern:0x%02x,Try:%u/%u", num, exp_rx, i, try);
     return res;
 }
 
@@ -525,7 +538,7 @@ bool spi_read_safe(uint8_t num, uint8_t* rx_array, uint32_t size) {
 }
 
 _WEAK_FUN_
-bool spi_mcal_read_word(uint8_t num, uint16_t* word) {
+bool spi_mcal_read_word(const uint8_t num, uint16_t* const word) {
     bool res = false;
     LOG_PARN(SPI, "SPI%u,ReadWord", num);
     res = spi_mcal_read(num, (uint8_t*)word, 2);
@@ -535,11 +548,23 @@ bool spi_mcal_read_word(uint8_t num, uint16_t* word) {
     return res;
 }
 
+bool spi_mcal_read_words(const uint8_t num, uint16_t* const word, const uint32_t cnt){
+    bool res = false;
+    LOG_PARN(SPI, "SPI%u,Read,Words", num,cnt);
+    uint32_t word_cnt = 2*cnt;
+    res = spi_mcal_read(num, (uint8_t*)word, word_cnt);
+    if(false == res) {
+        LOG_ERROR(SPI, "SPI%u,ReadWord,Err", num);
+    }
+    return res;
+}
+
 _WEAK_FUN_
 bool spi_write_word(uint8_t num, const uint16_t word) {
     bool res = false;
     LOG_PARN(SPI, "SPI%u,WriteWord,0x%04x", num, word);
     U16_bit_t Un16;
+    //Un16.u16 = word;
     Un16.u16 = reverse_byte_order_uint16(word);
     res = spi_mcal_write(num, Un16.u8, 2);
     if(res) {

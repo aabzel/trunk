@@ -45,10 +45,25 @@ bool spi_wait_tx_ll(SpiHandle_t * const Node);
 bool spi_wait_txrx_ll(SpiHandle_t * const Node);
 bool spi_wait_rx_ll(SpiHandle_t * const Node);
 
+/*setters*/
+bool spi_interrupt_ctrl(uint8_t num, bool enable);
+bool spi_interrupt_priority_set(uint8_t num, uint8_t irq_priority) ;
+bool spi_move_mode_set(const uint8_t num, const MoveMode_t move_mode);
+bool spi_write_byte(uint8_t num, const uint8_t byte);
+bool spi_write_word(uint8_t num, const uint16_t word);
+bool spi_mcal_write_words(uint8_t num, const uint16_t* const words, const uint32_t size);
+bool spi_write_dword(uint8_t num, const uint32_t word);
+bool spi_mcal_write(uint8_t num, const uint8_t* const tx_array, uint32_t tx_array_len);
+bool spi_mcal_write_it(uint8_t num, const uint8_t* const tx_array, const uint32_t size) ;
+bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* rx_array, uint32_t size);
+bool spi_set_clock(uint8_t num, uint32_t bit_rate_hz);
+
 /*getters*/
 bool spi_read_safe(uint8_t num, uint8_t* rx_array, uint32_t size);
 bool spi_mcal_read(uint8_t num, uint8_t* const rx_array, uint32_t array_len);
-bool spi_mcal_read_word(uint8_t num, uint16_t* word);
+bool spi_mcal_read_word(const uint8_t num, uint16_t* const word);
+bool spi_mcal_read_words(const uint8_t num, uint16_t* const word, const uint32_t cnt);
+
 bool spi_read_byte_v2(uint8_t num, uint8_t* const rx_byte);
 SpiClkIdleLevel_t spi_get_phase(uint8_t num);
 SpiPolarity_t spi_get_polarity(uint8_t num);
@@ -61,17 +76,6 @@ uint32_t spi_get_clock(uint8_t num);
 uint64_t spi_read_qword(uint8_t num);
 bool spi_move_mode_get(const uint8_t num, MoveMode_t* const move_mode);
 bool spi_read_until_pattern(const uint8_t num, const uint8_t exp_rx, const uint32_t try);
-
-/*setters*/
-bool spi_interrupt_ctrl(uint8_t num, bool enable);
-bool spi_interrupt_priority_set(uint8_t num, uint8_t irq_priority) ;
-bool spi_move_mode_set(const uint8_t num, const MoveMode_t move_mode);
-bool spi_write_byte(uint8_t num, const uint8_t byte);
-bool spi_write_word(uint8_t num, const uint16_t word);
-bool spi_write_dword(uint8_t num, const uint32_t word);
-bool spi_mcal_write(uint8_t num, const uint8_t* const tx_array, uint32_t tx_array_len);
-bool spi_mcal_write_read(uint8_t num, const uint8_t* const tx_array, uint8_t* rx_array, uint32_t size);
-bool spi_set_clock(uint8_t num, uint32_t bit_rate_hz);
 
 #ifdef __cplusplus
 }
